@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="add_alarm">Add alarm</string>
+  <string name="alarmClock">Alarm Clock</string>
+  <string name="alarmSet">Alarm set</string>
+  <string name="alarm_alert_dismiss_text">Dismiss</string>
+  <string name="alarm_alert_dismissed">Alarm dismissed</string>
+  <string name="alarm_alert_snooze_not_set">Snooze not set -- next alarm set for <xliff:g id="time">%s</xliff:g></string>
+  <string name="alarm_alert_snooze_set">Snoozing for <xliff:g id="minutes">%d</xliff:g> minutes.</string>
+  <string name="alarm_alert_snooze_text">Snooze</string>
+  <string name="alarm_repeat">Repeat</string>
+  <string name="alarm_set">This alarm is set for <xliff:g id="time_delta">%s</xliff:g> from now.</string>
+  <string name="alarm_vibrate">Vibrate</string>
+  <string name="alert">Ringtone</string>
+  <string name="am">am</string>
+  <string name="and">" and "</string>
+  <string name="clock_instructions">Select a clock to display.</string>
+  <string name="combiner"><xliff:g id="xxx">%1$s</xliff:g><xliff:g id="xxx">%2$s</xliff:g><xliff:g id="xxx">%3$s</xliff:g><xliff:g id="xxx">%4$s</xliff:g><xliff:g id="xxx">%5$s</xliff:g></string>
+  <string name="day">"1 day"</string>
+  <string name="day_concat">", "</string>
+  <string name="days">"<xliff:g id="days">%s</xliff:g> days"</string>
+  <string name="dberror">Sorry, the alarm could not be set.</string>
+  <string name="delete_alarm">Delete alarm</string>
+  <string name="enable">Alarm</string>
+  <string name="error">Alarm not set</string>
+  <string name="every_day">every day</string>
+  <string name="hide_clock">Hide clock</string>
+  <string name="hour">1 hour</string>
+  <string name="hours"><xliff:g id="hours">%s</xliff:g> hours</string>
+  <string name="minute">"1 minute"</string>
+  <string name="minutes">"<xliff:g id="minutes">%s</xliff:g> minutes"</string>
+  <string name="never">Never</string>
+  <string name="nextAlarm">Next alarm: <xliff:g id="next_alarm_time">%s</xliff:g></string>
+  <string name="pm">pm</string>
+  <string name="set_alarm">Set alarm</string>
+  <string name="settings">Date &amp; time settings</string>
+  <string name="show_clock">Show clock</string>
+  <string name="snoozeSet">Snooze set</string>
+  <string name="space">" "</string>
+  <string name="subminute">"less than 1 minute"</string>
+  <string name="time">Time</string>
+</resources>

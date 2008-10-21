@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="alarm_alert_dismiss_text">Zrušit</string>
+  <string name="alarm_alert_dismissed">Připomenutí zrušeno</string>
+  <string name="alarm_alert_snooze_set">Připomenout znovu za 10 minut</string>
+  <string name="alarm_alert_snooze_text">Připomenout znovu</string>
+  <string name="alarm_set">Připomenutí nastaveno na {0} odteď.</string>
+  <string name="alert">Připomenutí: </string>
+  <string name="and">" a "</string>
+  <string name="date_format">Formát data</string>
+  <string name="date_format_12">12 hodinový</string>
+  <string name="date_format_24">24 hodinový</string>
+  <string name="hour">1 hodina</string>
+  <string name="hours">{0} hodin</string>
+  <string name="minute">"1 minuta"</string>
+  <string name="minutes">"{0} minut"</string>
+  <string name="set_date_formats_hour_format_text">Hod.</string>
+  <string name="set_time">Nastavit čas a datum</string>
+  <string name="set_timezone">Nastavit časové pásmo</string>
+  <string name="subminute">"méně než 1 minuta"</string>
+  <string name="time">Čas:</string>
+</resources>

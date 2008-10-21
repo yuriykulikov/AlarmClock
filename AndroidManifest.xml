@@ -1,0 +1,47 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        package="com.android.alarmclock">
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+
+    <application android:label="@string/app_label"
+                 android:icon="@drawable/ic_launcher_alarmclock">
+
+        <provider android:name="AlarmProvider" android:authorities="com.android.alarmclock" />
+
+        <activity android:name="AlarmClock" android:label="Alarm Clock">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="SetAlarm" android:label="Set Alarm" />
+
+        <activity android:name="AlarmAlert" android:label="Alarm"
+                android:theme="@android:style/Theme.Dialog"
+                android:launchMode="singleTask"
+                android:taskAffinity=":AlarmAlert" />
+
+        <activity android:name="ClockPicker" />
+
+        <receiver android:name="AlarmReceiver">
+            <intent-filter>
+               <action android:name="com.android.alarmclock.ALARM_ALERT" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="AlarmInitReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>
+
