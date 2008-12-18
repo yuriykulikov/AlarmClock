@@ -27,6 +27,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,6 +54,10 @@ public class AlarmClock extends Activity {
 
     /** Cap alarm count at this number */
     final static int MAX_ALARM_COUNT = 12;
+
+    /** This must be false for production.  If true, turns on logging,
+        test code, etc. */
+    final static boolean DEBUG = false;
 
     private SharedPreferences mPrefs;
     private LayoutInflater mFactory;
@@ -84,7 +90,6 @@ public class AlarmClock extends Activity {
         }
 
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            /* FIXME: this is called 3+x times too many by the ListView */
             View ret = mFactory.inflate(R.layout.alarm_time, parent, false);
             DigitalClock digitalClock = (DigitalClock)ret.findViewById(R.id.digitalClock);
             digitalClock.setLive(false);
@@ -134,15 +139,29 @@ public class AlarmClock extends Activity {
                 });
 
             // set the alarm text
-            Calendar c = Calendar.getInstance();
+            final Calendar c = Calendar.getInstance();
             c.set(Calendar.HOUR_OF_DAY, hour);
             c.set(Calendar.MINUTE, minutes);
             digitalClock.updateTime(c);
             TextView daysOfWeekView = (TextView) digitalClock.findViewById(R.id.daysOfWeek);
             daysOfWeekView.setText(daysOfWeek.toString(AlarmClock.this, false));
+
+            // Build context menu
+            digitalClock.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+                    public void onCreateContextMenu(ContextMenu menu, View view,
+                                                    ContextMenuInfo menuInfo) {
+                        menu.setHeaderTitle(Alarms.formatTime(AlarmClock.this, c));
+                        MenuItem deleteAlarmItem = menu.add(0, id, 0, R.string.delete_alarm);
+                    }
+                });
         }
     };
 
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        Alarms.deleteAlarm(this, item.getItemId());
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle icicle) {
@@ -230,15 +249,6 @@ public class AlarmClock extends Activity {
 
         mToggleClockItem = menu.add(0, 0, 0, R.string.hide_clock);
         mToggleClockItem.setIcon(R.drawable.ic_menu_clock_face);
-
-        if (false) {
-            Intent intent = new Intent();
-            intent.setClassName(
-                    "com.android.settings",
-                    "com.android.settings.DateTimeSettings");
-            MenuItem settingsItem = menu.add(0, 0, 0, R.string.settings).setIntent(intent);
-            settingsItem.setIcon(android.R.drawable.ic_menu_preferences);
-        }
 
         return true;
     }

@@ -19,6 +19,6 @@
     <color name="ampm_on">#ffffffff</color>
 
     <color name="white">#ffffffff</color>
+    <color name="red">#ffee0000</color>
     <color name="ltgrey">#ffe0e0e0</color>
-    <color name="black">#ff000000</color>
 </resources>

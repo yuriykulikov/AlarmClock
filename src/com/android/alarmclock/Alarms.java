@@ -28,9 +28,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
-import android.pim.DateFormat;
 import android.provider.BaseColumns;
 import android.provider.Settings;
+import android.text.format.DateFormat;
 
 import java.util.Calendar;
 
@@ -42,7 +42,6 @@ public class Alarms {
     public final static String ALARM_ALERT_ACTION = "com.android.alarmclock.ALARM_ALERT";
     public final static String ID = "alarm_id";
     public final static String TIME = "alarm_time";
-    private final static int STATUSBAR_NOTIFICATION_ID = 22;
 
     final static String PREF_SNOOZE_ID = "snooze_id";
     final static String PREF_SNOOZE_TIME = "snooze_time";
@@ -294,15 +293,24 @@ public class Alarms {
     }
 
     /**
-     * Removes an existing Alarm.
+     * Removes an existing Alarm.  If this alarm is snoozing, disables
+     * snooze.  Sets next alert.
      */
     public synchronized static void deleteAlarm(
-            ContentResolver contentResolver, int alarmId) {
+            Context context, int alarmId) {
+
+        ContentResolver contentResolver = context.getContentResolver();
+        /* If alarm is snoozing, lose it */
+        int snoozeId = getSnoozeAlarmId(context);
+        if (snoozeId == alarmId) disableSnoozeAlert(context);
+
         Uri uri = ContentUris.withAppendedId(AlarmColumns.CONTENT_URI, alarmId);
         deleteAlarm(contentResolver, uri);
+
+        setNextAlert(context);
     }
 
-    public synchronized static void deleteAlarm(
+    private synchronized static void deleteAlarm(
             ContentResolver contentResolver, Uri uri) {
         contentResolver.delete(uri, "", null);
     }
@@ -645,7 +653,7 @@ public class Alarms {
     /**
      * @return alarm ID of snoozing alarm, -1 if snooze unset
      */
-    static int getSnoozeAlarmId(final Context context) {
+    private static int getSnoozeAlarmId(final Context context) {
         SharedPreferences prefs = context.getSharedPreferences(
                 AlarmClock.PREFERENCES, 0);
         return prefs.getInt(PREF_SNOOZE_ID, -1);
@@ -666,7 +674,6 @@ public class Alarms {
         enableAlert(context, id, atTimeInMillis);
         return true;
     }
-
 
 
     /**
@@ -746,8 +753,6 @@ public class Alarms {
      * @return true if clock is set to 24-hour mode
      */
     static boolean get24HourMode(final Context context) {
-        String value = Settings.System.getString(context.getContentResolver(),
-                                                 Settings.System.TIME_12_24);
-        return !(value == null || value.equals("12"));
+        return android.text.format.DateFormat.is24HourFormat(context);
     }
 }

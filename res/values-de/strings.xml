@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_label">"Wecker"</string>
+    <string name="add_alarm">"Wecker hinzufügen"</string>
+    <string name="delete_alarm">"Wecker löschen"</string>
+    <string name="show_clock">"Uhr anzeigen"</string>
+    <string name="hide_clock">"Uhr ausblenden"</string>
+    <string name="set_alarm">"Wecker einstellen"</string>
+    <string name="enable">"Wecker aktivieren"</string>
+    <string name="alarm_vibrate">"Vibrieren"</string>
+    <string name="alarm_repeat">"Wiederholen"</string>
+    <string name="alert">"Klingelton"</string>
+    <string name="time">"Uhrzeit"</string>
+    <!-- no translation found for alert_title (1600112166027371802) -->
+    <skip />
+    <string name="alarm_alert_dismiss_text">"Verwerfen"</string>
+    <!-- no translation found for alarm_alert_alert_silenced (7918075929961104202) -->
+    <skip />
+    <string name="alarm_alert_snooze_text">"Snooze-Funktion"</string>
+    <string name="alarm_alert_snooze_set">"Snooze-Funktion aktiviert für <xliff:g id="MINUTES">%d</xliff:g> Minuten"</string>
+    <string name="alarm_alert_snooze_not_set">"Snooze-Funktion nicht aktiviert - nächster Wecker klingelt <xliff:g id="TIME">%s</xliff:g>."</string>
+    <string name="alarm_set">"Dieser Wecker klingelt in <xliff:g id="TIME_DELTA">%s</xliff:g>."</string>
+    <!-- no translation found for combiner (2146732837172099134) -->
+    <skip />
+    <string name="day">"1 Tag"</string>
+    <string name="days">"<xliff:g id="DAYS">%s</xliff:g> Tage"</string>
+    <string name="hour">"1 Stunde"</string>
+    <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> Stunden"</string>
+    <string name="and">"und"</string>
+    <!-- no translation found for space (9141227650891547547) -->
+    <skip />
+    <string name="subminute">"Unter 1 Minute"</string>
+    <string name="minute">"1 Minute"</string>
+    <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> Minuten"</string>
+    <string name="am">"AM"</string>
+    <string name="pm">"PM"</string>
+    <string name="every_day">"Täglich"</string>
+    <string name="never">"Nie"</string>
+    <string name="day_concat">","</string>
+    <string name="clock_instructions">"Wählen Sie die anzuzeigende Uhr aus."</string>
+    <string name="error">"Wecker nicht eingestellt"</string>
+    <string name="dberror">"Der Wecker konnte nicht eingestellt werden."</string>
+  <string-array name="days_of_week">
+    <item>"Montag"</item>
+    <item>"Dienstag"</item>
+    <item>"Mittwoch"</item>
+    <item>"Donnerstag"</item>
+    <item>"Freitag"</item>
+    <item>"Samstag"</item>
+    <item>"Sonntag"</item>
+  </string-array>
+  <string-array name="days_of_week_short">
+    <item>"Mo"</item>
+    <item>"Di"</item>
+    <item>"Mi"</item>
+    <item>"Do"</item>
+    <item>"Fr"</item>
+    <item>"Sa"</item>
+    <item>"So"</item>
+  </string-array>
+</resources>

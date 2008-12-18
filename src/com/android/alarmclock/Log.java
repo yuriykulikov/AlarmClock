@@ -26,8 +26,7 @@ import android.util.Config;
 class Log {
     public final static String LOGTAG = "AlarmClock";
 
-    private static final boolean DEBUG = false;
-    static final boolean LOGV = DEBUG ? Config.LOGD : Config.LOGV;
+    static final boolean LOGV = AlarmClock.DEBUG ? Config.LOGD : Config.LOGV;
 
     static void v(String logMe) {
         android.util.Log.v(LOGTAG, /* SystemClock.uptimeMillis() + " " + */ logMe);
@@ -35,5 +34,9 @@ class Log {
 
     static void e(String logMe) {
         android.util.Log.e(LOGTAG, logMe);
+    }
+
+    static void e(String logMe, Exception ex) {
+        android.util.Log.e(LOGTAG, logMe, ex);
     }
 }

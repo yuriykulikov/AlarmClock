@@ -18,21 +18,18 @@ package com.android.alarmclock;
 
 import android.app.Activity;
 import android.app.KeyguardManager;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.AudioManager;
-import android.net.Uri;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
+import android.widget.TextView;
 
 import java.util.Calendar;
 
@@ -40,47 +37,45 @@ import java.util.Calendar;
  * Alarm Clock alarm alert: pops visible indicator and plays alarm
  * tone
  */
-public class AlarmAlert extends Activity implements Alarms.AlarmSettings {
+public class AlarmAlert extends Activity {
 
-    private static long[] sVibratePattern = new long[] { 500, 500 };
-
-    private NotificationManager mNotificationManager;
-
-    private final static int AUDIO_ALERT_NOTIFICATION_ID = 0;
-    /** Play alarm up to 5 minutes before silencing */
-    private final static int ALARM_TIMEOUT_SECONDS = 300;
     private final static int SNOOZE_MINUTES = 10;
 
     private KeyguardManager mKeyguardManager;
     private KeyguardManager.KeyguardLock mKeyguardLock = null;
-    private Handler mTimeout;
     private Button mSnoozeButton;
-
-    private int mAlarmId;
-    private Alarms.DaysOfWeek mDaysOfWeek;
-    private String mAlert;
-    private boolean mVibrate;
     private boolean mSnoozed;
-    private boolean mCleanupCalled = false;
 
-    public void reportAlarm(
-            int idx, boolean enabled, int hour, int minutes,
-            Alarms.DaysOfWeek daysOfWeek, boolean vibrate, String message,
-            String alert) {
-        if (Log.LOGV) Log.v("AlarmAlert.reportAlarm: " + idx + " " + hour +
-                            " " + minutes + " dow " + daysOfWeek);
-        mAlert = alert;
-        mDaysOfWeek = daysOfWeek;
-        mVibrate = vibrate;
-    }
+    private AlarmKlaxon mKlaxon;
+    private int mAlarmId;
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+
+        /* FIXME Intentionally verbose: always log this until we've
+           fully debugged the app failing to start up */
+        Log.v("AlarmAlert.onCreate()");
+
         setContentView(R.layout.alarm_alert);
 
+        mKlaxon = AlarmKlaxon.getInstance();
+
+        // Popup alert over black screen
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+        lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        // XXX DO NOT COPY THIS!!!  THIS IS BOGUS!  Making an activity have
+        // a system alert type is completely broken, because the activity
+        // manager will still hide/show it as if it is part of the normal
+        // activity stack.  If this is really what you want and you want it
+        // to work correctly, you should create and show your own custom window.
+        lp.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+        lp.token = null;
+        getWindow().setAttributes(lp);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
         mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         /* set clock face */
         LayoutInflater mFactory = LayoutInflater.from(this);
@@ -94,7 +89,7 @@ public class AlarmAlert extends Activity implements Alarms.AlarmSettings {
             ((DigitalClock)clockLayout).setAnimate();
         }
 
-        playAlert(getIntent());
+        mAlarmId = getIntent().getIntExtra(Alarms.ID, -1);
 
         /* allow next alarm to trigger while this activity is
            active */
@@ -129,8 +124,7 @@ public class AlarmAlert extends Activity implements Alarms.AlarmSettings {
                     Alarms.setNextAlert(AlarmAlert.this);
                     mSnoozed = true;
                 }
-                disableKiller();
-                cleanupAlarm();
+                mKlaxon.stop(AlarmAlert.this, mSnoozed);
                 releaseLocks();
                 finish();
             }
@@ -139,12 +133,30 @@ public class AlarmAlert extends Activity implements Alarms.AlarmSettings {
         /* dismiss button: close notification */
         findViewById(R.id.dismiss).setOnClickListener(new Button.OnClickListener() {
                 public void onClick(View v) {
-                    disableKiller();
-                    cleanupAlarm();
+                    mKlaxon.stop(AlarmAlert.this, mSnoozed);
                     releaseLocks();
                     finish();
                 }
             });
+
+        mKlaxon.setKillerCallback(new AlarmKlaxon.KillerCallback() {
+            public void onKilled() {
+                if (Log.LOGV) Log.v("onKilled()");
+                TextView silenced = (TextView)findViewById(R.id.silencedText);
+                silenced.setText(
+                        getString(R.string.alarm_alert_alert_silenced,
+                                  AlarmKlaxon.ALARM_TIMEOUT_SECONDS / 60));
+                silenced.setVisibility(View.VISIBLE);
+
+                /* don't allow snooze */
+                mSnoozeButton.setEnabled(false);
+
+                mKlaxon.stop(AlarmAlert.this, mSnoozed);
+                releaseLocks();
+            }
+        });
+
+        mKlaxon.restoreInstanceState(this, icicle);
     }
 
     /**
@@ -157,10 +169,13 @@ public class AlarmAlert extends Activity implements Alarms.AlarmSettings {
         if (Log.LOGV) Log.v("AlarmAlert.OnNewIntent()");
         mSnoozeButton.setEnabled(true);
         disableKeyguard();
-        cleanupAlarm();
-        mCleanupCalled = false;
-        disableKiller();
-        playAlert(intent);
+
+        mAlarmId = intent.getIntExtra(Alarms.ID, -1);
+
+        /* unset silenced message */
+        TextView silenced = (TextView)findViewById(R.id.silencedText);
+        silenced.setVisibility(View.GONE);
+
         Alarms.setNextAlert(this);
         setIntent(intent);
     }
@@ -176,61 +191,13 @@ public class AlarmAlert extends Activity implements Alarms.AlarmSettings {
     protected void onStop() {
         super.onStop();
         if (Log.LOGV) Log.v("AlarmAlert.onStop()");
-        disableKiller();
-        cleanupAlarm();
+        mKlaxon.stop(this, mSnoozed);
         releaseLocks();
     }
 
-    /**
-     * kicks off audio/vibe alert
-     */
-    private void playAlert(Intent intent) {
-        mAlarmId = intent.getIntExtra(Alarms.ID, 0);
-        if (Log.LOGV) Log.v("playAlert() " + mAlarmId);
-
-        /* load audio alert */
-        ContentResolver cr = getContentResolver();
-        /* this will call reportAlarm() callback */
-        Alarms.getAlarm(cr, this, mAlarmId);
-
-        /* play audio alert */
-        if (mAlert == null) {
-            Log.e("Unable to play alarm: no audio file available");
-        } else {
-            Notification audio = new Notification();
-            audio.sound = Uri.parse(mAlert);
-            audio.audioStreamType = AudioManager.STREAM_ALARM;
-            audio.flags |= Notification.FLAG_INSISTENT;
-            if (mVibrate) audio.vibrate = sVibratePattern;
-            mNotificationManager.notify(AUDIO_ALERT_NOTIFICATION_ID, audio);
-        }
-        enableKiller();
-    }
-
-    /**
-     * Kills alarm audio after ALARM_TIMEOUT_SECONDS, so the alarm
-     * won't run all day.
-     *
-     * This just cancels the audio, but leaves the notification
-     * popped, so the user will know that the alarm tripped.
-     */
-    private void enableKiller() {
-        mTimeout = new Handler();
-        mTimeout.postDelayed(new Runnable() {
-                public void run() {
-                    if (Log.LOGV) Log.v("*********** Alarm killer triggered *************");
-                    /* don't allow snooze */
-                    mSnoozeButton.setEnabled(false);
-                    cleanupAlarm();
-                    releaseLocks();
-                }}, 1000 * ALARM_TIMEOUT_SECONDS);
-    }
-
-    private void disableKiller() {
-        if (mTimeout != null) {
-            mTimeout.removeCallbacksAndMessages(null);
-            mTimeout = null;
-        }
+    @Override
+    protected void onSaveInstanceState(Bundle icicle) {
+        mKlaxon.onSaveInstanceState(icicle);
     }
 
     private synchronized void enableKeyguard() {
@@ -253,24 +220,5 @@ public class AlarmAlert extends Activity implements Alarms.AlarmSettings {
     private synchronized void releaseLocks() {
         AlarmAlertWakeLock.release();
         enableKeyguard();
-    }
-
-    /**
-     * Stops alarm audio and disables alarm if it not snoozed and not
-     * repeating
-     */
-    private synchronized void cleanupAlarm() {
-        if (Log.LOGV) Log.v("cleanupAlarm " + mAlarmId);
-        if (!mCleanupCalled) {
-            mCleanupCalled = true;
-
-            // Stop audio playing
-            mNotificationManager.cancel(AUDIO_ALERT_NOTIFICATION_ID);
-
-            /* disable alarm only if it is not set to repeat */
-            if (!mSnoozed && ((mDaysOfWeek == null || !mDaysOfWeek.isRepeatSet()))) {
-                Alarms.enableAlarm(AlarmAlert.this, mAlarmId, false);
-            }
-        }
     }
 }

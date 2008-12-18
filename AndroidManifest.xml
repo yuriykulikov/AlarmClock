@@ -12,7 +12,7 @@
 
         <provider android:name="AlarmProvider" android:authorities="com.android.alarmclock" />
 
-        <activity android:name="AlarmClock" android:label="Alarm Clock">
+        <activity android:name="AlarmClock" android:label="@string/app_label">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -20,9 +20,10 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="SetAlarm" android:label="Set Alarm" />
+        <activity android:name="SetAlarm" android:label="@string/set_alarm" />
 
-        <activity android:name="AlarmAlert" android:label="Alarm"
+        <activity android:name="AlarmAlert" android:label="@string/alert_title"
+                android:excludeFromRecents="true"
                 android:theme="@android:style/Theme.Dialog"
                 android:launchMode="singleTask"
                 android:taskAffinity=":AlarmAlert" />

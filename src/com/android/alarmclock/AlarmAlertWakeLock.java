@@ -17,11 +17,7 @@
 package com.android.alarmclock;
 
 import android.content.Context;
-import android.os.Binder;
-import android.os.IBinder;
 import android.os.PowerManager;
-import android.os.RemoteException;
-import android.os.ServiceManager;
 
 /**
  * Hold a wakelock that can be acquired in the AlarmReceiver and

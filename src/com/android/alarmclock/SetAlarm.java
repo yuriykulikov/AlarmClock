@@ -27,11 +27,11 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.pim.DateFormat;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.CheckBoxPreference;
 import android.preference.PreferenceScreen;
+import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TimePicker;
@@ -50,6 +50,7 @@ public class SetAlarm extends PreferenceActivity
     private RepeatPreference mRepeatPref;
     private ContentObserver mAlarmsChangeObserver;
     private MenuItem mDeleteAlarmItem;
+    private MenuItem mTestAlarmItem;
 
     private int mId;
     private int mHour;
@@ -66,12 +67,15 @@ public class SetAlarm extends PreferenceActivity
         }
     }
 
-    private class OnRepeatChangeListener implements RepeatPreference.OnRepeatChangeListener {
+    private class OnRepeatChangedObserver implements RepeatPreference.OnRepeatChangedObserver {
         public void onRepeatChanged(Alarms.DaysOfWeek daysOfWeek) {
             if (!mDaysOfWeek.equals(daysOfWeek)) {
                 mDaysOfWeek.set(daysOfWeek);
                 saveAlarm(true);
             }
+        }
+        public Alarms.DaysOfWeek getDaysOfWeek() {
+            return mDaysOfWeek;
         }
     }
 
@@ -120,7 +124,7 @@ public class SetAlarm extends PreferenceActivity
                 Alarms.AlarmColumns.CONTENT_URI, true, mAlarmsChangeObserver);
 
         mAlarmPref.setRingtoneChangedListener(new RingtoneChangedListener());
-        mRepeatPref.setOnRepeatChangeListener(new OnRepeatChangeListener());
+        mRepeatPref.setOnRepeatChangedObserver(new OnRepeatChangedObserver());
     }
 
     @Override
@@ -196,7 +200,6 @@ public class SetAlarm extends PreferenceActivity
         mMinutes = minutes;
         mAlarmOnPref.setChecked(enabled);
         mDaysOfWeek.set(daysOfWeek);
-        mRepeatPref.setDaysOfWeek(mDaysOfWeek);
         mVibratePref.setChecked(vibrate);
 
         if (alert == null || alert.length() == 0) {
@@ -347,23 +350,49 @@ public class SetAlarm extends PreferenceActivity
         mDeleteAlarmItem = menu.add(0, 0, 0, R.string.delete_alarm);
         mDeleteAlarmItem.setIcon(android.R.drawable.ic_menu_delete);
 
+        if (AlarmClock.DEBUG) {
+            mTestAlarmItem = menu.add(0, 0, 0, "test alarm");
+        }
+
+
         return true;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item == mDeleteAlarmItem) {
-
-            /* If alarm is snoozing, lose it */
-            int id = Alarms.getSnoozeAlarmId(this);
-            if (id == mId) Alarms.disableSnoozeAlert(this);
-
-            Alarms.deleteAlarm(getContentResolver(), mId);
-            Alarms.setNextAlert(this);
+            Alarms.deleteAlarm(this, mId);
             finish();
             return true;
         }
+        if (AlarmClock.DEBUG) {
+            if (item == mTestAlarmItem) {
+                setTestAlarm();
+                return true;
+            }
+        }
 
         return false;
+    }
+
+
+    /**
+     * Test code: this is disabled for production build.  Sets
+     * this alarm to go off on the next minute
+     */
+    void setTestAlarm() {
+
+        // start with now
+        java.util.Calendar c = java.util.Calendar.getInstance();
+        c.setTimeInMillis(System.currentTimeMillis());
+
+        int nowHour = c.get(java.util.Calendar.HOUR_OF_DAY);
+        int nowMinute = c.get(java.util.Calendar.MINUTE);
+
+        int minutes = (nowMinute + 1) % 60;
+        int hour = nowHour + (nowMinute == 0? 1 : 0);
+
+        saveAlarm(this, mId, true, hour, minutes, mDaysOfWeek, true,
+                  mAlarmPref.mAlert.toString(), true);
     }
 
 }

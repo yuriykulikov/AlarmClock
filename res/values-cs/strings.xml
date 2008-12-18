@@ -1,23 +1,78 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="alarm_alert_dismiss_text">Zrušit</string>
-  <string name="alarm_alert_dismissed">Připomenutí zrušeno</string>
-  <string name="alarm_alert_snooze_set">Připomenout znovu za 10 minut</string>
-  <string name="alarm_alert_snooze_text">Připomenout znovu</string>
-  <string name="alarm_set">Připomenutí nastaveno na {0} odteď.</string>
-  <string name="alert">Připomenutí: </string>
-  <string name="and">" a "</string>
-  <string name="date_format">Formát data</string>
-  <string name="date_format_12">12 hodinový</string>
-  <string name="date_format_24">24 hodinový</string>
-  <string name="hour">1 hodina</string>
-  <string name="hours">{0} hodin</string>
-  <string name="minute">"1 minuta"</string>
-  <string name="minutes">"{0} minut"</string>
-  <string name="set_date_formats_hour_format_text">Hod.</string>
-  <string name="set_time">Nastavit čas a datum</string>
-  <string name="set_timezone">Nastavit časové pásmo</string>
-  <string name="subminute">"méně než 1 minuta"</string>
-  <string name="time">Čas:</string>
+    <!-- no translation found for app_label (719424688690928500) -->
+    <skip />
+    <!-- no translation found for add_alarm (6465111143836160157) -->
+    <skip />
+    <!-- no translation found for delete_alarm (3187863838339613996) -->
+    <skip />
+    <!-- no translation found for show_clock (6454876279065558248) -->
+    <skip />
+    <!-- no translation found for hide_clock (5435118975737652258) -->
+    <skip />
+    <!-- no translation found for set_alarm (1116816561692090001) -->
+    <skip />
+    <!-- no translation found for enable (2220805156571304867) -->
+    <skip />
+    <!-- no translation found for alarm_vibrate (4222510918049555297) -->
+    <skip />
+    <!-- no translation found for alarm_repeat (4362017563139248149) -->
+    <skip />
+    <string name="alert">"Připomenutí:"</string>
+    <string name="time">"Čas:"</string>
+    <!-- no translation found for alert_title (7145110266896791932) -->
+    <skip />
+    <string name="alarm_alert_dismiss_text">"Zrušit"</string>
+    <!-- no translation found for alarm_alert_alert_silenced (6161953199860209948) -->
+    <skip />
+    <string name="alarm_alert_snooze_text">"Připomenout znovu"</string>
+    <string name="alarm_alert_snooze_set">"Připomenout znovu za 10 minut"</string>
+    <!-- no translation found for alarm_alert_snooze_not_set (881172141787275304) -->
+    <skip />
+    <string name="alarm_set">"Připomenutí nastaveno na {0} odteď."</string>
+    <!-- no translation found for combiner (5301921298271815218) -->
+    <skip />
+    <!-- no translation found for day (8001934889073807733) -->
+    <skip />
+    <!-- no translation found for days (2726636459135530788) -->
+    <skip />
+    <string name="hour">"1 hodina"</string>
+    <string name="hours">"{0} hodin"</string>
+    <string name="and">" a "</string>
+    <!-- no translation found for space (2078027275921450624) -->
+    <skip />
+    <string name="subminute">"méně než 1 minuta"</string>
+    <string name="minute">"1 minuta"</string>
+    <string name="minutes">"{0} minut"</string>
+    <!-- no translation found for am (455518889055307288) -->
+    <skip />
+    <!-- no translation found for pm (524364136816513977) -->
+    <skip />
+    <!-- no translation found for every_day (1334113044586868212) -->
+    <skip />
+    <!-- no translation found for never (353424542931922658) -->
+    <skip />
+    <!-- no translation found for day_concat (3295320053414797746) -->
+    <skip />
+    <!-- no translation found for clock_instructions (5234372612101338584) -->
+    <skip />
+    <!-- no translation found for error (7515419946657871513) -->
+    <skip />
+    <!-- no translation found for dberror (1950331240392210505) -->
+    <skip />
+    <!-- no translation found for days_of_week:0 (8344265315142161020) -->
+    <!-- no translation found for days_of_week:1 (7541897985112185383) -->
+    <!-- no translation found for days_of_week:2 (4893243935223768060) -->
+    <!-- no translation found for days_of_week:3 (1609352753342325832) -->
+    <!-- no translation found for days_of_week:4 (1959588981877324716) -->
+    <!-- no translation found for days_of_week:5 (1888524930952528619) -->
+    <!-- no translation found for days_of_week:6 (4773879695810324460) -->
+    <!-- no translation found for days_of_week_short:0 (486773581413687657) -->
+    <!-- no translation found for days_of_week_short:1 (5122948226489234004) -->
+    <!-- no translation found for days_of_week_short:2 (2480532703743806857) -->
+    <!-- no translation found for days_of_week_short:3 (7465873194133774157) -->
+    <!-- no translation found for days_of_week_short:4 (934143296602731292) -->
+    <!-- no translation found for days_of_week_short:5 (1100587425646981714) -->
+    <!-- no translation found for days_of_week_short:6 (4871830994398665704) -->
 </resources>

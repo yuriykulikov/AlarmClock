@@ -23,10 +23,14 @@ import android.preference.ListPreference;
 import android.util.AttributeSet;
 
 public class RepeatPreference extends ListPreference {
-    private Alarms.DaysOfWeek mDaysOfWeek = new Alarms.DaysOfWeek();
-    private OnRepeatChangeListener mOnRepeatChangeListener;
 
-    public interface OnRepeatChangeListener {
+    private Alarms.DaysOfWeek mDaysOfWeek = new Alarms.DaysOfWeek();
+    private OnRepeatChangedObserver mOnRepeatChangedObserver;
+
+    public interface OnRepeatChangedObserver {
+        /** RepeatPrefrence calls this to get initial state */
+        public Alarms.DaysOfWeek getDaysOfWeek();
+
         /** Called when this preference has changed */
         public void onRepeatChanged(Alarms.DaysOfWeek daysOfWeek);
     }
@@ -35,20 +39,17 @@ public class RepeatPreference extends ListPreference {
         super(context, attrs);
     }
 
-    void setDaysOfWeek(Alarms.DaysOfWeek daysOfWeek) {
-        /* we keep a local copy, so the host can set itself on a
-           positive result and ignore on a negative */
-        mDaysOfWeek.set(daysOfWeek);
-    }
-
-    void setOnRepeatChangeListener(OnRepeatChangeListener listener) {
-        mOnRepeatChangeListener = listener;
+    void setOnRepeatChangedObserver(OnRepeatChangedObserver onRepeatChangedObserver) {
+        mOnRepeatChangedObserver = onRepeatChangedObserver;
     }
 
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {
-            mOnRepeatChangeListener.onRepeatChanged(mDaysOfWeek);
+            mOnRepeatChangedObserver.onRepeatChanged(mDaysOfWeek);
+        } else {
+            /* no change -- reset to initial state */
+            mDaysOfWeek.set(mOnRepeatChangedObserver.getDaysOfWeek());
         }
     }
 
@@ -61,6 +62,9 @@ public class RepeatPreference extends ListPreference {
             throw new IllegalStateException(
                     "RepeatPreference requires an entries array and an entryValues array.");
         }
+
+        mDaysOfWeek.set(mOnRepeatChangedObserver.getDaysOfWeek());
+
         builder.setMultiChoiceItems(
                 entries, mDaysOfWeek.getBooleanArray(),
                 new DialogInterface.OnMultiChoiceClickListener() {

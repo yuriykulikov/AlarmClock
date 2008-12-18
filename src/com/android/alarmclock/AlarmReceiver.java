@@ -19,9 +19,6 @@ package com.android.alarmclock;
 import android.content.Context;
 import android.content.Intent;
 import android.content.BroadcastReceiver;
-import android.os.Handler;
-import android.os.PowerManager;
-import android.os.SystemClock;
 
 /**
  * Glue class: connects AlarmAlert IntentReceiver to AlarmAlert
@@ -39,17 +36,26 @@ public class AlarmReceiver extends BroadcastReceiver {
         int id = intent.getIntExtra(Alarms.ID, 0);
         long setFor = intent.getLongExtra(Alarms.TIME, 0);
 
+        /* FIXME Intentionally verbose: always log this until we've
+           fully debugged the app failing to start up */
+        Log.v("AlarmReceiver.onReceive() id " + id + " setFor " + setFor +
+              " now " + now);
+
         if (now > setFor + STALE_WINDOW * 1000) {
             if (Log.LOGV) Log.v("AlarmReceiver ignoring stale alarm intent id"
                                 + id + " setFor " + setFor + " now " + now);
             return;
         }
 
-        if (Log.LOGV) Log.v("*********** Keep UI Alive *************");
+        /* wake device */
         AlarmAlertWakeLock.acquire(context);
 
-        Intent fireAlarm = new Intent(context, AlarmAlert.class);
+        /* start audio/vibe */
+        AlarmKlaxon klaxon = AlarmKlaxon.getInstance();
+        klaxon.play(context, id);
 
+        /* launch UI */
+        Intent fireAlarm = new Intent(context, AlarmAlert.class);
         fireAlarm.putExtra(Alarms.ID, id);
         fireAlarm.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(fireAlarm);
