@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_label">"Réveil"</string>
+    <string name="add_alarm">"Ajouter alarme"</string>
+    <string name="delete_alarm">"Désactiver alarme"</string>
+    <string name="show_clock">"Afficher horloge"</string>
+    <string name="hide_clock">"Masquer horloge"</string>
+    <string name="set_alarm">"Régler alarme"</string>
+    <string name="enable">"Activer l\'alarme"</string>
+    <string name="alarm_vibrate">"Vibreur"</string>
+    <string name="alarm_repeat">"Répéter"</string>
+    <string name="alert">"Sonnerie"</string>
+    <string name="time">"Heure"</string>
+    <string name="alert_title">"Alarme"</string>
+    <string name="alarm_alert_dismiss_text">"Quitter"</string>
+    <string name="alarm_alert_alert_silenced">"Alarme interrompue après <xliff:g id="MINUTES">%d</xliff:g> minutes"</string>
+    <string name="alarm_alert_snooze_text">"Répéter"</string>
+    <string name="alarm_alert_snooze_set">"Répétition dans <xliff:g id="MINUTES">%d</xliff:g> minutes."</string>
+    <string name="alarm_alert_snooze_not_set">"Répétition non activée -- prochaine alarme à <xliff:g id="TIME">%s</xliff:g>"</string>
+    <string name="alarm_set">"Durée avant prochaine alarme : <xliff:g id="TIME_DELTA">%s</xliff:g>."</string>
+    <!-- no translation found for combiner (2146732837172099134) -->
+    <skip />
+    <string name="day">"1 jour"</string>
+    <string name="days">"<xliff:g id="DAYS">%s</xliff:g> jours"</string>
+    <string name="hour">"1 heure"</string>
+    <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> heures"</string>
+    <string name="and">"et"</string>
+    <!-- no translation found for space (9141227650891547547) -->
+    <skip />
+    <string name="subminute">"moins d\'1 minute"</string>
+    <string name="minute">"1 minute"</string>
+    <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> minutes"</string>
+    <string name="am">"AM"</string>
+    <string name="pm">"PM"</string>
+    <string name="every_day">"tous les jours"</string>
+    <string name="never">"Jamais"</string>
+    <string name="day_concat">","</string>
+    <string name="clock_instructions">"Sélectionner une horloge à afficher."</string>
+    <string name="error">"Alarme non activée"</string>
+    <string name="dberror">"Désolé, impossible de régler l\'alarme."</string>
+  <string-array name="days_of_week">
+    <item>"Lundi"</item>
+    <item>"Mardi"</item>
+    <item>"Mercredi"</item>
+    <item>"Jeudi"</item>
+    <item>"Vendredi"</item>
+    <item>"Samedi"</item>
+    <item>"Dimanche"</item>
+  </string-array>
+  <string-array name="days_of_week_short">
+    <item>"Lun."</item>
+    <item>"Mar."</item>
+    <item>"Mer."</item>
+    <item>"Jeu."</item>
+    <item>"Ven."</item>
+    <item>"Sam."</item>
+    <item>"Dim."</item>
+  </string-array>
+</resources>
