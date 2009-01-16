@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_label">"Budzik"</string>
+    <string name="add_alarm">"Dodaj alarm"</string>
+    <string name="delete_alarm">"Usuń alarm"</string>
+    <string name="show_clock">"Pokaż zegar"</string>
+    <string name="hide_clock">"Ukryj zegar"</string>
+    <string name="set_alarm">"Ustaw alarm"</string>
+    <string name="enable">"Włącz alarm"</string>
+    <string name="alarm_vibrate">"Wibracje"</string>
+    <string name="alarm_repeat">"Powtarzanie"</string>
+    <string name="alert">"Dzwonek"</string>
+    <string name="time">"Godzina"</string>
+    <string name="alert_title">"Alarm"</string>
+    <string name="alarm_alert_dismiss_text">"Odrzuć"</string>
+    <string name="alarm_alert_alert_silenced">"Alarm jest wyciszany po <xliff:g id="MINUTES">%d</xliff:g> min."</string>
+    <string name="alarm_alert_snooze_text">"Drzemka"</string>
+    <string name="alarm_alert_snooze_set">"Drzemka przez <xliff:g id="MINUTES">%d</xliff:g> min."</string>
+    <string name="alarm_alert_snooze_not_set">"Nie ustawiono drzemki — następny alarm: <xliff:g id="TIME">%s</xliff:g>"</string>
+    <string name="alarm_set">"Ustawiony alarm odezwie się za <xliff:g id="TIME_DELTA">%s</xliff:g>"</string>
+    <!-- no translation found for combiner (2146732837172099134) -->
+    <skip />
+    <string name="day">"1 dzień"</string>
+    <string name="days">"<xliff:g id="DAYS">%s</xliff:g> dni"</string>
+    <string name="hour">"1 godz."</string>
+    <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> godz."</string>
+    <string name="and">"oraz"</string>
+    <!-- no translation found for space (9141227650891547547) -->
+    <skip />
+    <string name="subminute">"mniej niż 1 min"</string>
+    <string name="minute">"1 min"</string>
+    <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> min"</string>
+    <string name="am">"AM"</string>
+    <string name="pm">"PM"</string>
+    <string name="every_day">"codziennie"</string>
+    <string name="never">"Nigdy"</string>
+    <string name="day_concat">","</string>
+    <string name="clock_instructions">"Wybierz wyświetlany zegar."</string>
+    <string name="error">"Alarm nieustawiony"</string>
+    <string name="dberror">"Niestety, nie można ustawić alarmu."</string>
+  <string-array name="days_of_week">
+    <item>"Poniedziałek"</item>
+    <item>"Wtorek"</item>
+    <item>"Środa"</item>
+    <item>"Czwartek"</item>
+    <item>"Piątek"</item>
+    <item>"Sobota"</item>
+    <item>"Niedziela"</item>
+  </string-array>
+  <string-array name="days_of_week_short">
+    <item>"Pn"</item>
+    <item>"Wt"</item>
+    <item>"Śr"</item>
+    <item>"Cz"</item>
+    <item>"Pt"</item>
+    <item>"So"</item>
+    <item>"Ndz"</item>
+  </string-array>
+</resources>
