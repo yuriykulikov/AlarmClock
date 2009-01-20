@@ -22,13 +22,13 @@
     <!-- no translation found for combiner (2146732837172099134) -->
     <skip />
     <string name="day">"1 Tag"</string>
-    <string name="days">"<xliff:g id="DAYS">%s</xliff:g> Tage"</string>
+    <string name="days">"<xliff:g id="DAYS">%s</xliff:g> Tagen"</string>
     <string name="hour">"1 Stunde"</string>
     <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> Stunden"</string>
     <string name="and">"und"</string>
     <!-- no translation found for space (9141227650891547547) -->
     <skip />
-    <string name="subminute">"Unter 1 Minute"</string>
+    <string name="subminute">"weniger als 1 Minute"</string>
     <string name="minute">"1 Minute"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> Minuten"</string>
     <string name="am">"AM"</string>
