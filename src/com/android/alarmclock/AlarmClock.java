@@ -158,8 +158,20 @@ public class AlarmClock extends Activity {
     };
 
     @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        Alarms.deleteAlarm(this, item.getItemId());
+    public boolean onContextItemSelected(final MenuItem item) {
+        // Confirm that the alarm will be deleted.
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.delete_alarm))
+                .setMessage(getString(R.string.delete_alarm_confirm))
+                .setPositiveButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface d, int w) {
+                                Alarms.deleteAlarm(AlarmClock.this,
+                                        item.getItemId());
+                            }
+                        })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
         return true;
     }
 

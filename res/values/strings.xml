@@ -25,6 +25,9 @@
     <!-- Context Menu Item on Alarm Settings screen: Delete alarm -->
     <string name="delete_alarm">Delete alarm</string>
 
+    <!-- Delete alarm confirmation dialog message. -->
+    <string name="delete_alarm_confirm">This alarm will be deleted.</string>
+
     <!-- Menu item on Alarm Clock screen: Show clock -->
     <string name="show_clock">Show clock</string>
 
@@ -142,6 +145,9 @@
     <!-- Error dialog message.  Appears only on critical
          failure -->
     <string name="dberror">Sorry, the alarm could not be set.</string>
+
+    <!-- Label for analog clock gadget, shown in list of all gadgets -->
+    <string name="analog_gadget">Analog clock</string>
 
     <!-- Days of week -->
     <string-array name="days_of_week">

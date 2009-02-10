@@ -14,8 +14,8 @@
      limitations under the License.
 -->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="@string/set_alarm"/>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+        android:title="@string/set_alarm">
     <CheckBoxPreference android:key="on" 
         android:title="@string/enable"/>
     <Preference android:key="time" 

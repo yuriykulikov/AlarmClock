@@ -54,6 +54,10 @@ public class AlarmReceiver extends BroadcastReceiver {
         AlarmKlaxon klaxon = AlarmKlaxon.getInstance();
         klaxon.play(context, id);
 
+        /* Close dialogs and window shade */
+        Intent i = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+        context.sendBroadcast(i);
+
         /* launch UI, explicitly stating that this is not due to user action
          * so that the current app's notification management is not disturbed */
         Intent fireAlarm = new Intent(context, AlarmAlert.class);

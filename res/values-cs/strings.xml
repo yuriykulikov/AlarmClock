@@ -18,6 +18,8 @@
     <string name="app_label">"Budík"</string>
     <string name="add_alarm">"Přidat upozornění"</string>
     <string name="delete_alarm">"Smazat upozornění"</string>
+    <!-- no translation found for delete_alarm_confirm (4237696873219106907) -->
+    <skip />
     <string name="show_clock">"Zobrazit hodiny"</string>
     <string name="hide_clock">"Skrýt hodiny"</string>
     <string name="set_alarm">"Nastavit upozornění"</string>
@@ -53,6 +55,8 @@
     <string name="clock_instructions">"Vyberte hodiny, které mají být zobrazeny."</string>
     <string name="error">"Upozornění není nastaveno"</string>
     <string name="dberror">"Upozornění bohužel nelze nastavit."</string>
+    <!-- no translation found for analog_gadget (1670505720837152766) -->
+    <skip />
   <string-array name="days_of_week">
     <item>"Pondělí"</item>
     <item>"Úterý"</item>

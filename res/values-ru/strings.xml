@@ -18,6 +18,8 @@
     <string name="app_label">"Будильник"</string>
     <string name="add_alarm">"Добавить будильник"</string>
     <string name="delete_alarm">"Удалить будильник"</string>
+    <!-- no translation found for delete_alarm_confirm (4237696873219106907) -->
+    <skip />
     <string name="show_clock">"Показать часы"</string>
     <string name="hide_clock">"Скрыть часы"</string>
     <string name="set_alarm">"Установить будильник"</string>
@@ -53,6 +55,8 @@
     <string name="clock_instructions">"Выберите часы для отображения"</string>
     <string name="error">"Будильник не установлен"</string>
     <string name="dberror">"К сожалению, установить будильник не удалось."</string>
+    <!-- no translation found for analog_gadget (1670505720837152766) -->
+    <skip />
   <string-array name="days_of_week">
     <item>"Понедельник"</item>
     <item>"Вторник"</item>

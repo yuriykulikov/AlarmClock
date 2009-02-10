@@ -18,6 +18,8 @@
     <string name="app_label">"Wekker"</string>
     <string name="add_alarm">"Alarm toevoegen"</string>
     <string name="delete_alarm">"Alarm verwijderen"</string>
+    <!-- no translation found for delete_alarm_confirm (4237696873219106907) -->
+    <skip />
     <string name="show_clock">"Klok weergeven"</string>
     <string name="hide_clock">"Klok verbergen"</string>
     <string name="set_alarm">"Alarm instellen"</string>
@@ -53,6 +55,8 @@
     <string name="clock_instructions">"Selecteer een klok die u wilt weergeven."</string>
     <string name="error">"Alarm is niet ingesteld"</string>
     <string name="dberror">"Het alarm kan niet worden ingesteld."</string>
+    <!-- no translation found for analog_gadget (1670505720837152766) -->
+    <skip />
   <string-array name="days_of_week">
     <item>"Maandag"</item>
     <item>"Dinsdag"</item>

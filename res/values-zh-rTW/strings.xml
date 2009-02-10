@@ -18,6 +18,8 @@
     <string name="app_label">"鬧鐘"</string>
     <string name="add_alarm">"新增鬧鐘"</string>
     <string name="delete_alarm">"刪除鬧鐘"</string>
+    <!-- no translation found for delete_alarm_confirm (4237696873219106907) -->
+    <skip />
     <string name="show_clock">"顯示時鐘"</string>
     <string name="hide_clock">"隱藏時鐘"</string>
     <string name="set_alarm">"設定鬧鐘"</string>
@@ -53,6 +55,8 @@
     <string name="clock_instructions">"選取顯示的時鐘。"</string>
     <string name="error">"鬧鐘未設定"</string>
     <string name="dberror">"抱歉，無法設定鬧鐘。"</string>
+    <!-- no translation found for analog_gadget (1670505720837152766) -->
+    <skip />
   <string-array name="days_of_week">
     <item>"星期一"</item>
     <item>"星期二"</item>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2009 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_label">"Alarm"</string>
+    <string name="add_alarm">"Legg til alarm"</string>
+    <string name="delete_alarm">"Slett alarm"</string>
+    <!-- no translation found for delete_alarm_confirm (4237696873219106907) -->
+    <skip />
+    <string name="show_clock">"Vis klokke"</string>
+    <string name="hide_clock">"Fjern klokke"</string>
+    <string name="set_alarm">"Sett alarm"</string>
+    <string name="enable">"Slå på alarm"</string>
+    <string name="alarm_vibrate">"Vibrer"</string>
+    <string name="alarm_repeat">"Gjenta"</string>
+    <string name="alert">"Ringetone"</string>
+    <string name="time">"Tidspunkt"</string>
+    <string name="alert_title">"Alarm"</string>
+    <string name="alarm_alert_dismiss_text">"OK"</string>
+    <string name="alarm_alert_alert_silenced">"Alarmen ble stilnet etter <xliff:g id="MINUTES">%d</xliff:g> minutter"</string>
+    <string name="alarm_alert_snooze_text">"Slumre"</string>
+    <string name="alarm_alert_snooze_set">"Slumrer i <xliff:g id="MINUTES">%d</xliff:g> minutter."</string>
+    <string name="alarm_alert_snooze_not_set">"Slumrer ikke -- neste alarm vil gå av <xliff:g id="TIME">%s</xliff:g>"</string>
+    <string name="alarm_set">"Alarmen vil gå av <xliff:g id="TIME_DELTA">%s</xliff:g> fra nå."</string>
+    <!-- no translation found for combiner (2146732837172099134) -->
+    <skip />
+    <string name="day">"en dag"</string>
+    <string name="days">"<xliff:g id="DAYS">%s</xliff:g> dager"</string>
+    <string name="hour">"en time"</string>
+    <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> timer"</string>
+    <string name="and">"og"</string>
+    <!-- no translation found for space (9141227650891547547) -->
+    <skip />
+    <string name="subminute">"mindre en et minutt"</string>
+    <string name="minute">"et minutt"</string>
+    <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> minutter"</string>
+    <string name="am">"am"</string>
+    <string name="pm">"pm"</string>
+    <string name="every_day">"hver dag"</string>
+    <string name="never">"Aldri"</string>
+    <string name="day_concat">","</string>
+    <string name="clock_instructions">"Velg klokken som skal vises."</string>
+    <string name="error">"Alarmen ble ikke satt"</string>
+    <string name="dberror">"Beklager, kunne ikke sette alarmen."</string>
+    <!-- no translation found for analog_gadget (1670505720837152766) -->
+    <skip />
+  <string-array name="days_of_week">
+    <item>"Mandag"</item>
+    <item>"Tirsdag"</item>
+    <item>"Onsdag"</item>
+    <item>"Torsdag"</item>
+    <item>"Fredag"</item>
+    <item>"Lørdag"</item>
+    <item>"Søndag"</item>
+  </string-array>
+  <string-array name="days_of_week_short">
+    <item>"man"</item>
+    <item>"tir"</item>
+    <item>"ons"</item>
+    <item>"tor"</item>
+    <item>"fre"</item>
+    <item>"lør"</item>
+    <item>"søn"</item>
+  </string-array>
+</resources>
