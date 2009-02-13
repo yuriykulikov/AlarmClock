@@ -26,7 +26,8 @@
                 android:excludeFromRecents="true"
                 android:theme="@android:style/Theme.Dialog"
                 android:launchMode="singleTask"
-                android:taskAffinity=":AlarmAlert" />
+                android:taskAffinity=":AlarmAlert"
+                android:configChanges="orientation|keyboardHidden|keyboard|navigation" />
 
         <activity android:name="ClockPicker" />
 

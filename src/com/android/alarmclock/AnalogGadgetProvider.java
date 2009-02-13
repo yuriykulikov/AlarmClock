@@ -52,7 +52,7 @@ public class AnalogGadgetProvider extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         
-        if (GadgetManager.GADGET_UPDATE_ACTION.equals(action)) {
+        if (GadgetManager.ACTION_GADGET_UPDATE.equals(action)) {
             RemoteViews views = new RemoteViews(context.getPackageName(),
                     R.layout.analog_gadget);
             

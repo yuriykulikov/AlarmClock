@@ -18,8 +18,7 @@
     <string name="app_label">"Alarm"</string>
     <string name="add_alarm">"Legg til alarm"</string>
     <string name="delete_alarm">"Slett alarm"</string>
-    <!-- no translation found for delete_alarm_confirm (4237696873219106907) -->
-    <skip />
+    <string name="delete_alarm_confirm">"Denne alarmen vil bli slettet."</string>
     <string name="show_clock">"Vis klokke"</string>
     <string name="hide_clock">"Fjern klokke"</string>
     <string name="set_alarm">"Sett alarm"</string>
@@ -44,7 +43,7 @@
     <string name="and">"og"</string>
     <!-- no translation found for space (9141227650891547547) -->
     <skip />
-    <string name="subminute">"mindre en et minutt"</string>
+    <string name="subminute">"mindre enn et minutt"</string>
     <string name="minute">"et minutt"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> minutter"</string>
     <string name="am">"am"</string>
@@ -55,8 +54,7 @@
     <string name="clock_instructions">"Velg klokken som skal vises."</string>
     <string name="error">"Alarmen ble ikke satt"</string>
     <string name="dberror">"Beklager, kunne ikke sette alarmen."</string>
-    <!-- no translation found for analog_gadget (1670505720837152766) -->
-    <skip />
+    <string name="analog_gadget">"Analog klokke"</string>
   <string-array name="days_of_week">
     <item>"Mandag"</item>
     <item>"Tirsdag"</item>

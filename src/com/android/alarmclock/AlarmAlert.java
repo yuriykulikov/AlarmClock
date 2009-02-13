@@ -21,6 +21,7 @@ import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.view.View;
@@ -57,8 +58,6 @@ public class AlarmAlert extends Activity {
            fully debugged the app failing to start up */
         Log.v("AlarmAlert.onCreate()");
 
-        setContentView(R.layout.alarm_alert);
-
         mKlaxon = AlarmKlaxon.getInstance();
 
         // Popup alert over black screen
@@ -77,18 +76,6 @@ public class AlarmAlert extends Activity {
 
         mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
 
-        /* set clock face */
-        LayoutInflater mFactory = LayoutInflater.from(this);
-        SharedPreferences settings = getSharedPreferences(AlarmClock.PREFERENCES, 0);
-        int face = settings.getInt(AlarmClock.PREF_CLOCK_FACE, 0);
-        if (face < 0 || face >= AlarmClock.CLOCKS.length) face = 0;
-        View clockLayout = (View)mFactory.inflate(AlarmClock.CLOCKS[face], null);
-        ViewGroup clockView = (ViewGroup)findViewById(R.id.clockView);
-        clockView.addView(clockLayout);
-        if (clockLayout instanceof DigitalClock) {
-            ((DigitalClock)clockLayout).setAnimate();
-        }
-
         mAlarmId = getIntent().getIntExtra(Alarms.ID, -1);
 
         /* allow next alarm to trigger while this activity is
@@ -96,48 +83,6 @@ public class AlarmAlert extends Activity {
         Alarms.disableSnoozeAlert(AlarmAlert.this);
         Alarms.disableAlert(AlarmAlert.this, mAlarmId);
         Alarms.setNextAlert(this);
-
-        /* snooze behavior: pop a snooze confirmation view, kick alarm
-           manager. */
-        mSnoozeButton = (Button) findViewById(R.id.snooze);
-        mSnoozeButton.requestFocus();
-        mSnoozeButton.setOnClickListener(new Button.OnClickListener() {
-            public void onClick(View v) {
-                /* If next alarm is set for sooner than the snooze interval,
-                   don't snooze: instead toast user that snooze will not be set */
-                final long snoozeTarget = System.currentTimeMillis() + 1000 * 60 * SNOOZE_MINUTES;
-                long nextAlarm = Alarms.calculateNextAlert(AlarmAlert.this).getAlert();
-                if (nextAlarm < snoozeTarget) {
-                    Calendar c = Calendar.getInstance();
-                    c.setTimeInMillis(nextAlarm);
-                    Toast.makeText(AlarmAlert.this,
-                                   getString(R.string.alarm_alert_snooze_not_set,
-                                             Alarms.formatTime(AlarmAlert.this, c)),
-                                   Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(AlarmAlert.this,
-                                   getString(R.string.alarm_alert_snooze_set,
-                                             SNOOZE_MINUTES),
-                                   Toast.LENGTH_LONG).show();
-
-                    Alarms.saveSnoozeAlert(AlarmAlert.this, mAlarmId, snoozeTarget);
-                    Alarms.setNextAlert(AlarmAlert.this);
-                    mSnoozed = true;
-                }
-                mKlaxon.stop(AlarmAlert.this, mSnoozed);
-                releaseLocks();
-                finish();
-            }
-        });
-
-        /* dismiss button: close notification */
-        findViewById(R.id.dismiss).setOnClickListener(new Button.OnClickListener() {
-                public void onClick(View v) {
-                    mKlaxon.stop(AlarmAlert.this, mSnoozed);
-                    releaseLocks();
-                    finish();
-                }
-            });
 
         mKlaxon.setKillerCallback(new AlarmKlaxon.KillerCallback() {
             public void onKilled() {
@@ -157,6 +102,73 @@ public class AlarmAlert extends Activity {
         });
 
         mKlaxon.restoreInstanceState(this, icicle);
+
+        updateLayout();
+    }
+
+    private void updateLayout() {
+        setContentView(R.layout.alarm_alert);
+
+        /* set clock face */
+        LayoutInflater mFactory = LayoutInflater.from(this);
+        SharedPreferences settings =
+                getSharedPreferences(AlarmClock.PREFERENCES, 0);
+        int face = settings.getInt(AlarmClock.PREF_CLOCK_FACE, 0);
+        if (face < 0 || face >= AlarmClock.CLOCKS.length) {
+            face = 0;
+        }
+        View clockLayout =
+                (View) mFactory.inflate(AlarmClock.CLOCKS[face], null);
+        ViewGroup clockView = (ViewGroup) findViewById(R.id.clockView);
+        clockView.addView(clockLayout);
+        if (clockLayout instanceof DigitalClock) {
+            ((DigitalClock) clockLayout).setAnimate();
+        }
+
+        /* snooze behavior: pop a snooze confirmation view, kick alarm
+           manager. */
+        mSnoozeButton = (Button) findViewById(R.id.snooze);
+        mSnoozeButton.requestFocus();
+        mSnoozeButton.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                // If next alarm is set for sooner than the snooze interval,
+                // don't snooze: instead toast user that snooze will not be set
+                final long snoozeTarget = System.currentTimeMillis()
+                        + (1000 * 60 * SNOOZE_MINUTES);
+                final long nextAlarm =
+                        Alarms.calculateNextAlert(AlarmAlert.this).getAlert();
+                String displayTime = null;
+                if (nextAlarm < snoozeTarget) {
+                    Calendar c = Calendar.getInstance();
+                    c.setTimeInMillis(nextAlarm);
+                    displayTime = getString(R.string.alarm_alert_snooze_set,
+                            Alarms.formatTime(AlarmAlert.this, c));
+                } else {
+                    Alarms.saveSnoozeAlert(AlarmAlert.this, mAlarmId,
+                            snoozeTarget);
+                    Alarms.setNextAlert(AlarmAlert.this);
+                    mSnoozed = true;
+                    displayTime = getString(R.string.alarm_alert_snooze_set,
+                            SNOOZE_MINUTES);
+                }
+                // Display the snooze minutes in a toast.
+                Toast.makeText(AlarmAlert.this, displayTime,
+                        Toast.LENGTH_LONG).show();
+                mKlaxon.stop(AlarmAlert.this, mSnoozed);
+                releaseLocks();
+                finish();
+            }
+        });
+
+        /* dismiss button: close notification */
+        findViewById(R.id.dismiss).setOnClickListener(
+                new Button.OnClickListener() {
+                    public void onClick(View v) {
+                        mKlaxon.stop(AlarmAlert.this, mSnoozed);
+                        releaseLocks();
+                        finish();
+                    }
+                });
     }
 
     /**
@@ -198,6 +210,12 @@ public class AlarmAlert extends Activity {
     @Override
     protected void onSaveInstanceState(Bundle icicle) {
         mKlaxon.onSaveInstanceState(icicle);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration config) {
+        super.onConfigurationChanged(config);
+        updateLayout();
     }
 
     private synchronized void enableKeyguard() {

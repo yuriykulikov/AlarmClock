@@ -18,6 +18,7 @@ package com.android.alarmclock;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
@@ -91,44 +92,60 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
 
         if (Log.LOGV) Log.v("AlarmKlaxon.play() " + mAlarmId + " alert " + mAlert);
 
+        /* play audio alert */
+        if (mAlert == null) {
+            Log.e("Unable to play alarm: no audio file available");
+        } else {
+            /* we need a new MediaPlayer when we change media URLs */
+            mMediaPlayer = new MediaPlayer();
+            mMediaPlayer.setOnErrorListener(new OnErrorListener() {
+                public boolean onError(MediaPlayer mp, int what, int extra) {
+                    Log.e("Error occurred while playing audio.");
+                    mp.stop();
+                    mp.release();
+                    mMediaPlayer = null;
+                    return true;
+                }
+            });
+
+            try {
+                mMediaPlayer.setDataSource(context, Uri.parse(mAlert));
+            } catch (Exception ex) {
+                Log.v("Using the fallback ringtone");
+                /* The alert may be on the sd card which could be busy right
+                 * now. Use the fallback ringtone. */
+                AssetFileDescriptor afd =
+                        context.getResources().openRawResourceFd(
+                                com.android.internal.R.raw.fallbackring);
+                if (afd != null) {
+                    try {
+                        mMediaPlayer.setDataSource(afd.getFileDescriptor(),
+                                afd.getStartOffset(), afd.getLength());
+                        afd.close();
+                    } catch (Exception ex2) {
+                        Log.e("Failed to play fallback ringtone", ex2);
+                        /* At this point we just don't play anything */
+                    }
+                }
+            }
+            /* Now try to play the alert. */
+            try {
+                mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
+                mMediaPlayer.setLooping(true);
+                mMediaPlayer.prepare();
+                mMediaPlayer.start();
+            } catch (Exception ex) {
+                Log.e("Error playing alarm: " + mAlert, ex);
+            }
+        }
+
+        /* Start the vibrator after everything is ok with the media player */
         if (mVibrate) {
             mVibrator.vibrate(sVibratePattern, 0);
         } else {
             mVibrator.cancel();
         }
 
-        /* play audio alert */
-        if (mAlert == null) {
-            Log.e("Unable to play alarm: no audio file available");
-        } else {
-
-            /* we need a new MediaPlayer when we change media URLs */
-            mMediaPlayer = new MediaPlayer();
-            if (mMediaPlayer == null) {
-                Log.e("Unable to instantiate MediaPlayer");
-            } else {
-                mMediaPlayer.setOnErrorListener(new OnErrorListener() {
-                        public boolean onError(MediaPlayer mp, int what, int extra) {
-                            Log.e("Error occurred while playing audio.");
-                            mMediaPlayer.stop();
-                            mMediaPlayer.release();
-                            mMediaPlayer = null;
-                            return true;
-                        }
-                    });
-
-                try {
-                    mMediaPlayer.setDataSource(context, Uri.parse(mAlert));
-                    mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-                    mMediaPlayer.setLooping(true);
-                    mMediaPlayer.prepare();
-                } catch (Exception ex) {
-                    Log.e("Error playing alarm: " + mAlert, ex);
-                    return;
-                }
-                mMediaPlayer.start();
-            }
-        }
         enableKiller();
         mPlaying = true;
     }
@@ -144,7 +161,11 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
             mPlaying = false;
 
             // Stop audio playing
-            if (mMediaPlayer != null) mMediaPlayer.stop();
+            if (mMediaPlayer != null) {
+                mMediaPlayer.stop();
+                mMediaPlayer.release();
+                mMediaPlayer = null;
+            }
 
             // Stop vibrator
             mVibrator.cancel();
