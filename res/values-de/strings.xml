@@ -18,8 +18,7 @@
     <string name="app_label">"Wecker"</string>
     <string name="add_alarm">"Wecker hinzufügen"</string>
     <string name="delete_alarm">"Wecker löschen"</string>
-    <!-- no translation found for delete_alarm_confirm (4237696873219106907) -->
-    <skip />
+    <string name="delete_alarm_confirm">"Dieser Alarm wird gelöscht."</string>
     <string name="show_clock">"Uhr anzeigen"</string>
     <string name="hide_clock">"Uhr ausblenden"</string>
     <string name="set_alarm">"Wecker einstellen"</string>
@@ -55,8 +54,7 @@
     <string name="clock_instructions">"Wählen Sie die anzuzeigende Uhr aus."</string>
     <string name="error">"Wecker nicht eingestellt"</string>
     <string name="dberror">"Der Wecker konnte nicht eingestellt werden."</string>
-    <!-- no translation found for analog_gadget (1670505720837152766) -->
-    <skip />
+    <string name="analog_gadget">"Analoguhr"</string>
   <string-array name="days_of_week">
     <item>"Montag"</item>
     <item>"Dienstag"</item>

@@ -18,8 +18,7 @@
     <string name="app_label">"Réveil"</string>
     <string name="add_alarm">"Ajouter alarme"</string>
     <string name="delete_alarm">"Désactiver alarme"</string>
-    <!-- no translation found for delete_alarm_confirm (4237696873219106907) -->
-    <skip />
+    <string name="delete_alarm_confirm">"Cette alarme va être supprimée."</string>
     <string name="show_clock">"Afficher horloge"</string>
     <string name="hide_clock">"Masquer horloge"</string>
     <string name="set_alarm">"Régler alarme"</string>
@@ -55,8 +54,7 @@
     <string name="clock_instructions">"Sélectionner une horloge à afficher."</string>
     <string name="error">"Alarme non activée"</string>
     <string name="dberror">"Désolé, impossible de régler l\'alarme."</string>
-    <!-- no translation found for analog_gadget (1670505720837152766) -->
-    <skip />
+    <string name="analog_gadget">"Horloge analogique"</string>
   <string-array name="days_of_week">
     <item>"Lundi"</item>
     <item>"Mardi"</item>

@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
@@ -40,12 +41,16 @@ import java.util.Calendar;
  */
 public class AlarmAlert extends Activity {
 
-    private final static int SNOOZE_MINUTES = 10;
+    private static final int SNOOZE_MINUTES = 10;
+    private static final int UNKNOWN = 0;
+    private static final int SNOOZE = 1;
+    private static final int DISMISS = 2;
+    private static final int KILLED = 3;
 
     private KeyguardManager mKeyguardManager;
     private KeyguardManager.KeyguardLock mKeyguardLock = null;
     private Button mSnoozeButton;
-    private boolean mSnoozed;
+    private int mState = UNKNOWN;
 
     private AlarmKlaxon mKlaxon;
     private int mAlarmId;
@@ -87,23 +92,27 @@ public class AlarmAlert extends Activity {
         mKlaxon.setKillerCallback(new AlarmKlaxon.KillerCallback() {
             public void onKilled() {
                 if (Log.LOGV) Log.v("onKilled()");
-                TextView silenced = (TextView)findViewById(R.id.silencedText);
-                silenced.setText(
-                        getString(R.string.alarm_alert_alert_silenced,
-                                  AlarmKlaxon.ALARM_TIMEOUT_SECONDS / 60));
-                silenced.setVisibility(View.VISIBLE);
+                updateSilencedText();
 
                 /* don't allow snooze */
                 mSnoozeButton.setEnabled(false);
 
-                mKlaxon.stop(AlarmAlert.this, mSnoozed);
-                releaseLocks();
+                // Dismiss the alarm but mark the state as killed so if the
+                // config changes, we show the silenced message and disable
+                // snooze.
+                dismiss();
+                mState = KILLED;
             }
         });
 
-        mKlaxon.restoreInstanceState(this, icicle);
-
         updateLayout();
+    }
+
+    private void updateSilencedText() {
+        TextView silenced = (TextView) findViewById(R.id.silencedText);
+        silenced.setText(getString(R.string.alarm_alert_alert_silenced,
+                    AlarmKlaxon.ALARM_TIMEOUT_SECONDS / 60));
+        silenced.setVisibility(View.VISIBLE);
     }
 
     private void updateLayout() {
@@ -129,46 +138,71 @@ public class AlarmAlert extends Activity {
            manager. */
         mSnoozeButton = (Button) findViewById(R.id.snooze);
         mSnoozeButton.requestFocus();
-        mSnoozeButton.setOnClickListener(new Button.OnClickListener() {
-            public void onClick(View v) {
-                // If next alarm is set for sooner than the snooze interval,
-                // don't snooze: instead toast user that snooze will not be set
-                final long snoozeTarget = System.currentTimeMillis()
-                        + (1000 * 60 * SNOOZE_MINUTES);
-                final long nextAlarm =
-                        Alarms.calculateNextAlert(AlarmAlert.this).getAlert();
-                String displayTime = null;
-                if (nextAlarm < snoozeTarget) {
-                    Calendar c = Calendar.getInstance();
-                    c.setTimeInMillis(nextAlarm);
-                    displayTime = getString(R.string.alarm_alert_snooze_set,
-                            Alarms.formatTime(AlarmAlert.this, c));
-                } else {
-                    Alarms.saveSnoozeAlert(AlarmAlert.this, mAlarmId,
-                            snoozeTarget);
-                    Alarms.setNextAlert(AlarmAlert.this);
-                    mSnoozed = true;
-                    displayTime = getString(R.string.alarm_alert_snooze_set,
-                            SNOOZE_MINUTES);
+        // If this was a configuration change, keep the silenced text if the
+        // alarm was killed.
+        if (mState == KILLED) {
+            updateSilencedText();
+            mSnoozeButton.setEnabled(false);
+        } else {
+            mSnoozeButton.setOnClickListener(new Button.OnClickListener() {
+                public void onClick(View v) {
+                    snooze();
+                    finish();
                 }
-                // Display the snooze minutes in a toast.
-                Toast.makeText(AlarmAlert.this, displayTime,
-                        Toast.LENGTH_LONG).show();
-                mKlaxon.stop(AlarmAlert.this, mSnoozed);
-                releaseLocks();
-                finish();
-            }
-        });
+            });
+        }
 
         /* dismiss button: close notification */
         findViewById(R.id.dismiss).setOnClickListener(
                 new Button.OnClickListener() {
                     public void onClick(View v) {
-                        mKlaxon.stop(AlarmAlert.this, mSnoozed);
-                        releaseLocks();
+                        dismiss();
                         finish();
                     }
                 });
+    }
+
+    // Attempt to snooze this alert.
+    private void snooze() {
+        if (mState != UNKNOWN) {
+            return;
+        }
+        // If the next alarm is set for sooner than the snooze interval, don't
+        // snooze. Instead, toast the user that the snooze will not be set.
+        final long snoozeTime = System.currentTimeMillis()
+                + (1000 * 60 * SNOOZE_MINUTES);
+        final long nextAlarm =
+                Alarms.calculateNextAlert(AlarmAlert.this).getAlert();
+        String displayTime = null;
+        if (nextAlarm < snoozeTime) {
+            final Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(nextAlarm);
+            displayTime = getString(R.string.alarm_alert_snooze_not_set,
+                    Alarms.formatTime(AlarmAlert.this, c));
+            mState = DISMISS;
+        } else {
+            Alarms.saveSnoozeAlert(AlarmAlert.this, mAlarmId, snoozeTime);
+            Alarms.setNextAlert(AlarmAlert.this);
+            displayTime = getString(R.string.alarm_alert_snooze_set,
+                    SNOOZE_MINUTES);
+            mState = SNOOZE;
+        }
+        // Intentionally log the snooze time for debugging.
+        Log.v(displayTime);
+        // Display the snooze minutes in a toast.
+        Toast.makeText(AlarmAlert.this, displayTime, Toast.LENGTH_LONG).show();
+        mKlaxon.stop(this, mState == SNOOZE);
+        releaseLocks();
+    }
+
+    // Dismiss the alarm.
+    private void dismiss() {
+        if (mState != UNKNOWN) {
+            return;
+        }
+        mState = DISMISS;
+        mKlaxon.stop(this, false);
+        releaseLocks();
     }
 
     /**
@@ -179,6 +213,7 @@ public class AlarmAlert extends Activity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         if (Log.LOGV) Log.v("AlarmAlert.OnNewIntent()");
+        mState = UNKNOWN;
         mSnoozeButton.setEnabled(true);
         disableKeyguard();
 
@@ -203,19 +238,53 @@ public class AlarmAlert extends Activity {
     protected void onStop() {
         super.onStop();
         if (Log.LOGV) Log.v("AlarmAlert.onStop()");
-        mKlaxon.stop(this, mSnoozed);
-        releaseLocks();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle icicle) {
-        mKlaxon.onSaveInstanceState(icicle);
+        // As a last resort, try to snooze if this activity is stopped.
+        snooze();
     }
 
     @Override
     public void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
         updateLayout();
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        // Do this on key down to handle a few of the system keys. Only handle
+        // the snooze and dismiss this alert if the state is unknown.
+        boolean up = event.getAction() == KeyEvent.ACTION_UP;
+        boolean dismiss = false;
+        switch (event.getKeyCode()) {
+            case KeyEvent.KEYCODE_DPAD_UP:
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+            case KeyEvent.KEYCODE_DPAD_CENTER:
+            // Ignore ENDCALL because we do not receive the event if the screen
+            // is on. However, we do receive the key up for ENDCALL if the
+            // screen was off.
+            case KeyEvent.KEYCODE_ENDCALL:
+                break;
+            // Volume keys dismiss the alarm
+            case KeyEvent.KEYCODE_VOLUME_UP:
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                dismiss = true;
+            // All other keys will snooze the alarm
+            default:
+                // Check for UNKNOWN here so that we intercept both key events
+                // and prevent the volume keys from triggering their default
+                // behavior.
+                if (mState == UNKNOWN && up) {
+                    if (dismiss) {
+                        dismiss();
+                    } else {
+                        snooze();
+                    }
+                    finish();
+                }
+                return true;
+        }
+        return super.dispatchKeyEvent(event);
     }
 
     private synchronized void enableKeyguard() {

@@ -18,8 +18,7 @@
     <string name="app_label">"Reloj de alarma"</string>
     <string name="add_alarm">"Añadir alarma"</string>
     <string name="delete_alarm">"Eliminar alarma"</string>
-    <!-- no translation found for delete_alarm_confirm (4237696873219106907) -->
-    <skip />
+    <string name="delete_alarm_confirm">"Esta alarma se eliminará."</string>
     <string name="show_clock">"Mostrar reloj"</string>
     <string name="hide_clock">"Ocultar reloj"</string>
     <string name="set_alarm">"Establecer alarma"</string>
@@ -55,8 +54,7 @@
     <string name="clock_instructions">"Selecciona el reloj que quieras ver."</string>
     <string name="error">"Alarma no establecida"</string>
     <string name="dberror">"No se ha podido establecer la alarma."</string>
-    <!-- no translation found for analog_gadget (1670505720837152766) -->
-    <skip />
+    <string name="analog_gadget">"Reloj analógico"</string>
   <string-array name="days_of_week">
     <item>"Lunes"</item>
     <item>"Martes"</item>

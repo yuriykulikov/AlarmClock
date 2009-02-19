@@ -18,8 +18,7 @@
     <string name="app_label">"알람 시계"</string>
     <string name="add_alarm">"알람 추가"</string>
     <string name="delete_alarm">"알람 삭제"</string>
-    <!-- no translation found for delete_alarm_confirm (4237696873219106907) -->
-    <skip />
+    <string name="delete_alarm_confirm">"알람이 삭제됩니다."</string>
     <string name="show_clock">"시계 표시"</string>
     <string name="hide_clock">"시계 숨기기"</string>
     <string name="set_alarm">"알람 설정"</string>
@@ -55,8 +54,7 @@
     <string name="clock_instructions">"표시할 시계를 선택하세요."</string>
     <string name="error">"알람이 설정되지 않음"</string>
     <string name="dberror">"죄송합니다. 알람을 설정할 수 없습니다."</string>
-    <!-- no translation found for analog_gadget (1670505720837152766) -->
-    <skip />
+    <string name="analog_gadget">"아날로그 시계"</string>
   <string-array name="days_of_week">
     <item>"월요일"</item>
     <item>"화요일"</item>

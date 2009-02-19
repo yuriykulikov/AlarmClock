@@ -39,8 +39,6 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
 
     /** Play alarm up to 10 minutes before silencing */
     final static int ALARM_TIMEOUT_SECONDS = 10 * 60;
-    final static String ICICLE_PLAYING = "IciclePlaying";
-    final static String ICICLE_ALARMID = "IcicleAlarmId";
 
     private static long[] sVibratePattern = new long[] { 500, 500 };
 
@@ -184,27 +182,6 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
      */
     void setKillerCallback(KillerCallback killerCallback) {
         mKillerCallback = killerCallback;
-    }
-
-
-    /**
-     * Called by the AlarmAlert activity on configuration change
-     */
-    protected void onSaveInstanceState(Bundle icicle) {
-        icicle.putBoolean(ICICLE_PLAYING, mPlaying);
-        icicle.putInt(ICICLE_ALARMID, mAlarmId);
-    }
-
-    /**
-     * Restores alarm playback state on configuration change
-     */
-    void restoreInstanceState(Context context, Bundle icicle) {
-        if (!mPlaying &&
-            icicle != null &&
-            icicle.containsKey(ICICLE_PLAYING) &&
-            icicle.getBoolean(ICICLE_PLAYING)) {
-            play(context, icicle.getInt(ICICLE_ALARMID));
-        }
     }
 
     /**

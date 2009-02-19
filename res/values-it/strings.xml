@@ -18,8 +18,7 @@
     <string name="app_label">"Sveglia"</string>
     <string name="add_alarm">"Aggiungi allarme"</string>
     <string name="delete_alarm">"Elimina allarme"</string>
-    <!-- no translation found for delete_alarm_confirm (4237696873219106907) -->
-    <skip />
+    <string name="delete_alarm_confirm">"Questa sveglia verrà eliminata."</string>
     <string name="show_clock">"Mostra orologio"</string>
     <string name="hide_clock">"Nascondi orologio"</string>
     <string name="set_alarm">"Imposta allarme"</string>
@@ -55,8 +54,7 @@
     <string name="clock_instructions">"Seleziona un orologio."</string>
     <string name="error">"Allarme non impostato"</string>
     <string name="dberror">"Spiacenti. Impossibile impostare l\'allarme."</string>
-    <!-- no translation found for analog_gadget (1670505720837152766) -->
-    <skip />
+    <string name="analog_gadget">"Orologio analogico"</string>
   <string-array name="days_of_week">
     <item>"Lunedì"</item>
     <item>"Martedì"</item>
