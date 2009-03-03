@@ -34,14 +34,14 @@
     <string name="alarm_alert_snooze_set">"<xliff:g id="MINUTES">%d</xliff:g>分間スヌーズ"</string>
     <string name="alarm_alert_snooze_not_set">"スヌーズ設定エラー: <xliff:g id="TIME">%s</xliff:g>に次のアラームがセットされています"</string>
     <string name="alarm_set">"<xliff:g id="TIME_DELTA">%s</xliff:g>後にセットしました"</string>
-    <!-- no translation found for combiner (3170916241487451546) -->
+    <!-- no translation found for combiner (2146732837172099134) -->
     <skip />
     <string name="day">"1日"</string>
     <string name="days">"<xliff:g id="DAYS">%s</xliff:g>日"</string>
     <string name="hour">"1時間"</string>
     <string name="hours">"<xliff:g id="HOURS">%s</xliff:g>時間"</string>
-    <string name="and">" と "</string>
-    <!-- no translation found for space (5294521584675021576) -->
+    <string name="and">"と"</string>
+    <!-- no translation found for space (9141227650891547547) -->
     <skip />
     <string name="subminute">"1分未満"</string>
     <string name="minute">"1分"</string>
@@ -50,7 +50,7 @@
     <string name="pm">"PM"</string>
     <string name="every_day">"毎日"</string>
     <string name="never">"繰り返しなし"</string>
-    <string name="day_concat">"、 "</string>
+    <string name="day_concat">"、"</string>
     <string name="clock_instructions">"表示する時計を選択してください。"</string>
     <string name="error">"アラームを設定できません"</string>
     <string name="dberror">"アラームを設定できません"</string>

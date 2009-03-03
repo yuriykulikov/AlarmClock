@@ -34,14 +34,14 @@
     <string name="alarm_alert_snooze_set">"Slumrer i <xliff:g id="MINUTES">%d</xliff:g> minutter."</string>
     <string name="alarm_alert_snooze_not_set">"Slumrer ikke -- neste alarm vil gå av <xliff:g id="TIME">%s</xliff:g>"</string>
     <string name="alarm_set">"Alarmen vil gå av <xliff:g id="TIME_DELTA">%s</xliff:g> fra nå."</string>
-    <!-- no translation found for combiner (3170916241487451546) -->
+    <!-- no translation found for combiner (2146732837172099134) -->
     <skip />
     <string name="day">"en dag"</string>
     <string name="days">"<xliff:g id="DAYS">%s</xliff:g> dager"</string>
     <string name="hour">"en time"</string>
     <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> timer"</string>
-    <string name="and">" og "</string>
-    <!-- no translation found for space (5294521584675021576) -->
+    <string name="and">"og"</string>
+    <!-- no translation found for space (9141227650891547547) -->
     <skip />
     <string name="subminute">"mindre enn et minutt"</string>
     <string name="minute">"et minutt"</string>
@@ -50,7 +50,7 @@
     <string name="pm">"pm"</string>
     <string name="every_day">"hver dag"</string>
     <string name="never">"Aldri"</string>
-    <string name="day_concat">", "</string>
+    <string name="day_concat">","</string>
     <string name="clock_instructions">"Velg klokken som skal vises."</string>
     <string name="error">"Alarmen ble ikke satt"</string>
     <string name="dberror">"Beklager, kunne ikke sette alarmen."</string>

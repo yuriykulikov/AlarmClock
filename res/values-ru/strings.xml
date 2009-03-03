@@ -34,14 +34,14 @@
     <string name="alarm_alert_snooze_set">"Отсрочка на <xliff:g id="MINUTES">%d</xliff:g> минут(ы)."</string>
     <string name="alarm_alert_snooze_not_set">"Отсрочка не установлена – следующий будильник установлен на <xliff:g id="TIME">%s</xliff:g>"</string>
     <string name="alarm_set">"Будильник прозвонит через <xliff:g id="TIME_DELTA">%s</xliff:g>"</string>
-    <!-- no translation found for combiner (3170916241487451546) -->
+    <!-- no translation found for combiner (2146732837172099134) -->
     <skip />
     <string name="day">"1 день"</string>
     <string name="days">"<xliff:g id="DAYS">%s</xliff:g> дня(ей)"</string>
     <string name="hour">"1 час"</string>
     <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> часа(ов)"</string>
-    <string name="and">" и "</string>
-    <!-- no translation found for space (5294521584675021576) -->
+    <string name="and">"и"</string>
+    <!-- no translation found for space (9141227650891547547) -->
     <skip />
     <string name="subminute">"менее 1 минуты"</string>
     <string name="minute">"1 минута"</string>
@@ -50,7 +50,7 @@
     <string name="pm">"после полудня"</string>
     <string name="every_day">"ежедневно"</string>
     <string name="never">"Никогда"</string>
-    <string name="day_concat">", "</string>
+    <string name="day_concat">","</string>
     <string name="clock_instructions">"Выберите часы для отображения"</string>
     <string name="error">"Будильник не установлен"</string>
     <string name="dberror">"К сожалению, установить будильник не удалось."</string>
