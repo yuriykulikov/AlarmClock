@@ -34,14 +34,14 @@
     <string name="alarm_alert_snooze_set">"Snooze-Funktion aktiviert für <xliff:g id="MINUTES">%d</xliff:g> Minuten"</string>
     <string name="alarm_alert_snooze_not_set">"Snooze-Funktion nicht aktiviert - nächster Wecker klingelt <xliff:g id="TIME">%s</xliff:g>."</string>
     <string name="alarm_set">"Dieser Wecker klingelt in <xliff:g id="TIME_DELTA">%s</xliff:g>."</string>
-    <!-- no translation found for combiner (2146732837172099134) -->
+    <!-- no translation found for combiner (3170916241487451546) -->
     <skip />
     <string name="day">"1 Tag"</string>
     <string name="days">"<xliff:g id="DAYS">%s</xliff:g> Tagen"</string>
     <string name="hour">"1 Stunde"</string>
     <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> Stunden"</string>
-    <string name="and">"und"</string>
-    <!-- no translation found for space (9141227650891547547) -->
+    <string name="and">" und "</string>
+    <!-- no translation found for space (5294521584675021576) -->
     <skip />
     <string name="subminute">"weniger als 1 Minute"</string>
     <string name="minute">"1 Minute"</string>
@@ -50,7 +50,7 @@
     <string name="pm">"PM"</string>
     <string name="every_day">"Täglich"</string>
     <string name="never">"Nie"</string>
-    <string name="day_concat">","</string>
+    <string name="day_concat">", "</string>
     <string name="clock_instructions">"Wählen Sie die anzuzeigende Uhr aus."</string>
     <string name="error">"Wecker nicht eingestellt"</string>
     <string name="dberror">"Der Wecker konnte nicht eingestellt werden."</string>
