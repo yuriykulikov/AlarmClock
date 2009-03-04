@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2009 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_label">"闹钟时钟"</string>
+    <string name="add_alarm">"添加闹钟"</string>
+    <string name="delete_alarm">"取消闹钟"</string>
+    <string name="delete_alarm_confirm">"将会删除此警报。"</string>
+    <string name="show_clock">"显示时钟"</string>
+    <string name="hide_clock">"隐藏时钟"</string>
+    <string name="set_alarm">"设置闹钟"</string>
+    <string name="enable">"开启闹钟"</string>
+    <string name="alarm_vibrate">"振动"</string>
+    <string name="alarm_repeat">"重复"</string>
+    <string name="alert">"铃声"</string>
+    <string name="time">"时间"</string>
+    <string name="alert_title">"闹钟"</string>
+    <string name="alarm_alert_dismiss_text">"取消"</string>
+    <string name="alarm_alert_alert_silenced">"闹钟在 <xliff:g id="MINUTES">%d</xliff:g> 分钟后静音"</string>
+    <string name="alarm_alert_snooze_text">"再响"</string>
+    <string name="alarm_alert_snooze_set">"<xliff:g id="MINUTES">%d</xliff:g> 分钟后再响。"</string>
+    <string name="alarm_alert_snooze_not_set">"未设置再响 - 下次闹钟设置在 <xliff:g id="TIME">%s</xliff:g>"</string>
+    <string name="alarm_set">"该闹钟设置为从现在起 <xliff:g id="TIME_DELTA">%s</xliff:g> 后再提醒。"</string>
+    <!-- no translation found for combiner (3170916241487451546) -->
+    <skip />
+    <string name="day">"1 天"</string>
+    <string name="days">"<xliff:g id="DAYS">%s</xliff:g> 天"</string>
+    <string name="hour">"1 小时"</string>
+    <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> 小时"</string>
+    <string name="and">" 和 "</string>
+    <!-- no translation found for space (5294521584675021576) -->
+    <skip />
+    <string name="subminute">"短于 1 分钟"</string>
+    <string name="minute">"1 分钟"</string>
+    <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> 分钟"</string>
+    <string name="am">"上午"</string>
+    <string name="pm">"下午"</string>
+    <string name="every_day">"每天"</string>
+    <string name="never">"永不"</string>
+    <string name="day_concat">"、 "</string>
+    <string name="clock_instructions">"选择要显示的时钟。"</string>
+    <string name="error">"未设置闹钟"</string>
+    <string name="dberror">"抱歉，无法设置该闹钟。"</string>
+    <string name="analog_gadget">"模拟时钟"</string>
+  <string-array name="days_of_week">
+    <item>"周一"</item>
+    <item>"周二"</item>
+    <item>"周三"</item>
+    <item>"周四"</item>
+    <item>"周五"</item>
+    <item>"周六"</item>
+    <item>"周日"</item>
+  </string-array>
+  <string-array name="days_of_week_short">
+    <item>"周一"</item>
+    <item>"周二"</item>
+    <item>"周三"</item>
+    <item>"周四"</item>
+    <item>"周五"</item>
+    <item>"周六"</item>
+    <item>"周日"</item>
+  </string-array>
+</resources>

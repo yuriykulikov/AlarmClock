@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2009 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_label">"Alarma"</string>
+    <string name="add_alarm">"Añadir alarma"</string>
+    <string name="delete_alarm">"Eliminar alarma"</string>
+    <string name="delete_alarm_confirm">"Esta alarma se eliminará."</string>
+    <string name="show_clock">"Mostrar reloj"</string>
+    <string name="hide_clock">"Ocultar reloj"</string>
+    <string name="set_alarm">"Establecer alarma"</string>
+    <string name="enable">"Activar alarma"</string>
+    <string name="alarm_vibrate">"Vibración"</string>
+    <string name="alarm_repeat">"Repetir"</string>
+    <string name="alert">"Tono"</string>
+    <string name="time">"Hora"</string>
+    <string name="alert_title">"Alarma"</string>
+    <string name="alarm_alert_dismiss_text">"Descartar"</string>
+    <string name="alarm_alert_alert_silenced">"La alarma se ha silenciado después de <xliff:g id="MINUTES">%d</xliff:g> minutos."</string>
+    <string name="alarm_alert_snooze_text">"Posponer"</string>
+    <string name="alarm_alert_snooze_set">"La alarma volverá a sonar en <xliff:g id="MINUTES">%d</xliff:g> minutos."</string>
+    <string name="alarm_alert_snooze_not_set">"No se ha pospuesto la alarma, ya que la siguiente alarma sonará a las <xliff:g id="TIME">%s</xliff:g>."</string>
+    <string name="alarm_set">"La alarma sonará en <xliff:g id="TIME_DELTA">%s</xliff:g> ."</string>
+    <!-- no translation found for combiner (3170916241487451546) -->
+    <skip />
+    <string name="day">"1 día"</string>
+    <string name="days">"<xliff:g id="DAYS">%s</xliff:g> días"</string>
+    <string name="hour">"1 hora"</string>
+    <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> horas"</string>
+    <string name="and">" y "</string>
+    <!-- no translation found for space (5294521584675021576) -->
+    <skip />
+    <string name="subminute">"menos de 1 minuto"</string>
+    <string name="minute">"1 minuto"</string>
+    <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> minutos"</string>
+    <string name="am">"a.m."</string>
+    <string name="pm">"p.m."</string>
+    <string name="every_day">"todos los días"</string>
+    <string name="never">"Nunca"</string>
+    <string name="day_concat">", "</string>
+    <string name="clock_instructions">"Selecciona el reloj que quieras ver."</string>
+    <string name="error">"Alarma no establecida"</string>
+    <string name="dberror">"No se ha podido establecer la alarma."</string>
+    <string name="analog_gadget">"Reloj analógico"</string>
+  <string-array name="days_of_week">
+    <item>"Lunes"</item>
+    <item>"Martes"</item>
+    <item>"Miércoles"</item>
+    <item>"Jueves"</item>
+    <item>"Viernes"</item>
+    <item>"Sábado"</item>
+    <item>"Domingo"</item>
+  </string-array>
+  <string-array name="days_of_week_short">
+    <item>"Lun."</item>
+    <item>"Mar."</item>
+    <item>"Mié."</item>
+    <item>"Jue."</item>
+    <item>"Vie."</item>
+    <item>"Sáb."</item>
+    <item>"Dom."</item>
+  </string-array>
+</resources>
