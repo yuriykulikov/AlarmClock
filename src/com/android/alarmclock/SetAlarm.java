@@ -27,9 +27,10 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.CheckBoxPreference;
+import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.CheckBoxPreference;
 import android.preference.PreferenceScreen;
 import android.text.format.DateFormat;
 import android.view.Menu;
@@ -43,6 +44,7 @@ import android.widget.Toast;
 public class SetAlarm extends PreferenceActivity
         implements Alarms.AlarmSettings, TimePickerDialog.OnTimeSetListener {
 
+    private EditTextPreference mLabel;
     private CheckBoxPreference mAlarmOnPref;
     private Preference mTimePref;
     private AlarmPreference mAlarmPref;
@@ -98,6 +100,16 @@ public class SetAlarm extends PreferenceActivity
         super.onCreate(icicle);
 
         addPreferencesFromResource(R.xml.alarm_prefs);
+        mLabel = (EditTextPreference) findPreference("label");
+        mLabel.setOnPreferenceChangeListener(
+                new Preference.OnPreferenceChangeListener() {
+                    public boolean onPreferenceChange(Preference p,
+                            Object newValue) {
+                        p.setSummary((String) newValue);
+                        saveAlarm(false, (String) newValue);
+                        return true;
+                    }
+                });
         mAlarmOnPref = (CheckBoxPreference)findPreference("on");
         mTimePref = findPreference("time");
         mAlarmPref = (AlarmPreference) findPreference("alarm");
@@ -193,9 +205,14 @@ public class SetAlarm extends PreferenceActivity
      */
     public void reportAlarm(
             int idx, boolean enabled, int hour, int minutes,
-            Alarms.DaysOfWeek daysOfWeek, boolean vibrate,String message,
+            Alarms.DaysOfWeek daysOfWeek, boolean vibrate, String label,
             String alert) {
 
+        if (label == null || label.length() == 0) {
+            label = getString(R.string.default_label);
+        }
+        mLabel.setText(label);
+        mLabel.setSummary(label);
         mHour = hour;
         mMinutes = minutes;
         mAlarmOnPref.setChecked(enabled);
@@ -251,10 +268,18 @@ public class SetAlarm extends PreferenceActivity
     }
 
     private void saveAlarm(boolean popToast) {
+        saveAlarm(popToast, mLabel.getText());
+    }
+
+    /**
+     * This version of saveAlarm uses the passed in label since mLabel may
+     * contain the old value (i.e. during the preference value change).
+     */
+    private void saveAlarm(boolean popToast, String label) {
         if (mReportAlarmCalled && mAlarmPref.mAlert != null) {
             String alertString = mAlarmPref.mAlert.toString();
             saveAlarm(this, mId, mAlarmOnPref.isChecked(), mHour, mMinutes,
-                      mDaysOfWeek, mVibratePref.isChecked(), alertString,
+                      mDaysOfWeek, mVibratePref.isChecked(), label, alertString,
                       popToast);
         }
     }
@@ -265,14 +290,14 @@ public class SetAlarm extends PreferenceActivity
      */
     private static void saveAlarm(
             Context context, int id, boolean enabled, int hour, int minute,
-            Alarms.DaysOfWeek daysOfWeek, boolean vibrate, String alert,
-            boolean popToast) {
-        if (Log.LOGV) Log.v("** saveAlarm " + id + " " + enabled + " " + hour +
-                            " " + minute + " vibe " + vibrate);
+            Alarms.DaysOfWeek daysOfWeek, boolean vibrate, String label,
+            String alert, boolean popToast) {
+        if (Log.LOGV) Log.v("** saveAlarm " + id + " " + label + " " + enabled
+                + " " + hour + " " + minute + " vibe " + vibrate);
 
         // Fix alert string first
         Alarms.setAlarm(context, id, enabled, hour, minute, daysOfWeek, vibrate,
-                        "", alert);
+                label, alert);
 
         if (enabled && popToast) {
             popAlarmSetToast(context, hour, minute, daysOfWeek);
@@ -392,7 +417,7 @@ public class SetAlarm extends PreferenceActivity
         int hour = nowHour + (nowMinute == 0? 1 : 0);
 
         saveAlarm(this, mId, true, hour, minutes, mDaysOfWeek, true,
-                  mAlarmPref.mAlert.toString(), true);
+                mLabel.getText(), mAlarmPref.mAlert.toString(), true);
     }
 
 }

@@ -42,9 +42,11 @@ public class Alarms {
     public final static String ALARM_ALERT_ACTION = "com.android.alarmclock.ALARM_ALERT";
     public final static String ID = "alarm_id";
     public final static String TIME = "alarm_time";
+    public final static String LABEL = "alarm_label";
 
     final static String PREF_SNOOZE_ID = "snooze_id";
     final static String PREF_SNOOZE_TIME = "snooze_time";
+    final static String PREF_SNOOZE_LABEL = "snooze_label";
 
     private final static String DM12 = "E h:mm aa";
     private final static String DM24 = "E k:mm";
@@ -480,8 +482,9 @@ public class Alarms {
      * Calculates next scheduled alert
      */
     static class AlarmCalculator implements AlarmSettings {
-        public long mMinAlert = Long.MAX_VALUE;
-        public int mMinIdx = -1;
+        private long mMinAlert = Long.MAX_VALUE;
+        private int mMinIdx = -1;
+        private String mLabel;
 
         /**
          * returns next scheduled alert, MAX_VALUE if none
@@ -491,6 +494,9 @@ public class Alarms {
         }
         public int getIndex() {
             return mMinIdx;
+        }
+        public String getLabel() {
+            return mLabel;
         }
 
         public void reportAlarm(
@@ -505,6 +511,7 @@ public class Alarms {
                 if (atTime < mMinAlert) {
                     mMinIdx = idx;
                     mMinAlert = atTime;
+                    mLabel = message;
                 }
             }
         }
@@ -564,7 +571,7 @@ public class Alarms {
             long atTime = ac.getAlert();
 
             if (atTime < Long.MAX_VALUE) {
-                enableAlert(context, id, atTime);
+                enableAlert(context, id, ac.getLabel(), atTime);
             } else {
                 disableAlert(context, id);
             }
@@ -586,13 +593,15 @@ public class Alarms {
      * @param id Alarm ID.
      * @param atTimeInMillis milliseconds since epoch
      */
-    static void enableAlert(Context context, int id, long atTimeInMillis) {
+    static void enableAlert(Context context, int id, String label,
+           long atTimeInMillis) {
         AlarmManager am = (AlarmManager)
                 context.getSystemService(Context.ALARM_SERVICE);
 
         Intent intent = new Intent(ALARM_ALERT_ACTION);
         if (Log.LOGV) Log.v("** setAlert id " + id + " atTime " + atTimeInMillis);
         intent.putExtra(ID, id);
+        intent.putExtra(LABEL, label);
         intent.putExtra(TIME, atTimeInMillis);
         PendingIntent sender = PendingIntent.getBroadcast(
                 context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -631,12 +640,13 @@ public class Alarms {
     }
 
     static void saveSnoozeAlert(final Context context, int id,
-                                long atTimeInMillis) {
+                                long atTimeInMillis, String label) {
         SharedPreferences prefs = context.getSharedPreferences(
                 AlarmClock.PREFERENCES, 0);
         SharedPreferences.Editor ed = prefs.edit();
         ed.putInt(PREF_SNOOZE_ID, id);
         ed.putLong(PREF_SNOOZE_TIME, atTimeInMillis);
+        ed.putString(PREF_SNOOZE_LABEL, label);
         ed.commit();
     }
 
@@ -646,7 +656,7 @@ public class Alarms {
     static int disableSnoozeAlert(final Context context) {
         int id = getSnoozeAlarmId(context);
         if (id == -1) return -1;
-        saveSnoozeAlert(context, -1, 0);
+        saveSnoozeAlert(context, -1, 0, null);
         return id;
     }
 
@@ -671,7 +681,13 @@ public class Alarms {
         if (id == -1) return false;
         long atTimeInMillis = prefs.getLong(PREF_SNOOZE_TIME, -1);
         if (id == -1) return false;
-        enableAlert(context, id, atTimeInMillis);
+        // Try to get the label from the snooze preference. If null, use the
+        // default label.
+        String label = prefs.getString(PREF_SNOOZE_LABEL, null);
+        if (label == null) {
+            label = context.getString(R.string.default_label);
+        }
+        enableAlert(context, id, label, atTimeInMillis);
         return true;
     }
 

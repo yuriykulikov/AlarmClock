@@ -34,6 +34,12 @@
     <!-- Menu item on Alarm Clock screen: Hide clock -->
     <string name="hide_clock">Hide clock</string>
 
+    <!-- Setting label on Set alarm screen: Label -->
+    <string name="label">Label</string>
+
+    <!-- Default label to display for an alarm -->
+    <string name="default_label">Alarm</string>
+
     <!-- Preference category on Alarm Settings screen: Set alarm -->
     <string name="set_alarm">Set alarm</string>
 

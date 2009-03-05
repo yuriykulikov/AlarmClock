@@ -54,6 +54,7 @@ public class AlarmAlert extends Activity {
 
     private AlarmKlaxon mKlaxon;
     private int mAlarmId;
+    private String mLabel;
 
     @Override
     protected void onCreate(Bundle icicle) {
@@ -81,7 +82,11 @@ public class AlarmAlert extends Activity {
 
         mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
 
-        mAlarmId = getIntent().getIntExtra(Alarms.ID, -1);
+        Intent i = getIntent();
+        mAlarmId = i.getIntExtra(Alarms.ID, -1);
+
+        /* Set the title from the passed in label */
+        setTitleFromIntent(i);
 
         /* allow next alarm to trigger while this activity is
            active */
@@ -106,6 +111,14 @@ public class AlarmAlert extends Activity {
         });
 
         updateLayout();
+    }
+
+    private void setTitleFromIntent(Intent i) {
+        mLabel = i.getStringExtra(Alarms.LABEL);
+        if (mLabel == null || mLabel.length() == 0) {
+            mLabel = getString(R.string.default_label);
+        }
+        setTitle(mLabel);
     }
 
     private void updateSilencedText() {
@@ -181,7 +194,8 @@ public class AlarmAlert extends Activity {
                     Alarms.formatTime(AlarmAlert.this, c));
             mState = DISMISS;
         } else {
-            Alarms.saveSnoozeAlert(AlarmAlert.this, mAlarmId, snoozeTime);
+            Alarms.saveSnoozeAlert(AlarmAlert.this, mAlarmId, snoozeTime,
+                    mLabel);
             Alarms.setNextAlert(AlarmAlert.this);
             displayTime = getString(R.string.alarm_alert_snooze_set,
                     SNOOZE_MINUTES);
@@ -218,6 +232,7 @@ public class AlarmAlert extends Activity {
         disableKeyguard();
 
         mAlarmId = intent.getIntExtra(Alarms.ID, -1);
+        setTitleFromIntent(intent);
 
         /* unset silenced message */
         TextView silenced = (TextView)findViewById(R.id.silencedText);

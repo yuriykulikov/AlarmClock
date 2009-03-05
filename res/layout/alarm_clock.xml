@@ -24,14 +24,14 @@
     <LinearLayout
         android:id="@+id/clock_layout"
         android:layout_width="fill_parent"
-        android:layout_height="208dip"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dip"
         android:gravity="center"/> 
 
     <ListView
         android:id="@+id/alarms_list"
         android:layout_width="fill_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1.0" />
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
 
 </LinearLayout>
