@@ -18,6 +18,7 @@ package com.android.alarmclock;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -25,7 +26,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.gadget.GadgetManager;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.provider.Calendar;
@@ -44,22 +44,22 @@ import android.widget.RemoteViews;
 import java.util.Arrays;
 
 /**
- * Simple gadget to show analog clock.
+ * Simple widget to show analog clock.
  */
-public class AnalogGadgetProvider extends BroadcastReceiver {
-    static final String TAG = "AnalogGadgetProvider";
+public class AnalogAppWidgetProvider extends BroadcastReceiver {
+    static final String TAG = "AnalogAppWidgetProvider";
 
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         
-        if (GadgetManager.ACTION_GADGET_UPDATE.equals(action)) {
+        if (AppWidgetManager.ACTION_APPWIDGET_UPDATE.equals(action)) {
             RemoteViews views = new RemoteViews(context.getPackageName(),
-                    R.layout.analog_gadget);
+                    R.layout.analog_appwidget);
             
-            int[] gadgetIds = intent.getIntArrayExtra(GadgetManager.EXTRA_GADGET_IDS);
+            int[] appWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
             
-            GadgetManager gm = GadgetManager.getInstance(context);
-            gm.updateGadget(gadgetIds, views);
+            AppWidgetManager gm = AppWidgetManager.getInstance(context);
+            gm.updateAppWidget(appWidgetIds, views);
         }
     }
 }

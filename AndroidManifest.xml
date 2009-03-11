@@ -45,11 +45,11 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="AnalogGadgetProvider" android:label="@string/analog_gadget">
+        <receiver android:name="AnalogAppWidgetProvider" android:label="@string/analog_gadget">
             <intent-filter>
-                <action android:name="android.gadget.action.GADGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-            <meta-data android:name="android.gadget.provider" android:resource="@xml/analog_gadget" />
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/analog_appwidget" />
         </receiver>
     </application>
 </manifest>

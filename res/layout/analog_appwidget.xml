@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2009 The Android Open Source Project
+<!-- Copyright (C) 2008 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,10 +14,9 @@
      limitations under the License.
 -->
 
-<gadget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:minWidth="146dip"
-    android:minHeight="146dip"
-    android:updatePeriodMillis="0"
-    android:initialLayout="@layout/analog_gadget"
-    >
-</gadget-provider>
+<AnalogClock xmlns:android="http://schemas.android.com/apk/res/android"
+    android:dial="@drawable/appwidget_clock_dial"
+    android:hand_hour="@drawable/appwidget_clock_hour"
+    android:hand_minute="@drawable/appwidget_clock_minute"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" />
