@@ -19,6 +19,7 @@ package com.android.alarmclock;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
+import android.content.res.Resources;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
@@ -26,6 +27,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.telephony.TelephonyManager;
 
 /**
  * Manages alarms and vibe.  Singleton, so it can be initiated in
@@ -78,6 +80,9 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
         mVibrate = vibrate;
     }
 
+    // Volume suggested by media team for in-call alarms. 
+    private static final float IN_CALL_VOLUME = 0.125f;
+
     synchronized void play(Context context, int alarmId) {
         ContentResolver contentResolver = context.getContentResolver();
 
@@ -90,51 +95,52 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
 
         if (Log.LOGV) Log.v("AlarmKlaxon.play() " + mAlarmId + " alert " + mAlert);
 
-        /* play audio alert */
-        if (mAlert == null) {
-            Log.e("Unable to play alarm: no audio file available");
-        } else {
-            /* we need a new MediaPlayer when we change media URLs */
-            mMediaPlayer = new MediaPlayer();
-            mMediaPlayer.setOnErrorListener(new OnErrorListener() {
-                public boolean onError(MediaPlayer mp, int what, int extra) {
-                    Log.e("Error occurred while playing audio.");
-                    mp.stop();
-                    mp.release();
-                    mMediaPlayer = null;
-                    return true;
-                }
-            });
+        // TODO: Reuse mMediaPlayer instead of creating a new one and/or use
+        // RingtoneManager.
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setOnErrorListener(new OnErrorListener() {
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+                Log.e("Error occurred while playing audio.");
+                mp.stop();
+                mp.release();
+                mMediaPlayer = null;
+                return true;
+            }
+        });
 
-            try {
+        try {
+            TelephonyManager tm = (TelephonyManager) context.getSystemService(
+                    Context.TELEPHONY_SERVICE);
+            // Check if we are in a call. If we are, use the in-call alarm
+            // resource at a low volume to not disrupt the call.
+            if (tm.getCallState() != TelephonyManager.CALL_STATE_IDLE) {
+                Log.v("Using the in-call alarm");
+                mMediaPlayer.setVolume(IN_CALL_VOLUME, IN_CALL_VOLUME);
+                setDataSourceFromResource(context.getResources(),
+                        mMediaPlayer, R.raw.in_call_alarm);
+            } else {
                 mMediaPlayer.setDataSource(context, Uri.parse(mAlert));
-            } catch (Exception ex) {
-                Log.v("Using the fallback ringtone");
-                /* The alert may be on the sd card which could be busy right
-                 * now. Use the fallback ringtone. */
-                AssetFileDescriptor afd =
-                        context.getResources().openRawResourceFd(
-                                com.android.internal.R.raw.fallbackring);
-                if (afd != null) {
-                    try {
-                        mMediaPlayer.setDataSource(afd.getFileDescriptor(),
-                                afd.getStartOffset(), afd.getLength());
-                        afd.close();
-                    } catch (Exception ex2) {
-                        Log.e("Failed to play fallback ringtone", ex2);
-                        /* At this point we just don't play anything */
-                    }
-                }
             }
-            /* Now try to play the alert. */
+        } catch (Exception ex) {
+            Log.v("Using the fallback ringtone");
+            // The alert may be on the sd card which could be busy right now.
+            // Use the fallback ringtone.
             try {
-                mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-                mMediaPlayer.setLooping(true);
-                mMediaPlayer.prepare();
-                mMediaPlayer.start();
-            } catch (Exception ex) {
-                Log.e("Error playing alarm: " + mAlert, ex);
+                setDataSourceFromResource(context.getResources(), mMediaPlayer,
+                        com.android.internal.R.raw.fallbackring);
+            } catch (Exception ex2) {
+                // At this point we just don't play anything.
+                Log.e("Failed to play fallback ringtone", ex2);
             }
+        }
+        /* Now try to play the alert. */
+        try {
+            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
+            mMediaPlayer.setLooping(true);
+            mMediaPlayer.prepare();
+            mMediaPlayer.start();
+        } catch (Exception ex) {
+            Log.e("Error playing alarm: " + mAlert, ex);
         }
 
         /* Start the vibrator after everything is ok with the media player */
@@ -148,6 +154,15 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
         mPlaying = true;
     }
 
+    private void setDataSourceFromResource(Resources resources,
+            MediaPlayer player, int res) throws java.io.IOException {
+        AssetFileDescriptor afd = resources.openRawResourceFd(res);
+        if (afd != null) {
+            player.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(),
+                    afd.getLength());
+            afd.close();
+        }
+    }
 
     /**
      * Stops alarm audio and disables alarm if it not snoozed and not
