@@ -18,6 +18,7 @@
     <string name="app_label">"Budík"</string>
     <string name="add_alarm">"Přidat upozornění"</string>
     <string name="delete_alarm">"Smazat upozornění"</string>
+    <string name="delete_alarm_confirm">"Toto upozornění bude odstraněno."</string>
     <string name="show_clock">"Zobrazit hodiny"</string>
     <string name="hide_clock">"Skrýt hodiny"</string>
     <string name="set_alarm">"Nastavit upozornění"</string>
@@ -33,14 +34,14 @@
     <string name="alarm_alert_snooze_set">"Upozornění odloženo o <xliff:g id="MINUTES">%d</xliff:g> min."</string>
     <string name="alarm_alert_snooze_not_set">"Upozornění nebylo odloženo – další upozornění v <xliff:g id="TIME">%s</xliff:g>."</string>
     <string name="alarm_set">"Toto upozornění bude aktivováno za: <xliff:g id="TIME_DELTA">%s</xliff:g>."</string>
-    <!-- no translation found for combiner (2146732837172099134) -->
+    <!-- no translation found for combiner (3170916241487451546) -->
     <skip />
     <string name="day">"1 den"</string>
     <string name="days">"dní: <xliff:g id="DAYS">%s</xliff:g>"</string>
     <string name="hour">"1 hodina"</string>
     <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> hod."</string>
-    <string name="and">"a"</string>
-    <!-- no translation found for space (9141227650891547547) -->
+    <string name="and">" a "</string>
+    <!-- no translation found for space (5294521584675021576) -->
     <skip />
     <string name="subminute">"méně než 1 minuta"</string>
     <string name="minute">"1 minuta"</string>
@@ -49,10 +50,11 @@
     <string name="pm">"odp."</string>
     <string name="every_day">"Každý den"</string>
     <string name="never">"Nikdy"</string>
-    <string name="day_concat">","</string>
+    <string name="day_concat">", "</string>
     <string name="clock_instructions">"Vyberte hodiny, které mají být zobrazeny."</string>
     <string name="error">"Upozornění není nastaveno"</string>
     <string name="dberror">"Upozornění bohužel nelze nastavit."</string>
+    <string name="analog_gadget">"Analogové hodiny"</string>
   <string-array name="days_of_week">
     <item>"Pondělí"</item>
     <item>"Úterý"</item>

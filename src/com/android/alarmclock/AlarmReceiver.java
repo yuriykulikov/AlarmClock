@@ -54,10 +54,15 @@ public class AlarmReceiver extends BroadcastReceiver {
         AlarmKlaxon klaxon = AlarmKlaxon.getInstance();
         klaxon.play(context, id);
 
+        /* Close dialogs and window shade */
+        Intent i = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+        context.sendBroadcast(i);
+
         /* launch UI, explicitly stating that this is not due to user action
          * so that the current app's notification management is not disturbed */
         Intent fireAlarm = new Intent(context, AlarmAlert.class);
         fireAlarm.putExtra(Alarms.ID, id);
+        fireAlarm.putExtra(Alarms.LABEL, intent.getStringExtra(Alarms.LABEL));
         fireAlarm.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_USER_ACTION);
         context.startActivity(fireAlarm);
    }

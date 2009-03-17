@@ -104,6 +104,8 @@ public class AlarmClock extends Activity {
             final Alarms.DaysOfWeek daysOfWeek = new Alarms.DaysOfWeek(
                     cursor.getInt(Alarms.AlarmColumns.ALARM_DAYS_OF_WEEK_INDEX));
             final boolean enabled = cursor.getInt(Alarms.AlarmColumns.ALARM_ENABLED_INDEX) == 1;
+            final String label =
+                    cursor.getString(Alarms.AlarmColumns.ALARM_MESSAGE_INDEX);
 
             CheckBox onButton = (CheckBox)view.findViewById(R.id.alarmButton);
             onButton.setChecked(enabled);
@@ -143,8 +145,26 @@ public class AlarmClock extends Activity {
             c.set(Calendar.HOUR_OF_DAY, hour);
             c.set(Calendar.MINUTE, minutes);
             digitalClock.updateTime(c);
+
+            // Set the repeat text or leave it blank if it does not repeat.
             TextView daysOfWeekView = (TextView) digitalClock.findViewById(R.id.daysOfWeek);
-            daysOfWeekView.setText(daysOfWeek.toString(AlarmClock.this, false));
+            final String daysOfWeekStr =
+                    daysOfWeek.toString(AlarmClock.this, false);
+            if (daysOfWeekStr != null && daysOfWeekStr.length() != 0) {
+                daysOfWeekView.setText(daysOfWeekStr);
+                daysOfWeekView.setVisibility(View.VISIBLE);
+            } else {
+                daysOfWeekView.setVisibility(View.GONE);
+            }
+
+            // Display the label
+            TextView labelView =
+                    (TextView) digitalClock.findViewById(R.id.label);
+            if (label != null && label.length() != 0) {
+                labelView.setText(label);
+            } else {
+                labelView.setText(R.string.default_label);
+            }
 
             // Build context menu
             digitalClock.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
@@ -158,8 +178,20 @@ public class AlarmClock extends Activity {
     };
 
     @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        Alarms.deleteAlarm(this, item.getItemId());
+    public boolean onContextItemSelected(final MenuItem item) {
+        // Confirm that the alarm will be deleted.
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.delete_alarm))
+                .setMessage(getString(R.string.delete_alarm_confirm))
+                .setPositiveButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface d, int w) {
+                                Alarms.deleteAlarm(AlarmClock.this,
+                                        item.getItemId());
+                            }
+                        })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
         return true;
     }
 

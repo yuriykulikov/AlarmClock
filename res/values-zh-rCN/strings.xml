@@ -18,6 +18,7 @@
     <string name="app_label">"闹钟时钟"</string>
     <string name="add_alarm">"添加闹钟"</string>
     <string name="delete_alarm">"取消闹钟"</string>
+    <string name="delete_alarm_confirm">"将会删除此警报。"</string>
     <string name="show_clock">"显示时钟"</string>
     <string name="hide_clock">"隐藏时钟"</string>
     <string name="set_alarm">"设置闹钟"</string>
@@ -33,14 +34,14 @@
     <string name="alarm_alert_snooze_set">"<xliff:g id="MINUTES">%d</xliff:g> 分钟后再响。"</string>
     <string name="alarm_alert_snooze_not_set">"未设置再响 - 下次闹钟设置在 <xliff:g id="TIME">%s</xliff:g>"</string>
     <string name="alarm_set">"该闹钟设置为从现在起 <xliff:g id="TIME_DELTA">%s</xliff:g> 后再提醒。"</string>
-    <!-- no translation found for combiner (2146732837172099134) -->
+    <!-- no translation found for combiner (3170916241487451546) -->
     <skip />
     <string name="day">"1 天"</string>
     <string name="days">"<xliff:g id="DAYS">%s</xliff:g> 天"</string>
     <string name="hour">"1 小时"</string>
     <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> 小时"</string>
-    <string name="and">"和"</string>
-    <!-- no translation found for space (9141227650891547547) -->
+    <string name="and">" 和 "</string>
+    <!-- no translation found for space (5294521584675021576) -->
     <skip />
     <string name="subminute">"短于 1 分钟"</string>
     <string name="minute">"1 分钟"</string>
@@ -49,10 +50,11 @@
     <string name="pm">"下午"</string>
     <string name="every_day">"每天"</string>
     <string name="never">"永不"</string>
-    <string name="day_concat">"、"</string>
+    <string name="day_concat">"、 "</string>
     <string name="clock_instructions">"选择要显示的时钟。"</string>
     <string name="error">"未设置闹钟"</string>
     <string name="dberror">"抱歉，无法设置该闹钟。"</string>
+    <string name="analog_gadget">"模拟时钟"</string>
   <string-array name="days_of_week">
     <item>"周一"</item>
     <item>"周二"</item>

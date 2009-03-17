@@ -18,6 +18,8 @@ package com.android.alarmclock;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.Resources;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
@@ -25,6 +27,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.telephony.TelephonyManager;
 
 /**
  * Manages alarms and vibe.  Singleton, so it can be initiated in
@@ -38,8 +41,6 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
 
     /** Play alarm up to 10 minutes before silencing */
     final static int ALARM_TIMEOUT_SECONDS = 10 * 60;
-    final static String ICICLE_PLAYING = "IciclePlaying";
-    final static String ICICLE_ALARMID = "IcicleAlarmId";
 
     private static long[] sVibratePattern = new long[] { 500, 500 };
 
@@ -79,6 +80,9 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
         mVibrate = vibrate;
     }
 
+    // Volume suggested by media team for in-call alarms. 
+    private static final float IN_CALL_VOLUME = 0.125f;
+
     synchronized void play(Context context, int alarmId) {
         ContentResolver contentResolver = context.getContentResolver();
 
@@ -91,48 +95,74 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
 
         if (Log.LOGV) Log.v("AlarmKlaxon.play() " + mAlarmId + " alert " + mAlert);
 
+        // TODO: Reuse mMediaPlayer instead of creating a new one and/or use
+        // RingtoneManager.
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setOnErrorListener(new OnErrorListener() {
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+                Log.e("Error occurred while playing audio.");
+                mp.stop();
+                mp.release();
+                mMediaPlayer = null;
+                return true;
+            }
+        });
+
+        try {
+            TelephonyManager tm = (TelephonyManager) context.getSystemService(
+                    Context.TELEPHONY_SERVICE);
+            // Check if we are in a call. If we are, use the in-call alarm
+            // resource at a low volume to not disrupt the call.
+            if (tm.getCallState() != TelephonyManager.CALL_STATE_IDLE) {
+                Log.v("Using the in-call alarm");
+                mMediaPlayer.setVolume(IN_CALL_VOLUME, IN_CALL_VOLUME);
+                setDataSourceFromResource(context.getResources(),
+                        mMediaPlayer, R.raw.in_call_alarm);
+            } else {
+                mMediaPlayer.setDataSource(context, Uri.parse(mAlert));
+            }
+        } catch (Exception ex) {
+            Log.v("Using the fallback ringtone");
+            // The alert may be on the sd card which could be busy right now.
+            // Use the fallback ringtone.
+            try {
+                setDataSourceFromResource(context.getResources(), mMediaPlayer,
+                        com.android.internal.R.raw.fallbackring);
+            } catch (Exception ex2) {
+                // At this point we just don't play anything.
+                Log.e("Failed to play fallback ringtone", ex2);
+            }
+        }
+        /* Now try to play the alert. */
+        try {
+            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
+            mMediaPlayer.setLooping(true);
+            mMediaPlayer.prepare();
+            mMediaPlayer.start();
+        } catch (Exception ex) {
+            Log.e("Error playing alarm: " + mAlert, ex);
+        }
+
+        /* Start the vibrator after everything is ok with the media player */
         if (mVibrate) {
             mVibrator.vibrate(sVibratePattern, 0);
         } else {
             mVibrator.cancel();
         }
 
-        /* play audio alert */
-        if (mAlert == null) {
-            Log.e("Unable to play alarm: no audio file available");
-        } else {
-
-            /* we need a new MediaPlayer when we change media URLs */
-            mMediaPlayer = new MediaPlayer();
-            if (mMediaPlayer == null) {
-                Log.e("Unable to instantiate MediaPlayer");
-            } else {
-                mMediaPlayer.setOnErrorListener(new OnErrorListener() {
-                        public boolean onError(MediaPlayer mp, int what, int extra) {
-                            Log.e("Error occurred while playing audio.");
-                            mMediaPlayer.stop();
-                            mMediaPlayer.release();
-                            mMediaPlayer = null;
-                            return true;
-                        }
-                    });
-
-                try {
-                    mMediaPlayer.setDataSource(context, Uri.parse(mAlert));
-                    mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-                    mMediaPlayer.setLooping(true);
-                    mMediaPlayer.prepare();
-                } catch (Exception ex) {
-                    Log.e("Error playing alarm: " + mAlert, ex);
-                    return;
-                }
-                mMediaPlayer.start();
-            }
-        }
         enableKiller();
         mPlaying = true;
     }
 
+    private void setDataSourceFromResource(Resources resources,
+            MediaPlayer player, int res) throws java.io.IOException {
+        AssetFileDescriptor afd = resources.openRawResourceFd(res);
+        if (afd != null) {
+            player.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(),
+                    afd.getLength());
+            afd.close();
+        }
+    }
 
     /**
      * Stops alarm audio and disables alarm if it not snoozed and not
@@ -144,7 +174,11 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
             mPlaying = false;
 
             // Stop audio playing
-            if (mMediaPlayer != null) mMediaPlayer.stop();
+            if (mMediaPlayer != null) {
+                mMediaPlayer.stop();
+                mMediaPlayer.release();
+                mMediaPlayer = null;
+            }
 
             // Stop vibrator
             mVibrator.cancel();
@@ -163,27 +197,6 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
      */
     void setKillerCallback(KillerCallback killerCallback) {
         mKillerCallback = killerCallback;
-    }
-
-
-    /**
-     * Called by the AlarmAlert activity on configuration change
-     */
-    protected void onSaveInstanceState(Bundle icicle) {
-        icicle.putBoolean(ICICLE_PLAYING, mPlaying);
-        icicle.putInt(ICICLE_ALARMID, mAlarmId);
-    }
-
-    /**
-     * Restores alarm playback state on configuration change
-     */
-    void restoreInstanceState(Context context, Bundle icicle) {
-        if (!mPlaying &&
-            icicle != null &&
-            icicle.containsKey(ICICLE_PLAYING) &&
-            icicle.getBoolean(ICICLE_PLAYING)) {
-            play(context, icicle.getInt(ICICLE_ALARMID));
-        }
     }
 
     /**
