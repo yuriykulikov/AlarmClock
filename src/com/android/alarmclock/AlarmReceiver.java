@@ -47,12 +47,9 @@ public class AlarmReceiver extends BroadcastReceiver {
             return;
         }
 
-        /* wake device */
+        /* Wake the device and stay awake until the AlarmAlert intent is
+         * handled. */
         AlarmAlertWakeLock.acquire(context);
-
-        /* start audio/vibe */
-        AlarmKlaxon klaxon = AlarmKlaxon.getInstance();
-        klaxon.play(context, id);
 
         /* Close dialogs and window shade */
         Intent i = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);

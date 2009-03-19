@@ -21,6 +21,10 @@
     <string name="delete_alarm_confirm">"Questa sveglia verrà eliminata."</string>
     <string name="show_clock">"Mostra orologio"</string>
     <string name="hide_clock">"Nascondi orologio"</string>
+    <!-- no translation found for label (162189613902857319) -->
+    <skip />
+    <!-- no translation found for default_label (5590025289805630372) -->
+    <skip />
     <string name="set_alarm">"Imposta allarme"</string>
     <string name="enable">"Attiva allarme"</string>
     <string name="alarm_vibrate">"Vibrazione"</string>

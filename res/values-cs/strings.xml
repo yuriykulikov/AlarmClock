@@ -21,6 +21,10 @@
     <string name="delete_alarm_confirm">"Toto upozornění bude odstraněno."</string>
     <string name="show_clock">"Zobrazit hodiny"</string>
     <string name="hide_clock">"Skrýt hodiny"</string>
+    <!-- no translation found for label (162189613902857319) -->
+    <skip />
+    <!-- no translation found for default_label (5590025289805630372) -->
+    <skip />
     <string name="set_alarm">"Nastavit upozornění"</string>
     <string name="enable">"Zapnout upozornění"</string>
     <string name="alarm_vibrate">"Vibrace"</string>

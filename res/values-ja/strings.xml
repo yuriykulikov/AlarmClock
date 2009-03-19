@@ -21,6 +21,10 @@
     <string name="delete_alarm_confirm">"このアラームを削除します。"</string>
     <string name="show_clock">"時計を表示"</string>
     <string name="hide_clock">"時計を隠す"</string>
+    <!-- no translation found for label (162189613902857319) -->
+    <skip />
+    <!-- no translation found for default_label (5590025289805630372) -->
+    <skip />
     <string name="set_alarm">"アラームの設定"</string>
     <string name="enable">"アラームをONにする"</string>
     <string name="alarm_vibrate">"バイブレーション"</string>

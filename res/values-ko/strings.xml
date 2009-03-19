@@ -21,6 +21,10 @@
     <string name="delete_alarm_confirm">"알람이 삭제됩니다."</string>
     <string name="show_clock">"시계 표시"</string>
     <string name="hide_clock">"시계 숨기기"</string>
+    <!-- no translation found for label (162189613902857319) -->
+    <skip />
+    <!-- no translation found for default_label (5590025289805630372) -->
+    <skip />
     <string name="set_alarm">"알람 설정"</string>
     <string name="enable">"알람 켜기"</string>
     <string name="alarm_vibrate">"진동"</string>

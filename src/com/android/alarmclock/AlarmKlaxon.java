@@ -26,6 +26,7 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.os.Vibrator;
 import android.telephony.TelephonyManager;
 
@@ -42,30 +43,39 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
     /** Play alarm up to 10 minutes before silencing */
     final static int ALARM_TIMEOUT_SECONDS = 10 * 60;
 
-    private static long[] sVibratePattern = new long[] { 500, 500 };
-
-    private static AlarmKlaxon sInstance;
+    private static final long[] sVibratePattern = new long[] { 500, 500 };
 
     private int mAlarmId;
     private String mAlert;
     private Alarms.DaysOfWeek mDaysOfWeek;
     private boolean mVibrate;
-
     private boolean mPlaying = false;
-
     private Vibrator mVibrator;
     private MediaPlayer mMediaPlayer;
-
-    private Handler mTimeout;
     private KillerCallback mKillerCallback;
 
+    // Internal messages
+    private static final int KILLER = 1000;
+    private static final int PLAY   = 1001;
+    private Handler mHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case KILLER:
+                    if (Log.LOGV) {
+                        Log.v("*********** Alarm killer triggered ***********");
+                    }
+                    if (mKillerCallback != null) {
+                        mKillerCallback.onKilled();
+                    }
+                    break;
+                case PLAY:
+                    play((Context) msg.obj, msg.arg1);
+                    break;
+            }
+        }
+    };
 
-    static synchronized AlarmKlaxon getInstance() {
-        if (sInstance == null) sInstance = new AlarmKlaxon();
-        return sInstance;
-    }
-
-    private AlarmKlaxon() {
+    AlarmKlaxon() {
         mVibrator = new Vibrator();
     }
 
@@ -80,10 +90,14 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
         mVibrate = vibrate;
     }
 
-    // Volume suggested by media team for in-call alarms. 
+    public void postPlay(final Context context, final int alarmId) {
+        mHandler.sendMessage(mHandler.obtainMessage(PLAY, alarmId, 0, context));
+    }
+
+    // Volume suggested by media team for in-call alarms.
     private static final float IN_CALL_VOLUME = 0.125f;
 
-    synchronized void play(Context context, int alarmId) {
+    private void play(Context context, int alarmId) {
         ContentResolver contentResolver = context.getContentResolver();
 
         if (mPlaying) stop(context, false);
@@ -168,7 +182,7 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
      * Stops alarm audio and disables alarm if it not snoozed and not
      * repeating
      */
-    synchronized void stop(Context context, boolean snoozed) {
+    public void stop(Context context, boolean snoozed) {
         if (Log.LOGV) Log.v("AlarmKlaxon.stop() " + mAlarmId);
         if (mPlaying) {
             mPlaying = false;
@@ -195,7 +209,7 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
      * This callback called when alarm killer times out unattended
      * alarm
      */
-    void setKillerCallback(KillerCallback killerCallback) {
+    public void setKillerCallback(KillerCallback killerCallback) {
         mKillerCallback = killerCallback;
     }
 
@@ -207,20 +221,12 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
      * popped, so the user will know that the alarm tripped.
      */
     private void enableKiller() {
-        mTimeout = new Handler();
-        mTimeout.postDelayed(new Runnable() {
-                public void run() {
-                    if (Log.LOGV) Log.v("*********** Alarm killer triggered *************");
-                    if (mKillerCallback != null) mKillerCallback.onKilled();
-                }
-            }, 1000 * ALARM_TIMEOUT_SECONDS);
+        mHandler.sendMessageDelayed(mHandler.obtainMessage(KILLER),
+                1000 * ALARM_TIMEOUT_SECONDS);
     }
 
     private void disableKiller() {
-        if (mTimeout != null) {
-            mTimeout.removeCallbacksAndMessages(null);
-            mTimeout = null;
-        }
+        mHandler.removeMessages(KILLER);
     }
 
 

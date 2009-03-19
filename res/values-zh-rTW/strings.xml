@@ -21,6 +21,10 @@
     <string name="delete_alarm_confirm">"將刪除此鬧鐘。"</string>
     <string name="show_clock">"顯示時鐘"</string>
     <string name="hide_clock">"隱藏時鐘"</string>
+    <!-- no translation found for label (162189613902857319) -->
+    <skip />
+    <!-- no translation found for default_label (5590025289805630372) -->
+    <skip />
     <string name="set_alarm">"設定鬧鐘"</string>
     <string name="enable">"開啟鬧鐘"</string>
     <string name="alarm_vibrate">"震動"</string>

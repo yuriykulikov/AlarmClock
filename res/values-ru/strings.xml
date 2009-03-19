@@ -21,6 +21,10 @@
     <string name="delete_alarm_confirm">"Сигнал будет удален."</string>
     <string name="show_clock">"Показать часы"</string>
     <string name="hide_clock">"Скрыть часы"</string>
+    <!-- no translation found for label (162189613902857319) -->
+    <skip />
+    <!-- no translation found for default_label (5590025289805630372) -->
+    <skip />
     <string name="set_alarm">"Установить будильник"</string>
     <string name="enable">"Включить будильник"</string>
     <string name="alarm_vibrate">"Вибрация"</string>

@@ -21,6 +21,10 @@
     <string name="delete_alarm_confirm">"Esta alarma se eliminará."</string>
     <string name="show_clock">"Mostrar reloj"</string>
     <string name="hide_clock">"Ocultar reloj"</string>
+    <!-- no translation found for label (162189613902857319) -->
+    <skip />
+    <!-- no translation found for default_label (5590025289805630372) -->
+    <skip />
     <string name="set_alarm">"Establecer alarma"</string>
     <string name="enable">"Activar alarma"</string>
     <string name="alarm_vibrate">"Vibración"</string>
