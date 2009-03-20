@@ -190,6 +190,17 @@
         <!-- Short Day of week: Sun -->
         <item>Sun</item>
     </string-array>
+    
+    <!-- Menu item title for general Alarm Clock Settings -->
+    <string name="settings">Settings</string>
+
+    <!-- Setting title for whether the alarm should play in silent mode.
+         Usually, silent mode only affects the ringer, but this setting
+         will make the alarms respect silent mode too. -->
+    <string name="alarm_in_silent_mode_title">Alarm in silent mode</string>
+
+    <!-- Setting summary for whether the alarm should play in silent mode. -->
+    <string name="alarm_in_silent_mode_summary">Play alarm even when the phone is in silent mode</string>
 
 </resources>
 

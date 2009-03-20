@@ -281,6 +281,10 @@ public class AlarmClock extends Activity {
 
         mToggleClockItem = menu.add(0, 0, 0, R.string.hide_clock);
         mToggleClockItem.setIcon(R.drawable.ic_menu_clock_face);
+        
+        MenuItem settingsItem = menu.add(0, 0, 0, R.string.settings);
+        settingsItem.setIcon(android.R.drawable.ic_menu_preferences);
+        settingsItem.setIntent(new Intent(this, SettingsActivity.class));
 
         return true;
     }
