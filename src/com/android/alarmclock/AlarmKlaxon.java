@@ -121,8 +121,6 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
                 return true;
             }
         });
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-        mMediaPlayer.setLooping(true);
 
         try {
             TelephonyManager tm = (TelephonyManager) context.getSystemService(
@@ -137,17 +135,17 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
             } else {
                 mMediaPlayer.setDataSource(context, Uri.parse(mAlert));
             }
-            mMediaPlayer.prepare();
-            mMediaPlayer.start();
+            startAlarm(mMediaPlayer);
         } catch (Exception ex) {
             Log.v("Using the fallback ringtone");
             // The alert may be on the sd card which could be busy right now.
             // Use the fallback ringtone.
             try {
+                // Must reset the media player to clear the error state.
+                mMediaPlayer.reset();
                 setDataSourceFromResource(context.getResources(), mMediaPlayer,
                         com.android.internal.R.raw.fallbackring);
-                mMediaPlayer.prepare();
-                mMediaPlayer.start();
+                startAlarm(mMediaPlayer);
             } catch (Exception ex2) {
                 // At this point we just don't play anything.
                 Log.e("Failed to play fallback ringtone", ex2);
@@ -163,6 +161,16 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
 
         enableKiller();
         mPlaying = true;
+    }
+
+    // Do the common stuff when starting the alarm.
+    private void startAlarm(MediaPlayer player)
+            throws java.io.IOException, IllegalArgumentException,
+                   IllegalStateException {
+        player.setAudioStreamType(AudioManager.STREAM_ALARM);
+        player.setLooping(true);
+        player.prepare();
+        player.start();
     }
 
     private void setDataSourceFromResource(Resources resources,
