@@ -264,6 +264,9 @@ public class AlarmAlert extends Activity {
         if (Log.LOGV) Log.v("AlarmAlert.onStop()");
         // As a last resort, try to snooze if this activity is stopped.
         snooze();
+        // We might have been killed by the KillerCallback so always release
+        // the lock and keyguard.
+        releaseLocks();
     }
 
     @Override
