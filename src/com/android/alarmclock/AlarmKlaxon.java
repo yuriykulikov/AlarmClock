@@ -121,6 +121,8 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
                 return true;
             }
         });
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
+        mMediaPlayer.setLooping(true);
 
         try {
             TelephonyManager tm = (TelephonyManager) context.getSystemService(
@@ -135,6 +137,8 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
             } else {
                 mMediaPlayer.setDataSource(context, Uri.parse(mAlert));
             }
+            mMediaPlayer.prepare();
+            mMediaPlayer.start();
         } catch (Exception ex) {
             Log.v("Using the fallback ringtone");
             // The alert may be on the sd card which could be busy right now.
@@ -142,19 +146,12 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
             try {
                 setDataSourceFromResource(context.getResources(), mMediaPlayer,
                         com.android.internal.R.raw.fallbackring);
+                mMediaPlayer.prepare();
+                mMediaPlayer.start();
             } catch (Exception ex2) {
                 // At this point we just don't play anything.
                 Log.e("Failed to play fallback ringtone", ex2);
             }
-        }
-        /* Now try to play the alert. */
-        try {
-            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-            mMediaPlayer.setLooping(true);
-            mMediaPlayer.prepare();
-            mMediaPlayer.start();
-        } catch (Exception ex) {
-            Log.e("Error playing alarm: " + mAlert, ex);
         }
 
         /* Start the vibrator after everything is ok with the media player */
