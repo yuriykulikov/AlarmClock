@@ -20,6 +20,12 @@
             </intent-filter>
         </activity>
 
+        <activity android:name="SettingsActivity" android:label="@string/settings">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
         <activity android:name="SetAlarm" android:label="@string/set_alarm" />
 
         <activity android:name="AlarmAlert" android:label="@string/alert_title"
