@@ -47,7 +47,7 @@
     <string name="and">" と "</string>
     <!-- no translation found for space (5294521584675021576) -->
     <skip />
-    <string name="subminute">"1分未満"</string>
+    <string name="subminute">"1分以内"</string>
     <string name="minute">"1分"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g>分"</string>
     <string name="am">"AM"</string>
@@ -77,4 +77,10 @@
     <item>"（土）"</item>
     <item>"（日）"</item>
   </string-array>
+    <!-- no translation found for settings (5849739030579520686) -->
+    <skip />
+    <!-- no translation found for alarm_in_silent_mode_title (3892612644543516705) -->
+    <skip />
+    <!-- no translation found for alarm_in_silent_mode_summary (6042500263899922832) -->
+    <skip />
 </resources>
