@@ -33,6 +33,7 @@
                 android:theme="@android:style/Theme.Dialog"
                 android:launchMode="singleTask"
                 android:taskAffinity=":AlarmAlert"
+                android:screenOrientation="nosensor"
                 android:configChanges="orientation|keyboardHidden|keyboard|navigation" />
 
         <activity android:name="ClockPicker" />
