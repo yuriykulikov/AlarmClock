@@ -21,10 +21,8 @@
     <string name="delete_alarm_confirm">"Denne alarmen vil bli slettet."</string>
     <string name="show_clock">"Vis klokke"</string>
     <string name="hide_clock">"Fjern klokke"</string>
-    <!-- no translation found for label (162189613902857319) -->
-    <skip />
-    <!-- no translation found for default_label (5590025289805630372) -->
-    <skip />
+    <string name="label">"Etikett"</string>
+    <string name="default_label">"Alarm"</string>
     <string name="set_alarm">"Sett alarm"</string>
     <string name="enable">"Slå på alarm"</string>
     <string name="alarm_vibrate">"Vibrer"</string>
@@ -45,8 +43,7 @@
     <string name="hour">"en time"</string>
     <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> timer"</string>
     <string name="and">" og "</string>
-    <!-- no translation found for space (5294521584675021576) -->
-    <skip />
+    <string name="space">" "</string>
     <string name="subminute">"mindre enn et minutt"</string>
     <string name="minute">"et minutt"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> minutter"</string>
@@ -77,4 +74,10 @@
     <item>"lør"</item>
     <item>"søn"</item>
   </string-array>
+    <!-- no translation found for settings (5849739030579520686) -->
+    <skip />
+    <!-- no translation found for alarm_in_silent_mode_title (3892612644543516705) -->
+    <skip />
+    <!-- no translation found for alarm_in_silent_mode_summary (6042500263899922832) -->
+    <skip />
 </resources>
