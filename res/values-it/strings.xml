@@ -21,6 +21,8 @@
     <string name="delete_alarm_confirm">"Questa sveglia verrà eliminata."</string>
     <string name="show_clock">"Mostra orologio"</string>
     <string name="hide_clock">"Nascondi orologio"</string>
+    <string name="label">"Etichetta"</string>
+    <string name="default_label">"Allarme"</string>
     <string name="set_alarm">"Imposta allarme"</string>
     <string name="enable">"Attiva allarme"</string>
     <string name="alarm_vibrate">"Vibrazione"</string>
@@ -34,15 +36,13 @@
     <string name="alarm_alert_snooze_set">"Sospensione per <xliff:g id="MINUTES">%d</xliff:g> minuti."</string>
     <string name="alarm_alert_snooze_not_set">"Sospensione non impostata. Prossimo allarme alle <xliff:g id="TIME">%s</xliff:g>"</string>
     <string name="alarm_set">"L\'allarme sarà attivato fra <xliff:g id="TIME_DELTA">%s</xliff:g>."</string>
-    <!-- no translation found for combiner (3170916241487451546) -->
-    <skip />
+    <string name="combiner">"<xliff:g id="XXX_0">%1$s</xliff:g><xliff:g id="XXX_1">%2$s</xliff:g><xliff:g id="XXX_2">%3$s</xliff:g><xliff:g id="XXX_3">%4$s</xliff:g><xliff:g id="XXX_4">%5$s</xliff:g>"</string>
     <string name="day">"1 giorno"</string>
     <string name="days">"<xliff:g id="DAYS">%s</xliff:g> giorni"</string>
     <string name="hour">"1 ora"</string>
     <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> ore"</string>
     <string name="and">" e "</string>
-    <!-- no translation found for space (5294521584675021576) -->
-    <skip />
+    <string name="space">" "</string>
     <string name="subminute">"meno di 1 minuto"</string>
     <string name="minute">"1 minuto"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> minuti"</string>
@@ -73,4 +73,10 @@
     <item>"Sab"</item>
     <item>"Dom"</item>
   </string-array>
+    <!-- no translation found for settings (5849739030579520686) -->
+    <skip />
+    <!-- no translation found for alarm_in_silent_mode_title (3892612644543516705) -->
+    <skip />
+    <!-- no translation found for alarm_in_silent_mode_summary (6042500263899922832) -->
+    <skip />
 </resources>

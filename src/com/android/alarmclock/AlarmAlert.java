@@ -48,7 +48,7 @@ public class AlarmAlert extends Activity {
     private static final int KILLED = 3;
 
     private KeyguardManager mKeyguardManager;
-    private KeyguardManager.KeyguardLock mKeyguardLock = null;
+    private KeyguardManager.KeyguardLock mKeyguardLock;
     private Button mSnoozeButton;
     private int mState = UNKNOWN;
 
@@ -60,11 +60,14 @@ public class AlarmAlert extends Activity {
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
+        // Maintain a lock during the playback of the alarm. This lock may have
+        // already been acquired in AlarmReceiver. If the process was killed,
+        // the global wake lock is gone. Acquire again just to be sure.
+        AlarmAlertWakeLock.acquire(this);
+
         /* FIXME Intentionally verbose: always log this until we've
            fully debugged the app failing to start up */
         Log.v("AlarmAlert.onCreate()");
-
-        mKlaxon = AlarmKlaxon.getInstance();
 
         // Popup alert over black screen
         WindowManager.LayoutParams lp = getWindow().getAttributes();
@@ -84,6 +87,9 @@ public class AlarmAlert extends Activity {
 
         Intent i = getIntent();
         mAlarmId = i.getIntExtra(Alarms.ID, -1);
+
+        mKlaxon = new AlarmKlaxon();
+        mKlaxon.postPlay(this, mAlarmId);
 
         /* Set the title from the passed in label */
         setTitleFromIntent(i);
@@ -232,6 +238,9 @@ public class AlarmAlert extends Activity {
         disableKeyguard();
 
         mAlarmId = intent.getIntExtra(Alarms.ID, -1);
+        // Play the new alarm sound.
+        mKlaxon.postPlay(this, mAlarmId);
+
         setTitleFromIntent(intent);
 
         /* unset silenced message */
@@ -255,6 +264,9 @@ public class AlarmAlert extends Activity {
         if (Log.LOGV) Log.v("AlarmAlert.onStop()");
         // As a last resort, try to snooze if this activity is stopped.
         snooze();
+        // We might have been killed by the KillerCallback so always release
+        // the lock and keyguard.
+        releaseLocks();
     }
 
     @Override

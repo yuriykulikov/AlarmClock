@@ -28,11 +28,13 @@ class AlarmAlertWakeLock {
     private static PowerManager.WakeLock sWakeLock;
 
     static void acquire(Context context) {
+        Log.v("Acquiring wake lock");
         if (sWakeLock != null) {
             sWakeLock.release();
         }
 
-        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        PowerManager pm =
+                (PowerManager) context.getSystemService(Context.POWER_SERVICE);
 
         sWakeLock = pm.newWakeLock(
                 PowerManager.FULL_WAKE_LOCK |
@@ -42,7 +44,7 @@ class AlarmAlertWakeLock {
     }
 
     static void release() {
-        if (Log.LOGV) Log.v("AlarmAlertWakeLock release");
+        Log.v("Releasing wake lock");
         if (sWakeLock != null) {
             sWakeLock.release();
             sWakeLock = null;
