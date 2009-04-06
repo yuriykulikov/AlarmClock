@@ -601,7 +601,9 @@ public class Alarms {
         Intent intent = new Intent(ALARM_ALERT_ACTION);
         if (Log.LOGV) Log.v("** setAlert id " + id + " atTime " + atTimeInMillis);
         intent.putExtra(ID, id);
-        intent.putExtra(LABEL, label);
+        if (label != null) {
+            intent.putExtra(LABEL, label);
+        }
         intent.putExtra(TIME, atTimeInMillis);
         PendingIntent sender = PendingIntent.getBroadcast(
                 context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -646,7 +648,9 @@ public class Alarms {
         SharedPreferences.Editor ed = prefs.edit();
         ed.putInt(PREF_SNOOZE_ID, id);
         ed.putLong(PREF_SNOOZE_TIME, atTimeInMillis);
-        ed.putString(PREF_SNOOZE_LABEL, label);
+        if (label != null) {
+            ed.putString(PREF_SNOOZE_LABEL, label);
+        }
         ed.commit();
     }
 
@@ -681,12 +685,8 @@ public class Alarms {
         if (id == -1) return false;
         long atTimeInMillis = prefs.getLong(PREF_SNOOZE_TIME, -1);
         if (id == -1) return false;
-        // Try to get the label from the snooze preference. If null, use the
-        // default label.
+        // Try to get the label from the snooze preference.
         String label = prefs.getString(PREF_SNOOZE_LABEL, null);
-        if (label == null) {
-            label = context.getString(R.string.default_label);
-        }
         enableAlert(context, id, label, atTimeInMillis);
         return true;
     }

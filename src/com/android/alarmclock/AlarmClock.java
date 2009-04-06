@@ -161,8 +161,9 @@ public class AlarmClock extends Activity {
                     (TextView) digitalClock.findViewById(R.id.label);
             if (label != null && label.length() != 0) {
                 labelView.setText(label);
+                labelView.setVisibility(View.VISIBLE);
             } else {
-                labelView.setText(R.string.default_label);
+                labelView.setVisibility(View.GONE);
             }
 
             // Build context menu
