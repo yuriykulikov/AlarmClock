@@ -208,9 +208,6 @@ public class SetAlarm extends PreferenceActivity
             Alarms.DaysOfWeek daysOfWeek, boolean vibrate, String label,
             String alert) {
 
-        if (label == null || label.length() == 0) {
-            label = getString(R.string.default_label);
-        }
         mLabel.setText(label);
         mLabel.setSummary(label);
         mHour = hour;
