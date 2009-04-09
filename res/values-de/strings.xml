@@ -75,5 +75,5 @@
   </string-array>
     <string name="settings">"Einstellungen"</string>
     <string name="alarm_in_silent_mode_title">"Alarm im Lautlosmodus"</string>
-    <string name="alarm_in_silent_mode_summary">"Alarm wiedergeben, selbst wenn sich das Telefon im Lautlosmodus befindet."</string>
+    <string name="alarm_in_silent_mode_summary">"Alarm auch im Lautlosmodus auslösen"</string>
 </resources>
