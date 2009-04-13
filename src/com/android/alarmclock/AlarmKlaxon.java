@@ -23,6 +23,7 @@ import android.content.res.Resources;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -109,6 +110,18 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
 
         if (Log.LOGV) Log.v("AlarmKlaxon.play() " + mAlarmId + " alert " + mAlert);
 
+        // Fall back on the default alarm if the database does not have an
+        // alarm stored.
+        Uri alert = null;
+        if (mAlert == null) {
+            alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+            if (Log.LOGV) {
+                Log.v("Using default alarm: " + alert.toString());
+            }
+        } else {
+            alert = Uri.parse(mAlert);
+        }
+
         // TODO: Reuse mMediaPlayer instead of creating a new one and/or use
         // RingtoneManager.
         mMediaPlayer = new MediaPlayer();
@@ -133,7 +146,7 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
                 setDataSourceFromResource(context.getResources(),
                         mMediaPlayer, R.raw.in_call_alarm);
             } else {
-                mMediaPlayer.setDataSource(context, Uri.parse(mAlert));
+                mMediaPlayer.setDataSource(context, alert);
             }
             startAlarm(mMediaPlayer);
         } catch (Exception ex) {

@@ -218,7 +218,8 @@ public class SetAlarm extends PreferenceActivity
 
         if (alert == null || alert.length() == 0) {
             if (Log.LOGV) Log.v("****** reportAlarm null or 0-length alert");
-            mAlarmPref.mAlert = getDefaultAlarm();
+            mAlarmPref.mAlert =
+                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
             if (mAlarmPref.mAlert == null) {
                 Log.e("****** Default Alarm null");
             }
@@ -235,15 +236,6 @@ public class SetAlarm extends PreferenceActivity
         updateAlarm(mAlarmPref.mAlert);
 
         mReportAlarmCalled = true;
-    }
-
-    /**
-     * picks the first alarm available
-     */
-    private Uri getDefaultAlarm() {
-        RingtoneManager ringtoneManager = new RingtoneManager(this);
-        ringtoneManager.setType(RingtoneManager.TYPE_ALARM);
-        return ringtoneManager.getRingtoneUri(0);
     }
 
     private void updateTime() {
