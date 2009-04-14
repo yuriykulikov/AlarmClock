@@ -74,6 +74,6 @@
     <item>"Dim"</item>
   </string-array>
     <string name="settings">"Paramètres"</string>
-    <string name="alarm_in_silent_mode_title">"Alarme en mode silencieux"</string>
+    <string name="alarm_in_silent_mode_title">"Alarme mode silencieux"</string>
     <string name="alarm_in_silent_mode_summary">"Faire sonner l\'alarme même lorsque le téléphone est en mode silencieux."</string>
 </resources>

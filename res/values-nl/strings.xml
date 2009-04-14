@@ -56,22 +56,22 @@
     <string name="dberror">"Het alarm kan niet worden ingesteld."</string>
     <string name="analog_gadget">"Analoge klok"</string>
   <string-array name="days_of_week">
-    <item>"Maandag"</item>
-    <item>"Dinsdag"</item>
-    <item>"Woensdag"</item>
-    <item>"Donderdag"</item>
-    <item>"Vrijdag"</item>
-    <item>"Zaterdag"</item>
-    <item>"Zondag"</item>
+    <item>"maandag"</item>
+    <item>"dinsdag"</item>
+    <item>"woensdag"</item>
+    <item>"donderdag"</item>
+    <item>"vrijdag"</item>
+    <item>"zaterdag"</item>
+    <item>"zondag"</item>
   </string-array>
   <string-array name="days_of_week_short">
-    <item>"Ma"</item>
-    <item>"Di"</item>
-    <item>"Wo"</item>
-    <item>"Do"</item>
-    <item>"Vr"</item>
-    <item>"Za"</item>
-    <item>"Zo"</item>
+    <item>"ma"</item>
+    <item>"di"</item>
+    <item>"wo"</item>
+    <item>"do"</item>
+    <item>"vr"</item>
+    <item>"za"</item>
+    <item>"zo"</item>
   </string-array>
     <string name="settings">"Instellingen"</string>
     <string name="alarm_in_silent_mode_title">"Alarm in stille modus"</string>
