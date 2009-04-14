@@ -26,13 +26,11 @@
     <com.android.alarmclock.DigitalClock android:id="@+id/digitalClock"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:focusable="true"
         android:layout_weight="1"
         android:gravity="center_vertical"
         android:orientation="vertical"
         android:paddingLeft="8dip"
-        android:paddingRight="8dip"
-        android:background="@android:drawable/menuitem_background">
+        android:paddingRight="8dip">
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -88,6 +86,7 @@
     </com.android.alarmclock.DigitalClock>
 
     <CheckBox android:id="@+id/alarmButton"
+        android:focusable="false"
         android:layout_width="60dip"
         android:layout_height="76dip"
         android:layout_gravity="center_vertical"/>
