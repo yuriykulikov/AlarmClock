@@ -73,10 +73,7 @@
     <item>"So"</item>
     <item>"Ndz"</item>
   </string-array>
-    <!-- no translation found for settings (5849739030579520686) -->
-    <skip />
-    <!-- no translation found for alarm_in_silent_mode_title (3892612644543516705) -->
-    <skip />
-    <!-- no translation found for alarm_in_silent_mode_summary (6042500263899922832) -->
-    <skip />
+    <string name="settings">"Ustawienia"</string>
+    <string name="alarm_in_silent_mode_title">"Alarm w trybie cichym"</string>
+    <string name="alarm_in_silent_mode_summary">"Odtwórz alarm, nawet gdy telefon jest w trybie cichym"</string>
 </resources>
