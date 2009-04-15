@@ -74,10 +74,7 @@
     <item>"lør"</item>
     <item>"søn"</item>
   </string-array>
-    <!-- no translation found for settings (5849739030579520686) -->
-    <skip />
-    <!-- no translation found for alarm_in_silent_mode_title (3892612644543516705) -->
-    <skip />
-    <!-- no translation found for alarm_in_silent_mode_summary (6042500263899922832) -->
-    <skip />
+    <string name="settings">"Innstillinger"</string>
+    <string name="alarm_in_silent_mode_title">"Alarm i stillemodus"</string>
+    <string name="alarm_in_silent_mode_summary">"Spill alarm selv når telefonen er i stillemodus"</string>
 </resources>
