@@ -46,8 +46,6 @@
     <string name="subminute">"méně než 1 minuta"</string>
     <string name="minute">"1 minuta"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> min"</string>
-    <string name="am">"dop."</string>
-    <string name="pm">"odp."</string>
     <string name="every_day">"Každý den"</string>
     <string name="never">"Nikdy"</string>
     <string name="day_concat">", "</string>
@@ -55,24 +53,6 @@
     <string name="error">"Upozornění není nastaveno"</string>
     <string name="dberror">"Upozornění bohužel nelze nastavit."</string>
     <string name="analog_gadget">"Analogové hodiny"</string>
-  <string-array name="days_of_week">
-    <item>"Pondělí"</item>
-    <item>"Úterý"</item>
-    <item>"Středa"</item>
-    <item>"Čtvrtek"</item>
-    <item>"Pátek"</item>
-    <item>"Sobota"</item>
-    <item>"Neděle"</item>
-  </string-array>
-  <string-array name="days_of_week_short">
-    <item>"Po"</item>
-    <item>"Út"</item>
-    <item>"St"</item>
-    <item>"Čt"</item>
-    <item>"Pá"</item>
-    <item>"So"</item>
-    <item>"Ne"</item>
-  </string-array>
     <string name="settings">"Nastavení"</string>
     <string name="alarm_in_silent_mode_title">"Budík v tichém režimu"</string>
     <string name="alarm_in_silent_mode_summary">"Aktivovat budík i v případě, že je telefon v tichém režimu."</string>

@@ -46,8 +46,6 @@
     <string name="subminute">"1분 미만"</string>
     <string name="minute">"1분"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g>분"</string>
-    <string name="am">"am"</string>
-    <string name="pm">"pm"</string>
     <string name="every_day">"매일"</string>
     <string name="never">"안 함"</string>
     <string name="day_concat">", "</string>
@@ -55,24 +53,6 @@
     <string name="error">"알람이 설정되지 않음"</string>
     <string name="dberror">"죄송합니다. 알람을 설정할 수 없습니다."</string>
     <string name="analog_gadget">"아날로그 시계"</string>
-  <string-array name="days_of_week">
-    <item>"월요일"</item>
-    <item>"화요일"</item>
-    <item>"수요일"</item>
-    <item>"목요일"</item>
-    <item>"금요일"</item>
-    <item>"토요일"</item>
-    <item>"일요일"</item>
-  </string-array>
-  <string-array name="days_of_week_short">
-    <item>"월"</item>
-    <item>"화"</item>
-    <item>"수"</item>
-    <item>"목"</item>
-    <item>"금"</item>
-    <item>"토"</item>
-    <item>"일"</item>
-  </string-array>
     <string name="settings">"설정"</string>
     <string name="alarm_in_silent_mode_title">"무음 모드로 알람 설정"</string>
     <string name="alarm_in_silent_mode_summary">"무음 모드에서도 알람이 울리도록 설정"</string>

@@ -46,8 +46,6 @@
     <string name="subminute">"minder dan 1 minuut"</string>
     <string name="minute">"1 minuut"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> minuten"</string>
-    <string name="am">"am"</string>
-    <string name="pm">"pm"</string>
     <string name="every_day">"elke dag"</string>
     <string name="never">"Nooit"</string>
     <string name="day_concat">", "</string>
@@ -55,24 +53,6 @@
     <string name="error">"Alarm is niet ingesteld"</string>
     <string name="dberror">"Het alarm kan niet worden ingesteld."</string>
     <string name="analog_gadget">"Analoge klok"</string>
-  <string-array name="days_of_week">
-    <item>"Maandag"</item>
-    <item>"Dinsdag"</item>
-    <item>"Woensdag"</item>
-    <item>"Donderdag"</item>
-    <item>"Vrijdag"</item>
-    <item>"Zaterdag"</item>
-    <item>"Zondag"</item>
-  </string-array>
-  <string-array name="days_of_week_short">
-    <item>"Ma"</item>
-    <item>"Di"</item>
-    <item>"Wo"</item>
-    <item>"Do"</item>
-    <item>"Vr"</item>
-    <item>"Za"</item>
-    <item>"Zo"</item>
-  </string-array>
     <string name="settings">"Instellingen"</string>
     <string name="alarm_in_silent_mode_title">"Alarm in stille modus"</string>
     <string name="alarm_in_silent_mode_summary">"Alarm afspelen, zelfs wanneer de stille modus van de telefoon is geactiveerd"</string>

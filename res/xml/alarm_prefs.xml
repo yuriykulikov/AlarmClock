@@ -30,9 +30,7 @@
         android:title="@string/alarm_vibrate"/>
     <com.android.alarmclock.RepeatPreference
         android:key="setRepeat" 
-        android:title="@string/alarm_repeat"
-        android:entries="@array/days_of_week"
-        android:entryValues="@array/days_of_week"/>
+        android:title="@string/alarm_repeat" />
     <EditTextPreference android:key="label"
         android:title="@string/label"
         android:dialogTitle="@string/label" />

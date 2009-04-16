@@ -46,8 +46,6 @@
     <string name="subminute">"meno di 1 minuto"</string>
     <string name="minute">"1 minuto"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> minuti"</string>
-    <string name="am">"am"</string>
-    <string name="pm">"pm"</string>
     <string name="every_day">"Ogni giorno"</string>
     <string name="never">"Mai"</string>
     <string name="day_concat">", "</string>
@@ -55,24 +53,6 @@
     <string name="error">"Allarme non impostato"</string>
     <string name="dberror">"Spiacenti. Impossibile impostare l\'allarme."</string>
     <string name="analog_gadget">"Orologio analogico"</string>
-  <string-array name="days_of_week">
-    <item>"Lunedì"</item>
-    <item>"Martedì"</item>
-    <item>"Mercoledì"</item>
-    <item>"Giovedì"</item>
-    <item>"Venerdì"</item>
-    <item>"Sabato"</item>
-    <item>"Domenica"</item>
-  </string-array>
-  <string-array name="days_of_week_short">
-    <item>"Lun"</item>
-    <item>"Mar"</item>
-    <item>"Mer"</item>
-    <item>"Gio"</item>
-    <item>"Ven"</item>
-    <item>"Sab"</item>
-    <item>"Dom"</item>
-  </string-array>
     <string name="settings">"Impostazioni"</string>
     <string name="alarm_in_silent_mode_title">"Allarme in modalità silenziosa"</string>
     <string name="alarm_in_silent_mode_summary">"Riproduci allarme anche con telefono in modalità silenziosa"</string>

@@ -46,8 +46,6 @@
     <string name="subminute">"менее 1 минуты"</string>
     <string name="minute">"1 минута"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> минут(ы)"</string>
-    <string name="am">"до полудня"</string>
-    <string name="pm">"после полудня"</string>
     <string name="every_day">"ежедневно"</string>
     <string name="never">"Никогда"</string>
     <string name="day_concat">", "</string>
@@ -55,24 +53,6 @@
     <string name="error">"Будильник не установлен"</string>
     <string name="dberror">"К сожалению, установить будильник не удалось."</string>
     <string name="analog_gadget">"Часы со стрелками"</string>
-  <string-array name="days_of_week">
-    <item>"Понедельник"</item>
-    <item>"Вторник"</item>
-    <item>"Среда"</item>
-    <item>"Четверг"</item>
-    <item>"Пятница"</item>
-    <item>"Суббота"</item>
-    <item>"Воскресенье"</item>
-  </string-array>
-  <string-array name="days_of_week_short">
-    <item>"Пн"</item>
-    <item>"Вт"</item>
-    <item>"Ср"</item>
-    <item>"Чт"</item>
-    <item>"Пт"</item>
-    <item>"Сб"</item>
-    <item>"Вс"</item>
-  </string-array>
     <string name="settings">"Настройки"</string>
     <string name="alarm_in_silent_mode_title">"Будильник в тихом режиме"</string>
     <string name="alarm_in_silent_mode_summary">"Подавать сигнал, даже если телефон работает в тихом режиме"</string>

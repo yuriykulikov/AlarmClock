@@ -46,8 +46,6 @@
     <string name="subminute">"mniej niż 1 min"</string>
     <string name="minute">"1 min"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> min"</string>
-    <string name="am">"AM"</string>
-    <string name="pm">"PM"</string>
     <string name="every_day">"codziennie"</string>
     <string name="never">"Nigdy"</string>
     <string name="day_concat">", "</string>
@@ -55,24 +53,6 @@
     <string name="error">"Alarm nieustawiony"</string>
     <string name="dberror">"Niestety, nie można ustawić alarmu."</string>
     <string name="analog_gadget">"Zegar analogowy"</string>
-  <string-array name="days_of_week">
-    <item>"poniedziałek"</item>
-    <item>"wtorek"</item>
-    <item>"środa"</item>
-    <item>"czwartek"</item>
-    <item>"piątek"</item>
-    <item>"sobota"</item>
-    <item>"niedziela"</item>
-  </string-array>
-  <string-array name="days_of_week_short">
-    <item>"Pn"</item>
-    <item>"Wt"</item>
-    <item>"Śr"</item>
-    <item>"Cz"</item>
-    <item>"Pt"</item>
-    <item>"So"</item>
-    <item>"Ndz"</item>
-  </string-array>
     <string name="settings">"Ustawienia"</string>
     <string name="alarm_in_silent_mode_title">"Alarm w trybie cichym"</string>
     <string name="alarm_in_silent_mode_summary">"Odtwórz alarm, nawet gdy telefon jest w trybie cichym"</string>
