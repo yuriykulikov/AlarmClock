@@ -33,6 +33,7 @@ import android.provider.Settings;
 import android.text.format.DateFormat;
 
 import java.util.Calendar;
+import java.text.DateFormatSymbols;
 
 /**
  * The Alarms provider supplies info about Alarm Clock settings
@@ -53,6 +54,20 @@ public class Alarms {
 
     private final static String M12 = "h:mm aa";
     private final static String M24 = "k:mm";
+
+    /**
+     * Mapping from days in this application (where Monday is 0) to
+     * days in DateFormatSymbols (where Monday is 2).
+     */
+    private static int[] DAY_MAP = new int[] {
+        Calendar.MONDAY,
+        Calendar.TUESDAY,
+        Calendar.WEDNESDAY,
+        Calendar.THURSDAY,
+        Calendar.FRIDAY,
+        Calendar.SATURDAY,
+        Calendar.SUNDAY,
+    };
 
     static class DaysOfWeek {
 
@@ -99,15 +114,15 @@ public class Alarms {
             }
 
             /* short or long form? */
-            CharSequence[] strings =
-                    context.getResources().getTextArray(
-                            (dayCount > 1) ? R.array.days_of_week_short :
-                            R.array.days_of_week);
+            DateFormatSymbols dfs = new DateFormatSymbols();
+            String[] dayList = (dayCount > 1) ?
+                                    dfs.getShortWeekdays() :
+                                    dfs.getWeekdays();
 
             /* selected days */
             for (int i = 0; i < 7; i++) {
                 if ((mDays & (1 << i)) != 0) {
-                    ret.append(strings[i]);
+                    ret.append(dayList[DAY_MAP[i]]);
                     dayCount -= 1;
                     if (dayCount > 0) ret.append(
                             context.getText(R.string.day_concat));

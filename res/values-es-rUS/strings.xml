@@ -46,8 +46,6 @@
     <string name="subminute">"menos de 1 minuto"</string>
     <string name="minute">"1 minuto"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> minutos"</string>
-    <string name="am">"a. m."</string>
-    <string name="pm">"p. m."</string>
     <string name="every_day">"todos los días"</string>
     <string name="never">"Nunca"</string>
     <string name="day_concat">", "</string>
@@ -55,24 +53,6 @@
     <string name="error">"Alarma no fijada"</string>
     <string name="dberror">"La alarma no se ha podido fijar."</string>
     <string name="analog_gadget">"Reloj analógico"</string>
-  <string-array name="days_of_week">
-    <item>"Lunes"</item>
-    <item>"Martes"</item>
-    <item>"Miércoles"</item>
-    <item>"Jueves"</item>
-    <item>"Viernes"</item>
-    <item>"Sábado"</item>
-    <item>"Domingo"</item>
-  </string-array>
-  <string-array name="days_of_week_short">
-    <item>"Lun."</item>
-    <item>"Mar."</item>
-    <item>"Mié."</item>
-    <item>"Jue."</item>
-    <item>"Vie."</item>
-    <item>"Sáb."</item>
-    <item>"Dom."</item>
-  </string-array>
     <!-- no translation found for settings (5849739030579520686) -->
     <skip />
     <!-- no translation found for alarm_in_silent_mode_title (3892612644543516705) -->

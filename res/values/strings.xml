@@ -125,12 +125,6 @@
     <!-- Alarm confirmation toast: plural minutes  -->
     <string name="minutes">"<xliff:g id="minutes">%s</xliff:g> minutes"</string>
 
-    <!-- Alarm confirmation toast: Ante Meridiem, or am  -->
-    <string name="am">am</string>
-
-    <!-- Alarm confirmation toast: Post Meridiem, or pm  -->
-    <string name="pm">pm</string>
-
     <!-- Repeat options that appear under an alarm on main Alarm Clock
          screen to identify repetition schedule: special case for when
          the alarm is set to repeat every day -->
@@ -161,42 +155,6 @@
     <!-- Label for analog clock gadget, shown in list of all gadgets -->
     <string name="analog_gadget">Analog clock</string>
 
-    <!-- Days of week -->
-    <string-array name="days_of_week">
-        <!-- Day of week: Monday -->
-        <item>Monday</item>
-        <!-- Day of week: Tuesday -->
-        <item>Tuesday</item>
-        <!-- Day of week: Wednesday -->
-        <item>Wednesday</item>
-        <!-- Day of week: Thursday -->
-        <item>Thursday</item>
-        <!-- Day of week: Friday  -->
-        <item>Friday</item>
-        <!-- Day of week: Saturday -->
-        <item>Saturday</item>
-        <!-- Day of week: Sunday -->
-        <item>Sunday</item>
-    </string-array>
-    
-    <!-- Short Day of week  -->
-    <string-array name="days_of_week_short">
-        <!-- Short Day of week: Mon -->
-        <item>Mon</item>
-        <!-- Short Day of week: Tue -->
-        <item>Tue</item>
-        <!-- Short Day of week: Wed -->
-        <item>Wed</item>
-        <!-- Short Day of week: Thu -->
-        <item>Thu</item>
-        <!-- Short Day of week: Fri  -->
-        <item>Fri</item>
-        <!-- Short Day of week: Sat -->
-        <item>Sat</item>
-        <!-- Short Day of week: Sun -->
-        <item>Sun</item>
-    </string-array>
-    
     <!-- Menu item title for general Alarm Clock Settings -->
     <string name="settings">Settings</string>
 

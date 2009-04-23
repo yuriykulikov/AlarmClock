@@ -46,8 +46,6 @@
     <string name="subminute">"moins d\'une minute"</string>
     <string name="minute">"1 minute"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> minutes"</string>
-    <string name="am">"a.m."</string>
-    <string name="pm">"p.m."</string>
     <string name="every_day">"Tous les jours"</string>
     <string name="never">"Jamais"</string>
     <string name="day_concat">", "</string>
@@ -55,25 +53,7 @@
     <string name="error">"Alarme non activée"</string>
     <string name="dberror">"Désolé, impossible de régler l\'alarme."</string>
     <string name="analog_gadget">"Horloge analogique"</string>
-  <string-array name="days_of_week">
-    <item>"Lundi"</item>
-    <item>"Mardi"</item>
-    <item>"Mercredi"</item>
-    <item>"Jeudi"</item>
-    <item>"Vendredi"</item>
-    <item>"Samedi"</item>
-    <item>"Dimanche"</item>
-  </string-array>
-  <string-array name="days_of_week_short">
-    <item>"Lun"</item>
-    <item>"Mar"</item>
-    <item>"Mer"</item>
-    <item>"Jeu"</item>
-    <item>"Ven"</item>
-    <item>"Sam"</item>
-    <item>"Dim"</item>
-  </string-array>
     <string name="settings">"Paramètres"</string>
-    <string name="alarm_in_silent_mode_title">"Alarme en mode silencieux"</string>
+    <string name="alarm_in_silent_mode_title">"Alarme mode silencieux"</string>
     <string name="alarm_in_silent_mode_summary">"Faire sonner l\'alarme même lorsque le téléphone est en mode silencieux."</string>
 </resources>

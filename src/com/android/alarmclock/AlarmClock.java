@@ -45,6 +45,7 @@ import android.widget.TextView;
 import android.widget.CheckBox;
 
 import java.util.Calendar;
+import java.text.DateFormatSymbols;
 
 /**
  * AlarmClock application.
@@ -69,6 +70,8 @@ public class AlarmClock extends Activity implements OnItemClickListener {
     private ListView mAlarmsList;
     private Cursor mCursor;
 
+    private String mAm, mPm;
+
     /**
      * Which clock face to show
      */
@@ -92,6 +95,10 @@ public class AlarmClock extends Activity implements OnItemClickListener {
 
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             View ret = mFactory.inflate(R.layout.alarm_time, parent, false);
+
+            ((TextView) ret.findViewById(R.id.am)).setText(mAm);
+            ((TextView) ret.findViewById(R.id.pm)).setText(mPm);
+
             DigitalClock digitalClock = (DigitalClock)ret.findViewById(R.id.digitalClock);
             digitalClock.setLive(false);
             if (Log.LOGV) Log.v("newView " + cursor.getPosition());
@@ -206,6 +213,10 @@ public class AlarmClock extends Activity implements OnItemClickListener {
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
+        String[] ampm = new DateFormatSymbols().getAmPmStrings();
+        mAm = ampm[0];
+        mPm = ampm[1];
+
         // sanity check -- no database, no clock
         if (getContentResolver() == null) {
             new AlertDialog.Builder(this)
@@ -277,6 +288,17 @@ public class AlarmClock extends Activity implements OnItemClickListener {
             mClockLayout.removeView(mClock);
         }
         mClock = mFactory.inflate(CLOCKS[mFace], null);
+
+        TextView am = (TextView) mClock.findViewById(R.id.am);
+        TextView pm = (TextView) mClock.findViewById(R.id.pm);
+
+        if (am != null) {
+            am.setText(mAm);
+        }
+        if (pm != null) {
+            pm.setText(mPm);
+        }
+
         mClockLayout.addView(mClock, 0);
     }
 
