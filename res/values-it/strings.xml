@@ -56,22 +56,22 @@
     <string name="dberror">"Spiacenti. Impossibile impostare l\'allarme."</string>
     <string name="analog_gadget">"Orologio analogico"</string>
   <string-array name="days_of_week">
-    <item>"Lunedì"</item>
-    <item>"Martedì"</item>
-    <item>"Mercoledì"</item>
-    <item>"Giovedì"</item>
-    <item>"Venerdì"</item>
-    <item>"Sabato"</item>
-    <item>"Domenica"</item>
+    <item>"lunedì"</item>
+    <item>"martedì"</item>
+    <item>"mercoledì"</item>
+    <item>"giovedì"</item>
+    <item>"venerdì"</item>
+    <item>"sabato"</item>
+    <item>"domenica"</item>
   </string-array>
   <string-array name="days_of_week_short">
-    <item>"Lun"</item>
-    <item>"Mar"</item>
-    <item>"Mer"</item>
-    <item>"Gio"</item>
-    <item>"Ven"</item>
-    <item>"Sab"</item>
-    <item>"Dom"</item>
+    <item>"lun"</item>
+    <item>"mar"</item>
+    <item>"mer"</item>
+    <item>"gio"</item>
+    <item>"ven"</item>
+    <item>"sab"</item>
+    <item>"dom"</item>
   </string-array>
     <string name="settings">"Impostazioni"</string>
     <string name="alarm_in_silent_mode_title">"Allarme in modalità silenziosa"</string>
