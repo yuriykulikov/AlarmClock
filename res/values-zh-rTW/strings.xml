@@ -18,14 +18,14 @@
     <string name="app_label">"鬧鐘"</string>
     <string name="add_alarm">"新增鬧鐘"</string>
     <string name="delete_alarm">"刪除鬧鐘"</string>
-    <string name="delete_alarm_confirm">"將刪除此鬧鐘。"</string>
+    <string name="delete_alarm_confirm">"刪除此鬧鐘？"</string>
     <string name="show_clock">"顯示時鐘"</string>
     <string name="hide_clock">"隱藏時鐘"</string>
     <string name="label">"標籤"</string>
     <string name="default_label">"鬧鐘"</string>
     <string name="set_alarm">"設定鬧鐘"</string>
     <string name="enable">"開啟鬧鐘"</string>
-    <string name="alarm_vibrate">"震動"</string>
+    <string name="alarm_vibrate">"振動"</string>
     <string name="alarm_repeat">"重複"</string>
     <string name="alert">"鈴聲"</string>
     <string name="time">"時間"</string>
@@ -53,7 +53,7 @@
     <string name="day_concat">"、 "</string>
     <string name="clock_instructions">"選取顯示的時鐘。"</string>
     <string name="error">"鬧鐘未設定"</string>
-    <string name="dberror">"抱歉，無法設定鬧鐘。"</string>
+    <string name="dberror">"很抱歉，無法設定鬧鐘。"</string>
     <string name="analog_gadget">"類比時鐘"</string>
   <string-array name="days_of_week">
     <item>"星期一"</item>
@@ -74,6 +74,6 @@
     <item>"週日"</item>
   </string-array>
     <string name="settings">"設定"</string>
-    <string name="alarm_in_silent_mode_title">"鬧鐘處於靜音模式"</string>
+    <string name="alarm_in_silent_mode_title">"靜音模式下的鬧鐘"</string>
     <string name="alarm_in_silent_mode_summary">"手機處於靜音模式時，鬧鐘仍會響"</string>
 </resources>
