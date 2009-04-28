@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +42,7 @@ import java.util.Calendar;
  */
 public class AlarmAlert extends Activity {
 
-    private static final int SNOOZE_MINUTES = 10;
+    private static final String DEFAULT_SNOOZE = "10";
     private static final int UNKNOWN = 0;
     private static final int SNOOZE = 1;
     private static final int DISMISS = 2;
@@ -188,8 +189,13 @@ public class AlarmAlert extends Activity {
         }
         // If the next alarm is set for sooner than the snooze interval, don't
         // snooze. Instead, toast the user that the snooze will not be set.
+        final String snooze =
+                PreferenceManager.getDefaultSharedPreferences(this)
+                .getString("snooze_duration", DEFAULT_SNOOZE);
+        int snoozeMinutes = Integer.parseInt(snooze);
+
         final long snoozeTime = System.currentTimeMillis()
-                + (1000 * 60 * SNOOZE_MINUTES);
+                + (1000 * 60 * snoozeMinutes);
         final long nextAlarm =
                 Alarms.calculateNextAlert(AlarmAlert.this).getAlert();
         String displayTime = null;
@@ -204,7 +210,7 @@ public class AlarmAlert extends Activity {
                     mLabel);
             Alarms.setNextAlert(AlarmAlert.this);
             displayTime = getString(R.string.alarm_alert_snooze_set,
-                    SNOOZE_MINUTES);
+                    snoozeMinutes);
             mState = SNOOZE;
         }
         // Intentionally log the snooze time for debugging.

@@ -166,6 +166,32 @@
     <!-- Setting summary for whether the alarm should play in silent mode. -->
     <string name="alarm_in_silent_mode_summary">Play alarm even when the phone is in silent mode</string>
 
+    <!-- Setting title for changing the snooze duration. -->
+    <string name="snooze_duration_title">Snooze duration</string>
+
+    <!-- Entries listed in the ListPreference when invoking the snooze duration
+         preference. -->
+    <string-array name="snooze_duration_entries">
+      <item>5 minutes</item>
+      <item>10 minutes</item>
+      <item>15 minutes</item>
+      <item>20 minutes</item>
+      <item>25 minutes</item>
+      <item>30 minutes</item>
+    </string-array>
+
+    <!-- Values that are retrieved from the ListPreference. These must match
+         the snooze_duration_entries above. -->
+    <string-array name="snooze_duration_values">
+      <item>5</item>
+      <item>10</item>
+      <item>15</item>
+      <item>20</item>
+      <item>25</item>
+      <item>30</item>
+    </string-array>
+
+
 </resources>
 
 
