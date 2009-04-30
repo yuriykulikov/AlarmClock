@@ -27,16 +27,11 @@ import java.util.Calendar;
 
 public class RepeatPreference extends ListPreference {
 
+    // Initial value that can be set with the values saved in the database.
     private Alarms.DaysOfWeek mDaysOfWeek = new Alarms.DaysOfWeek();
-    private OnRepeatChangedObserver mOnRepeatChangedObserver;
-
-    public interface OnRepeatChangedObserver {
-        /** RepeatPrefrence calls this to get initial state */
-        public Alarms.DaysOfWeek getDaysOfWeek();
-
-        /** Called when this preference has changed */
-        public void onRepeatChanged(Alarms.DaysOfWeek daysOfWeek);
-    }
+    // New value that will be set if a positive result comes back from the
+    // dialog.
+    private Alarms.DaysOfWeek mNewDaysOfWeek = new Alarms.DaysOfWeek();
 
     public RepeatPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -55,17 +50,11 @@ public class RepeatPreference extends ListPreference {
         setEntryValues(values);
     }
 
-    void setOnRepeatChangedObserver(OnRepeatChangedObserver onRepeatChangedObserver) {
-        mOnRepeatChangedObserver = onRepeatChangedObserver;
-    }
-
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {
-            mOnRepeatChangedObserver.onRepeatChanged(mDaysOfWeek);
-        } else {
-            /* no change -- reset to initial state */
-            mDaysOfWeek.set(mOnRepeatChangedObserver.getDaysOfWeek());
+            mDaysOfWeek.set(mNewDaysOfWeek);
+            setSummary(mDaysOfWeek.toString(getContext(), true));
         }
     }
 
@@ -74,19 +63,23 @@ public class RepeatPreference extends ListPreference {
         CharSequence[] entries = getEntries();
         CharSequence[] entryValues = getEntryValues();
 
-        if (entries == null || entryValues == null) {
-            throw new IllegalStateException(
-                    "RepeatPreference requires an entries array and an entryValues array.");
-        }
-
-        mDaysOfWeek.set(mOnRepeatChangedObserver.getDaysOfWeek());
-
         builder.setMultiChoiceItems(
                 entries, mDaysOfWeek.getBooleanArray(),
                 new DialogInterface.OnMultiChoiceClickListener() {
-                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                        mDaysOfWeek.set(which, isChecked);
+                    public void onClick(DialogInterface dialog, int which,
+                            boolean isChecked) {
+                        mNewDaysOfWeek.set(which, isChecked);
                     }
                 });
+    }
+
+    public void setDaysOfWeek(Alarms.DaysOfWeek dow) {
+        mDaysOfWeek.set(dow);
+        mNewDaysOfWeek.set(dow);
+        setSummary(dow.toString(getContext(), true));
+    }
+
+    public Alarms.DaysOfWeek getDaysOfWeek() {
+        return mDaysOfWeek;
     }
 }

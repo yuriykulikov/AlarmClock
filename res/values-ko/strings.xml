@@ -24,7 +24,6 @@
     <string name="label">"라벨"</string>
     <string name="default_label">"알람"</string>
     <string name="set_alarm">"알람 설정"</string>
-    <string name="enable">"알람 켜기"</string>
     <string name="alarm_vibrate">"진동"</string>
     <string name="alarm_repeat">"반복"</string>
     <string name="alert">"벨소리"</string>

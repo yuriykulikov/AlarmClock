@@ -24,7 +24,6 @@
     <string name="label">"Etikett"</string>
     <string name="default_label">"Alarm"</string>
     <string name="set_alarm">"Sett alarm"</string>
-    <string name="enable">"Slå på alarm"</string>
     <string name="alarm_vibrate">"Vibrer"</string>
     <string name="alarm_repeat">"Gjenta"</string>
     <string name="alert">"Ringetone"</string>

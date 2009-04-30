@@ -24,7 +24,6 @@
     <string name="label">"Label"</string>
     <string name="default_label">"Alarm"</string>
     <string name="set_alarm">"Alarm instellen"</string>
-    <string name="enable">"Alarm inschakelen"</string>
     <string name="alarm_vibrate">"Trillen"</string>
     <string name="alarm_repeat">"Herhalen"</string>
     <string name="alert">"Beltoon"</string>

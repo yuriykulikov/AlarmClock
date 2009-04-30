@@ -24,7 +24,6 @@
     <string name="label">"Etichetta"</string>
     <string name="default_label">"Allarme"</string>
     <string name="set_alarm">"Imposta allarme"</string>
-    <string name="enable">"Attiva allarme"</string>
     <string name="alarm_vibrate">"Vibrazione"</string>
     <string name="alarm_repeat">"Ripeti"</string>
     <string name="alert">"Suoneria"</string>

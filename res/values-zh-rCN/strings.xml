@@ -24,7 +24,6 @@
     <string name="label">"标签"</string>
     <string name="default_label">"警报"</string>
     <string name="set_alarm">"设置闹钟"</string>
-    <string name="enable">"开启闹钟"</string>
     <string name="alarm_vibrate">"振动"</string>
     <string name="alarm_repeat">"重复"</string>
     <string name="alert">"铃声"</string>

@@ -24,7 +24,6 @@
     <string name="label">"Libellé"</string>
     <string name="default_label">"Alarme"</string>
     <string name="set_alarm">"Régler l\'alarme"</string>
-    <string name="enable">"Activer l\'alarme"</string>
     <string name="alarm_vibrate">"Vibreur"</string>
     <string name="alarm_repeat">"Répéter"</string>
     <string name="alert">"Sonnerie"</string>

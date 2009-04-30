@@ -16,25 +16,27 @@
 
 package com.android.alarmclock;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.database.ContentObserver;
-import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.text.format.DateFormat;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -45,51 +47,18 @@ public class SetAlarm extends PreferenceActivity
         implements Alarms.AlarmSettings, TimePickerDialog.OnTimeSetListener {
 
     private EditTextPreference mLabel;
-    private CheckBoxPreference mAlarmOnPref;
     private Preference mTimePref;
     private AlarmPreference mAlarmPref;
     private CheckBoxPreference mVibratePref;
     private RepeatPreference mRepeatPref;
-    private ContentObserver mAlarmsChangeObserver;
     private MenuItem mDeleteAlarmItem;
     private MenuItem mTestAlarmItem;
 
     private int mId;
     private int mHour;
     private int mMinutes;
-    private Alarms.DaysOfWeek mDaysOfWeek = new Alarms.DaysOfWeek();
 
     private boolean mReportAlarmCalled;
-
-    private static final int DIALOG_TIMEPICKER = 0;
-
-    private class RingtoneChangedListener implements AlarmPreference.IRingtoneChangedListener {
-        public void onRingtoneChanged(Uri ringtoneUri) {
-            saveAlarm(false);
-        }
-    }
-
-    private class OnRepeatChangedObserver implements RepeatPreference.OnRepeatChangedObserver {
-        public void onRepeatChanged(Alarms.DaysOfWeek daysOfWeek) {
-            if (!mDaysOfWeek.equals(daysOfWeek)) {
-                mDaysOfWeek.set(daysOfWeek);
-                saveAlarm(true);
-            }
-        }
-        public Alarms.DaysOfWeek getDaysOfWeek() {
-            return mDaysOfWeek;
-        }
-    }
-
-    private class AlarmsChangeObserver extends ContentObserver {
-        public AlarmsChangeObserver() {
-            super(new Handler());
-        }
-        @Override
-        public void onChange(boolean selfChange) {
-            Alarms.getAlarm(getContentResolver(), SetAlarm.this, mId);
-        }
-    }
 
     /**
      * Set an alarm.  Requires an Alarms.ID to be passed in as an
@@ -100,17 +69,18 @@ public class SetAlarm extends PreferenceActivity
         super.onCreate(icicle);
 
         addPreferencesFromResource(R.xml.alarm_prefs);
+
+        // Get each preference so we can retrieve the value later.
         mLabel = (EditTextPreference) findPreference("label");
         mLabel.setOnPreferenceChangeListener(
                 new Preference.OnPreferenceChangeListener() {
                     public boolean onPreferenceChange(Preference p,
                             Object newValue) {
+                        // Set the summary based on the new label.
                         p.setSummary((String) newValue);
-                        saveAlarm(false, (String) newValue);
                         return true;
                     }
                 });
-        mAlarmOnPref = (CheckBoxPreference)findPreference("on");
         mTimePref = findPreference("time");
         mAlarmPref = (AlarmPreference) findPreference("alarm");
         mVibratePref = (CheckBoxPreference) findPreference("vibrate");
@@ -118,7 +88,9 @@ public class SetAlarm extends PreferenceActivity
 
         Intent i = getIntent();
         mId = i.getIntExtra(Alarms.ID, -1);
-        if (Log.LOGV) Log.v("In SetAlarm, alarm id = " + mId);
+        if (Log.LOGV) {
+            Log.v("In SetAlarm, alarm id = " + mId);
+        }
 
         mReportAlarmCalled = false;
         /* load alarm details from database */
@@ -131,62 +103,60 @@ public class SetAlarm extends PreferenceActivity
             finish();
         }
 
-        mAlarmsChangeObserver = new AlarmsChangeObserver();
-        getContentResolver().registerContentObserver(
-                Alarms.AlarmColumns.CONTENT_URI, true, mAlarmsChangeObserver);
+        // We have to do this to get the save/cancel buttons to highlight on
+        // their own.
+        getListView().setItemsCanFocus(true);
 
-        mAlarmPref.setRingtoneChangedListener(new RingtoneChangedListener());
-        mRepeatPref.setOnRepeatChangedObserver(new OnRepeatChangedObserver());
+        // Grab the content view so we can modify it.
+        FrameLayout content = (FrameLayout) getWindow().getDecorView()
+                .findViewById(com.android.internal.R.id.content);
+
+        // Get the main ListView and remove it from the content view.
+        ListView lv = getListView();
+        content.removeView(lv);
+
+        // Create the new LinearLayout that will become the content view and
+        // make it vertical.
+        LinearLayout ll = new LinearLayout(this);
+        ll.setOrientation(LinearLayout.VERTICAL);
+
+        // Have the ListView expand to fill the screen minus the save/cancel
+        // buttons.
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LayoutParams.FILL_PARENT,
+                LayoutParams.WRAP_CONTENT);
+        lp.weight = 1;
+        ll.addView(lv, lp);
+
+        // Inflate the buttons onto the LinearLayout.
+        View v = LayoutInflater.from(this).inflate(
+                R.layout.save_cancel_alarm, ll);
+
+        // Attach actions to each button.
+        Button b = (Button) v.findViewById(R.id.alarm_save);
+        b.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    saveAlarm();
+                    finish();
+                }
+        });
+        b = (Button) v.findViewById(R.id.alarm_cancel);
+        b.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    finish();
+                }
+        });
+
+        // Replace the old content view with our new one.
+        setContentView(ll);
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        getContentResolver().unregisterContentObserver(mAlarmsChangeObserver);
-    }
-
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        Dialog d;
-
-        switch (id) {
-        case DIALOG_TIMEPICKER:
-            d = new TimePickerDialog(
-                    SetAlarm.this,
-                    this,
-                    0,
-                    0,
-                    DateFormat.is24HourFormat(SetAlarm.this));
-            d.setTitle(getResources().getString(R.string.time));
-            break;
-        default:
-            d = null;
-        }
-
-        return d;
-    }
-
-    @Override
-    protected void onPrepareDialog(int id, Dialog dialog) {
-        super.onPrepareDialog(id, dialog);
-
-        switch (id) {
-        case DIALOG_TIMEPICKER:
-            TimePickerDialog timePicker = (TimePickerDialog)dialog;
-            timePicker.updateTime(mHour, mMinutes);
-            break;
-        }
-    }
-
-    @Override
-    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
-
+    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
+            Preference preference) {
         if (preference == mTimePref) {
-            showDialog(DIALOG_TIMEPICKER);
-        } else if (preference == mAlarmOnPref) {
-            saveAlarm(true);
-        } else if (preference == mVibratePref) {
-            saveAlarm(false);
+            new TimePickerDialog(this, this, mHour, mMinutes,
+                    DateFormat.is24HourFormat(this)).show();
         }
 
         return super.onPreferenceTreeClick(preferenceScreen, preference);
@@ -195,8 +165,7 @@ public class SetAlarm extends PreferenceActivity
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         mHour = hourOfDay;
         mMinutes = minute;
-        mAlarmOnPref.setChecked(true);
-        saveAlarm(true);
+        updateTime();
     }
 
     /**
@@ -212,65 +181,48 @@ public class SetAlarm extends PreferenceActivity
         mLabel.setSummary(label);
         mHour = hour;
         mMinutes = minutes;
-        mAlarmOnPref.setChecked(enabled);
-        mDaysOfWeek.set(daysOfWeek);
+        mRepeatPref.setDaysOfWeek(daysOfWeek);
         mVibratePref.setChecked(vibrate);
 
-        if (alert == null || alert.length() == 0) {
-            if (Log.LOGV) Log.v("****** reportAlarm null or 0-length alert");
-            mAlarmPref.mAlert =
-                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-            if (mAlarmPref.mAlert == null) {
-                Log.e("****** Default Alarm null");
-            }
-        } else {
-            mAlarmPref.mAlert = Uri.parse(alert);
-            if (mAlarmPref.mAlert == null) {
-                Log.e("****** Parsed null alarm. URI: " + alert);
-            }
+        Uri alertUri = null;
+        if (alert != null && alert.length() != 0) {
+            alertUri = Uri.parse(alert);
         }
-        if (Log.LOGV) Log.v("****** reportAlarm uri " + alert + " alert " +
-                            mAlarmPref.mAlert);
+
+        // If the database alert is null or it failed to parse, use the default
+        // alert.
+        if (alertUri == null) {
+            alertUri = RingtoneManager.getDefaultUri(
+                    RingtoneManager.TYPE_ALARM);
+        }
+
+        if (Log.LOGV) {
+            Log.v("reportAlarm alert: " + alert + " uri: " + alertUri);
+        }
+
+        // Give the alert uri to the preference.
+        mAlarmPref.setAlert(alertUri);
+
         updateTime();
-        updateRepeat();
-        updateAlarm(mAlarmPref.mAlert);
 
         mReportAlarmCalled = true;
     }
 
     private void updateTime() {
-        if (Log.LOGV) Log.v("updateTime " + mId);
-        mTimePref.setSummary(Alarms.formatTime(this, mHour, mMinutes, mDaysOfWeek));
-    }
-
-    private void updateAlarm(Uri ringtoneUri) {
-        if (Log.LOGV) Log.v("updateAlarm " + mId);
-        Ringtone ringtone = RingtoneManager.getRingtone(SetAlarm.this, ringtoneUri);
-        if (ringtone != null) {
-            mAlarmPref.setSummary(ringtone.getTitle(SetAlarm.this));
+        if (Log.LOGV) {
+            Log.v("updateTime " + mId);
         }
+        mTimePref.setSummary(Alarms.formatTime(this, mHour, mMinutes,
+                mRepeatPref.getDaysOfWeek()));
     }
 
-    private void updateRepeat() {
-        if (Log.LOGV) Log.v("updateRepeat " + mId);
-        mRepeatPref.setSummary(mDaysOfWeek.toString(this, true));
-    }
+    private void saveAlarm() {
+        final String alert = mAlarmPref.getAlertString();
+        Alarms.setAlarm(this, mId, true, mHour, mMinutes,
+                mRepeatPref.getDaysOfWeek(), mVibratePref.isChecked(),
+                mLabel.getText(), alert);
 
-    private void saveAlarm(boolean popToast) {
-        saveAlarm(popToast, mLabel.getText());
-    }
-
-    /**
-     * This version of saveAlarm uses the passed in label since mLabel may
-     * contain the old value (i.e. during the preference value change).
-     */
-    private void saveAlarm(boolean popToast, String label) {
-        if (mReportAlarmCalled && mAlarmPref.mAlert != null) {
-            String alertString = mAlarmPref.mAlert.toString();
-            saveAlarm(this, mId, mAlarmOnPref.isChecked(), mHour, mMinutes,
-                      mDaysOfWeek, mVibratePref.isChecked(), label, alertString,
-                      popToast);
-        }
+        popAlarmSetToast(this, mHour, mMinutes, mRepeatPref.getDaysOfWeek());
     }
 
     /**
@@ -368,7 +320,6 @@ public class SetAlarm extends PreferenceActivity
             mTestAlarmItem = menu.add(0, 0, 0, "test alarm");
         }
 
-
         return true;
     }
 
@@ -403,10 +354,10 @@ public class SetAlarm extends PreferenceActivity
         int nowMinute = c.get(java.util.Calendar.MINUTE);
 
         int minutes = (nowMinute + 1) % 60;
-        int hour = nowHour + (nowMinute == 0? 1 : 0);
+        int hour = nowHour + (nowMinute == 0 ? 1 : 0);
 
-        saveAlarm(this, mId, true, hour, minutes, mDaysOfWeek, true,
-                mLabel.getText(), mAlarmPref.mAlert.toString(), true);
+        saveAlarm(this, mId, true, hour, minutes, mRepeatPref.getDaysOfWeek(),
+                true, mLabel.getText(), mAlarmPref.getAlertString(), true);
     }
 
 }

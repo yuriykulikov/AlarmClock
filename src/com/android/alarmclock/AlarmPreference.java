@@ -17,38 +17,47 @@
 package com.android.alarmclock;
 
 import android.content.Context;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.preference.RingtonePreference;
 import android.util.AttributeSet;
 
+/**
+ * The RingtonePreference does not have a way to get/set the current ringtone so
+ * we override onSaveRingtone and onRestoreRingtone to get the same behavior.
+ */
 public class AlarmPreference extends RingtonePreference {
-    public Uri mAlert;
-    private IRingtoneChangedListener mRingtoneChangedListener;
-
-    public interface IRingtoneChangedListener {
-        public void onRingtoneChanged(Uri ringtoneUri);
-    };
+    private Uri mAlert;
 
     public AlarmPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public void setRingtoneChangedListener(IRingtoneChangedListener listener) {
-        mRingtoneChangedListener = listener;
-    }
-
     @Override
     protected void onSaveRingtone(Uri ringtoneUri) {
-        if (ringtoneUri != null) {
-            mAlert = ringtoneUri;
-            if (mRingtoneChangedListener != null) {
-                mRingtoneChangedListener.onRingtoneChanged(ringtoneUri);
-            }
-        }
+        setAlert(ringtoneUri);
     }
 
     @Override
     protected Uri onRestoreRingtone() {
         return mAlert;
+    }
+
+    public void setAlert(Uri alert) {
+        if (alert != null) {
+            mAlert = alert;
+            final Ringtone r = RingtoneManager.getRingtone(getContext(), alert);
+            if (r != null) {
+                setSummary(r.getTitle(getContext()));
+            }
+        }
+    }
+
+    public String getAlertString() {
+        if (mAlert != null) {
+            return mAlert.toString();
+        }
+        return null;
     }
 }

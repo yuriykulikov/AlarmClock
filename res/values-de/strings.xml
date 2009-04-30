@@ -24,7 +24,6 @@
     <string name="label">"Label"</string>
     <string name="default_label">"Wecker"</string>
     <string name="set_alarm">"Wecker einstellen"</string>
-    <string name="enable">"Wecker aktivieren"</string>
     <string name="alarm_vibrate">"Vibrieren"</string>
     <string name="alarm_repeat">"Wiederholen"</string>
     <string name="alert">"Klingelton"</string>

@@ -24,7 +24,6 @@
     <string name="label">"ラベル"</string>
     <string name="default_label">"アラーム"</string>
     <string name="set_alarm">"アラームを設定"</string>
-    <string name="enable">"アラームをONにする"</string>
     <string name="alarm_vibrate">"バイブレーション"</string>
     <string name="alarm_repeat">"繰り返し"</string>
     <string name="alert">"アラーム音"</string>

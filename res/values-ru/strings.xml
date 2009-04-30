@@ -24,7 +24,6 @@
     <string name="label">"Ярлык"</string>
     <string name="default_label">"Будильник"</string>
     <string name="set_alarm">"Установить будильник"</string>
-    <string name="enable">"Включить будильник"</string>
     <string name="alarm_vibrate">"Вибрация"</string>
     <string name="alarm_repeat">"Повтор"</string>
     <string name="alert">"Мелодия звонка"</string>

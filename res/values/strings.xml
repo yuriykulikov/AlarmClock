@@ -49,9 +49,6 @@
     <!-- Preference category on Alarm Settings screen: Set alarm -->
     <string name="set_alarm">Set alarm</string>
 
-    <!-- Setting labels on Set alarm screen: Enable alarm -->
-    <string name="enable">Turn on alarm</string>
-
     <!-- Setting labels on Set alarm screen: Vibration on or off -->
     <string name="alarm_vibrate">Vibrate</string>
 
@@ -191,7 +188,11 @@
       <item>30</item>
     </string-array>
 
+    <!-- Done button when editing an alarm. -->
+    <string name="done">Done</string>
 
+    <!-- Revert button when editing an alarm. -->
+    <string name="revert">Revert</string>
 </resources>
 
 
