@@ -25,7 +25,7 @@
     <string name="default_label">"鬧鐘"</string>
     <string name="set_alarm">"設定鬧鐘"</string>
     <string name="enable">"開啟鬧鐘"</string>
-    <string name="alarm_vibrate">"振動"</string>
+    <string name="alarm_vibrate">"震動"</string>
     <string name="alarm_repeat">"重複"</string>
     <string name="alert">"鈴聲"</string>
     <string name="time">"時間"</string>
