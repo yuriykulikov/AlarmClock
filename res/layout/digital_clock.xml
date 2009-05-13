@@ -14,10 +14,9 @@
      limitations under the License.
 -->
 
-<com.android.alarmclock.DigitalClock android:id="@+id/digitalClock"
+<com.android.alarmclock.DigitalClock android:id="@+id/clock"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    style="@style/clock"
     android:gravity="center">
 
     <!-- Includes vertical padding so animated background doesn't
@@ -25,9 +24,8 @@
     <TextView android:id="@+id/timeDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:textSize="64sp"
-        android:paddingTop="48dip"
-        android:paddingBottom="48dip"
         android:textColor="@color/white"/>
 
     <LinearLayout android:id="@+id/am_pm"

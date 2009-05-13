@@ -24,8 +24,7 @@
     <LinearLayout
         android:id="@+id/clock_layout"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"/> 
+        android:layout_height="192dip"/>
 
     <ListView
         android:id="@+id/alarms_list"

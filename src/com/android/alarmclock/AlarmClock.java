@@ -287,10 +287,12 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         if (mClock != null) {
             mClockLayout.removeView(mClock);
         }
-        mClock = mFactory.inflate(CLOCKS[mFace], null);
 
-        TextView am = (TextView) mClock.findViewById(R.id.am);
-        TextView pm = (TextView) mClock.findViewById(R.id.pm);
+        LayoutInflater.from(this).inflate(CLOCKS[mFace], mClockLayout);
+        mClock = findViewById(R.id.clock);
+
+        TextView am = (TextView) findViewById(R.id.am);
+        TextView pm = (TextView) findViewById(R.id.pm);
 
         if (am != null) {
             am.setText(mAm);
@@ -298,8 +300,6 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         if (pm != null) {
             pm.setText(mPm);
         }
-
-        mClockLayout.addView(mClock, 0);
     }
 
     @Override

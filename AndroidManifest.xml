@@ -29,13 +29,24 @@
         <activity android:name="SetAlarm" android:label="@string/set_alarm"
                 android:configChanges="orientation|keyboardHidden|keyboard|navigation" />
 
-        <activity android:name="AlarmAlert" android:label="@string/alert_title"
+        <activity android:name="AlarmAlert"
                 android:excludeFromRecents="true"
-                android:theme="@android:style/Theme.Dialog"
+                android:theme="@style/alarm_alert"
                 android:launchMode="singleTask"
                 android:taskAffinity=":AlarmAlert"
-                android:screenOrientation="nosensor"
-                android:configChanges="orientation|keyboardHidden|keyboard|navigation" />
+                android:screenOrientation="portrait"
+                android:configChanges="orientation|keyboardHidden|keyboard|navigation"/>
+
+        <!-- This activity is basically the same as AlarmAlert but with a more
+             generic theme. It also shows as full screen (with status bar) but
+             with the wallpaper background. -->
+        <activity android:name="AlarmAlertFullScreen"
+                android:excludeFromRecents="true"
+                android:theme="@android:style/Theme.NoTitleBar"
+                android:launchMode="singleTask"
+                android:taskAffinity=":AlarmAlert"
+                android:screenOrientation="portrait"
+                android:configChanges="orientation|keyboardHidden|keyboard|navigation"/>
 
         <activity android:name="ClockPicker" />
 

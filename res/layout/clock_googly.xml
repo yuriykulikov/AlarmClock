@@ -16,7 +16,7 @@
 
 <AnalogClock xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/clock"
-    style="@style/analogClock"
+    style="@style/clock"
     android:dial="@drawable/clockgoog_dial"
     android:hand_hour="@drawable/clockgoog_hour"
     android:hand_minute="@drawable/clockgoog_minute"/>

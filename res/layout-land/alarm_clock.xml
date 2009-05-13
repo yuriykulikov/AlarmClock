@@ -22,10 +22,8 @@
 
     <FrameLayout
         android:id="@+id/clock_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_marginLeft="8dip"
-        android:layout_marginRight="8dip"/> 
+        android:layout_width="208dip"
+        android:layout_height="fill_parent"/>
 
     <ListView
         android:id="@+id/alarms_list"

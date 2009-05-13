@@ -25,29 +25,50 @@ import android.os.PowerManager;
  */
 class AlarmAlertWakeLock {
 
-    private static PowerManager.WakeLock sWakeLock;
+    private static PowerManager.WakeLock sScreenWakeLock;
+    private static PowerManager.WakeLock sCpuWakeLock;
 
-    static void acquire(Context context) {
-        Log.v("Acquiring wake lock");
-        if (sWakeLock != null) {
-            sWakeLock.release();
+    static void acquireCpuWakeLock(Context context) {
+        Log.v("Acquiring cpu wake lock");
+        if (sCpuWakeLock != null) {
+            return;
         }
 
         PowerManager pm =
                 (PowerManager) context.getSystemService(Context.POWER_SERVICE);
 
-        sWakeLock = pm.newWakeLock(
+        sCpuWakeLock = pm.newWakeLock(
+                PowerManager.PARTIAL_WAKE_LOCK |
+                PowerManager.ACQUIRE_CAUSES_WAKEUP |
+                PowerManager.ON_AFTER_RELEASE, Log.LOGTAG);
+        sCpuWakeLock.acquire();
+    }
+
+    static void acquireScreenWakeLock(Context context) {
+        Log.v("Acquiring screen wake lock");
+        if (sScreenWakeLock != null) {
+            return;
+        }
+
+        PowerManager pm =
+                (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+
+        sScreenWakeLock = pm.newWakeLock(
                 PowerManager.FULL_WAKE_LOCK |
                 PowerManager.ACQUIRE_CAUSES_WAKEUP |
                 PowerManager.ON_AFTER_RELEASE, Log.LOGTAG);
-        sWakeLock.acquire();
+        sScreenWakeLock.acquire();
     }
 
     static void release() {
         Log.v("Releasing wake lock");
-        if (sWakeLock != null) {
-            sWakeLock.release();
-            sWakeLock = null;
+        if (sCpuWakeLock != null) {
+            sCpuWakeLock.release();
+            sCpuWakeLock = null;
+        }
+        if (sScreenWakeLock != null) {
+            sScreenWakeLock.release();
+            sScreenWakeLock = null;
         }
     }
 }
