@@ -23,6 +23,13 @@
         android:title="@string/alarm_in_silent_mode_title"
         android:summary="@string/alarm_in_silent_mode_summary" />
 
+    <VolumePreference
+        android:title="@string/alarm_volume_title"
+        android:summary="@string/alarm_volume_summary"
+        android:dialogTitle="@string/alarm_volume_title"
+        android:persistent="false"
+        android:streamType="alarm" />
+
     <ListPreference
         android:key="snooze_duration"
         android:title="@string/snooze_duration_title"

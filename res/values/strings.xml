@@ -193,6 +193,12 @@
 
     <!-- Revert button when editing an alarm. -->
     <string name="revert">Revert</string>
+
+    <!-- Setting title for changing the alarm volume. -->
+    <string name="alarm_volume_title">Alarm volume</string>
+
+    <!-- Setting summary for changing the alarm volume. -->
+    <string name="alarm_volume_summary">Set volume for alarms</string>
 </resources>
 
 
