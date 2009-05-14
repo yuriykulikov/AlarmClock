@@ -113,55 +113,62 @@ class AlarmKlaxon implements Alarms.AlarmSettings {
         // Fall back on the default alarm if the database does not have an
         // alarm stored.
         Uri alert = null;
+        boolean silent = false;
         if (mAlert == null) {
             alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
             if (Log.LOGV) {
                 Log.v("Using default alarm: " + alert.toString());
             }
+        } else if (Alarms.ALARM_ALERT_SILENT.equals(mAlert)) {
+            silent = true;
         } else {
             alert = Uri.parse(mAlert);
         }
 
-        // TODO: Reuse mMediaPlayer instead of creating a new one and/or use
-        // RingtoneManager.
-        mMediaPlayer = new MediaPlayer();
-        mMediaPlayer.setOnErrorListener(new OnErrorListener() {
-            public boolean onError(MediaPlayer mp, int what, int extra) {
-                Log.e("Error occurred while playing audio.");
-                mp.stop();
-                mp.release();
-                mMediaPlayer = null;
-                return true;
-            }
-        });
+        if (!silent) {
+            // TODO: Reuse mMediaPlayer instead of creating a new one and/or use
+            // RingtoneManager.
+            mMediaPlayer = new MediaPlayer();
+            mMediaPlayer.setOnErrorListener(new OnErrorListener() {
+                public boolean onError(MediaPlayer mp, int what, int extra) {
+                    Log.e("Error occurred while playing audio.");
+                    mp.stop();
+                    mp.release();
+                    mMediaPlayer = null;
+                    return true;
+                }
+            });
 
-        try {
-            TelephonyManager tm = (TelephonyManager) context.getSystemService(
-                    Context.TELEPHONY_SERVICE);
-            // Check if we are in a call. If we are, use the in-call alarm
-            // resource at a low volume to not disrupt the call.
-            if (tm.getCallState() != TelephonyManager.CALL_STATE_IDLE) {
-                Log.v("Using the in-call alarm");
-                mMediaPlayer.setVolume(IN_CALL_VOLUME, IN_CALL_VOLUME);
-                setDataSourceFromResource(context.getResources(),
-                        mMediaPlayer, R.raw.in_call_alarm);
-            } else {
-                mMediaPlayer.setDataSource(context, alert);
-            }
-            startAlarm(mMediaPlayer);
-        } catch (Exception ex) {
-            Log.v("Using the fallback ringtone");
-            // The alert may be on the sd card which could be busy right now.
-            // Use the fallback ringtone.
             try {
-                // Must reset the media player to clear the error state.
-                mMediaPlayer.reset();
-                setDataSourceFromResource(context.getResources(), mMediaPlayer,
-                        com.android.internal.R.raw.fallbackring);
+                TelephonyManager tm =
+                        (TelephonyManager) context.getSystemService(
+                                Context.TELEPHONY_SERVICE);
+                // Check if we are in a call. If we are, use the in-call alarm
+                // resource at a low volume to not disrupt the call.
+                if (tm.getCallState() != TelephonyManager.CALL_STATE_IDLE) {
+                    Log.v("Using the in-call alarm");
+                    mMediaPlayer.setVolume(IN_CALL_VOLUME, IN_CALL_VOLUME);
+                    setDataSourceFromResource(context.getResources(),
+                            mMediaPlayer, R.raw.in_call_alarm);
+                } else {
+                    mMediaPlayer.setDataSource(context, alert);
+                }
                 startAlarm(mMediaPlayer);
-            } catch (Exception ex2) {
-                // At this point we just don't play anything.
-                Log.e("Failed to play fallback ringtone", ex2);
+            } catch (Exception ex) {
+                Log.v("Using the fallback ringtone");
+                // The alert may be on the sd card which could be busy right
+                // now. Use the fallback ringtone.
+                try {
+                    // Must reset the media player to clear the error state.
+                    mMediaPlayer.reset();
+                    setDataSourceFromResource(context.getResources(),
+                            mMediaPlayer,
+                            com.android.internal.R.raw.fallbackring);
+                    startAlarm(mMediaPlayer);
+                } catch (Exception ex2) {
+                    // At this point we just don't play anything.
+                    Log.e("Failed to play fallback ringtone", ex2);
+                }
             }
         }
 

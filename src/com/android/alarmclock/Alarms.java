@@ -44,6 +44,7 @@ public class Alarms {
     public final static String ID = "alarm_id";
     public final static String TIME = "alarm_time";
     public final static String LABEL = "alarm_label";
+    public final static String ALARM_ALERT_SILENT = "silent";
 
     final static String PREF_SNOOZE_ID = "snooze_id";
     final static String PREF_SNOOZE_TIME = "snooze_time";

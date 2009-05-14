@@ -26,7 +26,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="SetAlarm" android:label="@string/set_alarm" />
+        <activity android:name="SetAlarm" android:label="@string/set_alarm"
+                android:configChanges="orientation|keyboardHidden|keyboard|navigation" />
 
         <activity android:name="AlarmAlert" android:label="@string/alert_title"
                 android:excludeFromRecents="true"

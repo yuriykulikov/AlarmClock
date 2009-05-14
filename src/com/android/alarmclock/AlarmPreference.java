@@ -45,12 +45,14 @@ public class AlarmPreference extends RingtonePreference {
     }
 
     public void setAlert(Uri alert) {
+        mAlert = alert;
         if (alert != null) {
-            mAlert = alert;
             final Ringtone r = RingtoneManager.getRingtone(getContext(), alert);
             if (r != null) {
                 setSummary(r.getTitle(getContext()));
             }
+        } else {
+            setSummary(R.string.silent_alarm_summary);
         }
     }
 
@@ -58,6 +60,6 @@ public class AlarmPreference extends RingtonePreference {
         if (mAlert != null) {
             return mAlert.toString();
         }
-        return null;
+        return Alarms.ALARM_ALERT_SILENT;
     }
 }

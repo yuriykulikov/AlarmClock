@@ -185,19 +185,25 @@ public class SetAlarm extends PreferenceActivity
         mVibratePref.setChecked(vibrate);
 
         Uri alertUri = null;
-        if (alert != null && alert.length() != 0) {
-            alertUri = Uri.parse(alert);
-        }
+        if (Alarms.ALARM_ALERT_SILENT.equals(alert)) {
+            if (Log.LOGV) {
+                Log.v("reportAlarm: silent alert");
+            }
+        } else {
+            if (alert != null && alert.length() != 0) {
+                alertUri = Uri.parse(alert);
+            }
 
-        // If the database alert is null or it failed to parse, use the default
-        // alert.
-        if (alertUri == null) {
-            alertUri = RingtoneManager.getDefaultUri(
-                    RingtoneManager.TYPE_ALARM);
-        }
+            // If the database alert is null or it failed to parse, use the
+            // default alert.
+            if (alertUri == null) {
+                alertUri = RingtoneManager.getDefaultUri(
+                        RingtoneManager.TYPE_ALARM);
+            }
 
-        if (Log.LOGV) {
-            Log.v("reportAlarm alert: " + alert + " uri: " + alertUri);
+            if (Log.LOGV) {
+                Log.v("reportAlarm alert: " + alert + " uri: " + alertUri);
+            }
         }
 
         // Give the alert uri to the preference.

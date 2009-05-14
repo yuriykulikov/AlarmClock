@@ -199,6 +199,9 @@
 
     <!-- Setting summary for changing the alarm volume. -->
     <string name="alarm_volume_summary">Set volume for alarms</string>
+
+    <!-- Summary for the alarm preference when silent is chosen. -->
+    <string name="silent_alarm_summary">Silent</string>
 </resources>
 
 
