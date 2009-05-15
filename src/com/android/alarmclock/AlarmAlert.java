@@ -17,17 +17,15 @@
 package com.android.alarmclock;
 
 import android.app.Activity;
-import android.app.KeyguardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
@@ -46,9 +44,6 @@ public class AlarmAlert extends Activity {
     private static final int SNOOZE = 1;
     private static final int DISMISS = 2;
     private static final int KILLED = 3;
-
-    private KeyguardManager mKeyguardManager;
-    private KeyguardManager.KeyguardLock mKeyguardLock;
     private Button mSnoozeButton;
     private int mState = UNKNOWN;
 
@@ -63,7 +58,7 @@ public class AlarmAlert extends Activity {
         // Maintain a lock during the playback of the alarm. This lock may have
         // already been acquired in AlarmReceiver. If the process was killed,
         // the global wake lock is gone. Acquire again just to be sure.
-        AlarmAlertWakeLock.acquire(this);
+       // AlarmAlertWakeLock.acquire(this);
 
         /* FIXME Intentionally verbose: always log this until we've
            fully debugged the app failing to start up */
@@ -80,10 +75,12 @@ public class AlarmAlert extends Activity {
         // to work correctly, you should create and show your own custom window.
         lp.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
         lp.token = null;
-        getWindow().setAttributes(lp);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-
-        mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+        Window win = getWindow();
+        win.setAttributes(lp);
+        // TODO Make the activity full screen for FLAG_SHOW_WHEN_LOCKED to bypass
+        // the key guard.
+        win.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND  |
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 
         Intent i = getIntent();
         mAlarmId = i.getIntExtra(Alarms.ID, -1);
@@ -235,7 +232,6 @@ public class AlarmAlert extends Activity {
         if (Log.LOGV) Log.v("AlarmAlert.OnNewIntent()");
         mState = UNKNOWN;
         mSnoozeButton.setEnabled(true);
-        disableKeyguard();
 
         mAlarmId = intent.getIntExtra(Alarms.ID, -1);
         // Play the new alarm sound.
@@ -255,7 +251,7 @@ public class AlarmAlert extends Activity {
     protected void onResume() {
         super.onResume();
         if (Log.LOGV) Log.v("AlarmAlert.onResume()");
-        disableKeyguard();
+        AlarmAlertWakeLock.acquire(this);
     }
 
     @Override
@@ -314,25 +310,10 @@ public class AlarmAlert extends Activity {
         return super.dispatchKeyEvent(event);
     }
 
-    private synchronized void enableKeyguard() {
-        if (mKeyguardLock != null) {
-            mKeyguardLock.reenableKeyguard();
-            mKeyguardLock = null;
-        }
-    }
-
-    private synchronized void disableKeyguard() {
-        if (mKeyguardLock == null) {
-            mKeyguardLock = mKeyguardManager.newKeyguardLock(Log.LOGTAG);
-            mKeyguardLock.disableKeyguard();
-        }
-    }
-
     /**
      * release wake and keyguard locks
      */
     private synchronized void releaseLocks() {
         AlarmAlertWakeLock.release();
-        enableKeyguard();
     }
 }
