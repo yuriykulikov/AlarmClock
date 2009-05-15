@@ -301,6 +301,8 @@ public class AlarmAlert extends Activity {
             // Volume keys dismiss the alarm
             case KeyEvent.KEYCODE_VOLUME_UP:
             case KeyEvent.KEYCODE_VOLUME_DOWN:
+            case KeyEvent.KEYCODE_CAMERA:
+            case KeyEvent.KEYCODE_FOCUS:
                 dismiss = true;
             // All other keys will snooze the alarm
             default:
