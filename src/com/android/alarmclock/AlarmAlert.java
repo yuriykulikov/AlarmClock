@@ -59,7 +59,7 @@ public class AlarmAlert extends Activity {
         // Maintain a lock during the playback of the alarm. This lock may have
         // already been acquired in AlarmReceiver. If the process was killed,
         // the global wake lock is gone. Acquire again just to be sure.
-       // AlarmAlertWakeLock.acquire(this);
+        AlarmAlertWakeLock.acquire(this);
 
         /* FIXME Intentionally verbose: always log this until we've
            fully debugged the app failing to start up */
@@ -215,7 +215,7 @@ public class AlarmAlert extends Activity {
         // Display the snooze minutes in a toast.
         Toast.makeText(AlarmAlert.this, displayTime, Toast.LENGTH_LONG).show();
         mKlaxon.stop(this, mState == SNOOZE);
-        releaseLocks();
+        AlarmAlertWakeLock.release();
     }
 
     // Dismiss the alarm.
@@ -225,7 +225,7 @@ public class AlarmAlert extends Activity {
         }
         mState = DISMISS;
         mKlaxon.stop(this, false);
-        releaseLocks();
+        AlarmAlertWakeLock.release();
     }
 
     /**
@@ -257,7 +257,6 @@ public class AlarmAlert extends Activity {
     protected void onResume() {
         super.onResume();
         if (Log.LOGV) Log.v("AlarmAlert.onResume()");
-        AlarmAlertWakeLock.acquire(this);
     }
 
     @Override
@@ -267,8 +266,8 @@ public class AlarmAlert extends Activity {
         // As a last resort, try to snooze if this activity is stopped.
         snooze();
         // We might have been killed by the KillerCallback so always release
-        // the lock and keyguard.
-        releaseLocks();
+        // the lock.
+        AlarmAlertWakeLock.release();
     }
 
     @Override
@@ -316,12 +315,5 @@ public class AlarmAlert extends Activity {
                 return true;
         }
         return super.dispatchKeyEvent(event);
-    }
-
-    /**
-     * release wake and keyguard locks
-     */
-    private synchronized void releaseLocks() {
-        AlarmAlertWakeLock.release();
     }
 }
