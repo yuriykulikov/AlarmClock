@@ -18,6 +18,10 @@
     <string name="app_label">"Relógio do alarme"</string>
     <string name="add_alarm">"Adicionar alarme"</string>
     <string name="delete_alarm">"Excluir alarme"</string>
+    <!-- no translation found for enable_alarm (7442658245797418741) -->
+    <skip />
+    <!-- no translation found for disable_alarm (6665528499886549648) -->
+    <skip />
     <!-- no translation found for delete_alarm_confirm (4237696873219106907) -->
     <skip />
     <string name="show_clock">"Mostrar relógio"</string>
@@ -27,7 +31,6 @@
     <!-- no translation found for default_label (5590025289805630372) -->
     <skip />
     <string name="set_alarm">"Definir alarme"</string>
-    <string name="enable">"Ativar alarme"</string>
     <string name="alarm_vibrate">"Vibrar"</string>
     <string name="alarm_repeat">"Repetir"</string>
     <string name="alert">"Ringtone"</string>
@@ -64,5 +67,29 @@
     <!-- no translation found for alarm_in_silent_mode_title (3892612644543516705) -->
     <skip />
     <!-- no translation found for alarm_in_silent_mode_summary (6042500263899922832) -->
+    <skip />
+    <!-- no translation found for snooze_duration_title (1471249885139952670) -->
+    <skip />
+    <!-- no translation found for snooze_duration_entries:0 (8337408933053603125) -->
+    <!-- no translation found for snooze_duration_entries:1 (5294206441496024610) -->
+    <!-- no translation found for snooze_duration_entries:2 (2165904039211935470) -->
+    <!-- no translation found for snooze_duration_entries:3 (7248236967714374250) -->
+    <!-- no translation found for snooze_duration_entries:4 (738394723625179423) -->
+    <!-- no translation found for snooze_duration_entries:5 (1180222611308391616) -->
+    <!-- no translation found for snooze_duration_values:0 (3655014754453084122) -->
+    <!-- no translation found for snooze_duration_values:1 (8939029597449573449) -->
+    <!-- no translation found for snooze_duration_values:2 (3922647341176353315) -->
+    <!-- no translation found for snooze_duration_values:3 (5821804105985044459) -->
+    <!-- no translation found for snooze_duration_values:4 (6048861883552402852) -->
+    <!-- no translation found for snooze_duration_values:5 (2740866721232379791) -->
+    <!-- no translation found for done (6509722361933858451) -->
+    <skip />
+    <!-- no translation found for revert (9100911171235162926) -->
+    <skip />
+    <!-- no translation found for alarm_volume_title (8506245173912428522) -->
+    <skip />
+    <!-- no translation found for alarm_volume_summary (8345575773085338506) -->
+    <skip />
+    <!-- no translation found for silent_alarm_summary (8605302849408279221) -->
     <skip />
 </resources>
