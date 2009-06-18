@@ -58,38 +58,17 @@ public class AlarmAlert extends Activity {
         // Maintain a lock during the playback of the alarm. This lock may have
         // already been acquired in AlarmReceiver. If the process was killed,
         // the global wake lock is gone. Acquire again just to be sure.
-       // AlarmAlertWakeLock.acquire(this);
+        AlarmAlertWakeLock.acquireCpuWakeLock(this);
 
         /* FIXME Intentionally verbose: always log this until we've
            fully debugged the app failing to start up */
         Log.v("AlarmAlert.onCreate()");
-
-        // Popup alert over black screen
-        WindowManager.LayoutParams lp = getWindow().getAttributes();
-        lp.width = ViewGroup.LayoutParams.WRAP_CONTENT;
-        lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        // XXX DO NOT COPY THIS!!!  THIS IS BOGUS!  Making an activity have
-        // a system alert type is completely broken, because the activity
-        // manager will still hide/show it as if it is part of the normal
-        // activity stack.  If this is really what you want and you want it
-        // to work correctly, you should create and show your own custom window.
-        lp.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
-        lp.token = null;
-        Window win = getWindow();
-        win.setAttributes(lp);
-        // TODO Make the activity full screen for FLAG_SHOW_WHEN_LOCKED to bypass
-        // the key guard.
-        win.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND  |
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 
         Intent i = getIntent();
         mAlarmId = i.getIntExtra(Alarms.ID, -1);
 
         mKlaxon = new AlarmKlaxon();
         mKlaxon.postPlay(this, mAlarmId);
-
-        /* Set the title from the passed in label */
-        setTitleFromIntent(i);
 
         /* allow next alarm to trigger while this activity is
            active */
@@ -113,6 +92,8 @@ public class AlarmAlert extends Activity {
             }
         });
 
+        requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         updateLayout();
     }
 
@@ -121,7 +102,8 @@ public class AlarmAlert extends Activity {
         if (mLabel == null || mLabel.length() == 0) {
             mLabel = getString(R.string.default_label);
         }
-        setTitle(mLabel);
+        TextView title = (TextView) findViewById(R.id.alertTitle);
+        title.setText(mLabel);
     }
 
     private void updateSilencedText() {
@@ -131,21 +113,27 @@ public class AlarmAlert extends Activity {
         silenced.setVisibility(View.VISIBLE);
     }
 
+    // This method is overwritten in AlarmAlertFullScreen in order to show a
+    // full activity with the wallpaper as the background.
+    protected View inflateView(LayoutInflater inflater) {
+        return inflater.inflate(R.layout.alarm_alert, null);
+    }
+
     private void updateLayout() {
-        setContentView(R.layout.alarm_alert);
+        LayoutInflater inflater = LayoutInflater.from(this);
+
+        setContentView(inflateView(inflater));
 
         /* set clock face */
-        LayoutInflater mFactory = LayoutInflater.from(this);
         SharedPreferences settings =
                 getSharedPreferences(AlarmClock.PREFERENCES, 0);
         int face = settings.getInt(AlarmClock.PREF_CLOCK_FACE, 0);
         if (face < 0 || face >= AlarmClock.CLOCKS.length) {
             face = 0;
         }
-        View clockLayout =
-                (View) mFactory.inflate(AlarmClock.CLOCKS[face], null);
         ViewGroup clockView = (ViewGroup) findViewById(R.id.clockView);
-        clockView.addView(clockLayout);
+        inflater.inflate(AlarmClock.CLOCKS[face], clockView);
+        View clockLayout = findViewById(R.id.clock);
         if (clockLayout instanceof DigitalClock) {
             ((DigitalClock) clockLayout).setAnimate();
         }
@@ -176,6 +164,9 @@ public class AlarmAlert extends Activity {
                         finish();
                     }
                 });
+
+        /* Set the title from the passed in label */
+        setTitleFromIntent(getIntent());
     }
 
     // Attempt to snooze this alert.
@@ -251,7 +242,9 @@ public class AlarmAlert extends Activity {
     protected void onResume() {
         super.onResume();
         if (Log.LOGV) Log.v("AlarmAlert.onResume()");
-        AlarmAlertWakeLock.acquire(this);
+        // Acquire a separate lock for the screen to stay on. This is necessary
+        // to avoid flashing the keyguard when the screen is locked.
+        AlarmAlertWakeLock.acquireScreenWakeLock(this);
     }
 
     @Override
@@ -263,12 +256,6 @@ public class AlarmAlert extends Activity {
         // We might have been killed by the KillerCallback so always release
         // the lock and keyguard.
         releaseLocks();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration config) {
-        super.onConfigurationChanged(config);
-        updateLayout();
     }
 
     @Override

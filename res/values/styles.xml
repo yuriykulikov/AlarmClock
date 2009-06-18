@@ -15,9 +15,15 @@
 -->
 
 <resources>
-    <style name="analogClock">
+    <style name="clock">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">fill_parent</item>
         <item name="android:layout_gravity">center_horizontal</item>
+    </style>
+
+    <!-- This theme is similar to the Theme.Dialog.Alert but does not rely on a
+         non-public resource. -->
+    <style name="alarm_alert" parent="android:Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 </resources>

@@ -16,6 +16,7 @@
 
 package com.android.alarmclock;
 
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.BroadcastReceiver;
@@ -49,15 +50,24 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         /* Wake the device and stay awake until the AlarmAlert intent is
          * handled. */
-        AlarmAlertWakeLock.acquire(context);
+        AlarmAlertWakeLock.acquireCpuWakeLock(context);
 
         /* Close dialogs and window shade */
         Intent i = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         context.sendBroadcast(i);
 
+        // Decide which activity to start based on the state of the keyguard.
+        Class c = AlarmAlert.class;
+        KeyguardManager km = (KeyguardManager) context.getSystemService(
+                Context.KEYGUARD_SERVICE);
+        if (km.inKeyguardRestrictedInputMode()) {
+            // Use the full screen activity for security.
+            c = AlarmAlertFullScreen.class;
+        }
+
         /* launch UI, explicitly stating that this is not due to user action
          * so that the current app's notification management is not disturbed */
-        Intent fireAlarm = new Intent(context, AlarmAlert.class);
+        Intent fireAlarm = new Intent(context, c);
         fireAlarm.putExtra(Alarms.ID, id);
         fireAlarm.putExtra(Alarms.LABEL, intent.getStringExtra(Alarms.LABEL));
         fireAlarm.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_USER_ACTION);
