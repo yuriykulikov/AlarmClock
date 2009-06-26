@@ -60,12 +60,16 @@ class AlarmAlertWakeLock {
         sScreenWakeLock.acquire();
     }
 
-    static void release() {
-        Log.v("Releasing wake lock");
+    static void releaseCpuLock() {
+        Log.v("Releasing cpu wake lock");
         if (sCpuWakeLock != null) {
             sCpuWakeLock.release();
             sCpuWakeLock = null;
         }
+    }
+
+    static void releaseScreenLock() {
+        Log.v("Releasing screen lock");
         if (sScreenWakeLock != null) {
             sScreenWakeLock.release();
             sScreenWakeLock = null;

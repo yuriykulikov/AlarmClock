@@ -28,10 +28,10 @@ import java.util.Calendar;
 public class RepeatPreference extends ListPreference {
 
     // Initial value that can be set with the values saved in the database.
-    private Alarms.DaysOfWeek mDaysOfWeek = new Alarms.DaysOfWeek();
+    private Alarm.DaysOfWeek mDaysOfWeek = new Alarm.DaysOfWeek(0);
     // New value that will be set if a positive result comes back from the
     // dialog.
-    private Alarms.DaysOfWeek mNewDaysOfWeek = new Alarms.DaysOfWeek();
+    private Alarm.DaysOfWeek mNewDaysOfWeek = new Alarm.DaysOfWeek(0);
 
     public RepeatPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -73,13 +73,13 @@ public class RepeatPreference extends ListPreference {
                 });
     }
 
-    public void setDaysOfWeek(Alarms.DaysOfWeek dow) {
+    public void setDaysOfWeek(Alarm.DaysOfWeek dow) {
         mDaysOfWeek.set(dow);
         mNewDaysOfWeek.set(dow);
         setSummary(dow.toString(getContext(), true));
     }
 
-    public Alarms.DaysOfWeek getDaysOfWeek() {
+    public Alarm.DaysOfWeek getDaysOfWeek() {
         return mDaysOfWeek;
     }
 }

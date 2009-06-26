@@ -35,12 +35,10 @@
     <string name="alarm_repeat">"Repetir"</string>
     <string name="alert">"Ringtone"</string>
     <string name="time">"Hora"</string>
-    <string name="alert_title">"Alarme"</string>
     <string name="alarm_alert_dismiss_text">"Descartar"</string>
     <string name="alarm_alert_alert_silenced">"Alarme silenciado após <xliff:g id="MINUTES">%d</xliff:g> minutos"</string>
     <string name="alarm_alert_snooze_text">"Soneca"</string>
     <string name="alarm_alert_snooze_set">"Soneca de <xliff:g id="MINUTES">%d</xliff:g> minutos."</string>
-    <string name="alarm_alert_snooze_not_set">"Soneca não definida - próximo alarme definido para <xliff:g id="TIME">%s</xliff:g>"</string>
     <string name="alarm_set">"Este alarme está definido para <xliff:g id="TIME_DELTA">%s</xliff:g> a partir de agora."</string>
     <!-- no translation found for combiner (3170916241487451546) -->
     <skip />

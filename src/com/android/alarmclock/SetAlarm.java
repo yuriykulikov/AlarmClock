@@ -44,7 +44,7 @@ import android.widget.Toast;
  * Manages each alarm
  */
 public class SetAlarm extends PreferenceActivity
-        implements Alarms.AlarmSettings, TimePickerDialog.OnTimeSetListener {
+        implements TimePickerDialog.OnTimeSetListener {
 
     private EditTextPreference mLabel;
     private Preference mTimePref;
@@ -58,11 +58,9 @@ public class SetAlarm extends PreferenceActivity
     private int mHour;
     private int mMinutes;
 
-    private boolean mReportAlarmCalled;
-
     /**
-     * Set an alarm.  Requires an Alarms.ID to be passed in as an
-     * extra
+     * Set an alarm.  Requires an Alarms.ALARM_ID to be passed in as an
+     * extra. FIXME: Pass an Alarm object like every other Activity.
      */
     @Override
     protected void onCreate(Bundle icicle) {
@@ -87,21 +85,22 @@ public class SetAlarm extends PreferenceActivity
         mRepeatPref = (RepeatPreference) findPreference("setRepeat");
 
         Intent i = getIntent();
-        mId = i.getIntExtra(Alarms.ID, -1);
+        mId = i.getIntExtra(Alarms.ALARM_ID, -1);
         if (Log.LOGV) {
             Log.v("In SetAlarm, alarm id = " + mId);
         }
 
-        mReportAlarmCalled = false;
         /* load alarm details from database */
-        Alarms.getAlarm(getContentResolver(), this, mId);
-        /* This should never happen, but does occasionally with the monkey.
-         * I believe it's a race condition where a deleted alarm is opened
-         * before the alarm list is refreshed. */
-        if (!mReportAlarmCalled) {
-            Log.e("reportAlarm never called!");
-            finish();
-        }
+        Alarm alarm = Alarms.getAlarm(getContentResolver(), mId);
+        mLabel.setText(alarm.label);
+        mLabel.setSummary(alarm.label);
+        mHour = alarm.hour;
+        mMinutes = alarm.minutes;
+        mRepeatPref.setDaysOfWeek(alarm.daysOfWeek);
+        mVibratePref.setChecked(alarm.vibrate);
+        // Give the alert uri to the preference.
+        mAlarmPref.setAlert(alarm.alert);
+        updateTime();
 
         // We have to do this to get the save/cancel buttons to highlight on
         // their own.
@@ -168,52 +167,6 @@ public class SetAlarm extends PreferenceActivity
         updateTime();
     }
 
-    /**
-     * Alarms.AlarmSettings implementation.  Database feeds current
-     * settings in through this call
-     */
-    public void reportAlarm(
-            int idx, boolean enabled, int hour, int minutes,
-            Alarms.DaysOfWeek daysOfWeek, boolean vibrate, String label,
-            String alert) {
-
-        mLabel.setText(label);
-        mLabel.setSummary(label);
-        mHour = hour;
-        mMinutes = minutes;
-        mRepeatPref.setDaysOfWeek(daysOfWeek);
-        mVibratePref.setChecked(vibrate);
-
-        Uri alertUri = null;
-        if (Alarms.ALARM_ALERT_SILENT.equals(alert)) {
-            if (Log.LOGV) {
-                Log.v("reportAlarm: silent alert");
-            }
-        } else {
-            if (alert != null && alert.length() != 0) {
-                alertUri = Uri.parse(alert);
-            }
-
-            // If the database alert is null or it failed to parse, use the
-            // default alert.
-            if (alertUri == null) {
-                alertUri = RingtoneManager.getDefaultUri(
-                        RingtoneManager.TYPE_ALARM);
-            }
-
-            if (Log.LOGV) {
-                Log.v("reportAlarm alert: " + alert + " uri: " + alertUri);
-            }
-        }
-
-        // Give the alert uri to the preference.
-        mAlarmPref.setAlert(alertUri);
-
-        updateTime();
-
-        mReportAlarmCalled = true;
-    }
-
     private void updateTime() {
         if (Log.LOGV) {
             Log.v("updateTime " + mId);
@@ -237,7 +190,7 @@ public class SetAlarm extends PreferenceActivity
      */
     private static void saveAlarm(
             Context context, int id, boolean enabled, int hour, int minute,
-            Alarms.DaysOfWeek daysOfWeek, boolean vibrate, String label,
+            Alarm.DaysOfWeek daysOfWeek, boolean vibrate, String label,
             String alert, boolean popToast) {
         if (Log.LOGV) Log.v("** saveAlarm " + id + " " + label + " " + enabled
                 + " " + hour + " " + minute + " vibe " + vibrate);
@@ -256,7 +209,7 @@ public class SetAlarm extends PreferenceActivity
      * goes off.  This helps prevent "am/pm" mistakes.
      */
     static void popAlarmSetToast(Context context, int hour, int minute,
-                                 Alarms.DaysOfWeek daysOfWeek) {
+                                 Alarm.DaysOfWeek daysOfWeek) {
 
         String toastText = formatToast(context, hour, minute, daysOfWeek);
         Toast toast = Toast.makeText(context, toastText, Toast.LENGTH_LONG);
@@ -269,7 +222,7 @@ public class SetAlarm extends PreferenceActivity
      * now"
      */
     static String formatToast(Context context, int hour, int minute,
-                              Alarms.DaysOfWeek daysOfWeek) {
+                              Alarm.DaysOfWeek daysOfWeek) {
         long alarm = Alarms.calculateAlarm(hour, minute,
                                            daysOfWeek).getTimeInMillis();
         long delta = alarm - System.currentTimeMillis();;

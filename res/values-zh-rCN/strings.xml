@@ -28,12 +28,10 @@
     <string name="alarm_repeat">"重复"</string>
     <string name="alert">"铃声"</string>
     <string name="time">"时间"</string>
-    <string name="alert_title">"闹钟"</string>
     <string name="alarm_alert_dismiss_text">"取消"</string>
     <string name="alarm_alert_alert_silenced">"闹钟在 <xliff:g id="MINUTES">%d</xliff:g> 分钟后静音"</string>
     <string name="alarm_alert_snooze_text">"再响"</string>
     <string name="alarm_alert_snooze_set">"<xliff:g id="MINUTES">%d</xliff:g> 分钟后再响。"</string>
-    <string name="alarm_alert_snooze_not_set">"未设置再响 - 下次闹钟设置在 <xliff:g id="TIME">%s</xliff:g>"</string>
     <string name="alarm_set">"该闹钟设置为从现在起 <xliff:g id="TIME_DELTA">%s</xliff:g> 后再提醒。"</string>
     <string name="combiner">"<xliff:g id="XXX_0">%1$s</xliff:g><xliff:g id="XXX_1">%2$s</xliff:g><xliff:g id="XXX_2">%3$s</xliff:g><xliff:g id="XXX_3">%4$s</xliff:g><xliff:g id="XXX_4">%5$s</xliff:g>"</string>
     <string name="day">"1 天"</string>

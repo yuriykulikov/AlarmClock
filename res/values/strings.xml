@@ -61,10 +61,6 @@
     <!-- Setting labels on Set alarm screen: Set time  -->
     <string name="time">Time</string>
 
-
-    <!-- Title of the alarm alert -->
-    <string name="alert_title">Alarm</string>
-    
     <!-- Button labels on the alarm dialog: Dismiss -->
     <string name="alarm_alert_dismiss_text">Dismiss</string>
 
@@ -79,13 +75,6 @@
     <!-- Toast that appears after Alarm is snoozed from the Alarm
          dialog. Says the alarm will snooze for xxx minutes.  -->
     <string name="alarm_alert_snooze_set">Snoozing for <xliff:g id="minutes">%d</xliff:g> minutes.</string>
-
-    <!-- Toast that appears after Alarm is snoozed from the Alarm
-         dialog. Shown if snooze cannot be set because the next alarm
-         would fire before the snooze alrm.  "Snooze not set - next
-         alarm set for xxx."  -->
-    <string name="alarm_alert_snooze_not_set">Snooze not set -- next alarm set for <xliff:g id="time">%s</xliff:g></string>
-
 
     <!-- Alarm confirmation toast: Describes how long from now until
          alarm fires -->
@@ -202,6 +191,17 @@
 
     <!-- Summary for the alarm preference when silent is chosen. -->
     <string name="silent_alarm_summary">Silent</string>
+
+    <!-- Text to display in the small text of the notification -->
+    <string name="alarm_notify_text">Select to snooze or dismiss this alarm.</string>
+
+    <!-- Text to display in the notification ticker and label -->
+    <string name="alarm_notify_snooze_label"><xliff:g id="label">%s</xliff:g>
+      (snoozed)</string>
+
+    <!-- Text to display in the notification when the alarm has been snoozed -->
+    <string name="alarm_notify_snooze_text">Alarm set for <xliff:g
+        id="time">%s</xliff:g>. Click to cancel.</string>
 </resources>
 
 

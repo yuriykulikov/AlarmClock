@@ -53,8 +53,22 @@
         <receiver android:name="AlarmReceiver">
             <intent-filter>
                <action android:name="com.android.alarmclock.ALARM_ALERT" />
+               <action android:name="alarm_killed" />
+               <action android:name="cancel_snooze" />
             </intent-filter>
         </receiver>
+
+        <!-- This service receives the same intent as AlarmReceiver but it does
+             not respond to the same broadcast. The AlarmReceiver will receive
+             the alert broadcast and will start this service with the same
+             intent. The service plays the alarm alert and vibrates the device.
+             This allows the alert to continue playing even if another activity
+             causes the AlarmAlert activity to pause. -->
+        <service android:name="AlarmKlaxon">
+            <intent-filter>
+                <action android:name="com.android.alarmclock.ALARM_ALERT" />
+            </intent-filter>
+        </service>
 
         <receiver android:name="AlarmInitReceiver">
             <intent-filter>

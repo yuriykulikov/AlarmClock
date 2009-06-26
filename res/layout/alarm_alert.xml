@@ -77,15 +77,6 @@
 
         </LinearLayout>
 
-        <TextView android:id="@+id/silencedText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:visibility="gone"
-            android:gravity="center"
-            android:textColor="@color/red"/>
-
     </LinearLayout>
+
 </LinearLayout>

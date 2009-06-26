@@ -106,42 +106,36 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         }
 
         public void bindView(View view, Context context, Cursor cursor) {
-            final int id = cursor.getInt(Alarms.AlarmColumns.ALARM_ID_INDEX);
-            final int hour = cursor.getInt(Alarms.AlarmColumns.ALARM_HOUR_INDEX);
-            final int minutes = cursor.getInt(Alarms.AlarmColumns.ALARM_MINUTES_INDEX);
-            final Alarms.DaysOfWeek daysOfWeek = new Alarms.DaysOfWeek(
-                    cursor.getInt(Alarms.AlarmColumns.ALARM_DAYS_OF_WEEK_INDEX));
-            final boolean enabled = cursor.getInt(Alarms.AlarmColumns.ALARM_ENABLED_INDEX) == 1;
-            final String label =
-                    cursor.getString(Alarms.AlarmColumns.ALARM_MESSAGE_INDEX);
+            final Alarm alarm = new Alarm(cursor);
 
             CheckBox onButton = (CheckBox)view.findViewById(R.id.alarmButton);
-            onButton.setChecked(enabled);
+            onButton.setChecked(alarm.enabled);
             onButton.setOnClickListener(new OnClickListener() {
                     public void onClick(View v) {
                         boolean isChecked = ((CheckBox) v).isChecked();
-                        Alarms.enableAlarm(AlarmClock.this, id, isChecked);
+                        Alarms.enableAlarm(AlarmClock.this, alarm.id,
+                            isChecked);
                         if (isChecked) {
-                            SetAlarm.popAlarmSetToast(
-                                    AlarmClock.this, hour, minutes, daysOfWeek);
+                            SetAlarm.popAlarmSetToast(AlarmClock.this,
+                                alarm.hour, alarm.minutes, alarm.daysOfWeek);
                         }
                     }
             });
 
-            DigitalClock digitalClock = (DigitalClock)view.findViewById(R.id.digitalClock);
-            if (Log.LOGV) Log.v("bindView " + cursor.getPosition() + " " + id + " " + hour +
-                                ":" + minutes + " " + daysOfWeek.toString(context, true) + " dc " + digitalClock);
+            DigitalClock digitalClock =
+                    (DigitalClock) view.findViewById(R.id.digitalClock);
 
             // set the alarm text
             final Calendar c = Calendar.getInstance();
-            c.set(Calendar.HOUR_OF_DAY, hour);
-            c.set(Calendar.MINUTE, minutes);
+            c.set(Calendar.HOUR_OF_DAY, alarm.hour);
+            c.set(Calendar.MINUTE, alarm.minutes);
             digitalClock.updateTime(c);
 
             // Set the repeat text or leave it blank if it does not repeat.
-            TextView daysOfWeekView = (TextView) digitalClock.findViewById(R.id.daysOfWeek);
+            TextView daysOfWeekView =
+                    (TextView) digitalClock.findViewById(R.id.daysOfWeek);
             final String daysOfWeekStr =
-                    daysOfWeek.toString(AlarmClock.this, false);
+                    alarm.daysOfWeek.toString(AlarmClock.this, false);
             if (daysOfWeekStr != null && daysOfWeekStr.length() != 0) {
                 daysOfWeekView.setText(daysOfWeekStr);
                 daysOfWeekView.setVisibility(View.VISIBLE);
@@ -152,18 +146,14 @@ public class AlarmClock extends Activity implements OnItemClickListener {
             // Display the label
             TextView labelView =
                     (TextView) digitalClock.findViewById(R.id.label);
-            if (label != null && label.length() != 0) {
-                labelView.setText(label);
+            if (alarm.label != null && alarm.label.length() != 0) {
+                labelView.setText(alarm.label);
                 labelView.setVisibility(View.VISIBLE);
             } else {
                 labelView.setVisibility(View.GONE);
             }
         }
     };
-
-    private boolean isAlarmEnabled(final Cursor c) {
-        return c.getInt(Alarms.AlarmColumns.ALARM_ENABLED_INDEX) == 1;
-    }
 
     @Override
     public boolean onContextItemSelected(final MenuItem item) {
@@ -190,16 +180,11 @@ public class AlarmClock extends Activity implements OnItemClickListener {
             case R.id.enable_alarm:
                 final Cursor c = (Cursor) mAlarmsList.getAdapter()
                         .getItem(info.position);
-                boolean enabled = isAlarmEnabled(c);
-                Alarms.enableAlarm(this, id, !enabled);
-                if (!enabled) {
-                    final int hour =
-                            c.getInt(Alarms.AlarmColumns.ALARM_HOUR_INDEX);
-                    final int minutes =
-                            c.getInt(Alarms.AlarmColumns.ALARM_MINUTES_INDEX);
-                    final Alarms.DaysOfWeek daysOfWeek = new Alarms.DaysOfWeek(
-                            c.getInt(Alarms.AlarmColumns.ALARM_DAYS_OF_WEEK_INDEX));
-                    SetAlarm.popAlarmSetToast(this, hour, minutes, daysOfWeek);
+                final Alarm alarm = new Alarm(c);
+                Alarms.enableAlarm(this, alarm.id, !alarm.enabled);
+                if (!alarm.enabled) {
+                    SetAlarm.popAlarmSetToast(this, alarm.hour, alarm.minutes,
+                            alarm.daysOfWeek);
                 }
                 return true;
 
@@ -320,15 +305,12 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
         final Cursor c =
                 (Cursor) mAlarmsList.getAdapter().getItem((int) info.position);
-        final int hour = c.getInt(Alarms.AlarmColumns.ALARM_HOUR_INDEX);
-        final int minutes = c.getInt(Alarms.AlarmColumns.ALARM_MINUTES_INDEX);
-        final String label =
-                c.getString(Alarms.AlarmColumns.ALARM_MESSAGE_INDEX);
+        final Alarm alarm = new Alarm(c);
 
         // Construct the Calendar to compute the time.
         final Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, hour);
-        cal.set(Calendar.MINUTE, minutes);
+        cal.set(Calendar.HOUR_OF_DAY, alarm.hour);
+        cal.set(Calendar.MINUTE, alarm.minutes);
         final String time = Alarms.formatTime(this, cal);
 
         // Inflate the custom view and set each TextView's text.
@@ -336,19 +318,19 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         TextView textView = (TextView) v.findViewById(R.id.header_time);
         textView.setText(time);
         textView = (TextView) v.findViewById(R.id.header_label);
-        textView.setText(label);
+        textView.setText(alarm.label);
 
         // Set the custom view on the menu.
         menu.setHeaderView(v);
         // Change the text to "disable" if the alarm is already enabled.
-        if (isAlarmEnabled(c)) {
+        if (alarm.enabled) {
             menu.findItem(R.id.enable_alarm).setTitle(R.string.disable_alarm);
         }
     }
 
     public void onItemClick(AdapterView parent, View v, int pos, long id) {
         Intent intent = new Intent(this, SetAlarm.class);
-        intent.putExtra(Alarms.ID, (int) id);
+        intent.putExtra(Alarms.ALARM_ID, (int) id);
         startActivity(intent);
     }
 
@@ -378,7 +360,7 @@ public class AlarmClock extends Activity implements OnItemClickListener {
                     Log.v("In AlarmClock, new alarm id = " + newId);
                 }
                 Intent intent = new Intent(this, SetAlarm.class);
-                intent.putExtra(Alarms.ID, newId);
+                intent.putExtra(Alarms.ALARM_ID, newId);
                 startActivity(intent);
                 return true;
 

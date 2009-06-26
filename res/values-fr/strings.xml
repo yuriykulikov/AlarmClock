@@ -28,12 +28,10 @@
     <string name="alarm_repeat">"Répéter"</string>
     <string name="alert">"Sonnerie"</string>
     <string name="time">"Heure"</string>
-    <string name="alert_title">"Alarme"</string>
     <string name="alarm_alert_dismiss_text">"Quitter"</string>
     <string name="alarm_alert_alert_silenced">"Alarme interrompue après <xliff:g id="MINUTES">%d</xliff:g> minutes"</string>
     <string name="alarm_alert_snooze_text">"Répéter"</string>
     <string name="alarm_alert_snooze_set">"Répétition dans <xliff:g id="MINUTES">%d</xliff:g> minutes."</string>
-    <string name="alarm_alert_snooze_not_set">"Répétition non activée : prochaine alarme à <xliff:g id="TIME">%s</xliff:g>"</string>
     <string name="alarm_set">"Prochaine alarme dans <xliff:g id="TIME_DELTA">%s</xliff:g>."</string>
     <string name="combiner">"<xliff:g id="XXX_0">%1$s</xliff:g><xliff:g id="XXX_1">%2$s</xliff:g><xliff:g id="XXX_2">%3$s</xliff:g><xliff:g id="XXX_3">%4$s</xliff:g><xliff:g id="XXX_4">%5$s</xliff:g>"</string>
     <string name="day">"1 jour"</string>
