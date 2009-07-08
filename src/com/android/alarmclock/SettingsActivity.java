@@ -36,23 +36,15 @@ public class SettingsActivity extends PreferenceActivity
 
     private static final String KEY_ALARM_IN_SILENT_MODE =
             "alarm_in_silent_mode";
-    private static final String KEY_ALARM_SNOOZE =
+    static final String KEY_ALARM_SNOOZE =
             "snooze_duration";
-    private CheckBoxPreference mAlarmInSilentModePref;
+    static final String KEY_VOLUME_BEHAVIOR =
+            "volume_button_setting";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         addPreferencesFromResource(R.xml.settings);
-
-        mAlarmInSilentModePref =
-                (CheckBoxPreference) findPreference(KEY_ALARM_IN_SILENT_MODE);
-
-        final ListPreference snooze =
-                (ListPreference) findPreference(KEY_ALARM_SNOOZE);
-        snooze.setSummary(snooze.getEntry());
-        snooze.setOnPreferenceChangeListener(this);
     }
 
     @Override
@@ -64,14 +56,13 @@ public class SettingsActivity extends PreferenceActivity
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
             Preference preference) {
-
-        if (preference == mAlarmInSilentModePref) {
-
+        if (KEY_ALARM_IN_SILENT_MODE.equals(preference.getKey())) {
+            CheckBoxPreference pref = (CheckBoxPreference) preference;
             int ringerModeStreamTypes = Settings.System.getInt(
                     getContentResolver(),
                     Settings.System.MODE_RINGER_STREAMS_AFFECTED, 0);
 
-            if (mAlarmInSilentModePref.isChecked()) {
+            if (pref.isChecked()) {
                 ringerModeStreamTypes &= ~ALARM_STREAM_TYPE_BIT;
             } else {
                 ringerModeStreamTypes |= ALARM_STREAM_TYPE_BIT;
@@ -88,17 +79,25 @@ public class SettingsActivity extends PreferenceActivity
     }
 
     public boolean onPreferenceChange(Preference pref, Object newValue) {
-        ListPreference listPref = (ListPreference) pref;
-        int idx = listPref.findIndexOfValue((String) newValue);
+        final ListPreference listPref = (ListPreference) pref;
+        final int idx = listPref.findIndexOfValue((String) newValue);
         listPref.setSummary(listPref.getEntries()[idx]);
         return true;
     }
 
     private void refresh() {
-        int silentModeStreams = Settings.System.getInt(getContentResolver(),
-                Settings.System.MODE_RINGER_STREAMS_AFFECTED, 0);
-        mAlarmInSilentModePref.setChecked(
+        final CheckBoxPreference alarmInSilentModePref =
+                (CheckBoxPreference) findPreference(KEY_ALARM_IN_SILENT_MODE);
+        final int silentModeStreams =
+                Settings.System.getInt(getContentResolver(),
+                        Settings.System.MODE_RINGER_STREAMS_AFFECTED, 0);
+        alarmInSilentModePref.setChecked(
                 (silentModeStreams & ALARM_STREAM_TYPE_BIT) == 0);
+
+        final ListPreference snooze =
+                (ListPreference) findPreference(KEY_ALARM_SNOOZE);
+        snooze.setSummary(snooze.getEntry());
+        snooze.setOnPreferenceChangeListener(this);
     }
 
 }

@@ -46,8 +46,12 @@ import java.util.Calendar;
  */
 public class AlarmAlert extends Activity {
 
+    // These defaults must match the values in res/xml/settings.xml
     private static final String DEFAULT_SNOOZE = "10";
+    private static final String DEFAULT_VOLUME_BEHAVIOR = "2";
+
     private Alarm mAlarm;
+    private int mVolumeBehavior;
 
     // Receives the ALARM_KILLED action from the AlarmKlaxon.
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -65,6 +69,13 @@ public class AlarmAlert extends Activity {
         super.onCreate(icicle);
 
         mAlarm = getIntent().getParcelableExtra(Alarms.ALARM_INTENT_EXTRA);
+
+        // Get the volume/camera button behavior setting
+        final String vol =
+                PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(SettingsActivity.KEY_VOLUME_BEHAVIOR,
+                        DEFAULT_VOLUME_BEHAVIOR);
+        mVolumeBehavior = Integer.parseInt(vol);
 
         requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
@@ -131,7 +142,7 @@ public class AlarmAlert extends Activity {
     private void snooze() {
         final String snooze =
                 PreferenceManager.getDefaultSharedPreferences(this)
-                .getString("snooze_duration", DEFAULT_SNOOZE);
+                .getString(SettingsActivity.KEY_ALARM_SNOOZE, DEFAULT_SNOOZE);
         int snoozeMinutes = Integer.parseInt(snooze);
 
         final long snoozeTime = System.currentTimeMillis()
@@ -240,7 +251,18 @@ public class AlarmAlert extends Activity {
             case KeyEvent.KEYCODE_CAMERA:
             case KeyEvent.KEYCODE_FOCUS:
                 if (up) {
-                    dismiss(false);
+                    switch (mVolumeBehavior) {
+                        case 1:
+                            snooze();
+                            break;
+
+                        case 2:
+                            dismiss(false);
+                            break;
+
+                        default:
+                            break;
+                    }
                 }
                 return true;
             default:

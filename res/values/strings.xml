@@ -187,7 +187,7 @@
     <string name="alarm_volume_title">Alarm volume</string>
 
     <!-- Setting summary for changing the alarm volume. -->
-    <string name="alarm_volume_summary">Set volume for alarms</string>
+    <string name="alarm_volume_summary">Set the volume of alarms</string>
 
     <!-- Summary for the alarm preference when silent is chosen. -->
     <string name="silent_alarm_summary">Silent</string>
@@ -196,12 +196,30 @@
     <string name="alarm_notify_text">Select to snooze or dismiss this alarm.</string>
 
     <!-- Text to display in the notification ticker and label -->
-    <string name="alarm_notify_snooze_label"><xliff:g id="label">%s</xliff:g>
-      (snoozed)</string>
+    <string name="alarm_notify_snooze_label"><xliff:g id="label">%s</xliff:g> (snoozed)</string>
 
     <!-- Text to display in the notification when the alarm has been snoozed -->
-    <string name="alarm_notify_snooze_text">Alarm set for <xliff:g
-        id="time">%s</xliff:g>. Click to cancel.</string>
+    <string name="alarm_notify_snooze_text">Alarm set for <xliff:g id="time">%s</xliff:g>. Select to cancel.</string>
+
+    <!-- Title of the setting to change the volume/camera button behavior. -->
+    <string name="volume_button_setting_title">Side button behavior</string>
+
+    <!-- The summary of the side button setting. -->
+    <string name="volume_button_setting_summary">Set the desired behavior of the side buttons when pressed during an alarm</string>
+
+    <!-- Entries listed in the setting for the side-button action. -->
+    <string-array name="volume_button_setting_entries">
+      <item>None</item>
+      <item>Snooze</item>
+      <item>Dismiss</item>
+    </string-array>
+
+    <!-- Values for the side-button setting. -->
+    <string-array name="volume_button_setting_values">
+      <item>0</item>
+      <item>1</item>
+      <item>2</item>
+    </string-array>
 </resources>
 
 
