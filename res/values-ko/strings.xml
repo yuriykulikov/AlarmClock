@@ -24,15 +24,17 @@
     <string name="label">"라벨"</string>
     <string name="default_label">"알람"</string>
     <string name="set_alarm">"알람 설정"</string>
+    <string name="enable">"알람 사용"</string>
     <string name="alarm_vibrate">"진동"</string>
     <string name="alarm_repeat">"반복"</string>
     <string name="alert">"벨소리"</string>
     <string name="time">"시간"</string>
     <string name="alarm_alert_dismiss_text">"해제"</string>
-    <string name="alarm_alert_alert_silenced">"<xliff:g id="MINUTES">%d</xliff:g>분 후에 알람이 꺼집니다."</string>
-    <string name="alarm_alert_snooze_text">"스누즈"</string>
-    <string name="alarm_alert_snooze_set">"<xliff:g id="MINUTES">%d</xliff:g>분 동안 스누즈"</string>
-    <string name="alarm_set">"이 알람은 지금부터 <xliff:g id="TIME_DELTA">%s</xliff:g> 동안 설정됩니다."</string>
+    <string name="alarm_alert_alert_silenced">"<xliff:g id="MINUTES">%d</xliff:g>분 후 알람이 중지됨"</string>
+    <string name="alarm_alert_snooze_text">"다시 울림"</string>
+    <string name="alarm_alert_snooze_set">"<xliff:g id="MINUTES">%d</xliff:g>분 동안 알람 일시 중지"</string>
+    <string name="alarm_alert_snooze_not_set">"다시 울림을 설정할 수 없음 -- 다음 알람 <xliff:g id="TIME">%s</xliff:g>"</string>
+    <string name="alarm_set">"지금부터 <xliff:g id="TIME_DELTA">%s</xliff:g> 후로 알람이 설정됩니다."</string>
     <string name="combiner">"<xliff:g id="XXX_0">%1$s</xliff:g><xliff:g id="XXX_1">%2$s</xliff:g><xliff:g id="XXX_2">%3$s</xliff:g><xliff:g id="XXX_3">%4$s</xliff:g><xliff:g id="XXX_4">%5$s</xliff:g>"</string>
     <string name="day">"1일"</string>
     <string name="days">"<xliff:g id="DAYS">%s</xliff:g>일"</string>
@@ -44,10 +46,10 @@
     <string name="minute">"1분"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g>분"</string>
     <string name="every_day">"매일"</string>
-    <string name="never">"안 함"</string>
+    <string name="never">"반복 안함"</string>
     <string name="day_concat">", "</string>
     <string name="clock_instructions">"표시할 시계를 선택하세요."</string>
-    <string name="error">"알람이 설정되지 않음"</string>
+    <string name="error">"알람 설정 안됨"</string>
     <string name="dberror">"죄송합니다. 알람을 설정할 수 없습니다."</string>
     <string name="analog_gadget">"아날로그 시계"</string>
     <string name="settings">"설정"</string>
