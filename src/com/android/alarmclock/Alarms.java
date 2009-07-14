@@ -80,7 +80,8 @@ public class Alarms {
     private final static String DM24 = "E k:mm";
 
     private final static String M12 = "h:mm aa";
-    private final static String M24 = "k:mm";
+    // Shared with DigitalClock
+    final static String M24 = "kk:mm";
 
     /**
      * Creates a new Alarm.
