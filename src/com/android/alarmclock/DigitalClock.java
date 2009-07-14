@@ -40,7 +40,6 @@ import java.util.Calendar;
 public class DigitalClock extends LinearLayout {
 
     private final static String M12 = "h:mm";
-    private final static String M24 = "k:mm";
 
     private Calendar mCalendar;
     private String mFormat;
@@ -188,7 +187,7 @@ public class DigitalClock extends LinearLayout {
     }
 
     private void setDateFormat() {
-        mFormat = Alarms.get24HourMode(mContext) ? M24 : M12;
+        mFormat = Alarms.get24HourMode(mContext) ? Alarms.M24 : M12;
         mAmPm.setShowAmPm(mFormat == M12);
     }
 

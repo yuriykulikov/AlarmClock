@@ -40,20 +40,21 @@ import java.text.DateFormatSymbols;
  */
 public class Alarms {
 
-    public final static String ALARM_ALERT_ACTION = "com.android.alarmclock.ALARM_ALERT";
-    public final static String ID = "alarm_id";
-    public final static String TIME = "alarm_time";
-    public final static String LABEL = "alarm_label";
+    final static String ALARM_ALERT_ACTION = "com.android.alarmclock.ALARM_ALERT";
+    final static String ID = "alarm_id";
+    final static String TIME = "alarm_time";
+    final static String LABEL = "alarm_label";
 
     final static String PREF_SNOOZE_ID = "snooze_id";
     final static String PREF_SNOOZE_TIME = "snooze_time";
     final static String PREF_SNOOZE_LABEL = "snooze_label";
 
     private final static String DM12 = "E h:mm aa";
-    private final static String DM24 = "E k:mm";
+    private final static String DM24 = "E kk:mm";
 
     private final static String M12 = "h:mm aa";
-    private final static String M24 = "k:mm";
+    // Shared with DigitalClock
+    final static String M24 = "kk:mm";
 
     /**
      * Mapping from days in this application (where Monday is 0) to
