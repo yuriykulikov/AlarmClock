@@ -35,15 +35,10 @@
     <string name="alarm_alert_snooze_text">"Posponer"</string>
     <string name="alarm_alert_snooze_set">"La alarma volverá a sonar en <xliff:g id="MINUTES">%d</xliff:g> minutos."</string>
     <string name="alarm_alert_snooze_not_set">"No se ha pospuesto la alarma, ya que la siguiente alarma sonará a las <xliff:g id="TIME">%s</xliff:g>."</string>
-    <string name="alarm_set">"La alarma sonará en <xliff:g id="TIME_DELTA">%s</xliff:g>."</string>
-    <string name="combiner">"<xliff:g id="XXX_0">%1$s</xliff:g><xliff:g id="XXX_1">%2$s</xliff:g><xliff:g id="XXX_2">%3$s</xliff:g><xliff:g id="XXX_3">%4$s</xliff:g><xliff:g id="XXX_4">%5$s</xliff:g>"</string>
     <string name="day">"1 día"</string>
     <string name="days">"<xliff:g id="DAYS">%s</xliff:g> días"</string>
     <string name="hour">"1 hora"</string>
     <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> horas"</string>
-    <string name="and">" y "</string>
-    <string name="space">" "</string>
-    <string name="subminute">"menos de 1 minuto"</string>
     <string name="minute">"1 minuto"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> minutos"</string>
     <string name="every_day">"todos los días"</string>

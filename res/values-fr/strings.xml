@@ -35,15 +35,10 @@
     <string name="alarm_alert_snooze_text">"Répéter"</string>
     <string name="alarm_alert_snooze_set">"Répétition dans <xliff:g id="MINUTES">%d</xliff:g> minutes."</string>
     <string name="alarm_alert_snooze_not_set">"Répétition non activée : prochaine alarme à <xliff:g id="TIME">%s</xliff:g>"</string>
-    <string name="alarm_set">"Prochaine alarme dans <xliff:g id="TIME_DELTA">%s</xliff:g>."</string>
-    <string name="combiner">"<xliff:g id="XXX_0">%1$s</xliff:g><xliff:g id="XXX_1">%2$s</xliff:g><xliff:g id="XXX_2">%3$s</xliff:g><xliff:g id="XXX_3">%4$s</xliff:g><xliff:g id="XXX_4">%5$s</xliff:g>"</string>
     <string name="day">"1 jour"</string>
     <string name="days">"<xliff:g id="DAYS">%s</xliff:g> jours"</string>
     <string name="hour">"1 heure"</string>
     <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> heures"</string>
-    <string name="and">" et "</string>
-    <string name="space">" "</string>
-    <string name="subminute">"moins d\'une minute"</string>
     <string name="minute">"1 minute"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> minutes"</string>
     <string name="every_day">"Tous les jours"</string>

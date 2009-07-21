@@ -347,26 +347,12 @@ public class SetAlarm extends PreferenceActivity
         boolean dispHour = hours > 0;
         boolean dispMinute = minutes > 0;
 
-        String ret;
-        if (!(dispDays || dispHour || dispMinute)) {
-            ret = context.getString(R.string.subminute);
-        } else {
-            String parts[] = new String[5];
-            parts[0] = daySeq;
-            parts[1] = !dispDays ? "" :
-                    dispHour && dispMinute ? context.getString(R.string.space) :
-                    !dispHour && !dispMinute ? "" :
-                    context.getString(R.string.and);
-            parts[2] = dispHour ? hourSeq : "";
-            parts[3] = dispHour && dispMinute ? context.getString(R.string.and) : "";
-            parts[4] = dispMinute ? minSeq : "";
-            ret = context.getString(R.string.combiner, (Object[])parts);
-        }
+        int index = (dispDays ? 1 : 0) |
+                    (dispHour ? 2 : 0) |
+                    (dispMinute ? 4 : 0);
 
-        ret = context.getString(R.string.alarm_set, ret);
-        /* if (Log.LOGV) Log.v("** TOAST daySeq " + daySeq + " hourSeq " + hourSeq +
-           " minSeq " + minSeq + " ret " + ret); */
-        return ret;
+        String[] formats = context.getResources().getStringArray(R.array.alarm_set);
+        return String.format(formats[index], daySeq, hourSeq, minSeq);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
