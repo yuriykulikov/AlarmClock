@@ -32,15 +32,10 @@
     <string name="alarm_alert_alert_silenced">"闹钟响铃时间为 <xliff:g id="MINUTES">%d</xliff:g> 分钟"</string>
     <string name="alarm_alert_snooze_text">"暂停"</string>
     <string name="alarm_alert_snooze_set">"暂停 <xliff:g id="MINUTES">%d</xliff:g> 分钟。"</string>
-    <string name="alarm_set">"该闹钟设置为从现在起 <xliff:g id="TIME_DELTA">%s</xliff:g>后再提醒。"</string>
-    <string name="combiner">"<xliff:g id="XXX_0">%1$s</xliff:g><xliff:g id="XXX_1">%2$s</xliff:g><xliff:g id="XXX_2">%3$s</xliff:g><xliff:g id="XXX_3">%4$s</xliff:g><xliff:g id="XXX_4">%5$s</xliff:g>"</string>
     <string name="day">"1 天"</string>
     <string name="days">"<xliff:g id="DAYS">%s</xliff:g> 天"</string>
     <string name="hour">"1 小时"</string>
     <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> 小时"</string>
-    <string name="and">" 和 "</string>
-    <string name="space">" "</string>
-    <string name="subminute">"少于 1 分钟"</string>
     <string name="minute">"1 分钟"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> 分钟"</string>
     <string name="every_day">"每天"</string>

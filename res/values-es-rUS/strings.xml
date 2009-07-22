@@ -32,15 +32,10 @@
     <string name="alarm_alert_alert_silenced">"Alarma silenciada después de <xliff:g id="MINUTES">%d</xliff:g> minutos"</string>
     <string name="alarm_alert_snooze_text">"Recurrente"</string>
     <string name="alarm_alert_snooze_set">"Recurrente a los <xliff:g id="MINUTES">%d</xliff:g> minutos."</string>
-    <string name="alarm_set">"Esta alarma se activará en <xliff:g id="TIME_DELTA">%s</xliff:g> a partir de ahora."</string>
-    <string name="combiner">"Segmento <xliff:g id="XXX_0">%1$s</xliff:g><xliff:g id="XXX_1">%2$s</xliff:g><xliff:g id="XXX_2">%3$s</xliff:g><xliff:g id="XXX_3">%4$s</xliff:g><xliff:g id="XXX_4">%5$s</xliff:g>"</string>
     <string name="day">"un día"</string>
     <string name="days">"<xliff:g id="DAYS">%s</xliff:g> días"</string>
     <string name="hour">"1 hora"</string>
     <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> horas"</string>
-    <string name="and">" y "</string>
-    <string name="space">" Segmento "</string>
-    <string name="subminute">"menos de 1 minuto"</string>
     <string name="minute">"1 minuto"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> minutos"</string>
     <string name="every_day">"todos los días"</string>

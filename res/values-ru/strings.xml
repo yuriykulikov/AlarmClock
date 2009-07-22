@@ -32,15 +32,10 @@
     <string name="alarm_alert_alert_silenced">"Будильник выключился спустя <xliff:g id="MINUTES">%d</xliff:g> мин."</string>
     <string name="alarm_alert_snooze_text">"Спящий режим"</string>
     <string name="alarm_alert_snooze_set">"Отсрочка будильника на <xliff:g id="MINUTES">%d</xliff:g> мин."</string>
-    <string name="alarm_set">"Будильник зазвонит через <xliff:g id="TIME_DELTA">%s</xliff:g>."</string>
-    <string name="combiner">"<xliff:g id="XXX_0">%1$s</xliff:g><xliff:g id="XXX_1">%2$s</xliff:g><xliff:g id="XXX_2">%3$s</xliff:g><xliff:g id="XXX_3">%4$s</xliff:g><xliff:g id="XXX_4">%5$s</xliff:g>"</string>
     <string name="day">"1 день"</string>
     <string name="days">"<xliff:g id="DAYS">%s</xliff:g> дн."</string>
     <string name="hour">"1 час"</string>
     <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> ч."</string>
-    <string name="and">" и "</string>
-    <string name="space">" "</string>
-    <string name="subminute">"меньше 1 минуты"</string>
     <string name="minute">"1 минута"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> мин."</string>
     <string name="every_day">"каждый день"</string>
