@@ -46,8 +46,6 @@
     <string name="subminute">"少於 1 分鐘"</string>
     <string name="minute">"1 分鐘"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> 分鐘"</string>
-    <string name="am">"am"</string>
-    <string name="pm">"pm"</string>
     <string name="every_day">"每天"</string>
     <string name="never">"從不"</string>
     <string name="day_concat">"、 "</string>
@@ -55,24 +53,6 @@
     <string name="error">"鬧鐘未設定"</string>
     <string name="dberror">"抱歉，無法設定鬧鐘。"</string>
     <string name="analog_gadget">"類比時鐘"</string>
-  <string-array name="days_of_week">
-    <item>"星期一"</item>
-    <item>"星期二"</item>
-    <item>"星期三"</item>
-    <item>"星期四"</item>
-    <item>"星期五"</item>
-    <item>"星期六"</item>
-    <item>"星期日"</item>
-  </string-array>
-  <string-array name="days_of_week_short">
-    <item>"週一"</item>
-    <item>"週二"</item>
-    <item>"週三"</item>
-    <item>"週四"</item>
-    <item>"週五"</item>
-    <item>"週六"</item>
-    <item>"週日"</item>
-  </string-array>
     <!-- no translation found for settings (5849739030579520686) -->
     <skip />
     <!-- no translation found for alarm_in_silent_mode_title (3892612644543516705) -->

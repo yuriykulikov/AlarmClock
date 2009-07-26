@@ -41,6 +41,7 @@ import android.widget.TextView;
 import android.widget.CheckBox;
 
 import java.util.Calendar;
+import java.text.DateFormatSymbols;
 
 /**
  * AlarmClock application.
@@ -48,7 +49,6 @@ import java.util.Calendar;
 public class AlarmClock extends Activity {
 
     final static String PREFERENCES = "AlarmClock";
-    final static int SET_ALARM = 1;
     final static String PREF_CLOCK_FACE = "face";
     final static String PREF_SHOW_CLOCK = "show_clock";
 
@@ -67,6 +67,8 @@ public class AlarmClock extends Activity {
     private MenuItem mToggleClockItem;
     private ListView mAlarmsList;
     private Cursor mCursor;
+
+    private String mAm, mPm;
 
     /**
      * Which clock face to show
@@ -91,6 +93,10 @@ public class AlarmClock extends Activity {
 
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             View ret = mFactory.inflate(R.layout.alarm_time, parent, false);
+
+            ((TextView) ret.findViewById(R.id.am)).setText(mAm);
+            ((TextView) ret.findViewById(R.id.pm)).setText(mPm);
+
             DigitalClock digitalClock = (DigitalClock)ret.findViewById(R.id.digitalClock);
             digitalClock.setLive(false);
             if (Log.LOGV) Log.v("newView " + cursor.getPosition());
@@ -129,7 +135,7 @@ public class AlarmClock extends Activity {
                         if (true) {
                             Intent intent = new Intent(AlarmClock.this, SetAlarm.class);
                             intent.putExtra(Alarms.ID, id);
-                            startActivityForResult(intent, SET_ALARM);
+                            startActivity(intent);
                         } else {
                             // TESTING: immediately pop alarm
                             Intent fireAlarm = new Intent(AlarmClock.this, AlarmAlert.class);
@@ -198,6 +204,10 @@ public class AlarmClock extends Activity {
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+
+        String[] ampm = new DateFormatSymbols().getAmPmStrings();
+        mAm = ampm[0];
+        mPm = ampm[1];
 
         // sanity check -- no database, no clock
         if (getContentResolver() == null) {
@@ -268,25 +278,27 @@ public class AlarmClock extends Activity {
         if (mClock != null) {
             mClockLayout.removeView(mClock);
         }
-        mClock = mFactory.inflate(CLOCKS[mFace], null);
-        mClockLayout.addView(mClock, 0);
+
+        LayoutInflater.from(this).inflate(CLOCKS[mFace], mClockLayout);
+        mClock = findViewById(R.id.clock);
+
+        TextView am = (TextView) findViewById(R.id.am);
+        TextView pm = (TextView) findViewById(R.id.pm);
+
+        if (am != null) {
+            am.setText(mAm);
+        }
+        if (pm != null) {
+            pm.setText(mPm);
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
+        // Inflate our menu.
+        getMenuInflater().inflate(R.menu.main_menu, menu);
 
-        mAddAlarmItem = menu.add(0, 0, 0, R.string.add_alarm);
-        mAddAlarmItem.setIcon(android.R.drawable.ic_menu_add);
-
-        mToggleClockItem = menu.add(0, 0, 0, R.string.hide_clock);
-        mToggleClockItem.setIcon(R.drawable.ic_menu_clock_face);
-        
-        MenuItem settingsItem = menu.add(0, 0, 0, R.string.settings);
-        settingsItem.setIcon(android.R.drawable.ic_menu_preferences);
-        settingsItem.setIntent(new Intent(this, SettingsActivity.class));
-
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     /**
@@ -295,32 +307,41 @@ public class AlarmClock extends Activity {
      */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        mAddAlarmItem.setVisible(mAlarmsList.getChildCount() < MAX_ALARM_COUNT);
-        mToggleClockItem.setTitle(getClockVisibility() ? R.string.hide_clock :
-                                  R.string.show_clock);
-        return true;
+        menu.findItem(R.id.menu_add_alarm).setVisible(
+                mAlarmsList.getAdapter().getCount() < MAX_ALARM_COUNT);
+        menu.findItem(R.id.menu_toggle_clock).setTitle(
+                getClockVisibility() ? R.string.hide_clock
+                    : R.string.show_clock);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item == mAddAlarmItem) {
-            Uri uri = Alarms.addAlarm(getContentResolver());
-            // FIXME: scroll to new item.  mAlarmsList.requestChildRectangleOnScreen() ?
-            String segment = uri.getPathSegments().get(1);
-            int newId = Integer.parseInt(segment);
-            if (Log.LOGV) Log.v("In AlarmClock, new alarm id = " + newId);
-            Intent intent = new Intent(AlarmClock.this, SetAlarm.class);
-            intent.putExtra(Alarms.ID, newId);
-            startActivityForResult(intent, SET_ALARM);
-            return true;
-        } else if (item == mToggleClockItem) {
-            setClockVisibility(!getClockVisibility());
-            saveClockVisibility();
-            return true;
+        switch (item.getItemId()) {
+            case R.id.menu_add_alarm:
+                Uri uri = Alarms.addAlarm(getContentResolver());
+                // FIXME: scroll to new item?
+                String segment = uri.getPathSegments().get(1);
+                int newId = Integer.parseInt(segment);
+                if (Log.LOGV) {
+                    Log.v("In AlarmClock, new alarm id = " + newId);
+                }
+                Intent intent = new Intent(this, SetAlarm.class);
+                intent.putExtra(Alarms.ID, newId);
+                startActivity(intent);
+                return true;
+
+            case R.id.menu_toggle_clock:
+                setClockVisibility(!getClockVisibility());
+                saveClockVisibility();
+                return true;
+
+            case R.id.menu_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
         }
 
-        return false;
+        return super.onOptionsItemSelected(item);
     }
 
 

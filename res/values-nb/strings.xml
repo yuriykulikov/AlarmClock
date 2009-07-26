@@ -47,8 +47,6 @@
     <string name="subminute">"mindre enn et minutt"</string>
     <string name="minute">"et minutt"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> minutter"</string>
-    <string name="am">"am"</string>
-    <string name="pm">"pm"</string>
     <string name="every_day">"hver dag"</string>
     <string name="never">"Aldri"</string>
     <string name="day_concat">", "</string>
@@ -56,24 +54,6 @@
     <string name="error">"Alarmen ble ikke satt"</string>
     <string name="dberror">"Beklager, kunne ikke sette alarmen."</string>
     <string name="analog_gadget">"Analog klokke"</string>
-  <string-array name="days_of_week">
-    <item>"Mandag"</item>
-    <item>"Tirsdag"</item>
-    <item>"Onsdag"</item>
-    <item>"Torsdag"</item>
-    <item>"Fredag"</item>
-    <item>"Lørdag"</item>
-    <item>"Søndag"</item>
-  </string-array>
-  <string-array name="days_of_week_short">
-    <item>"man"</item>
-    <item>"tir"</item>
-    <item>"ons"</item>
-    <item>"tor"</item>
-    <item>"fre"</item>
-    <item>"lør"</item>
-    <item>"søn"</item>
-  </string-array>
     <string name="settings">"Innstillinger"</string>
     <string name="alarm_in_silent_mode_title">"Alarm i stillemodus"</string>
     <string name="alarm_in_silent_mode_summary">"Spill alarm selv når telefonen er i stillemodus"</string>

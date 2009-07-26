@@ -55,13 +55,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
-                    android:text="@string/am"
                     android:textSize="12sp"/>
                 <TextView android:id="@+id/pm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="-4dp"
-                    android:text="@string/pm"
                     android:textSize="12sp"/>
             </LinearLayout>
 

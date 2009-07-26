@@ -46,8 +46,6 @@
     <string name="subminute">"weniger als 1 Minute"</string>
     <string name="minute">"1 Minute"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> Minuten"</string>
-    <string name="am">"AM"</string>
-    <string name="pm">"PM"</string>
     <string name="every_day">"Täglich"</string>
     <string name="never">"Nie"</string>
     <string name="day_concat">", "</string>
@@ -55,24 +53,6 @@
     <string name="error">"Wecker nicht eingestellt"</string>
     <string name="dberror">"Der Wecker konnte nicht eingestellt werden."</string>
     <string name="analog_gadget">"Analoguhr"</string>
-  <string-array name="days_of_week">
-    <item>"Montag"</item>
-    <item>"Dienstag"</item>
-    <item>"Mittwoch"</item>
-    <item>"Donnerstag"</item>
-    <item>"Freitag"</item>
-    <item>"Samstag"</item>
-    <item>"Sonntag"</item>
-  </string-array>
-  <string-array name="days_of_week_short">
-    <item>"Mo"</item>
-    <item>"Di"</item>
-    <item>"Mi"</item>
-    <item>"Do"</item>
-    <item>"Fr"</item>
-    <item>"Sa"</item>
-    <item>"So"</item>
-  </string-array>
     <string name="settings">"Einstellungen"</string>
     <string name="alarm_in_silent_mode_title">"Alarm im Lautlosmodus"</string>
     <string name="alarm_in_silent_mode_summary">"Alarm auch im Lautlosmodus auslösen"</string>

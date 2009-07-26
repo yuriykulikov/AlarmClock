@@ -130,16 +130,9 @@ public class DigitalClock extends LinearLayout {
         mAttached = true;
 
         if (mAnimate) {
-            AnimationDrawable frameAnimation =
-                    (AnimationDrawable) mContext.getResources().getDrawable(
-                            R.drawable.animate_circle);
-            View digitalClock = findViewById(R.id.digitalClock);
-            digitalClock.setBackgroundDrawable(frameAnimation);
+            setBackgroundResource(R.drawable.animate_circle);
             /* Start the animation (looped playback by default). */
-            ((AnimationDrawable) digitalClock.getBackground()).start();
-            /* No luck wrapping animation or individual bitmaps in a
-               ScaleDrawable */
-            digitalClock.requestLayout();
+            ((AnimationDrawable) getBackground()).start();
         }
 
         if (mLive) {
