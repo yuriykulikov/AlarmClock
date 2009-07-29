@@ -17,25 +17,25 @@
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_label">"Despertador"</string>
     <string name="add_alarm">"Adicionar alarme"</string>
-    <string name="delete_alarm">"Excluir alarme"</string>
-    <string name="delete_alarm_confirm">"Este alarme será excluído."</string>
+    <string name="delete_alarm">"Eliminar alarme"</string>
+    <string name="delete_alarm_confirm">"Este alarme será eliminado."</string>
     <string name="show_clock">"Mostrar relógio"</string>
     <string name="hide_clock">"Ocultar relógio"</string>
-    <string name="label">"Marcador"</string>
+    <string name="label">"Etiqueta"</string>
     <string name="default_label">"Alarme"</string>
     <string name="set_alarm">"Definir alarme"</string>
-    <string name="enable">"Ativar o alarme"</string>
+    <string name="enable">"Activar alarme"</string>
     <string name="alarm_vibrate">"Vibrar"</string>
     <string name="alarm_repeat">"Repetir"</string>
     <string name="alert">"Toque"</string>
-    <string name="time">"Horário"</string>
+    <string name="time">"Hora"</string>
     <string name="alert_title">"Alarme"</string>
-    <string name="alarm_alert_dismiss_text">"Encerrar"</string>
-    <string name="alarm_alert_alert_silenced">"Alarme silenciado após <xliff:g id="MINUTES">%d</xliff:g> minutos"</string>
-    <string name="alarm_alert_snooze_text">"Colocar em modo de espera"</string>
-    <string name="alarm_alert_snooze_set">"Em espera por <xliff:g id="MINUTES">%d</xliff:g> minutos."</string>
-    <string name="alarm_alert_snooze_not_set">"Modo de espera não definido. Próximo alarme definido para <xliff:g id="TIME">%s</xliff:g>"</string>
-    <string name="alarm_set">"Este alarme está definido para daqui a  <xliff:g id="TIME_DELTA">%s</xliff:g>."</string>
+    <string name="alarm_alert_dismiss_text">"Ignorar"</string>
+    <string name="alarm_alert_alert_silenced">"Alarme silenciado após <xliff:g id="MINUTES">%d</xliff:g> minutos."</string>
+    <string name="alarm_alert_snooze_text">"Suspender"</string>
+    <string name="alarm_alert_snooze_set">"Suspenso por <xliff:g id="MINUTES">%d</xliff:g> minutos."</string>
+    <string name="alarm_alert_snooze_not_set">"Suspensão não definida -- próximo alarme definido para as <xliff:g id="TIME">%s</xliff:g>"</string>
+    <string name="alarm_set">"Este·alarme·dispara·daqui·a <xliff:g id="TIME_DELTA">%s</xliff:g>."</string>
     <string name="combiner">"<xliff:g id="XXX_0">%1$s</xliff:g><xliff:g id="XXX_1">%2$s</xliff:g><xliff:g id="XXX_2">%3$s</xliff:g><xliff:g id="XXX_3">%4$s</xliff:g><xliff:g id="XXX_4">%5$s</xliff:g>"</string>
     <string name="day">"1 dia"</string>
     <string name="days">"<xliff:g id="DAYS">%s</xliff:g> dias"</string>
@@ -49,11 +49,11 @@
     <string name="every_day">"todos os dias"</string>
     <string name="never">"Nunca"</string>
     <string name="day_concat">", "</string>
-    <string name="clock_instructions">"Selecione um relógio para exibir."</string>
+    <string name="clock_instructions">"Seleccione um relógio para visualizar."</string>
     <string name="error">"Alarme não definido"</string>
-    <string name="dberror">"Desculpe, não foi possível definir o alarme."</string>
+    <string name="dberror">"Lamentamos, mas não foi possível definir o alarme."</string>
     <string name="analog_gadget">"Relógio analógico"</string>
-    <string name="settings">"Configurações"</string>
-    <string name="alarm_in_silent_mode_title">"Alarme no modo silencioso"</string>
-    <string name="alarm_in_silent_mode_summary">"Tocar o alarme mesmo quando o telefone estiver no modo silencioso"</string>
+    <string name="settings">"Definições"</string>
+    <string name="alarm_in_silent_mode_title">"Alarme em modo silencioso"</string>
+    <string name="alarm_in_silent_mode_summary">"Fazer soar o alarme mesmo com o telefone em modo silencioso"</string>
 </resources>
