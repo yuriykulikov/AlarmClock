@@ -35,15 +35,10 @@
     <string name="alarm_alert_snooze_text">"貪睡"</string>
     <string name="alarm_alert_snooze_set">"再貪睡 <xliff:g id="MINUTES">%d</xliff:g> 分鐘。"</string>
     <string name="alarm_alert_snooze_not_set">"未設定貪睡鬧鐘 -- 下一次鬧鐘時間為 <xliff:g id="TIME">%s</xliff:g>"</string>
-    <string name="alarm_set">"還有 <xliff:g id="TIME_DELTA">%s</xliff:g> 會啟動鬧鐘。"</string>
-    <string name="combiner">"<xliff:g id="XXX_0">%1$s</xliff:g><xliff:g id="XXX_1">%2$s</xliff:g><xliff:g id="XXX_2">%3$s</xliff:g><xliff:g id="XXX_3">%4$s</xliff:g><xliff:g id="XXX_4">%5$s</xliff:g>"</string>
     <string name="day">"1 天"</string>
     <string name="days">"<xliff:g id="DAYS">%s</xliff:g> 天"</string>
     <string name="hour">"1 小時"</string>
     <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> 小時"</string>
-    <string name="and">" 又 "</string>
-    <string name="space">" "</string>
-    <string name="subminute">"少於 1 分鐘"</string>
     <string name="minute">"1 分鐘"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> 分鐘"</string>
     <string name="every_day">"每天"</string>

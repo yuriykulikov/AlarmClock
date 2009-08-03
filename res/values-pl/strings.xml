@@ -35,15 +35,10 @@
     <string name="alarm_alert_snooze_text">"Drzemka"</string>
     <string name="alarm_alert_snooze_set">"Drzemka przez <xliff:g id="MINUTES">%d</xliff:g> min."</string>
     <string name="alarm_alert_snooze_not_set">"Nie ustawiono drzemki – następny alarm: <xliff:g id="TIME">%s</xliff:g>"</string>
-    <string name="alarm_set">"Ustawiony alarm zadzwoni za <xliff:g id="TIME_DELTA">%s</xliff:g>"</string>
-    <string name="combiner">"<xliff:g id="XXX_0">%1$s</xliff:g><xliff:g id="XXX_1">%2$s</xliff:g><xliff:g id="XXX_2">%3$s</xliff:g><xliff:g id="XXX_3">%4$s</xliff:g><xliff:g id="XXX_4">%5$s</xliff:g>"</string>
     <string name="day">"1 dzień"</string>
     <string name="days">"<xliff:g id="DAYS">%s</xliff:g> dni"</string>
     <string name="hour">"1 godz."</string>
     <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> godz."</string>
-    <string name="and">" oraz "</string>
-    <string name="space">" "</string>
-    <string name="subminute">"mniej niż 1 min"</string>
     <string name="minute">"1 min"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> min"</string>
     <string name="every_day">"codziennie"</string>

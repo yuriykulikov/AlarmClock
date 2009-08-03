@@ -83,14 +83,28 @@
          alarm set for xxx."  -->
     <string name="alarm_alert_snooze_not_set">Snooze not set -- next alarm set for <xliff:g id="time">%s</xliff:g></string>
 
+    <!-- 0: nothing
+         1: days
+         2:      hours
+         3: days hours
+         4:            minutes
+         5: days       minutes
+         6:      hours minutes
+         7: days hours minutes
+    --><skip />
 
     <!-- Alarm confirmation toast: Describes how long from now until
          alarm fires -->
-    <string name="alarm_set">This alarm is set for <xliff:g id="time_delta">%s</xliff:g> from now.</string>
-
-    <!-- Alarm confirmation toast: A combiner that orders the segments
-         that follow -->
-    <string name="combiner"><xliff:g id="xxx">%1$s</xliff:g><xliff:g id="xxx">%2$s</xliff:g><xliff:g id="xxx">%3$s</xliff:g><xliff:g id="xxx">%4$s</xliff:g><xliff:g id="xxx">%5$s</xliff:g></string>
+    <string-array name="alarm_set">
+        <item>This alarm is set for less than 1 minute from now.</item>
+        <item>This alarm is set for <xliff:g id="DAYS" example="2 days">%1$s</xliff:g> from now.</item>
+        <item>This alarm is set for <xliff:g id="HOURS" example="2 hours">%2$s</xliff:g> from now.</item>
+        <item>This alarm is set for <xliff:g id="DAYS" example="2 days">%1$s</xliff:g> and <xliff:g id="HOURS" example="2 hours">%2$s</xliff:g> from now.</item>
+        <item>This alarm is set for <xliff:g id="MINUTES" example="2 minutes">%3$s</xliff:g> from now.</item>
+        <item>This alarm is set for <xliff:g id="DAYS" example="2 days">%1$s</xliff:g> and <xliff:g id="MINUTES" example="2 minutes">%3$s</xliff:g> from now.</item>
+        <item>This alarm is set for <xliff:g id="HOURS" example="2 hours">%2$s</xliff:g> and <xliff:g id="MINUTES" example="2 minutes">%3$s</xliff:g> from now.</item>
+        <item>This alarm is set for <xliff:g id="DAYS" example="2 days">%1$s</xliff:g>, <xliff:g id="HOURS" example="2 hours">%2$s</xliff:g>, and <xliff:g id="MINUTES" example="2 minutes">%3$s</xliff:g> from now.</item>
+    </string-array>
 
     <!-- Alarm confirmation toast: singular day -->
     <string name="day">"1 day"</string>
@@ -103,15 +117,6 @@
 
     <!-- Alarm confirmation toast: plural hours -->
     <string name="hours"><xliff:g id="hours">%s</xliff:g> hours</string>
-
-    <!-- Alarm confirmation toast: "and" to join hours and minutes -->
-    <string name="and">" and "</string>
-
-    <!-- Alarm confirmation toast: space  -->
-    <string name="space">" "</string>
-
-    <!-- Alarm confirmation toast: time less than one minute  -->
-    <string name="subminute">"less than 1 minute"</string>
 
     <!-- Alarm confirmation toast: singular minute  -->
     <string name="minute">"1 minute"</string>
