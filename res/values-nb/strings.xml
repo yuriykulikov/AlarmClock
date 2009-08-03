@@ -15,42 +15,48 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_label">"Alarm"</string>
-    <string name="add_alarm">"Legg til alarm"</string>
-    <string name="delete_alarm">"Slett alarm"</string>
-    <string name="delete_alarm_confirm">"Denne alarmen vil bli slettet."</string>
-    <string name="show_clock">"Vis klokke"</string>
-    <string name="hide_clock">"Fjern klokke"</string>
-    <string name="label">"Etikett"</string>
-    <string name="default_label">"Alarm"</string>
-    <string name="set_alarm">"Sett alarm"</string>
-    <string name="enable">"Slå på alarm"</string>
-    <string name="alarm_vibrate">"Vibrer"</string>
-    <string name="alarm_repeat">"Gjenta"</string>
-    <string name="alert">"Ringetone"</string>
-    <string name="time">"Tidspunkt"</string>
-    <string name="alert_title">"Alarm"</string>
-    <string name="alarm_alert_dismiss_text">"OK"</string>
-    <string name="alarm_alert_alert_silenced">"Alarmen ble stilnet etter <xliff:g id="MINUTES">%d</xliff:g> minutter"</string>
-    <string name="alarm_alert_snooze_text">"Slumre"</string>
-    <string name="alarm_alert_snooze_set">"Slumrer i <xliff:g id="MINUTES">%d</xliff:g> minutter."</string>
-    <string name="alarm_alert_snooze_not_set">"Slumrer ikke -- neste alarm vil gå av <xliff:g id="TIME">%s</xliff:g>"</string>
-    <!-- no translation found for combiner (3170916241487451546) -->
-    <skip />
-    <string name="day">"en dag"</string>
-    <string name="days">"<xliff:g id="DAYS">%s</xliff:g> dager"</string>
-    <string name="hour">"en time"</string>
-    <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> timer"</string>
-    <string name="minute">"et minutt"</string>
-    <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> minutter"</string>
-    <string name="every_day">"hver dag"</string>
-    <string name="never">"Aldri"</string>
-    <string name="day_concat">", "</string>
-    <string name="clock_instructions">"Velg klokken som skal vises."</string>
-    <string name="error">"Alarmen ble ikke satt"</string>
-    <string name="dberror">"Beklager, kunne ikke sette alarmen."</string>
-    <string name="analog_gadget">"Analog klokke"</string>
-    <string name="settings">"Innstillinger"</string>
-    <string name="alarm_in_silent_mode_title">"Alarm i stillemodus"</string>
-    <string name="alarm_in_silent_mode_summary">"Spill alarm selv når telefonen er i stillemodus"</string>
+    <string name="app_label" msgid="6642875149600019623">"Alarmklokke"</string>
+    <string name="add_alarm" msgid="5976616107390962899">"Legg til alarm"</string>
+    <string name="delete_alarm" msgid="3457780990646206817">"Slett alarm"</string>
+    <string name="delete_alarm_confirm" msgid="4237696873219106907">"Denne alarmen vil bli slettet."</string>
+    <string name="show_clock" msgid="8358759982675616915">"Vis klokke"</string>
+    <string name="hide_clock" msgid="3217727306480505694">"Skjul klokke"</string>
+    <string name="label" msgid="162189613902857319">"Etikett"</string>
+    <string name="default_label" msgid="5590025289805630372">"Alarm"</string>
+    <string name="set_alarm" msgid="9148359866152726808">"Sett alarm"</string>
+    <string name="enable" msgid="3089255608289797715">"Slå på alarm"</string>
+    <string name="alarm_vibrate" msgid="3476686921490362230">"Vibrer"</string>
+    <string name="alarm_repeat" msgid="7242985466344233206">"Gjenta"</string>
+    <string name="alert" msgid="6539852766423700221">"Ringetone"</string>
+    <string name="time" msgid="8067216534232296518">"Tidspunkt"</string>
+    <string name="alert_title" msgid="1600112166027371802">"Alarm"</string>
+    <string name="alarm_alert_dismiss_text" msgid="4942914605480888820">"Slå av"</string>
+    <string name="alarm_alert_alert_silenced" msgid="7918075929961104202">"Alarmen ble slått av etter <xliff:g id="MINUTES">%d</xliff:g> minutter"</string>
+    <string name="alarm_alert_snooze_text" msgid="1774416052207651584">"Slumre"</string>
+    <string name="alarm_alert_snooze_set" msgid="656470966696912087">"Slumrer i <xliff:g id="MINUTES">%d</xliff:g> minutter."</string>
+    <string name="alarm_alert_snooze_not_set" msgid="8783980489802220546">"Ikke slumring -- neste alarm utløses <xliff:g id="TIME">%s</xliff:g>"</string>
+    <!-- no translation found for alarm_set:0 (5163476010406761625) -->
+    <!-- no translation found for alarm_set:1 (7110525731259629055) -->
+    <!-- no translation found for alarm_set:2 (7003982794086186185) -->
+    <!-- no translation found for alarm_set:3 (7311021123230077742) -->
+    <!-- no translation found for alarm_set:4 (8431715191823114872) -->
+    <!-- no translation found for alarm_set:5 (3244151088673185428) -->
+    <!-- no translation found for alarm_set:6 (3663661342600168814) -->
+    <!-- no translation found for alarm_set:7 (7779544127785487304) -->
+    <string name="day" msgid="7984755014526510295">"1 dag"</string>
+    <string name="days" msgid="2070509222727852210">"<xliff:g id="DAYS">%s</xliff:g> dager"</string>
+    <string name="hour" msgid="2546819039651509323">"1 time"</string>
+    <string name="hours" msgid="2071487018566991613">"<xliff:g id="HOURS">%s</xliff:g> timer"</string>
+    <string name="minute" msgid="2486157997434653710">"1 minutt"</string>
+    <string name="minutes" msgid="6115838729146292526">"<xliff:g id="MINUTES">%s</xliff:g> minutter"</string>
+    <string name="every_day" msgid="1058994798884544691">"hver dag"</string>
+    <string name="never" msgid="54104287800571769">"Aldri"</string>
+    <string name="day_concat" msgid="971998564991636532">", "</string>
+    <string name="clock_instructions" msgid="3118560284915857690">"Velg klokken som skal vises."</string>
+    <string name="error" msgid="108628064084462722">"Alarm ikke satt"</string>
+    <string name="dberror" msgid="6922426026866330853">"Beklager, kan ikke sette alarmen."</string>
+    <string name="analog_gadget" msgid="1670505720837152766">"Analog klokke"</string>
+    <string name="settings" msgid="5849739030579520686">"Innstillinger"</string>
+    <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Alarm i stillemodus"</string>
+    <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"Spill alarm selv når telefonen er i stillemodus"</string>
 </resources>
