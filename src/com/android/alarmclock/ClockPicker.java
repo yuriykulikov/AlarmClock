@@ -83,7 +83,7 @@ public class ClockPicker extends Activity implements
 
     private synchronized void selectClock(int position) {
         SharedPreferences.Editor ed = mPrefs.edit();
-        ed.putInt("face", position);
+        ed.putInt(AlarmClock.PREF_CLOCK_FACE, position);
         ed.commit();
 
         setResult(RESULT_OK);

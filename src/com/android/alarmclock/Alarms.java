@@ -367,12 +367,12 @@ public class Alarms {
                 AlarmClock.PREFERENCES, 0);
         SharedPreferences.Editor ed = prefs.edit();
         if (id == -1) {
-            ed.clear();
+            clearSnoozePreference(ed);
         } else {
             ed.putInt(PREF_SNOOZE_ID, id);
             ed.putLong(PREF_SNOOZE_TIME, time);
+            ed.commit();
         }
-        ed.commit();
         // Set the next alert after updating the snooze.
         setNextAlert(context);
     }
@@ -389,11 +389,17 @@ public class Alarms {
             return;
         } else if (snoozeId == id) {
             // This is the same id so clear the shared prefs.
-            SharedPreferences.Editor ed = prefs.edit();
-            ed.clear();
-            ed.commit();
+            clearSnoozePreference(prefs.edit());
         }
     }
+
+    // Helper to remove the snooze preference. Do not use clear because that
+    // will erase the clock preferences.
+    private static void clearSnoozePreference(final SharedPreferences.Editor ed) {
+        ed.remove(PREF_SNOOZE_ID);
+        ed.remove(PREF_SNOOZE_TIME);
+        ed.commit();
+    };
 
     /**
      * If there is a snooze set, enable it in AlarmManager
