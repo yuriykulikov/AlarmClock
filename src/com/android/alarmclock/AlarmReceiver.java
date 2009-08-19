@@ -48,11 +48,9 @@ public class AlarmReceiver extends BroadcastReceiver {
             return;
         }
 
-        // Wake the device and stay awake until the AlarmAlert intent is
-        // handled. Also acquire the screen lock so that if the AlarmAlert
-        // activity is paused, it will be resumed.
+        /* Wake the device and stay awake until the AlarmAlert intent is
+         * handled. */
         AlarmAlertWakeLock.acquireCpuWakeLock(context);
-        AlarmAlertWakeLock.acquireScreenWakeLock(context);
 
         /* Close dialogs and window shade */
         Intent i = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
