@@ -88,6 +88,14 @@ public class AlarmReceiver extends BroadcastReceiver {
             return;
         }
 
+        // Maintain a cpu wake lock until the AlarmAlert and AlarmKlaxon can
+        // pick it up. Also acquire the screen lock so the screen is on before
+        // starting the AlarmAlert activity. Do this before launching the
+        // AlarmAlert so that the ActivityManager does not try to pause the
+        // activity due to the screen being off.
+        AlarmAlertWakeLock.acquireCpuWakeLock(context);
+        AlarmAlertWakeLock.acquireScreenWakeLock(context);
+
         /* Close dialogs and window shade */
         Intent closeDialogs = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         context.sendBroadcast(closeDialogs);
@@ -154,10 +162,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         // correct notification.
         NotificationManager nm = getNotificationManager(context);
         nm.notify(alarm.id, n);
-
-        // Maintain a cpu wake lock until the AlarmAlert and AlarmKlaxon can
-        // pick it up.
-        AlarmAlertWakeLock.acquireCpuWakeLock(context);
     }
 
     private NotificationManager getNotificationManager(Context context) {

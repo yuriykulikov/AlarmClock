@@ -218,16 +218,15 @@ public class AlarmAlert extends Activity {
 
     @Override
     protected void onStart() {
-        super.onResume();
+        super.onStart();
         if (Log.LOGV) Log.v("AlarmAlert.onStart()");
-        // Acquire a separate lock for the screen to stay on. This is necessary
-        // to avoid flashing the keyguard when the screen is locked.
+        // Acquire a separate lock for the screen to stay on.
         AlarmAlertWakeLock.acquireScreenWakeLock(this);
     }
 
     @Override
     protected void onStop() {
-        super.onPause();
+        super.onStop();
         if (Log.LOGV) Log.v("AlarmAlert.onStop()");
         AlarmAlertWakeLock.releaseScreenLock();
     }
