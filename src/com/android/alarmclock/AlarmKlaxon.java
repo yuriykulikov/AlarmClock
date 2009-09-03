@@ -31,11 +31,12 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Vibrator;
+import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
 /**
- * Manages alarms and vibe.  Singleton, so it can be initiated in
- * AlarmReceiver and shut down in the AlarmAlert activity
+ * Manages alarms and vibe. Runs as a service so that it can continue to play
+ * if another activity overrides the AlarmAlert dialog.
  */
 public class AlarmKlaxon extends Service {
 
@@ -49,6 +50,8 @@ public class AlarmKlaxon extends Service {
     private MediaPlayer mMediaPlayer;
     private Alarm mCurrentAlarm;
     private long mStartTime;
+    private TelephonyManager mTelephonyManager;
+    private int mInitialCallState;
 
     // Internal messages
     private static final int KILLER = 1000;
@@ -66,15 +69,37 @@ public class AlarmKlaxon extends Service {
         }
     };
 
+    private PhoneStateListener mPhoneStateListener = new PhoneStateListener() {
+        @Override
+        public void onCallStateChanged(int state, String ignored) {
+            // The user might already be in a call when the alarm fires. When
+            // we register onCallStateChanged, we get the initial in-call state
+            // which kills the alarm. Check against the initial call state so
+            // we don't kill the alarm during a call.
+            if (state != TelephonyManager.CALL_STATE_IDLE
+                    && state != mInitialCallState) {
+                sendKillBroadcast(mCurrentAlarm);
+                stopSelf();
+            }
+        }
+    };
+
     @Override
     public void onCreate() {
         mVibrator = new Vibrator();
+        // Listen for incoming calls to kill the alarm.
+        mTelephonyManager =
+                (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        mTelephonyManager.listen(
+                mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
         AlarmAlertWakeLock.acquireCpuWakeLock(this);
     }
 
     @Override
     public void onDestroy() {
         stop();
+        // Stop listening for incoming calls.
+        mTelephonyManager.listen(mPhoneStateListener, 0);
         AlarmAlertWakeLock.releaseCpuLock();
     }
 
@@ -99,6 +124,9 @@ public class AlarmKlaxon extends Service {
 
         play(alarm);
         mCurrentAlarm = alarm;
+        // Record the initial call state here so that the new alarm has the
+        // newest state.
+        mInitialCallState = mTelephonyManager.getCallState();
     }
 
     private void sendKillBroadcast(Alarm alarm) {
@@ -147,12 +175,10 @@ public class AlarmKlaxon extends Service {
             });
 
             try {
-                TelephonyManager tm =
-                        (TelephonyManager) getSystemService(
-                                Context.TELEPHONY_SERVICE);
                 // Check if we are in a call. If we are, use the in-call alarm
                 // resource at a low volume to not disrupt the call.
-                if (tm.getCallState() != TelephonyManager.CALL_STATE_IDLE) {
+                if (mTelephonyManager.getCallState()
+                        != TelephonyManager.CALL_STATE_IDLE) {
                     Log.v("Using the in-call alarm");
                     mMediaPlayer.setVolume(IN_CALL_VOLUME, IN_CALL_VOLUME);
                     setDataSourceFromResource(getResources(), mMediaPlayer,
