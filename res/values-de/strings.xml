@@ -15,40 +15,50 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_label">"Wecker"</string>
-    <string name="add_alarm">"Wecker hinzufügen"</string>
-    <string name="delete_alarm">"Wecker löschen"</string>
-    <string name="delete_alarm_confirm">"Dieser Alarm wird gelöscht."</string>
-    <string name="show_clock">"Uhr anzeigen"</string>
-    <string name="hide_clock">"Uhr ausblenden"</string>
-    <string name="label">"Label"</string>
-    <string name="default_label">"Wecker"</string>
-    <string name="set_alarm">"Wecker einstellen"</string>
-    <string name="enable">"Wecker aktivieren"</string>
-    <string name="alarm_vibrate">"Vibrieren"</string>
-    <string name="alarm_repeat">"Wiederholen"</string>
-    <string name="alert">"Klingelton"</string>
-    <string name="time">"Uhrzeit"</string>
-    <string name="alert_title">"Wecker"</string>
-    <string name="alarm_alert_dismiss_text">"Verwerfen"</string>
-    <string name="alarm_alert_alert_silenced">"Der Wecker verstummte nach <xliff:g id="MINUTES">%d</xliff:g> Minuten"</string>
-    <string name="alarm_alert_snooze_text">"Snooze-Funktion"</string>
-    <string name="alarm_alert_snooze_set">"Snooze-Funktion aktiviert für <xliff:g id="MINUTES">%d</xliff:g> Minuten"</string>
-    <string name="alarm_alert_snooze_not_set">"Snooze-Funktion nicht aktiviert - nächster Wecker klingelt <xliff:g id="TIME">%s</xliff:g>."</string>
-    <string name="day">"1 Tag"</string>
-    <string name="days">"<xliff:g id="DAYS">%s</xliff:g> Tagen"</string>
-    <string name="hour">"1 Stunde"</string>
-    <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> Stunden"</string>
-    <string name="minute">"1 Minute"</string>
-    <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> Minuten"</string>
-    <string name="every_day">"Täglich"</string>
-    <string name="never">"Nie"</string>
-    <string name="day_concat">", "</string>
-    <string name="clock_instructions">"Wählen Sie die anzuzeigende Uhr aus."</string>
-    <string name="error">"Wecker nicht eingestellt"</string>
-    <string name="dberror">"Der Wecker konnte nicht eingestellt werden."</string>
-    <string name="analog_gadget">"Analoguhr"</string>
-    <string name="settings">"Einstellungen"</string>
-    <string name="alarm_in_silent_mode_title">"Alarm im Lautlosmodus"</string>
-    <string name="alarm_in_silent_mode_summary">"Alarm auch im Lautlosmodus auslösen"</string>
+    <string name="app_label" msgid="6642875149600019623">"Wecker"</string>
+    <string name="add_alarm" msgid="5976616107390962899">"Wecker hinzufügen"</string>
+    <string name="delete_alarm" msgid="3457780990646206817">"Wecker löschen"</string>
+    <string name="delete_alarm_confirm" msgid="4237696873219106907">"Dieser Alarm wird gelöscht."</string>
+    <string name="show_clock" msgid="8358759982675616915">"Uhr anzeigen"</string>
+    <string name="hide_clock" msgid="3217727306480505694">"Uhr ausblenden"</string>
+    <string name="label" msgid="162189613902857319">"Label"</string>
+    <string name="default_label" msgid="5590025289805630372">"Wecker"</string>
+    <string name="set_alarm" msgid="9148359866152726808">"Wecker einstellen"</string>
+    <string name="enable" msgid="3089255608289797715">"Wecker aktivieren"</string>
+    <string name="alarm_vibrate" msgid="3476686921490362230">"Vibrieren"</string>
+    <string name="alarm_repeat" msgid="7242985466344233206">"Wiederholen"</string>
+    <string name="alert" msgid="6539852766423700221">"Klingelton"</string>
+    <string name="time" msgid="8067216534232296518">"Uhrzeit"</string>
+    <string name="alert_title" msgid="1600112166027371802">"Wecker"</string>
+    <string name="alarm_alert_dismiss_text" msgid="4942914605480888820">"Verwerfen"</string>
+    <string name="alarm_alert_alert_silenced" msgid="7918075929961104202">"Der Wecker verstummte nach <xliff:g id="MINUTES">%d</xliff:g> Minuten"</string>
+    <string name="alarm_alert_snooze_text" msgid="1774416052207651584">"Snooze-Funktion"</string>
+    <string name="alarm_alert_snooze_set" msgid="656470966696912087">"Snooze-Funktion aktiviert für <xliff:g id="MINUTES">%d</xliff:g> Minuten"</string>
+    <string name="alarm_alert_snooze_not_set" msgid="8783980489802220546">"Snooze-Funktion nicht aktiviert - nächster Wecker klingelt <xliff:g id="TIME">%s</xliff:g>."</string>
+  <string-array name="alarm_set">
+    <item msgid="5163476010406761625">"Dieser Wecker klingelt in weniger als 1 Minute."</item>
+    <item msgid="7110525731259629055">"Dieser Wecker klingelt in <xliff:g id="DAYS">%1$s</xliff:g>."</item>
+    <item msgid="7003982794086186185">"Dieser Wecker klingelt in <xliff:g id="HOURS">%2$s</xliff:g>."</item>
+    <item msgid="7311021123230077742">"Dieser Wecker klingelt in <xliff:g id="DAYS">%1$s</xliff:g> und <xliff:g id="HOURS">%2$s</xliff:g>."</item>
+    <item msgid="8431715191823114872">"Dieser Wecker klingelt in <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
+    <item msgid="3244151088673185428">"Dieser Wecker klingelt in <xliff:g id="DAYS">%1$s</xliff:g> und <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
+    <item msgid="3663661342600168814">"Dieser Wecker klingelt in <xliff:g id="HOURS">%2$s</xliff:g> und <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
+    <item msgid="7779544127785487304">"Dieser Wecker klingelt in <xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> und <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
+  </string-array>
+    <string name="day" msgid="7984755014526510295">"1 Tag"</string>
+    <string name="days" msgid="2070509222727852210">"<xliff:g id="DAYS">%s</xliff:g> Tagen"</string>
+    <string name="hour" msgid="2546819039651509323">"1 Stunde"</string>
+    <string name="hours" msgid="2071487018566991613">"<xliff:g id="HOURS">%s</xliff:g> Stunden"</string>
+    <string name="minute" msgid="2486157997434653710">"1 Minute"</string>
+    <string name="minutes" msgid="6115838729146292526">"<xliff:g id="MINUTES">%s</xliff:g> Minuten"</string>
+    <string name="every_day" msgid="1058994798884544691">"Täglich"</string>
+    <string name="never" msgid="54104287800571769">"Nie"</string>
+    <string name="day_concat" msgid="971998564991636532">", "</string>
+    <string name="clock_instructions" msgid="3118560284915857690">"Wählen Sie die anzuzeigende Uhr aus."</string>
+    <string name="error" msgid="108628064084462722">"Wecker nicht eingestellt"</string>
+    <string name="dberror" msgid="6922426026866330853">"Der Wecker konnte nicht eingestellt werden."</string>
+    <string name="analog_gadget" msgid="1670505720837152766">"Analoguhr"</string>
+    <string name="settings" msgid="5849739030579520686">"Einstellungen"</string>
+    <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Alarm im Lautlosmodus"</string>
+    <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"Alarm auch im Lautlosmodus auslösen"</string>
 </resources>

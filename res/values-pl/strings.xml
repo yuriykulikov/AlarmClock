@@ -15,40 +15,50 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_label">"Budzik"</string>
-    <string name="add_alarm">"Dodaj alarm"</string>
-    <string name="delete_alarm">"Usuń alarm"</string>
-    <string name="delete_alarm_confirm">"Ten zegar zostanie usunięty."</string>
-    <string name="show_clock">"Pokaż zegar"</string>
-    <string name="hide_clock">"Ukryj zegar"</string>
-    <string name="label">"Etykieta"</string>
-    <string name="default_label">"Alarm"</string>
-    <string name="set_alarm">"Ustaw alarm"</string>
-    <string name="enable">"Włącz alarm"</string>
-    <string name="alarm_vibrate">"Wibracje"</string>
-    <string name="alarm_repeat">"Powtarzanie"</string>
-    <string name="alert">"Dzwonek"</string>
-    <string name="time">"Godzina"</string>
-    <string name="alert_title">"Alarm"</string>
-    <string name="alarm_alert_dismiss_text">"Zamknij"</string>
-    <string name="alarm_alert_alert_silenced">"Alarm jest wyciszany po <xliff:g id="MINUTES">%d</xliff:g> min."</string>
-    <string name="alarm_alert_snooze_text">"Drzemka"</string>
-    <string name="alarm_alert_snooze_set">"Drzemka przez <xliff:g id="MINUTES">%d</xliff:g> min."</string>
-    <string name="alarm_alert_snooze_not_set">"Nie ustawiono drzemki – następny alarm: <xliff:g id="TIME">%s</xliff:g>"</string>
-    <string name="day">"1 dzień"</string>
-    <string name="days">"<xliff:g id="DAYS">%s</xliff:g> dni"</string>
-    <string name="hour">"1 godz."</string>
-    <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> godz."</string>
-    <string name="minute">"1 min"</string>
-    <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> min"</string>
-    <string name="every_day">"codziennie"</string>
-    <string name="never">"Nigdy"</string>
-    <string name="day_concat">", "</string>
-    <string name="clock_instructions">"Wybierz wyświetlany zegar."</string>
-    <string name="error">"Alarm nieustawiony"</string>
-    <string name="dberror">"Niestety, nie można ustawić alarmu."</string>
-    <string name="analog_gadget">"Zegar analogowy"</string>
-    <string name="settings">"Ustawienia"</string>
-    <string name="alarm_in_silent_mode_title">"Alarm w trybie cichym"</string>
-    <string name="alarm_in_silent_mode_summary">"Odtwórz alarm, nawet gdy telefon jest w trybie cichym"</string>
+    <string name="app_label" msgid="6642875149600019623">"Budzik"</string>
+    <string name="add_alarm" msgid="5976616107390962899">"Dodaj alarm"</string>
+    <string name="delete_alarm" msgid="3457780990646206817">"Usuń alarm"</string>
+    <string name="delete_alarm_confirm" msgid="4237696873219106907">"Ten zegar zostanie usunięty."</string>
+    <string name="show_clock" msgid="8358759982675616915">"Pokaż zegar"</string>
+    <string name="hide_clock" msgid="3217727306480505694">"Ukryj zegar"</string>
+    <string name="label" msgid="162189613902857319">"Etykieta"</string>
+    <string name="default_label" msgid="5590025289805630372">"Alarm"</string>
+    <string name="set_alarm" msgid="9148359866152726808">"Ustaw alarm"</string>
+    <string name="enable" msgid="3089255608289797715">"Włącz alarm"</string>
+    <string name="alarm_vibrate" msgid="3476686921490362230">"Wibracje"</string>
+    <string name="alarm_repeat" msgid="7242985466344233206">"Powtarzanie"</string>
+    <string name="alert" msgid="6539852766423700221">"Dzwonek"</string>
+    <string name="time" msgid="8067216534232296518">"Godzina"</string>
+    <string name="alert_title" msgid="1600112166027371802">"Alarm"</string>
+    <string name="alarm_alert_dismiss_text" msgid="4942914605480888820">"Zamknij"</string>
+    <string name="alarm_alert_alert_silenced" msgid="7918075929961104202">"Alarm jest wyciszany po <xliff:g id="MINUTES">%d</xliff:g> min."</string>
+    <string name="alarm_alert_snooze_text" msgid="1774416052207651584">"Drzemka"</string>
+    <string name="alarm_alert_snooze_set" msgid="656470966696912087">"Drzemka przez <xliff:g id="MINUTES">%d</xliff:g> min."</string>
+    <string name="alarm_alert_snooze_not_set" msgid="8783980489802220546">"Nie ustawiono drzemki – następny alarm: <xliff:g id="TIME">%s</xliff:g>"</string>
+  <string-array name="alarm_set">
+    <item msgid="5163476010406761625">"Ten alarm włączy się za mniej niż 1 minutę."</item>
+    <item msgid="7110525731259629055">"Ten alarm włączy się za <xliff:g id="DAYS">%1$s</xliff:g>."</item>
+    <item msgid="7003982794086186185">"Ten alarm włączy się za <xliff:g id="HOURS">%2$s</xliff:g>."</item>
+    <item msgid="7311021123230077742">"Ten alarm włączy się za <xliff:g id="DAYS">%1$s</xliff:g> i <xliff:g id="HOURS">%2$s</xliff:g>."</item>
+    <item msgid="8431715191823114872">"Ten alarm włączy się za <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
+    <item msgid="3244151088673185428">"Ten alarm włączy się za <xliff:g id="DAYS">%1$s</xliff:g> i <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
+    <item msgid="3663661342600168814">"Ten alarm włączy się za <xliff:g id="HOURS">%2$s</xliff:g> i <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
+    <item msgid="7779544127785487304">"Ten alarm włączy się za <xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> i <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
+  </string-array>
+    <string name="day" msgid="7984755014526510295">"1 dzień"</string>
+    <string name="days" msgid="2070509222727852210">"<xliff:g id="DAYS">%s</xliff:g> dni"</string>
+    <string name="hour" msgid="2546819039651509323">"1 godz."</string>
+    <string name="hours" msgid="2071487018566991613">"<xliff:g id="HOURS">%s</xliff:g> godz."</string>
+    <string name="minute" msgid="2486157997434653710">"1 min"</string>
+    <string name="minutes" msgid="6115838729146292526">"<xliff:g id="MINUTES">%s</xliff:g> min"</string>
+    <string name="every_day" msgid="1058994798884544691">"codziennie"</string>
+    <string name="never" msgid="54104287800571769">"Nigdy"</string>
+    <string name="day_concat" msgid="971998564991636532">", "</string>
+    <string name="clock_instructions" msgid="3118560284915857690">"Wybierz wyświetlany zegar."</string>
+    <string name="error" msgid="108628064084462722">"Alarm nieustawiony"</string>
+    <string name="dberror" msgid="6922426026866330853">"Niestety, nie można ustawić alarmu."</string>
+    <string name="analog_gadget" msgid="1670505720837152766">"Zegar analogowy"</string>
+    <string name="settings" msgid="5849739030579520686">"Ustawienia"</string>
+    <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Alarm w trybie cichym"</string>
+    <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"Odtwórz alarm, nawet gdy telefon jest w trybie cichym"</string>
 </resources>

@@ -15,40 +15,50 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_label">"Réveil"</string>
-    <string name="add_alarm">"Ajouter alarme"</string>
-    <string name="delete_alarm">"Désactiver l\'alarme"</string>
-    <string name="delete_alarm_confirm">"Cette alarme va être supprimée."</string>
-    <string name="show_clock">"Afficher l\'horloge"</string>
-    <string name="hide_clock">"Masquer l\'horloge"</string>
-    <string name="label">"Libellé"</string>
-    <string name="default_label">"Alarme"</string>
-    <string name="set_alarm">"Régler l\'alarme"</string>
-    <string name="enable">"Activer l\'alarme"</string>
-    <string name="alarm_vibrate">"Vibreur"</string>
-    <string name="alarm_repeat">"Répéter"</string>
-    <string name="alert">"Sonnerie"</string>
-    <string name="time">"Heure"</string>
-    <string name="alert_title">"Alarme"</string>
-    <string name="alarm_alert_dismiss_text">"Quitter"</string>
-    <string name="alarm_alert_alert_silenced">"Alarme interrompue après <xliff:g id="MINUTES">%d</xliff:g> minutes"</string>
-    <string name="alarm_alert_snooze_text">"Répéter"</string>
-    <string name="alarm_alert_snooze_set">"Répétition dans <xliff:g id="MINUTES">%d</xliff:g> minutes."</string>
-    <string name="alarm_alert_snooze_not_set">"Répétition non activée : prochaine alarme à <xliff:g id="TIME">%s</xliff:g>"</string>
-    <string name="day">"1 jour"</string>
-    <string name="days">"<xliff:g id="DAYS">%s</xliff:g> jours"</string>
-    <string name="hour">"1 heure"</string>
-    <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> heures"</string>
-    <string name="minute">"1 minute"</string>
-    <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> minutes"</string>
-    <string name="every_day">"Tous les jours"</string>
-    <string name="never">"Jamais"</string>
-    <string name="day_concat">", "</string>
-    <string name="clock_instructions">"Sélectionnez une horloge à afficher."</string>
-    <string name="error">"Alarme non activée"</string>
-    <string name="dberror">"Désolé, impossible de régler l\'alarme."</string>
-    <string name="analog_gadget">"Horloge analogique"</string>
-    <string name="settings">"Paramètres"</string>
-    <string name="alarm_in_silent_mode_title">"Alarme mode silencieux"</string>
-    <string name="alarm_in_silent_mode_summary">"Faire sonner l\'alarme même lorsque le téléphone est en mode silencieux."</string>
+    <string name="app_label" msgid="6642875149600019623">"Réveil"</string>
+    <string name="add_alarm" msgid="5976616107390962899">"Ajouter alarme"</string>
+    <string name="delete_alarm" msgid="3457780990646206817">"Désactiver l\'alarme"</string>
+    <string name="delete_alarm_confirm" msgid="4237696873219106907">"Cette alarme va être supprimée."</string>
+    <string name="show_clock" msgid="8358759982675616915">"Afficher l\'horloge"</string>
+    <string name="hide_clock" msgid="3217727306480505694">"Masquer l\'horloge"</string>
+    <string name="label" msgid="162189613902857319">"Libellé"</string>
+    <string name="default_label" msgid="5590025289805630372">"Alarme"</string>
+    <string name="set_alarm" msgid="9148359866152726808">"Régler l\'alarme"</string>
+    <string name="enable" msgid="3089255608289797715">"Activer l\'alarme"</string>
+    <string name="alarm_vibrate" msgid="3476686921490362230">"Vibreur"</string>
+    <string name="alarm_repeat" msgid="7242985466344233206">"Répéter"</string>
+    <string name="alert" msgid="6539852766423700221">"Sonnerie"</string>
+    <string name="time" msgid="8067216534232296518">"Heure"</string>
+    <string name="alert_title" msgid="1600112166027371802">"Alarme"</string>
+    <string name="alarm_alert_dismiss_text" msgid="4942914605480888820">"Quitter"</string>
+    <string name="alarm_alert_alert_silenced" msgid="7918075929961104202">"Alarme interrompue après <xliff:g id="MINUTES">%d</xliff:g> minutes"</string>
+    <string name="alarm_alert_snooze_text" msgid="1774416052207651584">"Répéter"</string>
+    <string name="alarm_alert_snooze_set" msgid="656470966696912087">"Répétition dans <xliff:g id="MINUTES">%d</xliff:g> minutes."</string>
+    <string name="alarm_alert_snooze_not_set" msgid="8783980489802220546">"Répétition non activée : prochaine alarme à <xliff:g id="TIME">%s</xliff:g>"</string>
+  <string-array name="alarm_set">
+    <item msgid="5163476010406761625">"Prochaine alarme dans moins d\'une minute."</item>
+    <item msgid="7110525731259629055">"Prochaine alarme dans <xliff:g id="DAYS">%1$s</xliff:g>."</item>
+    <item msgid="7003982794086186185">"Prochaine alarme dans <xliff:g id="HOURS">%2$s</xliff:g>."</item>
+    <item msgid="7311021123230077742">"Prochaine alarme dans <xliff:g id="DAYS">%1$s</xliff:g> et <xliff:g id="HOURS">%2$s</xliff:g>."</item>
+    <item msgid="8431715191823114872">"Prochaine alarme dans <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
+    <item msgid="3244151088673185428">"Prochaine alarme dans <xliff:g id="DAYS">%1$s</xliff:g> et <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
+    <item msgid="3663661342600168814">"Prochaine alarme dans <xliff:g id="HOURS">%2$s</xliff:g> et <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
+    <item msgid="7779544127785487304">"Prochaine alarme dans <xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> et <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
+  </string-array>
+    <string name="day" msgid="7984755014526510295">"1 jour"</string>
+    <string name="days" msgid="2070509222727852210">"<xliff:g id="DAYS">%s</xliff:g> jours"</string>
+    <string name="hour" msgid="2546819039651509323">"1 heure"</string>
+    <string name="hours" msgid="2071487018566991613">"<xliff:g id="HOURS">%s</xliff:g> heures"</string>
+    <string name="minute" msgid="2486157997434653710">"1 minute"</string>
+    <string name="minutes" msgid="6115838729146292526">"<xliff:g id="MINUTES">%s</xliff:g> minutes"</string>
+    <string name="every_day" msgid="1058994798884544691">"Tous les jours"</string>
+    <string name="never" msgid="54104287800571769">"Jamais"</string>
+    <string name="day_concat" msgid="971998564991636532">", "</string>
+    <string name="clock_instructions" msgid="3118560284915857690">"Sélectionnez une horloge à afficher."</string>
+    <string name="error" msgid="108628064084462722">"Alarme non activée"</string>
+    <string name="dberror" msgid="6922426026866330853">"Désolé, impossible de régler l\'alarme."</string>
+    <string name="analog_gadget" msgid="1670505720837152766">"Horloge analogique"</string>
+    <string name="settings" msgid="5849739030579520686">"Paramètres"</string>
+    <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Alarme mode silencieux"</string>
+    <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"Faire sonner l\'alarme même lorsque le téléphone est en mode silencieux."</string>
 </resources>

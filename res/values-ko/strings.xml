@@ -15,40 +15,48 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_label">"알람 시계"</string>
-    <string name="add_alarm">"알람 추가"</string>
-    <string name="delete_alarm">"알람 삭제"</string>
-    <string name="delete_alarm_confirm">"알람이 삭제됩니다."</string>
-    <string name="show_clock">"시계 표시"</string>
-    <string name="hide_clock">"시계 숨기기"</string>
-    <string name="label">"라벨"</string>
-    <string name="default_label">"알람"</string>
-    <string name="set_alarm">"알람 설정"</string>
-    <string name="enable">"알람 사용"</string>
-    <string name="alarm_vibrate">"진동"</string>
-    <string name="alarm_repeat">"반복"</string>
-    <string name="alert">"벨소리"</string>
-    <string name="time">"시간"</string>
-    <string name="alert_title">"알람"</string>
-    <string name="alarm_alert_dismiss_text">"해제"</string>
-    <string name="alarm_alert_alert_silenced">"<xliff:g id="MINUTES">%d</xliff:g>분 후 알람이 중지됨"</string>
-    <string name="alarm_alert_snooze_text">"다시 울림"</string>
-    <string name="alarm_alert_snooze_set">"<xliff:g id="MINUTES">%d</xliff:g>분 동안 알람 일시 중지"</string>
-    <string name="alarm_alert_snooze_not_set">"다시 울림을 설정할 수 없음 -- 다음 알람 <xliff:g id="TIME">%s</xliff:g>"</string>
-    <string name="day">"1일"</string>
-    <string name="days">"<xliff:g id="DAYS">%s</xliff:g>일"</string>
-    <string name="hour">"1시간"</string>
-    <string name="hours">"<xliff:g id="HOURS">%s</xliff:g>시간"</string>
-    <string name="minute">"1분"</string>
-    <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g>분"</string>
-    <string name="every_day">"매일"</string>
-    <string name="never">"반복 안함"</string>
-    <string name="day_concat">", "</string>
-    <string name="clock_instructions">"표시할 시계를 선택하세요."</string>
-    <string name="error">"알람 설정 안됨"</string>
-    <string name="dberror">"죄송합니다. 알람을 설정할 수 없습니다."</string>
-    <string name="analog_gadget">"아날로그 시계"</string>
-    <string name="settings">"설정"</string>
-    <string name="alarm_in_silent_mode_title">"무음 모드로 알람 설정"</string>
-    <string name="alarm_in_silent_mode_summary">"무음 모드에서도 알람이 울리도록 설정"</string>
+    <string name="app_label" msgid="6642875149600019623">"알람 시계"</string>
+    <string name="add_alarm" msgid="5976616107390962899">"알람 추가"</string>
+    <string name="delete_alarm" msgid="3457780990646206817">"알람 삭제"</string>
+    <string name="delete_alarm_confirm" msgid="4237696873219106907">"알람이 삭제됩니다."</string>
+    <string name="show_clock" msgid="8358759982675616915">"시계 표시"</string>
+    <string name="hide_clock" msgid="3217727306480505694">"시계 숨기기"</string>
+    <string name="label" msgid="162189613902857319">"라벨"</string>
+    <string name="default_label" msgid="5590025289805630372">"알람"</string>
+    <string name="set_alarm" msgid="9148359866152726808">"알람 설정"</string>
+    <string name="enable" msgid="3089255608289797715">"알람 사용"</string>
+    <string name="alarm_vibrate" msgid="3476686921490362230">"진동"</string>
+    <string name="alarm_repeat" msgid="7242985466344233206">"반복"</string>
+    <string name="alert" msgid="6539852766423700221">"벨소리"</string>
+    <string name="time" msgid="8067216534232296518">"시간"</string>
+    <string name="alert_title" msgid="1600112166027371802">"알람"</string>
+    <string name="alarm_alert_dismiss_text" msgid="4942914605480888820">"해제"</string>
+    <string name="alarm_alert_alert_silenced" msgid="7918075929961104202">"<xliff:g id="MINUTES">%d</xliff:g>분 후 알람이 중지됨"</string>
+    <string name="alarm_alert_snooze_text" msgid="1774416052207651584">"다시 울림"</string>
+    <string name="alarm_alert_snooze_set" msgid="656470966696912087">"<xliff:g id="MINUTES">%d</xliff:g>분 동안 알람 일시 중지"</string>
+    <string name="alarm_alert_snooze_not_set" msgid="8783980489802220546">"다시 울림을 설정할 수 없음 -- 다음 알람 <xliff:g id="TIME">%s</xliff:g>"</string>
+    <!-- no translation found for alarm_set:0 (5163476010406761625) -->
+    <!-- no translation found for alarm_set:1 (7110525731259629055) -->
+    <!-- no translation found for alarm_set:2 (7003982794086186185) -->
+    <!-- no translation found for alarm_set:3 (7311021123230077742) -->
+    <!-- no translation found for alarm_set:4 (8431715191823114872) -->
+    <!-- no translation found for alarm_set:5 (3244151088673185428) -->
+    <!-- no translation found for alarm_set:6 (3663661342600168814) -->
+    <!-- no translation found for alarm_set:7 (7779544127785487304) -->
+    <string name="day" msgid="7984755014526510295">"1일"</string>
+    <string name="days" msgid="2070509222727852210">"<xliff:g id="DAYS">%s</xliff:g>일"</string>
+    <string name="hour" msgid="2546819039651509323">"1시간"</string>
+    <string name="hours" msgid="2071487018566991613">"<xliff:g id="HOURS">%s</xliff:g>시간"</string>
+    <string name="minute" msgid="2486157997434653710">"1분"</string>
+    <string name="minutes" msgid="6115838729146292526">"<xliff:g id="MINUTES">%s</xliff:g>분"</string>
+    <string name="every_day" msgid="1058994798884544691">"매일"</string>
+    <string name="never" msgid="54104287800571769">"반복 안함"</string>
+    <string name="day_concat" msgid="971998564991636532">", "</string>
+    <string name="clock_instructions" msgid="3118560284915857690">"표시할 시계를 선택하세요."</string>
+    <string name="error" msgid="108628064084462722">"알람 설정 안됨"</string>
+    <string name="dberror" msgid="6922426026866330853">"죄송합니다. 알람을 설정할 수 없습니다."</string>
+    <string name="analog_gadget" msgid="1670505720837152766">"아날로그 시계"</string>
+    <string name="settings" msgid="5849739030579520686">"설정"</string>
+    <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"무음 모드로 알람 설정"</string>
+    <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"무음 모드에서도 알람이 울리도록 설정"</string>
 </resources>
