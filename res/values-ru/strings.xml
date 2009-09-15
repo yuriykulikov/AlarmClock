@@ -54,8 +54,6 @@
     <string name="never" msgid="54104287800571769">"Никогда"</string>
     <string name="day_concat" msgid="971998564991636532">", "</string>
     <string name="clock_instructions" msgid="3118560284915857690">"Выберите вид часов."</string>
-    <string name="error" msgid="108628064084462722">"Будильник не установлен"</string>
-    <string name="dberror" msgid="6922426026866330853">"К сожалению, будильник не удалось установить."</string>
     <string name="analog_gadget" msgid="1670505720837152766">"Часы со стрелками"</string>
     <string name="settings" msgid="5849739030579520686">"Настройки"</string>
     <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Будильник в тихом режиме"</string>
