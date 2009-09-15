@@ -54,8 +54,6 @@
     <string name="never" msgid="54104287800571769">"Aldrig"</string>
     <string name="day_concat" msgid="971998564991636532">", "</string>
     <string name="clock_instructions" msgid="3118560284915857690">"Välj vilken klocka du vill visa."</string>
-    <string name="error" msgid="108628064084462722">"Inget alarm har ställts in"</string>
-    <string name="dberror" msgid="6922426026866330853">"Det gick tyvärr inte att ställa alarmet."</string>
     <string name="analog_gadget" msgid="1670505720837152766">"Analog klocka"</string>
     <string name="settings" msgid="5849739030579520686">"Inställningar"</string>
     <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Alarm i tyst läge"</string>

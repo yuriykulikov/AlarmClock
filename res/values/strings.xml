@@ -136,14 +136,6 @@
          select a clock to display -->
     <string name="clock_instructions">Select a clock to display.</string>
 
-    <!-- Error dialog title: Alarm not set.  Appears only on critical
-         failure -->
-    <string name="error">Alarm not set</string>
-
-    <!-- Error dialog message.  Appears only on critical
-         failure -->
-    <string name="dberror">Sorry, the alarm could not be set.</string>
-
     <!-- Label for analog clock gadget, shown in list of all gadgets -->
     <string name="analog_gadget">Analog clock</string>
 
