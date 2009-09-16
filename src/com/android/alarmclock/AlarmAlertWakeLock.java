@@ -25,7 +25,6 @@ import android.os.PowerManager;
  */
 class AlarmAlertWakeLock {
 
-    private static PowerManager.WakeLock sScreenWakeLock;
     private static PowerManager.WakeLock sCpuWakeLock;
 
     static void acquireCpuWakeLock(Context context) {
@@ -44,35 +43,11 @@ class AlarmAlertWakeLock {
         sCpuWakeLock.acquire();
     }
 
-    static void acquireScreenWakeLock(Context context) {
-        Log.v("Acquiring screen wake lock");
-        if (sScreenWakeLock != null) {
-            return;
-        }
-
-        PowerManager pm =
-                (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-
-        sScreenWakeLock = pm.newWakeLock(
-                PowerManager.FULL_WAKE_LOCK |
-                PowerManager.ACQUIRE_CAUSES_WAKEUP |
-                PowerManager.ON_AFTER_RELEASE, Log.LOGTAG);
-        sScreenWakeLock.acquire();
-    }
-
     static void releaseCpuLock() {
         Log.v("Releasing cpu wake lock");
         if (sCpuWakeLock != null) {
             sCpuWakeLock.release();
             sCpuWakeLock = null;
-        }
-    }
-
-    static void releaseScreenLock() {
-        Log.v("Releasing screen lock");
-        if (sScreenWakeLock != null) {
-            sScreenWakeLock.release();
-            sScreenWakeLock = null;
         }
     }
 }

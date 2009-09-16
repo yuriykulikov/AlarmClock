@@ -78,7 +78,9 @@ public class AlarmAlert extends Activity {
         mVolumeBehavior = Integer.parseInt(vol);
 
         requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         updateLayout();
 
         // Register to get the alarm killed intent.
@@ -214,21 +216,6 @@ public class AlarmAlert extends Activity {
         mAlarm = intent.getParcelableExtra(Alarms.ALARM_INTENT_EXTRA);
 
         setTitle();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (Log.LOGV) Log.v("AlarmAlert.onStart()");
-        // Acquire a separate lock for the screen to stay on.
-        AlarmAlertWakeLock.acquireScreenWakeLock(this);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (Log.LOGV) Log.v("AlarmAlert.onStop()");
-        AlarmAlertWakeLock.releaseScreenLock();
     }
 
     @Override
