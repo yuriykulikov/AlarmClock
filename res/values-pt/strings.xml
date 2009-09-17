@@ -18,10 +18,8 @@
     <string name="app_label" msgid="6642875149600019623">"Despertador"</string>
     <string name="add_alarm" msgid="5976616107390962899">"Adicionar alarme"</string>
     <string name="delete_alarm" msgid="3457780990646206817">"Excluir alarme"</string>
-    <!-- no translation found for enable_alarm (7442658245797418741) -->
-    <skip />
-    <!-- no translation found for disable_alarm (6665528499886549648) -->
-    <skip />
+    <string name="enable_alarm" msgid="7442658245797418741">"Ativar alarme"</string>
+    <string name="disable_alarm" msgid="6665528499886549648">"Desativar alarme"</string>
     <string name="delete_alarm_confirm" msgid="4237696873219106907">"Este alarme será excluído."</string>
     <string name="show_clock" msgid="8358759982675616915">"Mostrar relógio"</string>
     <string name="hide_clock" msgid="3217727306480505694">"Ocultar relógio"</string>
@@ -36,14 +34,16 @@
     <string name="alarm_alert_alert_silenced" msgid="7918075929961104202">"Alarme silenciado após <xliff:g id="MINUTES">%d</xliff:g> minutos"</string>
     <string name="alarm_alert_snooze_text" msgid="1774416052207651584">"Colocar em modo de espera"</string>
     <string name="alarm_alert_snooze_set" msgid="656470966696912087">"Em espera por <xliff:g id="MINUTES">%d</xliff:g> minutos."</string>
-    <!-- no translation found for alarm_set:0 (5163476010406761625) -->
-    <!-- no translation found for alarm_set:1 (7110525731259629055) -->
-    <!-- no translation found for alarm_set:2 (7003982794086186185) -->
-    <!-- no translation found for alarm_set:3 (7311021123230077742) -->
-    <!-- no translation found for alarm_set:4 (8431715191823114872) -->
-    <!-- no translation found for alarm_set:5 (3244151088673185428) -->
-    <!-- no translation found for alarm_set:6 (3663661342600168814) -->
-    <!-- no translation found for alarm_set:7 (7779544127785487304) -->
+  <string-array name="alarm_set">
+    <item msgid="5163476010406761625">"Este alarme está definido para menos de um minuto a partir de agora."</item>
+    <item msgid="7110525731259629055">"Este alarme está definido para <xliff:g id="DAYS">%1$s</xliff:g> a partir de agora."</item>
+    <item msgid="7003982794086186185">"Este alarme está definido para <xliff:g id="HOURS">%2$s</xliff:g> a partir de agora."</item>
+    <item msgid="7311021123230077742">"Este alarme está definido para <xliff:g id="DAYS">%1$s</xliff:g> e <xliff:g id="HOURS">%2$s</xliff:g> a partir de agora."</item>
+    <item msgid="8431715191823114872">"Este alarme está definido para <xliff:g id="MINUTES">%3$s</xliff:g> a partir de agora."</item>
+    <item msgid="3244151088673185428">"Este alarme está definido para <xliff:g id="DAYS">%1$s</xliff:g> e <xliff:g id="MINUTES">%3$s</xliff:g> a partir de agora."</item>
+    <item msgid="3663661342600168814">"Este alarme está definido para <xliff:g id="HOURS">%2$s</xliff:g> e <xliff:g id="MINUTES">%3$s</xliff:g> a partir de agora."</item>
+    <item msgid="7779544127785487304">"Este alarme está definido para <xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> e <xliff:g id="MINUTES">%3$s</xliff:g> a partir de agora."</item>
+  </string-array>
     <string name="day" msgid="7984755014526510295">"1 dia"</string>
     <string name="days" msgid="2070509222727852210">"<xliff:g id="DAYS">%s</xliff:g> dias"</string>
     <string name="hour" msgid="2546819039651509323">"1 hora"</string>
@@ -58,44 +58,41 @@
     <string name="settings" msgid="5849739030579520686">"Configurações"</string>
     <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Alarme no modo silencioso"</string>
     <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"Tocar o alarme mesmo quando o telefone estiver no modo silencioso"</string>
-    <!-- no translation found for snooze_duration_title (1471249885139952670) -->
-    <skip />
-    <!-- no translation found for snooze_duration_entries:0 (8337408933053603125) -->
-    <!-- no translation found for snooze_duration_entries:1 (5294206441496024610) -->
-    <!-- no translation found for snooze_duration_entries:2 (2165904039211935470) -->
-    <!-- no translation found for snooze_duration_entries:3 (7248236967714374250) -->
-    <!-- no translation found for snooze_duration_entries:4 (738394723625179423) -->
-    <!-- no translation found for snooze_duration_entries:5 (1180222611308391616) -->
-    <!-- no translation found for snooze_duration_values:0 (3655014754453084122) -->
-    <!-- no translation found for snooze_duration_values:1 (8939029597449573449) -->
-    <!-- no translation found for snooze_duration_values:2 (3922647341176353315) -->
-    <!-- no translation found for snooze_duration_values:3 (5821804105985044459) -->
-    <!-- no translation found for snooze_duration_values:4 (6048861883552402852) -->
-    <!-- no translation found for snooze_duration_values:5 (2740866721232379791) -->
-    <!-- no translation found for done (6509722361933858451) -->
-    <skip />
-    <!-- no translation found for revert (9100911171235162926) -->
-    <skip />
-    <!-- no translation found for alarm_volume_title (8506245173912428522) -->
-    <skip />
-    <!-- no translation found for alarm_volume_summary (8957440373896242438) -->
-    <skip />
-    <!-- no translation found for silent_alarm_summary (8605302849408279221) -->
-    <skip />
-    <!-- no translation found for alarm_notify_text (4146350965933990093) -->
-    <skip />
-    <!-- no translation found for alarm_notify_snooze_label (5404083762646377829) -->
-    <skip />
-    <!-- no translation found for alarm_notify_snooze_text (8004830999152609519) -->
-    <skip />
-    <!-- no translation found for volume_button_setting_title (1892885285888644234) -->
-    <skip />
-    <!-- no translation found for volume_button_setting_summary (1594641247799573198) -->
-    <skip />
-    <!-- no translation found for volume_button_setting_entries:0 (4520420953175098625) -->
-    <!-- no translation found for volume_button_setting_entries:1 (7111908302622811168) -->
-    <!-- no translation found for volume_button_setting_entries:2 (8573552194573068996) -->
-    <!-- no translation found for volume_button_setting_values:0 (4851033050639608752) -->
-    <!-- no translation found for volume_button_setting_values:1 (3204893476515513084) -->
-    <!-- no translation found for volume_button_setting_values:2 (7687709558968154577) -->
+    <string name="snooze_duration_title" msgid="1471249885139952670">"Duração do modo de espera"</string>
+  <string-array name="snooze_duration_entries">
+    <item msgid="8337408933053603125">"5 minutos"</item>
+    <item msgid="5294206441496024610">"10 minutos"</item>
+    <item msgid="2165904039211935470">"15 minutos"</item>
+    <item msgid="7248236967714374250">"20 minutos"</item>
+    <item msgid="738394723625179423">"25 minutos"</item>
+    <item msgid="1180222611308391616">"30 minutos"</item>
+  </string-array>
+  <string-array name="snooze_duration_values">
+    <item msgid="3655014754453084122">"5"</item>
+    <item msgid="8939029597449573449">"10"</item>
+    <item msgid="3922647341176353315">"15"</item>
+    <item msgid="5821804105985044459">"20"</item>
+    <item msgid="6048861883552402852">"25"</item>
+    <item msgid="2740866721232379791">"30"</item>
+  </string-array>
+    <string name="done" msgid="6509722361933858451">"Concluído"</string>
+    <string name="revert" msgid="9100911171235162926">"Reverter"</string>
+    <string name="alarm_volume_title" msgid="8506245173912428522">"Volume do alarme"</string>
+    <string name="alarm_volume_summary" msgid="8957440373896242438">"Definir o volume dos alarmes"</string>
+    <string name="silent_alarm_summary" msgid="8605302849408279221">"Silencioso"</string>
+    <string name="alarm_notify_text" msgid="4146350965933990093">"Selecione para colocar esse alarme em modo de espera ou descartá-lo."</string>
+    <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (em modo de espera)"</string>
+    <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"Alarme definido para <xliff:g id="TIME">%s</xliff:g>. Selecione para cancelar."</string>
+    <string name="volume_button_setting_title" msgid="1892885285888644234">"Comportamento do botão lateral"</string>
+    <string name="volume_button_setting_summary" msgid="1594641247799573198">"Defina o comportamento desejado dos botões laterais quando pressionados durante um alarme"</string>
+  <string-array name="volume_button_setting_entries">
+    <item msgid="4520420953175098625">"Nenhuma"</item>
+    <item msgid="7111908302622811168">"Colocar em modo de espera"</item>
+    <item msgid="8573552194573068996">"Descartar"</item>
+  </string-array>
+  <string-array name="volume_button_setting_values">
+    <item msgid="4851033050639608752">"0"</item>
+    <item msgid="3204893476515513084">"1"</item>
+    <item msgid="7687709558968154577">"2"</item>
+  </string-array>
 </resources>

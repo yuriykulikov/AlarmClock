@@ -18,10 +18,8 @@
     <string name="app_label" msgid="6642875149600019623">"알람 시계"</string>
     <string name="add_alarm" msgid="5976616107390962899">"알람 추가"</string>
     <string name="delete_alarm" msgid="3457780990646206817">"알람 삭제"</string>
-    <!-- no translation found for enable_alarm (7442658245797418741) -->
-    <skip />
-    <!-- no translation found for disable_alarm (6665528499886549648) -->
-    <skip />
+    <string name="enable_alarm" msgid="7442658245797418741">"알람 사용"</string>
+    <string name="disable_alarm" msgid="6665528499886549648">"알람 사용 중지"</string>
     <string name="delete_alarm_confirm" msgid="4237696873219106907">"알람이 삭제됩니다."</string>
     <string name="show_clock" msgid="8358759982675616915">"시계 표시"</string>
     <string name="hide_clock" msgid="3217727306480505694">"시계 숨기기"</string>
@@ -36,14 +34,16 @@
     <string name="alarm_alert_alert_silenced" msgid="7918075929961104202">"<xliff:g id="MINUTES">%d</xliff:g>분 후 알람이 중지됨"</string>
     <string name="alarm_alert_snooze_text" msgid="1774416052207651584">"다시 울림"</string>
     <string name="alarm_alert_snooze_set" msgid="656470966696912087">"<xliff:g id="MINUTES">%d</xliff:g>분 동안 알람 일시 중지"</string>
-    <!-- no translation found for alarm_set:0 (5163476010406761625) -->
-    <!-- no translation found for alarm_set:1 (7110525731259629055) -->
-    <!-- no translation found for alarm_set:2 (7003982794086186185) -->
-    <!-- no translation found for alarm_set:3 (7311021123230077742) -->
-    <!-- no translation found for alarm_set:4 (8431715191823114872) -->
-    <!-- no translation found for alarm_set:5 (3244151088673185428) -->
-    <!-- no translation found for alarm_set:6 (3663661342600168814) -->
-    <!-- no translation found for alarm_set:7 (7779544127785487304) -->
+  <string-array name="alarm_set">
+    <item msgid="5163476010406761625">"지금부터 1분 미만 후로 알람이 설정됩니다."</item>
+    <item msgid="7110525731259629055">"지금부터 <xliff:g id="DAYS">%1$s</xliff:g> 후로 알람이 설정됩니다."</item>
+    <item msgid="7003982794086186185">"지금부터 <xliff:g id="HOURS">%2$s</xliff:g> 후로 알람이 설정됩니다."</item>
+    <item msgid="7311021123230077742">"지금부터 <xliff:g id="DAYS">%1$s</xliff:g> <xliff:g id="HOURS">%2$s</xliff:g> 후로 알람이 설정됩니다."</item>
+    <item msgid="8431715191823114872">"지금부터 <xliff:g id="MINUTES">%3$s</xliff:g> 후로 알람이 설정됩니다."</item>
+    <item msgid="3244151088673185428">"지금부터 <xliff:g id="DAYS">%1$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g> 후로 알람이 설정됩니다."</item>
+    <item msgid="3663661342600168814">"지금부터 <xliff:g id="HOURS">%2$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g> 후로 알람이 설정됩니다."</item>
+    <item msgid="7779544127785487304">"지금부터 <xliff:g id="DAYS">%1$s</xliff:g> <xliff:g id="HOURS">%2$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g> 후로 알람이 설정됩니다."</item>
+  </string-array>
     <string name="day" msgid="7984755014526510295">"1일"</string>
     <string name="days" msgid="2070509222727852210">"<xliff:g id="DAYS">%s</xliff:g>일"</string>
     <string name="hour" msgid="2546819039651509323">"1시간"</string>
@@ -58,44 +58,41 @@
     <string name="settings" msgid="5849739030579520686">"설정"</string>
     <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"무음 모드로 알람 설정"</string>
     <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"무음 모드에서도 알람이 울리도록 설정"</string>
-    <!-- no translation found for snooze_duration_title (1471249885139952670) -->
-    <skip />
-    <!-- no translation found for snooze_duration_entries:0 (8337408933053603125) -->
-    <!-- no translation found for snooze_duration_entries:1 (5294206441496024610) -->
-    <!-- no translation found for snooze_duration_entries:2 (2165904039211935470) -->
-    <!-- no translation found for snooze_duration_entries:3 (7248236967714374250) -->
-    <!-- no translation found for snooze_duration_entries:4 (738394723625179423) -->
-    <!-- no translation found for snooze_duration_entries:5 (1180222611308391616) -->
-    <!-- no translation found for snooze_duration_values:0 (3655014754453084122) -->
-    <!-- no translation found for snooze_duration_values:1 (8939029597449573449) -->
-    <!-- no translation found for snooze_duration_values:2 (3922647341176353315) -->
-    <!-- no translation found for snooze_duration_values:3 (5821804105985044459) -->
-    <!-- no translation found for snooze_duration_values:4 (6048861883552402852) -->
-    <!-- no translation found for snooze_duration_values:5 (2740866721232379791) -->
-    <!-- no translation found for done (6509722361933858451) -->
-    <skip />
-    <!-- no translation found for revert (9100911171235162926) -->
-    <skip />
-    <!-- no translation found for alarm_volume_title (8506245173912428522) -->
-    <skip />
-    <!-- no translation found for alarm_volume_summary (8957440373896242438) -->
-    <skip />
-    <!-- no translation found for silent_alarm_summary (8605302849408279221) -->
-    <skip />
-    <!-- no translation found for alarm_notify_text (4146350965933990093) -->
-    <skip />
-    <!-- no translation found for alarm_notify_snooze_label (5404083762646377829) -->
-    <skip />
-    <!-- no translation found for alarm_notify_snooze_text (8004830999152609519) -->
-    <skip />
-    <!-- no translation found for volume_button_setting_title (1892885285888644234) -->
-    <skip />
-    <!-- no translation found for volume_button_setting_summary (1594641247799573198) -->
-    <skip />
-    <!-- no translation found for volume_button_setting_entries:0 (4520420953175098625) -->
-    <!-- no translation found for volume_button_setting_entries:1 (7111908302622811168) -->
-    <!-- no translation found for volume_button_setting_entries:2 (8573552194573068996) -->
-    <!-- no translation found for volume_button_setting_values:0 (4851033050639608752) -->
-    <!-- no translation found for volume_button_setting_values:1 (3204893476515513084) -->
-    <!-- no translation found for volume_button_setting_values:2 (7687709558968154577) -->
+    <string name="snooze_duration_title" msgid="1471249885139952670">"다시 울림 간격"</string>
+  <string-array name="snooze_duration_entries">
+    <item msgid="8337408933053603125">"5분"</item>
+    <item msgid="5294206441496024610">"10분"</item>
+    <item msgid="2165904039211935470">"15분"</item>
+    <item msgid="7248236967714374250">"20분"</item>
+    <item msgid="738394723625179423">"25분"</item>
+    <item msgid="1180222611308391616">"30분"</item>
+  </string-array>
+  <string-array name="snooze_duration_values">
+    <item msgid="3655014754453084122">"5"</item>
+    <item msgid="8939029597449573449">"10"</item>
+    <item msgid="3922647341176353315">"15"</item>
+    <item msgid="5821804105985044459">"20"</item>
+    <item msgid="6048861883552402852">"25"</item>
+    <item msgid="2740866721232379791">"30"</item>
+  </string-array>
+    <string name="done" msgid="6509722361933858451">"완료"</string>
+    <string name="revert" msgid="9100911171235162926">"되돌리기"</string>
+    <string name="alarm_volume_title" msgid="8506245173912428522">"알람 볼륨"</string>
+    <string name="alarm_volume_summary" msgid="8957440373896242438">"알람 볼륨 설정"</string>
+    <string name="silent_alarm_summary" msgid="8605302849408279221">"무음"</string>
+    <string name="alarm_notify_text" msgid="4146350965933990093">"알람을 일시 중지하거나 해제하려면 선택하세요."</string>
+    <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g>(알람 일시 중지됨)"</string>
+    <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"<xliff:g id="TIME">%s</xliff:g> 후로 알람이 설정되었습니다. 취소하려면 선택하세요."</string>
+    <string name="volume_button_setting_title" msgid="1892885285888644234">"사이드 버튼 동작"</string>
+    <string name="volume_button_setting_summary" msgid="1594641247799573198">"알람이 울리는 동안 사이드 버튼을 눌렀을 때의 동작 설정"</string>
+  <string-array name="volume_button_setting_entries">
+    <item msgid="4520420953175098625">"없음"</item>
+    <item msgid="7111908302622811168">"다시 울림"</item>
+    <item msgid="8573552194573068996">"취소"</item>
+  </string-array>
+  <string-array name="volume_button_setting_values">
+    <item msgid="4851033050639608752">"0"</item>
+    <item msgid="3204893476515513084">"1"</item>
+    <item msgid="7687709558968154577">"2"</item>
+  </string-array>
 </resources>
