@@ -18,10 +18,8 @@
     <string name="app_label" msgid="6642875149600019623">"Будильник"</string>
     <string name="add_alarm" msgid="5976616107390962899">"Добавить будильник"</string>
     <string name="delete_alarm" msgid="3457780990646206817">"Удалить будильник"</string>
-    <!-- no translation found for enable_alarm (7442658245797418741) -->
-    <skip />
-    <!-- no translation found for disable_alarm (6665528499886549648) -->
-    <skip />
+    <string name="enable_alarm" msgid="7442658245797418741">"Включить будильник"</string>
+    <string name="disable_alarm" msgid="6665528499886549648">"Отключить будильник"</string>
     <string name="delete_alarm_confirm" msgid="4237696873219106907">"Сигнал будет удален."</string>
     <string name="show_clock" msgid="8358759982675616915">"Показать часы"</string>
     <string name="hide_clock" msgid="3217727306480505694">"Спрятать часы"</string>
@@ -36,14 +34,16 @@
     <string name="alarm_alert_alert_silenced" msgid="7918075929961104202">"Будильник выключился спустя <xliff:g id="MINUTES">%d</xliff:g> мин."</string>
     <string name="alarm_alert_snooze_text" msgid="1774416052207651584">"Спящий режим"</string>
     <string name="alarm_alert_snooze_set" msgid="656470966696912087">"Отсрочка будильника на <xliff:g id="MINUTES">%d</xliff:g> мин."</string>
-    <!-- no translation found for alarm_set:0 (5163476010406761625) -->
-    <!-- no translation found for alarm_set:1 (7110525731259629055) -->
-    <!-- no translation found for alarm_set:2 (7003982794086186185) -->
-    <!-- no translation found for alarm_set:3 (7311021123230077742) -->
-    <!-- no translation found for alarm_set:4 (8431715191823114872) -->
-    <!-- no translation found for alarm_set:5 (3244151088673185428) -->
-    <!-- no translation found for alarm_set:6 (3663661342600168814) -->
-    <!-- no translation found for alarm_set:7 (7779544127785487304) -->
+  <string-array name="alarm_set">
+    <item msgid="5163476010406761625">"До срабатывания будильника осталось меньше одной минуты."</item>
+    <item msgid="7110525731259629055">"Будильник зазвонит через <xliff:g id="DAYS">%1$s</xliff:g>."</item>
+    <item msgid="7003982794086186185">"Будильник зазвонит через <xliff:g id="HOURS">%2$s</xliff:g>."</item>
+    <item msgid="7311021123230077742">"Будильник зазвонит через <xliff:g id="DAYS">%1$s</xliff:g> и <xliff:g id="HOURS">%2$s</xliff:g>."</item>
+    <item msgid="8431715191823114872">"Будильник зазвонит через <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
+    <item msgid="3244151088673185428">"Будильник зазвонит через <xliff:g id="DAYS">%1$s</xliff:g> и <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
+    <item msgid="3663661342600168814">"Будильник зазвонит через <xliff:g id="HOURS">%2$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
+    <item msgid="7779544127785487304">"Будильник зазвонит через <xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> и <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
+  </string-array>
     <string name="day" msgid="7984755014526510295">"1 день"</string>
     <string name="days" msgid="2070509222727852210">"<xliff:g id="DAYS">%s</xliff:g> дн."</string>
     <string name="hour" msgid="2546819039651509323">"1 час"</string>
@@ -58,44 +58,41 @@
     <string name="settings" msgid="5849739030579520686">"Настройки"</string>
     <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Будильник в тихом режиме"</string>
     <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"Подавать сигнал, даже если телефон работает в тихом режиме"</string>
-    <!-- no translation found for snooze_duration_title (1471249885139952670) -->
-    <skip />
-    <!-- no translation found for snooze_duration_entries:0 (8337408933053603125) -->
-    <!-- no translation found for snooze_duration_entries:1 (5294206441496024610) -->
-    <!-- no translation found for snooze_duration_entries:2 (2165904039211935470) -->
-    <!-- no translation found for snooze_duration_entries:3 (7248236967714374250) -->
-    <!-- no translation found for snooze_duration_entries:4 (738394723625179423) -->
-    <!-- no translation found for snooze_duration_entries:5 (1180222611308391616) -->
-    <!-- no translation found for snooze_duration_values:0 (3655014754453084122) -->
-    <!-- no translation found for snooze_duration_values:1 (8939029597449573449) -->
-    <!-- no translation found for snooze_duration_values:2 (3922647341176353315) -->
-    <!-- no translation found for snooze_duration_values:3 (5821804105985044459) -->
-    <!-- no translation found for snooze_duration_values:4 (6048861883552402852) -->
-    <!-- no translation found for snooze_duration_values:5 (2740866721232379791) -->
-    <!-- no translation found for done (6509722361933858451) -->
-    <skip />
-    <!-- no translation found for revert (9100911171235162926) -->
-    <skip />
-    <!-- no translation found for alarm_volume_title (8506245173912428522) -->
-    <skip />
-    <!-- no translation found for alarm_volume_summary (8957440373896242438) -->
-    <skip />
-    <!-- no translation found for silent_alarm_summary (8605302849408279221) -->
-    <skip />
-    <!-- no translation found for alarm_notify_text (4146350965933990093) -->
-    <skip />
-    <!-- no translation found for alarm_notify_snooze_label (5404083762646377829) -->
-    <skip />
-    <!-- no translation found for alarm_notify_snooze_text (8004830999152609519) -->
-    <skip />
-    <!-- no translation found for volume_button_setting_title (1892885285888644234) -->
-    <skip />
-    <!-- no translation found for volume_button_setting_summary (1594641247799573198) -->
-    <skip />
-    <!-- no translation found for volume_button_setting_entries:0 (4520420953175098625) -->
-    <!-- no translation found for volume_button_setting_entries:1 (7111908302622811168) -->
-    <!-- no translation found for volume_button_setting_entries:2 (8573552194573068996) -->
-    <!-- no translation found for volume_button_setting_values:0 (4851033050639608752) -->
-    <!-- no translation found for volume_button_setting_values:1 (3204893476515513084) -->
-    <!-- no translation found for volume_button_setting_values:2 (7687709558968154577) -->
+    <string name="snooze_duration_title" msgid="1471249885139952670">"Продолжительность спящего режима"</string>
+  <string-array name="snooze_duration_entries">
+    <item msgid="8337408933053603125">"5 минут"</item>
+    <item msgid="5294206441496024610">"10 минут"</item>
+    <item msgid="2165904039211935470">"15 минут"</item>
+    <item msgid="7248236967714374250">"20 минут"</item>
+    <item msgid="738394723625179423">"25 минут"</item>
+    <item msgid="1180222611308391616">"30 минут"</item>
+  </string-array>
+  <string-array name="snooze_duration_values">
+    <item msgid="3655014754453084122">"5"</item>
+    <item msgid="8939029597449573449">"10"</item>
+    <item msgid="3922647341176353315">"15"</item>
+    <item msgid="5821804105985044459">"20"</item>
+    <item msgid="6048861883552402852">"25"</item>
+    <item msgid="2740866721232379791">"30"</item>
+  </string-array>
+    <string name="done" msgid="6509722361933858451">"Готово"</string>
+    <string name="revert" msgid="9100911171235162926">"Отменить изменения"</string>
+    <string name="alarm_volume_title" msgid="8506245173912428522">"Громкость будильника"</string>
+    <string name="alarm_volume_summary" msgid="8957440373896242438">"Настройка громкости будильника"</string>
+    <string name="silent_alarm_summary" msgid="8605302849408279221">"Без звука"</string>
+    <string name="alarm_notify_text" msgid="4146350965933990093">"Выберите, чтобы включить спящий режим или полностью отключить этот будильник."</string>
+    <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (спящий режим)"</string>
+    <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"Будильник зазвонит в <xliff:g id="TIME">%s</xliff:g>. Отменить?"</string>
+    <string name="volume_button_setting_title" msgid="1892885285888644234">"Функции боковой кнопки"</string>
+    <string name="volume_button_setting_summary" msgid="1594641247799573198">"Настройка функции боковой кнопки при ее нажатии во время звонка будильника"</string>
+  <string-array name="volume_button_setting_entries">
+    <item msgid="4520420953175098625">"Нет"</item>
+    <item msgid="7111908302622811168">"Спящий режим"</item>
+    <item msgid="8573552194573068996">"Отключить"</item>
+  </string-array>
+  <string-array name="volume_button_setting_values">
+    <item msgid="4851033050639608752">"0"</item>
+    <item msgid="3204893476515513084">"1"</item>
+    <item msgid="7687709558968154577">"2"</item>
+  </string-array>
 </resources>
