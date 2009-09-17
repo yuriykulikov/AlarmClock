@@ -42,8 +42,6 @@
     <string name="never">"繰り返しなし"</string>
     <string name="day_concat">"、 "</string>
     <string name="clock_instructions">"表示する時計を選択してください。"</string>
-    <string name="error">"アラームを設定できません"</string>
-    <string name="dberror">"アラームを設定できません"</string>
     <string name="analog_gadget">"アナログ時計"</string>
     <string name="settings">"設定"</string>
     <string name="alarm_in_silent_mode_title">"マナーモード中のアラーム"</string>

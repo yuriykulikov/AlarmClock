@@ -42,8 +42,6 @@
     <string name="never">"Ποτέ"</string>
     <string name="day_concat">", "</string>
     <string name="clock_instructions">"Επιλογή ρολογιού για προβολή."</string>
-    <string name="error">"Το ξυπνητήρι δεν έχει οριστεί"</string>
-    <string name="dberror">"Λυπούμαστε, δεν ήταν δυνατός ο ορισμός του ξυπνητηριού."</string>
     <string name="analog_gadget">"Αναλογικό ρολόι"</string>
     <string name="settings">"Ρυθμίσεις"</string>
     <string name="alarm_in_silent_mode_title">"Ξυπνητήρι σε αθόρυβη λειτουργία"</string>

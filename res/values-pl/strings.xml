@@ -42,8 +42,6 @@
     <string name="never">"Nigdy"</string>
     <string name="day_concat">", "</string>
     <string name="clock_instructions">"Wybierz wyświetlany zegar."</string>
-    <string name="error">"Alarm nieustawiony"</string>
-    <string name="dberror">"Niestety, nie można ustawić alarmu."</string>
     <string name="analog_gadget">"Zegar analogowy"</string>
     <string name="settings">"Ustawienia"</string>
     <string name="alarm_in_silent_mode_title">"Alarm w trybie cichym"</string>

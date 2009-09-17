@@ -42,8 +42,6 @@
     <string name="never">"永不"</string>
     <string name="day_concat">"、 "</string>
     <string name="clock_instructions">"选择要显示的时钟。"</string>
-    <string name="error">"未设置闹钟"</string>
-    <string name="dberror">"很抱歉，无法设置闹钟。"</string>
     <string name="analog_gadget">"模拟时钟"</string>
     <string name="settings">"设置"</string>
     <string name="alarm_in_silent_mode_title">"在静音模式下提醒"</string>

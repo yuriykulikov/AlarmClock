@@ -42,8 +42,6 @@
     <string name="never">"Nie"</string>
     <string name="day_concat">", "</string>
     <string name="clock_instructions">"Wählen Sie die anzuzeigende Uhr aus."</string>
-    <string name="error">"Wecker nicht eingestellt"</string>
-    <string name="dberror">"Der Wecker konnte nicht eingestellt werden."</string>
     <string name="analog_gadget">"Analoguhr"</string>
     <string name="settings">"Einstellungen"</string>
     <string name="alarm_in_silent_mode_title">"Alarm im Lautlosmodus"</string>

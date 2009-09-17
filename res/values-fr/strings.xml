@@ -42,8 +42,6 @@
     <string name="never">"Jamais"</string>
     <string name="day_concat">", "</string>
     <string name="clock_instructions">"Sélectionnez une horloge à afficher."</string>
-    <string name="error">"Alarme non activée"</string>
-    <string name="dberror">"Désolé, impossible de régler l\'alarme."</string>
     <string name="analog_gadget">"Horloge analogique"</string>
     <string name="settings">"Paramètres"</string>
     <string name="alarm_in_silent_mode_title">"Alarme mode silencieux"</string>

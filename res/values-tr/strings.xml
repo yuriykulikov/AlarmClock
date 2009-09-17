@@ -42,8 +42,6 @@
     <string name="never">"Asla"</string>
     <string name="day_concat">", "</string>
     <string name="clock_instructions">"Görüntülenecek bir saat seçin."</string>
-    <string name="error">"Alarm ayarlanmadı"</string>
-    <string name="dberror">"Maalesef, alarm ayarlanamadı."</string>
     <string name="analog_gadget">"Analog saat"</string>
     <string name="settings">"Ayarlar"</string>
     <string name="alarm_in_silent_mode_title">"Alarm sessiz modda"</string>

@@ -42,8 +42,6 @@
     <string name="never">"Nikdy"</string>
     <string name="day_concat">", "</string>
     <string name="clock_instructions">"Vyberte hodiny, které mají být zobrazeny."</string>
-    <string name="error">"Upozornění není nastaveno"</string>
-    <string name="dberror">"Upozornění bohužel nelze nastavit."</string>
     <string name="analog_gadget">"Analogové hodiny"</string>
     <string name="settings">"Nastavení"</string>
     <string name="alarm_in_silent_mode_title">"Budík v tichém režimu"</string>

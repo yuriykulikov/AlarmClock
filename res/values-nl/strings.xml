@@ -42,8 +42,6 @@
     <string name="never">"Nooit"</string>
     <string name="day_concat">", "</string>
     <string name="clock_instructions">"Selecteer een klok die u wilt weergeven."</string>
-    <string name="error">"Alarm is niet ingesteld"</string>
-    <string name="dberror">"Het alarm kan niet worden ingesteld."</string>
     <string name="analog_gadget">"Analoge klok"</string>
     <string name="settings">"Instellingen"</string>
     <string name="alarm_in_silent_mode_title">"Alarm in stille modus"</string>

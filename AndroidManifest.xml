@@ -13,7 +13,8 @@
 
         <provider android:name="AlarmProvider" android:authorities="com.android.alarmclock" />
 
-        <activity android:name="AlarmClock" android:label="@string/app_label">
+        <activity android:name="AlarmClock" android:label="@string/app_label"
+                android:configChanges="orientation|keyboardHidden|keyboard|navigation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />

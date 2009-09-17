@@ -42,8 +42,6 @@
     <string name="never">"Nunca"</string>
     <string name="day_concat">", "</string>
     <string name="clock_instructions">"Selecciona un reloj."</string>
-    <string name="error">"Alarma no fijada"</string>
-    <string name="dberror">"La alarma no se ha podido fijar."</string>
     <string name="analog_gadget">"Reloj analógico"</string>
     <string name="settings">"Configuración"</string>
     <string name="alarm_in_silent_mode_title">"La alarma está en modo silencioso."</string>

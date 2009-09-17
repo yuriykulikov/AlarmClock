@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -202,33 +203,23 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         mAm = ampm[0];
         mPm = ampm[1];
 
-        // sanity check -- no database, no clock
-        if (getContentResolver() == null) {
-            new AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.error))
-                    .setMessage(getString(R.string.dberror))
-                    .setPositiveButton(
-                            android.R.string.ok,
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    finish();
-                                }
-                            })
-                    .setOnCancelListener(
-                            new DialogInterface.OnCancelListener() {
-                                public void onCancel(DialogInterface dialog) {
-                                    finish();
-                                }})
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .create().show();
-            return;
-        }
-
-        setContentView(R.layout.alarm_clock);
         mFactory = LayoutInflater.from(this);
         mPrefs = getSharedPreferences(PREFERENCES, 0);
-
         mCursor = Alarms.getAlarmsCursor(getContentResolver());
+
+        updateLayout();
+        setClockVisibility(mPrefs.getBoolean(PREF_SHOW_CLOCK, true));
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        updateLayout();
+        inflateClock();
+    }
+
+    private void updateLayout() {
+        setContentView(R.layout.alarm_clock);
         mAlarmsList = (ListView) findViewById(R.id.alarms_list);
         mAlarmsList.setAdapter(new AlarmTimeAdapter(this, mCursor));
         mAlarmsList.setVerticalScrollBarEnabled(true);
@@ -238,13 +229,12 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         mClockLayout = (ViewGroup) findViewById(R.id.clock_layout);
         mClockLayout.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    final Intent intent = new Intent(AlarmClock.this, ClockPicker.class);
+                    final Intent intent =
+                            new Intent(AlarmClock.this, ClockPicker.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }
             });
-
-        setClockVisibility(mPrefs.getBoolean(PREF_SHOW_CLOCK, true));
     }
 
     @Override
@@ -253,10 +243,11 @@ public class AlarmClock extends Activity implements OnItemClickListener {
 
         int face = mPrefs.getInt(PREF_CLOCK_FACE, 0);
         if (mFace != face) {
-            if (face < 0 || face >= AlarmClock.CLOCKS.length)
+            if (face < 0 || face >= AlarmClock.CLOCKS.length) {
                 mFace = 0;
-            else
+            } else {
                 mFace = face;
+            }
             inflateClock();
         }
     }

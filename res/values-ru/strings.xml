@@ -42,8 +42,6 @@
     <string name="never">"Никогда"</string>
     <string name="day_concat">", "</string>
     <string name="clock_instructions">"Выберите вид часов."</string>
-    <string name="error">"Будильник не установлен"</string>
-    <string name="dberror">"К сожалению, будильник не удалось установить."</string>
     <string name="analog_gadget">"Часы со стрелками"</string>
     <string name="settings">"Настройки"</string>
     <string name="alarm_in_silent_mode_title">"Будильник в тихом режиме"</string>

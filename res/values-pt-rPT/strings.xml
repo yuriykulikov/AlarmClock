@@ -42,8 +42,6 @@
     <string name="never">"Nunca"</string>
     <string name="day_concat">", "</string>
     <string name="clock_instructions">"Seleccione um relógio para visualizar."</string>
-    <string name="error">"Alarme não definido"</string>
-    <string name="dberror">"Lamentamos, mas não foi possível definir o alarme."</string>
     <string name="analog_gadget">"Relógio analógico"</string>
     <string name="settings">"Definições"</string>
     <string name="alarm_in_silent_mode_title">"Alarme em modo silencioso"</string>
