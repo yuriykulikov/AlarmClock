@@ -237,6 +237,7 @@ public class Alarms {
     public static Alarm calculateNextAlert(final Context context) {
         Alarm alarm = null;
         long minTime = Long.MAX_VALUE;
+        long now = System.currentTimeMillis();
         Cursor cursor = getFilteredAlarmsCursor(context.getContentResolver());
         if (cursor != null) {
             if (cursor.moveToFirst()) {
@@ -247,6 +248,10 @@ public class Alarms {
                     if (a.time == 0) {
                         a.time = calculateAlarm(a.hour, a.minutes, a.daysOfWeek)
                                 .getTimeInMillis();
+                    } else if (a.time < now) {
+                        // Expired alarm, disable it and move along.
+                        enableAlarmInternal(context, a, false);
+                        continue;
                     }
                     if (a.time < minTime) {
                         minTime = a.time;

@@ -27,6 +27,9 @@ import android.content.BroadcastReceiver;
 import android.database.Cursor;
 import android.os.Parcel;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Glue class: connects AlarmAlert IntentReceiver to AlarmAlert
  * activity.  Passes through Alarm ID.
@@ -74,16 +77,17 @@ public class AlarmReceiver extends BroadcastReceiver {
             return;
         }
 
+        // Intentionally verbose: always log the alarm time to provide useful
+        // information in bug reports.
         long now = System.currentTimeMillis();
-        /* FIXME Intentionally verbose: always log this until we've
-           fully debugged the app failing to start up */
+        SimpleDateFormat format =
+                new SimpleDateFormat("HH:mm:ss.SSS aaa");
         Log.v("AlarmReceiver.onReceive() id " + alarm.id + " setFor "
-                + alarm.time + " now " + now);
+                + format.format(new Date(alarm.time)));
 
         if (now > alarm.time + STALE_WINDOW * 1000) {
             if (Log.LOGV) {
-                Log.v("AlarmReceiver ignoring stale alarm intent id" + alarm.id
-                        + " setFor " + alarm.time + " now " + now);
+                Log.v("AlarmReceiver ignoring stale alarm");
             }
             return;
         }
@@ -118,9 +122,11 @@ public class AlarmReceiver extends BroadcastReceiver {
         // Disable this alarm if it does not repeat.
         if (!alarm.daysOfWeek.isRepeatSet()) {
             Alarms.enableAlarm(context, alarm.id, false);
+        } else {
+            // Enable the next alert if there is one. The above call to
+            // enableAlarm will call setNextAlert so avoid calling it twice.
+            Alarms.setNextAlert(context);
         }
-        // Enable the next alert if there is one.
-        Alarms.setNextAlert(context);
 
         // Play the alarm alert and vibrate the device.
         Intent playAlarm = new Intent(Alarms.ALARM_ALERT_ACTION);
