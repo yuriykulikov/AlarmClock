@@ -16,10 +16,8 @@
 
 package com.android.alarmclock;
 
-import android.graphics.drawable.BitmapDrawable;
-import android.view.View;
-import android.view.Gravity;
-import android.view.LayoutInflater;
+import android.os.Bundle;
+import android.view.WindowManager;
 
 /**
  * Full screen alarm alert: pops visible indicator and plays alarm tone. This
@@ -27,17 +25,18 @@ import android.view.LayoutInflater;
  * background is the current wallpaper.
  */
 public class AlarmAlertFullScreen extends AlarmAlert {
-
     @Override
-    final protected View inflateView(LayoutInflater inflater) {
-        View v = inflater.inflate(R.layout.alarm_alert, null);
-
-        // Display the wallpaper as the background.
-        BitmapDrawable wallpaper = (BitmapDrawable) getWallpaper();
-        wallpaper.setGravity(Gravity.CENTER);
-        v.setBackgroundDrawable(wallpaper);
-
-        return v;
+    protected void onCreate(Bundle icicle) {
+        super.onCreate(icicle);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
     }
-
+    
+    @Override
+    public void onBackPressed() {
+        // Don't allow back to dismiss.
+        return;
+    }
 }
