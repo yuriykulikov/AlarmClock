@@ -34,8 +34,8 @@
         <activity android:name="AlarmAlert"
                 android:excludeFromRecents="true"
                 android:theme="@style/alarm_alert"
-                android:launchMode="singleTask"
-                android:taskAffinity=":AlarmAlert"
+                android:launchMode="singleInstance"
+                android:taskAffinity=""
                 android:configChanges="orientation|keyboardHidden|keyboard|navigation"/>
 
         <!-- This activity is basically the same as AlarmAlert but with a more
@@ -43,9 +43,9 @@
              with the wallpaper background. -->
         <activity android:name="AlarmAlertFullScreen"
                 android:excludeFromRecents="true"
-                android:theme="@android:style/Theme.NoTitleBar"
-                android:launchMode="singleTask"
-                android:taskAffinity=":AlarmAlert"
+                android:theme="@android:style/Theme.Wallpaper.NoTitleBar"
+                android:launchMode="singleInstance"
+                android:taskAffinity=""
                 android:configChanges="orientation|keyboardHidden|keyboard|navigation"/>
 
         <activity android:name="ClockPicker" />
