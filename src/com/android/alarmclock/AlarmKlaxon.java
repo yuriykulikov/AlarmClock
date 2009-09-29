@@ -109,13 +109,20 @@ public class AlarmKlaxon extends Service {
     }
 
     @Override
-    public void onStart(Intent intent, int startId) {
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        // No intent, tell the system not to restart us.
+        if (intent == null) {
+            stopSelf();
+            return START_NOT_STICKY;
+        }
+
         final Alarm alarm = intent.getParcelableExtra(
                 Alarms.ALARM_INTENT_EXTRA);
 
         if (alarm == null) {
             Log.v("AlarmKlaxon failed to parse the alarm from the intent");
-            return;
+            stopSelf();
+            return START_NOT_STICKY;
         }
 
         if (mCurrentAlarm != null) {
@@ -127,6 +134,8 @@ public class AlarmKlaxon extends Service {
         // Record the initial call state here so that the new alarm has the
         // newest state.
         mInitialCallState = mTelephonyManager.getCallState();
+
+        return START_STICKY;
     }
 
     private void sendKillBroadcast(Alarm alarm) {
