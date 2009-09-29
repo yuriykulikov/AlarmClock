@@ -15,7 +15,7 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_label" msgid="6642875149600019623">"Alarmklokke"</string>
+    <string name="app_label" msgid="6642875149600019623">"Alarm"</string>
     <string name="add_alarm" msgid="5976616107390962899">"Legg til alarm"</string>
     <string name="delete_alarm" msgid="3457780990646206817">"Slett alarm"</string>
     <string name="delete_alarm_confirm" msgid="4237696873219106907">"Denne alarmen vil bli slettet."</string>
@@ -35,14 +35,16 @@
     <string name="alarm_alert_snooze_text" msgid="1774416052207651584">"Slumre"</string>
     <string name="alarm_alert_snooze_set" msgid="656470966696912087">"Slumrer i <xliff:g id="MINUTES">%d</xliff:g> minutter."</string>
     <string name="alarm_alert_snooze_not_set" msgid="8783980489802220546">"Ikke slumring -- neste alarm utløses <xliff:g id="TIME">%s</xliff:g>"</string>
-    <!-- no translation found for alarm_set:0 (5163476010406761625) -->
-    <!-- no translation found for alarm_set:1 (7110525731259629055) -->
-    <!-- no translation found for alarm_set:2 (7003982794086186185) -->
-    <!-- no translation found for alarm_set:3 (7311021123230077742) -->
-    <!-- no translation found for alarm_set:4 (8431715191823114872) -->
-    <!-- no translation found for alarm_set:5 (3244151088673185428) -->
-    <!-- no translation found for alarm_set:6 (3663661342600168814) -->
-    <!-- no translation found for alarm_set:7 (7779544127785487304) -->
+  <string-array name="alarm_set">
+    <item msgid="5163476010406761625">"Denne alarmen er innstilt på under ett minutt fra nå."</item>
+    <item msgid="7110525731259629055">"Denne alarmen er innstilt på <xliff:g id="DAYS">%1$s</xliff:g> fra nå."</item>
+    <item msgid="7003982794086186185">"Denne alarmen er innstilt på <xliff:g id="HOURS">%2$s</xliff:g>  fra nå."</item>
+    <item msgid="7311021123230077742">"Denne alarmen er innstilt på <xliff:g id="DAYS">%1$s</xliff:g> og <xliff:g id="HOURS">%2$s</xliff:g> fra nå."</item>
+    <item msgid="8431715191823114872">"Denne alarmen er innstilt på <xliff:g id="MINUTES">%3$s</xliff:g>  fra nå."</item>
+    <item msgid="3244151088673185428">"Denne alarmen er innstilt på <xliff:g id="DAYS">%1$s</xliff:g> og <xliff:g id="MINUTES">%3$s</xliff:g> fra nå."</item>
+    <item msgid="3663661342600168814">"Denne alarmen er innstilt på  <xliff:g id="HOURS">%2$s</xliff:g> og <xliff:g id="MINUTES">%3$s</xliff:g> fra nå."</item>
+    <item msgid="7779544127785487304">"Denne alarmen er innstilt på <xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> og <xliff:g id="MINUTES">%3$s</xliff:g> fra nå."</item>
+  </string-array>
     <string name="day" msgid="7984755014526510295">"1 dag"</string>
     <string name="days" msgid="2070509222727852210">"<xliff:g id="DAYS">%s</xliff:g> dager"</string>
     <string name="hour" msgid="2546819039651509323">"1 time"</string>
