@@ -54,9 +54,10 @@ public class SetAlarm extends PreferenceActivity
     private MenuItem mDeleteAlarmItem;
     private MenuItem mTestAlarmItem;
 
-    private int mId;
-    private int mHour;
-    private int mMinutes;
+    private int     mId;
+    private boolean mEnabled;
+    private int     mHour;
+    private int     mMinutes;
 
     /**
      * Set an alarm.  Requires an Alarms.ALARM_ID to be passed in as an
@@ -92,6 +93,7 @@ public class SetAlarm extends PreferenceActivity
 
         /* load alarm details from database */
         Alarm alarm = Alarms.getAlarm(getContentResolver(), mId);
+        mEnabled = alarm.enabled;
         mLabel.setText(alarm.label);
         mLabel.setSummary(alarm.label);
         mHour = alarm.hour;
@@ -161,10 +163,18 @@ public class SetAlarm extends PreferenceActivity
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
 
+    @Override
+    public void onBackPressed() {
+        saveAlarm();
+        finish();
+    }
+
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         mHour = hourOfDay;
         mMinutes = minute;
         updateTime();
+        // If the time has been changed, enable the alarm.
+        mEnabled = true;
     }
 
     private void updateTime() {
@@ -177,11 +187,14 @@ public class SetAlarm extends PreferenceActivity
 
     private void saveAlarm() {
         final String alert = mAlarmPref.getAlertString();
-        Alarms.setAlarm(this, mId, true, mHour, mMinutes,
+        Alarms.setAlarm(this, mId, mEnabled, mHour, mMinutes,
                 mRepeatPref.getDaysOfWeek(), mVibratePref.isChecked(),
                 mLabel.getText(), alert);
 
-        popAlarmSetToast(this, mHour, mMinutes, mRepeatPref.getDaysOfWeek());
+        if (mEnabled) {
+            popAlarmSetToast(this, mHour, mMinutes,
+                    mRepeatPref.getDaysOfWeek());
+        }
     }
 
     /**
