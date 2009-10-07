@@ -14,6 +14,7 @@
         <provider android:name="AlarmProvider" android:authorities="com.android.alarmclock" />
 
         <activity android:name="AlarmClock" android:label="@string/app_label"
+                android:icon="@drawable/ic_widget_analog_clock"
                 android:configChanges="orientation|keyboardHidden|keyboard|navigation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -78,7 +79,8 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="AnalogAppWidgetProvider" android:label="@string/analog_gadget">
+        <receiver android:name="AnalogAppWidgetProvider" android:label="@string/analog_gadget"
+        	android:icon="@drawable/ic_widget_analog_clock">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
