@@ -27,7 +27,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -35,34 +34,33 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnCreateContextMenuListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.CheckBox;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.CheckBox;
 
-import java.util.Calendar;
 import java.text.DateFormatSymbols;
+import java.util.Calendar;
 
 /**
  * AlarmClock application.
  */
 public class AlarmClock extends Activity implements OnItemClickListener {
 
-    final static String PREFERENCES = "AlarmClock";
-    final static String PREF_CLOCK_FACE = "face";
-    final static String PREF_SHOW_CLOCK = "show_clock";
+    static final String PREFERENCES = "AlarmClock";
+    static final String PREF_CLOCK_FACE = "face";
+    static final String PREF_SHOW_CLOCK = "show_clock";
 
     /** Cap alarm count at this number */
-    final static int MAX_ALARM_COUNT = 12;
+    static final int MAX_ALARM_COUNT = 12;
 
     /** This must be false for production.  If true, turns on logging,
         test code, etc. */
-    final static boolean DEBUG = false;
+    static final boolean DEBUG = false;
 
     private SharedPreferences mPrefs;
     private LayoutInflater mFactory;
@@ -79,9 +77,9 @@ public class AlarmClock extends Activity implements OnItemClickListener {
     private int mFace = -1;
 
     /*
-     * FIXME: it would be nice for this to live in an xml config file.
+     * TODO: it would be nice for this to live in an xml config file.
      */
-    final static int[] CLOCKS = {
+    static final int[] CLOCKS = {
         R.layout.clock_basic_bw,
         R.layout.clock_googly,
         R.layout.clock_droid2,
@@ -100,16 +98,16 @@ public class AlarmClock extends Activity implements OnItemClickListener {
             ((TextView) ret.findViewById(R.id.am)).setText(mAm);
             ((TextView) ret.findViewById(R.id.pm)).setText(mPm);
 
-            DigitalClock digitalClock = (DigitalClock)ret.findViewById(R.id.digitalClock);
+            DigitalClock digitalClock =
+                    (DigitalClock) ret.findViewById(R.id.digitalClock);
             digitalClock.setLive(false);
-            if (Log.LOGV) Log.v("newView " + cursor.getPosition());
             return ret;
         }
 
         public void bindView(View view, Context context, Cursor cursor) {
             final Alarm alarm = new Alarm(cursor);
 
-            CheckBox onButton = (CheckBox)view.findViewById(R.id.alarmButton);
+            CheckBox onButton = (CheckBox) view.findViewById(R.id.alarmButton);
             onButton.setChecked(alarm.enabled);
             onButton.setOnClickListener(new OnClickListener() {
                     public void onClick(View v) {
@@ -211,11 +209,18 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         setClockVisibility(mPrefs.getBoolean(PREF_SHOW_CLOCK, true));
     }
 
+    private final Handler mHandler = new Handler();
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        updateLayout();
-        inflateClock();
+        // Send a message to avoid a possible ANR.
+        mHandler.post(new Runnable() {
+            public void run() {
+                updateLayout();
+                inflateClock();
+            }
+        });
     }
 
     private void updateLayout() {
@@ -344,7 +349,8 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         switch (item.getItemId()) {
             case R.id.menu_add_alarm:
                 Uri uri = Alarms.addAlarm(getContentResolver());
-                // FIXME: scroll to new item?
+                // TODO: Create new alarm _after_ SetAlarm so the user has the
+                // chance to cancel alarm creation.
                 String segment = uri.getPathSegments().get(1);
                 int newId = Integer.parseInt(segment);
                 if (Log.LOGV) {
