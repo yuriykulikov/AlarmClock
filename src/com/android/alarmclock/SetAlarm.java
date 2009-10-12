@@ -93,6 +93,11 @@ public class SetAlarm extends PreferenceActivity
 
         /* load alarm details from database */
         Alarm alarm = Alarms.getAlarm(getContentResolver(), mId);
+        // Bad alarm, bail to avoid a NPE.
+        if (alarm == null) {
+            finish();
+            return;
+        }
         mEnabled = alarm.enabled;
         mLabel.setText(alarm.label);
         mLabel.setSummary(alarm.label);
