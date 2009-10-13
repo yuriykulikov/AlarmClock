@@ -137,6 +137,8 @@ public class SetAlarm extends PreferenceActivity
         Button b = (Button) v.findViewById(R.id.alarm_save);
         b.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
+                    // Enable the alarm when clicking "Done"
+                    mEnabled = true;
                     saveAlarm();
                     finish();
                 }
