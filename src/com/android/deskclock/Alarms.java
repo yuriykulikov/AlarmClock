@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.alarmclock;
+package com.android.deskclock;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -41,7 +41,7 @@ public class Alarms {
     // This action triggers the AlarmReceiver as well as the AlarmKlaxon. It
     // is a public action used in the manifest for receiving Alarm broadcasts
     // from the alarm manager.
-    public static final String ALARM_ALERT_ACTION = "com.android.alarmclock.ALARM_ALERT";
+    public static final String ALARM_ALERT_ACTION = "com.android.deskclock.ALARM_ALERT";
 
     // This is a private action used when the user clears all notifications.
     public static final String CLEAR_NOTIFICATION = "clear_notification";

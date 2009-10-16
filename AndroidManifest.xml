@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        package="com.android.alarmclock">
+        package="com.android.deskclock">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
@@ -11,7 +11,7 @@
     <application android:label="@string/app_label"
                  android:icon="@drawable/ic_launcher_alarmclock">
 
-        <provider android:name="AlarmProvider" android:authorities="com.android.alarmclock" />
+        <provider android:name="AlarmProvider" android:authorities="com.android.deskclock" />
 
         <activity android:name="AlarmClock" android:label="@string/app_label"
                 android:icon="@drawable/ic_widget_analog_clock"
@@ -20,6 +20,7 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DESK_DOCK" />
             </intent-filter>
         </activity>
 
@@ -53,7 +54,7 @@
 
         <receiver android:name="AlarmReceiver">
             <intent-filter>
-               <action android:name="com.android.alarmclock.ALARM_ALERT" />
+               <action android:name="com.android.deskclock.ALARM_ALERT" />
                <action android:name="alarm_killed" />
                <action android:name="cancel_snooze" />
             </intent-filter>
@@ -67,7 +68,7 @@
              causes the AlarmAlert activity to pause. -->
         <service android:name="AlarmKlaxon">
             <intent-filter>
-                <action android:name="com.android.alarmclock.ALARM_ALERT" />
+                <action android:name="com.android.deskclock.ALARM_ALERT" />
             </intent-filter>
         </service>
 
@@ -85,6 +86,19 @@
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/analog_appwidget" />
+        </receiver>
+
+        <receiver android:name="DockEventReceiver">
+            
+            <intent-filter>
+                <action android:name="android.intent.action.DOCK_EVENT" />
+            </intent-filter>
+            
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SECRET_CODE" />
+                <data android:scheme="android_secret_code" android:host="3375" /><!-- DESK -->
+            </intent-filter>
+            
         </receiver>
     </application>
 </manifest>
