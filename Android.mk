@@ -3,6 +3,6 @@ include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := $(call all-subdir-java-files)
 
-LOCAL_PACKAGE_NAME := AlarmClock
+LOCAL_PACKAGE_NAME := DeskClock
 
 include $(BUILD_PACKAGE)
