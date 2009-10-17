@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.alarmclock;
+package com.android.deskclock;
 
 import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;

@@ -14,7 +14,7 @@
      limitations under the License.
 -->
 
-<com.android.alarmclock.DigitalClock android:id="@+id/clock"
+<com.android.deskclock.DigitalClock android:id="@+id/clock"
     xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/clock"
     android:gravity="center">
@@ -49,4 +49,4 @@
             android:includeFontPadding="false"
             android:textSize="28sp"/>
     </LinearLayout>
-</com.android.alarmclock.DigitalClock>
+</com.android.deskclock.DigitalClock>
