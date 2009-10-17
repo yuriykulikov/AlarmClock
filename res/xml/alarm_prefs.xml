@@ -19,7 +19,7 @@
     <Preference android:key="time" 
         android:persistent="false"
         android:title="@string/time"/>
-    <com.android.alarmclock.AlarmPreference
+    <com.android.deskclock.AlarmPreference
         android:key="alarm" 
         android:title="@string/alert"
         android:ringtoneType="alarm"
@@ -29,7 +29,7 @@
     <CheckBoxPreference android:key="vibrate" 
         android:persistent="false"
         android:title="@string/alarm_vibrate"/>
-    <com.android.alarmclock.RepeatPreference
+    <com.android.deskclock.RepeatPreference
         android:persistent="false"
         android:key="setRepeat" 
         android:title="@string/alarm_repeat" />
