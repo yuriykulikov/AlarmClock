@@ -14,28 +14,29 @@
  * limitations under the License.
  */
 
-package com.android.alarmclock;
+/**
+ * package-level logging flag
+ */
 
-import android.widget.Toast;
+package com.android.deskclock;
 
-public class ToastMaster {
+import android.os.SystemClock;
+import android.util.Config;
 
-    private static Toast sToast = null;
+class Log {
+    public final static String LOGTAG = "AlarmClock";
 
-    private ToastMaster() {
+    static final boolean LOGV = AlarmClock.DEBUG ? Config.LOGD : Config.LOGV;
 
+    static void v(String logMe) {
+        android.util.Log.v(LOGTAG, /* SystemClock.uptimeMillis() + " " + */ logMe);
     }
 
-    public static void setToast(Toast toast) {
-        if (sToast != null)
-            sToast.cancel();
-        sToast = toast;
+    static void e(String logMe) {
+        android.util.Log.e(LOGTAG, logMe);
     }
 
-    public static void cancelToast() {
-        if (sToast != null)
-            sToast.cancel();
-        sToast = null;
+    static void e(String logMe, Exception ex) {
+        android.util.Log.e(LOGTAG, logMe, ex);
     }
-
 }
