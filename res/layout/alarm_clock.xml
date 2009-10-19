@@ -18,13 +18,7 @@
     android:id="@+id/base_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_marginTop="6dip"
     android:orientation="vertical"> 
-
-    <LinearLayout
-        android:id="@+id/clock_layout"
-        android:layout_width="fill_parent"
-        android:layout_height="192dip"/>
 
     <ListView
         android:id="@+id/alarms_list"

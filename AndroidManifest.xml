@@ -50,8 +50,6 @@
                 android:taskAffinity=""
                 android:configChanges="orientation|keyboardHidden|keyboard|navigation"/>
 
-        <activity android:name="ClockPicker" />
-
         <receiver android:name="AlarmReceiver">
             <intent-filter>
                <action android:name="com.android.deskclock.ALARM_ALERT" />
