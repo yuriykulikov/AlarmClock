@@ -22,8 +22,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.database.ContentObserver;
-import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.provider.Settings;
 import android.text.format.DateFormat;
@@ -45,7 +43,6 @@ public class DigitalClock extends LinearLayout {
     private String mFormat;
     private TextView mTimeDisplay;
     private AmPm mAmPm;
-    private boolean mAnimate;
     private ContentObserver mFormatChangeObserver;
     private boolean mLive = true;
     private boolean mAttached;
@@ -128,12 +125,6 @@ public class DigitalClock extends LinearLayout {
         if (mAttached) return;
         mAttached = true;
 
-        if (mAnimate) {
-            setBackgroundResource(R.drawable.animate_circle);
-            /* Start the animation (looped playback by default). */
-            ((AnimationDrawable) getBackground()).start();
-        }
-
         if (mLive) {
             /* monitor time ticks, time changed, timezone */
             IntentFilter filter = new IntentFilter();
@@ -157,11 +148,6 @@ public class DigitalClock extends LinearLayout {
 
         if (!mAttached) return;
         mAttached = false;
-
-        Drawable background = getBackground();
-        if (background instanceof AnimationDrawable) {
-            ((AnimationDrawable) background).stop();
-        }
 
         if (mLive) {
             mContext.unregisterReceiver(mIntentReceiver);
@@ -189,10 +175,6 @@ public class DigitalClock extends LinearLayout {
     private void setDateFormat() {
         mFormat = Alarms.get24HourMode(mContext) ? Alarms.M24 : M12;
         mAmPm.setShowAmPm(mFormat == M12);
-    }
-
-    void setAnimate() {
-        mAnimate = true;
     }
 
     void setLive(boolean live) {
