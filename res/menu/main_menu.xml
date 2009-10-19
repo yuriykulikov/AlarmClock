@@ -18,9 +18,6 @@
     <item android:id="@+id/menu_add_alarm"
         android:title="@string/add_alarm"
         android:icon="@android:drawable/ic_menu_add"/>
-    <item android:id="@+id/menu_toggle_clock"
-        android:title="@string/hide_clock"
-        android:icon="@drawable/ic_menu_clock_face"/>
     <item android:id="@+id/menu_settings"
         android:title="@string/settings"
         android:icon="@android:drawable/ic_menu_preferences"/>

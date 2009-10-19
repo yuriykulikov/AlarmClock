@@ -108,20 +108,6 @@ public class AlarmAlertFullScreen extends Activity {
 
         setContentView(inflater.inflate(R.layout.alarm_alert, null));
 
-        /* set clock face */
-        SharedPreferences settings =
-                getSharedPreferences(AlarmClock.PREFERENCES, 0);
-        int face = settings.getInt(AlarmClock.PREF_CLOCK_FACE, 0);
-        if (face < 0 || face >= AlarmClock.CLOCKS.length) {
-            face = 0;
-        }
-        ViewGroup clockView = (ViewGroup) findViewById(R.id.clockView);
-        inflater.inflate(AlarmClock.CLOCKS[face], clockView);
-        View clockLayout = findViewById(R.id.clock);
-        if (clockLayout instanceof DigitalClock) {
-            ((DigitalClock) clockLayout).setAnimate();
-        }
-
         /* snooze behavior: pop a snooze confirmation view, kick alarm
            manager. */
         Button snooze = (Button) findViewById(R.id.snooze);

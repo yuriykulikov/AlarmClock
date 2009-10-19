@@ -52,8 +52,6 @@ import java.util.Calendar;
 public class AlarmClock extends Activity implements OnItemClickListener {
 
     static final String PREFERENCES = "AlarmClock";
-    static final String PREF_CLOCK_FACE = "face";
-    static final String PREF_SHOW_CLOCK = "show_clock";
 
     /** Cap alarm count at this number */
     static final int MAX_ALARM_COUNT = 12;
@@ -64,28 +62,10 @@ public class AlarmClock extends Activity implements OnItemClickListener {
 
     private SharedPreferences mPrefs;
     private LayoutInflater mFactory;
-    private ViewGroup mClockLayout;
-    private View mClock = null;
     private ListView mAlarmsList;
     private Cursor mCursor;
 
     private String mAm, mPm;
-
-    /**
-     * Which clock face to show
-     */
-    private int mFace = -1;
-
-    /*
-     * TODO: it would be nice for this to live in an xml config file.
-     */
-    static final int[] CLOCKS = {
-        R.layout.clock_basic_bw,
-        R.layout.clock_googly,
-        R.layout.clock_droid2,
-        R.layout.clock_droids,
-        R.layout.digital_clock
-    };
 
     private class AlarmTimeAdapter extends CursorAdapter {
         public AlarmTimeAdapter(Context context, Cursor cursor) {
@@ -206,21 +186,6 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         mCursor = Alarms.getAlarmsCursor(getContentResolver());
 
         updateLayout();
-        setClockVisibility(mPrefs.getBoolean(PREF_SHOW_CLOCK, true));
-    }
-
-    private final Handler mHandler = new Handler();
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        // Send a message to avoid a possible ANR.
-        mHandler.post(new Runnable() {
-            public void run() {
-                updateLayout();
-                inflateClock();
-            }
-        });
     }
 
     private void updateLayout() {
@@ -230,31 +195,6 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         mAlarmsList.setVerticalScrollBarEnabled(true);
         mAlarmsList.setOnItemClickListener(this);
         mAlarmsList.setOnCreateContextMenuListener(this);
-
-        mClockLayout = (ViewGroup) findViewById(R.id.clock_layout);
-        mClockLayout.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    final Intent intent =
-                            new Intent(AlarmClock.this, ClockPicker.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
-            });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        int face = mPrefs.getInt(PREF_CLOCK_FACE, 0);
-        if (mFace != face) {
-            if (face < 0 || face >= AlarmClock.CLOCKS.length) {
-                mFace = 0;
-            } else {
-                mFace = face;
-            }
-            inflateClock();
-        }
     }
 
     @Override
@@ -262,25 +202,6 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         super.onDestroy();
         ToastMaster.cancelToast();
         mCursor.deactivate();
-    }
-
-    protected void inflateClock() {
-        if (mClock != null) {
-            mClockLayout.removeView(mClock);
-        }
-
-        LayoutInflater.from(this).inflate(CLOCKS[mFace], mClockLayout);
-        mClock = findViewById(R.id.clock);
-
-        TextView am = (TextView) findViewById(R.id.am);
-        TextView pm = (TextView) findViewById(R.id.pm);
-
-        if (am != null) {
-            am.setText(mAm);
-        }
-        if (pm != null) {
-            pm.setText(mPm);
-        }
     }
 
     @Override
@@ -338,9 +259,6 @@ public class AlarmClock extends Activity implements OnItemClickListener {
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.findItem(R.id.menu_add_alarm).setVisible(
                 mAlarmsList.getAdapter().getCount() < MAX_ALARM_COUNT);
-        menu.findItem(R.id.menu_toggle_clock).setTitle(
-                getClockVisibility() ? R.string.hide_clock
-                    : R.string.show_clock);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -361,29 +279,11 @@ public class AlarmClock extends Activity implements OnItemClickListener {
                 startActivity(intent);
                 return true;
 
-            case R.id.menu_toggle_clock:
-                setClockVisibility(!getClockVisibility());
-                saveClockVisibility();
-                return true;
-
             case R.id.menu_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-
-    private boolean getClockVisibility() {
-        return mClockLayout.getVisibility() == View.VISIBLE;
-    }
-
-    private void setClockVisibility(boolean visible) {
-        mClockLayout.setVisibility(visible ? View.VISIBLE : View.GONE);
-    }
-
-    private void saveClockVisibility() {
-        mPrefs.edit().putBoolean(PREF_SHOW_CLOCK, getClockVisibility()).commit();
     }
 }
