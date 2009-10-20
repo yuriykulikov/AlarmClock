@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.database.ContentObserver;
+import android.graphics.Typeface;
 import android.os.Handler;
 import android.provider.Settings;
 import android.text.format.DateFormat;
@@ -66,10 +67,12 @@ public class DigitalClock extends LinearLayout {
         private LinearLayout mAmPmLayout;
         private TextView mAm, mPm;
 
-        AmPm(View parent) {
+        AmPm(View parent, Typeface tf) {
             mAmPmLayout = (LinearLayout) parent.findViewById(R.id.am_pm);
             mAm = (TextView)mAmPmLayout.findViewById(R.id.am);
+            mAm.setTypeface(tf);
             mPm = (TextView)mAmPmLayout.findViewById(R.id.pm);
+            mPm.setTypeface(tf);
 
             Resources r = parent.getResources();
             mColorOn = r.getColor(R.color.ampm_on);
@@ -109,8 +112,11 @@ public class DigitalClock extends LinearLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
+        Typeface tf = Typeface.createFromAsset(getContext().getAssets(),
+                "fonts/Clockopia.ttf");
         mTimeDisplay = (TextView) findViewById(R.id.timeDisplay);
-        mAmPm = new AmPm(this);
+        mTimeDisplay.setTypeface(tf);
+        mAmPm = new AmPm(this, tf);
         mCalendar = Calendar.getInstance();
 
         setDateFormat();
