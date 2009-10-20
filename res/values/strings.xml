@@ -17,7 +17,10 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- -->
     <!-- Label shown on launcher icon -->
-    <string name="app_label">Alarm Clock</string>
+    <string name="app_label">Desk Clock</string>
+
+    <!-- Title for AlarmClock activity -->
+    <string name="alarm_list_title">Alarms</string>
 
     <!-- Menu item on Alarm Clock screen: Add alarm -->
     <string name="add_alarm">Add alarm</string>
@@ -218,6 +221,12 @@
       <item>1</item>
       <item>2</item>
     </string-array>
+
+    <!-- Placeholders --><skip/>
+    <string name="alarm_button_title_placeholder">Alarms</string>
+    <string name="gallery_button_title_placeholder">Gallery</string>
+    <string name="music_button_title_placeholder">Music</string>
+    <string name="nightmode_button_title_placeholder">Dim</string>
 </resources>
 
 
