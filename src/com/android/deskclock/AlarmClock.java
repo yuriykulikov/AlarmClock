@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,6 +39,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
@@ -191,10 +193,50 @@ public class AlarmClock extends Activity implements OnItemClickListener {
     private void updateLayout() {
         setContentView(R.layout.alarm_clock);
         mAlarmsList = (ListView) findViewById(R.id.alarms_list);
-        mAlarmsList.setAdapter(new AlarmTimeAdapter(this, mCursor));
+        AlarmTimeAdapter adapter = new AlarmTimeAdapter(this, mCursor);
+        mAlarmsList.setAdapter(adapter);
         mAlarmsList.setVerticalScrollBarEnabled(true);
         mAlarmsList.setOnItemClickListener(this);
         mAlarmsList.setOnCreateContextMenuListener(this);
+
+        final Button addAlarm = (Button) findViewById(R.id.add_alarm);
+        addAlarm.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Uri uri = Alarms.addAlarm(getContentResolver());
+                    // FIXME: scroll to new item?
+                    String segment = uri.getPathSegments().get(1);
+                    int newId = Integer.parseInt(segment);
+                    if (Log.LOGV) {
+                        Log.v("In AlarmClock, new alarm id = " + newId);
+                    }
+                    Intent intent =
+                        new Intent(AlarmClock.this, SetAlarm.class);
+                    intent.putExtra(Alarms.ALARM_ID, newId);
+                    startActivity(intent);
+                }
+            });
+        // Update the enabled state of the "Add alarm" menu item depending on
+        // how many alarms are set.
+        adapter.registerDataSetObserver(new DataSetObserver() {
+            public void onChanged() {
+                updateAddAlarmButton(addAlarm);
+            }
+            public void onInvalidate() {
+                updateAddAlarmButton(addAlarm);
+            }
+        });
+
+        Button settings = (Button) findViewById(R.id.settings);
+        settings.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    startActivity(
+                        new Intent(AlarmClock.this, SettingsActivity.class));
+                }
+            });
+    }
+
+    private void updateAddAlarmButton(Button b) {
+        b.setEnabled(mAlarmsList.getAdapter().getCount() < MAX_ALARM_COUNT);
     }
 
     @Override
@@ -202,14 +244,6 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         super.onDestroy();
         ToastMaster.cancelToast();
         mCursor.deactivate();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate our menu.
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-
-        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -249,41 +283,5 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         Intent intent = new Intent(this, SetAlarm.class);
         intent.putExtra(Alarms.ALARM_ID, (int) id);
         startActivity(intent);
-    }
-
-    /**
-     * Only allow user to add a new alarm if there are fewer than
-     * MAX_ALARM_COUNT
-     */
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.menu_add_alarm).setVisible(
-                mAlarmsList.getAdapter().getCount() < MAX_ALARM_COUNT);
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_add_alarm:
-                Uri uri = Alarms.addAlarm(getContentResolver());
-                // TODO: Create new alarm _after_ SetAlarm so the user has the
-                // chance to cancel alarm creation.
-                String segment = uri.getPathSegments().get(1);
-                int newId = Integer.parseInt(segment);
-                if (Log.LOGV) {
-                    Log.v("In AlarmClock, new alarm id = " + newId);
-                }
-                Intent intent = new Intent(this, SetAlarm.class);
-                intent.putExtra(Alarms.ALARM_ID, newId);
-                startActivity(intent);
-                return true;
-
-            case R.id.menu_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }

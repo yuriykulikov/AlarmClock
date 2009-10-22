@@ -26,4 +26,26 @@
         android:layout_height="wrap_content"
         android:layout_weight="1" />
 
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        style="@android:style/ButtonBar">
+
+        <Button android:id="@+id/add_alarm"
+            android:focusable="true"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="@string/add_alarm"/>
+
+        <Button android:id="@+id/settings"
+            android:focusable="true"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="@string/settings"/>
+
+    </LinearLayout>
+
 </LinearLayout>
