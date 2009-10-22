@@ -45,7 +45,6 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.text.DateFormatSymbols;
 import java.util.Calendar;
 
 /**
@@ -67,8 +66,6 @@ public class AlarmClock extends Activity implements OnItemClickListener {
     private ListView mAlarmsList;
     private Cursor mCursor;
 
-    private String mAm, mPm;
-
     private class AlarmTimeAdapter extends CursorAdapter {
         public AlarmTimeAdapter(Context context, Cursor cursor) {
             super(context, cursor);
@@ -76,9 +73,6 @@ public class AlarmClock extends Activity implements OnItemClickListener {
 
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             View ret = mFactory.inflate(R.layout.alarm_time, parent, false);
-
-            ((TextView) ret.findViewById(R.id.am)).setText(mAm);
-            ((TextView) ret.findViewById(R.id.pm)).setText(mPm);
 
             DigitalClock digitalClock =
                     (DigitalClock) ret.findViewById(R.id.digitalClock);
@@ -178,10 +172,6 @@ public class AlarmClock extends Activity implements OnItemClickListener {
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-
-        String[] ampm = new DateFormatSymbols().getAmPmStrings();
-        mAm = ampm[0];
-        mPm = ampm[1];
 
         mFactory = LayoutInflater.from(this);
         mPrefs = getSharedPreferences(PREFERENCES, 0);

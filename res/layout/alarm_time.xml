@@ -42,29 +42,13 @@
                 android:textSize="30sp"
                 android:textColor="@color/white"/>
 
-            <LinearLayout android:id="@+id/am_pm"
+            <TextView android:id="@+id/am_pm"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:layout_marginLeft="4dip"
-                android:orientation="vertical">
+                android:gravity="bottom"
+                android:textSize="12sp"
+                android:textColor="@color/white"/>
 
-                <TextView android:id="@+id/am"
-                    android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
-                    android:gravity="bottom"
-                    android:layout_weight=".5"
-                    android:includeFontPadding="false"
-                    android:textSize="12sp"/>
-
-                <TextView android:id="@+id/pm"
-                    android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
-                    android:gravity="top"
-                    android:layout_weight=".5"
-                    android:includeFontPadding="false"
-                    android:textSize="12sp"/>
-
-            </LinearLayout>
         </LinearLayout>
 
         <TextView android:id="@+id/daysOfWeek"
