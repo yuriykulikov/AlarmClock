@@ -37,7 +37,7 @@ public class DockEventReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {        
         Intent clockIntent = new Intent(Intent.ACTION_MAIN);
         clockIntent.setComponent(
-                new ComponentName(context, AlarmClock.class));
+                new ComponentName(context, DeskClock.class));
         clockIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         
         String action = intent.getAction();
