@@ -31,6 +31,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.text.DateFormatSymbols;
 import java.util.Calendar;
 
 /**
@@ -62,30 +63,24 @@ public class DigitalClock extends LinearLayout {
         };
 
     static class AmPm {
-        private int mColorOn, mColorOff;
-
-        private LinearLayout mAmPmLayout;
-        private TextView mAm, mPm;
+        private TextView mAmPm;
+        private String mAmString, mPmString;
 
         AmPm(View parent, Typeface tf) {
-            mAmPmLayout = (LinearLayout) parent.findViewById(R.id.am_pm);
-            mAm = (TextView)mAmPmLayout.findViewById(R.id.am);
-            mAm.setTypeface(tf);
-            mPm = (TextView)mAmPmLayout.findViewById(R.id.pm);
-            mPm.setTypeface(tf);
+            mAmPm = (TextView) parent.findViewById(R.id.am_pm);
+            mAmPm.setTypeface(tf);
 
-            Resources r = parent.getResources();
-            mColorOn = r.getColor(R.color.ampm_on);
-            mColorOff = r.getColor(R.color.ampm_off);
+            String[] ampm = new DateFormatSymbols().getAmPmStrings();
+            mAmString = ampm[0];
+            mPmString = ampm[1];
         }
 
         void setShowAmPm(boolean show) {
-            mAmPmLayout.setVisibility(show ? View.VISIBLE : View.GONE);
+            mAmPm.setVisibility(show ? View.VISIBLE : View.GONE);
         }
 
         void setIsMorning(boolean isMorning) {
-            mAm.setTextColor(isMorning ? mColorOn : mColorOff);
-            mPm.setTextColor(isMorning ? mColorOff : mColorOn);
+            mAmPm.setText(isMorning ? mAmString : mPmString);
         }
     }
 
