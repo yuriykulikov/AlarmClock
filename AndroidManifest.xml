@@ -13,7 +13,9 @@
 
         <provider android:name="AlarmProvider" android:authorities="com.android.deskclock" />
 
-        <activity android:name="AlarmClock" android:label="@string/app_label"
+        <activity android:name="DeskClock"
+                android:label="@string/app_label"
+                android:theme="@android:style/Theme.Wallpaper.NoTitleBar"
                 android:icon="@drawable/ic_widget_analog_clock"
                 android:configChanges="orientation|keyboardHidden|keyboard|navigation">
             <intent-filter>
@@ -21,6 +23,13 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.DESK_DOCK" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="AlarmClock" android:label="@string/alarm_list_title"
+                android:configChanges="orientation|keyboardHidden|keyboard|navigation">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
 
