@@ -227,6 +227,10 @@
     <string name="gallery_button_title_placeholder">Gallery</string>
     <string name="music_button_title_placeholder">Music</string>
     <string name="nightmode_button_title_placeholder">Dim</string>
+    <string name="home_button_title_placeholder">Launcher</string>
+
+    <!-- A short representation of charging information, e.g "34%" -->
+    <string name="battery_charging_level"><xliff:g id="number">%d</xliff:g><xliff:g id="percent">%%</xliff:g></string>
 </resources>
 
 
