@@ -33,6 +33,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.animation.AnimationUtils;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -64,6 +65,10 @@ import java.util.Date;
  */
 public class DeskClock extends Activity {
 
+    private static final String LOG_TAG = "DeskClock";
+
+    private static final String MUSIC_NOW_PLAYING_ACTIVITY = "com.android.music.PLAYBACK_VIEWER";
+
     private TextView mNextAlarm = null;
     private TextView mDate;
     private TextView mBatteryDisplay;
@@ -84,7 +89,6 @@ public class DeskClock extends Activity {
             }
         }
     };
-
 
     private DateFormat mDateFormat;
     
@@ -205,12 +209,33 @@ public class DeskClock extends Activity {
         final Button galleryButton = (Button) findViewById(R.id.gallery_button);
         galleryButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                try {
+                    startActivity(new Intent(
+                        Intent.ACTION_VIEW,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI));
+                } catch (android.content.ActivityNotFoundException e) {
+                    Log.e(LOG_TAG, "Couldn't launch image browser", e);
+                }
             }
         });
 
         final Button musicButton = (Button) findViewById(R.id.music_button);
         musicButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                try {
+                    startActivity(new Intent(MUSIC_NOW_PLAYING_ACTIVITY));
+                } catch (android.content.ActivityNotFoundException e) {
+                    Log.e(LOG_TAG, "Couldn't launch music browser", e);
+                }
+            }
+        });
+
+        final Button homeButton = (Button) findViewById(R.id.home_button);
+        homeButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startActivity(
+                    new Intent(Intent.ACTION_MAIN)
+                        .addCategory(Intent.CATEGORY_HOME));
             }
         });
 
