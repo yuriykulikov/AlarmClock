@@ -52,6 +52,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.CheckBox;
 
+import static android.os.BatteryManager.BATTERY_STATUS_CHARGING;
+import static android.os.BatteryManager.BATTERY_STATUS_FULL;
+import static android.os.BatteryManager.BATTERY_STATUS_UNKNOWN;
+
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -62,6 +66,7 @@ public class DeskClock extends Activity {
 
     private TextView mNextAlarm = null;
     private TextView mDate;
+    private TextView mBatteryDisplay;
     private DigitalClock mTime;
 
     private boolean mDimmed = false;
@@ -69,12 +74,44 @@ public class DeskClock extends Activity {
     private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            refreshDate();
+            final String action = intent.getAction();
+            if (Intent.ACTION_DATE_CHANGED.equals(action)) {
+                refreshDate();
+            } else if (Intent.ACTION_BATTERY_CHANGED.equals(action)) {
+                handleBatteryUpdate(
+                    intent.getIntExtra("status", BATTERY_STATUS_UNKNOWN),
+                    intent.getIntExtra("level", 0));
+            }
         }
     };
 
 
     private DateFormat mDateFormat;
+    
+    private int mBatteryLevel;
+    private boolean mPluggedIn;
+
+    // Adapted from KeyguardUpdateMonitor.java
+    private void handleBatteryUpdate(int plugStatus, int batteryLevel) {
+        final boolean pluggedIn = (plugStatus == BATTERY_STATUS_CHARGING || plugStatus == BATTERY_STATUS_FULL);
+        if (pluggedIn != mPluggedIn || batteryLevel != mBatteryLevel) {
+            mBatteryLevel = batteryLevel;
+            mPluggedIn = pluggedIn;
+            refreshBattery();
+        }
+    }
+
+    private void refreshBattery() {
+        if (mPluggedIn /* || mBatteryLevel < LOW_BATTERY_THRESHOLD */) {
+            mBatteryDisplay.setCompoundDrawablesWithIntrinsicBounds(
+                0, 0, android.R.drawable.ic_lock_idle_charging, 0);
+            mBatteryDisplay.setText(
+                getString(R.string.battery_charging_level, mBatteryLevel));
+            mBatteryDisplay.setVisibility(View.VISIBLE);
+        } else {
+            mBatteryDisplay.setVisibility(View.INVISIBLE);
+        }
+    }
 
     private void refreshDate() {
         mDate.setText(mDateFormat.format(new Date()));
@@ -98,14 +135,26 @@ public class DeskClock extends Activity {
 
         Window win = getWindow();
         WindowManager.LayoutParams winParams = win.getAttributes();
+
+        // dim the wallpaper somewhat (how much is determined below)
+        winParams.flags |= (WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
         if (mDimmed) {
             winParams.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+//            winParams.flags &= (~WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+            winParams.dimAmount = 0.5f; // pump up contrast in dim mode
+
+            // show the window tint
             tintView.startAnimation(AnimationUtils.loadAnimation(this, R.anim.dim));
         } else {
             winParams.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//            winParams.flags |= WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+            winParams.dimAmount = 0.2f; // lower contrast in normal mode
+    
+            // hide the window tint
             tintView.startAnimation(AnimationUtils.loadAnimation(this, R.anim.undim));
         }
-
+        
         win.setAttributes(winParams);
     }
 
@@ -119,11 +168,13 @@ public class DeskClock extends Activity {
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_DATE_CHANGED);
+        filter.addAction(Intent.ACTION_BATTERY_CHANGED);
         registerReceiver(mIntentReceiver, filter);
 
         doDim();
         refreshDate();
         refreshAlarm();
+        refreshBattery();
     }
 
     @Override
@@ -140,6 +191,7 @@ public class DeskClock extends Activity {
 
         mTime = (DigitalClock) findViewById(R.id.time);
         mDate = (TextView) findViewById(R.id.date);
+        mBatteryDisplay = (TextView) findViewById(R.id.battery);
 
         mNextAlarm = (TextView) findViewById(R.id.nextAlarm);
 

@@ -28,91 +28,146 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical"
-        android:gravity="bottom"
-        android:background="#30000000"
         >
 
+        <!-- Entire display region (everything but bottom buttons) -->
         <LinearLayout
             android:orientation="vertical"
             android:layout_gravity="left"
+            android:layout_weight="1"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dip"
-            android:layout_marginLeft="15dip"
-            android:layout_marginRight="15dip"
-            android:paddingTop="20dip"
-            android:paddingBottom="20dip"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="20dip"
+            android:layout_marginTop="20dip"
+            android:layout_marginRight="14dip"
+            android:layout_marginBottom="14dip"
             >
 
-            <TextView android:id="@+id/carrier"
+            <!-- across the top: next alarm, nightmode button -->
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:gravity="right"
-                android:textSize="34sp"
-                />
-
-            <!-- digital clock -->
-            <com.android.deskclock.DigitalClock android:id="@+id/time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dip"
-                android:layout_marginBottom="12dip"
-                android:layout_marginLeft="-8dip"
+                android:layout_weight="0"
+                android:layout_marginBottom="6dip"
                 >
-                <!-- negative left margin above accounts for Clockopia's
-                     generous glyph padding -->
-
-                <TextView android:id="@+id/timeDisplay"
+                <TextView android:id="@+id/nextAlarm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textSize="100sp"
-                    android:textColor="@color/white"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:textSize="18sp"
+                    android:textColor="#FFFFFFFF"
+                    android:drawablePadding="6dip"
+                    android:drawableLeft="@android:drawable/ic_lock_idle_alarm"
+                    android:shadowColor="#C0000000"
+                    android:shadowDx="0"
+                    android:shadowDy="0"
+                    android:shadowRadius="3.0"                        
                     />
-
-
-                <TextView android:id="@+id/am_pm"
+                <Button android:id="@+id/nightmode_button"
+                    android:layout_weight="0"
+                    android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
-                    android:gravity="bottom"
-                    android:textSize="28sp"
-                    android:layout_marginLeft="3dip"
-                    android:textColor="@color/white"
+                    android:text="@string/nightmode_button_title_placeholder"
                     />
+            </LinearLayout>
 
-            </com.android.deskclock.DigitalClock>
 
-            <TextView android:id="@+id/date"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:gravity="left"
-                      android:textSize="18sp"
-                      android:textColor="@color/white"
-                      />
+            <!-- digital clock & date, together -->
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left|center_vertical"
+                android:layout_marginBottom="12dip"
+                >
+
+                <com.android.deskclock.DigitalClock android:id="@+id/time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dip"
+                    android:layout_marginLeft="-8dip"
+                    >
+                    <!-- negative left margin above accounts for Clockopia's
+                         generous glyph padding -->
+
+                    <TextView android:id="@+id/timeDisplay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="100sp"
+                        android:textColor="#FFFFFFFF"
+                        android:shadowColor="#C0000000"
+                        android:shadowDx="0"
+                        android:shadowDy="0"
+                        android:shadowRadius="3.0"                        
+                        />
+
+
+                    <TextView android:id="@+id/am_pm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:gravity="bottom"
+                        android:textSize="28sp"
+                        android:singleLine="true"
+                        android:layout_marginLeft="3dip"
+                        android:textColor="#FFFFFFFF"
+                        android:shadowColor="#C0000000"
+                        android:shadowDx="0"
+                        android:shadowDy="0"
+                        android:shadowRadius="3.0"                        
+                        />
+
+                </com.android.deskclock.DigitalClock>
+
+                <TextView android:id="@+id/date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:textSize="18sp"
+                    android:textColor="#FFFFFFFF"
+                    android:shadowColor="#C0000000"
+                    android:shadowDx="0"
+                    android:shadowDy="0"
+                    android:shadowRadius="3.0"                        
+                    />
+            
+            </LinearLayout>
 
             <!-- TODO: weather -->
             <View android:id="@+id/weather"
-                      android:layout_width="wrap_content"
-                      android:layout_height="100dip"
-                      />
+                android:layout_width="wrap_content"
+                android:layout_height="100dip"
+                android:layout_weight="0"
+                android:background="#C0FF8000"
+                android:layout_marginBottom="12dip"
+                />
 
-            <TextView android:id="@+id/nextAlarm"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:gravity="left"
-                      android:textSize="18sp"
-                      android:textColor="@color/white"
-                      android:drawablePadding="6dip"
-                      android:drawableLeft="@android:drawable/ic_lock_idle_alarm"
-                      />
+            <!-- battery/charge status -->
+            <TextView android:id="@+id/battery"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:gravity="right"
+                android:textSize="18sp"
+                android:textColor="#FFFFFFFF"
+                android:drawablePadding="6dip"
+                android:shadowColor="#C0000000"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="3.0"                        
+                />
 
         </LinearLayout>
 
-        <!-- TODO: buttons -->
+        <!-- buttons -->
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="0"
             >
             <!--
                 android:background="@null"
@@ -136,11 +191,11 @@
                 android:layout_weight=".25"
                 android:text="@string/music_button_title_placeholder"
                 />
-            <Button android:id="@+id/nightmode_button"
+            <Button android:id="@+id/home_button"
                 android:layout_height="wrap_content"
                 android:layout_width="fill_parent"
                 android:layout_weight=".25"
-                android:text="@string/nightmode_button_title_placeholder"
+                android:text="@string/home_button_title_placeholder"
                 />
 
         </LinearLayout>
