@@ -18,9 +18,11 @@ package com.android.deskclock;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -50,8 +52,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.CheckBox;
 
-import java.util.Calendar;
-import java.text.DateFormatSymbols;
+import java.text.DateFormat;
+import java.util.Date;
 
 /**
  * DeskClock clock view for desk docks.
@@ -59,21 +61,32 @@ import java.text.DateFormatSymbols;
 public class DeskClock extends Activity {
 
     private TextView mNextAlarm = null;
-    private Drawable mAlarmIcon = null;
-
     private TextView mDate;
     private DigitalClock mTime;
 
     private boolean mDimmed = false;
 
+    private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            refreshDate();
+        }
+    };
+
+
+    private DateFormat mDateFormat;
+
+    private void refreshDate() {
+        mDate.setText(mDateFormat.format(new Date()));
+    }
+
     private void refreshAlarm() {
         String nextAlarm = Settings.System.getString(getContentResolver(),
                 Settings.System.NEXT_ALARM_FORMATTED);
-        if (nextAlarm != null && TextUtils.isEmpty(nextAlarm)) {
+        if (!TextUtils.isEmpty(nextAlarm)) {
             mNextAlarm.setText(nextAlarm);
-            mAlarmIcon = getResources().getDrawable(android.R.drawable.ic_lock_idle_alarm);
-            mNextAlarm.setCompoundDrawablesWithIntrinsicBounds(
-                mAlarmIcon, null, null, null);
+            //mNextAlarm.setCompoundDrawablesWithIntrinsicBounds(
+            //    android.R.drawable.ic_lock_idle_alarm, 0, 0, 0);
             mNextAlarm.setVisibility(View.VISIBLE);
         } else {
             mNextAlarm.setVisibility(View.INVISIBLE);
@@ -94,6 +107,29 @@ public class DeskClock extends Activity {
         }
 
         win.setAttributes(winParams);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // reload the date format in case the user has changed settings
+        // recently
+        mDateFormat = java.text.DateFormat.getDateInstance(java.text.DateFormat.FULL);
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_DATE_CHANGED);
+        registerReceiver(mIntentReceiver, filter);
+
+        doDim();
+        refreshDate();
+        refreshAlarm();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        unregisterReceiver(mIntentReceiver);
     }
 
     @Override
@@ -134,8 +170,6 @@ public class DeskClock extends Activity {
             }
         });
 
-        doDim();
-        refreshAlarm();
     }
 
 }
