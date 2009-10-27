@@ -75,16 +75,17 @@
 
             <include layout="@layout/desk_clock_time_date"
                 android:layout_weight="1"
-                />
-
-            <View android:id="@+id/weather" xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_height="100dip"
                 android:layout_width="wrap_content"
-                android:background="#C0CC00CC"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="12dip"
-                android:layout_weight="0"
                 />
 
+            <include layout="@layout/desk_clock_weather"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:layout_marginBottom="12dip"
+                />
 
             <include layout="@layout/desk_clock_battery"
                 android:layout_height="wrap_content"
@@ -101,7 +102,7 @@
     <View android:id="@+id/window_tint"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="#D0000000"
+        android:background="#E0000000"
         android:visibility="visible"
         android:clickable="false"
         />
