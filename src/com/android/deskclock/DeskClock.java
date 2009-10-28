@@ -187,10 +187,8 @@ public class DeskClock extends Activity {
         unregisterReceiver(mIntentReceiver);
     }
 
-    @Override
-    protected void onCreate(Bundle icicle) {
-        super.onCreate(icicle);
 
+    private void initViews() {
         setContentView(R.layout.desk_clock);
 
         mTime = (DigitalClock) findViewById(R.id.time);
@@ -247,6 +245,20 @@ public class DeskClock extends Activity {
             }
         });
 
+        doDim();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        initViews();
+    }
+
+
+    @Override
+    protected void onCreate(Bundle icicle) {
+        super.onCreate(icicle);
+        initViews();
     }
 
 }
