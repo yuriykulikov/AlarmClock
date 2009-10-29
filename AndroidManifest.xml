@@ -17,6 +17,7 @@
                 android:label="@string/app_label"
                 android:theme="@android:style/Theme.Wallpaper.NoTitleBar"
                 android:icon="@drawable/ic_widget_analog_clock"
+                android:configChanges="orientation|keyboardHidden|keyboard|navigation">
                 >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

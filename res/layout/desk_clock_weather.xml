@@ -14,64 +14,51 @@
      limitations under the License.
 -->
 
-<!-- digital clock & date, together -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/time_date"
+<!-- Weather data from Genie provider -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/weather"
     android:orientation="vertical"
-    android:layout_width="wrap_content"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:gravity="left|center_vertical"
-    android:layout_weight="1"
+    android:layout_weight="0"
+    android:gravity="left"
     >
-
-    <com.android.deskclock.DigitalClock android:id="@+id/time"
+    <RelativeLayout android:id="@+id/weather_temp_icon_cluster"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dip"
-        android:layout_marginLeft="-8dip"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="-4dip"
         >
-        <!-- negative left margin above accounts for Clockopia's
-             generous glyph padding -->
-
-        <TextView android:id="@+id/timeDisplay"
+        <TextView android:id="@+id/weather_temperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="106sp"
+            android:textSize="42sp"
             android:textColor="#FFFFFFFF"
             android:shadowColor="#C0000000"
             android:shadowDx="0"
             android:shadowDy="0"
             android:shadowRadius="3.0"                        
+            android:layout_marginRight="8dip"
+            android:layout_centerVertical="true"
             />
-
-
-        <TextView android:id="@+id/am_pm"
+        <ImageView android:id="@+id/weather_icon"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:gravity="bottom"
-            android:textSize="24sp"
-            android:singleLine="true"
-            android:layout_marginLeft="3dip"
-            android:textColor="#FFFFFFFF"
-            android:shadowColor="#C0000000"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="3.0"                        
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/weather_temperature"
+            android:layout_centerVertical="true"
+            android:paddingTop="2dip"
             />
-
-    </com.android.deskclock.DigitalClock>
-
-    <TextView android:id="@+id/date"
+    </RelativeLayout>
+    <TextView android:id="@+id/weather_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/weather_temp_icon_cluster"
         android:gravity="left"
         android:textSize="18sp"
-        android:textColor="#FFFFFFFF"
-        android:shadowColor="#C0000000"
+        android:textColor="#ffffffff"
+        android:shadowColor="#c0000000"
         android:shadowDx="0"
         android:shadowDy="0"
         android:shadowRadius="3.0"                        
         />
-
-</LinearLayout>
+</RelativeLayout>
