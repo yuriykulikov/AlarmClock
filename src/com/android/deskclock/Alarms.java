@@ -43,9 +43,6 @@ public class Alarms {
     // from the alarm manager.
     public static final String ALARM_ALERT_ACTION = "com.android.deskclock.ALARM_ALERT";
 
-    // This is a private action used when the user clears all notifications.
-    public static final String CLEAR_NOTIFICATION = "clear_notification";
-
     // This is a private action used by the AlarmKlaxon to update the UI to
     // show the alarm has been killed.
     public static final String ALARM_KILLED = "alarm_killed";

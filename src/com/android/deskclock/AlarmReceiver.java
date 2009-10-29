@@ -42,13 +42,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        // Take care of the easy intents first.
-        if (Alarms.CLEAR_NOTIFICATION.equals(intent.getAction())) {
-            // If this is the "Clear All Notifications" intent, stop the alarm
-            // service and return.
-            context.stopService(new Intent(Alarms.ALARM_ALERT_ACTION));
-            return;
-        } else if (Alarms.ALARM_KILLED.equals(intent.getAction())) {
+        if (Alarms.ALARM_KILLED.equals(intent.getAction())) {
             // The alarm has been killed, update the notification
             updateNotification(context, (Alarm)
                     intent.getParcelableExtra(Alarms.ALARM_INTENT_EXTRA),
@@ -149,16 +143,11 @@ public class AlarmReceiver extends BroadcastReceiver {
         n.setLatestEventInfo(context, label,
                 context.getString(R.string.alarm_notify_text),
                 pendingNotify);
-        n.flags |= Notification.FLAG_SHOW_LIGHTS;
+        n.flags |= Notification.FLAG_SHOW_LIGHTS
+                | Notification.FLAG_ONGOING_EVENT;
         n.ledARGB = 0xFF00FF00;
         n.ledOnMS = 500;
         n.ledOffMS = 500;
-
-        // Set the deleteIntent for when the user clicks "Clear All
-        // Notifications"
-        Intent clearAll = new Intent(context, AlarmReceiver.class);
-        clearAll.setAction(Alarms.CLEAR_NOTIFICATION);
-        n.deleteIntent = PendingIntent.getBroadcast(context, 0, clearAll, 0);
 
         // Send the notification using the alarm id to easily identify the
         // correct notification.
@@ -197,6 +186,10 @@ public class AlarmReceiver extends BroadcastReceiver {
                 context.getString(R.string.alarm_alert_alert_silenced, timeout),
                 intent);
         n.flags |= Notification.FLAG_AUTO_CANCEL;
+        // We have to cancel the original notification since it is in the
+        // ongoing section and we want the "killed" notification to be a plain
+        // notification.
+        nm.cancel(alarm.id);
         nm.notify(alarm.id, n);
     }
 }
