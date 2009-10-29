@@ -162,8 +162,8 @@ public class AlarmAlertFullScreen extends Activity {
         n.setLatestEventInfo(this, label,
                 getString(R.string.alarm_notify_snooze_text,
                     Alarms.formatTime(this, c)), broadcast);
-        n.deleteIntent = broadcast;
-        n.flags |= Notification.FLAG_AUTO_CANCEL;
+        n.flags |= Notification.FLAG_AUTO_CANCEL
+                | Notification.FLAG_ONGOING_EVENT;
         nm.notify(mAlarm.id, n);
 
         String displayTime = getString(R.string.alarm_alert_snooze_set,
