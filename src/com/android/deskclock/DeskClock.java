@@ -24,39 +24,46 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.animation.AnimationUtils;
-import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnCreateContextMenuListener;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import static android.os.BatteryManager.BATTERY_STATUS_CHARGING;
 import static android.os.BatteryManager.BATTERY_STATUS_FULL;
 import static android.os.BatteryManager.BATTERY_STATUS_UNKNOWN;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -64,17 +71,53 @@ import java.util.Date;
  * DeskClock clock view for desk docks.
  */
 public class DeskClock extends Activity {
+    private static final boolean DEBUG = true;
 
     private static final String LOG_TAG = "DeskClock";
 
     private static final String MUSIC_NOW_PLAYING_ACTIVITY = "com.android.music.PLAYBACK_VIEWER";
 
-    private TextView mNextAlarm = null;
-    private TextView mDate;
-    private TextView mBatteryDisplay;
+    private final long FETCH_WEATHER_DELAY = 5 * 60 * 1000; // 5 min.
+    private final int FETCH_WEATHER_DATA_MSG = 10000;
+    private final int UPDATE_WEATHER_DISPLAY_MSG = 10001;
+
+    private static final String GENIE_PACKAGE_ID = "com.google.android.apps.genie.geniewidget";
+    private static final String WEATHER_CONTENT_AUTHORITY = GENIE_PACKAGE_ID + ".weather";
+    private static final String WEATHER_CONTENT_PATH = "/weather/current";
+    private static final String[] WEATHER_CONTENT_COLUMNS = new String[] {
+            "location",
+            "timestamp",
+            "highTemperature",
+            "lowTemperature",
+            "iconUrl",
+            "iconResId",
+            "description",
+        };
+
     private DigitalClock mTime;
+    private TextView mDate;
+
+    private TextView mNextAlarm = null;
+    private TextView mBatteryDisplay;
+
+    private TextView mWeatherTemperature;
+    private TextView mWeatherLocation;
+    private ImageView mWeatherIcon;
+
+    private String mWeatherTemperatureString;
+    private String mWeatherLocationString;
+    private Drawable mWeatherIconDrawable;
+
+    private Resources mGenieResources = null;
 
     private boolean mDimmed = false;
+
+    private DateFormat mDateFormat;
+    
+    private int mBatteryLevel;
+    private boolean mPluggedIn;
+
+    private boolean mWeatherFetchScheduled = false;
 
     private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
@@ -90,10 +133,95 @@ public class DeskClock extends Activity {
         }
     };
 
-    private DateFormat mDateFormat;
-    
-    private int mBatteryLevel;
-    private boolean mPluggedIn;
+    private final Handler mHandy = new Handler() {
+        @Override
+        public void handleMessage(Message m) {
+            if (DEBUG) Log.d(LOG_TAG, "handleMessage: " + m.toString());
+
+            if (m.what == FETCH_WEATHER_DATA_MSG) {
+                if (!mWeatherFetchScheduled) return;
+                mWeatherFetchScheduled = false;
+                new Thread() { public void run() { fetchWeatherData(); } }.start();
+                scheduleWeatherFetchDelayed(FETCH_WEATHER_DELAY);
+            } else if (m.what == UPDATE_WEATHER_DISPLAY_MSG) {
+                updateWeatherDisplay();
+            }
+        }
+    };
+
+    private boolean supportsWeather() {
+        return (mGenieResources != null);
+    }
+
+    private void scheduleWeatherFetchDelayed(long delay) {
+        if (mWeatherFetchScheduled) return;
+
+        if (DEBUG) Log.d(LOG_TAG, "scheduling weather fetch message for " + delay + "ms from now");
+
+        mWeatherFetchScheduled = true;
+
+        mHandy.sendEmptyMessageDelayed(FETCH_WEATHER_DATA_MSG, delay);
+    }
+
+    private void unscheduleWeatherFetch() {
+        mWeatherFetchScheduled = false;
+    }
+
+    private void fetchWeatherData() {
+        // if we couldn't load the weather widget's resources, we simply
+        // assume it's not present on the device.
+        if (mGenieResources == null) return;
+
+        Uri queryUri = new Uri.Builder()
+            .scheme(android.content.ContentResolver.SCHEME_CONTENT)
+            .authority(WEATHER_CONTENT_AUTHORITY)
+            .path(WEATHER_CONTENT_PATH)
+            .appendPath(new Long(System.currentTimeMillis()).toString())
+            .build();
+
+        if (DEBUG) Log.d(LOG_TAG, "querying genie: " + queryUri);
+
+        Cursor cur;
+        try {
+            cur = managedQuery(
+                queryUri,
+                WEATHER_CONTENT_COLUMNS,
+                null,
+                null,
+                null);
+        } catch (RuntimeException e) {
+            Log.e(LOG_TAG, "Weather query failed", e);
+            cur = null;
+        }
+
+        if (cur != null && cur.moveToFirst()) {
+            mWeatherIconDrawable = mGenieResources.getDrawable(cur.getInt(
+                cur.getColumnIndexOrThrow("iconResId")));
+            mWeatherTemperatureString = cur.getString(
+                cur.getColumnIndexOrThrow("highTemperature"));
+            mWeatherLocationString = cur.getString(
+                cur.getColumnIndexOrThrow("location"));
+        } else {
+            Log.w(LOG_TAG, "No weather information available (cur=" 
+                + cur +")");
+            mWeatherIconDrawable = null;
+            mWeatherTemperatureString = "";
+            mWeatherLocationString = "Weather data unavailable."; // TODO: internationalize
+        }
+
+        mHandy.sendEmptyMessage(UPDATE_WEATHER_DISPLAY_MSG);
+    }
+
+    private void refreshWeather() {
+        if (supportsWeather())
+            scheduleWeatherFetchDelayed(0);
+    }
+
+    private void updateWeatherDisplay() {
+        mWeatherTemperature.setText(mWeatherTemperatureString);
+        mWeatherLocation.setText(mWeatherLocationString);
+        mWeatherIcon.setImageDrawable(mWeatherIconDrawable);
+    }
 
     // Adapted from KeyguardUpdateMonitor.java
     private void handleBatteryUpdate(int plugStatus, int batteryLevel) {
@@ -134,7 +262,14 @@ public class DeskClock extends Activity {
         }
     }
 
-    private void doDim() {
+    private void refreshAll() {
+        refreshDate();
+        refreshAlarm();
+        refreshBattery();
+        refreshWeather();
+    }
+
+    private void doDim(boolean fade) {
         View tintView = findViewById(R.id.window_tint);
 
         Window win = getWindow();
@@ -149,14 +284,18 @@ public class DeskClock extends Activity {
             winParams.dimAmount = 0.5f; // pump up contrast in dim mode
 
             // show the window tint
-            tintView.startAnimation(AnimationUtils.loadAnimation(this, R.anim.dim));
+            tintView.startAnimation(AnimationUtils.loadAnimation(this, 
+                fade ? R.anim.dim
+                     : R.anim.dim_instant));
         } else {
             winParams.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
 //            winParams.flags |= WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
             winParams.dimAmount = 0.2f; // lower contrast in normal mode
     
             // hide the window tint
-            tintView.startAnimation(AnimationUtils.loadAnimation(this, R.anim.undim));
+            tintView.startAnimation(AnimationUtils.loadAnimation(this, 
+                fade ? R.anim.undim
+                     : R.anim.undim_instant));
         }
         
         win.setAttributes(winParams);
@@ -175,16 +314,15 @@ public class DeskClock extends Activity {
         filter.addAction(Intent.ACTION_BATTERY_CHANGED);
         registerReceiver(mIntentReceiver, filter);
 
-        doDim();
-        refreshDate();
-        refreshAlarm();
-        refreshBattery();
+        doDim(false);
+        refreshAll();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         unregisterReceiver(mIntentReceiver);
+        unscheduleWeatherFetch();
     }
 
 
@@ -194,6 +332,10 @@ public class DeskClock extends Activity {
         mTime = (DigitalClock) findViewById(R.id.time);
         mDate = (TextView) findViewById(R.id.date);
         mBatteryDisplay = (TextView) findViewById(R.id.battery);
+
+        mWeatherTemperature = (TextView) findViewById(R.id.weather_temperature);
+        mWeatherLocation = (TextView) findViewById(R.id.weather_location);
+        mWeatherIcon = (ImageView) findViewById(R.id.weather_icon);
 
         mNextAlarm = (TextView) findViewById(R.id.nextAlarm);
 
@@ -241,23 +383,30 @@ public class DeskClock extends Activity {
         nightmodeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mDimmed = ! mDimmed;
-                doDim();
+                doDim(true);
             }
         });
-
-        doDim();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         initViews();
+        doDim(false);
+        refreshAll();
     }
-
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+
+        try {
+            mGenieResources = getPackageManager().getResourcesForApplication(GENIE_PACKAGE_ID);
+        } catch (PackageManager.NameNotFoundException e) {
+            // no weather info available
+            Log.w(LOG_TAG, "Can't find "+GENIE_PACKAGE_ID+". Weather forecast will not be available.");
+        }
+
         initViews();
     }
 
