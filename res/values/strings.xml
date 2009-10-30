@@ -17,7 +17,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- -->
     <!-- Label shown on launcher icon -->
-    <string name="app_label">Desk Clock</string>
+    <string name="app_label">Alarm Clock</string>
 
     <!-- Title for AlarmClock activity -->
     <string name="alarm_list_title">Alarms</string>
