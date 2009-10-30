@@ -28,6 +28,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -35,8 +36,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.os.PowerManager;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.ContextMenu;
@@ -49,7 +52,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
+import android.widget.AbsoluteLayout;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView;
@@ -66,6 +72,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.Random;
 
 /**
  * DeskClock clock view for desk docks.
@@ -77,9 +85,17 @@ public class DeskClock extends Activity {
 
     private static final String MUSIC_NOW_PLAYING_ACTIVITY = "com.android.music.PLAYBACK_VIEWER";
 
-    private final long FETCH_WEATHER_DELAY = 5 * 60 * 1000; // 5 min.
-    private final int FETCH_WEATHER_DATA_MSG = 10000;
-    private final int UPDATE_WEATHER_DISPLAY_MSG = 10001;
+    private final long FETCH_WEATHER_DELAY = 60 * 60 * 1000; // 1 hr
+    private final long SCREEN_SAVER_TIMEOUT = 5 * 60 * 1000; // 5 min
+    private final long SCREEN_SAVER_MOVE_DELAY = 5 * 1000; // 15 sec
+
+    private final int FETCH_WEATHER_DATA_MSG     = 0x1000;
+    private final int UPDATE_WEATHER_DISPLAY_MSG = 0x1001;
+    private final int SCREEN_SAVER_TIMEOUT_MSG   = 0x2000;
+    private final int SCREEN_SAVER_MOVE_MSG      = 0x2001;
+
+    private final int SCREEN_SAVER_COLOR = 0xFF008000;
+    private final int SCREEN_SAVER_COLOR_DIM = 0xFF003000;
 
     private static final String GENIE_PACKAGE_ID = "com.google.android.apps.genie.geniewidget";
     private static final String WEATHER_CONTENT_AUTHORITY = GENIE_PACKAGE_ID + ".weather";
@@ -100,24 +116,34 @@ public class DeskClock extends Activity {
     private TextView mNextAlarm = null;
     private TextView mBatteryDisplay;
 
-    private TextView mWeatherTemperature;
+    private TextView mWeatherHighTemperature;
+    private TextView mWeatherLowTemperature;
     private TextView mWeatherLocation;
     private ImageView mWeatherIcon;
 
-    private String mWeatherTemperatureString;
+    private String mWeatherHighTemperatureString;
+    private String mWeatherLowTemperatureString;
     private String mWeatherLocationString;
     private Drawable mWeatherIconDrawable;
 
     private Resources mGenieResources = null;
 
     private boolean mDimmed = false;
+    private boolean mScreenSaverMode = false;
 
     private DateFormat mDateFormat;
-    
+
     private int mBatteryLevel;
     private boolean mPluggedIn;
 
+    private PowerManager.WakeLock mWakeLock;
+    private int mIdleTimeoutEpoch = 0;
+
     private boolean mWeatherFetchScheduled = false;
+
+    private Random mRNG;
+
+
 
     private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
@@ -145,9 +171,107 @@ public class DeskClock extends Activity {
                 scheduleWeatherFetchDelayed(FETCH_WEATHER_DELAY);
             } else if (m.what == UPDATE_WEATHER_DISPLAY_MSG) {
                 updateWeatherDisplay();
+            } else if (m.what == SCREEN_SAVER_TIMEOUT_MSG) {
+                if (m.arg1 == mIdleTimeoutEpoch) {
+                    saveScreen();
+                }
+            } else if (m.what == SCREEN_SAVER_MOVE_MSG) {
+                moveScreenSaver();
             }
         }
     };
+    private void moveScreenSaver() {
+        moveScreenSaverTo(-1,-1);
+    }
+    private void moveScreenSaverTo(int x, int y) {
+        if (!mScreenSaverMode) return;
+
+        final View time_date = findViewById(R.id.time_date);
+
+        /*
+        final TranslateAnimation anim = new TranslateAnimation(
+            Animation.RELATIVE_TO_SELF,   0, // fromX
+            Animation.RELATIVE_TO_PARENT, 0.5f, // toX
+            Animation.RELATIVE_TO_SELF,   0, // fromY
+            Animation.RELATIVE_TO_PARENT, 0.5f // toY
+        );
+        anim.setDuration(1000);
+        anim.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+        anim.setFillEnabled(true);
+        anim.setFillAfter(true);
+        time_date.startAnimation(anim);
+        */
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        if (x < 0 || y < 0) {
+            int myWidth = time_date.getMeasuredWidth();
+            int myHeight = time_date.getMeasuredHeight();
+            x = (int)(mRNG.nextFloat()*(metrics.widthPixels - myWidth));
+            y = (int)(mRNG.nextFloat()*(metrics.heightPixels - myHeight));
+        }
+
+        time_date.setLayoutParams(new AbsoluteLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            x,
+            y));
+
+        mHandy.sendEmptyMessageDelayed(SCREEN_SAVER_MOVE_MSG, SCREEN_SAVER_MOVE_DELAY);
+    }
+
+    private void restoreScreen() {
+        if (!mScreenSaverMode) return;
+        mScreenSaverMode = false;
+        initViews();
+        doDim(false); // restores previous dim mode
+        refreshAll();
+    }
+
+    // Special screen-saver mode for OLED displays that burn in quickly
+    private void saveScreen() {
+        if (mScreenSaverMode) return;
+
+        // quickly stash away the x/y of the current date
+        final View oldTimeDate = findViewById(R.id.time_date);
+        int oldLoc[] = new int[2];
+        oldTimeDate.getLocationOnScreen(oldLoc);
+
+        mScreenSaverMode = true;
+        Window win = getWindow();
+        WindowManager.LayoutParams winParams = win.getAttributes();
+        winParams.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        win.setAttributes(winParams);
+
+        setContentView(R.layout.desk_clock_saver);
+
+        mTime = (DigitalClock) findViewById(R.id.time);
+        mDate = (TextView) findViewById(R.id.date);
+
+        final int color = mDimmed ? SCREEN_SAVER_COLOR_DIM : SCREEN_SAVER_COLOR;
+
+        ((TextView)findViewById(R.id.timeDisplay)).setTextColor(color);
+        ((TextView)findViewById(R.id.am_pm)).setTextColor(color);
+        mDate.setTextColor(color);
+
+        mBatteryDisplay =
+        mNextAlarm =
+        mWeatherHighTemperature =
+        mWeatherLowTemperature =
+        mWeatherLocation = null;
+        mWeatherIcon = null;
+
+        refreshDate();
+
+        moveScreenSaverTo(oldLoc[0], oldLoc[1]);
+    }
+
+    @Override
+    public void onUserInteraction() {
+        if (mScreenSaverMode)
+            restoreScreen();
+    }
 
     private boolean supportsWeather() {
         return (mGenieResources != null);
@@ -165,6 +289,16 @@ public class DeskClock extends Activity {
 
     private void unscheduleWeatherFetch() {
         mWeatherFetchScheduled = false;
+    }
+
+    private static final boolean sCelsius;
+    static {
+        String cc = Locale.getDefault().getCountry().toLowerCase();
+        sCelsius = !("us".equals(cc) || "bz".equals(cc) || "jm".equals(cc));
+    }
+
+    private static int celsiusToLocal(int tempC) {
+        return sCelsius ? tempC : (int)(tempC * 1.8f + 32);
     }
 
     private void fetchWeatherData() {
@@ -197,15 +331,18 @@ public class DeskClock extends Activity {
         if (cur != null && cur.moveToFirst()) {
             mWeatherIconDrawable = mGenieResources.getDrawable(cur.getInt(
                 cur.getColumnIndexOrThrow("iconResId")));
-            mWeatherTemperatureString = cur.getString(
-                cur.getColumnIndexOrThrow("highTemperature"));
+            mWeatherHighTemperatureString = String.format("%d\u00b0",
+                celsiusToLocal(cur.getInt(cur.getColumnIndexOrThrow("highTemperature"))));
+            mWeatherLowTemperatureString = String.format("%d\u00b0",
+                celsiusToLocal(cur.getInt(cur.getColumnIndexOrThrow("lowTemperature"))));
             mWeatherLocationString = cur.getString(
                 cur.getColumnIndexOrThrow("location"));
         } else {
-            Log.w(LOG_TAG, "No weather information available (cur=" 
+            Log.w(LOG_TAG, "No weather information available (cur="
                 + cur +")");
             mWeatherIconDrawable = null;
-            mWeatherTemperatureString = "";
+            mWeatherHighTemperatureString = "";
+            mWeatherLowTemperatureString = "";
             mWeatherLocationString = "Weather data unavailable."; // TODO: internationalize
         }
 
@@ -213,12 +350,16 @@ public class DeskClock extends Activity {
     }
 
     private void refreshWeather() {
-        if (supportsWeather())
+        if (supportsWeather()) 
             scheduleWeatherFetchDelayed(0);
+        updateWeatherDisplay(); // in case we have it cached
     }
 
     private void updateWeatherDisplay() {
-        mWeatherTemperature.setText(mWeatherTemperatureString);
+        if (mWeatherHighTemperature == null) return;
+
+        mWeatherHighTemperature.setText(mWeatherHighTemperatureString);
+        mWeatherLowTemperature.setText(mWeatherLowTemperatureString);
         mWeatherLocation.setText(mWeatherLocationString);
         mWeatherIcon.setImageDrawable(mWeatherIconDrawable);
     }
@@ -230,10 +371,18 @@ public class DeskClock extends Activity {
             mBatteryLevel = batteryLevel;
             mPluggedIn = pluggedIn;
             refreshBattery();
+
+            if (mPluggedIn) {
+                if (!mWakeLock.isHeld()) mWakeLock.acquire();
+            } else {
+                if (mWakeLock.isHeld()) mWakeLock.release();
+            }
         }
     }
 
     private void refreshBattery() {
+        if (mBatteryDisplay == null) return;
+
         if (mPluggedIn /* || mBatteryLevel < LOW_BATTERY_THRESHOLD */) {
             mBatteryDisplay.setCompoundDrawablesWithIntrinsicBounds(
                 0, 0, android.R.drawable.ic_lock_idle_charging, 0);
@@ -250,6 +399,8 @@ public class DeskClock extends Activity {
     }
 
     private void refreshAlarm() {
+        if (mNextAlarm == null) return;
+
         String nextAlarm = Settings.System.getString(getContentResolver(),
                 Settings.System.NEXT_ALARM_FORMATTED);
         if (!TextUtils.isEmpty(nextAlarm)) {
@@ -271,6 +422,7 @@ public class DeskClock extends Activity {
 
     private void doDim(boolean fade) {
         View tintView = findViewById(R.id.window_tint);
+        if (tintView == null) return;
 
         Window win = getWindow();
         WindowManager.LayoutParams winParams = win.getAttributes();
@@ -280,24 +432,22 @@ public class DeskClock extends Activity {
 
         if (mDimmed) {
             winParams.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
-//            winParams.flags &= (~WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
             winParams.dimAmount = 0.5f; // pump up contrast in dim mode
 
             // show the window tint
-            tintView.startAnimation(AnimationUtils.loadAnimation(this, 
+            tintView.startAnimation(AnimationUtils.loadAnimation(this,
                 fade ? R.anim.dim
                      : R.anim.dim_instant));
         } else {
             winParams.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//            winParams.flags |= WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
             winParams.dimAmount = 0.2f; // lower contrast in normal mode
-    
+
             // hide the window tint
-            tintView.startAnimation(AnimationUtils.loadAnimation(this, 
+            tintView.startAnimation(AnimationUtils.loadAnimation(this,
                 fade ? R.anim.undim
                      : R.anim.undim_instant));
         }
-        
+
         win.setAttributes(winParams);
     }
 
@@ -316,6 +466,12 @@ public class DeskClock extends Activity {
 
         doDim(false);
         refreshAll();
+        if (mPluggedIn && !mWakeLock.isHeld()) mWakeLock.acquire();
+
+        mIdleTimeoutEpoch++;
+        mHandy.sendMessageDelayed(
+            Message.obtain(mHandy, SCREEN_SAVER_TIMEOUT_MSG, mIdleTimeoutEpoch, 0),
+            SCREEN_SAVER_TIMEOUT);
     }
 
     @Override
@@ -323,6 +479,7 @@ public class DeskClock extends Activity {
         super.onPause();
         unregisterReceiver(mIntentReceiver);
         unscheduleWeatherFetch();
+        if (mWakeLock.isHeld()) mWakeLock.release();
     }
 
 
@@ -333,7 +490,8 @@ public class DeskClock extends Activity {
         mDate = (TextView) findViewById(R.id.date);
         mBatteryDisplay = (TextView) findViewById(R.id.battery);
 
-        mWeatherTemperature = (TextView) findViewById(R.id.weather_temperature);
+        mWeatherHighTemperature = (TextView) findViewById(R.id.weather_high_temperature);
+        mWeatherLowTemperature = (TextView) findViewById(R.id.weather_low_temperature);
         mWeatherLocation = (TextView) findViewById(R.id.weather_location);
         mWeatherIcon = (ImageView) findViewById(R.id.weather_icon);
 
@@ -386,19 +544,35 @@ public class DeskClock extends Activity {
                 doDim(true);
             }
         });
+
+        nightmodeButton.setOnLongClickListener(new View.OnLongClickListener() {
+            public boolean onLongClick(View v) {
+                saveScreen();
+                return true;
+            }
+        });
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        initViews();
-        doDim(false);
-        refreshAll();
+        if (!mScreenSaverMode) {
+            initViews();
+            doDim(false);
+            refreshAll();
+        }
     }
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        mWakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
+            "DeskClock");
+        mWakeLock.acquire();
+
+        mRNG = new Random();
 
         try {
             mGenieResources = getPackageManager().getResourcesForApplication(GENIE_PACKAGE_ID);
