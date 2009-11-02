@@ -29,7 +29,7 @@
         android:layout_alignParentLeft="true"
         android:layout_marginBottom="-4dip"
         >
-        <TextView android:id="@+id/weather_temperature"
+        <TextView android:id="@+id/weather_high_temperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="42sp"
@@ -41,10 +41,23 @@
             android:layout_marginRight="8dip"
             android:layout_centerVertical="true"
             />
+        <TextView android:id="@+id/weather_low_temperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="42sp"
+            android:textColor="#FFCCCCCC"
+            android:shadowColor="#C0000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="3.0"                        
+            android:layout_marginRight="8dip"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/weather_high_temperature"
+            />
         <ImageView android:id="@+id/weather_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/weather_temperature"
+            android:layout_toRightOf="@id/weather_low_temperature"
             android:layout_centerVertical="true"
             android:paddingTop="2dip"
             />
