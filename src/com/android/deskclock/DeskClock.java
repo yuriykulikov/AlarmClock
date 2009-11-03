@@ -79,7 +79,7 @@ import java.util.Random;
  * DeskClock clock view for desk docks.
  */
 public class DeskClock extends Activity {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private static final String LOG_TAG = "DeskClock";
 
@@ -133,17 +133,14 @@ public class DeskClock extends Activity {
 
     private DateFormat mDateFormat;
 
-    private int mBatteryLevel;
-    private boolean mPluggedIn;
+    private int mBatteryLevel = -1;
+    private boolean mPluggedIn = false;
 
-    private PowerManager.WakeLock mWakeLock;
     private int mIdleTimeoutEpoch = 0;
 
     private boolean mWeatherFetchScheduled = false;
 
     private Random mRNG;
-
-
 
     private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
@@ -221,6 +218,18 @@ public class DeskClock extends Activity {
         mHandy.sendEmptyMessageDelayed(SCREEN_SAVER_MOVE_MSG, SCREEN_SAVER_MOVE_DELAY);
     }
 
+    private void setWakeLock(boolean hold) {
+        if (DEBUG) Log.d(LOG_TAG, (hold ? "hold" : " releas") + "ing wake lock");
+        Window win = getWindow();
+        WindowManager.LayoutParams winParams = win.getAttributes();
+        winParams.flags |= WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD;
+        if (hold)
+            winParams.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+        else
+            winParams.flags &= (~WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        win.setAttributes(winParams);
+    }
+
     private void restoreScreen() {
         if (!mScreenSaverMode) return;
         mScreenSaverMode = false;
@@ -243,6 +252,10 @@ public class DeskClock extends Activity {
         WindowManager.LayoutParams winParams = win.getAttributes();
         winParams.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
         win.setAttributes(winParams);
+
+        // give up any internal focus before we switch layouts
+        final View focused = getCurrentFocus();
+        if (focused != null) focused.clearFocus();
 
         setContentView(R.layout.desk_clock_saver);
 
@@ -367,16 +380,13 @@ public class DeskClock extends Activity {
     // Adapted from KeyguardUpdateMonitor.java
     private void handleBatteryUpdate(int plugStatus, int batteryLevel) {
         final boolean pluggedIn = (plugStatus == BATTERY_STATUS_CHARGING || plugStatus == BATTERY_STATUS_FULL);
+        if (pluggedIn != mPluggedIn) {
+            setWakeLock(pluggedIn);
+        }
         if (pluggedIn != mPluggedIn || batteryLevel != mBatteryLevel) {
             mBatteryLevel = batteryLevel;
             mPluggedIn = pluggedIn;
             refreshBattery();
-
-            if (mPluggedIn) {
-                if (!mWakeLock.isHeld()) mWakeLock.acquire();
-            } else {
-                if (mWakeLock.isHeld()) mWakeLock.release();
-            }
         }
     }
 
@@ -427,6 +437,10 @@ public class DeskClock extends Activity {
         Window win = getWindow();
         WindowManager.LayoutParams winParams = win.getAttributes();
 
+        // secret!
+        winParams.flags |= (WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+        winParams.flags |= (WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+
         // dim the wallpaper somewhat (how much is determined below)
         winParams.flags |= (WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
@@ -454,6 +468,11 @@ public class DeskClock extends Activity {
     @Override
     public void onResume() {
         super.onResume();
+        // NB: To avoid situations where the user launches Alarm Clock and is
+        // surprised to find it in dim mode (because it was last used in dim
+        // mode, but that last use is long in the past), we always un-dim upon
+        // bringing the activity to the foregreound.
+        mDimmed = false;
 
         // reload the date format in case the user has changed settings
         // recently
@@ -465,8 +484,9 @@ public class DeskClock extends Activity {
         registerReceiver(mIntentReceiver, filter);
 
         doDim(false);
+        restoreScreen();
         refreshAll();
-        if (mPluggedIn && !mWakeLock.isHeld()) mWakeLock.acquire();
+        setWakeLock(mPluggedIn);
 
         mIdleTimeoutEpoch++;
         mHandy.sendMessageDelayed(
@@ -479,11 +499,14 @@ public class DeskClock extends Activity {
         super.onPause();
         unregisterReceiver(mIntentReceiver);
         unscheduleWeatherFetch();
-        if (mWakeLock.isHeld()) mWakeLock.release();
     }
 
 
     private void initViews() {
+        // give up any internal focus before we switch layouts
+        final View focused = getCurrentFocus();
+        if (focused != null) focused.clearFocus();
+
         setContentView(R.layout.desk_clock);
 
         mTime = (DigitalClock) findViewById(R.id.time);
@@ -566,11 +589,6 @@ public class DeskClock extends Activity {
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        mWakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
-            "DeskClock");
-        mWakeLock.acquire();
 
         mRNG = new Random();
 
