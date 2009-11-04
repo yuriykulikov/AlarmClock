@@ -83,20 +83,31 @@ public class DeskClock extends Activity {
 
     private static final String LOG_TAG = "DeskClock";
 
-    private static final String MUSIC_NOW_PLAYING_ACTIVITY = "com.android.music.PLAYBACK_VIEWER";
+    // Intent used to start the music player.
+    private static final String MUSIC_NOW_PLAYING = "com.android.music.PLAYBACK_VIEWER";
 
-    private final long FETCH_WEATHER_DELAY = 60 * 60 * 1000; // 1 hr
-    private final long SCREEN_SAVER_TIMEOUT = 5 * 60 * 1000; // 5 min
-    private final long SCREEN_SAVER_MOVE_DELAY = 5 * 1000; // 15 sec
+    // Interval between polls of the weather widget. Its refresh period is
+    // likely to be much longer (~3h), but we want to pick up any changes
+    // within 5 minutes.
+    private final long FETCH_WEATHER_DELAY = 5 * 60 * 1000; // 5 min
 
+    // Delay before engaging the burn-in protection mode (green-on-black).
+    private final long SCREEN_SAVER_TIMEOUT = 10 * 60 * 1000; // 10 min
+
+    // Repositioning delay in screen saver.
+    private final long SCREEN_SAVER_MOVE_DELAY = 60 * 1000; // 1 min
+
+    // Color to use for text & graphics in screen saver mode.
+    private final int SCREEN_SAVER_COLOR = 0xFF008000;
+    private final int SCREEN_SAVER_COLOR_DIM = 0xFF003000;
+
+    // Internal message IDs.
     private final int FETCH_WEATHER_DATA_MSG     = 0x1000;
     private final int UPDATE_WEATHER_DISPLAY_MSG = 0x1001;
     private final int SCREEN_SAVER_TIMEOUT_MSG   = 0x2000;
     private final int SCREEN_SAVER_MOVE_MSG      = 0x2001;
 
-    private final int SCREEN_SAVER_COLOR = 0xFF008000;
-    private final int SCREEN_SAVER_COLOR_DIM = 0xFF003000;
-
+    // Weather widget query information.
     private static final String GENIE_PACKAGE_ID = "com.google.android.apps.genie.geniewidget";
     private static final String WEATHER_CONTENT_AUTHORITY = GENIE_PACKAGE_ID + ".weather";
     private static final String WEATHER_CONTENT_PATH = "/weather/current";
@@ -110,6 +121,7 @@ public class DeskClock extends Activity {
             "description",
         };
 
+    // State variables follow.
     private DigitalClock mTime;
     private TextView mDate;
 
@@ -159,8 +171,6 @@ public class DeskClock extends Activity {
     private final Handler mHandy = new Handler() {
         @Override
         public void handleMessage(Message m) {
-            if (DEBUG) Log.d(LOG_TAG, "handleMessage: " + m.toString());
-
             if (m.what == FETCH_WEATHER_DATA_MSG) {
                 if (!mWeatherFetchScheduled) return;
                 mWeatherFetchScheduled = false;
@@ -177,6 +187,8 @@ public class DeskClock extends Activity {
             }
         }
     };
+
+
     private void moveScreenSaver() {
         moveScreenSaverTo(-1,-1);
     }
@@ -209,13 +221,19 @@ public class DeskClock extends Activity {
             y = (int)(mRNG.nextFloat()*(metrics.heightPixels - myHeight));
         }
 
+        if (DEBUG) Log.d(LOG_TAG, String.format("screen saver: %d: jumping to (%d,%d)",
+                System.currentTimeMillis(), x, y));
+
         time_date.setLayoutParams(new AbsoluteLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT,
             x,
             y));
 
-        mHandy.sendEmptyMessageDelayed(SCREEN_SAVER_MOVE_MSG, SCREEN_SAVER_MOVE_DELAY);
+        // Synchronize our jumping so that it happens exactly on the second.
+        mHandy.sendEmptyMessageDelayed(SCREEN_SAVER_MOVE_MSG,
+            SCREEN_SAVER_MOVE_DELAY +
+            (1000 - (System.currentTimeMillis() % 1000)));
     }
 
     private void setWakeLock(boolean hold) {
@@ -223,6 +241,8 @@ public class DeskClock extends Activity {
         Window win = getWindow();
         WindowManager.LayoutParams winParams = win.getAttributes();
         winParams.flags |= WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD;
+        winParams.flags |= WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
+        winParams.flags |= WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON;
         if (hold)
             winParams.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
         else
@@ -232,6 +252,7 @@ public class DeskClock extends Activity {
 
     private void restoreScreen() {
         if (!mScreenSaverMode) return;
+        if (DEBUG) Log.d(LOG_TAG, "restoreScreen");
         mScreenSaverMode = false;
         initViews();
         doDim(false); // restores previous dim mode
@@ -241,6 +262,7 @@ public class DeskClock extends Activity {
     // Special screen-saver mode for OLED displays that burn in quickly
     private void saveScreen() {
         if (mScreenSaverMode) return;
+        if (DEBUG) Log.d(LOG_TAG, "saveScreen");
 
         // quickly stash away the x/y of the current date
         final View oldTimeDate = findViewById(R.id.time_date);
@@ -311,7 +333,7 @@ public class DeskClock extends Activity {
     }
 
     private static int celsiusToLocal(int tempC) {
-        return sCelsius ? tempC : (int)(tempC * 1.8f + 32);
+        return sCelsius ? tempC : (int) Math.round(tempC * 1.8f + 32);
     }
 
     private void fetchWeatherData() {
@@ -342,6 +364,19 @@ public class DeskClock extends Activity {
         }
 
         if (cur != null && cur.moveToFirst()) {
+            if (DEBUG) {
+                java.lang.StringBuilder sb =
+                    new java.lang.StringBuilder("Weather query result: {");
+                for(int i=0; i<cur.getColumnCount(); i++) {
+                    if (i>0) sb.append(", ");
+                    sb.append(cur.getColumnName(i))
+                        .append("=")
+                        .append(cur.getString(i));
+                }
+                sb.append("}");
+                Log.d(LOG_TAG, sb.toString());
+            }
+
             mWeatherIconDrawable = mGenieResources.getDrawable(cur.getInt(
                 cur.getColumnIndexOrThrow("iconResId")));
             mWeatherHighTemperatureString = String.format("%d\u00b0",
@@ -363,7 +398,7 @@ public class DeskClock extends Activity {
     }
 
     private void refreshWeather() {
-        if (supportsWeather()) 
+        if (supportsWeather())
             scheduleWeatherFetchDelayed(0);
         updateWeatherDisplay(); // in case we have it cached
     }
@@ -468,11 +503,7 @@ public class DeskClock extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-        // NB: To avoid situations where the user launches Alarm Clock and is
-        // surprised to find it in dim mode (because it was last used in dim
-        // mode, but that last use is long in the past), we always un-dim upon
-        // bringing the activity to the foregreound.
-        mDimmed = false;
+        if (DEBUG) Log.d(LOG_TAG, "onResume");
 
         // reload the date format in case the user has changed settings
         // recently
@@ -485,7 +516,8 @@ public class DeskClock extends Activity {
 
         doDim(false);
         restoreScreen();
-        refreshAll();
+        refreshAll(); // will schedule periodic weather fetch
+
         setWakeLock(mPluggedIn);
 
         mIdleTimeoutEpoch++;
@@ -496,9 +528,21 @@ public class DeskClock extends Activity {
 
     @Override
     public void onPause() {
-        super.onPause();
+        if (DEBUG) Log.d(LOG_TAG, "onPause");
+
+        // Turn off the screen saver.
+        restoreScreen();
+
+        // Avoid situations where the user launches Alarm Clock and is
+        // surprised to find it in dim mode (because it was last used in dim
+        // mode, but that last use is long in the past).
+        mDimmed = false;
+
+        // Other things we don't want to be doing in the background.
         unregisterReceiver(mIntentReceiver);
         unscheduleWeatherFetch();
+
+        super.onPause();
     }
 
 
@@ -544,7 +588,7 @@ public class DeskClock extends Activity {
         musicButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
-                    startActivity(new Intent(MUSIC_NOW_PLAYING_ACTIVITY));
+                    startActivity(new Intent(MUSIC_NOW_PLAYING));
                 } catch (android.content.ActivityNotFoundException e) {
                     Log.e(LOG_TAG, "Couldn't launch music browser", e);
                 }
