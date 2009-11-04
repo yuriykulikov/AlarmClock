@@ -577,7 +577,8 @@ public class DeskClock extends Activity {
                 try {
                     startActivity(new Intent(
                         Intent.ACTION_VIEW,
-                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI));
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                            .putExtra("slideshow", true));
                 } catch (android.content.ActivityNotFoundException e) {
                     Log.e(LOG_TAG, "Couldn't launch image browser", e);
                 }
