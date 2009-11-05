@@ -61,6 +61,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -564,14 +565,14 @@ public class DeskClock extends Activity {
 
         mNextAlarm = (TextView) findViewById(R.id.nextAlarm);
 
-        final Button alarmButton = (Button) findViewById(R.id.alarm_button);
+        final ImageButton alarmButton = (ImageButton) findViewById(R.id.alarm_button);
         alarmButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startActivity(new Intent(DeskClock.this, AlarmClock.class));
             }
         });
 
-        final Button galleryButton = (Button) findViewById(R.id.gallery_button);
+        final ImageButton galleryButton = (ImageButton) findViewById(R.id.gallery_button);
         galleryButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
@@ -585,7 +586,7 @@ public class DeskClock extends Activity {
             }
         });
 
-        final Button musicButton = (Button) findViewById(R.id.music_button);
+        final ImageButton musicButton = (ImageButton) findViewById(R.id.music_button);
         musicButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
@@ -596,7 +597,7 @@ public class DeskClock extends Activity {
             }
         });
 
-        final Button homeButton = (Button) findViewById(R.id.home_button);
+        final ImageButton homeButton = (ImageButton) findViewById(R.id.home_button);
         homeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startActivity(
@@ -605,7 +606,7 @@ public class DeskClock extends Activity {
             }
         });
 
-        final Button nightmodeButton = (Button) findViewById(R.id.nightmode_button);
+        final ImageButton nightmodeButton = (ImageButton) findViewById(R.id.nightmode_button);
         nightmodeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mDimmed = ! mDimmed;
