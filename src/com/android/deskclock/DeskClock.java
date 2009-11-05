@@ -558,6 +558,8 @@ public class DeskClock extends Activity {
         mDate = (TextView) findViewById(R.id.date);
         mBatteryDisplay = (TextView) findViewById(R.id.battery);
 
+        mTime.getRootView().requestFocus();
+
         mWeatherHighTemperature = (TextView) findViewById(R.id.weather_high_temperature);
         mWeatherLowTemperature = (TextView) findViewById(R.id.weather_low_temperature);
         mWeatherLocation = (TextView) findViewById(R.id.weather_location);
