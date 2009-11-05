@@ -66,11 +66,12 @@
                     android:shadowDy="0"
                     android:shadowRadius="3.0"                        
                     />
-                <Button android:id="@+id/nightmode_button"
+                <ImageButton android:id="@+id/nightmode_button"
+					style="@style/RoundTouchButton"
                     android:layout_weight="0"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="@string/nightmode_button_title_placeholder"
+                    android:src="@drawable/ic_round_brightness"
                     />
             </LinearLayout>
 
