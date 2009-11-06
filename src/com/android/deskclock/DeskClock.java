@@ -99,8 +99,8 @@ public class DeskClock extends Activity {
     private final long SCREEN_SAVER_MOVE_DELAY = 60 * 1000; // 1 min
 
     // Color to use for text & graphics in screen saver mode.
-    private final int SCREEN_SAVER_COLOR = 0xFF008000;
-    private final int SCREEN_SAVER_COLOR_DIM = 0xFF003000;
+    private final int SCREEN_SAVER_COLOR = 0xFF308030;
+    private final int SCREEN_SAVER_COLOR_DIM = 0xFF183018;
 
     // Internal message IDs.
     private final int FETCH_WEATHER_DATA_MSG     = 0x1000;
@@ -197,20 +197,6 @@ public class DeskClock extends Activity {
         if (!mScreenSaverMode) return;
 
         final View time_date = findViewById(R.id.time_date);
-
-        /*
-        final TranslateAnimation anim = new TranslateAnimation(
-            Animation.RELATIVE_TO_SELF,   0, // fromX
-            Animation.RELATIVE_TO_PARENT, 0.5f, // toX
-            Animation.RELATIVE_TO_SELF,   0, // fromY
-            Animation.RELATIVE_TO_PARENT, 0.5f // toY
-        );
-        anim.setDuration(1000);
-        anim.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
-        anim.setFillEnabled(true);
-        anim.setFillAfter(true);
-        time_date.startAnimation(anim);
-        */
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -482,7 +468,7 @@ public class DeskClock extends Activity {
 
         if (mDimmed) {
             winParams.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
-            winParams.dimAmount = 0.5f; // pump up contrast in dim mode
+            winParams.dimAmount = 0.67f; // pump up contrast in dim mode
 
             // show the window tint
             tintView.startAnimation(AnimationUtils.loadAnimation(this,
@@ -490,7 +476,7 @@ public class DeskClock extends Activity {
                      : R.anim.dim_instant));
         } else {
             winParams.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            winParams.dimAmount = 0.2f; // lower contrast in normal mode
+            winParams.dimAmount = 0.5f; // lower contrast in normal mode
 
             // hide the window tint
             tintView.startAnimation(AnimationUtils.loadAnimation(this,
