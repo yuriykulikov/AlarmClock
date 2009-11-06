@@ -622,6 +622,18 @@ public class DeskClock extends Activity {
                 return true;
             }
         });
+
+        final View weatherView = findViewById(R.id.weather);
+        weatherView.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (!supportsWeather()) return;
+
+                Intent genieAppQuery = getPackageManager().getLaunchIntentForPackage(GENIE_PACKAGE_ID);
+                if (genieAppQuery != null) {
+                    startActivity(genieAppQuery);
+                }
+            }
+        });
     }
 
     @Override
