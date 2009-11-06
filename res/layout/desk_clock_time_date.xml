@@ -28,10 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dip"
-        android:layout_marginLeft="-8dip"
         >
-        <!-- negative left margin above accounts for Clockopia's
-             generous glyph padding -->
 
         <TextView android:id="@+id/timeDisplay"
             android:layout_width="wrap_content"
@@ -42,7 +39,7 @@
             android:shadowColor="#C0000000"
             android:shadowDx="0"
             android:shadowDy="0"
-            android:shadowRadius="3.0"                        
+            android:shadowRadius="3.0"
             />
 
 
@@ -66,7 +63,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="left"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:textColor="#FFFFFFFF"
         android:shadowColor="#C0000000"
         android:shadowDx="0"
