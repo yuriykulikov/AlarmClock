@@ -45,6 +45,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View.OnClickListener;
 import android.view.View.OnCreateContextMenuListener;
@@ -72,6 +73,7 @@ import static android.os.BatteryManager.BATTERY_STATUS_UNKNOWN;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
@@ -115,6 +117,7 @@ public class DeskClock extends Activity {
     private static final String[] WEATHER_CONTENT_COLUMNS = new String[] {
             "location",
             "timestamp",
+            "temperature",
             "highTemperature",
             "lowTemperature",
             "iconUrl",
@@ -129,11 +132,13 @@ public class DeskClock extends Activity {
     private TextView mNextAlarm = null;
     private TextView mBatteryDisplay;
 
+    private TextView mWeatherCurrentTemperature;
     private TextView mWeatherHighTemperature;
     private TextView mWeatherLowTemperature;
     private TextView mWeatherLocation;
     private ImageView mWeatherIcon;
 
+    private String mWeatherCurrentTemperatureString;
     private String mWeatherHighTemperatureString;
     private String mWeatherLowTemperatureString;
     private String mWeatherLocationString;
@@ -148,6 +153,8 @@ public class DeskClock extends Activity {
 
     private int mBatteryLevel = -1;
     private boolean mPluggedIn = false;
+
+    private boolean mInDock = false;
 
     private int mIdleTimeoutEpoch = 0;
 
@@ -279,6 +286,7 @@ public class DeskClock extends Activity {
 
         mBatteryDisplay =
         mNextAlarm =
+        mWeatherCurrentTemperature =
         mWeatherHighTemperature =
         mWeatherLowTemperature =
         mWeatherLocation = null;
@@ -366,6 +374,8 @@ public class DeskClock extends Activity {
 
             mWeatherIconDrawable = mGenieResources.getDrawable(cur.getInt(
                 cur.getColumnIndexOrThrow("iconResId")));
+            mWeatherCurrentTemperatureString = String.format("%d\u00b0",
+                celsiusToLocal(cur.getInt(cur.getColumnIndexOrThrow("temperature"))));
             mWeatherHighTemperatureString = String.format("%d\u00b0",
                 celsiusToLocal(cur.getInt(cur.getColumnIndexOrThrow("highTemperature"))));
             mWeatherLowTemperatureString = String.format("%d\u00b0",
@@ -391,8 +401,9 @@ public class DeskClock extends Activity {
     }
 
     private void updateWeatherDisplay() {
-        if (mWeatherHighTemperature == null) return;
+        if (mWeatherCurrentTemperature == null) return;
 
+        mWeatherCurrentTemperature.setText(mWeatherCurrentTemperatureString);
         mWeatherHighTemperature.setText(mWeatherHighTemperatureString);
         mWeatherLowTemperature.setText(mWeatherLowTemperatureString);
         mWeatherLocation.setText(mWeatherLocationString);
@@ -494,7 +505,15 @@ public class DeskClock extends Activity {
 
         // reload the date format in case the user has changed settings
         // recently
-        mDateFormat = java.text.DateFormat.getDateInstance(java.text.DateFormat.FULL);
+        final SimpleDateFormat dateFormat = (SimpleDateFormat)
+                java.text.DateFormat.getDateInstance(java.text.DateFormat.FULL);
+        // This is a little clumsy; we want to honor the locale's date format
+        // (rather than simply hardcoding "Weekday, Month Date") but
+        // DateFormat.FULL includes the year (at least, in enUS). So we lop
+        // that bit off if it's there; should have no effect on
+        // locale-specific date strings that look different.
+        mDateFormat = new SimpleDateFormat(dateFormat.toPattern()
+                    .replace(", yyyy", "")); // no year
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_DATE_CHANGED);
@@ -511,6 +530,18 @@ public class DeskClock extends Activity {
         mHandy.sendMessageDelayed(
             Message.obtain(mHandy, SCREEN_SAVER_TIMEOUT_MSG, mIdleTimeoutEpoch, 0),
             SCREEN_SAVER_TIMEOUT);
+
+        final boolean launchedFromDock 
+            = getIntent().hasCategory(Intent.CATEGORY_DESK_DOCK);
+
+        if (supportsWeather() && launchedFromDock && !mInDock) {
+            if (DEBUG) Log.d(LOG_TAG, "Device now docked; forcing weather to refresh right now");
+            sendBroadcast(
+                new Intent("com.google.android.apps.genie.REFRESH")
+                    .putExtra("requestWeather", true));
+        }
+
+        mInDock = launchedFromDock;
     }
 
     @Override
@@ -546,6 +577,7 @@ public class DeskClock extends Activity {
 
         mTime.getRootView().requestFocus();
 
+        mWeatherCurrentTemperature = (TextView) findViewById(R.id.weather_temperature);
         mWeatherHighTemperature = (TextView) findViewById(R.id.weather_high_temperature);
         mWeatherLowTemperature = (TextView) findViewById(R.id.weather_low_temperature);
         mWeatherLocation = (TextView) findViewById(R.id.weather_location);
@@ -630,6 +662,22 @@ public class DeskClock extends Activity {
             doDim(false);
             refreshAll();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_item_alarms) {
+            startActivity(new Intent(DeskClock.this, AlarmClock.class));
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.desk_clock_menu, menu);
+        return true;
     }
 
     @Override
