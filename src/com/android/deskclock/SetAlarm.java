@@ -187,19 +187,19 @@ public class SetAlarm extends PreferenceActivity
 
     private void saveAlarm() {
         final String alert = mAlarmPref.getAlertString();
-        Alarms.setAlarm(this, mId, mEnabled, mHour, mMinutes,
+        long time = Alarms.setAlarm(this, mId, mEnabled, mHour, mMinutes,
                 mRepeatPref.getDaysOfWeek(), mVibratePref.isChecked(),
                 mLabel.getText(), alert);
 
         if (mEnabled) {
-            popAlarmSetToast(this, mHour, mMinutes,
-                    mRepeatPref.getDaysOfWeek());
+            popAlarmSetToast(this, time);
         }
     }
 
     /**
      * Write alarm out to persistent store and pops toast if alarm
-     * enabled
+     * enabled.
+     * Used only in test code.
      */
     private static void saveAlarm(
             Context context, int id, boolean enabled, int hour, int minute,
@@ -209,11 +209,11 @@ public class SetAlarm extends PreferenceActivity
                 + " " + hour + " " + minute + " vibe " + vibrate);
 
         // Fix alert string first
-        Alarms.setAlarm(context, id, enabled, hour, minute, daysOfWeek, vibrate,
-                label, alert);
+        long time = Alarms.setAlarm(context, id, enabled, hour, minute,
+                daysOfWeek, vibrate, label, alert);
 
         if (enabled && popToast) {
-            popAlarmSetToast(context, hour, minute, daysOfWeek);
+            popAlarmSetToast(context, time);
         }
     }
 
@@ -223,8 +223,13 @@ public class SetAlarm extends PreferenceActivity
      */
     static void popAlarmSetToast(Context context, int hour, int minute,
                                  Alarm.DaysOfWeek daysOfWeek) {
+        popAlarmSetToast(context,
+                Alarms.calculateAlarm(hour, minute, daysOfWeek)
+                .getTimeInMillis());
+    }
 
-        String toastText = formatToast(context, hour, minute, daysOfWeek);
+    private static void popAlarmSetToast(Context context, long timeInMillis) {
+        String toastText = formatToast(context, timeInMillis);
         Toast toast = Toast.makeText(context, toastText, Toast.LENGTH_LONG);
         ToastMaster.setToast(toast);
         toast.show();
@@ -234,11 +239,8 @@ public class SetAlarm extends PreferenceActivity
      * format "Alarm set for 2 days 7 hours and 53 minutes from
      * now"
      */
-    static String formatToast(Context context, int hour, int minute,
-                              Alarm.DaysOfWeek daysOfWeek) {
-        long alarm = Alarms.calculateAlarm(hour, minute,
-                                           daysOfWeek).getTimeInMillis();
-        long delta = alarm - System.currentTimeMillis();;
+    static String formatToast(Context context, long timeInMillis) {
+        long delta = timeInMillis - System.currentTimeMillis();
         long hours = delta / (1000 * 60 * 60);
         long minutes = delta / (1000 * 60) % 60;
         long days = hours / 24;
