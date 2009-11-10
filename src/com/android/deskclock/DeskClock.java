@@ -548,13 +548,8 @@ public class DeskClock extends Activity {
     public void onPause() {
         if (DEBUG) Log.d(LOG_TAG, "onPause");
 
-        // Turn off the screen saver.
+        // Turn off the screen saver. (But don't un-dim.)
         restoreScreen();
-
-        // Avoid situations where the user launches Alarm Clock and is
-        // surprised to find it in dim mode (because it was last used in dim
-        // mode, but that last use is long in the past).
-        mDimmed = false;
 
         // Other things we don't want to be doing in the background.
         unregisterReceiver(mIntentReceiver);
@@ -563,6 +558,17 @@ public class DeskClock extends Activity {
         super.onPause();
     }
 
+    @Override
+    public void onStop() {
+        if (DEBUG) Log.d(LOG_TAG, "onStop");
+
+        // Avoid situations where the user launches Alarm Clock and is
+        // surprised to find it in dim mode (because it was last used in dim
+        // mode, but that last use is long in the past).
+        mDimmed = false;
+
+        super.onStop();
+    }
 
     private void initViews() {
         // give up any internal focus before we switch layouts
