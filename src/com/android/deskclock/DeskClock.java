@@ -17,7 +17,9 @@
 package com.android.deskclock;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -74,6 +76,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
@@ -88,6 +91,8 @@ public class DeskClock extends Activity {
 
     // Intent used to start the music player.
     private static final String MUSIC_NOW_PLAYING = "com.android.music.PLAYBACK_VIEWER";
+
+    private static final String ACTION_MIDNIGHT = "com.android.deskclock.MIDNIGHT";
 
     // Interval between polls of the weather widget. Its refresh period is
     // likely to be much longer (~3h), but we want to pick up any changes
@@ -161,6 +166,8 @@ public class DeskClock extends Activity {
     private boolean mWeatherFetchScheduled = false;
 
     private Random mRNG;
+
+    private PendingIntent mMidnightIntent;
 
     private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
@@ -438,7 +445,9 @@ public class DeskClock extends Activity {
     }
 
     private void refreshDate() {
-        mDate.setText(mDateFormat.format(new Date()));
+        final Date now = new Date();
+        if (DEBUG) Log.d(LOG_TAG, "refreshing date..." + now);
+        mDate.setText(mDateFormat.format(now));
     }
 
     private void refreshAlarm() {
@@ -470,7 +479,6 @@ public class DeskClock extends Activity {
         Window win = getWindow();
         WindowManager.LayoutParams winParams = win.getAttributes();
 
-        // secret!
         winParams.flags |= (WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
         winParams.flags |= (WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
@@ -518,6 +526,13 @@ public class DeskClock extends Activity {
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_DATE_CHANGED);
         filter.addAction(Intent.ACTION_BATTERY_CHANGED);
+        filter.addAction(ACTION_MIDNIGHT);
+
+        Calendar today = Calendar.getInstance();
+        today.add(Calendar.DATE, 1);
+        mMidnightIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_MIDNIGHT), 0);
+        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        am.setRepeating(AlarmManager.RTC, today.getTimeInMillis(), AlarmManager.INTERVAL_DAY, mMidnightIntent);
         registerReceiver(mIntentReceiver, filter);
 
         doDim(false);
@@ -553,6 +568,8 @@ public class DeskClock extends Activity {
 
         // Other things we don't want to be doing in the background.
         unregisterReceiver(mIntentReceiver);
+        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        am.cancel(mMidnightIntent);
         unscheduleWeatherFetch();
 
         super.onPause();
