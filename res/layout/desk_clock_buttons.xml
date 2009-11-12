@@ -26,6 +26,7 @@
         android:layout_width="fill_parent"
         android:layout_weight=".25"
         android:src="@drawable/ic_clock_strip_alarm"
+        android:contentDescription="@string/alarm_button_description"
         />
     <ImageButton android:id="@+id/gallery_button"
 		style="@style/ButtonStripMiddle"
@@ -33,6 +34,7 @@
         android:layout_width="fill_parent"
         android:layout_weight=".25"
         android:src="@drawable/ic_clock_strip_gallery"
+        android:contentDescription="@string/gallery_button_description"
         />
     <ImageButton android:id="@+id/music_button"
 		style="@style/ButtonStripMiddle"
@@ -40,6 +42,7 @@
         android:layout_width="fill_parent"
         android:layout_weight=".25"
         android:src="@drawable/ic_clock_strip_music"
+        android:contentDescription="@string/music_button_description"
         />
     <ImageButton android:id="@+id/home_button"
 		style="@style/ButtonStripRight"
@@ -47,5 +50,6 @@
         android:layout_width="fill_parent"
         android:layout_weight=".25"
         android:src="@drawable/ic_clock_strip_home"
+        android:contentDescription="@string/home_button_description"
         />
 </LinearLayout>

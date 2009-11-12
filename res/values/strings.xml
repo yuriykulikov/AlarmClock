@@ -222,12 +222,12 @@
       <item>2</item>
     </string-array>
 
-    <!-- Placeholders --><skip/>
-    <string name="alarm_button_title_placeholder">Alarms</string>
-    <string name="gallery_button_title_placeholder">Gallery</string>
-    <string name="music_button_title_placeholder">Music</string>
-    <string name="nightmode_button_title_placeholder">Dim</string>
-    <string name="home_button_title_placeholder">Launcher</string>
+    <!-- Accessibility labels for Clock activity buttons --><skip/>
+    <string name="alarm_button_description">Alarms</string>
+    <string name="gallery_button_description">Gallery</string>
+    <string name="music_button_description">Music</string>
+    <string name="nightmode_button_description">Dim</string>
+    <string name="home_button_description">Launcher</string>
 
     <!-- A short representation of charging information, e.g "34%" -->
     <string name="battery_charging_level"><xliff:g id="number">%d</xliff:g><xliff:g id="percent">%%</xliff:g></string>
