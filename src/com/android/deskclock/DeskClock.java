@@ -211,14 +211,14 @@ public class DeskClock extends Activity {
     private void moveScreenSaverTo(int x, int y) {
         if (!mScreenSaverMode) return;
 
-        final View time_date = findViewById(R.id.time_date);
+        final View saver_view = findViewById(R.id.saver_view);
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
         if (x < 0 || y < 0) {
-            int myWidth = time_date.getMeasuredWidth();
-            int myHeight = time_date.getMeasuredHeight();
+            int myWidth = saver_view.getMeasuredWidth();
+            int myHeight = saver_view.getMeasuredHeight();
             x = (int)(mRNG.nextFloat()*(metrics.widthPixels - myWidth));
             y = (int)(mRNG.nextFloat()*(metrics.heightPixels - myHeight));
         }
@@ -226,7 +226,7 @@ public class DeskClock extends Activity {
         if (DEBUG) Log.d(LOG_TAG, String.format("screen saver: %d: jumping to (%d,%d)",
                 System.currentTimeMillis(), x, y));
 
-        time_date.setLayoutParams(new AbsoluteLayout.LayoutParams(
+        saver_view.setLayoutParams(new AbsoluteLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT,
             x,
@@ -285,15 +285,21 @@ public class DeskClock extends Activity {
 
         mTime = (DigitalClock) findViewById(R.id.time);
         mDate = (TextView) findViewById(R.id.date);
+        mNextAlarm = (TextView) findViewById(R.id.nextAlarm);
 
         final int color = mDimmed ? SCREEN_SAVER_COLOR_DIM : SCREEN_SAVER_COLOR;
 
         ((TextView)findViewById(R.id.timeDisplay)).setTextColor(color);
         ((TextView)findViewById(R.id.am_pm)).setTextColor(color);
         mDate.setTextColor(color);
+        mNextAlarm.setTextColor(color);
+        mNextAlarm.setCompoundDrawablesWithIntrinsicBounds(
+            getResources().getDrawable(mDimmed 
+                ? R.drawable.ic_lock_idle_alarm_saver_dim 
+                : R.drawable.ic_lock_idle_alarm_saver),
+            null, null, null);
 
         mBatteryDisplay =
-        mNextAlarm =
         mWeatherCurrentTemperature =
         mWeatherHighTemperature =
         mWeatherLowTemperature =
@@ -301,6 +307,7 @@ public class DeskClock extends Activity {
         mWeatherIcon = null;
 
         refreshDate();
+        refreshAlarm();
 
         moveScreenSaverTo(oldLoc[0], oldLoc[1]);
     }
