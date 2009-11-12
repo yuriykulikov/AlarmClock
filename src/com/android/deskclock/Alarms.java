@@ -17,6 +17,7 @@
 package com.android.deskclock;
 
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -157,8 +158,9 @@ public class Alarms {
      * @param vibrate        corresponds to the VIBRATE column
      * @param message        corresponds to the MESSAGE column
      * @param alert          corresponds to the ALERT column
+     * @return Time when the alarm will fire.
      */
-    public static void setAlarm(
+    public static long setAlarm(
             Context context, int id, boolean enabled, int hour, int minutes,
             Alarm.DaysOfWeek daysOfWeek, boolean vibrate, String message,
             String alert) {
@@ -187,7 +189,23 @@ public class Alarms {
         resolver.update(ContentUris.withAppendedId(Alarm.Columns.CONTENT_URI, id),
                         values, null, null);
 
+        long timeInMillis =
+                calculateAlarm(hour, minutes, daysOfWeek).getTimeInMillis();
+
+        if (enabled) {
+            // If this alarm fires before the next snooze, clear the snooze to
+            // enable this alarm.
+            SharedPreferences prefs = context.getSharedPreferences(
+                    AlarmClock.PREFERENCES, 0);
+            long snoozeTime = prefs.getLong(PREF_SNOOZE_TIME, 0);
+            if (timeInMillis < snoozeTime) {
+                clearSnoozePreference(context, prefs);
+            }
+        }
+
         setNextAlert(context);
+
+        return timeInMillis;
     }
 
     /**
@@ -367,10 +385,10 @@ public class Alarms {
             final long time) {
         SharedPreferences prefs = context.getSharedPreferences(
                 AlarmClock.PREFERENCES, 0);
-        SharedPreferences.Editor ed = prefs.edit();
         if (id == -1) {
-            clearSnoozePreference(ed);
+            clearSnoozePreference(context, prefs);
         } else {
+            SharedPreferences.Editor ed = prefs.edit();
             ed.putInt(PREF_SNOOZE_ID, id);
             ed.putLong(PREF_SNOOZE_TIME, time);
             ed.commit();
@@ -391,13 +409,23 @@ public class Alarms {
             return;
         } else if (snoozeId == id) {
             // This is the same id so clear the shared prefs.
-            clearSnoozePreference(prefs.edit());
+            clearSnoozePreference(context, prefs);
         }
     }
 
     // Helper to remove the snooze preference. Do not use clear because that
-    // will erase the clock preferences.
-    private static void clearSnoozePreference(final SharedPreferences.Editor ed) {
+    // will erase the clock preferences. Also clear the snooze notification in
+    // the window shade.
+    private static void clearSnoozePreference(final Context context,
+            final SharedPreferences prefs) {
+        final int alarmId = prefs.getInt(PREF_SNOOZE_ID, -1);
+        if (alarmId != -1) {
+            NotificationManager nm = (NotificationManager)
+                    context.getSystemService(Context.NOTIFICATION_SERVICE);
+            nm.cancel(alarmId);
+        }
+
+        final SharedPreferences.Editor ed = prefs.edit();
         ed.remove(PREF_SNOOZE_ID);
         ed.remove(PREF_SNOOZE_TIME);
         ed.commit();
