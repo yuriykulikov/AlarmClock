@@ -58,7 +58,7 @@
                     android:textSize="18sp"
                     android:textColor="#FFFFFFFF"
                     android:drawablePadding="6dip"
-                    android:drawableLeft="@android:drawable/ic_lock_idle_alarm"
+                    android:drawableLeft="@drawable/ic_lock_idle_alarm"
                     android:shadowColor="#C0000000"
                     android:shadowDx="0"
                     android:shadowDy="0"
