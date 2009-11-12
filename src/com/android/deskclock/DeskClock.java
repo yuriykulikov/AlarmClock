@@ -89,9 +89,10 @@ public class DeskClock extends Activity {
 
     private static final String LOG_TAG = "DeskClock";
 
-    // Intent used to start the music player.
-    private static final String MUSIC_NOW_PLAYING = "com.android.music.PLAYBACK_VIEWER";
+    // Package ID of the music player.
+    private static final String MUSIC_PACKAGE_ID = "com.android.music";
 
+    // Alarm action for midnight (so we can update the date display).
     private static final String ACTION_MIDNIGHT = "com.android.deskclock.MIDNIGHT";
 
     // Interval between polls of the weather widget. Its refresh period is
@@ -633,7 +634,10 @@ public class DeskClock extends Activity {
         musicButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
-                    startActivity(new Intent(MUSIC_NOW_PLAYING));
+                    Intent musicAppQuery = getPackageManager().getLaunchIntentForPackage(MUSIC_PACKAGE_ID);
+                    if (musicAppQuery != null) {
+                        startActivity(musicAppQuery);
+                    }
                 } catch (android.content.ActivityNotFoundException e) {
                     Log.e(LOG_TAG, "Couldn't launch music browser", e);
                 }
