@@ -32,14 +32,22 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="AlarmClock" android:label="@string/alarm_list_title"
-                android:configChanges="orientation|keyboardHidden|keyboard|navigation">
+        <activity android:name="AlarmClock"
+                android:label="@string/alarm_list_title"
+                android:taskAffinity=""
+                android:excludeFromRecents="true"
+                android:configChanges="orientation|keyboardHidden|keyboard|navigation"
+                >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
 
-        <activity android:name="SettingsActivity" android:label="@string/settings">
+        <activity android:name="SettingsActivity"
+                android:label="@string/settings"
+                android:taskAffinity=""
+                android:excludeFromRecents="true"
+                >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>

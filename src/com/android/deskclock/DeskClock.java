@@ -630,7 +630,8 @@ public class DeskClock extends Activity {
                     startActivity(new Intent(
                         Intent.ACTION_VIEW,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                            .putExtra("slideshow", true));
+                            .putExtra("slideshow", true)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 } catch (android.content.ActivityNotFoundException e) {
                     Log.e(LOG_TAG, "Couldn't launch image browser", e);
                 }
@@ -641,7 +642,9 @@ public class DeskClock extends Activity {
         musicButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
-                    Intent musicAppQuery = getPackageManager().getLaunchIntentForPackage(MUSIC_PACKAGE_ID);
+                    Intent musicAppQuery = getPackageManager()
+                        .getLaunchIntentForPackage(MUSIC_PACKAGE_ID)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     if (musicAppQuery != null) {
                         startActivity(musicAppQuery);
                     }
@@ -656,6 +659,7 @@ public class DeskClock extends Activity {
             public void onClick(View v) {
                 startActivity(
                     new Intent(Intent.ACTION_MAIN)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         .addCategory(Intent.CATEGORY_HOME));
             }
         });
@@ -680,7 +684,9 @@ public class DeskClock extends Activity {
             public void onClick(View v) {
                 if (!supportsWeather()) return;
 
-                Intent genieAppQuery = getPackageManager().getLaunchIntentForPackage(GENIE_PACKAGE_ID);
+                Intent genieAppQuery = getPackageManager()
+                    .getLaunchIntentForPackage(GENIE_PACKAGE_ID)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 if (genieAppQuery != null) {
                     startActivity(genieAppQuery);
                 }
