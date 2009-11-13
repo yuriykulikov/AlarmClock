@@ -15,7 +15,10 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_label" msgid="6642875149600019623">"Despertador"</string>
+    <!-- no translation found for app_label (6674495003718166674) -->
+    <skip />
+    <!-- no translation found for alarm_list_title (7589940465292950600) -->
+    <skip />
     <string name="add_alarm" msgid="5976616107390962899">"Adicionar alarme"</string>
     <string name="delete_alarm" msgid="3457780990646206817">"Excluir alarme"</string>
     <string name="enable_alarm" msgid="7442658245797418741">"Ativar alarme"</string>
@@ -56,7 +59,7 @@
     <string name="clock_instructions" msgid="3118560284915857690">"Selecione um relógio para exibir."</string>
     <string name="analog_gadget" msgid="1670505720837152766">"Relógio analógico"</string>
     <string name="settings" msgid="5849739030579520686">"Configurações"</string>
-    <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Alarme no modo silencioso"</string>
+    <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Modo silencioso"</string>
     <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"Tocar o alarme mesmo quando o telefone estiver no modo silencioso"</string>
     <string name="snooze_duration_title" msgid="1471249885139952670">"Duração do modo de espera"</string>
   <string-array name="snooze_duration_entries">
@@ -95,4 +98,16 @@
     <item msgid="3204893476515513084">"1"</item>
     <item msgid="7687709558968154577">"2"</item>
   </string-array>
+    <!-- no translation found for alarm_button_description (740283647046258651) -->
+    <skip />
+    <!-- no translation found for gallery_button_description (1151743663255257668) -->
+    <skip />
+    <!-- no translation found for music_button_description (1626593420810117999) -->
+    <skip />
+    <!-- no translation found for nightmode_button_description (990894208217576381) -->
+    <skip />
+    <!-- no translation found for home_button_description (3383859096809056157) -->
+    <skip />
+    <!-- no translation found for battery_charging_level (4391767951302394083) -->
+    <skip />
 </resources>
