@@ -15,7 +15,10 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_label" msgid="6642875149600019623">"Çalar Saat"</string>
+    <!-- no translation found for app_label (6674495003718166674) -->
+    <skip />
+    <!-- no translation found for alarm_list_title (7589940465292950600) -->
+    <skip />
     <string name="add_alarm" msgid="5976616107390962899">"Alarm ekle"</string>
     <string name="delete_alarm" msgid="3457780990646206817">"Alarmı sil"</string>
     <string name="enable_alarm" msgid="7442658245797418741">"Alarmı etkinleştir"</string>
@@ -95,4 +98,16 @@
     <item msgid="3204893476515513084">"1"</item>
     <item msgid="7687709558968154577">"2"</item>
   </string-array>
+    <!-- no translation found for alarm_button_description (740283647046258651) -->
+    <skip />
+    <!-- no translation found for gallery_button_description (1151743663255257668) -->
+    <skip />
+    <!-- no translation found for music_button_description (1626593420810117999) -->
+    <skip />
+    <!-- no translation found for nightmode_button_description (990894208217576381) -->
+    <skip />
+    <!-- no translation found for home_button_description (3383859096809056157) -->
+    <skip />
+    <!-- no translation found for battery_charging_level (4391767951302394083) -->
+    <skip />
 </resources>
