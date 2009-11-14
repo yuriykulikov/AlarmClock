@@ -15,10 +15,8 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- no translation found for app_label (6674495003718166674) -->
-    <skip />
-    <!-- no translation found for alarm_list_title (7589940465292950600) -->
-    <skip />
+    <string name="app_label" msgid="6674495003718166674">"Ρολόι"</string>
+    <string name="alarm_list_title" msgid="7589940465292950600">"Ειδοποιήσεις"</string>
     <string name="add_alarm" msgid="5976616107390962899">"Προσθήκη ξυπνητηριού"</string>
     <string name="delete_alarm" msgid="3457780990646206817">"Διαγραφή ξυπνητηριού"</string>
     <string name="enable_alarm" msgid="7442658245797418741">"Ενεργοποίηση ξυπνητηριού"</string>
@@ -81,7 +79,7 @@
     <string name="done" msgid="6509722361933858451">"Τέλος"</string>
     <string name="revert" msgid="9100911171235162926">"Επαναφορά"</string>
     <string name="alarm_volume_title" msgid="8506245173912428522">"Ένταση ήχου ξυπνητηριού"</string>
-    <string name="alarm_volume_summary" msgid="8957440373896242438">"Ορισμός του αριθμού των ειδοποιήσεων"</string>
+    <string name="alarm_volume_summary" msgid="8957440373896242438">"Ορισμός της έντασης του ήχου ξυπνητηριού"</string>
     <string name="silent_alarm_summary" msgid="8605302849408279221">"Σίγαση"</string>
     <string name="alarm_notify_text" msgid="4146350965933990093">"Επιλέξτε την αφύπνιση ή την παράβλεψη σε αυτό το ξυπνητήρι."</string>
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (αναβολή)"</string>
@@ -89,7 +87,7 @@
     <string name="volume_button_setting_title" msgid="1892885285888644234">"Συμπεριφορά πλευρικού κουμπιού"</string>
     <string name="volume_button_setting_summary" msgid="1594641247799573198">"Ορίστε την επιθυμητή συμπεριφορά των πλαϊνών κουμπιών κατά τον ήχο του ξυπνητηριού"</string>
   <string-array name="volume_button_setting_entries">
-    <item msgid="4520420953175098625">"Κανένα"</item>
+    <item msgid="4520420953175098625">"Καμία"</item>
     <item msgid="7111908302622811168">"Αφύπνιση"</item>
     <item msgid="8573552194573068996">"Παράβλεψη"</item>
   </string-array>
@@ -98,16 +96,10 @@
     <item msgid="3204893476515513084">"1"</item>
     <item msgid="7687709558968154577">"2"</item>
   </string-array>
-    <!-- no translation found for alarm_button_description (740283647046258651) -->
-    <skip />
-    <!-- no translation found for gallery_button_description (1151743663255257668) -->
-    <skip />
-    <!-- no translation found for music_button_description (1626593420810117999) -->
-    <skip />
-    <!-- no translation found for nightmode_button_description (990894208217576381) -->
-    <skip />
-    <!-- no translation found for home_button_description (3383859096809056157) -->
-    <skip />
-    <!-- no translation found for battery_charging_level (4391767951302394083) -->
-    <skip />
+    <string name="alarm_button_description" msgid="740283647046258651">"Ειδοποιήσεις"</string>
+    <string name="gallery_button_description" msgid="1151743663255257668">"Συλλογή"</string>
+    <string name="music_button_description" msgid="1626593420810117999">"Μουσική"</string>
+    <string name="nightmode_button_description" msgid="990894208217576381">"Θάμπωμα"</string>
+    <string name="home_button_description" msgid="3383859096809056157">"Εκκίνηση"</string>
+    <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g><xliff:g id="PERCENT">%%</xliff:g>"</string>
 </resources>
