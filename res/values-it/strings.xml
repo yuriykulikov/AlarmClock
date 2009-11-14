@@ -15,10 +15,8 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- no translation found for app_label (6674495003718166674) -->
-    <skip />
-    <!-- no translation found for alarm_list_title (7589940465292950600) -->
-    <skip />
+    <string name="app_label" msgid="6674495003718166674">"Orologio"</string>
+    <string name="alarm_list_title" msgid="7589940465292950600">"Sveglia"</string>
     <string name="add_alarm" msgid="5976616107390962899">"Aggiungi allarme"</string>
     <string name="delete_alarm" msgid="3457780990646206817">"Elimina allarme"</string>
     <string name="enable_alarm" msgid="7442658245797418741">"Attiva allarme"</string>
@@ -59,7 +57,7 @@
     <string name="clock_instructions" msgid="3118560284915857690">"Seleziona un orologio."</string>
     <string name="analog_gadget" msgid="1670505720837152766">"Orologio analogico"</string>
     <string name="settings" msgid="5849739030579520686">"Impostazioni"</string>
-    <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Allarme in mod. silenziosa"</string>
+    <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Allarme in mod. silenz."</string>
     <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"Riproduci allarme anche con telefono in modalità silenziosa"</string>
     <string name="snooze_duration_title" msgid="1471249885139952670">"Durata sospensione"</string>
   <string-array name="snooze_duration_entries">
@@ -86,8 +84,8 @@
     <string name="alarm_notify_text" msgid="4146350965933990093">"Seleziona per sospendere o eliminare questo allarme."</string>
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (sospeso)"</string>
     <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"L\'allarme sarà attivato alle <xliff:g id="TIME">%s</xliff:g>. Seleziona per annullare."</string>
-    <string name="volume_button_setting_title" msgid="1892885285888644234">"Comportamento pulsante laterale"</string>
-    <string name="volume_button_setting_summary" msgid="1594641247799573198">"Imposta il comportamento desiderato dei pulsanti laterali quando vengono premuti durante un allarme"</string>
+    <string name="volume_button_setting_title" msgid="1892885285888644234">"Comp. pulsante laterale"</string>
+    <string name="volume_button_setting_summary" msgid="1594641247799573198">"Imposta il comport. dei puls. laterali quando vengono premuti durante un allarme"</string>
   <string-array name="volume_button_setting_entries">
     <item msgid="4520420953175098625">"Nessuno"</item>
     <item msgid="7111908302622811168">"Sospendi"</item>
@@ -98,16 +96,10 @@
     <item msgid="3204893476515513084">"1"</item>
     <item msgid="7687709558968154577">"2"</item>
   </string-array>
-    <!-- no translation found for alarm_button_description (740283647046258651) -->
-    <skip />
-    <!-- no translation found for gallery_button_description (1151743663255257668) -->
-    <skip />
-    <!-- no translation found for music_button_description (1626593420810117999) -->
-    <skip />
-    <!-- no translation found for nightmode_button_description (990894208217576381) -->
-    <skip />
-    <!-- no translation found for home_button_description (3383859096809056157) -->
-    <skip />
-    <!-- no translation found for battery_charging_level (4391767951302394083) -->
-    <skip />
+    <string name="alarm_button_description" msgid="740283647046258651">"Sveglia"</string>
+    <string name="gallery_button_description" msgid="1151743663255257668">"Galleria"</string>
+    <string name="music_button_description" msgid="1626593420810117999">"Musica"</string>
+    <string name="nightmode_button_description" msgid="990894208217576381">"Abbassa"</string>
+    <string name="home_button_description" msgid="3383859096809056157">"Launcher"</string>
+    <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g><xliff:g id="PERCENT">%%</xliff:g>"</string>
 </resources>

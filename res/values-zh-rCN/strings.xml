@@ -15,10 +15,8 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- no translation found for app_label (6674495003718166674) -->
-    <skip />
-    <!-- no translation found for alarm_list_title (7589940465292950600) -->
-    <skip />
+    <string name="app_label" msgid="6674495003718166674">"时钟"</string>
+    <string name="alarm_list_title" msgid="7589940465292950600">"闹钟"</string>
     <string name="add_alarm" msgid="5976616107390962899">"添加闹钟"</string>
     <string name="delete_alarm" msgid="3457780990646206817">"取消闹钟"</string>
     <string name="enable_alarm" msgid="7442658245797418741">"启用闹钟"</string>
@@ -39,13 +37,13 @@
     <string name="alarm_alert_snooze_set" msgid="656470966696912087">"暂停 <xliff:g id="MINUTES">%d</xliff:g> 分钟。"</string>
   <string-array name="alarm_set">
     <item msgid="5163476010406761625">"已将此闹钟设置为从现在起不到 1 分钟后提醒。"</item>
-    <item msgid="7110525731259629055">"已将此闹钟设置为从现在起 <xliff:g id="DAYS">%1$s</xliff:g>后提醒。"</item>
-    <item msgid="7003982794086186185">"已将此闹钟设置为从现在起 <xliff:g id="HOURS">%2$s</xliff:g>后提醒。"</item>
-    <item msgid="7311021123230077742">"已将此闹钟设置为从现在起 <xliff:g id="DAYS">%1$s</xliff:g> <xliff:g id="HOURS">%2$s</xliff:g>后提醒。"</item>
-    <item msgid="8431715191823114872">"已将此闹钟设置为从现在起 <xliff:g id="MINUTES">%3$s</xliff:g>后提醒。"</item>
-    <item msgid="3244151088673185428">"已将此闹钟设置为从现在起 <xliff:g id="DAYS">%1$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g>后提醒。"</item>
-    <item msgid="3663661342600168814">"已将此闹钟设置为从现在起 <xliff:g id="HOURS">%2$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g>后提醒。"</item>
-    <item msgid="7779544127785487304">"已将该闹钟设置为从现在起 <xliff:g id="DAYS">%1$s</xliff:g> <xliff:g id="HOURS">%2$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g>后提醒。"</item>
+    <item msgid="7110525731259629055">"已将此闹钟设置为从现在起 <xliff:g id="DAYS">%1$s</xliff:g>后启动。"</item>
+    <item msgid="7003982794086186185">"已将此闹钟设置为从现在起 <xliff:g id="HOURS">%2$s</xliff:g>后启动。"</item>
+    <item msgid="7311021123230077742">"已将此闹钟设置为从现在起 <xliff:g id="DAYS">%1$s</xliff:g> <xliff:g id="HOURS">%2$s</xliff:g>后启动。"</item>
+    <item msgid="8431715191823114872">"已将此闹钟设置为从现在起 <xliff:g id="MINUTES">%3$s</xliff:g>后启动。"</item>
+    <item msgid="3244151088673185428">"已将此闹钟设置为从现在起 <xliff:g id="DAYS">%1$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g>后启动。"</item>
+    <item msgid="3663661342600168814">"已将此闹钟设置为从现在起 <xliff:g id="HOURS">%2$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g>后启动。"</item>
+    <item msgid="7779544127785487304">"已将此闹钟设置为从现在起 <xliff:g id="DAYS">%1$s</xliff:g> <xliff:g id="HOURS">%2$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g>后启动。"</item>
   </string-array>
     <string name="day" msgid="7984755014526510295">"1 天"</string>
     <string name="days" msgid="2070509222727852210">"<xliff:g id="DAYS">%s</xliff:g> 天"</string>
@@ -59,9 +57,9 @@
     <string name="clock_instructions" msgid="3118560284915857690">"选择要显示的时钟。"</string>
     <string name="analog_gadget" msgid="1670505720837152766">"模拟时钟"</string>
     <string name="settings" msgid="5849739030579520686">"设置"</string>
-    <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"在静音模式下提醒"</string>
-    <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"当手机处于静音模式时，同样进行提醒"</string>
-    <string name="snooze_duration_title" msgid="1471249885139952670">"暂停时长"</string>
+    <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"静音模式下的闹钟"</string>
+    <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"手机处于静音模式时，闹钟仍会响"</string>
+    <string name="snooze_duration_title" msgid="1471249885139952670">"暂停时间"</string>
   <string-array name="snooze_duration_entries">
     <item msgid="8337408933053603125">"5 分钟"</item>
     <item msgid="5294206441496024610">"10 分钟"</item>
@@ -85,9 +83,9 @@
     <string name="silent_alarm_summary" msgid="8605302849408279221">"静音"</string>
     <string name="alarm_notify_text" msgid="4146350965933990093">"选择暂停或关闭此闹钟。"</string>
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g>（已暂停）"</string>
-    <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"已将闹钟设置为从现在起 <xliff:g id="TIME">%s</xliff:g>后再提醒。选中可以取消。"</string>
-    <string name="volume_button_setting_title" msgid="1892885285888644234">"侧按钮行为"</string>
-    <string name="volume_button_setting_summary" msgid="1594641247799573198">"根据需要设置闹钟响时按侧按钮所期望出现的行为"</string>
+    <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"已将此闹钟设置在 <xliff:g id="TIME">%s</xliff:g>启动。选择即可取消。"</string>
+    <string name="volume_button_setting_title" msgid="1892885285888644234">"侧边按钮功用"</string>
+    <string name="volume_button_setting_summary" msgid="1594641247799573198">"设置侧边按钮在闹钟启动时的功用"</string>
   <string-array name="volume_button_setting_entries">
     <item msgid="4520420953175098625">"无"</item>
     <item msgid="7111908302622811168">"暂停"</item>
@@ -98,16 +96,10 @@
     <item msgid="3204893476515513084">"1"</item>
     <item msgid="7687709558968154577">"2"</item>
   </string-array>
-    <!-- no translation found for alarm_button_description (740283647046258651) -->
-    <skip />
-    <!-- no translation found for gallery_button_description (1151743663255257668) -->
-    <skip />
-    <!-- no translation found for music_button_description (1626593420810117999) -->
-    <skip />
-    <!-- no translation found for nightmode_button_description (990894208217576381) -->
-    <skip />
-    <!-- no translation found for home_button_description (3383859096809056157) -->
-    <skip />
-    <!-- no translation found for battery_charging_level (4391767951302394083) -->
-    <skip />
+    <string name="alarm_button_description" msgid="740283647046258651">"闹钟"</string>
+    <string name="gallery_button_description" msgid="1151743663255257668">"图库"</string>
+    <string name="music_button_description" msgid="1626593420810117999">"音乐"</string>
+    <string name="nightmode_button_description" msgid="990894208217576381">"调暗"</string>
+    <string name="home_button_description" msgid="3383859096809056157">"启动程序"</string>
+    <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g><xliff:g id="PERCENT">%%</xliff:g>"</string>
 </resources>
