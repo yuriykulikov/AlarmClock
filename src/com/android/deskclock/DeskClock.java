@@ -41,6 +41,7 @@ import android.os.SystemClock;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -74,8 +75,6 @@ import static android.os.BatteryManager.BATTERY_STATUS_UNKNOWN;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -155,7 +154,7 @@ public class DeskClock extends Activity {
     private boolean mDimmed = false;
     private boolean mScreenSaverMode = false;
 
-    private DateFormat mDateFormat;
+    private String mDateFormat;
 
     private int mBatteryLevel = -1;
     private boolean mPluggedIn = false;
@@ -336,16 +335,6 @@ public class DeskClock extends Activity {
         mWeatherFetchScheduled = false;
     }
 
-    private static final boolean sCelsius;
-    static {
-        String cc = Locale.getDefault().getCountry().toLowerCase();
-        sCelsius = !("us".equals(cc) || "bz".equals(cc) || "jm".equals(cc));
-    }
-
-    private static int celsiusToLocal(int tempC) {
-        return sCelsius ? tempC : (int) Math.round(tempC * 1.8f + 32);
-    }
-
     private void fetchWeatherData() {
         // if we couldn't load the weather widget's resources, we simply
         // assume it's not present on the device.
@@ -390,11 +379,11 @@ public class DeskClock extends Activity {
             mWeatherIconDrawable = mGenieResources.getDrawable(cur.getInt(
                 cur.getColumnIndexOrThrow("iconResId")));
             mWeatherCurrentTemperatureString = String.format("%d\u00b0",
-                celsiusToLocal(cur.getInt(cur.getColumnIndexOrThrow("temperature"))));
+                (cur.getInt(cur.getColumnIndexOrThrow("temperature"))));
             mWeatherHighTemperatureString = String.format("%d\u00b0",
-                celsiusToLocal(cur.getInt(cur.getColumnIndexOrThrow("highTemperature"))));
+                (cur.getInt(cur.getColumnIndexOrThrow("highTemperature"))));
             mWeatherLowTemperatureString = String.format("%d\u00b0",
-                celsiusToLocal(cur.getInt(cur.getColumnIndexOrThrow("lowTemperature"))));
+                (cur.getInt(cur.getColumnIndexOrThrow("lowTemperature"))));
             mWeatherLocationString = cur.getString(
                 cur.getColumnIndexOrThrow("location"));
         } else {
@@ -455,7 +444,7 @@ public class DeskClock extends Activity {
     private void refreshDate() {
         final Date now = new Date();
         if (DEBUG) Log.d(LOG_TAG, "refreshing date..." + now);
-        mDate.setText(mDateFormat.format(now));
+        mDate.setText(DateFormat.format(mDateFormat, now));
     }
 
     private void refreshAlarm() {
@@ -521,15 +510,7 @@ public class DeskClock extends Activity {
 
         // reload the date format in case the user has changed settings
         // recently
-        final SimpleDateFormat dateFormat = (SimpleDateFormat)
-                java.text.DateFormat.getDateInstance(java.text.DateFormat.FULL);
-        // This is a little clumsy; we want to honor the locale's date format
-        // (rather than simply hardcoding "Weekday, Month Date") but
-        // DateFormat.FULL includes the year (at least, in enUS). So we lop
-        // that bit off if it's there; should have no effect on
-        // locale-specific date strings that look different.
-        mDateFormat = new SimpleDateFormat(dateFormat.toPattern()
-                    .replace(", yyyy", "")); // no year
+        mDateFormat = getString(com.android.internal.R.string.full_wday_month_day_no_year);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_DATE_CHANGED);
