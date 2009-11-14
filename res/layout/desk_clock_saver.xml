@@ -40,8 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dip"
             android:gravity="left"
-            android:textSize="18sp"
-            android:textColor="#FFFFFFFF"
+			android:textAppearance="?android:attr/textAppearanceMedium"
             android:drawablePadding="6dip"
             />
         <include layout="@layout/desk_clock_time_date"

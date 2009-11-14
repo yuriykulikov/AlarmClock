@@ -17,8 +17,7 @@
 <!-- battery/charge status -->
 <TextView android:id="@+id/battery" xmlns:android="http://schemas.android.com/apk/res/android"
     android:gravity="right"
-    android:textSize="18sp"
-    android:textColor="#FFFFFFFF"
+	android:textAppearance="?android:attr/textAppearanceMedium"
     android:drawablePadding="6dip"
     android:shadowColor="#C0000000"
     android:shadowDx="0"
