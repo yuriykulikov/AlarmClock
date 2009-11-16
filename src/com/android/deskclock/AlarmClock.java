@@ -25,6 +25,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.DataSetObserver;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,6 +43,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -66,6 +68,17 @@ public class AlarmClock extends Activity implements OnItemClickListener {
     private ListView mAlarmsList;
     private Cursor mCursor;
 
+    private void updateIndicatorAndAlarm(boolean enabled, ImageView bar,
+            Alarm alarm) {
+        bar.setImageResource(enabled ? R.drawable.ic_indicator_on
+                : R.drawable.ic_indicator_off);
+        Alarms.enableAlarm(this, alarm.id, enabled);
+        if (enabled) {
+            SetAlarm.popAlarmSetToast(this, alarm.hour, alarm.minutes,
+                    alarm.daysOfWeek);
+        }
+    }
+
     private class AlarmTimeAdapter extends CursorAdapter {
         public AlarmTimeAdapter(Context context, Cursor cursor) {
             super(context, cursor);
@@ -83,17 +96,33 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         public void bindView(View view, Context context, Cursor cursor) {
             final Alarm alarm = new Alarm(cursor);
 
-            CheckBox onButton = (CheckBox) view.findViewById(R.id.alarmButton);
-            onButton.setChecked(alarm.enabled);
-            onButton.setOnClickListener(new OnClickListener() {
+            View indicator = view.findViewById(R.id.indicator);
+
+            // Set the initial resource for the bar image.
+            final ImageView barOnOff =
+                    (ImageView) indicator.findViewById(R.id.bar_onoff);
+            barOnOff.setImageResource(alarm.enabled ?
+                    R.drawable.ic_indicator_on : R.drawable.ic_indicator_off);
+
+            // Set the initial state of the clock "checkbox"
+            final CheckBox clockOnOff =
+                    (CheckBox) indicator.findViewById(R.id.clock_onoff);
+            clockOnOff.setChecked(alarm.enabled);
+
+            // Handle the "checkbox" click and toggle the alarm.
+            clockOnOff.setOnClickListener(new OnClickListener() {
                     public void onClick(View v) {
                         boolean isChecked = ((CheckBox) v).isChecked();
-                        Alarms.enableAlarm(AlarmClock.this, alarm.id,
-                            isChecked);
-                        if (isChecked) {
-                            SetAlarm.popAlarmSetToast(AlarmClock.this,
-                                alarm.hour, alarm.minutes, alarm.daysOfWeek);
-                        }
+                        updateIndicatorAndAlarm(isChecked, barOnOff, alarm);
+                    }
+            });
+
+            // Clicking outside the "checkbox" should also change the state.
+            indicator.setOnClickListener(new OnClickListener() {
+                    public void onClick(View v) {
+                        clockOnOff.toggle();
+                        updateIndicatorAndAlarm(clockOnOff.isChecked(),
+                                barOnOff, alarm);
                     }
             });
 
@@ -105,6 +134,7 @@ public class AlarmClock extends Activity implements OnItemClickListener {
             c.set(Calendar.HOUR_OF_DAY, alarm.hour);
             c.set(Calendar.MINUTE, alarm.minutes);
             digitalClock.updateTime(c);
+            digitalClock.setTypeface(Typeface.DEFAULT);
 
             // Set the repeat text or leave it blank if it does not repeat.
             TextView daysOfWeekView =
@@ -120,7 +150,7 @@ public class AlarmClock extends Activity implements OnItemClickListener {
 
             // Display the label
             TextView labelView =
-                    (TextView) digitalClock.findViewById(R.id.label);
+                    (TextView) view.findViewById(R.id.label);
             if (alarm.label != null && alarm.label.length() != 0) {
                 labelView.setText(alarm.label);
                 labelView.setVisibility(View.VISIBLE);

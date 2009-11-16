@@ -66,11 +66,8 @@ public class DigitalClock extends LinearLayout {
         private TextView mAmPm;
         private String mAmString, mPmString;
 
-        AmPm(View parent, Typeface tf) {
+        AmPm(View parent) {
             mAmPm = (TextView) parent.findViewById(R.id.am_pm);
-            if (tf != null) {
-                mAmPm.setTypeface(tf);
-            }
 
             String[] ampm = new DateFormatSymbols().getAmPmStrings();
             mAmString = ampm[0];
@@ -113,7 +110,7 @@ public class DigitalClock extends LinearLayout {
                 "fonts/Clockopia.ttf");
         mTimeDisplay = (TextView) findViewById(R.id.timeDisplay);
         mTimeDisplay.setTypeface(tf);
-        mAmPm = new AmPm(this, null);
+        mAmPm = new AmPm(this);
         mCalendar = Calendar.getInstance();
 
         setDateFormat();
@@ -182,5 +179,9 @@ public class DigitalClock extends LinearLayout {
 
     void setLive(boolean live) {
         mLive = live;
+    }
+
+    void setTypeface(Typeface tf) {
+        mTimeDisplay.setTypeface(tf);
     }
 }
