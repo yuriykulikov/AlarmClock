@@ -23,12 +23,8 @@
     android:orientation="horizontal">
 
     <LinearLayout android:id="@+id/indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="14dip"
-        android:paddingRight="14dip"
-        android:paddingTop="8dip"
-        android:paddingBottom="8dip"
+        style="@style/alarm_list_left_column"
+        android:gravity="center"
         android:orientation="vertical">
         <CheckBox android:id="@+id/clock_onoff"
             android:focusable="false"
@@ -87,6 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:paddingLeft="4dip"
                 android:textSize="16sp"
                 android:textColor="@color/grey"
                 android:textStyle="bold"

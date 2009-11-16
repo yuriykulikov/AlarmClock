@@ -20,6 +20,34 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"> 
 
+    <LinearLayout android:id="@+id/add_alarm"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:background="@android:drawable/list_selector_background"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="4dip"
+        android:paddingBottom="4dip"
+        android:orientation="horizontal">
+
+        <ImageView
+            style="@style/alarm_list_left_column"
+            android:duplicateParentState="true"
+            android:gravity="center"
+            android:scaleType="center"
+            android:src="@drawable/add_alarm" />
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textSize="28sp"
+            android:textColor="@color/white"
+            android:text="@string/add_alarm" />
+
+    </LinearLayout>
+
     <ListView
         android:id="@+id/alarms_list"
         android:layout_width="fill_parent"
@@ -29,22 +57,42 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        style="@android:style/ButtonBar">
+        android:orientation="horizontal" >
 
-        <Button android:id="@+id/add_alarm"
-            android:focusable="true"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:text="@string/add_alarm"/>
+        <ImageButton android:id="@+id/desk_clock_button"
+            style="@style/ButtonStripLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_menu_desk_clock"
+            android:contentDescription="@string/desk_clock_button_description"/>
 
-        <Button android:id="@+id/settings"
-            android:focusable="true"
+        <com.android.deskclock.DigitalClock
+            style="@style/ButtonStripRight"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:text="@string/settings"/>
+            android:layout_height="fill_parent">
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="true">
+
+                <TextView android:id="@+id/timeDisplay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="6dip"
+                    android:textSize="42sp"
+                    android:textColor="@color/white" />
+
+                <TextView android:id="@+id/am_pm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white" />
+
+            </LinearLayout>
+
+      </com.android.deskclock.DigitalClock>
 
     </LinearLayout>
 
