@@ -24,7 +24,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.database.DataSetObserver;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -45,6 +44,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CursorAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -57,9 +57,6 @@ import java.util.Calendar;
 public class AlarmClock extends Activity implements OnItemClickListener {
 
     final static String PREFERENCES = "AlarmClock";
-
-    /** Cap alarm count at this number */
-    final static int MAX_ALARM_COUNT = 12;
 
     /** This must be false for production.  If true, turns on logging,
         test code, etc. */
@@ -221,7 +218,7 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         mAlarmsList.setOnItemClickListener(this);
         mAlarmsList.setOnCreateContextMenuListener(this);
 
-        final Button addAlarm = (Button) findViewById(R.id.add_alarm);
+        View addAlarm = findViewById(R.id.add_alarm);
         addAlarm.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     Uri uri = Alarms.addAlarm(getContentResolver());
@@ -237,28 +234,14 @@ public class AlarmClock extends Activity implements OnItemClickListener {
                     startActivity(intent);
                 }
             });
-        // Update the enabled state of the "Add alarm" menu item depending on
-        // how many alarms are set.
-        adapter.registerDataSetObserver(new DataSetObserver() {
-            public void onChanged() {
-                updateAddAlarmButton(addAlarm);
-            }
-            public void onInvalidate() {
-                updateAddAlarmButton(addAlarm);
-            }
-        });
 
-        Button settings = (Button) findViewById(R.id.settings);
-        settings.setOnClickListener(new View.OnClickListener() {
+        ImageButton deskClock =
+                (ImageButton) findViewById(R.id.desk_clock_button);
+        deskClock.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    startActivity(
-                        new Intent(AlarmClock.this, SettingsActivity.class));
+                    startActivity(new Intent(AlarmClock.this, DeskClock.class));
                 }
-            });
-    }
-
-    private void updateAddAlarmButton(Button b) {
-        b.setEnabled(mAlarmsList.getAdapter().getCount() < MAX_ALARM_COUNT);
+        });
     }
 
     @Override
@@ -299,6 +282,21 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         if (alarm.enabled) {
             menu.findItem(R.id.enable_alarm).setTitle(R.string.disable_alarm);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_item_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.alarm_list_menu, menu);
+        return true;
     }
 
     public void onItemClick(AdapterView parent, View v, int pos, long id) {
