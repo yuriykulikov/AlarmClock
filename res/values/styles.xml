@@ -52,4 +52,9 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@drawable/btn_strip_trans_right</item>
     </style>
+
+    <style name="alarm_list_left_column">
+        <item name="android:layout_width">64dip</item>
+        <item name="android:layout_height">54dip</item>
+    </style>
 </resources>
