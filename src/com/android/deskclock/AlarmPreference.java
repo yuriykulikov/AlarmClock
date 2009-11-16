@@ -41,6 +41,10 @@ public class AlarmPreference extends RingtonePreference {
 
     @Override
     protected Uri onRestoreRingtone() {
+        if (RingtoneManager.isDefault(mAlert)) {
+            return RingtoneManager.getActualDefaultRingtoneUri(getContext(),
+                    RingtoneManager.TYPE_ALARM);
+        }
         return mAlert;
     }
 
