@@ -17,6 +17,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/enable_alarm"
         android:title="@string/enable_alarm"/>
+    <item android:id="@+id/edit_alarm"
+        android:title="@string/menu_edit_alarm"/>
     <item android:id="@+id/delete_alarm"
         android:title="@string/delete_alarm"/>
 </menu>
