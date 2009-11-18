@@ -23,7 +23,6 @@
     <LinearLayout android:id="@+id/add_alarm"
         android:clickable="true"
         android:focusable="true"
-        android:focusableInTouchMode="true"
         android:background="@android:drawable/list_selector_background"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -42,11 +41,18 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_gravity="center_vertical"
-            android:textSize="28sp"
-            android:textColor="@color/white"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="?android:attr/textColorPrimary"
             android:text="@string/add_alarm" />
 
     </LinearLayout>
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        android:gravity="fill_horizontal"
+        android:src="@android:drawable/divider_horizontal_dark" />
 
     <ListView
         android:id="@+id/alarms_list"
@@ -80,15 +86,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingRight="6dip"
-                    android:textSize="42sp"
-                    android:textColor="@color/white" />
+                    android:textSize="48sp"
+                    android:textColor="?android:attr/textColorPrimary" />
 
                 <TextView android:id="@+id/am_pm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textStyle="bold"
-                    android:textColor="@color/white" />
+                    android:textColor="?android:attr/textColorPrimary" />
 
             </LinearLayout>
 

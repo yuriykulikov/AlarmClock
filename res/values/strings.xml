@@ -25,14 +25,17 @@
     <!-- Menu item on Alarm Clock screen: Add alarm -->
     <string name="add_alarm">Add alarm</string>
 
+    <!-- Menu item on Alarm Clock screen: Desk clock -->
+    <string name="menu_desk_clock">Desk clock</string>
+
+    <!-- Menu item on Alarm Clock screen: Edit alarm -->
+    <string name="menu_edit_alarm">Edit alarm</string>
+
     <!-- Context Menu Item on Alarm Settings screen: Delete alarm -->
     <string name="delete_alarm">Delete alarm</string>
 
     <!-- Context Menu Item on Alarm Settings screen: Enable alarm -->
-    <string name="enable_alarm">Enable alarm</string>
-
-    <!-- Context Menu Item on Alarm Settings screen: Disable alarm -->
-    <string name="disable_alarm">Disable alarm</string>
+    <string name="enable_alarm">Turn alarm on/off</string>
 
     <!-- Delete alarm confirmation dialog message. -->
     <string name="delete_alarm_confirm">This alarm will be deleted.</string>
