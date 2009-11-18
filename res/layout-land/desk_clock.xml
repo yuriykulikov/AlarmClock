@@ -55,7 +55,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="left"
-					android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:drawablePadding="6dip"
                     android:drawableLeft="@drawable/ic_lock_idle_alarm"
                     android:shadowColor="#C0000000"
@@ -72,7 +72,7 @@
                     />
 
                 <ImageButton android:id="@+id/nightmode_button"
-					style="@style/RoundTouchButton"
+                    style="@style/RoundTouchButton"
                     android:layout_weight="0"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
@@ -93,14 +93,15 @@
 
                 <include layout="@layout/desk_clock_time_date"
                     android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_width="0dip"
+                    android:layout_weight="4"
                     />
 
                 <include layout="@layout/desk_clock_weather"
                     android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dip"
                     android:layout_marginLeft="12dip"
+                    android:layout_weight="3"
                     />
 
 
