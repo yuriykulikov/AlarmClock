@@ -190,6 +190,12 @@ public class AlarmClock extends Activity implements OnItemClickListener {
                 }
                 return true;
 
+            case R.id.edit_alarm:
+                Intent intent = new Intent(this, SetAlarm.class);
+                intent.putExtra(Alarms.ALARM_ID, id);
+                startActivity(intent);
+                return true;
+
             default:
                 break;
         }
@@ -219,17 +225,7 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         View addAlarm = findViewById(R.id.add_alarm);
         addAlarm.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    Uri uri = Alarms.addAlarm(getContentResolver());
-                    // FIXME: scroll to new item?
-                    String segment = uri.getPathSegments().get(1);
-                    int newId = Integer.parseInt(segment);
-                    if (Log.LOGV) {
-                        Log.v("In AlarmClock, new alarm id = " + newId);
-                    }
-                    Intent intent =
-                        new Intent(AlarmClock.this, SetAlarm.class);
-                    intent.putExtra(Alarms.ALARM_ID, newId);
-                    startActivity(intent);
+                    addNewAlarm();
                 }
             });
 
@@ -240,6 +236,18 @@ public class AlarmClock extends Activity implements OnItemClickListener {
                     startActivity(new Intent(AlarmClock.this, DeskClock.class));
                 }
         });
+    }
+
+    private void addNewAlarm() {
+        Uri uri = Alarms.addAlarm(getContentResolver());
+        String segment = uri.getPathSegments().get(1);
+        int newId = Integer.parseInt(segment);
+        if (Log.LOGV) {
+            Log.v("In AlarmClock, new alarm id = " + newId);
+        }
+        Intent intent = new Intent(this, SetAlarm.class);
+        intent.putExtra(Alarms.ALARM_ID, newId);
+        startActivity(intent);
     }
 
     @Override
@@ -276,25 +284,30 @@ public class AlarmClock extends Activity implements OnItemClickListener {
 
         // Set the custom view on the menu.
         menu.setHeaderView(v);
-        // Change the text to "disable" if the alarm is already enabled.
-        if (alarm.enabled) {
-            menu.findItem(R.id.enable_alarm).setTitle(R.string.disable_alarm);
-        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_item_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
+        switch (item.getItemId()) {
+            case R.id.menu_item_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            case R.id.menu_item_desk_clock:
+                startActivity(new Intent(this, DeskClock.class));
+                return true;
+            case R.id.menu_item_add_alarm:
+                addNewAlarm();
+                return true;
+            default:
+                break;
         }
-        return false;
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.alarm_list_menu, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     public void onItemClick(AdapterView parent, View v, int pos, long id) {
