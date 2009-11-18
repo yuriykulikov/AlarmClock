@@ -97,7 +97,7 @@ public class DeskClock extends Activity {
     // Interval between polls of the weather widget. Its refresh period is
     // likely to be much longer (~3h), but we want to pick up any changes
     // within 5 minutes.
-    private final long FETCH_WEATHER_DELAY = 5 * 60 * 1000; // 5 min
+    private final long QUERY_WEATHER_DELAY = 5 * 60 * 1000; // 5 min
 
     // Delay before engaging the burn-in protection mode (green-on-black).
     private final long SCREEN_SAVER_TIMEOUT = 10 * 60 * 1000; // 10 min
@@ -109,8 +109,12 @@ public class DeskClock extends Activity {
     private final int SCREEN_SAVER_COLOR = 0xFF308030;
     private final int SCREEN_SAVER_COLOR_DIM = 0xFF183018;
 
+    // Opacity of black layer between clock display and wallpaper.
+    private final float DIM_BEHIND_AMOUNT_NORMAL = 0.4f;
+    private final float DIM_BEHIND_AMOUNT_DIMMED = 0.7f; // higher contrast when display dimmed
+
     // Internal message IDs.
-    private final int FETCH_WEATHER_DATA_MSG     = 0x1000;
+    private final int QUERY_WEATHER_DATA_MSG     = 0x1000;
     private final int UPDATE_WEATHER_DISPLAY_MSG = 0x1001;
     private final int SCREEN_SAVER_TIMEOUT_MSG   = 0x2000;
     private final int SCREEN_SAVER_MOVE_MSG      = 0x2001;
@@ -129,6 +133,8 @@ public class DeskClock extends Activity {
             "iconResId",
             "description",
         };
+
+    private static final String ACTION_GENIE_REFRESH = "com.google.android.apps.genie.REFRESH";
 
     // State variables follow.
     private DigitalClock mTime;
@@ -163,8 +169,6 @@ public class DeskClock extends Activity {
 
     private int mIdleTimeoutEpoch = 0;
 
-    private boolean mWeatherFetchScheduled = false;
-
     private Random mRNG;
 
     private PendingIntent mMidnightIntent;
@@ -186,11 +190,9 @@ public class DeskClock extends Activity {
     private final Handler mHandy = new Handler() {
         @Override
         public void handleMessage(Message m) {
-            if (m.what == FETCH_WEATHER_DATA_MSG) {
-                if (!mWeatherFetchScheduled) return;
-                mWeatherFetchScheduled = false;
-                new Thread() { public void run() { fetchWeatherData(); } }.start();
-                scheduleWeatherFetchDelayed(FETCH_WEATHER_DELAY);
+            if (m.what == QUERY_WEATHER_DATA_MSG) {
+                new Thread() { public void run() { queryWeatherData(); } }.start();
+                scheduleWeatherQueryDelayed(QUERY_WEATHER_DELAY);
             } else if (m.what == UPDATE_WEATHER_DISPLAY_MSG) {
                 updateWeatherDisplay();
             } else if (m.what == SCREEN_SAVER_TIMEOUT_MSG) {
@@ -257,6 +259,8 @@ public class DeskClock extends Activity {
         mScreenSaverMode = false;
         initViews();
         doDim(false); // restores previous dim mode
+        // policy: update weather info when returning from screen saver
+        if (mPluggedIn) requestWeatherDataFetch();
         refreshAll();
     }
 
@@ -293,8 +297,8 @@ public class DeskClock extends Activity {
         mDate.setTextColor(color);
         mNextAlarm.setTextColor(color);
         mNextAlarm.setCompoundDrawablesWithIntrinsicBounds(
-            getResources().getDrawable(mDimmed 
-                ? R.drawable.ic_lock_idle_alarm_saver_dim 
+            getResources().getDrawable(mDimmed
+                ? R.drawable.ic_lock_idle_alarm_saver_dim
                 : R.drawable.ic_lock_idle_alarm_saver),
             null, null, null);
 
@@ -317,25 +321,32 @@ public class DeskClock extends Activity {
             restoreScreen();
     }
 
+    // Tell the Genie widget to load new data from the network.
+    private void requestWeatherDataFetch() {
+        if (DEBUG) Log.d(LOG_TAG, "forcing the Genie widget to update weather now...");
+        sendBroadcast(new Intent(ACTION_GENIE_REFRESH).putExtra("requestWeather", true));
+        // update the display with any new data
+        scheduleWeatherQueryDelayed(5000);
+    }
+
     private boolean supportsWeather() {
         return (mGenieResources != null);
     }
 
-    private void scheduleWeatherFetchDelayed(long delay) {
-        if (mWeatherFetchScheduled) return;
+    private void scheduleWeatherQueryDelayed(long delay) {
+        // cancel any existing scheduled queries
+        unscheduleWeatherQuery();
 
         if (DEBUG) Log.d(LOG_TAG, "scheduling weather fetch message for " + delay + "ms from now");
 
-        mWeatherFetchScheduled = true;
-
-        mHandy.sendEmptyMessageDelayed(FETCH_WEATHER_DATA_MSG, delay);
+        mHandy.sendEmptyMessageDelayed(QUERY_WEATHER_DATA_MSG, delay);
     }
 
-    private void unscheduleWeatherFetch() {
-        mWeatherFetchScheduled = false;
+    private void unscheduleWeatherQuery() {
+        mHandy.removeMessages(QUERY_WEATHER_DATA_MSG);
     }
 
-    private void fetchWeatherData() {
+    private void queryWeatherData() {
         // if we couldn't load the weather widget's resources, we simply
         // assume it's not present on the device.
         if (mGenieResources == null) return;
@@ -392,7 +403,7 @@ public class DeskClock extends Activity {
             mWeatherIconDrawable = null;
             mWeatherHighTemperatureString = "";
             mWeatherLowTemperatureString = "";
-            mWeatherLocationString = "Weather data unavailable."; // TODO: internationalize
+            mWeatherLocationString = getString(R.string.weather_fetch_failure);
         }
 
         mHandy.sendEmptyMessage(UPDATE_WEATHER_DISPLAY_MSG);
@@ -400,7 +411,7 @@ public class DeskClock extends Activity {
 
     private void refreshWeather() {
         if (supportsWeather())
-            scheduleWeatherFetchDelayed(0);
+            scheduleWeatherQueryDelayed(0);
         updateWeatherDisplay(); // in case we have it cached
     }
 
@@ -419,6 +430,11 @@ public class DeskClock extends Activity {
         final boolean pluggedIn = (plugStatus == BATTERY_STATUS_CHARGING || plugStatus == BATTERY_STATUS_FULL);
         if (pluggedIn != mPluggedIn) {
             setWakeLock(pluggedIn);
+
+            if (pluggedIn) {
+                // policy: update weather info when attaching to power
+                requestWeatherDataFetch();
+            }
         }
         if (pluggedIn != mPluggedIn || batteryLevel != mBatteryLevel) {
             mBatteryLevel = batteryLevel;
@@ -484,7 +500,7 @@ public class DeskClock extends Activity {
 
         if (mDimmed) {
             winParams.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
-            winParams.dimAmount = 0.67f; // pump up contrast in dim mode
+            winParams.dimAmount = DIM_BEHIND_AMOUNT_DIMMED;
 
             // show the window tint
             tintView.startAnimation(AnimationUtils.loadAnimation(this,
@@ -492,7 +508,7 @@ public class DeskClock extends Activity {
                      : R.anim.dim_instant));
         } else {
             winParams.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            winParams.dimAmount = 0.5f; // lower contrast in normal mode
+            winParams.dimAmount = DIM_BEHIND_AMOUNT_NORMAL;
 
             // hide the window tint
             tintView.startAnimation(AnimationUtils.loadAnimation(this,
@@ -524,8 +540,8 @@ public class DeskClock extends Activity {
         am.setRepeating(AlarmManager.RTC, today.getTimeInMillis(), AlarmManager.INTERVAL_DAY, mMidnightIntent);
         registerReceiver(mIntentReceiver, filter);
 
-        doDim(false);
-        restoreScreen();
+        doDim(false); // un-dim when resuming
+        restoreScreen(); // disable screen saver
         refreshAll(); // will schedule periodic weather fetch
 
         setWakeLock(mPluggedIn);
@@ -535,14 +551,13 @@ public class DeskClock extends Activity {
             Message.obtain(mHandy, SCREEN_SAVER_TIMEOUT_MSG, mIdleTimeoutEpoch, 0),
             SCREEN_SAVER_TIMEOUT);
 
-        final boolean launchedFromDock 
+        final boolean launchedFromDock
             = getIntent().hasCategory(Intent.CATEGORY_DESK_DOCK);
 
         if (supportsWeather() && launchedFromDock && !mInDock) {
+            // policy: fetch weather if launched via dock connection
             if (DEBUG) Log.d(LOG_TAG, "Device now docked; forcing weather to refresh right now");
-            sendBroadcast(
-                new Intent("com.google.android.apps.genie.REFRESH")
-                    .putExtra("requestWeather", true));
+            requestWeatherDataFetch();
         }
 
         mInDock = launchedFromDock;
@@ -559,7 +574,7 @@ public class DeskClock extends Activity {
         unregisterReceiver(mIntentReceiver);
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         am.cancel(mMidnightIntent);
-        unscheduleWeatherFetch();
+        unscheduleWeatherQuery();
 
         super.onPause();
     }
@@ -595,14 +610,17 @@ public class DeskClock extends Activity {
         mWeatherLocation = (TextView) findViewById(R.id.weather_location);
         mWeatherIcon = (ImageView) findViewById(R.id.weather_icon);
 
-        mNextAlarm = (TextView) findViewById(R.id.nextAlarm);
-
-        final ImageButton alarmButton = (ImageButton) findViewById(R.id.alarm_button);
-        alarmButton.setOnClickListener(new View.OnClickListener() {
+        final View.OnClickListener alarmClickListener = new View.OnClickListener() {
             public void onClick(View v) {
                 startActivity(new Intent(DeskClock.this, AlarmClock.class));
             }
-        });
+        };
+
+        mNextAlarm = (TextView) findViewById(R.id.nextAlarm);
+        mNextAlarm.setOnClickListener(alarmClickListener);
+
+        final ImageButton alarmButton = (ImageButton) findViewById(R.id.alarm_button);
+        alarmButton.setOnClickListener(alarmClickListener);
 
         final ImageButton galleryButton = (ImageButton) findViewById(R.id.gallery_button);
         galleryButton.setOnClickListener(new View.OnClickListener() {
@@ -612,7 +630,7 @@ public class DeskClock extends Activity {
                         Intent.ACTION_VIEW,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                             .putExtra("slideshow", true)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 } catch (android.content.ActivityNotFoundException e) {
                     Log.e(LOG_TAG, "Couldn't launch image browser", e);
                 }
@@ -625,7 +643,7 @@ public class DeskClock extends Activity {
                 try {
                     Intent musicAppQuery = getPackageManager()
                         .getLaunchIntentForPackage(MUSIC_PACKAGE_ID)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     if (musicAppQuery != null) {
                         startActivity(musicAppQuery);
                     }
@@ -640,7 +658,7 @@ public class DeskClock extends Activity {
             public void onClick(View v) {
                 startActivity(
                     new Intent(Intent.ACTION_MAIN)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         .addCategory(Intent.CATEGORY_HOME));
             }
         });
@@ -667,7 +685,7 @@ public class DeskClock extends Activity {
 
                 Intent genieAppQuery = getPackageManager()
                     .getLaunchIntentForPackage(GENIE_PACKAGE_ID)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 if (genieAppQuery != null) {
                     startActivity(genieAppQuery);
                 }
