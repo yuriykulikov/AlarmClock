@@ -30,6 +30,7 @@
 
         <TextView android:id="@+id/alertTitle"
             style="?android:attr/textAppearanceLarge"
+            android:padding="5dip"
             android:singleLine="true"
             android:ellipsize="end"
             android:gravity="center"
@@ -46,23 +47,23 @@
 
         <com.android.deskclock.DigitalClock
             style="@style/clock"
-            android:paddingTop="20dip"
-            android:paddingBottom="20dip"
-            android:gravity="center">
+            android:paddingTop="30dip"
+            android:paddingBottom="30dip"
+            android:baselineAligned="true"
+            android:gravity="center_horizontal">
 
             <TextView android:id="@+id/timeDisplay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:textSize="64sp"
-                android:textColor="@color/white"/>
+                android:textColor="?android:attr/textColorPrimary"/>
 
             <TextView android:id="@+id/am_pm"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:gravity="bottom"
-                android:textSize="28sp"
-                android:textColor="@color/white"/>
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="?android:attr/textColorPrimary"/>
 
         </com.android.deskclock.DigitalClock>
 
