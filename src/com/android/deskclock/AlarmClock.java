@@ -240,16 +240,21 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         });
     }
 
-    private void addNewAlarm() {
-        Uri uri = Alarms.addAlarm(getContentResolver());
-        String segment = uri.getPathSegments().get(1);
+    // Version of addNewAlarm that can be called from any activity, e.g. DeskClock
+    protected static void addNewAlarm(Context context) {
+        final Uri uri = Alarms.addAlarm(context.getContentResolver());
+        final String segment = uri.getPathSegments().get(1);
         int newId = Integer.parseInt(segment);
         if (Log.LOGV) {
             Log.v("In AlarmClock, new alarm id = " + newId);
         }
-        Intent intent = new Intent(this, SetAlarm.class);
+        final Intent intent = new Intent(context, SetAlarm.class);
         intent.putExtra(Alarms.ALARM_ID, newId);
-        startActivity(intent);
+        context.startActivity(intent);
+    }
+
+    private void addNewAlarm() {
+        addNewAlarm(this);
     }
 
     @Override
