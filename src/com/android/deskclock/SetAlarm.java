@@ -16,8 +16,10 @@
 
 package com.android.deskclock;
 
+import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -47,15 +49,14 @@ public class SetAlarm extends PreferenceActivity
         implements TimePickerDialog.OnTimeSetListener {
 
     private EditTextPreference mLabel;
+    private CheckBoxPreference mEnabledPref;
     private Preference mTimePref;
     private AlarmPreference mAlarmPref;
     private CheckBoxPreference mVibratePref;
     private RepeatPreference mRepeatPref;
-    private MenuItem mDeleteAlarmItem;
     private MenuItem mTestAlarmItem;
 
     private int     mId;
-    private boolean mEnabled;
     private int     mHour;
     private int     mMinutes;
 
@@ -80,6 +81,7 @@ public class SetAlarm extends PreferenceActivity
                         return true;
                     }
                 });
+        mEnabledPref = (CheckBoxPreference) findPreference("enabled");
         mTimePref = findPreference("time");
         mAlarmPref = (AlarmPreference) findPreference("alarm");
         mVibratePref = (CheckBoxPreference) findPreference("vibrate");
@@ -93,7 +95,7 @@ public class SetAlarm extends PreferenceActivity
 
         /* load alarm details from database */
         Alarm alarm = Alarms.getAlarm(getContentResolver(), mId);
-        mEnabled = alarm.enabled;
+        mEnabledPref.setChecked(alarm.enabled);
         mLabel.setText(alarm.label);
         mLabel.setSummary(alarm.label);
         mHour = alarm.hour;
@@ -147,6 +149,12 @@ public class SetAlarm extends PreferenceActivity
                     finish();
                 }
         });
+        b = (Button) v.findViewById(R.id.alarm_delete);
+        b.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    deleteAlarm();
+                }
+        });
 
         // Replace the old content view with our new one.
         setContentView(ll);
@@ -174,7 +182,7 @@ public class SetAlarm extends PreferenceActivity
         mMinutes = minute;
         updateTime();
         // If the time has been changed, enable the alarm.
-        mEnabled = true;
+        mEnabledPref.setChecked(true);
     }
 
     private void updateTime() {
@@ -187,13 +195,28 @@ public class SetAlarm extends PreferenceActivity
 
     private void saveAlarm() {
         final String alert = mAlarmPref.getAlertString();
-        long time = Alarms.setAlarm(this, mId, mEnabled, mHour, mMinutes,
-                mRepeatPref.getDaysOfWeek(), mVibratePref.isChecked(),
+        long time = Alarms.setAlarm(this, mId, mEnabledPref.isChecked(), mHour,
+                mMinutes, mRepeatPref.getDaysOfWeek(), mVibratePref.isChecked(),
                 mLabel.getText(), alert);
 
-        if (mEnabled) {
+        if (mEnabledPref.isChecked()) {
             popAlarmSetToast(this, time);
         }
+    }
+
+    private void deleteAlarm() {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.delete_alarm))
+                .setMessage(getString(R.string.delete_alarm_confirm))
+                .setPositiveButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface d, int w) {
+                                Alarms.deleteAlarm(SetAlarm.this, mId);
+                                finish();
+                            }
+                        })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
     }
 
     /**
@@ -273,9 +296,6 @@ public class SetAlarm extends PreferenceActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
 
-        mDeleteAlarmItem = menu.add(0, 0, 0, R.string.delete_alarm);
-        mDeleteAlarmItem.setIcon(android.R.drawable.ic_menu_delete);
-
         if (AlarmClock.DEBUG) {
             mTestAlarmItem = menu.add(0, 0, 0, "test alarm");
         }
@@ -284,11 +304,6 @@ public class SetAlarm extends PreferenceActivity
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item == mDeleteAlarmItem) {
-            Alarms.deleteAlarm(this, mId);
-            finish();
-            return true;
-        }
         if (AlarmClock.DEBUG) {
             if (item == mTestAlarmItem) {
                 setTestAlarm();

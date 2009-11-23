@@ -55,6 +55,6 @@
 
     <style name="alarm_list_left_column">
         <item name="android:layout_width">68dip</item>
-        <item name="android:layout_height">60dip</item>
+        <item name="android:layout_height">68dip</item>
     </style>
 </resources>
