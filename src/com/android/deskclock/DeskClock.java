@@ -708,6 +708,9 @@ public class DeskClock extends Activity {
         if (item.getItemId() == R.id.menu_item_alarms) {
             startActivity(new Intent(DeskClock.this, AlarmClock.class));
             return true;
+        } else if (item.getItemId() == R.id.menu_item_add_alarm) {
+            AlarmClock.addNewAlarm(this);
+            return true;
         }
         return false;
     }
