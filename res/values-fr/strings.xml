@@ -18,8 +18,13 @@
     <string name="app_label" msgid="6674495003718166674">"Horloge"</string>
     <string name="alarm_list_title" msgid="7589940465292950600">"Alarmes"</string>
     <string name="add_alarm" msgid="5976616107390962899">"Ajouter alarme"</string>
+    <!-- no translation found for menu_desk_clock (3241995064554071588) -->
+    <skip />
+    <!-- no translation found for menu_edit_alarm (7204602994918829751) -->
+    <skip />
     <string name="delete_alarm" msgid="3457780990646206817">"Supprimer l\'alarme"</string>
-    <string name="enable_alarm" msgid="7442658245797418741">"Activer l\'alarme"</string>
+    <!-- no translation found for enable_alarm (6651061088440290332) -->
+    <skip />
     <string name="delete_alarm_confirm" msgid="4237696873219106907">"Cette alarme va être supprimée."</string>
     <string name="show_clock" msgid="8358759982675616915">"Afficher l\'horloge"</string>
     <string name="hide_clock" msgid="3217727306480505694">"Masquer l\'horloge"</string>
@@ -57,7 +62,7 @@
     <string name="analog_gadget" msgid="1670505720837152766">"Horloge analogique"</string>
     <string name="settings" msgid="5849739030579520686">"Paramètres"</string>
     <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Alarme mode silencieux"</string>
-    <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"Faire sonner l\'alarme même lorsque le téléphone est en mode silencieux."</string>
+    <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"Faire sonner l\'alarme même lorsque le téléphone est en mode silencieux"</string>
     <string name="snooze_duration_title" msgid="1471249885139952670">"Répéter après"</string>
   <string-array name="snooze_duration_entries">
     <item msgid="8337408933053603125">"5 minutes"</item>
@@ -84,7 +89,7 @@
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (répétition)"</string>
     <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"Prochaine alarme dans <xliff:g id="TIME">%s</xliff:g>. Sélectionnez l\'option appropriée pour annuler."</string>
     <string name="volume_button_setting_title" msgid="1892885285888644234">"Action du bouton latéral"</string>
-    <string name="volume_button_setting_summary" msgid="1594641247799573198">"Définissez actions effectuées par boutons latéraux lors d\'une alarme"</string>
+    <string name="volume_button_setting_summary" msgid="1594641247799573198">"Définir les actions des boutons latéraux lors d\'une alarme"</string>
   <string-array name="volume_button_setting_entries">
     <item msgid="4520420953175098625">"Aucune"</item>
     <item msgid="7111908302622811168">"Répéter"</item>
@@ -100,5 +105,9 @@
     <string name="music_button_description" msgid="1626593420810117999">"Musique"</string>
     <string name="nightmode_button_description" msgid="990894208217576381">"Assombrir"</string>
     <string name="home_button_description" msgid="3383859096809056157">"Lanceur"</string>
+    <!-- no translation found for desk_clock_button_description (968868045496561043) -->
+    <skip />
     <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g> <xliff:g id="PERCENT">%%</xliff:g>"</string>
+    <!-- no translation found for weather_fetch_failure (7517010911981312358) -->
+    <skip />
 </resources>
