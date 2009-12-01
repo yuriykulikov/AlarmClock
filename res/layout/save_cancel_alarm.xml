@@ -34,4 +34,11 @@
         android:layout_weight="1"
         android:text="@string/revert"/>
 
+    <Button android:id="@+id/alarm_delete"
+        android:focusable="true"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:text="@string/delete"/>
+
 </LinearLayout>

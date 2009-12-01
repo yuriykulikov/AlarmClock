@@ -86,7 +86,7 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             View ret = mFactory.inflate(R.layout.alarm_time, parent, false);
 
-            DigitalClock digitalClock = (DigitalClock)ret.findViewById(R.id.digitalClock);
+            DigitalClock digitalClock = (DigitalClock) ret.findViewById(R.id.digitalClock);
             digitalClock.setLive(false);
             if (Log.LOGV) Log.v("newView " + cursor.getPosition());
             return ret;
@@ -107,14 +107,6 @@ public class AlarmClock extends Activity implements OnItemClickListener {
             final CheckBox clockOnOff =
                     (CheckBox) indicator.findViewById(R.id.clock_onoff);
             clockOnOff.setChecked(alarm.enabled);
-
-            // Handle the "checkbox" click and toggle the alarm.
-            clockOnOff.setOnClickListener(new OnClickListener() {
-                    public void onClick(View v) {
-                        boolean isChecked = ((CheckBox) v).isChecked();
-                        updateIndicatorAndAlarm(isChecked, barOnOff, alarm);
-                    }
-            });
 
             // Clicking outside the "checkbox" should also change the state.
             indicator.setOnClickListener(new OnClickListener() {
@@ -230,6 +222,12 @@ public class AlarmClock extends Activity implements OnItemClickListener {
                     addNewAlarm();
                 }
             });
+        // Make the entire view selected when focused.
+        addAlarm.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                public void onFocusChange(View v, boolean hasFocus) {
+                    v.setSelected(hasFocus);
+                }
+        });
 
         ImageButton deskClock =
                 (ImageButton) findViewById(R.id.desk_clock_button);
@@ -291,6 +289,10 @@ public class AlarmClock extends Activity implements OnItemClickListener {
 
         // Set the custom view on the menu.
         menu.setHeaderView(v);
+        // Change the text based on the state of the alarm.
+        if (alarm.enabled) {
+            menu.findItem(R.id.enable_alarm).setTitle(R.string.disable_alarm);
+        }
     }
 
     @Override

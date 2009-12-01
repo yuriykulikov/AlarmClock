@@ -35,7 +35,10 @@
     <string name="delete_alarm">Delete alarm</string>
 
     <!-- Context Menu Item on Alarm Settings screen: Enable alarm -->
-    <string name="enable_alarm">Turn alarm on/off</string>
+    <string name="enable_alarm">Turn alarm on</string>
+
+    <!-- Context Menu Item on Alarm Settings screen: Disable alarm -->
+    <string name="disable_alarm">Turn alarm off</string>
 
     <!-- Delete alarm confirmation dialog message. -->
     <string name="delete_alarm_confirm">This alarm will be deleted.</string>
@@ -186,6 +189,9 @@
 
     <!-- Revert button when editing an alarm. -->
     <string name="revert">Revert</string>
+
+    <!-- Delete button when editing an alarm. -->
+    <string name="delete">Delete</string>
 
     <!-- Setting title for changing the alarm volume. -->
     <string name="alarm_volume_title">Alarm volume</string>

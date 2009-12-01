@@ -16,8 +16,6 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:paddingTop="4dip"
-    android:paddingBottom="4dip"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
@@ -30,13 +28,16 @@
             minimum height. If the bar is a checkbox, it is too tall and is
             clipped on the right.
     -->
-    <LinearLayout android:id="@+id/indicator"
+    <com.android.deskclock.DontPressWithParentLayout android:id="@+id/indicator"
         style="@style/alarm_list_left_column"
+        android:background="@drawable/clock_selector"
         android:gravity="center"
         android:orientation="vertical">
         <CheckBox android:id="@+id/clock_onoff"
             android:focusable="false"
+            android:clickable="false"
             android:background="@drawable/indicator_clock_onoff"
+            android:duplicateParentState="true"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_gravity="center"
@@ -47,12 +48,15 @@
             android:layout_gravity="center"
             android:paddingTop="4dip"
             android:src="@drawable/ic_indicator_off" />
-    </LinearLayout>
+    </com.android.deskclock.DontPressWithParentLayout>
 
     <ImageView
         android:src="@*android:drawable/divider_vertical_dark"
+        android:background="?android:attr/windowBackground"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
+        android:paddingTop="4dip"
+        android:paddingBottom="4dip"
         android:scaleType="fitXY"
         android:gravity="fill_vertical" />
 
