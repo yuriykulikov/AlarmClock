@@ -23,7 +23,9 @@
     <!-- no translation found for menu_edit_alarm (7204602994918829751) -->
     <skip />
     <string name="delete_alarm" msgid="3457780990646206817">"Slett alarm"</string>
-    <!-- no translation found for enable_alarm (6651061088440290332) -->
+    <!-- no translation found for enable_alarm (1834599140632142536) -->
+    <skip />
+    <!-- no translation found for disable_alarm (5889378670229554109) -->
     <skip />
     <string name="delete_alarm_confirm" msgid="4237696873219106907">"Denne alarmen vil bli slettet."</string>
     <string name="show_clock" msgid="8358759982675616915">"Vis klokke"</string>
@@ -82,6 +84,8 @@
   </string-array>
     <string name="done" msgid="6509722361933858451">"OK"</string>
     <string name="revert" msgid="9100911171235162926">"Tilbakestill"</string>
+    <!-- no translation found for delete (5732434972457000541) -->
+    <skip />
     <string name="alarm_volume_title" msgid="8506245173912428522">"Alarmvolum"</string>
     <string name="alarm_volume_summary" msgid="8957440373896242438">"Still inn volumet på alarmer"</string>
     <string name="silent_alarm_summary" msgid="8605302849408279221">"Stille"</string>

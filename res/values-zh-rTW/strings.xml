@@ -15,17 +15,17 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- no translation found for app_label (6674495003718166674) -->
-    <skip />
-    <!-- no translation found for alarm_list_title (7589940465292950600) -->
-    <skip />
+    <string name="app_label" msgid="6674495003718166674">"時鐘"</string>
+    <string name="alarm_list_title" msgid="7589940465292950600">"鬧鐘"</string>
     <string name="add_alarm" msgid="5976616107390962899">"新增鬧鐘"</string>
     <!-- no translation found for menu_desk_clock (3241995064554071588) -->
     <skip />
     <!-- no translation found for menu_edit_alarm (7204602994918829751) -->
     <skip />
     <string name="delete_alarm" msgid="3457780990646206817">"刪除鬧鐘"</string>
-    <!-- no translation found for enable_alarm (6651061088440290332) -->
+    <!-- no translation found for enable_alarm (1834599140632142536) -->
+    <skip />
+    <!-- no translation found for disable_alarm (5889378670229554109) -->
     <skip />
     <string name="delete_alarm_confirm" msgid="4237696873219106907">"刪除此鬧鐘？"</string>
     <string name="show_clock" msgid="8358759982675616915">"顯示時鐘"</string>
@@ -84,6 +84,8 @@
   </string-array>
     <string name="done" msgid="6509722361933858451">"完成"</string>
     <string name="revert" msgid="9100911171235162926">"復原"</string>
+    <!-- no translation found for delete (5732434972457000541) -->
+    <skip />
     <string name="alarm_volume_title" msgid="8506245173912428522">"鬧鐘音量"</string>
     <string name="alarm_volume_summary" msgid="8957440373896242438">"設定鬧鐘音量"</string>
     <string name="silent_alarm_summary" msgid="8605302849408279221">"靜音"</string>
@@ -102,20 +104,14 @@
     <item msgid="3204893476515513084">"1"</item>
     <item msgid="7687709558968154577">"2"</item>
   </string-array>
-    <!-- no translation found for alarm_button_description (740283647046258651) -->
-    <skip />
-    <!-- no translation found for gallery_button_description (1151743663255257668) -->
-    <skip />
-    <!-- no translation found for music_button_description (1626593420810117999) -->
-    <skip />
-    <!-- no translation found for nightmode_button_description (990894208217576381) -->
-    <skip />
-    <!-- no translation found for home_button_description (3383859096809056157) -->
-    <skip />
+    <string name="alarm_button_description" msgid="740283647046258651">"鬧鐘"</string>
+    <string name="gallery_button_description" msgid="1151743663255257668">"圖片庫"</string>
+    <string name="music_button_description" msgid="1626593420810117999">"音樂"</string>
+    <string name="nightmode_button_description" msgid="990894208217576381">"微暗"</string>
+    <string name="home_button_description" msgid="3383859096809056157">"Launcher"</string>
     <!-- no translation found for desk_clock_button_description (968868045496561043) -->
     <skip />
-    <!-- no translation found for battery_charging_level (4391767951302394083) -->
-    <skip />
+    <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g><xliff:g id="PERCENT">%%</xliff:g>"</string>
     <!-- no translation found for weather_fetch_failure (7517010911981312358) -->
     <skip />
 </resources>
