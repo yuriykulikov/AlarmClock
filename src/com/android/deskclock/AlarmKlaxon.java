@@ -229,10 +229,15 @@ public class AlarmKlaxon extends Service {
     private void startAlarm(MediaPlayer player)
             throws java.io.IOException, IllegalArgumentException,
                    IllegalStateException {
-        player.setAudioStreamType(AudioManager.STREAM_ALARM);
-        player.setLooping(true);
-        player.prepare();
-        player.start();
+        final AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        // do not play alarms if stream volume is 0
+        // (typically because ringer mode is silent).
+        if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0) {
+            player.setAudioStreamType(AudioManager.STREAM_ALARM);
+            player.setLooping(true);
+            player.prepare();
+            player.start();
+        }
     }
 
     private void setDataSourceFromResource(Resources resources,
