@@ -100,7 +100,7 @@ public class DeskClock extends Activity {
     private final long QUERY_WEATHER_DELAY = 5 * 60 * 1000; // 5 min
 
     // Delay before engaging the burn-in protection mode (green-on-black).
-    private final long SCREEN_SAVER_TIMEOUT = 10 * 60 * 1000; // 10 min
+    private final long SCREEN_SAVER_TIMEOUT = 5* 60 * 1000; // 10 min
 
     // Repositioning delay in screen saver.
     private final long SCREEN_SAVER_MOVE_DELAY = 60 * 1000; // 1 min
