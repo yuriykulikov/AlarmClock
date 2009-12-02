@@ -23,24 +23,28 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
+    <!-- the top padding accounts for the status bar area -->
     <LinearLayout
         android:id="@+id/desk_clock"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical"
-        android:paddingTop="18dip"
+        android:paddingTop="25dip"
         >
 
         <!-- Entire display region (everything but bottom buttons) -->
+        <!-- Left margin is 4 dip shy of desired to allow for the time to
+             "hang off" the left-hand side, accommodating the extra glyph
+             escapement in Clockopia and 3px of text shadow -->
         <LinearLayout
             android:orientation="vertical"
             android:layout_gravity="left"
             android:layout_weight="1"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_marginLeft="20dip"
-            android:layout_marginTop="20dip"
-            android:layout_marginRight="14dip"
+            android:layout_marginLeft="22dip"
+            android:layout_marginTop="18dip"
+            android:layout_marginRight="18dip"
             android:layout_marginBottom="14dip"
             >
 
@@ -50,14 +54,16 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
+                android:layout_marginLeft="4dip"
                 android:layout_marginBottom="6dip"
+                android:gravity="center_vertical"
                 >
                 <TextView android:id="@+id/nextAlarm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="left"
-					android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:drawablePadding="6dip"
                     android:drawableLeft="@drawable/ic_lock_idle_alarm"
                     android:shadowColor="#C0000000"
@@ -66,7 +72,7 @@
                     android:shadowRadius="3.0"                        
                     />
                 <ImageButton android:id="@+id/nightmode_button"
-					style="@style/RoundTouchButton"
+                    style="@style/RoundTouchButton"
                     android:layout_weight="0"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
@@ -86,13 +92,15 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:layout_marginTop="12dip"
-                android:layout_marginBottom="12dip"
+                android:layout_marginBottom="40dip"
+                android:layout_marginLeft="4dip"
                 />
 
             <include layout="@layout/desk_clock_battery"
                 android:layout_height="wrap_content"
                 android:layout_width="fill_parent"
                 android:layout_weight="0"
+                android:layout_marginLeft="4dip"
                 />
 
         </LinearLayout>
