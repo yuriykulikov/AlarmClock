@@ -29,7 +29,7 @@
     <com.android.deskclock.AlarmPreference
         android:key="alarm"
         android:title="@string/alert"
-        android:ringtoneType="alarm|ringtone"
+        android:ringtoneType="alarm"
         android:persistent="false"
         android:showDefault="false"
         android:showSilent="true" />
