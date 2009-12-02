@@ -39,8 +39,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dip"
+            android:layout_marginLeft="4dip"
             android:gravity="left"
-			android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:drawablePadding="6dip"
             />
         <include layout="@layout/desk_clock_time_date"
