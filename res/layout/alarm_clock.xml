@@ -26,8 +26,6 @@
         android:background="@android:drawable/list_selector_background"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="4dip"
-        android:paddingBottom="4dip"
         android:orientation="horizontal">
 
         <ImageView
@@ -41,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_gravity="center_vertical"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="?android:attr/textColorPrimary"
             android:text="@string/add_alarm" />
 
@@ -69,7 +67,7 @@
             style="@style/ButtonStripLeft"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_menu_desk_clock"
+            android:src="@drawable/ic_clock_strip_desk_clock"
             android:contentDescription="@string/desk_clock_button_description"/>
 
         <com.android.deskclock.DigitalClock
