@@ -54,7 +54,7 @@
             android:textStyle="bold"
             android:singleLine="true"
             android:ellipsize="none"
-            android:layout_marginLeft="3dip"
+            android:layout_marginLeft="4dip"
             android:shadowColor="#C0000000"
             android:shadowDx="0"
             android:shadowDy="0"
@@ -72,6 +72,7 @@
         android:shadowDx="0"
         android:shadowDy="0"
         android:shadowRadius="3.0"
+        android:layout_marginLeft="4dip"
         />
 
 </LinearLayout>
