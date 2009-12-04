@@ -389,21 +389,35 @@ public class DeskClock extends Activity {
 
             mWeatherIconDrawable = mGenieResources.getDrawable(cur.getInt(
                 cur.getColumnIndexOrThrow("iconResId")));
-            mWeatherCurrentTemperatureString = String.format("%d\u00b0",
-                (cur.getInt(cur.getColumnIndexOrThrow("temperature"))));
-            mWeatherHighTemperatureString = String.format("%d\u00b0",
-                (cur.getInt(cur.getColumnIndexOrThrow("highTemperature"))));
-            mWeatherLowTemperatureString = String.format("%d\u00b0",
-                (cur.getInt(cur.getColumnIndexOrThrow("lowTemperature"))));
+
             mWeatherLocationString = cur.getString(
                 cur.getColumnIndexOrThrow("location"));
+
+            // any of these may be NULL
+            final int colTemp = cur.getColumnIndexOrThrow("temperature");
+            final int colHigh = cur.getColumnIndexOrThrow("highTemperature");
+            final int colLow = cur.getColumnIndexOrThrow("lowTemperature");
+
+            mWeatherCurrentTemperatureString =
+                cur.isNull(colTemp)
+                    ? "\u2014"
+                    : String.format("%d\u00b0", cur.getInt(colTemp));
+            mWeatherHighTemperatureString =
+                cur.isNull(colHigh)
+                    ? "\u2014"
+                    : String.format("%d\u00b0", cur.getInt(colHigh));
+            mWeatherLowTemperatureString =
+                cur.isNull(colLow)
+                    ? "\u2014"
+                    : String.format("%d\u00b0", cur.getInt(colLow));
         } else {
             Log.w(LOG_TAG, "No weather information available (cur="
                 + cur +")");
             mWeatherIconDrawable = null;
-            mWeatherHighTemperatureString = "";
-            mWeatherLowTemperatureString = "";
             mWeatherLocationString = getString(R.string.weather_fetch_failure);
+            mWeatherCurrentTemperatureString =
+                mWeatherHighTemperatureString =
+                mWeatherLowTemperatureString = "";
         }
 
         mHandy.sendEmptyMessage(UPDATE_WEATHER_DISPLAY_MSG);
