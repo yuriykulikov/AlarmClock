@@ -540,7 +540,10 @@ public class DeskClock extends Activity {
         am.setRepeating(AlarmManager.RTC, today.getTimeInMillis(), AlarmManager.INTERVAL_DAY, mMidnightIntent);
         registerReceiver(mIntentReceiver, filter);
 
-        doDim(false); // un-dim when resuming
+        // un-dim when resuming
+        mDimmed = false;
+        doDim(false);
+
         restoreScreen(); // disable screen saver
         refreshAll(); // will schedule periodic weather fetch
 
