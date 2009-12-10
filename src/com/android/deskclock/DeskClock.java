@@ -167,8 +167,6 @@ public class DeskClock extends Activity {
 
     private boolean mLaunchedFromDock = false;
 
-    private int mIdleTimeoutEpoch = 0;
-
     private Random mRNG;
 
     private PendingIntent mMidnightIntent;
@@ -206,9 +204,7 @@ public class DeskClock extends Activity {
             } else if (m.what == UPDATE_WEATHER_DISPLAY_MSG) {
                 updateWeatherDisplay();
             } else if (m.what == SCREEN_SAVER_TIMEOUT_MSG) {
-                if (m.arg1 == mIdleTimeoutEpoch) {
-                    saveScreen();
-                }
+                saveScreen();
             } else if (m.what == SCREEN_SAVER_MOVE_MSG) {
                 moveScreenSaver();
             }
@@ -263,6 +259,14 @@ public class DeskClock extends Activity {
         win.setAttributes(winParams);
     }
 
+    private void scheduleScreenSaver() {
+        // reschedule screen saver
+        mHandy.removeMessages(SCREEN_SAVER_TIMEOUT_MSG);
+        mHandy.sendMessageDelayed(
+            Message.obtain(mHandy, SCREEN_SAVER_TIMEOUT_MSG),
+            SCREEN_SAVER_TIMEOUT);
+    }
+
     private void restoreScreen() {
         if (!mScreenSaverMode) return;
         if (DEBUG) Log.d(LOG_TAG, "restoreScreen");
@@ -271,6 +275,9 @@ public class DeskClock extends Activity {
         doDim(false); // restores previous dim mode
         // policy: update weather info when returning from screen saver
         if (mPluggedIn) requestWeatherDataFetch();
+
+        scheduleScreenSaver();
+
         refreshAll();
     }
 
@@ -570,10 +577,7 @@ public class DeskClock extends Activity {
 
         setWakeLock(mPluggedIn);
 
-        mIdleTimeoutEpoch++;
-        mHandy.sendMessageDelayed(
-            Message.obtain(mHandy, SCREEN_SAVER_TIMEOUT_MSG, mIdleTimeoutEpoch, 0),
-            SCREEN_SAVER_TIMEOUT);
+        scheduleScreenSaver();
 
         final boolean launchedFromDock
             = getIntent().hasCategory(Intent.CATEGORY_DESK_DOCK);
@@ -591,7 +595,9 @@ public class DeskClock extends Activity {
     public void onPause() {
         if (DEBUG) Log.d(LOG_TAG, "onPause");
 
-        // Turn off the screen saver. (But don't un-dim.)
+        // Turn off the screen saver and cancel any pending timeouts.
+        // (But don't un-dim.)
+        mHandy.removeMessages(SCREEN_SAVER_TIMEOUT_MSG);
         restoreScreen();
 
         // Other things we don't want to be doing in the background.
