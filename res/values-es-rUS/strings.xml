@@ -18,15 +18,11 @@
     <string name="app_label" msgid="6674495003718166674">"Reloj"</string>
     <string name="alarm_list_title" msgid="7589940465292950600">"Alarmas"</string>
     <string name="add_alarm" msgid="5976616107390962899">"Agregar alarma"</string>
-    <!-- no translation found for menu_desk_clock (3241995064554071588) -->
-    <skip />
-    <!-- no translation found for menu_edit_alarm (7204602994918829751) -->
-    <skip />
+    <string name="menu_desk_clock" msgid="3241995064554071588">"Reloj de escritorio"</string>
+    <string name="menu_edit_alarm" msgid="7204602994918829751">"Modificar alarma"</string>
     <string name="delete_alarm" msgid="3457780990646206817">"Eliminar alarma"</string>
-    <!-- no translation found for enable_alarm (1834599140632142536) -->
-    <skip />
-    <!-- no translation found for disable_alarm (5889378670229554109) -->
-    <skip />
+    <string name="enable_alarm" msgid="1834599140632142536">"Activar alarma"</string>
+    <string name="disable_alarm" msgid="5889378670229554109">"Desactivar alarma"</string>
     <string name="delete_alarm_confirm" msgid="4237696873219106907">"Esta alarma se eliminará"</string>
     <string name="show_clock" msgid="8358759982675616915">"Mostrar reloj"</string>
     <string name="hide_clock" msgid="3217727306480505694">"Ocultar reloj"</string>
@@ -84,8 +80,7 @@
   </string-array>
     <string name="done" msgid="6509722361933858451">"Finalizado"</string>
     <string name="revert" msgid="9100911171235162926">"Revertir"</string>
-    <!-- no translation found for delete (5732434972457000541) -->
-    <skip />
+    <string name="delete" msgid="5732434972457000541">"Suprimir"</string>
     <string name="alarm_volume_title" msgid="8506245173912428522">"Volumen de la alarma"</string>
     <string name="alarm_volume_summary" msgid="8957440373896242438">"Establecer el volumen de las alarmas"</string>
     <string name="silent_alarm_summary" msgid="8605302849408279221">"Silencioso"</string>
@@ -109,9 +104,7 @@
     <string name="music_button_description" msgid="1626593420810117999">"Música"</string>
     <string name="nightmode_button_description" msgid="990894208217576381">"Atenuar"</string>
     <string name="home_button_description" msgid="3383859096809056157">"Launcher"</string>
-    <!-- no translation found for desk_clock_button_description (968868045496561043) -->
-    <skip />
+    <string name="desk_clock_button_description" msgid="968868045496561043">"Visualización del reloj"</string>
     <string name="battery_charging_level" msgid="4391767951302394083">"Segmento <xliff:g id="NUMBER">%d</xliff:g><xliff:g id="PERCENT">%%</xliff:g>"</string>
-    <!-- no translation found for weather_fetch_failure (7517010911981312358) -->
-    <skip />
+    <string name="weather_fetch_failure" msgid="7517010911981312358">"Actualmente no se encuentra disponible información sobre el tiempo."</string>
 </resources>
