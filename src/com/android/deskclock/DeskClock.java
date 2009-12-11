@@ -165,7 +165,7 @@ public class DeskClock extends Activity {
     private int mBatteryLevel = -1;
     private boolean mPluggedIn = false;
 
-    private boolean mInDock = false;
+    private boolean mLaunchedFromDock = false;
 
     private int mIdleTimeoutEpoch = 0;
 
@@ -183,6 +183,16 @@ public class DeskClock extends Activity {
                 handleBatteryUpdate(
                     intent.getIntExtra("status", BATTERY_STATUS_UNKNOWN),
                     intent.getIntExtra("level", 0));
+            } else if (Intent.ACTION_DOCK_EVENT.equals(action)) {
+                int state = intent.getIntExtra(Intent.EXTRA_DOCK_STATE, -1);
+                if (DEBUG) Log.d(LOG_TAG, "ACTION_DOCK_EVENT, state=" + state);
+                if (state == Intent.EXTRA_DOCK_STATE_UNDOCKED) {
+                    if (mLaunchedFromDock) {
+                        // moveTaskToBack(false);
+                        finish();
+                    }
+                    mLaunchedFromDock = false;
+                }
             }
         }
     };
@@ -520,9 +530,19 @@ public class DeskClock extends Activity {
     }
 
     @Override
+    public void onNewIntent(Intent newIntent) {
+        super.onNewIntent(newIntent);
+        if (DEBUG) Log.d(LOG_TAG, "onNewIntent with intent: " + newIntent);
+
+        // update our intent so that we can consult it to determine whether or
+        // not the most recent launch was via a dock event 
+        setIntent(newIntent);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        if (DEBUG) Log.d(LOG_TAG, "onResume");
+        if (DEBUG) Log.d(LOG_TAG, "onResume with intent: " + getIntent());
 
         // reload the date format in case the user has changed settings
         // recently
@@ -531,14 +551,15 @@ public class DeskClock extends Activity {
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_DATE_CHANGED);
         filter.addAction(Intent.ACTION_BATTERY_CHANGED);
+        filter.addAction(Intent.ACTION_DOCK_EVENT);
         filter.addAction(ACTION_MIDNIGHT);
+        registerReceiver(mIntentReceiver, filter);
 
         Calendar today = Calendar.getInstance();
         today.add(Calendar.DATE, 1);
         mMidnightIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_MIDNIGHT), 0);
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         am.setRepeating(AlarmManager.RTC, today.getTimeInMillis(), AlarmManager.INTERVAL_DAY, mMidnightIntent);
-        registerReceiver(mIntentReceiver, filter);
 
         // un-dim when resuming
         mDimmed = false;
@@ -557,13 +578,13 @@ public class DeskClock extends Activity {
         final boolean launchedFromDock
             = getIntent().hasCategory(Intent.CATEGORY_DESK_DOCK);
 
-        if (supportsWeather() && launchedFromDock && !mInDock) {
+        if (supportsWeather() && launchedFromDock && !mLaunchedFromDock) {
             // policy: fetch weather if launched via dock connection
             if (DEBUG) Log.d(LOG_TAG, "Device now docked; forcing weather to refresh right now");
             requestWeatherDataFetch();
         }
 
-        mInDock = launchedFromDock;
+        mLaunchedFromDock = launchedFromDock;
     }
 
     @Override
