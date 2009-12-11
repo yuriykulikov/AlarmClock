@@ -29,6 +29,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
@@ -94,13 +95,11 @@ public class DeskClock extends Activity {
     // Alarm action for midnight (so we can update the date display).
     private static final String ACTION_MIDNIGHT = "com.android.deskclock.MIDNIGHT";
 
-    // Interval between polls of the weather widget. Its refresh period is
-    // likely to be much longer (~3h), but we want to pick up any changes
-    // within 5 minutes.
-    private final long QUERY_WEATHER_DELAY = 5 * 60 * 1000; // 5 min
+    // Interval between forced polls of the weather widget.
+    private final long QUERY_WEATHER_DELAY = 60 * 60 * 1000; // 1 hr
 
     // Delay before engaging the burn-in protection mode (green-on-black).
-    private final long SCREEN_SAVER_TIMEOUT = 5* 60 * 1000; // 10 min
+    private final long SCREEN_SAVER_TIMEOUT = 5 * 60 * 1000; // 5 min
 
     // Repositioning delay in screen saver.
     private final long SCREEN_SAVER_MOVE_DELAY = 60 * 1000; // 1 min
@@ -208,6 +207,14 @@ public class DeskClock extends Activity {
             } else if (m.what == SCREEN_SAVER_MOVE_MSG) {
                 moveScreenSaver();
             }
+        }
+    };
+
+    private final ContentObserver mContentObserver = new ContentObserver(mHandy) {
+        @Override
+        public void onChange(boolean selfChange) {
+            if (DEBUG) Log.d(LOG_TAG, "content observer notified that weather changed");
+            refreshWeather();
         }
     };
 
@@ -342,8 +349,7 @@ public class DeskClock extends Activity {
     private void requestWeatherDataFetch() {
         if (DEBUG) Log.d(LOG_TAG, "forcing the Genie widget to update weather now...");
         sendBroadcast(new Intent(ACTION_GENIE_REFRESH).putExtra("requestWeather", true));
-        // update the display with any new data
-        scheduleWeatherQueryDelayed(5000);
+        // we expect the result to show up in our content observer
     }
 
     private boolean supportsWeather() {
@@ -562,6 +568,16 @@ public class DeskClock extends Activity {
         filter.addAction(ACTION_MIDNIGHT);
         registerReceiver(mIntentReceiver, filter);
 
+        // Listen for updates to weather data
+        Uri weatherNotificationUri = new Uri.Builder()
+            .scheme(android.content.ContentResolver.SCHEME_CONTENT)
+            .authority(WEATHER_CONTENT_AUTHORITY)
+            .path(WEATHER_CONTENT_PATH)
+            .build();
+        getContentResolver().registerContentObserver(
+            weatherNotificationUri, true, mContentObserver);
+
+        // Elaborate mechanism to find out when the day rolls over
         Calendar today = Calendar.getInstance();
         today.add(Calendar.DATE, 1);
         mMidnightIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_MIDNIGHT), 0);
@@ -602,6 +618,8 @@ public class DeskClock extends Activity {
 
         // Other things we don't want to be doing in the background.
         unregisterReceiver(mIntentReceiver);
+        getContentResolver().unregisterContentObserver(mContentObserver);
+
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         am.cancel(mMidnightIntent);
         unscheduleWeatherQuery();
