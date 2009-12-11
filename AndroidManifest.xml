@@ -108,19 +108,6 @@
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/analog_appwidget" />
         </receiver>
-
-        <receiver android:name="DockEventReceiver">
-            
-            <intent-filter>
-                <action android:name="android.intent.action.DOCK_EVENT" />
-            </intent-filter>
-            
-            <intent-filter>
-                <action android:name="android.provider.Telephony.SECRET_CODE" />
-                <data android:scheme="android_secret_code" android:host="3375" /><!-- DESK -->
-            </intent-filter>
-            
-        </receiver>
     </application>
 </manifest>
 
