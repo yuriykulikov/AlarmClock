@@ -132,6 +132,11 @@ public class AlarmAlertFullScreen extends Activity {
 
     // Attempt to snooze this alert.
     private void snooze() {
+        // Do not snooze if the snooze button is disabled.
+        if (!findViewById(R.id.snooze).isEnabled()) {
+            dismiss(false);
+            return;
+        }
         final String snooze =
                 PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(SettingsActivity.KEY_ALARM_SNOOZE, DEFAULT_SNOOZE);
@@ -208,6 +213,16 @@ public class AlarmAlertFullScreen extends Activity {
         mAlarm = intent.getParcelableExtra(Alarms.ALARM_INTENT_EXTRA);
 
         setTitle();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // If the alarm was deleted at some point, disable snooze.
+        if (Alarms.getAlarm(getContentResolver(), mAlarm.id) == null) {
+            Button snooze = (Button) findViewById(R.id.snooze);
+            snooze.setEnabled(false);
+        }
     }
 
     @Override

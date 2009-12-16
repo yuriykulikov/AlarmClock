@@ -229,6 +229,9 @@ public class Alarms {
 
     private static void enableAlarmInternal(final Context context,
             final Alarm alarm, boolean enabled) {
+        if (alarm == null) {
+            return;
+        }
         ContentResolver resolver = context.getContentResolver();
 
         ContentValues values = new ContentValues(2);
@@ -243,6 +246,9 @@ public class Alarms {
                         alarm.daysOfWeek).getTimeInMillis();
             }
             values.put(Alarm.Columns.ALARM_TIME, time);
+        } else {
+            // Clear the snooze if the id matches.
+            disableSnoozeAlert(context, alarm.id);
         }
 
         resolver.update(ContentUris.withAppendedId(
@@ -447,6 +453,9 @@ public class Alarms {
 
         // Get the alarm from the db.
         final Alarm alarm = getAlarm(context.getContentResolver(), id);
+        if (alarm == null) {
+            return false;
+        }
         // The time in the database is either 0 (repeating) or a specific time
         // for a non-repeating alarm. Update this value so the AlarmReceiver
         // has the right time to compare.
