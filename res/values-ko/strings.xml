@@ -15,10 +15,14 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_label" msgid="6642875149600019623">"알람"</string>
+    <string name="app_label" msgid="6674495003718166674">"시계"</string>
+    <string name="alarm_list_title" msgid="7589940465292950600">"알람"</string>
     <string name="add_alarm" msgid="5976616107390962899">"알람 추가"</string>
+    <string name="menu_desk_clock" msgid="3241995064554071588">"탁상 시계"</string>
+    <string name="menu_edit_alarm" msgid="7204602994918829751">"알람 수정"</string>
     <string name="delete_alarm" msgid="3457780990646206817">"알람 삭제"</string>
-    <string name="enable_alarm" msgid="7442658245797418741">"알람 사용"</string>
+    <string name="enable_alarm" msgid="1834599140632142536">"알람 켜기"</string>
+    <string name="disable_alarm" msgid="5889378670229554109">"알람 끄기"</string>
     <string name="delete_alarm_confirm" msgid="4237696873219106907">"알람이 삭제됩니다."</string>
     <string name="show_clock" msgid="8358759982675616915">"시계 표시"</string>
     <string name="hide_clock" msgid="3217727306480505694">"시계 숨기기"</string>
@@ -76,6 +80,7 @@
   </string-array>
     <string name="done" msgid="6509722361933858451">"완료"</string>
     <string name="revert" msgid="9100911171235162926">"되돌리기"</string>
+    <string name="delete" msgid="5732434972457000541">"삭제"</string>
     <string name="alarm_volume_title" msgid="8506245173912428522">"알람 볼륨"</string>
     <string name="alarm_volume_summary" msgid="8957440373896242438">"알람 볼륨 설정"</string>
     <string name="silent_alarm_summary" msgid="8605302849408279221">"무음"</string>
@@ -94,4 +99,12 @@
     <item msgid="3204893476515513084">"1"</item>
     <item msgid="7687709558968154577">"2"</item>
   </string-array>
+    <string name="alarm_button_description" msgid="740283647046258651">"알람"</string>
+    <string name="gallery_button_description" msgid="1151743663255257668">"갤러리"</string>
+    <string name="music_button_description" msgid="1626593420810117999">"음악"</string>
+    <string name="nightmode_button_description" msgid="990894208217576381">"낮추기"</string>
+    <string name="home_button_description" msgid="3383859096809056157">"Launcher"</string>
+    <string name="desk_clock_button_description" msgid="968868045496561043">"시계 디스플레이"</string>
+    <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g><xliff:g id="PERCENT">%%</xliff:g>"</string>
+    <string name="weather_fetch_failure" msgid="7517010911981312358">"현재 날씨 정보를 사용할 수 없습니다."</string>
 </resources>

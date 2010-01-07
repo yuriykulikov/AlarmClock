@@ -15,10 +15,14 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_label" msgid="6642875149600019623">"Alarma"</string>
+    <string name="app_label" msgid="6674495003718166674">"Reloj"</string>
+    <string name="alarm_list_title" msgid="7589940465292950600">"Alarmas"</string>
     <string name="add_alarm" msgid="5976616107390962899">"Añadir alarma"</string>
+    <string name="menu_desk_clock" msgid="3241995064554071588">"Reloj de escritorio"</string>
+    <string name="menu_edit_alarm" msgid="7204602994918829751">"Editar alarma"</string>
     <string name="delete_alarm" msgid="3457780990646206817">"Eliminar alarma"</string>
-    <string name="enable_alarm" msgid="7442658245797418741">"Activar alarma"</string>
+    <string name="enable_alarm" msgid="1834599140632142536">"Activar alarma"</string>
+    <string name="disable_alarm" msgid="5889378670229554109">"Desactivar alarma"</string>
     <string name="delete_alarm_confirm" msgid="4237696873219106907">"Esta alarma se eliminará."</string>
     <string name="show_clock" msgid="8358759982675616915">"Mostrar reloj"</string>
     <string name="hide_clock" msgid="3217727306480505694">"Ocultar reloj"</string>
@@ -57,7 +61,7 @@
     <string name="settings" msgid="5849739030579520686">"Configuración"</string>
     <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Alarma en modo silencio"</string>
     <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"Reproducir alarma aunque el teléfono esté en modo silencio"</string>
-    <string name="snooze_duration_title" msgid="1471249885139952670">"Duración de la posposición"</string>
+    <string name="snooze_duration_title" msgid="1471249885139952670">"Repetición de alarmas"</string>
   <string-array name="snooze_duration_entries">
     <item msgid="8337408933053603125">"5 minutos"</item>
     <item msgid="5294206441496024610">"10 minutos"</item>
@@ -76,13 +80,14 @@
   </string-array>
     <string name="done" msgid="6509722361933858451">"Hecho"</string>
     <string name="revert" msgid="9100911171235162926">"Revertir"</string>
+    <string name="delete" msgid="5732434972457000541">"Eliminar"</string>
     <string name="alarm_volume_title" msgid="8506245173912428522">"Volumen de alarma"</string>
     <string name="alarm_volume_summary" msgid="8957440373896242438">"Establecer el volumen de las alarmas"</string>
     <string name="silent_alarm_summary" msgid="8605302849408279221">"Silencio"</string>
-    <string name="alarm_notify_text" msgid="4146350965933990093">"Elija si desea posponer o descartar esta alarma."</string>
+    <string name="alarm_notify_text" msgid="4146350965933990093">"Elige si deseas posponer o descartar esta alarma."</string>
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (pospuesta)"</string>
-    <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"La alarma sonará a las <xliff:g id="TIME">%s</xliff:g>. Seleccione la opción para cancelarla."</string>
-    <string name="volume_button_setting_title" msgid="1892885285888644234">"Comportamiento de botón lateral"</string>
+    <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"La alarma sonará a las <xliff:g id="TIME">%s</xliff:g>. Selecciona la opción para cancelarla."</string>
+    <string name="volume_button_setting_title" msgid="1892885285888644234">"Comportamiento de los botones laterales"</string>
     <string name="volume_button_setting_summary" msgid="1594641247799573198">"Establecer el comportamiento deseado de los botones laterales cuando se pulsan durante una alarma"</string>
   <string-array name="volume_button_setting_entries">
     <item msgid="4520420953175098625">"Ninguno"</item>
@@ -94,4 +99,12 @@
     <item msgid="3204893476515513084">"1"</item>
     <item msgid="7687709558968154577">"2"</item>
   </string-array>
+    <string name="alarm_button_description" msgid="740283647046258651">"Alarmas"</string>
+    <string name="gallery_button_description" msgid="1151743663255257668">"Galería"</string>
+    <string name="music_button_description" msgid="1626593420810117999">"Música"</string>
+    <string name="nightmode_button_description" msgid="990894208217576381">"Atenuar"</string>
+    <string name="home_button_description" msgid="3383859096809056157">"Página principal"</string>
+    <string name="desk_clock_button_description" msgid="968868045496561043">"Reloj"</string>
+    <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g> <xliff:g id="PERCENT">%%</xliff:g>"</string>
+    <string name="weather_fetch_failure" msgid="7517010911981312358">"La información meteorológica no está disponible."</string>
 </resources>
