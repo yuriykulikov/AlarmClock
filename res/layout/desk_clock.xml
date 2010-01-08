@@ -20,14 +20,14 @@
      Buttons are provided to access alarms, music, and other useful functions.
      -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     >
     <!-- the top padding accounts for the status bar area -->
     <LinearLayout
         android:id="@+id/desk_clock"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingTop="25dip"
         >
@@ -40,8 +40,8 @@
             android:orientation="vertical"
             android:layout_gravity="left"
             android:layout_weight="1"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginLeft="22dip"
             android:layout_marginTop="18dip"
             android:layout_marginRight="18dip"
@@ -51,7 +51,7 @@
             <!-- across the top: next alarm, nightmode button -->
             <LinearLayout
                 android:orientation="horizontal"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:layout_marginLeft="4dip"
@@ -98,7 +98,7 @@
 
             <include layout="@layout/desk_clock_battery"
                 android:layout_height="wrap_content"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_weight="0"
                 android:layout_marginLeft="4dip"
                 />
@@ -110,8 +110,8 @@
     </LinearLayout>
 
     <View android:id="@+id/window_tint"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="#E0000000"
         android:visibility="visible"
         android:clickable="false"

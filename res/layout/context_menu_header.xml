@@ -16,7 +16,7 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="6dip"
     android:paddingBottom="9dip"
@@ -34,15 +34,15 @@
     <TextView android:id="@+id/header_time"
         style="?android:attr/textAppearanceLarge"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
+        android:layout_height="match_parent"
         android:singleLine="true"
         android:gravity="center_vertical"
         android:ellipsize="none"/>
 
     <TextView android:id="@+id/header_label"
         style="?android:attr/textAppearanceLarge"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginLeft="20dip"
         android:singleLine="true"
         android:gravity="right|center_vertical"

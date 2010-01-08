@@ -19,5 +19,5 @@
     android:dial="@drawable/appwidget_clock_dial"
     android:hand_hour="@drawable/appwidget_clock_hour"
     android:hand_minute="@drawable/appwidget_clock_minute"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" />
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />

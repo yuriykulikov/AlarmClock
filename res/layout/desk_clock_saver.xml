@@ -16,13 +16,13 @@
 
 <!-- Special "screen saver mode" with just the time/date on black. -->
 <AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     >
 
     <View
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_x="0dip"
         android:layout_y="0dip"
         android:background="#FF000000"

@@ -17,13 +17,13 @@
 <!-- This is the alarm clock in LANDSCAPE desk dock mode.
      -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     >
     <LinearLayout
         android:id="@+id/desk_clock"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingTop="25dip"
         >
@@ -36,8 +36,8 @@
             android:orientation="vertical"
             android:layout_gravity="left"
             android:layout_weight="1"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginLeft="25dip"
             android:layout_marginTop="18dip"
             android:layout_marginRight="18dip"
@@ -47,7 +47,7 @@
             <!-- across the top: next alarm, battery, nightmode button -->
             <LinearLayout
                 android:orientation="horizontal"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:layout_marginBottom="6dip"
@@ -89,7 +89,7 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_weight="1"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="bottom"
                 >
@@ -117,8 +117,8 @@
     </LinearLayout>
 
     <View android:id="@+id/window_tint"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="#E0000000"
         android:visibility="visible"
         android:clickable="false"
