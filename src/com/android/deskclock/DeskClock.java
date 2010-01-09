@@ -177,7 +177,8 @@ public class DeskClock extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-            if (Intent.ACTION_DATE_CHANGED.equals(action)) {
+            if (DEBUG) Log.d(LOG_TAG, "mIntentReceiver.onReceive: action=" + action + ", intent=" + intent);
+            if (Intent.ACTION_DATE_CHANGED.equals(action) || ACTION_MIDNIGHT.equals(action)) {
                 refreshDate();
             } else if (Intent.ACTION_BATTERY_CHANGED.equals(action)) {
                 handleBatteryUpdate(
@@ -570,10 +571,17 @@ public class DeskClock extends Activity {
         registerReceiver(mIntentReceiver, filter);
 
         Calendar today = Calendar.getInstance();
+        today.set(Calendar.HOUR_OF_DAY, 0);
+        today.set(Calendar.MINUTE, 0);
+        today.set(Calendar.SECOND, 0);
         today.add(Calendar.DATE, 1);
+        long alarmTimeUTC = today.getTimeInMillis() + today.get(Calendar.ZONE_OFFSET);
         mMidnightIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_MIDNIGHT), 0);
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        am.setRepeating(AlarmManager.RTC, today.getTimeInMillis(), AlarmManager.INTERVAL_DAY, mMidnightIntent);
+        am.setRepeating(AlarmManager.RTC, alarmTimeUTC, AlarmManager.INTERVAL_DAY, mMidnightIntent);
+        if (DEBUG) Log.d(LOG_TAG, "set repeating midnight event at "
+            + alarmTimeUTC + " repeating every "
+            + AlarmManager.INTERVAL_DAY + " with intent: " + mMidnightIntent);
 
         // un-dim when resuming
         mDimmed = false;
