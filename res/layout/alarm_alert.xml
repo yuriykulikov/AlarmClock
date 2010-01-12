@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:background="@drawable/dialog"
+        android:orientation="vertical">
+
+        <TextView android:id="@+id/alertTitle"
+            style="?android:attr/textAppearanceLarge"
+            android:padding="5dip"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:scaleType="fitXY"
+            android:gravity="fill_horizontal"
+            android:src="@*android:drawable/dialog_divider_horizontal_light"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="10dip"/>
+
+        <com.android.deskclock.DigitalClock
+            style="@style/clock"
+            android:paddingTop="30dip"
+            android:paddingBottom="30dip"
+            android:baselineAligned="true"
+            android:gravity="center_horizontal">
+
+            <TextView android:id="@+id/timeDisplay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="64sp"
+                android:textColor="?android:attr/textColorPrimary"/>
+
+            <TextView android:id="@+id/am_pm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="?android:attr/textColorPrimary"/>
+
+        </com.android.deskclock.DigitalClock>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@android:style/ButtonBar">
+
+            <Button
+                android:id="@+id/snooze"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="@string/alarm_alert_snooze_text" />
+
+            <!-- blank stretchable view -->
+            <View
+                android:layout_width="2dip"
+                android:layout_height="2dip"
+                android:layout_gravity="fill_horizontal"
+                android:layout_weight="1"/>
+
+            <Button
+                android:id="@+id/dismiss"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="@string/alarm_alert_dismiss_text" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

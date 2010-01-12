@@ -1,0 +1,113 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        package="com.android.deskclock">
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <application android:label="@string/app_label"
+                 android:icon="@drawable/ic_launcher_alarmclock">
+
+        <provider android:name="AlarmProvider" android:authorities="com.android.deskclock" />
+
+        <activity android:name="DeskClock"
+                android:label="@string/app_label"
+                android:theme="@android:style/Theme.Wallpaper.NoTitleBar"
+                android:icon="@drawable/ic_widget_analog_clock"
+                android:launchMode="singleInstance"
+                android:configChanges="orientation|keyboardHidden|keyboard|navigation">
+                >
+
+            <!-- while docked, this is our home application -->
+            <meta-data android:name="android.dock_home" android:value="true" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DESK_DOCK" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="AlarmClock"
+                android:label="@string/alarm_list_title"
+                android:taskAffinity=""
+                android:excludeFromRecents="true"
+                android:configChanges="orientation|keyboardHidden|keyboard|navigation"
+                >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="SettingsActivity"
+                android:label="@string/settings"
+                android:taskAffinity=""
+                android:excludeFromRecents="true"
+                >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="SetAlarm" android:label="@string/set_alarm"
+                android:configChanges="orientation|keyboardHidden|keyboard|navigation" />
+
+        <activity android:name="AlarmAlert"
+                android:excludeFromRecents="true"
+                android:theme="@style/alarm_alert"
+                android:launchMode="singleInstance"
+                android:taskAffinity=""
+                android:configChanges="orientation|keyboardHidden|keyboard|navigation"/>
+
+        <!-- This activity is basically the same as AlarmAlert but with a more
+             generic theme. It also shows as full screen (with status bar) but
+             with the wallpaper background. -->
+        <activity android:name="AlarmAlertFullScreen"
+                android:excludeFromRecents="true"
+                android:theme="@android:style/Theme.Wallpaper.NoTitleBar"
+                android:launchMode="singleInstance"
+                android:taskAffinity=""
+                android:configChanges="orientation|keyboardHidden|keyboard|navigation"/>
+
+        <receiver android:name="AlarmReceiver">
+            <intent-filter>
+               <action android:name="com.android.deskclock.ALARM_ALERT" />
+               <action android:name="alarm_killed" />
+               <action android:name="cancel_snooze" />
+            </intent-filter>
+        </receiver>
+
+        <!-- This service receives the same intent as AlarmReceiver but it does
+             not respond to the same broadcast. The AlarmReceiver will receive
+             the alert broadcast and will start this service with the same
+             intent. The service plays the alarm alert and vibrates the device.
+             This allows the alert to continue playing even if another activity
+             causes the AlarmAlert activity to pause. -->
+        <service android:name="AlarmKlaxon">
+            <intent-filter>
+                <action android:name="com.android.deskclock.ALARM_ALERT" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name="AlarmInitReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="AnalogAppWidgetProvider" android:label="@string/analog_gadget"
+        	android:icon="@drawable/ic_widget_analog_clock">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/analog_appwidget" />
+        </receiver>
+    </application>
+</manifest>
+
