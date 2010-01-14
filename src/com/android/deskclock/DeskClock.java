@@ -31,6 +31,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -51,10 +52,13 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View.OnClickListener;
 import android.view.View.OnCreateContextMenuListener;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.ViewTreeObserver.OnGlobalFocusChangeListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -110,7 +114,7 @@ public class DeskClock extends Activity {
 
     // Opacity of black layer between clock display and wallpaper.
     private final float DIM_BEHIND_AMOUNT_NORMAL = 0.4f;
-    private final float DIM_BEHIND_AMOUNT_DIMMED = 0.7f; // higher contrast when display dimmed
+    private final float DIM_BEHIND_AMOUNT_DIMMED = 0.8f; // higher contrast when display dimmed
 
     // Internal message IDs.
     private final int QUERY_WEATHER_DATA_MSG     = 0x1000;
@@ -592,8 +596,13 @@ public class DeskClock extends Activity {
             + alarmTimeUTC + " repeating every "
             + AlarmManager.INTERVAL_DAY + " with intent: " + mMidnightIntent);
 
-        // un-dim when resuming
-        mDimmed = false;
+        // If we weren't previously visible but now we are, it's because we're
+        // being started from another activity. So it's OK to un-dim.
+        if (mTime != null && mTime.getWindowVisibility() != View.VISIBLE) {
+            mDimmed = false;
+        }
+
+        // Adjust the display to reflect the currently chosen dim mode.
         doDim(false);
 
         restoreScreen(); // disable screen saver
@@ -633,18 +642,6 @@ public class DeskClock extends Activity {
         unscheduleWeatherQuery();
 
         super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        if (DEBUG) Log.d(LOG_TAG, "onStop");
-
-        // Avoid situations where the user launches Alarm Clock and is
-        // surprised to find it in dim mode (because it was last used in dim
-        // mode, but that last use is long in the past).
-        mDimmed = false;
-
-        super.onStop();
     }
 
     private void initViews() {
@@ -747,12 +744,47 @@ public class DeskClock extends Activity {
                 }
             }
         });
+
+        final View tintView = findViewById(R.id.window_tint);
+        tintView.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                if (mDimmed && event.getAction() == MotionEvent.ACTION_DOWN) {
+                    // We want to un-dim the whole screen on tap.
+                    // ...Unless the user is specifically tapping on the dim
+                    // widget, in which case let it do the work.
+                    Rect r = new Rect();
+                    nightmodeButton.getHitRect(r);
+                    int[] gloc = new int[2];
+                    nightmodeButton.getLocationInWindow(gloc);
+                    r.offsetTo(gloc[0], gloc[1]); // convert to window coords
+
+                    if (!r.contains((int) event.getX(), (int) event.getY())) {
+                        mDimmed = false;
+                        doDim(true);
+                    }
+                }
+                return false; // always pass the click through
+            }
+        });
+
+        // Tidy up awkward focus behavior: the first view to be focused in
+        // trackball mode should be the alarms button
+        final ViewTreeObserver vto = alarmButton.getViewTreeObserver();
+        vto.addOnGlobalFocusChangeListener(new ViewTreeObserver.OnGlobalFocusChangeListener() {
+            public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+                if (oldFocus == null && newFocus == nightmodeButton) {
+                    alarmButton.requestFocus();
+                }
+            }
+        });
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (!mScreenSaverMode) {
+        if (mScreenSaverMode) {
+            moveScreenSaver();
+        } else {
             initViews();
             doDim(false);
             refreshAll();
