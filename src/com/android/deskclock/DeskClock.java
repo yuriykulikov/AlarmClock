@@ -529,6 +529,7 @@ public class DeskClock extends Activity {
         if (mDimmed) {
             winParams.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
             winParams.dimAmount = DIM_BEHIND_AMOUNT_DIMMED;
+            winParams.buttonBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF;
 
             // show the window tint
             tintView.startAnimation(AnimationUtils.loadAnimation(this,
@@ -537,6 +538,7 @@ public class DeskClock extends Activity {
         } else {
             winParams.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
             winParams.dimAmount = DIM_BEHIND_AMOUNT_NORMAL;
+            winParams.buttonBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
 
             // hide the window tint
             tintView.startAnimation(AnimationUtils.loadAnimation(this,
