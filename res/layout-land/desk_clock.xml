@@ -82,6 +82,7 @@
                     android:layout_width="wrap_content"
                     android:src="@drawable/ic_round_brightness"
                     android:contentDescription="@string/nightmode_button_description"
+                    android:nextFocusDown="@+id/alarm_button"
                     />
             </LinearLayout>
 
@@ -97,7 +98,7 @@
                 <include layout="@layout/desk_clock_time_date"
                     android:layout_height="wrap_content"
                     android:layout_width="0dip"
-                    android:layout_weight="4"
+                    android:layout_weight="5"
                     />
 
                 <include layout="@layout/desk_clock_weather"
@@ -119,7 +120,7 @@
     <View android:id="@+id/window_tint"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="#E0000000"
+        android:background="#CC000000"
         android:visibility="visible"
         android:clickable="false"
         />
