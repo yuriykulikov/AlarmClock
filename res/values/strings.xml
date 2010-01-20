@@ -247,7 +247,7 @@
          present on the device, we show nothing at all. -->
     <string name="weather_fetch_failure">Weather information currently unavailable.</string>
 
-    <string name="menu_item_dock_settings">Dock settings</string>
+    <string name="menu_item_dock_settings" msgid="9161438664257429372">Dock settings</string>
 </resources>
 
 
