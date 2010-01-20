@@ -29,7 +29,7 @@
         android:layout_gravity="top"
         android:paddingTop="6dip"
         android:paddingRight="10dip"
-        android:src="@*android:drawable/ic_dialog_time"/>
+        android:src="@drawable/ic_dialog_time"/>
 
     <TextView android:id="@+id/header_time"
         style="?android:attr/textAppearanceLarge"

@@ -66,6 +66,9 @@ public class SetAlarm extends PreferenceActivity
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
+        // Override the default content view.
+        setContentView(R.layout.set_alarm);
+
         addPreferencesFromResource(R.xml.alarm_prefs);
 
         // Get each preference so we can retrieve the value later.
@@ -113,33 +116,8 @@ public class SetAlarm extends PreferenceActivity
         // their own.
         getListView().setItemsCanFocus(true);
 
-        // Grab the content view so we can modify it.
-        FrameLayout content = (FrameLayout) getWindow().getDecorView()
-                .findViewById(com.android.internal.R.id.content);
-
-        // Get the main ListView and remove it from the content view.
-        ListView lv = getListView();
-        content.removeView(lv);
-
-        // Create the new LinearLayout that will become the content view and
-        // make it vertical.
-        LinearLayout ll = new LinearLayout(this);
-        ll.setOrientation(LinearLayout.VERTICAL);
-
-        // Have the ListView expand to fill the screen minus the save/cancel
-        // buttons.
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LayoutParams.MATCH_PARENT,
-                LayoutParams.WRAP_CONTENT);
-        lp.weight = 1;
-        ll.addView(lv, lp);
-
-        // Inflate the buttons onto the LinearLayout.
-        View v = LayoutInflater.from(this).inflate(
-                R.layout.save_cancel_alarm, ll);
-
         // Attach actions to each button.
-        Button b = (Button) v.findViewById(R.id.alarm_save);
+        Button b = (Button) findViewById(R.id.alarm_save);
         b.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     // Enable the alarm when clicking "Done"
@@ -148,21 +126,18 @@ public class SetAlarm extends PreferenceActivity
                     finish();
                 }
         });
-        b = (Button) v.findViewById(R.id.alarm_cancel);
+        b = (Button) findViewById(R.id.alarm_cancel);
         b.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     finish();
                 }
         });
-        b = (Button) v.findViewById(R.id.alarm_delete);
+        b = (Button) findViewById(R.id.alarm_delete);
         b.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     deleteAlarm();
                 }
         });
-
-        // Replace the old content view with our new one.
-        setContentView(ll);
     }
 
     @Override

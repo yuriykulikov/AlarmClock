@@ -86,7 +86,7 @@ public class AlarmKlaxon extends Service {
 
     @Override
     public void onCreate() {
-        mVibrator = new Vibrator();
+        mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         // Listen for incoming calls to kill the alarm.
         mTelephonyManager =
                 (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
@@ -204,7 +204,7 @@ public class AlarmKlaxon extends Service {
                     // Must reset the media player to clear the error state.
                     mMediaPlayer.reset();
                     setDataSourceFromResource(getResources(), mMediaPlayer,
-                            com.android.internal.R.raw.fallbackring);
+                            R.raw.fallbackring);
                     startAlarm(mMediaPlayer);
                 } catch (Exception ex2) {
                     // At this point we just don't play anything.

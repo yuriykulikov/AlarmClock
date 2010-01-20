@@ -41,7 +41,7 @@
             android:layout_height="1dip"
             android:scaleType="fitXY"
             android:gravity="fill_horizontal"
-            android:src="@*android:drawable/dialog_divider_horizontal_light"
+            android:src="@drawable/dialog_divider_horizontal_light"
             android:layout_marginLeft="10dip"
             android:layout_marginRight="10dip"/>
 

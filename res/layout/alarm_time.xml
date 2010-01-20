@@ -51,7 +51,7 @@
     </com.android.deskclock.DontPressWithParentLayout>
 
     <ImageView
-        android:src="@*android:drawable/divider_vertical_dark"
+        android:src="@drawable/divider_vertical_dark"
         android:background="?android:attr/windowBackground"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"

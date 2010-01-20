@@ -566,7 +566,7 @@ public class DeskClock extends Activity {
 
         // reload the date format in case the user has changed settings
         // recently
-        mDateFormat = getString(com.android.internal.R.string.full_wday_month_day_no_year);
+        mDateFormat = getString(R.string.full_wday_month_day_no_year);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_DATE_CHANGED);
