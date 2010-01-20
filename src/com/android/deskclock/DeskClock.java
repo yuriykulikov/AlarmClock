@@ -94,6 +94,9 @@ public class DeskClock extends Activity {
     // Alarm action for midnight (so we can update the date display).
     private static final String ACTION_MIDNIGHT = "com.android.deskclock.MIDNIGHT";
 
+    // Intent to broadcast for dock settings.
+    private static final String DOCK_SETTINGS_ACTION = "com.android.settings.DOCK_SETTINGS";
+
     // Interval between polls of the weather widget. Its refresh period is
     // likely to be much longer (~3h), but we want to pick up any changes
     // within 5 minutes.
@@ -757,14 +760,19 @@ public class DeskClock extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_item_alarms) {
-            startActivity(new Intent(DeskClock.this, AlarmClock.class));
-            return true;
-        } else if (item.getItemId() == R.id.menu_item_add_alarm) {
-            AlarmClock.addNewAlarm(this);
-            return true;
+        switch (item.getItemId()) {
+            case R.id.menu_item_alarms:
+                startActivity(new Intent(DeskClock.this, AlarmClock.class));
+                return true;
+            case R.id.menu_item_add_alarm:
+                AlarmClock.addNewAlarm(this);
+                return true;
+            case R.id.menu_item_dock_settings:
+                startActivity(new Intent(DOCK_SETTINGS_ACTION));
+                return true;
+            default:
+                return false;
         }
-        return false;
     }
 
     @Override

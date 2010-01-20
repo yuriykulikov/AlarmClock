@@ -246,6 +246,8 @@
          respond. This is a sign of an error; if the weather widget is not
          present on the device, we show nothing at all. -->
     <string name="weather_fetch_failure">Weather information currently unavailable.</string>
+
+    <string name="menu_item_dock_settings">Dock settings</string>
 </resources>
 
 
