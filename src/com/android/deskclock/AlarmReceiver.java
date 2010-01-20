@@ -145,9 +145,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 pendingNotify);
         n.flags |= Notification.FLAG_SHOW_LIGHTS
                 | Notification.FLAG_ONGOING_EVENT;
-        n.ledARGB = 0xFF00FF00;
-        n.ledOnMS = 500;
-        n.ledOffMS = 500;
+        n.defaults |= Notification.DEFAULT_LIGHTS;
 
         // Send the notification using the alarm id to easily identify the
         // correct notification.
