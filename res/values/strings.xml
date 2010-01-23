@@ -249,6 +249,9 @@
 
     <!-- String matching the lock screen format for displaying the date. -->
     <string name="full_wday_month_day_no_year" translatable="false">EEEE, MMMM d</string>
+
+    <string name="menu_item_dock_settings">Dock settings</string>
+
 </resources>
 
 

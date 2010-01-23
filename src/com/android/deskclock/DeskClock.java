@@ -102,6 +102,9 @@ public class DeskClock extends Activity {
     // Interval between forced polls of the weather widget.
     private final long QUERY_WEATHER_DELAY = 60 * 60 * 1000; // 1 hr
 
+    // Intent to broadcast for dock settings.
+    private static final String DOCK_SETTINGS_ACTION = "com.android.settings.DOCK_SETTINGS";
+
     // Delay before engaging the burn-in protection mode (green-on-black).
     private final long SCREEN_SAVER_TIMEOUT = 5 * 60 * 1000; // 5 min
 
@@ -795,14 +798,19 @@ public class DeskClock extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_item_alarms) {
-            startActivity(new Intent(DeskClock.this, AlarmClock.class));
-            return true;
-        } else if (item.getItemId() == R.id.menu_item_add_alarm) {
-            AlarmClock.addNewAlarm(this);
-            return true;
+        switch (item.getItemId()) {
+            case R.id.menu_item_alarms:
+                startActivity(new Intent(DeskClock.this, AlarmClock.class));
+                return true;
+            case R.id.menu_item_add_alarm:
+                AlarmClock.addNewAlarm(this);
+                return true;
+            case R.id.menu_item_dock_settings:
+                startActivity(new Intent(DOCK_SETTINGS_ACTION));
+                return true;
+            default:
+                return false;
         }
-        return false;
     }
 
     @Override
