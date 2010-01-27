@@ -166,35 +166,7 @@ public class AlarmProvider extends ContentProvider {
             throw new IllegalArgumentException("Cannot insert into URL: " + url);
         }
 
-        ContentValues values;
-        if (initialValues != null)
-            values = new ContentValues(initialValues);
-        else
-            values = new ContentValues();
-
-        if (!values.containsKey(Alarm.Columns.HOUR))
-            values.put(Alarm.Columns.HOUR, 0);
-
-        if (!values.containsKey(Alarm.Columns.MINUTES))
-            values.put(Alarm.Columns.MINUTES, 0);
-
-        if (!values.containsKey(Alarm.Columns.DAYS_OF_WEEK))
-            values.put(Alarm.Columns.DAYS_OF_WEEK, 0);
-
-        if (!values.containsKey(Alarm.Columns.ALARM_TIME))
-            values.put(Alarm.Columns.ALARM_TIME, 0);
-
-        if (!values.containsKey(Alarm.Columns.ENABLED))
-            values.put(Alarm.Columns.ENABLED, 0);
-
-        if (!values.containsKey(Alarm.Columns.VIBRATE))
-            values.put(Alarm.Columns.VIBRATE, 1);
-
-        if (!values.containsKey(Alarm.Columns.MESSAGE))
-            values.put(Alarm.Columns.MESSAGE, "");
-
-        if (!values.containsKey(Alarm.Columns.ALERT))
-            values.put(Alarm.Columns.ALERT, "");
+        ContentValues values = new ContentValues(initialValues);
 
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         long rowId = db.insert("alarms", Alarm.Columns.MESSAGE, values);

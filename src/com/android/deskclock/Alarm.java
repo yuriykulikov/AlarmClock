@@ -208,6 +208,17 @@ public final class Alarm implements Parcelable {
         silent = p.readInt() == 1;
     }
 
+    // Creates a default alarm at the current time.
+    public Alarm() {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(System.currentTimeMillis());
+        hour = c.get(Calendar.HOUR_OF_DAY);
+        minutes = c.get(Calendar.MINUTE);
+        vibrate = true;
+        daysOfWeek = new DaysOfWeek(0);
+        alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+    }
+
     public String getLabelOrDefault(Context context) {
         if (label == null || label.length() == 0) {
             return context.getString(R.string.default_label);

@@ -57,6 +57,7 @@ public class SetAlarm extends PreferenceActivity
     private int     mId;
     private int     mHour;
     private int     mMinutes;
+    private boolean mCreateNewAlarm;
 
     /**
      * Set an alarm.  Requires an Alarms.ALARM_ID to be passed in as an
@@ -94,12 +95,19 @@ public class SetAlarm extends PreferenceActivity
             Log.v("In SetAlarm, alarm id = " + mId);
         }
 
-        /* load alarm details from database */
-        Alarm alarm = Alarms.getAlarm(getContentResolver(), mId);
-        // Bad alarm, bail to avoid a NPE.
-        if (alarm == null) {
-            finish();
-            return;
+        Alarm alarm = null;
+        if (mId == -1) {
+            // No alarm id means create a new alarm.
+            mCreateNewAlarm = true;
+            alarm = new Alarm();
+        } else {
+            /* load alarm details from database */
+            alarm = Alarms.getAlarm(getContentResolver(), mId);
+            // Bad alarm, bail to avoid a NPE.
+            if (alarm == null) {
+                finish();
+                return;
+            }
         }
         mEnabledPref.setChecked(alarm.enabled);
         mLabel.setText(alarm.label);
@@ -138,14 +146,18 @@ public class SetAlarm extends PreferenceActivity
                     deleteAlarm();
                 }
         });
+
+        // The last thing we do is pop the time picker if this is a new alarm.
+        if (mCreateNewAlarm) {
+            showTimePicker();
+        }
     }
 
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
             Preference preference) {
         if (preference == mTimePref) {
-            new TimePickerDialog(this, this, mHour, mMinutes,
-                    DateFormat.is24HourFormat(this)).show();
+            showTimePicker();
         }
 
         return super.onPreferenceTreeClick(preferenceScreen, preference);
@@ -155,6 +167,11 @@ public class SetAlarm extends PreferenceActivity
     public void onBackPressed() {
         saveAlarm();
         finish();
+    }
+
+    private void showTimePicker() {
+        new TimePickerDialog(this, this, mHour, mMinutes,
+                DateFormat.is24HourFormat(this)).show();
     }
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -174,12 +191,24 @@ public class SetAlarm extends PreferenceActivity
     }
 
     private void saveAlarm() {
-        final String alert = mAlarmPref.getAlertString();
-        long time = Alarms.setAlarm(this, mId, mEnabledPref.isChecked(), mHour,
-                mMinutes, mRepeatPref.getDaysOfWeek(), mVibratePref.isChecked(),
-                mLabel.getText(), alert);
+        Alarm alarm = new Alarm();
+        alarm.id = mId;
+        alarm.enabled = mEnabledPref.isChecked();
+        alarm.hour = mHour;
+        alarm.minutes = mMinutes;
+        alarm.daysOfWeek = mRepeatPref.getDaysOfWeek();
+        alarm.vibrate = mVibratePref.isChecked();
+        alarm.label = mLabel.getText();
+        alarm.alert = mAlarmPref.getAlert();
 
-        if (mEnabledPref.isChecked()) {
+        long time;
+        if (mCreateNewAlarm) {
+            time = Alarms.addAlarm(this, alarm);
+        } else {
+            time = Alarms.setAlarm(this, alarm);
+        }
+
+        if (alarm.enabled) {
             popAlarmSetToast(this, time);
         }
     }
@@ -197,27 +226,6 @@ public class SetAlarm extends PreferenceActivity
                         })
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
-    }
-
-    /**
-     * Write alarm out to persistent store and pops toast if alarm
-     * enabled.
-     * Used only in test code.
-     */
-    private static void saveAlarm(
-            Context context, int id, boolean enabled, int hour, int minute,
-            Alarm.DaysOfWeek daysOfWeek, boolean vibrate, String label,
-            String alert, boolean popToast) {
-        if (Log.LOGV) Log.v("** saveAlarm " + id + " " + label + " " + enabled
-                + " " + hour + " " + minute + " vibe " + vibrate);
-
-        // Fix alert string first
-        long time = Alarms.setAlarm(context, id, enabled, hour, minute,
-                daysOfWeek, vibrate, label, alert);
-
-        if (enabled && popToast) {
-            popAlarmSetToast(context, time);
-        }
     }
 
     /**
@@ -272,47 +280,4 @@ public class SetAlarm extends PreferenceActivity
         String[] formats = context.getResources().getStringArray(R.array.alarm_set);
         return String.format(formats[index], daySeq, hourSeq, minSeq);
     }
-
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-
-        if (AlarmClock.DEBUG) {
-            mTestAlarmItem = menu.add(0, 0, 0, "test alarm");
-        }
-
-        return true;
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (AlarmClock.DEBUG) {
-            if (item == mTestAlarmItem) {
-                setTestAlarm();
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-
-    /**
-     * Test code: this is disabled for production build.  Sets
-     * this alarm to go off on the next minute
-     */
-    void setTestAlarm() {
-
-        // start with now
-        java.util.Calendar c = java.util.Calendar.getInstance();
-        c.setTimeInMillis(System.currentTimeMillis());
-
-        int nowHour = c.get(java.util.Calendar.HOUR_OF_DAY);
-        int nowMinute = c.get(java.util.Calendar.MINUTE);
-
-        int minutes = (nowMinute + 1) % 60;
-        int hour = nowHour + (nowMinute == 0 ? 1 : 0);
-
-        saveAlarm(this, mId, true, hour, minutes, mRepeatPref.getDaysOfWeek(),
-                true, mLabel.getText(), mAlarmPref.getAlertString(), true);
-    }
-
 }

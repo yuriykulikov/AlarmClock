@@ -803,7 +803,7 @@ public class DeskClock extends Activity {
                 startActivity(new Intent(DeskClock.this, AlarmClock.class));
                 return true;
             case R.id.menu_item_add_alarm:
-                AlarmClock.addNewAlarm(this);
+                startActivity(new Intent(this, SetAlarm.class));
                 return true;
             case R.id.menu_item_dock_settings:
                 startActivity(new Intent(DOCK_SETTINGS_ACTION));

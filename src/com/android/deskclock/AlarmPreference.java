@@ -60,10 +60,7 @@ public class AlarmPreference extends RingtonePreference {
         }
     }
 
-    public String getAlertString() {
-        if (mAlert != null) {
-            return mAlert.toString();
-        }
-        return Alarms.ALARM_ALERT_SILENT;
+    public Uri getAlert() {
+        return mAlert;
     }
 }
