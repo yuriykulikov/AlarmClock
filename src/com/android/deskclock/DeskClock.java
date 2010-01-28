@@ -264,9 +264,10 @@ public class DeskClock extends Activity {
         if (DEBUG) Log.d(LOG_TAG, (hold ? "hold" : " releas") + "ing wake lock");
         Window win = getWindow();
         WindowManager.LayoutParams winParams = win.getAttributes();
-        winParams.flags |= WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD;
-        winParams.flags |= WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
-        winParams.flags |= WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON;
+        winParams.flags |= (WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
+                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         if (hold)
             winParams.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
         else
