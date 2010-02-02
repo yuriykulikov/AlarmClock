@@ -212,10 +212,13 @@
     <string name="alarm_notify_snooze_text">Alarm set for <xliff:g id="time">%s</xliff:g>. Select to cancel.</string>
 
     <!-- Title of the setting to change the volume/camera button behavior. -->
-    <string name="volume_button_setting_title">Side button behavior</string>
+    <string name="volume_button_setting_title">Volume and Power</string>
+
+    <!-- Dialog title of the volume and power setting. -->
+    <string name="volume_button_dialog_title">Button effect</string>
 
     <!-- The summary of the side button setting. -->
-    <string name="volume_button_setting_summary">Set the desired behavior of the side buttons when pressed during an alarm</string>
+    <string name="volume_button_setting_summary">Set what these buttons do when pressed during an alarm</string>
 
     <!-- Entries listed in the setting for the side-button action. -->
     <string-array name="volume_button_setting_entries">
