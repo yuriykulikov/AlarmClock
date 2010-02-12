@@ -19,7 +19,7 @@
         <activity android:name="DeskClock"
                 android:label="@string/app_label"
                 android:theme="@android:style/Theme.Wallpaper.NoTitleBar"
-                android:icon="@drawable/ic_widget_analog_clock"
+                android:icon="@drawable/ic_launcher_alarmclock"
                 android:launchMode="singleInstance"
                 android:configChanges="orientation|keyboardHidden|keyboard|navigation">
                 >
