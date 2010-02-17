@@ -141,11 +141,15 @@ public class SetAlarm extends PreferenceActivity
                 }
         });
         b = (Button) findViewById(R.id.alarm_delete);
-        b.setOnClickListener(new View.OnClickListener() {
+        if (mId == -1) {
+            b.setEnabled(false);
+        } else {
+            b.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     deleteAlarm();
                 }
-        });
+            });
+        }
 
         // The last thing we do is pop the time picker if this is a new alarm.
         if (mCreateNewAlarm) {
