@@ -201,6 +201,15 @@ public class Alarms {
         long timeInMillis = calculateAlarm(alarm);
 
         if (alarm.enabled) {
+            // Disable the snooze if we just changed the snoozed alarm. This
+            // only does work if the snoozed alarm is the same as the given
+            // alarm.
+            // TODO: disableSnoozeAlert should have a better name.
+            disableSnoozeAlert(context, alarm.id);
+
+            // Disable the snooze if this alarm fires before the snoozed alarm.
+            // This works on every alarm since the user most likely intends to
+            // have the modified alarm fire next.
             clearSnoozeIfNeeded(context, timeInMillis);
         }
 
