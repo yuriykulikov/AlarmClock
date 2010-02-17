@@ -701,9 +701,9 @@ public class DeskClock extends Activity {
             public void onClick(View v) {
                 try {
                     Intent musicAppQuery = getPackageManager()
-                        .getLaunchIntentForPackage(MUSIC_PACKAGE_ID)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        .getLaunchIntentForPackage(MUSIC_PACKAGE_ID);
                     if (musicAppQuery != null) {
+                        musicAppQuery.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(musicAppQuery);
                     }
                 } catch (android.content.ActivityNotFoundException e) {
