@@ -42,6 +42,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
@@ -92,9 +93,6 @@ public class DeskClock extends Activity {
     private static final boolean DEBUG = false;
 
     private static final String LOG_TAG = "DeskClock";
-
-    // Package ID of the music player.
-    private static final String MUSIC_PACKAGE_ID = "com.android.music";
 
     // Alarm action for midnight (so we can update the date display).
     private static final String ACTION_MIDNIGHT = "com.android.deskclock.MIDNIGHT";
@@ -700,12 +698,9 @@ public class DeskClock extends Activity {
         musicButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
-                    Intent musicAppQuery = getPackageManager()
-                        .getLaunchIntentForPackage(MUSIC_PACKAGE_ID);
-                    if (musicAppQuery != null) {
-                        musicAppQuery.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(musicAppQuery);
-                    }
+                    startActivity(new Intent(MediaStore.INTENT_ACTION_MUSIC_PLAYER)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
                 } catch (android.content.ActivityNotFoundException e) {
                     Log.e(LOG_TAG, "Couldn't launch music browser", e);
                 }
