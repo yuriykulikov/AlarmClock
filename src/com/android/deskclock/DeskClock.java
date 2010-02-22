@@ -699,7 +699,7 @@ public class DeskClock extends Activity {
             public void onClick(View v) {
                 try {
                     startActivity(new Intent(MediaStore.INTENT_ACTION_MUSIC_PLAYER)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP));
 
                 } catch (android.content.ActivityNotFoundException e) {
                     Log.e(LOG_TAG, "Couldn't launch music browser", e);
