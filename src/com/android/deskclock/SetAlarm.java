@@ -58,6 +58,7 @@ public class SetAlarm extends PreferenceActivity
     private int     mHour;
     private int     mMinutes;
     private boolean mCreateNewAlarm;
+    private boolean mTimePickerCancelled;
 
     /**
      * Set an alarm.  Requires an Alarms.ALARM_ID to be passed in as an
@@ -153,6 +154,8 @@ public class SetAlarm extends PreferenceActivity
 
         // The last thing we do is pop the time picker if this is a new alarm.
         if (mCreateNewAlarm) {
+            // Assume the user hit cancel
+            mTimePickerCancelled = true;
             showTimePicker();
         }
     }
@@ -169,7 +172,12 @@ public class SetAlarm extends PreferenceActivity
 
     @Override
     public void onBackPressed() {
-        saveAlarm();
+        // In the usual case of viewing an alarm, mTimePickerCancelled is
+        // initialized to false. When creating a new alarm, this value is
+        // assumed true until the user changes the time.
+        if (!mTimePickerCancelled) {
+            saveAlarm();
+        }
         finish();
     }
 
@@ -179,6 +187,8 @@ public class SetAlarm extends PreferenceActivity
     }
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        // onTimeSet is called when the user clicks "Set"
+        mTimePickerCancelled = false;
         mHour = hourOfDay;
         mMinutes = minute;
         updateTime();
