@@ -87,8 +87,9 @@
     <string name="alarm_notify_text" msgid="4146350965933990093">"Velg å slumre eller slå av alarmen"</string>
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (slumre)"</string>
     <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"Alarmen er innstilt på <xliff:g id="TIME">%s</xliff:g>. Velg for å avbryte."</string>
-    <string name="volume_button_setting_title" msgid="1892885285888644234">"Sideknappfunksjon"</string>
-    <string name="volume_button_setting_summary" msgid="1594641247799573198">"Angi hvilken funksjon du vil at sideknappene skal ha når de trykkes på under en alarm"</string>
+    <string name="volume_button_setting_title" msgid="3059140802458343131">"Volum- og strøminnstillinger"</string>
+    <string name="volume_button_dialog_title" msgid="8768042543750036853">"Knappefunksjon"</string>
+    <string name="volume_button_setting_summary" msgid="4776447991226047070">"Still inn disse knappenes funksjon ved alarm"</string>
   <string-array name="volume_button_setting_entries">
     <item msgid="4520420953175098625">"Ingen"</item>
     <item msgid="7111908302622811168">"Slumre"</item>

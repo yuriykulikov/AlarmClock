@@ -87,8 +87,9 @@
     <string name="alarm_notify_text" msgid="4146350965933990093">"Seleziona per sospendere o eliminare questo allarme."</string>
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (sospeso)"</string>
     <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"L\'allarme sarà attivato alle <xliff:g id="TIME">%s</xliff:g>. Seleziona per annullare."</string>
-    <string name="volume_button_setting_title" msgid="1892885285888644234">"Comp. pulsante laterale"</string>
-    <string name="volume_button_setting_summary" msgid="1594641247799573198">"Imposta il comport. dei puls. laterali quando vengono premuti durante un allarme"</string>
+    <string name="volume_button_setting_title" msgid="3059140802458343131">"Volume e alimentazione"</string>
+    <string name="volume_button_dialog_title" msgid="8768042543750036853">"Effetto pulsante"</string>
+    <string name="volume_button_setting_summary" msgid="4776447991226047070">"Imposta le azioni di questi tasti quando vengono premuti se l\'allarme è attivo"</string>
   <string-array name="volume_button_setting_entries">
     <item msgid="4520420953175098625">"Nessuno"</item>
     <item msgid="7111908302622811168">"Sospendi"</item>

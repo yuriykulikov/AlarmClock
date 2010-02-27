@@ -87,8 +87,9 @@
     <string name="alarm_notify_text" msgid="4146350965933990093">"Seleccionar alarma recurrente o rechazar."</string>
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (recurrente)"</string>
     <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"Esta alarma se activará en <xliff:g id="TIME">%s</xliff:g>. Selecciona para cancelar."</string>
-    <string name="volume_button_setting_title" msgid="1892885285888644234">"Comport. del botón lateral"</string>
-    <string name="volume_button_setting_summary" msgid="1594641247799573198">"Activar el comport. deseado de los botones lat. durante una alarma"</string>
+    <string name="volume_button_setting_title" msgid="3059140802458343131">"Volumen y potencia"</string>
+    <string name="volume_button_dialog_title" msgid="8768042543750036853">"Efecto del botón"</string>
+    <string name="volume_button_setting_summary" msgid="4776447991226047070">"Configurar las acciones de los botones durante una alarma"</string>
   <string-array name="volume_button_setting_entries">
     <item msgid="4520420953175098625">"Ninguno"</item>
     <item msgid="7111908302622811168">"Recurrente"</item>
