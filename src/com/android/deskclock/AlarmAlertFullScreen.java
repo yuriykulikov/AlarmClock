@@ -55,13 +55,21 @@ public class AlarmAlertFullScreen extends Activity {
     protected Alarm mAlarm;
     private int mVolumeBehavior;
 
-    // Receives the ALARM_KILLED action from the AlarmKlaxon.
+    // Receives the ALARM_KILLED action from the AlarmKlaxon,
+    // and also ALARM_SNOOZE_ACTION / ALARM_DISMISS_ACTION from other applications
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Alarm alarm = intent.getParcelableExtra(Alarms.ALARM_INTENT_EXTRA);
-            if (alarm != null && mAlarm.id == alarm.id) {
-                dismiss(true);
+            String action = intent.getAction();
+            if (action.equals(Alarms.ALARM_SNOOZE_ACTION)) {
+                snooze();
+            } else if (action.equals(Alarms.ALARM_DISMISS_ACTION)) {
+                dismiss(false);
+            } else {
+                Alarm alarm = intent.getParcelableExtra(Alarms.ALARM_INTENT_EXTRA);
+                if (alarm != null && mAlarm.id == alarm.id) {
+                    dismiss(true);
+                }
             }
         }
     };
@@ -94,8 +102,11 @@ public class AlarmAlertFullScreen extends Activity {
 
         updateLayout();
 
-        // Register to get the alarm killed intent.
-        registerReceiver(mReceiver, new IntentFilter(Alarms.ALARM_KILLED));
+        // Register to get the alarm killed/snooze/dismiss intent.
+        IntentFilter filter = new IntentFilter(Alarms.ALARM_KILLED);
+        filter.addAction(Alarms.ALARM_SNOOZE_ACTION);
+        filter.addAction(Alarms.ALARM_DISMISS_ACTION);
+        registerReceiver(mReceiver, filter);
     }
 
     private void setTitle() {
@@ -190,6 +201,7 @@ public class AlarmAlertFullScreen extends Activity {
 
     // Dismiss the alarm.
     private void dismiss(boolean killed) {
+        Log.i(killed ? "Alarm killed" : "Alarm dismissed by user");
         // The service told us that the alarm has been killed, do not modify
         // the notification or stop the service.
         if (!killed) {

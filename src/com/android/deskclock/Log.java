@@ -32,6 +32,10 @@ class Log {
         android.util.Log.v(LOGTAG, /* SystemClock.uptimeMillis() + " " + */ logMe);
     }
 
+    static void i(String logMe) {
+        android.util.Log.i(LOGTAG, logMe);
+    }
+
     static void e(String logMe) {
         android.util.Log.e(LOGTAG, logMe);
     }
