@@ -259,6 +259,9 @@ public class AlarmKlaxon extends Service {
         if (mPlaying) {
             mPlaying = false;
 
+            Intent alarmDone = new Intent(Alarms.ALARM_DONE_ACTION);
+            sendBroadcast(alarmDone);
+
             // Stop audio playing
             if (mMediaPlayer != null) {
                 mMediaPlayer.stop();
