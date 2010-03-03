@@ -95,11 +95,13 @@ public class Alarms {
     final static String M24 = "kk:mm";
 
     /**
-     * Creates a new Alarm.
+     * Creates a new Alarm and fills in the given alarm's id.
      */
     public static long addAlarm(Context context, Alarm alarm) {
         ContentValues values = createContentValues(alarm);
-        context.getContentResolver().insert(Alarm.Columns.CONTENT_URI, values);
+        Uri uri = context.getContentResolver().insert(
+                Alarm.Columns.CONTENT_URI, values);
+        alarm.id = (int) ContentUris.parseId(uri);
 
         long timeInMillis = calculateAlarm(alarm);
         if (alarm.enabled) {

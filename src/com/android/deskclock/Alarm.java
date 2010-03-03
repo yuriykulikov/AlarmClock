@@ -210,6 +210,7 @@ public final class Alarm implements Parcelable {
 
     // Creates a default alarm at the current time.
     public Alarm() {
+        id = -1;
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis());
         hour = c.get(Calendar.HOUR_OF_DAY);

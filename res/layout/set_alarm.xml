@@ -40,7 +40,7 @@
             android:layout_weight="1"
             android:text="@string/done"/>
 
-        <Button android:id="@+id/alarm_cancel"
+        <Button android:id="@+id/alarm_revert"
             android:focusable="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
