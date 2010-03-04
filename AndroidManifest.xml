@@ -106,7 +106,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="AnalogAppWidgetProvider" android:label="@string/analog_gadget"
+        <receiver android:name="com.android.alarmclock.AnalogAppWidgetProvider" android:label="@string/analog_gadget"
         	android:icon="@drawable/ic_widget_analog_clock">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
