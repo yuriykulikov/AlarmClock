@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.app.UiModeManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -186,16 +187,12 @@ public class DeskClock extends Activity {
                 handleBatteryUpdate(
                     intent.getIntExtra("status", BATTERY_STATUS_UNKNOWN),
                     intent.getIntExtra("level", 0));
-            } else if (Intent.ACTION_DOCK_EVENT.equals(action)) {
-                int state = intent.getIntExtra(Intent.EXTRA_DOCK_STATE, -1);
-                if (DEBUG) Log.d(LOG_TAG, "ACTION_DOCK_EVENT, state=" + state);
-                if (state == Intent.EXTRA_DOCK_STATE_UNDOCKED) {
-                    if (mLaunchedFromDock) {
-                        // moveTaskToBack(false);
-                        finish();
-                    }
-                    mLaunchedFromDock = false;
+            } else if (UiModeManager.ACTION_EXIT_DESK_MODE.equals(action)) {
+                if (mLaunchedFromDock) {
+                    // moveTaskToBack(false);
+                    finish();
                 }
+                mLaunchedFromDock = false;
             }
         }
     };
@@ -573,7 +570,7 @@ public class DeskClock extends Activity {
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_DATE_CHANGED);
         filter.addAction(Intent.ACTION_BATTERY_CHANGED);
-        filter.addAction(Intent.ACTION_DOCK_EVENT);
+        filter.addAction(UiModeManager.ACTION_EXIT_DESK_MODE);
         filter.addAction(ACTION_MIDNIGHT);
         registerReceiver(mIntentReceiver, filter);
 
