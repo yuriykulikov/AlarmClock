@@ -144,8 +144,6 @@ public class SetAlarm extends PreferenceActivity
         Button b = (Button) findViewById(R.id.alarm_save);
         b.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    // Enable the alarm when clicking "Done"
-                    mEnabledPref.setChecked(true);
                     saveAlarm();
                     finish();
                 }
@@ -187,11 +185,15 @@ public class SetAlarm extends PreferenceActivity
     // Used to post runnables asynchronously.
     private static final Handler sHandler = new Handler();
 
-    public boolean onPreferenceChange(Preference p, Object newValue) {
+    public boolean onPreferenceChange(final Preference p, Object newValue) {
         // Asynchronously save the alarm since this method is called _before_
         // the value of the preference has changed.
         sHandler.post(new Runnable() {
             public void run() {
+                // Editing any preference (except enable) enables the alarm.
+                if (p != mEnabledPref) {
+                    mEnabledPref.setChecked(true);
+                }
                 saveAlarmAndEnableRevert();
             }
         });
