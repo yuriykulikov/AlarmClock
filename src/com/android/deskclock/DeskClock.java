@@ -559,13 +559,8 @@ public class DeskClock extends Activity {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (DEBUG) Log.d(LOG_TAG, "onResume with intent: " + getIntent());
-
-        // reload the date format in case the user has changed settings
-        // recently
-        mDateFormat = getString(R.string.full_wday_month_day_no_year);
+    public void onStart() {
+        super.onStart();
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_DATE_CHANGED);
@@ -573,6 +568,23 @@ public class DeskClock extends Activity {
         filter.addAction(UiModeManager.ACTION_EXIT_DESK_MODE);
         filter.addAction(ACTION_MIDNIGHT);
         registerReceiver(mIntentReceiver, filter);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        unregisterReceiver(mIntentReceiver);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (DEBUG) Log.d(LOG_TAG, "onResume with intent: " + getIntent());
+
+        // reload the date format in case the user has changed settings
+        // recently
+        mDateFormat = getString(R.string.full_wday_month_day_no_year);
 
         // Listen for updates to weather data
         Uri weatherNotificationUri = new Uri.Builder()
@@ -635,7 +647,8 @@ public class DeskClock extends Activity {
         restoreScreen();
 
         // Other things we don't want to be doing in the background.
-        unregisterReceiver(mIntentReceiver);
+        // NB: we need to keep our broadcast receiver alive in case the dock
+        // is disconnected while the screen is off
         getContentResolver().unregisterContentObserver(mContentObserver);
 
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
