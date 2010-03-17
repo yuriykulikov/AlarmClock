@@ -212,7 +212,7 @@
     <string name="alarm_notify_snooze_text">Alarm set for <xliff:g id="time">%s</xliff:g>. Select to cancel.</string>
 
     <!-- Title of the setting to change the volume/camera button behavior. -->
-    <string name="volume_button_setting_title">Volume and Power</string>
+    <string name="volume_button_setting_title">Volume and Camera</string>
 
     <!-- Dialog title of the volume and power setting. -->
     <string name="volume_button_dialog_title">Button effect</string>
