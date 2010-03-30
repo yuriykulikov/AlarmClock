@@ -88,7 +88,8 @@
     <string name="alarm_notify_text" msgid="4146350965933990093">"Elige si deseas posponer o descartar esta alarma."</string>
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (pospuesta)"</string>
     <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"La alarma sonará a las <xliff:g id="TIME">%s</xliff:g>. Selecciona la opción para cancelarla."</string>
-    <string name="volume_button_setting_title" msgid="3059140802458343131">"Volumen y botón de encendido"</string>
+    <!-- no translation found for volume_button_setting_title (8155275533660105161) -->
+    <skip />
     <string name="volume_button_dialog_title" msgid="8768042543750036853">"Efecto de botón"</string>
     <string name="volume_button_setting_summary" msgid="4776447991226047070">"Establecer la función de estos botones al pulsarse durante una alarma"</string>
   <string-array name="volume_button_setting_entries">
@@ -105,7 +106,7 @@
     <string name="gallery_button_description" msgid="1151743663255257668">"Galería"</string>
     <string name="music_button_description" msgid="1626593420810117999">"Música"</string>
     <string name="nightmode_button_description" msgid="990894208217576381">"Atenuar"</string>
-    <string name="home_button_description" msgid="3383859096809056157">"Página principal"</string>
+    <string name="home_button_description" msgid="3383859096809056157">"Launcher"</string>
     <string name="desk_clock_button_description" msgid="968868045496561043">"Reloj"</string>
     <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g> <xliff:g id="PERCENT">%%</xliff:g>"</string>
     <string name="weather_fetch_failure" msgid="7517010911981312358">"La información meteorológica no está disponible."</string>
