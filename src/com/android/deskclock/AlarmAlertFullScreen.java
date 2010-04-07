@@ -239,15 +239,6 @@ public class AlarmAlertFullScreen extends Activity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        if (!isFinishing()) {
-            // Don't hang around.
-            finish();
-        }
-    }
-    
-    @Override
     public void onDestroy() {
         super.onDestroy();
         if (Log.LOGV) Log.v("AlarmAlert.onDestroy()");
