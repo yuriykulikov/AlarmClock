@@ -41,11 +41,11 @@
                 android:taskAffinity=""
                 android:excludeFromRecents="true"
                 android:configChanges="orientation|keyboardHidden|keyboard|navigation"
-                >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
+                android:exported="true" />
+
+        <activity-alias android:name="com.android.alarmclock.AlarmClock"
+                android:targetActivity="com.android.deskclock.AlarmClock"
+                android:exported="true" />
 
         <activity android:name="SettingsActivity"
                 android:label="@string/settings"
