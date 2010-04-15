@@ -88,8 +88,7 @@
     <string name="alarm_notify_text" msgid="4146350965933990093">"選取貪睡功能或關閉此鬧鐘。"</string>
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (貪睡)"</string>
     <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"鬧鐘設定在 <xliff:g id="TIME">%s</xliff:g>，選取即可取消"</string>
-    <!-- no translation found for volume_button_setting_title (8155275533660105161) -->
-    <skip />
+    <string name="volume_button_setting_title" msgid="8155275533660105161">"音量和相機"</string>
     <string name="volume_button_dialog_title" msgid="8768042543750036853">"按鈕功用"</string>
     <string name="volume_button_setting_summary" msgid="4776447991226047070">"設定這些按鈕在鬧鐘啟動時的功用"</string>
   <string-array name="volume_button_setting_entries">

@@ -88,8 +88,7 @@
     <string name="alarm_notify_text" msgid="4146350965933990093">"Choisissez de répéter ou de désactiver cette alarme."</string>
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (répétition)"</string>
     <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"Prochaine alarme dans <xliff:g id="TIME">%s</xliff:g>. Sélectionnez l\'option appropriée pour annuler."</string>
-    <!-- no translation found for volume_button_setting_title (8155275533660105161) -->
-    <skip />
+    <string name="volume_button_setting_title" msgid="8155275533660105161">"Volume et appareil photo"</string>
     <string name="volume_button_dialog_title" msgid="8768042543750036853">"Effet du bouton"</string>
     <string name="volume_button_setting_summary" msgid="4776447991226047070">"Définissez les actions de ces boutons lorsqu\'ils sont utilisés pendant une alarme."</string>
   <string-array name="volume_button_setting_entries">
