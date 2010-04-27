@@ -23,6 +23,7 @@ import android.app.PendingIntent;
 import android.app.UiModeManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -389,7 +390,7 @@ public class DeskClock extends Activity {
 
         Cursor cur;
         try {
-            cur = managedQuery(
+            cur = getContentResolver().query(
                 queryUri,
                 WEATHER_CONTENT_COLUMNS,
                 null,
@@ -445,6 +446,11 @@ public class DeskClock extends Activity {
             mWeatherCurrentTemperatureString =
                 mWeatherHighTemperatureString =
                 mWeatherLowTemperatureString = "";
+        }
+
+        if (cur != null) {
+            // clean up cursor
+            cur.close();
         }
 
         mHandy.sendEmptyMessage(UPDATE_WEATHER_DISPLAY_MSG);
