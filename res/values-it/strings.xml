@@ -17,14 +17,14 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_label" msgid="6674495003718166674">"Orologio"</string>
-    <string name="alarm_list_title" msgid="7589940465292950600">"Sveglia"</string>
+    <string name="alarm_list_title" msgid="7589940465292950600">"Allarmi"</string>
     <string name="add_alarm" msgid="5976616107390962899">"Aggiungi allarme"</string>
     <string name="menu_desk_clock" msgid="3241995064554071588">"Orologio da tavolo"</string>
     <string name="menu_edit_alarm" msgid="7204602994918829751">"Modifica allarme"</string>
     <string name="delete_alarm" msgid="3457780990646206817">"Elimina allarme"</string>
     <string name="enable_alarm" msgid="1834599140632142536">"Attiva allarme"</string>
     <string name="disable_alarm" msgid="5889378670229554109">"Disattiva allarme"</string>
-    <string name="delete_alarm_confirm" msgid="4237696873219106907">"Questa sveglia verrà eliminata."</string>
+    <string name="delete_alarm_confirm" msgid="4237696873219106907">"Questo allarme verrà eliminato."</string>
     <string name="show_clock" msgid="8358759982675616915">"Mostra orologio"</string>
     <string name="hide_clock" msgid="3217727306480505694">"Nascondi orologio"</string>
     <string name="label" msgid="162189613902857319">"Etichetta"</string>
@@ -37,7 +37,7 @@
     <string name="alarm_alert_dismiss_text" msgid="4942914605480888820">"Spegni"</string>
     <string name="alarm_alert_alert_silenced" msgid="7918075929961104202">"Tono allarme disattivato dopo <xliff:g id="MINUTES">%d</xliff:g> minuti"</string>
     <string name="alarm_alert_snooze_text" msgid="1774416052207651584">"Posponi"</string>
-    <string name="alarm_alert_snooze_set" msgid="656470966696912087">"Sospensione per <xliff:g id="MINUTES">%d</xliff:g> minuti."</string>
+    <string name="alarm_alert_snooze_set" msgid="656470966696912087">"<xliff:g id="MINUTES">%d</xliff:g>Sospensione per minuti."</string>
   <string-array name="alarm_set">
     <item msgid="5163476010406761625">"L\'allarme sarà attivato fra meno di 1 minuto."</item>
     <item msgid="7110525731259629055">"L\'allarme sarà attivato fra <xliff:g id="DAYS">%1$s</xliff:g>."</item>
@@ -101,7 +101,7 @@
     <item msgid="3204893476515513084">"1"</item>
     <item msgid="7687709558968154577">"2"</item>
   </string-array>
-    <string name="alarm_button_description" msgid="740283647046258651">"Sveglia"</string>
+    <string name="alarm_button_description" msgid="740283647046258651">"Allarmi"</string>
     <string name="gallery_button_description" msgid="1151743663255257668">"Galleria"</string>
     <string name="music_button_description" msgid="1626593420810117999">"Musica"</string>
     <string name="nightmode_button_description" msgid="990894208217576381">"Abbassa"</string>

@@ -49,7 +49,7 @@
     <item msgid="7779544127785487304">"Dieser Wecker klingelt in <xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> und <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
   </string-array>
     <string name="day" msgid="7984755014526510295">"1 Tag"</string>
-    <string name="days" msgid="2070509222727852210">"<xliff:g id="DAYS">%s</xliff:g> Tagen"</string>
+    <string name="days" msgid="2070509222727852210">"<xliff:g id="DAYS">%s</xliff:g> Tage"</string>
     <string name="hour" msgid="2546819039651509323">"1 Stunde"</string>
     <string name="hours" msgid="2071487018566991613">"<xliff:g id="HOURS">%s</xliff:g> Stunden"</string>
     <string name="minute" msgid="2486157997434653710">"1 Minute"</string>
@@ -82,7 +82,7 @@
     <string name="done" msgid="6509722361933858451">"Fertig"</string>
     <string name="revert" msgid="9100911171235162926">"Zurücksetzen"</string>
     <string name="delete" msgid="5732434972457000541">"Löschen"</string>
-    <string name="alarm_volume_title" msgid="8506245173912428522">"Lautstärke für Alarm"</string>
+    <string name="alarm_volume_title" msgid="8506245173912428522">"Lautstärke für Wecker"</string>
     <string name="alarm_volume_summary" msgid="8957440373896242438">"Lautstärke des Weckers einstellen"</string>
     <string name="silent_alarm_summary" msgid="8605302849408279221">"Lautlos"</string>
     <string name="alarm_notify_text" msgid="4146350965933990093">"Für Snooze-Funktion oder Beenden auswählen"</string>
@@ -105,7 +105,7 @@
     <string name="gallery_button_description" msgid="1151743663255257668">"Galerie"</string>
     <string name="music_button_description" msgid="1626593420810117999">"Musik"</string>
     <string name="nightmode_button_description" msgid="990894208217576381">"Dimmen"</string>
-    <string name="home_button_description" msgid="3383859096809056157">"Launcher"</string>
+    <string name="home_button_description" msgid="3383859096809056157">"Übersicht"</string>
     <string name="desk_clock_button_description" msgid="968868045496561043">"Uhrendisplay"</string>
     <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g> <xliff:g id="PERCENT">%%</xliff:g>"</string>
     <string name="weather_fetch_failure" msgid="7517010911981312358">"Wetterinformationen derzeit nicht verfügbar"</string>
