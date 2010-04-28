@@ -35,7 +35,7 @@
     <string name="alert" msgid="6539852766423700221">"Ringetone"</string>
     <string name="time" msgid="8067216534232296518">"Tid"</string>
     <string name="alarm_alert_dismiss_text" msgid="4942914605480888820">"Annuller"</string>
-    <string name="alarm_alert_alert_silenced" msgid="7918075929961104202">"Alarm slukkes efter <xliff:g id="MINUTES">%d</xliff:g> minutter"</string>
+    <string name="alarm_alert_alert_silenced" msgid="7918075929961104202">"Alarm dæmpes efter <xliff:g id="MINUTES">%d</xliff:g> minutter"</string>
     <string name="alarm_alert_snooze_text" msgid="1774416052207651584">"Slumretilstand"</string>
     <string name="alarm_alert_snooze_set" msgid="656470966696912087">"Slumrer i <xliff:g id="MINUTES">%d</xliff:g> minutter."</string>
   <string-array name="alarm_set">

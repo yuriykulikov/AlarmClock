@@ -50,9 +50,9 @@
   </string-array>
     <string name="day" msgid="7984755014526510295">"1 день"</string>
     <string name="days" msgid="2070509222727852210">"<xliff:g id="DAYS">%s</xliff:g> дн."</string>
-    <string name="hour" msgid="2546819039651509323">"1 час"</string>
+    <string name="hour" msgid="2546819039651509323">"за 1 час"</string>
     <string name="hours" msgid="2071487018566991613">"<xliff:g id="HOURS">%s</xliff:g> ч."</string>
-    <string name="minute" msgid="2486157997434653710">"1 минута"</string>
+    <string name="minute" msgid="2486157997434653710">"за 1 минуту"</string>
     <string name="minutes" msgid="6115838729146292526">"<xliff:g id="MINUTES">%s</xliff:g> мин."</string>
     <string name="every_day" msgid="1058994798884544691">"каждый день"</string>
     <string name="never" msgid="54104287800571769">"Никогда"</string>
@@ -60,8 +60,8 @@
     <string name="clock_instructions" msgid="3118560284915857690">"Выберите вид часов."</string>
     <string name="analog_gadget" msgid="1670505720837152766">"Часы со стрелками"</string>
     <string name="settings" msgid="5849739030579520686">"Настройки"</string>
-    <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Будильник в тихом режиме"</string>
-    <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"Подавать сигнал, даже если телефон работает в тихом режиме"</string>
+    <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Будильник без звука"</string>
+    <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"Подавать сигнал, даже если телефон работает в режиме без звука"</string>
     <string name="snooze_duration_title" msgid="1471249885139952670">"Продолжительность спящего режима"</string>
   <string-array name="snooze_duration_entries">
     <item msgid="8337408933053603125">"5 минут"</item>
