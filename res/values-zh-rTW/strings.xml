@@ -105,7 +105,7 @@
     <string name="gallery_button_description" msgid="1151743663255257668">"圖片庫"</string>
     <string name="music_button_description" msgid="1626593420810117999">"音樂"</string>
     <string name="nightmode_button_description" msgid="990894208217576381">"微暗"</string>
-    <string name="home_button_description" msgid="3383859096809056157">"Launcher"</string>
+    <string name="home_button_description" msgid="3383859096809056157">"啟動器"</string>
     <string name="desk_clock_button_description" msgid="968868045496561043">"時鐘顯示"</string>
     <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g><xliff:g id="PERCENT">%%</xliff:g>"</string>
     <string name="weather_fetch_failure" msgid="7517010911981312358">"目前無法取得天氣資訊。"</string>
