@@ -21,6 +21,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.preference.RingtonePreference;
+import android.provider.Settings;
 import android.util.AttributeSet;
 
 /**
@@ -29,6 +30,7 @@ import android.util.AttributeSet;
  */
 public class AlarmPreference extends RingtonePreference {
     private Uri mAlert;
+    private boolean mChangeDefault;
 
     public AlarmPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -37,6 +39,12 @@ public class AlarmPreference extends RingtonePreference {
     @Override
     protected void onSaveRingtone(Uri ringtoneUri) {
         setAlert(ringtoneUri);
+        if (mChangeDefault) {
+            // Update the default alert in the system.
+            Settings.System.putString(getContext().getContentResolver(),
+                    Settings.System.ALARM_ALERT,
+                    ringtoneUri == null ? null : ringtoneUri.toString());
+        }
     }
 
     @Override
@@ -62,5 +70,9 @@ public class AlarmPreference extends RingtonePreference {
 
     public Uri getAlert() {
         return mAlert;
+    }
+
+    public void setChangeDefault() {
+        mChangeDefault = true;
     }
 }

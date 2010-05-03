@@ -234,6 +234,9 @@
       <item>2</item>
     </string-array>
 
+    <!-- Title of the ringtone setting. -->
+    <string name="default_ringtone_setting_title">Set default ringtone</string>
+
     <!-- Accessibility labels for Clock activity buttons --><skip/>
     <string name="alarm_button_description">Alarms</string>
     <string name="gallery_button_description">Gallery</string>
