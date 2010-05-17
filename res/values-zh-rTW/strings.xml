@@ -55,7 +55,7 @@
     <string name="minute" msgid="2486157997434653710">"1 分鐘"</string>
     <string name="minutes" msgid="6115838729146292526">"<xliff:g id="MINUTES">%s</xliff:g> 分鐘"</string>
     <string name="every_day" msgid="1058994798884544691">"每天"</string>
-    <string name="never" msgid="54104287800571769">"從不"</string>
+    <string name="never" msgid="54104287800571769">"永不"</string>
     <string name="day_concat" msgid="971998564991636532">"、 "</string>
     <string name="clock_instructions" msgid="3118560284915857690">"選取要顯示的時鐘。"</string>
     <string name="analog_gadget" msgid="1670505720837152766">"類比時鐘"</string>
