@@ -92,7 +92,7 @@
     <string name="volume_button_dialog_title" msgid="8768042543750036853">"Effet du bouton"</string>
     <string name="volume_button_setting_summary" msgid="4776447991226047070">"Définir les actions de ces boutons lorsqu\'ils sont utilisés pendant une alarme"</string>
   <string-array name="volume_button_setting_entries">
-    <item msgid="4520420953175098625">"Aucune"</item>
+    <item msgid="4520420953175098625">"Aucun"</item>
     <item msgid="7111908302622811168">"Répéter"</item>
     <item msgid="8573552194573068996">"Désactiver"</item>
   </string-array>
@@ -105,7 +105,7 @@
     <string name="gallery_button_description" msgid="1151743663255257668">"Galerie"</string>
     <string name="music_button_description" msgid="1626593420810117999">"Musique"</string>
     <string name="nightmode_button_description" msgid="990894208217576381">"Assombrir"</string>
-    <string name="home_button_description" msgid="3383859096809056157">"Lanceur"</string>
+    <string name="home_button_description" msgid="3383859096809056157">"Lanceur d\'applications"</string>
     <string name="desk_clock_button_description" msgid="968868045496561043">"Affichage de l\'horloge"</string>
     <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g> <xliff:g id="PERCENT">%%</xliff:g>"</string>
     <string name="weather_fetch_failure" msgid="7517010911981312358">"La météo n\'est pas disponible pour le moment."</string>

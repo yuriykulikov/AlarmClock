@@ -24,7 +24,7 @@
     <string name="delete_alarm" msgid="3457780990646206817">"Wecker löschen"</string>
     <string name="enable_alarm" msgid="1834599140632142536">"Wecker einschalten"</string>
     <string name="disable_alarm" msgid="5889378670229554109">"Wecker ausschalten"</string>
-    <string name="delete_alarm_confirm" msgid="4237696873219106907">"Dieser Alarm wird gelöscht."</string>
+    <string name="delete_alarm_confirm" msgid="4237696873219106907">"Dieser Wecker wird gelöscht."</string>
     <string name="show_clock" msgid="8358759982675616915">"Uhr anzeigen"</string>
     <string name="hide_clock" msgid="3217727306480505694">"Uhr ausblenden"</string>
     <string name="label" msgid="162189613902857319">"Label"</string>
@@ -60,8 +60,8 @@
     <string name="clock_instructions" msgid="3118560284915857690">"Wählen Sie die anzuzeigende Uhr aus."</string>
     <string name="analog_gadget" msgid="1670505720837152766">"Analoguhr"</string>
     <string name="settings" msgid="5849739030579520686">"Einstellungen"</string>
-    <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Alarm im Lautlosmodus"</string>
-    <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"Alarm auch im Lautlosmodus auslösen"</string>
+    <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Auch im Lautlosmodus"</string>
+    <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"Wecker klingelt auch im Lautlosmodus"</string>
     <string name="snooze_duration_title" msgid="1471249885139952670">"Snooze-Dauer"</string>
   <string-array name="snooze_duration_entries">
     <item msgid="8337408933053603125">"5 Minuten"</item>
@@ -106,7 +106,7 @@
     <string name="music_button_description" msgid="1626593420810117999">"Musik"</string>
     <string name="nightmode_button_description" msgid="990894208217576381">"Dimmen"</string>
     <string name="home_button_description" msgid="3383859096809056157">"Übersicht"</string>
-    <string name="desk_clock_button_description" msgid="968868045496561043">"Uhrendisplay"</string>
+    <string name="desk_clock_button_description" msgid="968868045496561043">"Uhrenansicht"</string>
     <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g> <xliff:g id="PERCENT">%%</xliff:g>"</string>
     <string name="weather_fetch_failure" msgid="7517010911981312358">"Wetterinformationen derzeit nicht verfügbar"</string>
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Dock-Einstellungen"</string>
