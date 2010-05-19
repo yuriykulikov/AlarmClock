@@ -621,12 +621,15 @@ public class DeskClock extends Activity {
         today.set(Calendar.MINUTE, 0);
         today.set(Calendar.SECOND, 0);
         today.add(Calendar.DATE, 1);
-        long alarmTimeUTC = today.getTimeInMillis() + today.get(Calendar.ZONE_OFFSET);
+        long alarmTimeUTC = today.getTimeInMillis();
+
         mMidnightIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_MIDNIGHT), 0);
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         am.setRepeating(AlarmManager.RTC, alarmTimeUTC, AlarmManager.INTERVAL_DAY, mMidnightIntent);
-        if (DEBUG) Log.d(LOG_TAG, "set repeating midnight event at "
-            + alarmTimeUTC + " repeating every "
+        if (DEBUG) Log.d(LOG_TAG, "set repeating midnight event at UTC: "
+            + alarmTimeUTC + " ("
+            + (alarmTimeUTC - System.currentTimeMillis())
+            + " ms from now) repeating every "
             + AlarmManager.INTERVAL_DAY + " with intent: " + mMidnightIntent);
 
         // If we weren't previously visible but now we are, it's because we're
