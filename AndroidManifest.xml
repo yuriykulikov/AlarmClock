@@ -1,8 +1,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        package="com.android.deskclock">
+        package="com.android.deskclock"
+        android:versionCode="200" android:versionName="2.0.0">
+
+    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="8"/>
 
     <original-package android:name="com.android.alarmclock" />
     <original-package android:name="com.android.deskclock" />
+
+    <!-- This permission is for internal use only.  It is meant to protect the
+         internal alarm provider from other apps.  It uses the signature
+         protection which means that apps signed with the same certificate
+         would be able to use the permission.  Please do not do that! -->
+    <permission android:name="com.android.deskclock.permission.PROVIDER"
+                android:protectionLevel="signature"
+                android:label="@string/permission_provider"
+                android:description="@string/permission_provider_desc" />
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
@@ -15,7 +27,16 @@
     <application android:label="@string/app_label"
                  android:icon="@drawable/ic_launcher_alarmclock">
 
-        <provider android:name="AlarmProvider" android:authorities="com.android.deskclock" />
+        <provider android:name="AlarmProvider"
+                  android:exported="false"
+                  android:multiprocess="false"
+                  android:writePermission="com.android.deskclock.permission.PROVIDER"
+                  android:readPermission="com.android.deskclock.permission.PROVIDER"
+                  android:authorities="com.android.deskclock" />
+
+        <provider android:name="ExternalAlarmProvider"
+                  android:authorities="com.android.deskclock.alarmprovider"
+                  android:multiprocess="false" />
 
         <activity android:name="DeskClock"
                 android:label="@string/app_label"

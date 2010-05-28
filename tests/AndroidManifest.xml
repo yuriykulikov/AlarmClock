@@ -17,8 +17,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.android.deskclock.tests">
 
+    <uses-permission android:name="com.android.deskclock.permission.ADD_ALARM" />
+
     <application>
         <uses-library android:name="android.test.runner" />
+
+        <activity android:name="TestAddAlarm" android:label="Test Adding Alarm">
+          <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.LAUNCHER" />
+          </intent-filter>
+        </activity>
     </application>
 
     <instrumentation android:name="com.android.deskclock.DeskClockLaunchPerformance"

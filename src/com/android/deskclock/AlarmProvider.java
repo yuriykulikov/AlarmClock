@@ -17,20 +17,18 @@
 package com.android.deskclock;
 
 import android.content.ContentProvider;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 
 public class AlarmProvider extends ContentProvider {
-    private SQLiteOpenHelper mOpenHelper;
+    private AlarmDatabaseHelper mOpenHelper;
 
     private static final int ALARMS = 1;
     private static final int ALARMS_ID = 2;
@@ -42,52 +40,12 @@ public class AlarmProvider extends ContentProvider {
         sURLMatcher.addURI("com.android.deskclock", "alarm/#", ALARMS_ID);
     }
 
-    private static class DatabaseHelper extends SQLiteOpenHelper {
-        private static final String DATABASE_NAME = "alarms.db";
-        private static final int DATABASE_VERSION = 5;
-
-        public DatabaseHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE alarms (" +
-                       "_id INTEGER PRIMARY KEY," +
-                       "hour INTEGER, " +
-                       "minutes INTEGER, " +
-                       "daysofweek INTEGER, " +
-                       "alarmtime INTEGER, " +
-                       "enabled INTEGER, " +
-                       "vibrate INTEGER, " +
-                       "message TEXT, " +
-                       "alert TEXT);");
-
-            // insert default alarms
-            String insertMe = "INSERT INTO alarms " +
-                    "(hour, minutes, daysofweek, alarmtime, enabled, vibrate, message, alert) " +
-                    "VALUES ";
-            db.execSQL(insertMe + "(8, 30, 31, 0, 0, 1, '', '');");
-            db.execSQL(insertMe + "(9, 00, 96, 0, 0, 1, '', '');");
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int currentVersion) {
-            if (Log.LOGV) Log.v(
-                    "Upgrading alarms database from version " +
-                    oldVersion + " to " + currentVersion +
-                    ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS alarms");
-            onCreate(db);
-        }
-    }
-
     public AlarmProvider() {
     }
 
     @Override
     public boolean onCreate() {
-        mOpenHelper = new DatabaseHelper(getContext());
+        mOpenHelper = new AlarmDatabaseHelper(getContext());
         return true;
     }
 
@@ -166,16 +124,7 @@ public class AlarmProvider extends ContentProvider {
             throw new IllegalArgumentException("Cannot insert into URL: " + url);
         }
 
-        ContentValues values = new ContentValues(initialValues);
-
-        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        long rowId = db.insert("alarms", Alarm.Columns.MESSAGE, values);
-        if (rowId < 0) {
-            throw new SQLException("Failed to insert row into " + url);
-        }
-        if (Log.LOGV) Log.v("Added alarm rowId = " + rowId);
-
-        Uri newUrl = ContentUris.withAppendedId(Alarm.Columns.CONTENT_URI, rowId);
+        Uri newUrl = mOpenHelper.commonInsert(initialValues);
         getContext().getContentResolver().notifyChange(newUrl, null);
         return newUrl;
     }
