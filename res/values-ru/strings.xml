@@ -88,9 +88,9 @@
     <string name="alarm_notify_text" msgid="4146350965933990093">"Нажмите, чтобы прервать или отключить."</string>
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (отложено)"</string>
     <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"Будильник зазвонит в <xliff:g id="TIME">%s</xliff:g>. Отменить?"</string>
-    <string name="volume_button_setting_title" msgid="8155275533660105161">"Громкость и камера"</string>
+    <string name="volume_button_setting_title" msgid="8155275533660105161">"Клавиша \"Громкость\""</string>
     <string name="volume_button_dialog_title" msgid="8768042543750036853">"Функция кнопок"</string>
-    <string name="volume_button_setting_summary" msgid="4776447991226047070">"Определить функции этих кнопок во время звонка будильника"</string>
+    <string name="volume_button_setting_summary" msgid="4776447991226047070">"Определить функцию этой кнопки во время звонка будильника"</string>
   <string-array name="volume_button_setting_entries">
     <item msgid="4520420953175098625">"Нет"</item>
     <item msgid="7111908302622811168">"Отложить"</item>
@@ -102,7 +102,7 @@
     <item msgid="7687709558968154577">"2"</item>
   </string-array>
     <string name="alarm_button_description" msgid="740283647046258651">"Будильник"</string>
-    <string name="gallery_button_description" msgid="1151743663255257668">"Фотоальбом"</string>
+    <string name="gallery_button_description" msgid="1151743663255257668">"Галерея"</string>
     <string name="music_button_description" msgid="1626593420810117999">"Музыка"</string>
     <string name="nightmode_button_description" msgid="990894208217576381">"Затемнить"</string>
     <string name="home_button_description" msgid="3383859096809056157">"Launcher"</string>
