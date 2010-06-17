@@ -46,6 +46,8 @@ public class SettingsActivity extends PreferenceActivity
             "volume_button_setting";
     static final String KEY_DEFAULT_RINGTONE =
             "default_ringtone";
+    static final String KEY_AUTO_SILENCE =
+            "auto_silence";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,11 +96,28 @@ public class SettingsActivity extends PreferenceActivity
     }
 
     public boolean onPreferenceChange(Preference pref, Object newValue) {
-        final ListPreference listPref = (ListPreference) pref;
-        final int idx = listPref.findIndexOfValue((String) newValue);
-        listPref.setSummary(listPref.getEntries()[idx]);
+        if (KEY_ALARM_SNOOZE.equals(pref.getKey())) {
+            final ListPreference listPref = (ListPreference) pref;
+            final int idx = listPref.findIndexOfValue((String) newValue);
+            listPref.setSummary(listPref.getEntries()[idx]);
+        } else if (KEY_AUTO_SILENCE.equals(pref.getKey())) {
+            final ListPreference listPref = (ListPreference) pref;
+            String delay = (String) newValue;
+            updateAutoSnoozeSummary(listPref, delay);
+        }
         return true;
     }
+
+    private void updateAutoSnoozeSummary(ListPreference listPref,
+            String delay) {
+        int i = Integer.parseInt(delay);
+        if (i == -1) {
+            listPref.setSummary(R.string.auto_silence_never);
+        } else {
+            listPref.setSummary(getString(R.string.auto_silence_summary, i));
+        }
+    }
+
 
     private void refresh() {
         final CheckBoxPreference alarmInSilentModePref =
@@ -109,10 +128,14 @@ public class SettingsActivity extends PreferenceActivity
         alarmInSilentModePref.setChecked(
                 (silentModeStreams & ALARM_STREAM_TYPE_BIT) == 0);
 
-        final ListPreference snooze =
+        ListPreference listPref =
                 (ListPreference) findPreference(KEY_ALARM_SNOOZE);
-        snooze.setSummary(snooze.getEntry());
-        snooze.setOnPreferenceChangeListener(this);
-    }
+        listPref.setSummary(listPref.getEntry());
+        listPref.setOnPreferenceChangeListener(this);
 
+        listPref = (ListPreference) findPreference(KEY_AUTO_SILENCE);
+        String delay = listPref.getValue();
+        updateAutoSnoozeSummary(listPref, delay);
+        listPref.setOnPreferenceChangeListener(this);
+    }
 }

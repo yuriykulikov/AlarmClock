@@ -31,6 +31,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
@@ -39,9 +40,8 @@ import android.telephony.TelephonyManager;
  * if another activity overrides the AlarmAlert dialog.
  */
 public class AlarmKlaxon extends Service {
-
-    /** Play alarm up to 10 minutes before silencing */
-    private static final int ALARM_TIMEOUT_SECONDS = 10 * 60;
+    // Default of 10 minutes until alarm is silenced.
+    private static final String DEFAULT_ALARM_TIMEOUT = "10";
 
     private static final long[] sVibratePattern = new long[] { 500, 500 };
 
@@ -283,8 +283,15 @@ public class AlarmKlaxon extends Service {
      * popped, so the user will know that the alarm tripped.
      */
     private void enableKiller(Alarm alarm) {
-        mHandler.sendMessageDelayed(mHandler.obtainMessage(KILLER, alarm),
-                1000 * ALARM_TIMEOUT_SECONDS);
+        final String autoSnooze =
+                PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(SettingsActivity.KEY_AUTO_SILENCE,
+                        DEFAULT_ALARM_TIMEOUT);
+        int autoSnoozeMinutes = Integer.parseInt(autoSnooze);
+        if (autoSnoozeMinutes != -1) {
+            mHandler.sendMessageDelayed(mHandler.obtainMessage(KILLER, alarm),
+                    1000 * autoSnoozeMinutes * 60);
+        }
     }
 
     private void disableKiller() {

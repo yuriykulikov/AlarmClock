@@ -39,6 +39,14 @@
         android:dialogTitle="@string/snooze_duration_title" />
 
     <ListPreference
+        android:key="auto_silence"
+        android:title="@string/auto_silence_title"
+        android:entries="@array/auto_silence_entries"
+        android:entryValues="@array/auto_silence_values"
+        android:defaultValue="10"
+        android:dialogTitle="@string/auto_silence_title" />
+
+    <ListPreference
         android:key="volume_button_setting"
         android:title="@string/volume_button_setting_title"
         android:dialogTitle="@string/volume_button_dialog_title"
