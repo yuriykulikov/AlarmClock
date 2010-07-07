@@ -103,14 +103,6 @@ public class AlarmReceiver extends BroadcastReceiver {
             c = AlarmAlertFullScreen.class;
         }
 
-        /* launch UI, explicitly stating that this is not due to user action
-         * so that the current app's notification management is not disturbed */
-        Intent alarmAlert = new Intent(context, c);
-        alarmAlert.putExtra(Alarms.ALARM_INTENT_EXTRA, alarm);
-        alarmAlert.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_NO_USER_ACTION);
-        context.startActivity(alarmAlert);
-
         // Disable the snooze alert if this alarm is the snooze.
         Alarms.disableSnoozeAlert(context, alarm.id);
         // Disable this alarm if it does not repeat.
@@ -144,8 +136,17 @@ public class AlarmReceiver extends BroadcastReceiver {
                 context.getString(R.string.alarm_notify_text),
                 pendingNotify);
         n.flags |= Notification.FLAG_SHOW_LIGHTS
-                | Notification.FLAG_ONGOING_EVENT;
+                | Notification.FLAG_ONGOING_EVENT
+                | Notification.FLAG_HIGH_PRIORITY;
         n.defaults |= Notification.DEFAULT_LIGHTS;
+
+        // NEW: Embed the full-screen UI here. The notification manager will
+        // take care of displaying it if it's OK to do so.
+        Intent alarmAlert = new Intent(context, c);
+        alarmAlert.putExtra(Alarms.ALARM_INTENT_EXTRA, alarm);
+        alarmAlert.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_NO_USER_ACTION);
+        n.fullScreenIntent = PendingIntent.getActivity(context, alarm.id, alarmAlert, 0);
 
         // Send the notification using the alarm id to easily identify the
         // correct notification.
