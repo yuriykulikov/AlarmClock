@@ -208,7 +208,7 @@
 
     <!-- Values that are retrieved from the ListPreference. These must match
          the auto_silence_entries above. -->
-    <string-array name="auto_silence_values">
+    <string-array name="auto_silence_values" translatable="false">
       <item>-1</item> <!-- Off -->
       <item>5</item>
       <item>10</item>
