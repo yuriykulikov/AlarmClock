@@ -252,6 +252,8 @@
 
     <string name="menu_item_dock_settings" msgid="9161438664257429372">Dock settings</string>
 
+    <string name="alarm_klaxon_service_desc">Sound playback service for alarms set in DeskClock.</string>
+
 </resources>
 
 

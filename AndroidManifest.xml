@@ -91,7 +91,9 @@
              intent. The service plays the alarm alert and vibrates the device.
              This allows the alert to continue playing even if another activity
              causes the AlarmAlert activity to pause. -->
-        <service android:name="AlarmKlaxon">
+        <service android:name="AlarmKlaxon"
+                android:description="@string/alarm_klaxon_service_desc"
+                >
             <intent-filter>
                 <action android:name="com.android.deskclock.ALARM_ALERT" />
             </intent-filter>
