@@ -79,6 +79,18 @@
     <item msgid="6048861883552402852">"25"</item>
     <item msgid="2740866721232379791">"30"</item>
   </string-array>
+    <string name="auto_silence_title" msgid="8000666766495360928">"Автовыключение"</string>
+    <string name="auto_silence_summary" msgid="5757272454196171758">"Сигнал отключится через <xliff:g id="MINUTES">%d</xliff:g> мин."</string>
+    <string name="auto_silence_never" msgid="4302257878142130807">"Выкл."</string>
+  <string-array name="auto_silence_entries">
+    <item msgid="7718972982871612080">"Выкл."</item>
+    <item msgid="5431906692406316549">"5 минут"</item>
+    <item msgid="7742728812068919959">"10 минут"</item>
+    <item msgid="2855948657259647629">"15 минут"</item>
+    <item msgid="6330196381284475079">"20 минут"</item>
+    <item msgid="7809240121716151904">"25 минут"</item>
+    <item msgid="2807487305575255986">"30 минут"</item>
+  </string-array>
     <string name="done" msgid="6509722361933858451">"Готово"</string>
     <string name="revert" msgid="9100911171235162926">"Отмена"</string>
     <string name="delete" msgid="5732434972457000541">"Удалить"</string>
@@ -101,6 +113,7 @@
     <item msgid="3204893476515513084">"1"</item>
     <item msgid="7687709558968154577">"2"</item>
   </string-array>
+    <string name="default_ringtone_setting_title" msgid="4549726190682964245">"Установить мелодию звонка по умолчанию"</string>
     <string name="alarm_button_description" msgid="740283647046258651">"Будильник"</string>
     <string name="gallery_button_description" msgid="1151743663255257668">"Галерея"</string>
     <string name="music_button_description" msgid="1626593420810117999">"Музыка"</string>
@@ -110,4 +123,6 @@
     <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g><xliff:g id="PERCENT">%%</xliff:g>"</string>
     <string name="weather_fetch_failure" msgid="7517010911981312358">"Сейчас информация о погоде недоступна."</string>
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Настройки док-станции"</string>
+    <string name="permission_provider" msgid="1285718676421141062">"считывать и устанавливать сигналы"</string>
+    <string name="permission_provider_desc" msgid="8795064961509550253">"Разрешает приложению считывать и устанавливать сигналы будильника"</string>
 </resources>

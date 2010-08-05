@@ -79,6 +79,18 @@
     <item msgid="6048861883552402852">"25"</item>
     <item msgid="2740866721232379791">"30"</item>
   </string-array>
+    <string name="auto_silence_title" msgid="8000666766495360928">"Automatické ztišení"</string>
+    <string name="auto_silence_summary" msgid="5757272454196171758">"Budíky budou ztišeny po <xliff:g id="MINUTES">%d</xliff:g> min."</string>
+    <string name="auto_silence_never" msgid="4302257878142130807">"Vypnuto"</string>
+  <string-array name="auto_silence_entries">
+    <item msgid="7718972982871612080">"Vypnuto"</item>
+    <item msgid="5431906692406316549">"5 minut"</item>
+    <item msgid="7742728812068919959">"10 minut"</item>
+    <item msgid="2855948657259647629">"15 minut"</item>
+    <item msgid="6330196381284475079">"20 minut"</item>
+    <item msgid="7809240121716151904">"25 minut"</item>
+    <item msgid="2807487305575255986">"30 minut"</item>
+  </string-array>
     <string name="done" msgid="6509722361933858451">"Hotovo"</string>
     <string name="revert" msgid="9100911171235162926">"Vrátit zpět"</string>
     <string name="delete" msgid="5732434972457000541">"Smazat"</string>
@@ -88,7 +100,7 @@
     <string name="alarm_notify_text" msgid="4146350965933990093">"Vyberte, zda budík chcete ukončit nebo odložit."</string>
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (odloženo)"</string>
     <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"Budík byl nastaven na <xliff:g id="TIME">%s</xliff:g>. Výběrem jej zrušíte."</string>
-    <string name="volume_button_setting_title" msgid="8155275533660105161">"Hlasitost a fotoaparát"</string>
+    <string name="volume_button_setting_title" msgid="8155275533660105161">"Hlasitost"</string>
     <string name="volume_button_dialog_title" msgid="8768042543750036853">"Funkce tlačítek"</string>
     <string name="volume_button_setting_summary" msgid="4776447991226047070">"Nastavte funkci těchto tlačítek, pokud jsou stisknuta během vyzvánění budíku."</string>
   <string-array name="volume_button_setting_entries">
@@ -101,6 +113,7 @@
     <item msgid="3204893476515513084">"1"</item>
     <item msgid="7687709558968154577">"2"</item>
   </string-array>
+    <string name="default_ringtone_setting_title" msgid="4549726190682964245">"Nastavení výchozího vyzvánění"</string>
     <string name="alarm_button_description" msgid="740283647046258651">"Budíky"</string>
     <string name="gallery_button_description" msgid="1151743663255257668">"Galerie"</string>
     <string name="music_button_description" msgid="1626593420810117999">"Hudba"</string>
@@ -110,4 +123,6 @@
     <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g> <xliff:g id="PERCENT">%%</xliff:g>"</string>
     <string name="weather_fetch_failure" msgid="7517010911981312358">"Informace o počasí aktuálně nejsou k dispozici."</string>
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Nastavení doku"</string>
+    <string name="permission_provider" msgid="1285718676421141062">"Číst a zapisovat budíky"</string>
+    <string name="permission_provider_desc" msgid="8795064961509550253">"Umožňuje aplikaci číst a zapisovat budíky v části Hodiny"</string>
 </resources>

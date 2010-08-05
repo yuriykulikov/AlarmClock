@@ -79,6 +79,18 @@
     <item msgid="6048861883552402852">"25"</item>
     <item msgid="2740866721232379791">"30"</item>
   </string-array>
+    <string name="auto_silence_title" msgid="8000666766495360928">"Automatisk sluk"</string>
+    <string name="auto_silence_summary" msgid="5757272454196171758">"Alarmen slukker efter <xliff:g id="MINUTES">%d</xliff:g> minutter"</string>
+    <string name="auto_silence_never" msgid="4302257878142130807">"Fra"</string>
+  <string-array name="auto_silence_entries">
+    <item msgid="7718972982871612080">"Fra"</item>
+    <item msgid="5431906692406316549">"5 minutter"</item>
+    <item msgid="7742728812068919959">"10 minutter"</item>
+    <item msgid="2855948657259647629">"15 minutter"</item>
+    <item msgid="6330196381284475079">"20 minutter"</item>
+    <item msgid="7809240121716151904">"25 minutter"</item>
+    <item msgid="2807487305575255986">"30 minutter"</item>
+  </string-array>
     <string name="done" msgid="6509722361933858451">"Udfør"</string>
     <string name="revert" msgid="9100911171235162926">"Annuller"</string>
     <string name="delete" msgid="5732434972457000541">"Slet"</string>
@@ -88,7 +100,7 @@
     <string name="alarm_notify_text" msgid="4146350965933990093">"Vælg for at slumre eller annullere alarmen."</string>
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (slumretilstand)"</string>
     <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"Alarmen er indstillet til <xliff:g id="TIME">%s</xliff:g>. Vælg for at annullere."</string>
-    <string name="volume_button_setting_title" msgid="8155275533660105161">"Lydstyrke og kamera"</string>
+    <string name="volume_button_setting_title" msgid="8155275533660105161">"Lydstyrke"</string>
     <string name="volume_button_dialog_title" msgid="8768042543750036853">"Knapeffekt"</string>
     <string name="volume_button_setting_summary" msgid="4776447991226047070">"Angiv, hvad sideknapperne gør, når der trykkes på dem under en alarm"</string>
   <string-array name="volume_button_setting_entries">
@@ -101,6 +113,7 @@
     <item msgid="3204893476515513084">"1"</item>
     <item msgid="7687709558968154577">"2"</item>
   </string-array>
+    <string name="default_ringtone_setting_title" msgid="4549726190682964245">"Angiv standardringetone"</string>
     <string name="alarm_button_description" msgid="740283647046258651">"Alarmer"</string>
     <string name="gallery_button_description" msgid="1151743663255257668">"Galleri"</string>
     <string name="music_button_description" msgid="1626593420810117999">"Musik"</string>
@@ -110,4 +123,6 @@
     <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g><xliff:g id="PERCENT">%%</xliff:g>"</string>
     <string name="weather_fetch_failure" msgid="7517010911981312358">"Oplysninger om vejret er ikke tilgængelige i øjeblikket."</string>
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Indstillinger for dockingstation"</string>
+    <string name="permission_provider" msgid="1285718676421141062">"Læs og skriv alarmer"</string>
+    <string name="permission_provider_desc" msgid="8795064961509550253">"Tillad, at programmet læser og skriver alarmer til Ur"</string>
 </resources>
