@@ -154,6 +154,10 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         final AdapterContextMenuInfo info =
                 (AdapterContextMenuInfo) item.getMenuInfo();
         final int id = (int) info.id;
+        // Error check just in case.
+        if (id == -1) {
+            return super.onContextItemSelected(item);
+        }
         switch (item.getItemId()) {
             case R.id.delete_alarm:
                 // Confirm that the alarm will be deleted.
