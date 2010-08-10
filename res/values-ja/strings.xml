@@ -125,4 +125,6 @@
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"ドックの設定"</string>
     <string name="permission_provider" msgid="1285718676421141062">"アラームの読み取りと書き込み"</string>
     <string name="permission_provider_desc" msgid="8795064961509550253">"時計に対するアラームの読み書きをアプリケーションに許可する"</string>
+    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
+    <skip />
 </resources>

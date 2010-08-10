@@ -123,6 +123,8 @@
     <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g><xliff:g id="PERCENT">%%</xliff:g>"</string>
     <string name="weather_fetch_failure" msgid="7517010911981312358">"현재 날씨 정보를 사용할 수 없습니다."</string>
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"도킹 설정"</string>
-    <string name="permission_provider" msgid="1285718676421141062">"알람을 읽고 작성합니다."</string>
-    <string name="permission_provider_desc" msgid="8795064961509550253">"애플리케이션이 알람을 읽고 시계에 작성하도록 허용합니다."</string>
+    <string name="permission_provider" msgid="1285718676421141062">"알람 읽기 및 설정하기"</string>
+    <string name="permission_provider_desc" msgid="8795064961509550253">"애플리케이션이 시계 알람을 읽고 설정하도록 허용합니다."</string>
+    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
+    <skip />
 </resources>

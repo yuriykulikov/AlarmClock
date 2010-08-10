@@ -125,4 +125,6 @@
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Impostazioni dock"</string>
     <string name="permission_provider" msgid="1285718676421141062">"Lettura e scrittura di allarmi"</string>
     <string name="permission_provider_desc" msgid="8795064961509550253">"Consenti all\'applicazione di leggere e scrivere allarmi per l\'orologio"</string>
+    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
+    <skip />
 </resources>

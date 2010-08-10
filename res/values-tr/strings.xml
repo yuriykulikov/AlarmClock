@@ -80,7 +80,7 @@
     <item msgid="2740866721232379791">"30"</item>
   </string-array>
     <string name="auto_silence_title" msgid="8000666766495360928">"Otomatik susma"</string>
-    <string name="auto_silence_summary" msgid="5757272454196171758">"Alarmlar <xliff:g id="MINUTES">%d</xliff:g>dakika sonra susacaktır"</string>
+    <string name="auto_silence_summary" msgid="5757272454196171758">"Alarmlar <xliff:g id="MINUTES">%d</xliff:g> dakika sonra susacaktır"</string>
     <string name="auto_silence_never" msgid="4302257878142130807">"Kapalı"</string>
   <string-array name="auto_silence_entries">
     <item msgid="7718972982871612080">"Kapalı"</item>
@@ -125,4 +125,6 @@
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Yuva ayarları"</string>
     <string name="permission_provider" msgid="1285718676421141062">"Alarmları oku ve yaz"</string>
     <string name="permission_provider_desc" msgid="8795064961509550253">"Uygulamanın alarmları Saatten okumasına ve Saate yazmasına izin ver"</string>
+    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
+    <skip />
 </resources>

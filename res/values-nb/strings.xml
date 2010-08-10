@@ -125,4 +125,6 @@
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Innstillinger for forankringsstasjon"</string>
     <string name="permission_provider" msgid="1285718676421141062">"Les og skriv alarmer"</string>
     <string name="permission_provider_desc" msgid="8795064961509550253">"Tillat programmet å lese og skrive alarmer til klokken"</string>
+    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
+    <skip />
 </resources>

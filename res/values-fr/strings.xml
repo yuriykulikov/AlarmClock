@@ -83,7 +83,7 @@
     <string name="auto_silence_summary" msgid="5757272454196171758">"Les alarmes passent en mode silencieux au bout de <xliff:g id="MINUTES">%d</xliff:g> minutes."</string>
     <string name="auto_silence_never" msgid="4302257878142130807">"Désactivé"</string>
   <string-array name="auto_silence_entries">
-    <item msgid="7718972982871612080">"Désactiver"</item>
+    <item msgid="7718972982871612080">"Désactivé"</item>
     <item msgid="5431906692406316549">"5 minutes"</item>
     <item msgid="7742728812068919959">"10 minutes"</item>
     <item msgid="2855948657259647629">"15 minutes"</item>
@@ -125,4 +125,6 @@
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Paramètres station d\'accueil"</string>
     <string name="permission_provider" msgid="1285718676421141062">"Consulter et ajouter des alarmes"</string>
     <string name="permission_provider_desc" msgid="8795064961509550253">"Autoriser l\'application à consulter et à ajouter des alarmes dans l\'horloge"</string>
+    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
+    <skip />
 </resources>
