@@ -79,8 +79,8 @@
     <item msgid="6048861883552402852">"25"</item>
     <item msgid="2740866721232379791">"30"</item>
   </string-array>
-    <string name="auto_silence_title" msgid="8000666766495360928">"自動靜音"</string>
-    <string name="auto_silence_summary" msgid="5757272454196171758">"鬧鐘將於 <xliff:g id="MINUTES">%d</xliff:g> 分鐘後靜音"</string>
+    <string name="auto_silence_title" msgid="8000666766495360928">"自動停止鈴聲"</string>
+    <string name="auto_silence_summary" msgid="5757272454196171758">"鬧鐘會在 <xliff:g id="MINUTES">%d</xliff:g> 分鐘後停止鈴聲"</string>
     <string name="auto_silence_never" msgid="4302257878142130807">"關閉"</string>
   <string-array name="auto_silence_entries">
     <item msgid="7718972982871612080">"關閉"</item>
@@ -123,6 +123,8 @@
     <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g><xliff:g id="PERCENT">%%</xliff:g>"</string>
     <string name="weather_fetch_failure" msgid="7517010911981312358">"目前無法取得天氣資訊。"</string>
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"座架設定"</string>
-    <string name="permission_provider" msgid="1285718676421141062">"讀取及寫入鬧鐘設定"</string>
-    <string name="permission_provider_desc" msgid="8795064961509550253">"允許應用程式對「時鐘」讀取及寫入鬧鐘設定"</string>
+    <string name="permission_provider" msgid="1285718676421141062">"讀取和寫入鬧鐘設定"</string>
+    <string name="permission_provider_desc" msgid="8795064961509550253">"允許應用程式對「時鐘」讀取和寫入鬧鐘設定"</string>
+    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
+    <skip />
 </resources>

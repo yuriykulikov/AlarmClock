@@ -125,4 +125,6 @@
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Definições da estação de ancoragem"</string>
     <string name="permission_provider" msgid="1285718676421141062">"Ler e escrever alarmes"</string>
     <string name="permission_provider_desc" msgid="8795064961509550253">"Permitir à aplicação ler e escrever alarmes para o Relógio"</string>
+    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
+    <skip />
 </resources>

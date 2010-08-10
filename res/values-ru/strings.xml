@@ -124,5 +124,7 @@
     <string name="weather_fetch_failure" msgid="7517010911981312358">"Сейчас информация о погоде недоступна."</string>
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Настройки док-станции"</string>
     <string name="permission_provider" msgid="1285718676421141062">"считывать и устанавливать сигналы"</string>
-    <string name="permission_provider_desc" msgid="8795064961509550253">"Разрешает приложению считывать и устанавливать сигналы будильника"</string>
+    <string name="permission_provider_desc" msgid="8795064961509550253">"Разрешить приложению считывать и устанавливать сигналы будильника"</string>
+    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
+    <skip />
 </resources>

@@ -79,8 +79,8 @@
     <item msgid="6048861883552402852">"25"</item>
     <item msgid="2740866721232379791">"30"</item>
   </string-array>
-    <string name="auto_silence_title" msgid="8000666766495360928">"Silenciar automaticamente"</string>
-    <string name="auto_silence_summary" msgid="5757272454196171758">"Os alarmes serão silenciados depois de <xliff:g id="MINUTES">%d</xliff:g> minutos"</string>
+    <string name="auto_silence_title" msgid="8000666766495360928">"Silenciar autom."</string>
+    <string name="auto_silence_summary" msgid="5757272454196171758">"Os alarmes serão silenciados após <xliff:g id="MINUTES">%d</xliff:g> minutos"</string>
     <string name="auto_silence_never" msgid="4302257878142130807">"Desativado"</string>
   <string-array name="auto_silence_entries">
     <item msgid="7718972982871612080">"Desativado"</item>
@@ -125,4 +125,6 @@
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Configurações de dock"</string>
     <string name="permission_provider" msgid="1285718676421141062">"Ler e gravar alarmes"</string>
     <string name="permission_provider_desc" msgid="8795064961509550253">"Permitir que o aplicativo leia e grave alarmes no Relógio"</string>
+    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
+    <skip />
 </resources>

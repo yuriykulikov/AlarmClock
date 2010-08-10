@@ -125,4 +125,6 @@
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Dockningsinställningar"</string>
     <string name="permission_provider" msgid="1285718676421141062">"Läs och skriv alarm"</string>
     <string name="permission_provider_desc" msgid="8795064961509550253">"Tillåter att ett program läser och skriver alarm till klockan"</string>
+    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
+    <skip />
 </resources>
