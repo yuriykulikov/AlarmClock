@@ -115,8 +115,8 @@ public class Alarms {
      * Removes an existing Alarm.  If this alarm is snoozing, disables
      * snooze.  Sets next alert.
      */
-    public static void deleteAlarm(
-            Context context, int alarmId) {
+    public static void deleteAlarm(Context context, int alarmId) {
+        if (alarmId == -1) return;
 
         ContentResolver contentResolver = context.getContentResolver();
         /* If alarm is snoozing, lose it */
