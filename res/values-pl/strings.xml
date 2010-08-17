@@ -125,6 +125,5 @@
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Ustawienia podstawki"</string>
     <string name="permission_provider" msgid="1285718676421141062">"Odczytywanie i zapisywanie alarmów"</string>
     <string name="permission_provider_desc" msgid="8795064961509550253">"Zezwala aplikacji na odczyt i zapis alarmów w aplikacji Zegar"</string>
-    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
-    <skip />
+    <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Usługa odtwarzania dźwięku alarmów ustawionych w aplikacji DeskClock."</string>
 </resources>

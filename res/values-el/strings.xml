@@ -125,6 +125,5 @@
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Ρυθμίσεις βάσης σύνδεσης"</string>
     <string name="permission_provider" msgid="1285718676421141062">"Ανάγνωση και εγγραφή ειδοποιήσεων"</string>
     <string name="permission_provider_desc" msgid="8795064961509550253">"Να επιτρέπεται στην εφαρμογή να πραγματοποιεί ανάγνωση και εγγραφή ειδοποιήσεων στο Ρολόι"</string>
-    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
-    <skip />
+    <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Η υπηρεσία αναπαραγωγής ήχου για ειδοποιήσεις έχει ρυθμιστεί στο DeskClock."</string>
 </resources>

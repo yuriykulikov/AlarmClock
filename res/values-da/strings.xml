@@ -125,6 +125,5 @@
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Indstillinger for dockingstation"</string>
     <string name="permission_provider" msgid="1285718676421141062">"Læs og skriv alarmer"</string>
     <string name="permission_provider_desc" msgid="8795064961509550253">"Tillad, at programmet læser og skriver alarmer til Ur"</string>
-    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
-    <skip />
+    <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Kør afspilningstjeneste for alarmer, der er indstillet i DeskClock."</string>
 </resources>

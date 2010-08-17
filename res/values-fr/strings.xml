@@ -125,6 +125,5 @@
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Paramètres station d\'accueil"</string>
     <string name="permission_provider" msgid="1285718676421141062">"Consulter et ajouter des alarmes"</string>
     <string name="permission_provider_desc" msgid="8795064961509550253">"Autoriser l\'application à consulter et à ajouter des alarmes dans l\'horloge"</string>
-    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
-    <skip />
+    <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Lancez le service de lecture pour les alarmes définies via l\'Horloge de bureau."</string>
 </resources>

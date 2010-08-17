@@ -125,6 +125,5 @@
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"도킹 설정"</string>
     <string name="permission_provider" msgid="1285718676421141062">"알람 읽기 및 설정하기"</string>
     <string name="permission_provider_desc" msgid="8795064961509550253">"애플리케이션이 시계 알람을 읽고 설정하도록 허용합니다."</string>
-    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
-    <skip />
+    <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"DeskClock에서 설정한 알람에 대한 사운드 재생 서비스"</string>
 </resources>

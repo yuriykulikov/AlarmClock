@@ -125,6 +125,5 @@
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Configuración de la base"</string>
     <string name="permission_provider" msgid="1285718676421141062">"Leer y escribir alarmas"</string>
     <string name="permission_provider_desc" msgid="8795064961509550253">"Permitir que la aplicación lea y escriba alarmas en el reloj"</string>
-    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
-    <skip />
+    <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Servicio de reproducción de sonidos para alarmas en DeskClock"</string>
 </resources>

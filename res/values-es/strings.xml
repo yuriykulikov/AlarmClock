@@ -125,6 +125,5 @@
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Ajustes del conector"</string>
     <string name="permission_provider" msgid="1285718676421141062">"Leer y crear alarmas"</string>
     <string name="permission_provider_desc" msgid="8795064961509550253">"Permitir a la aplicación leer y crear alarmas para el reloj"</string>
-    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
-    <skip />
+    <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Reproducción de alarmas definidas en reloj de escritorio"</string>
 </resources>
