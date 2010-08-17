@@ -110,6 +110,5 @@
     <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g><xliff:g id="PERCENT">%%</xliff:g>"</string>
     <string name="weather_fetch_failure" msgid="7517010911981312358">"Værinformasjonen er for øyeblikket ikke tilgjengelig."</string>
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Innstillinger for forankringsstasjon"</string>
-    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
-    <skip />
+    <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Lydavspillingstjeneste for alarmer som er angitt i DeskClock."</string>
 </resources>
