@@ -136,8 +136,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 context.getString(R.string.alarm_notify_text),
                 pendingNotify);
         n.flags |= Notification.FLAG_SHOW_LIGHTS
-                | Notification.FLAG_ONGOING_EVENT
-                | Notification.FLAG_HIGH_PRIORITY;
+                | Notification.FLAG_ONGOING_EVENT;
         n.defaults |= Notification.DEFAULT_LIGHTS;
 
         // NEW: Embed the full-screen UI here. The notification manager will
