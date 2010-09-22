@@ -15,7 +15,9 @@
     <application android:label="@string/app_label"
                  android:icon="@drawable/ic_launcher_alarmclock">
 
-        <provider android:name="AlarmProvider" android:authorities="com.android.deskclock" />
+        <provider android:name="AlarmProvider"
+                android:authorities="com.android.deskclock"
+                android:exported="false" />
 
         <activity android:name="DeskClock"
                 android:label="@string/app_label"
@@ -79,11 +81,21 @@
 
         <receiver android:name="AlarmReceiver">
             <intent-filter>
-               <action android:name="com.android.deskclock.ALARM_ALERT" />
-               <action android:name="alarm_killed" />
-               <action android:name="cancel_snooze" />
+                <action android:name="com.android.deskclock.ALARM_ALERT" />
+                <action android:name="alarm_killed" />
+                <action android:name="cancel_snooze" />
             </intent-filter>
         </receiver>
+
+        <activity android:name="HandleSetAlarm"
+                android:theme="@android:style/Theme.NoDisplay"
+                android:excludeFromRecents="true"
+                android:permission="com.android.alarm.permission.SET_ALARM">
+            <intent-filter>
+                <action android:name="android.intent.action.SET_ALARM" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <!-- This service receives the same intent as AlarmReceiver but it does
              not respond to the same broadcast. The AlarmReceiver will receive
