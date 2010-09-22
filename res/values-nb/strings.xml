@@ -123,7 +123,5 @@
     <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g><xliff:g id="PERCENT">%%</xliff:g>"</string>
     <string name="weather_fetch_failure" msgid="7517010911981312358">"Værinformasjonen er for øyeblikket ikke tilgjengelig."</string>
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Innstillinger for forankringsstasjon"</string>
-    <string name="permission_provider" msgid="1285718676421141062">"Les og skriv alarmer"</string>
-    <string name="permission_provider_desc" msgid="8795064961509550253">"Tillat programmet å lese og skrive alarmer til klokken"</string>
     <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Lydavspillingstjeneste for alarmer som er angitt i DeskClock."</string>
 </resources>

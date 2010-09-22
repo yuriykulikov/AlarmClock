@@ -123,7 +123,5 @@
     <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g><xliff:g id="PERCENT">%%</xliff:g>"</string>
     <string name="weather_fetch_failure" msgid="7517010911981312358">"Informações metereológicas indisponíveis no momento"</string>
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Configurações de dock"</string>
-    <string name="permission_provider" msgid="1285718676421141062">"Ler e gravar alarmes"</string>
-    <string name="permission_provider_desc" msgid="8795064961509550253">"Permitir que o aplicativo leia e grave alarmes no Relógio"</string>
     <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Serviço de reprodução de sons para alarmes definidos no DeskClock."</string>
 </resources>

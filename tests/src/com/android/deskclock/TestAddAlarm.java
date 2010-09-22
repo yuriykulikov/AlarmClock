@@ -17,29 +17,38 @@
 package com.android.deskclock.tests;
 
 import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.net.Uri;
+import android.content.Intent;
 import android.os.Bundle;
-
-import java.util.Calendar;
+import android.provider.AlarmClock;
 
 public class TestAddAlarm extends Activity {
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        ContentResolver cr = getContentResolver();
 
-        ContentValues values = new ContentValues();
+        Intent i = new Intent(AlarmClock.ACTION_SET_ALARM);
+        i.putExtra(AlarmClock.EXTRA_MESSAGE, "New Alarm!");
+        i.putExtra(AlarmClock.EXTRA_HOUR, 12);
+        i.putExtra(AlarmClock.EXTRA_MINUTES, 27);
 
-        // 1:23 pm
-        values.put("hour", 13);
-        values.put("minutes", 23);
-        values.put("message", "Auto-added alarm");
+        startActivity(i);
 
-        cr.insert(Uri.parse("content://com.android.deskclock.alarmprovider/add"),
-                  values);
+        // Should not see a duplicate
+        startActivity(i);
+
+        // No message, alarm set for now.
+        startActivity(new Intent(AlarmClock.ACTION_SET_ALARM));
+
+        i.removeExtra(AlarmClock.EXTRA_MESSAGE);
+        startActivity(i);
+        // No dup of null message.
+        startActivity(i);
+
+        // Enable default 8:30 alarm.
+        i.putExtra(AlarmClock.EXTRA_HOUR, 8);
+        i.putExtra(AlarmClock.EXTRA_MINUTES, 30);
+        startActivity(i);
 
         finish();
     }

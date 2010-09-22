@@ -289,11 +289,6 @@
 
     <string name="menu_item_dock_settings" msgid="9161438664257429372">Dock settings</string>
 
-    <string name="permission_provider">Read and write alarms</string>
-
-    <string name="permission_provider_desc">Allow the application to read and
-      write alarms to the Clock</string>
-
     <!-- A description for the DeskClock alarm sound playback service.
          [CHAR LIMIT=NONE] -->
     <string name="alarm_klaxon_service_desc">Sound playback service for alarms set in DeskClock.</string>

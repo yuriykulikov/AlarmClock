@@ -5,15 +5,6 @@
     <original-package android:name="com.android.alarmclock" />
     <original-package android:name="com.android.deskclock" />
 
-    <!-- This permission is for internal use only.  It is meant to protect the
-         internal alarm provider from other apps.  It uses the signature
-         protection which means that apps signed with the same certificate
-         would be able to use the permission.  Please do not do that! -->
-    <permission android:name="com.android.deskclock.permission.PROVIDER"
-                android:protectionLevel="signature"
-                android:label="@string/permission_provider"
-                android:description="@string/permission_provider_desc" />
-
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
@@ -26,15 +17,8 @@
                  android:icon="@drawable/ic_launcher_alarmclock">
 
         <provider android:name="AlarmProvider"
-                  android:exported="false"
-                  android:multiprocess="false"
-                  android:writePermission="com.android.deskclock.permission.PROVIDER"
-                  android:readPermission="com.android.deskclock.permission.PROVIDER"
-                  android:authorities="com.android.deskclock" />
-
-        <provider android:name="ExternalAlarmProvider"
-                  android:authorities="com.android.deskclock.alarmprovider"
-                  android:multiprocess="false" />
+                android:authorities="com.android.deskclock"
+                android:exported="false" />
 
         <activity android:name="DeskClock"
                 android:label="@string/app_label"
@@ -98,11 +82,21 @@
 
         <receiver android:name="AlarmReceiver">
             <intent-filter>
-               <action android:name="com.android.deskclock.ALARM_ALERT" />
-               <action android:name="alarm_killed" />
-               <action android:name="cancel_snooze" />
+                <action android:name="com.android.deskclock.ALARM_ALERT" />
+                <action android:name="alarm_killed" />
+                <action android:name="cancel_snooze" />
             </intent-filter>
         </receiver>
+
+        <activity android:name="HandleSetAlarm"
+                android:theme="@android:style/Theme.NoDisplay"
+                android:excludeFromRecents="true"
+                android:permission="com.android.alarm.permission.SET_ALARM">
+            <intent-filter>
+                <action android:name="android.intent.action.SET_ALARM" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <!-- This service receives the same intent as AlarmReceiver but it does
              not respond to the same broadcast. The AlarmReceiver will receive

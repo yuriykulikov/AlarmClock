@@ -123,7 +123,5 @@
     <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g> <xliff:g id="PERCENT">%%</xliff:g>"</string>
     <string name="weather_fetch_failure" msgid="7517010911981312358">"La météo n\'est pas disponible pour le moment."</string>
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Paramètres station d\'accueil"</string>
-    <string name="permission_provider" msgid="1285718676421141062">"Consulter et ajouter des alarmes"</string>
-    <string name="permission_provider_desc" msgid="8795064961509550253">"Autoriser l\'application à consulter et à ajouter des alarmes dans l\'horloge"</string>
     <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Lancez le service de lecture pour les alarmes définies via l\'Horloge de bureau."</string>
 </resources>
