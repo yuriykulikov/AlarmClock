@@ -27,18 +27,15 @@ import android.content.BroadcastReceiver;
 import android.database.Cursor;
 import android.os.Parcel;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 /**
  * Glue class: connects AlarmAlert IntentReceiver to AlarmAlert
  * activity.  Passes through Alarm ID.
  */
 public class AlarmReceiver extends BroadcastReceiver {
 
-    /** If the alarm is older than STALE_WINDOW seconds, ignore.  It
+    /** If the alarm is older than STALE_WINDOW, ignore.  It
         is probably the result of a time or timezone change */
-    private final static int STALE_WINDOW = 60 * 30;
+    private final static int STALE_WINDOW = 30 * 60 * 1000;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -50,6 +47,9 @@ public class AlarmReceiver extends BroadcastReceiver {
             return;
         } else if (Alarms.CANCEL_SNOOZE.equals(intent.getAction())) {
             Alarms.saveSnoozeAlert(context, -1, -1);
+            return;
+        } else if (!Alarms.ALARM_ALERT_ACTION.equals(intent.getAction())) {
+            // Unknown intent, bail.
             return;
         }
 
@@ -67,22 +67,31 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
 
         if (alarm == null) {
-            Log.v("AlarmReceiver failed to parse the alarm from the intent");
+            Log.wtf("Failed to parse the alarm from the intent");
+            // Make sure we set the next alert if needed.
+            Alarms.setNextAlert(context);
             return;
+        }
+
+        // Disable the snooze alert if this alarm is the snooze.
+        Alarms.disableSnoozeAlert(context, alarm.id);
+        // Disable this alarm if it does not repeat.
+        if (!alarm.daysOfWeek.isRepeatSet()) {
+            Alarms.enableAlarm(context, alarm.id, false);
+        } else {
+            // Enable the next alert if there is one. The above call to
+            // enableAlarm will call setNextAlert so avoid calling it twice.
+            Alarms.setNextAlert(context);
         }
 
         // Intentionally verbose: always log the alarm time to provide useful
         // information in bug reports.
         long now = System.currentTimeMillis();
-        SimpleDateFormat format =
-                new SimpleDateFormat("HH:mm:ss.SSS aaa");
-        Log.v("AlarmReceiver.onReceive() id " + alarm.id + " setFor "
-                + format.format(new Date(alarm.time)));
+        Log.v("Recevied alarm set for " + Log.formatTime(alarm.time));
 
-        if (now > alarm.time + STALE_WINDOW * 1000) {
-            if (Log.LOGV) {
-                Log.v("AlarmReceiver ignoring stale alarm");
-            }
+        // Always verbose to track down time change problems.
+        if (now > alarm.time + STALE_WINDOW) {
+            Log.v("Ignoring stale alarm");
             return;
         }
 
@@ -101,17 +110,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         if (km.inKeyguardRestrictedInputMode()) {
             // Use the full screen activity for security.
             c = AlarmAlertFullScreen.class;
-        }
-
-        // Disable the snooze alert if this alarm is the snooze.
-        Alarms.disableSnoozeAlert(context, alarm.id);
-        // Disable this alarm if it does not repeat.
-        if (!alarm.daysOfWeek.isRepeatSet()) {
-            Alarms.enableAlarm(context, alarm.id, false);
-        } else {
-            // Enable the next alert if there is one. The above call to
-            // enableAlarm will call setNextAlert so avoid calling it twice.
-            Alarms.setNextAlert(context);
         }
 
         // Play the alarm alert and vibrate the device.
