@@ -23,6 +23,9 @@ package com.android.deskclock;
 import android.os.SystemClock;
 import android.util.Config;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 class Log {
     public final static String LOGTAG = "AlarmClock";
 
@@ -42,5 +45,13 @@ class Log {
 
     static void e(String logMe, Exception ex) {
         android.util.Log.e(LOGTAG, logMe, ex);
+    }
+
+    static void wtf(String logMe) {
+        android.util.Log.wtf(LOGTAG, logMe);
+    }
+
+    static String formatTime(long millis) {
+        return new SimpleDateFormat("HH:mm:ss.SSS aaa").format(new Date(millis));
     }
 }

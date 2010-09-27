@@ -293,6 +293,8 @@ public class Alarms {
                     if (a.time == 0) {
                         a.time = calculateAlarm(a);
                     } else if (a.time < now) {
+                        Log.v("Disabling expired alarm set for " +
+                              Log.formatTime(a.time));
                         // Expired alarm, disable it and move along.
                         enableAlarmInternal(context, a, false);
                         continue;
@@ -322,10 +324,8 @@ public class Alarms {
                 // A time of 0 means this alarm repeats. If the time is
                 // non-zero, check if the time is before now.
                 if (alarm.time != 0 && alarm.time < now) {
-                    if (Log.LOGV) {
-                        Log.v("** DISABLE " + alarm.id + " now " + now +" set "
-                                + alarm.time);
-                    }
+                    Log.v("Disabling expired alarm set for " +
+                          Log.formatTime(alarm.time));
                     enableAlarmInternal(context, alarm, false);
                 }
             } while (cur.moveToNext());
