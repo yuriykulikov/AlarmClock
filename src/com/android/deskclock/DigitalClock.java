@@ -67,6 +67,8 @@ public class DigitalClock extends LinearLayout {
             }
         };
 
+    private static Typeface sTypeface;
+
     static class AmPm {
         private TextView mAmPm;
         private String mAmString, mPmString;
@@ -111,10 +113,12 @@ public class DigitalClock extends LinearLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        Typeface tf = Typeface.createFromAsset(getContext().getAssets(),
+        if (sTypeface == null) {
+            sTypeface = Typeface.createFromAsset(getContext().getAssets(),
                 "fonts/Clockopia.ttf");
+        }
         mTimeDisplay = (TextView) findViewById(R.id.timeDisplay);
-        mTimeDisplay.setTypeface(tf);
+        mTimeDisplay.setTypeface(sTypeface);
         mAmPm = new AmPm(this);
         mCalendar = Calendar.getInstance();
 
