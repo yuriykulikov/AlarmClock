@@ -37,18 +37,13 @@ public class TestAddAlarm extends Activity {
         // Should not see a duplicate
         startActivity(i);
 
-        // No message, alarm set for now.
-        startActivity(new Intent(AlarmClock.ACTION_SET_ALARM));
-
         i.removeExtra(AlarmClock.EXTRA_MESSAGE);
         startActivity(i);
         // No dup of null message.
         startActivity(i);
 
-        // Enable default 8:30 alarm.
-        i.putExtra(AlarmClock.EXTRA_HOUR, 8);
-        i.putExtra(AlarmClock.EXTRA_MINUTES, 30);
-        startActivity(i);
+        // No extras, launches the alarm list.
+        startActivity(new Intent(AlarmClock.ACTION_SET_ALARM));
 
         finish();
     }

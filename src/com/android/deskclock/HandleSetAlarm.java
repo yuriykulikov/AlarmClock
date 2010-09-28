@@ -38,6 +38,10 @@ public class HandleSetAlarm extends Activity {
         if (intent == null || !ACTION_SET_ALARM.equals(intent.getAction())) {
             finish();
             return;
+        } else if (!intent.hasExtra(EXTRA_HOUR)) {
+            startActivity(new Intent(this, AlarmClock.class));
+            finish();
+            return;
         }
 
         final Calendar calendar = Calendar.getInstance();
@@ -52,18 +56,21 @@ public class HandleSetAlarm extends Activity {
         }
 
         Cursor c = null;
+        long timeInMillis = Alarms.calculateAlarm(hour, minutes,
+                new Alarm.DaysOfWeek(0)).getTimeInMillis();
         try {
             c = getContentResolver().query(
                     Alarm.Columns.CONTENT_URI,
                     new String[] { Alarm.Columns._ID },
                     Alarm.Columns.HOUR + "=" + hour + " AND " +
                     Alarm.Columns.MINUTES + "=" + minutes + " AND " +
+                    Alarm.Columns.DAYS_OF_WEEK + "=0 AND " +
                     Alarm.Columns.MESSAGE + "=?",
                     new String[] { message }, null);
             if (c != null && c.moveToFirst()) {
-                do {
-                    Alarms.enableAlarm(this, c.getInt(0), true);
-                } while (c.moveToNext());
+                // Enable the first alarm we find.
+                Alarms.enableAlarm(this, c.getInt(0), true);
+                SetAlarm.popAlarmSetToast(this, timeInMillis);
                 finish();
                 return;
             }
@@ -77,12 +84,12 @@ public class HandleSetAlarm extends Activity {
         values.put(Alarm.Columns.MESSAGE, message);
         values.put(Alarm.Columns.ENABLED, 1);
         values.put(Alarm.Columns.VIBRATE, 1);
-        values.put(Alarm.Columns.ALARM_TIME,
-                Alarms.calculateAlarm(hour, minutes,
-                        new Alarm.DaysOfWeek(0)).getTimeInMillis());
+        values.put(Alarm.Columns.DAYS_OF_WEEK, 0);
+        values.put(Alarm.Columns.ALARM_TIME, timeInMillis);
 
         if (getContentResolver().insert(
                 Alarm.Columns.CONTENT_URI, values) != null) {
+            SetAlarm.popAlarmSetToast(this, timeInMillis);
             Alarms.setNextAlert(this);
         }
 
