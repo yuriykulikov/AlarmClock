@@ -18,6 +18,7 @@
     android:minWidth="146dip"
     android:minHeight="146dip"
     android:updatePeriodMillis="0"
+    android:previewImage="@drawable/preview"
     android:initialLayout="@layout/analog_appwidget"
     >
 </appwidget-provider>
