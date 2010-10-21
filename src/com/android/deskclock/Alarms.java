@@ -88,7 +88,7 @@ public class Alarms {
     final static String PREF_SNOOZE_TIME = "snooze_time";
 
     private final static String DM12 = "E h:mm aa";
-    private final static String DM24 = "E k:mm";
+    private final static String DM24 = "E kk:mm";
 
     private final static String M12 = "h:mm aa";
     // Shared with DigitalClock
