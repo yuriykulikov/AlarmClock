@@ -38,6 +38,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -186,8 +187,9 @@ public class DeskClock extends Activity {
                 refreshDate();
             } else if (Intent.ACTION_BATTERY_CHANGED.equals(action)) {
                 handleBatteryUpdate(
-                    intent.getIntExtra("status", BATTERY_STATUS_UNKNOWN),
-                    intent.getIntExtra("level", 0));
+                    intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0),
+                    intent.getIntExtra(BatteryManager.EXTRA_STATUS, BATTERY_STATUS_UNKNOWN),
+                    intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0));
             } else if (UiModeManager.ACTION_EXIT_DESK_MODE.equals(action)) {
                 if (mLaunchedFromDock) {
                     // moveTaskToBack(false);
@@ -473,8 +475,8 @@ public class DeskClock extends Activity {
     }
 
     // Adapted from KeyguardUpdateMonitor.java
-    private void handleBatteryUpdate(int plugStatus, int batteryLevel) {
-        final boolean pluggedIn = (plugStatus == BATTERY_STATUS_CHARGING || plugStatus == BATTERY_STATUS_FULL);
+    private void handleBatteryUpdate(int plugged, int status, int level) {
+        final boolean pluggedIn = (plugged != 0);
         if (pluggedIn != mPluggedIn) {
             setWakeLock(pluggedIn);
 
@@ -483,8 +485,8 @@ public class DeskClock extends Activity {
                 requestWeatherDataFetch();
             }
         }
-        if (pluggedIn != mPluggedIn || batteryLevel != mBatteryLevel) {
-            mBatteryLevel = batteryLevel;
+        if (pluggedIn != mPluggedIn || level != mBatteryLevel) {
+            mBatteryLevel = level;
             mPluggedIn = pluggedIn;
             refreshBattery();
         }
