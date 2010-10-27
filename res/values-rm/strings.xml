@@ -47,7 +47,7 @@
     <string name="minutes" msgid="6115838729146292526">"<xliff:g id="MINUTES">%s</xliff:g> minutas"</string>
     <string name="every_day" msgid="1058994798884544691">"mintga di"</string>
     <string name="never" msgid="54104287800571769">"Mai"</string>
-    <string name="day_concat" msgid="971998564991636532">", "</string>
+    <string name="day_concat" msgid="971998564991636532">"\",\" "</string>
     <string name="clock_instructions" msgid="3118560284915857690">"Tscherni l\'ura che duai vegnir mussada."</string>
     <string name="analog_gadget" msgid="1670505720837152766">"Ura analoga"</string>
     <string name="settings" msgid="5849739030579520686">"Parameters"</string>
@@ -85,7 +85,7 @@
     <!-- no translation found for auto_silence_entries:6 (2807487305575255986) -->
     <string name="done" msgid="6509722361933858451">"Finì"</string>
     <string name="revert" msgid="9100911171235162926">"Reinizialisar"</string>
-    <string name="delete" msgid="5732434972457000541">"Stizzar"</string>
+    <string name="delete" msgid="5732434972457000541">"\"Stizzar"</string>
     <string name="alarm_volume_title" msgid="8506245173912428522">"Volumen dal svegliarin"</string>
     <string name="alarm_volume_summary" msgid="8957440373896242438">"Reglar il volumen dal svegliarin"</string>
     <string name="silent_alarm_summary" msgid="8605302849408279221">"Silenzius"</string>
@@ -113,7 +113,7 @@
     <string name="home_button_description" msgid="3383859096809056157">"Lantschader"</string>
     <string name="desk_clock_button_description" msgid="968868045496561043">"Visualisaziun da l\'ura"</string>
     <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g><xliff:g id="PERCENT">%%</xliff:g>"</string>
-    <string name="weather_fetch_failure" msgid="7517010911981312358">"Infurmaziuns davart l\'aura n\'èn betg diponiblas en il mument."</string>
+    <string name="weather_fetch_failure" msgid="7517010911981312358">"Infurmaziuns davart l\'aura n\'èn betg disponiblas en il mument."</string>
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Parameters da la basa"</string>
     <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
     <skip />

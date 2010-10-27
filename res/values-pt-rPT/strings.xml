@@ -79,7 +79,7 @@
     <item msgid="6048861883552402852">"25"</item>
     <item msgid="2740866721232379791">"30"</item>
   </string-array>
-    <string name="auto_silence_title" msgid="8000666766495360928">"Silenciador automático "</string>
+    <string name="auto_silence_title" msgid="8000666766495360928">"Silenciador automático"</string>
     <string name="auto_silence_summary" msgid="5757272454196171758">"Os alarmes serão silenciados ao fim de <xliff:g id="MINUTES">%d</xliff:g> minutos"</string>
     <string name="auto_silence_never" msgid="4302257878142130807">"Desligado"</string>
   <string-array name="auto_silence_entries">
