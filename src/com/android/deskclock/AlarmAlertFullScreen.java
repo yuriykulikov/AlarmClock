@@ -254,6 +254,7 @@ public class AlarmAlertFullScreen extends Activity {
             // Volume keys and camera keys dismiss the alarm
             case KeyEvent.KEYCODE_VOLUME_UP:
             case KeyEvent.KEYCODE_VOLUME_DOWN:
+            case KeyEvent.KEYCODE_VOLUME_MUTE:
             case KeyEvent.KEYCODE_CAMERA:
             case KeyEvent.KEYCODE_FOCUS:
                 if (up) {
