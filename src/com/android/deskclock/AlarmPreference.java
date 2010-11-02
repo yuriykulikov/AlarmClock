@@ -20,6 +20,7 @@ import android.content.Context;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.preference.RingtonePreference;
 import android.provider.Settings;
 import android.util.AttributeSet;
@@ -31,6 +32,7 @@ import android.util.AttributeSet;
 public class AlarmPreference extends RingtonePreference {
     private Uri mAlert;
     private boolean mChangeDefault;
+    private AsyncTask mRingtoneTask;
 
     public AlarmPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -59,10 +61,26 @@ public class AlarmPreference extends RingtonePreference {
     public void setAlert(Uri alert) {
         mAlert = alert;
         if (alert != null) {
-            final Ringtone r = RingtoneManager.getRingtone(getContext(), alert);
-            if (r != null) {
-                setSummary(r.getTitle(getContext()));
+            setSummary(R.string.loading_ringtone);
+            if (mRingtoneTask != null) {
+                mRingtoneTask.cancel(true);
             }
+            mRingtoneTask = new AsyncTask<Uri, Void, Ringtone>() {
+                @Override
+                protected Ringtone doInBackground(Uri... params) {
+                    return RingtoneManager.getRingtone(getContext(), params[0]);
+                }
+
+                @Override
+                protected void onPostExecute(Ringtone r) {
+                    if (!isCancelled()) {
+                        if (r != null) {
+                            setSummary(r.getTitle(getContext()));
+                        }
+                        mRingtoneTask = null;
+                    }
+                }
+            }.execute(alert);
         } else {
             setSummary(R.string.silent_alarm_summary);
         }
