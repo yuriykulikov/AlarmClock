@@ -19,6 +19,7 @@ package com.android.deskclock;
 import android.content.Context;
 import android.content.Intent;
 import android.content.BroadcastReceiver;
+import android.os.PowerManager.WakeLock;
 
 public class AlarmInitReceiver extends BroadcastReceiver {
 
@@ -27,16 +28,26 @@ public class AlarmInitReceiver extends BroadcastReceiver {
      * TIME_SET, TIMEZONE_CHANGED
      */
     @Override
-    public void onReceive(Context context, Intent intent) {
-        String action = intent.getAction();
+    public void onReceive(final Context context, Intent intent) {
+        final String action = intent.getAction();
         if (Log.LOGV) Log.v("AlarmInitReceiver" + action);
 
-        // Remove the snooze alarm after a boot.
-        if (action.equals(Intent.ACTION_BOOT_COMPLETED)) {
-            Alarms.saveSnoozeAlert(context, -1, -1);
-        }
+        final PendingResult result = goAsync();
+        final WakeLock wl = AlarmAlertWakeLock.createPartialWakeLock(context);
+        wl.acquire();
+        AsyncHandler.post(new Runnable() {
+            @Override public void run() {
+                // Remove the snooze alarm after a boot.
+                if (action.equals(Intent.ACTION_BOOT_COMPLETED)) {
+                    Alarms.saveSnoozeAlert(context, -1, -1);
+                }
 
-        Alarms.disableExpiredAlarms(context);
-        Alarms.setNextAlert(context);
+                Alarms.disableExpiredAlarms(context);
+                Alarms.setNextAlert(context);
+                result.finish();
+                Log.v("AlarmInitReceiver finished");
+                wl.release();
+            }
+        });
     }
 }

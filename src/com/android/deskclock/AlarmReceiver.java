@@ -26,6 +26,7 @@ import android.content.Intent;
 import android.content.BroadcastReceiver;
 import android.database.Cursor;
 import android.os.Parcel;
+import android.os.PowerManager.WakeLock;
 
 /**
  * Glue class: connects AlarmAlert IntentReceiver to AlarmAlert
@@ -38,7 +39,20 @@ public class AlarmReceiver extends BroadcastReceiver {
     private final static int STALE_WINDOW = 30 * 60 * 1000;
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(final Context context, final Intent intent) {
+        final PendingResult result = goAsync();
+        final WakeLock wl = AlarmAlertWakeLock.createPartialWakeLock(context);
+        wl.acquire();
+        AsyncHandler.post(new Runnable() {
+            @Override public void run() {
+                handleIntent(context, intent);
+                result.finish();
+                wl.release();
+            }
+        });
+    }
+
+    private void handleIntent(Context context, Intent intent) {
         if (Alarms.ALARM_KILLED.equals(intent.getAction())) {
             // The alarm has been killed, update the notification
             updateNotification(context, (Alarm)
