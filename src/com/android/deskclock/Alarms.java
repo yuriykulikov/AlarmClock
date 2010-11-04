@@ -158,7 +158,7 @@ public class Alarms {
         values.put(Alarm.Columns.ENABLED, alarm.enabled ? 1 : 0);
         values.put(Alarm.Columns.HOUR, alarm.hour);
         values.put(Alarm.Columns.MINUTES, alarm.minutes);
-        values.put(Alarm.Columns.ALARM_TIME, alarm.time);
+        values.put(Alarm.Columns.ALARM_TIME, time);
         values.put(Alarm.Columns.DAYS_OF_WEEK, alarm.daysOfWeek.getCoded());
         values.put(Alarm.Columns.VIBRATE, alarm.vibrate);
         values.put(Alarm.Columns.MESSAGE, alarm.label);
