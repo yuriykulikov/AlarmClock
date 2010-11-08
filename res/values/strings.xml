@@ -246,7 +246,7 @@
     <string name="alarm_notify_snooze_text">Alarm set for <xliff:g id="time">%s</xliff:g>. Select to cancel.</string>
 
     <!-- Title of the setting to change hardware button behavior. This string
-         should be changed for each piece of hardware. -->
+         should be changed for each piece of hardware. [CHAR LIMIT=20] -->
     <string name="volume_button_setting_title">Volume buttons</string>
 
     <!-- Dialog title of the volume and power setting. -->
@@ -295,7 +295,7 @@
     <string name="alarm_klaxon_service_desc">Sound playback service for alarms set in DeskClock.</string>
 
     <!-- String displayed as the alert summary while loading the alert name from
-         the media player. -->
+         the media player. [CHAR LIMIT=NONE] -->
     <string name="loading_ringtone">Loading ringtone\u2026</string>
 
 </resources>
