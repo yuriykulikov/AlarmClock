@@ -100,7 +100,7 @@
     <string name="alarm_notify_text" msgid="4146350965933990093">"Selecione para colocar esse alarme em modo de espera ou descartá-lo."</string>
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (em modo de espera)"</string>
     <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"Alarme definido para <xliff:g id="TIME">%s</xliff:g>. Selecione para cancelar."</string>
-    <string name="volume_button_setting_title" msgid="8155275533660105161">"Volume e câmera"</string>
+    <!-- outdated translation 8155275533660105161 -->     <string name="volume_button_setting_title" msgid="6937131248843413357">"Volume e câmera"</string>
     <string name="volume_button_dialog_title" msgid="8768042543750036853">"Efeito do botão"</string>
     <string name="volume_button_setting_summary" msgid="4776447991226047070">"Define a ação desses botões quando pressionados durante um alarme"</string>
   <string-array name="volume_button_setting_entries">
@@ -124,4 +124,6 @@
     <string name="weather_fetch_failure" msgid="7517010911981312358">"Informações metereológicas indisponíveis no momento"</string>
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Configurações de dock"</string>
     <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Serviço de reprodução de sons para alarmes definidos no DeskClock."</string>
+    <!-- no translation found for loading_ringtone (6523322777415268044) -->
+    <skip />
 </resources>

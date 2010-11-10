@@ -100,7 +100,7 @@
     <string name="alarm_notify_text" msgid="4146350965933990093">"알람을 일시 중지하거나 해제하려면 선택하세요."</string>
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g>(알람 일시 중지됨)"</string>
     <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"<xliff:g id="TIME">%s</xliff:g>으로 알람이 설정되었습니다. 취소하려면 선택하세요."</string>
-    <string name="volume_button_setting_title" msgid="8155275533660105161">"사이드 버튼 동작"</string>
+    <!-- outdated translation 8155275533660105161 -->     <string name="volume_button_setting_title" msgid="6937131248843413357">"사이드 버튼 동작"</string>
     <string name="volume_button_dialog_title" msgid="8768042543750036853">"버튼 효과"</string>
     <string name="volume_button_setting_summary" msgid="4776447991226047070">"알람이 울릴 때 버튼을 누르면 수행할 동작 설정"</string>
   <string-array name="volume_button_setting_entries">
@@ -124,4 +124,6 @@
     <string name="weather_fetch_failure" msgid="7517010911981312358">"현재 날씨 정보를 사용할 수 없습니다."</string>
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"도킹 설정"</string>
     <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"DeskClock에서 설정한 알람에 대한 사운드 재생 서비스"</string>
+    <!-- no translation found for loading_ringtone (6523322777415268044) -->
+    <skip />
 </resources>
