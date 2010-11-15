@@ -65,17 +65,22 @@ public class AlarmPreference extends RingtonePreference {
             if (mRingtoneTask != null) {
                 mRingtoneTask.cancel(true);
             }
-            mRingtoneTask = new AsyncTask<Uri, Void, Ringtone>() {
+            mRingtoneTask = new AsyncTask<Uri, Void, String>() {
                 @Override
-                protected Ringtone doInBackground(Uri... params) {
-                    return RingtoneManager.getRingtone(getContext(), params[0]);
+                protected String doInBackground(Uri... params) {
+                    Ringtone r = RingtoneManager.getRingtone(
+                            getContext(), params[0]);
+                    if (r != null) {
+                        return r.getTitle(getContext());
+                    }
+                    return null;
                 }
 
                 @Override
-                protected void onPostExecute(Ringtone r) {
+                protected void onPostExecute(String title) {
                     if (!isCancelled()) {
-                        if (r != null) {
-                            setSummary(r.getTitle(getContext()));
+                        if (title != null) {
+                            setSummary(title);
                         }
                         mRingtoneTask = null;
                     }
