@@ -100,7 +100,7 @@
     <string name="alarm_notify_text" msgid="4146350965933990093">"Elige si deseas posponer o descartar esta alarma."</string>
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (pospuesta)"</string>
     <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"Alarma a las <xliff:g id="TIME">%s</xliff:g>. Selecciona para cancelarla."</string>
-    <!-- outdated translation 8155275533660105161 -->     <string name="volume_button_setting_title" msgid="6937131248843413357">"Volumen y cámara"</string>
+    <string name="volume_button_setting_title" msgid="6937131248843413357">"Botones de volumen"</string>
     <string name="volume_button_dialog_title" msgid="8768042543750036853">"Efecto de botón"</string>
     <string name="volume_button_setting_summary" msgid="4776447991226047070">"Establecer la función de los botones de una alarma"</string>
   <string-array name="volume_button_setting_entries">
@@ -124,6 +124,5 @@
     <string name="weather_fetch_failure" msgid="7517010911981312358">"La información meteorológica no está disponible."</string>
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Ajustes del conector"</string>
     <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Reproducción de alarmas definidas en reloj de escritorio"</string>
-    <!-- no translation found for loading_ringtone (6523322777415268044) -->
-    <skip />
+    <string name="loading_ringtone" msgid="6523322777415268044">"Cargando tono…"</string>
 </resources>

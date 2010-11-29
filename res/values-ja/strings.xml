@@ -100,7 +100,7 @@
     <string name="alarm_notify_text" msgid="4146350965933990093">"アラームのスヌーズ/解除を選択します。"</string>
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g>（スヌーズ）"</string>
     <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"アラームは<xliff:g id="TIME">%s</xliff:g>に設定されています。選択すると解除されます。"</string>
-    <!-- outdated translation 8155275533660105161 -->     <string name="volume_button_setting_title" msgid="6937131248843413357">"音量とカメラ"</string>
+    <string name="volume_button_setting_title" msgid="6937131248843413357">"音量ボタン"</string>
     <string name="volume_button_dialog_title" msgid="8768042543750036853">"ボタンの設定"</string>
     <string name="volume_button_setting_summary" msgid="4776447991226047070">"アラームが鳴っているときにこれらのボタンを押した場合の動作を設定する"</string>
   <string-array name="volume_button_setting_entries">
@@ -124,6 +124,5 @@
     <string name="weather_fetch_failure" msgid="7517010911981312358">"天気予報は現在ご利用いただけません。"</string>
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"ドックの設定"</string>
     <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"卓上時計で設定したアラーム用のサウンド再生サービスです。"</string>
-    <!-- no translation found for loading_ringtone (6523322777415268044) -->
-    <skip />
+    <string name="loading_ringtone" msgid="6523322777415268044">"着信音を読み込み中..."</string>
 </resources>

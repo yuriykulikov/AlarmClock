@@ -100,7 +100,7 @@
     <string name="alarm_notify_text" msgid="4146350965933990093">"選取貪睡功能或關閉此鬧鐘。"</string>
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (貪睡)"</string>
     <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"鬧鐘設定在 <xliff:g id="TIME">%s</xliff:g>，選取即可取消"</string>
-    <!-- outdated translation 8155275533660105161 -->     <string name="volume_button_setting_title" msgid="6937131248843413357">"音量和相機"</string>
+    <string name="volume_button_setting_title" msgid="6937131248843413357">"音量按鈕"</string>
     <string name="volume_button_dialog_title" msgid="8768042543750036853">"按鈕功用"</string>
     <string name="volume_button_setting_summary" msgid="4776447991226047070">"設定這些按鈕在鬧鐘啟動時的功用"</string>
   <string-array name="volume_button_setting_entries">
@@ -124,6 +124,5 @@
     <string name="weather_fetch_failure" msgid="7517010911981312358">"目前無法取得天氣資訊。"</string>
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"座架設定"</string>
     <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"DeskClock 鬧鐘鈴聲播放服務。"</string>
-    <!-- no translation found for loading_ringtone (6523322777415268044) -->
-    <skip />
+    <string name="loading_ringtone" msgid="6523322777415268044">"正在載入鈴聲..."</string>
 </resources>
