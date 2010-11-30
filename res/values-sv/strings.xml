@@ -80,7 +80,7 @@
     <item msgid="2740866721232379791">"30"</item>
   </string-array>
     <string name="done" msgid="6509722361933858451">"Färdig"</string>
-    <string name="revert" msgid="9100911171235162926">"Återgå"</string>
+    <string name="revert" msgid="9100911171235162926">"Tillbaka"</string>
     <string name="delete" msgid="5732434972457000541">"Ta bort"</string>
     <string name="alarm_volume_title" msgid="8506245173912428522">"Alarmvolym"</string>
     <string name="alarm_volume_summary" msgid="8957440373896242438">"Ställ in volym för alarmen"</string>
