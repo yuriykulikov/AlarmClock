@@ -183,7 +183,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         // Launch SetAlarm when clicked.
         Intent viewAlarm = new Intent(context, SetAlarm.class);
-        viewAlarm.putExtra(Alarms.ALARM_ID, alarm.id);
+        viewAlarm.putExtra(Alarms.ALARM_INTENT_EXTRA, alarm);
         PendingIntent intent =
                 PendingIntent.getActivity(context, alarm.id, viewAlarm, 0);
 

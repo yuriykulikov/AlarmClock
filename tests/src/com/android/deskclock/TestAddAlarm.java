@@ -31,6 +31,7 @@ public class TestAddAlarm extends Activity {
         i.putExtra(AlarmClock.EXTRA_MESSAGE, "New Alarm!");
         i.putExtra(AlarmClock.EXTRA_HOUR, 12);
         i.putExtra(AlarmClock.EXTRA_MINUTES, 27);
+        i.putExtra(AlarmClock.EXTRA_SKIP_UI, true);
 
         startActivity(i);
 
@@ -42,8 +43,9 @@ public class TestAddAlarm extends Activity {
         // No dup of null message.
         startActivity(i);
 
-        // No extras, launches the alarm list.
-        startActivity(new Intent(AlarmClock.ACTION_SET_ALARM));
+        // Launch with SetAlarm UI.
+        i.putExtra(AlarmClock.EXTRA_SKIP_UI, false);
+        startActivity(i);
 
         finish();
     }

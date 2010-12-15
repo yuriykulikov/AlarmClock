@@ -80,10 +80,6 @@ public class Alarms {
     // the Intent extras.
     public static final String ALARM_RAW_DATA = "intent.extra.alarm_raw";
 
-    // This string is used to identify the alarm id passed to SetAlarm from the
-    // list of alarms.
-    public static final String ALARM_ID = "alarm_id";
-
     final static String PREF_SNOOZE_ID = "snooze_id";
     final static String PREF_SNOOZE_TIME = "snooze_time";
 

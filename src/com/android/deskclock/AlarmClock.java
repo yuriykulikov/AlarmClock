@@ -159,7 +159,7 @@ public class AlarmClock extends Activity implements OnItemClickListener {
             return super.onContextItemSelected(item);
         }
         switch (item.getItemId()) {
-            case R.id.delete_alarm:
+            case R.id.delete_alarm: {
                 // Confirm that the alarm will be deleted.
                 new AlertDialog.Builder(this)
                         .setTitle(getString(R.string.delete_alarm))
@@ -174,8 +174,9 @@ public class AlarmClock extends Activity implements OnItemClickListener {
                         .setNegativeButton(android.R.string.cancel, null)
                         .show();
                 return true;
+            }
 
-            case R.id.enable_alarm:
+            case R.id.enable_alarm: {
                 final Cursor c = (Cursor) mAlarmsList.getAdapter()
                         .getItem(info.position);
                 final Alarm alarm = new Alarm(c);
@@ -185,12 +186,17 @@ public class AlarmClock extends Activity implements OnItemClickListener {
                             alarm.daysOfWeek);
                 }
                 return true;
+            }
 
-            case R.id.edit_alarm:
+            case R.id.edit_alarm: {
+                final Cursor c = (Cursor) mAlarmsList.getAdapter()
+                        .getItem(info.position);
+                final Alarm alarm = new Alarm(c);
                 Intent intent = new Intent(this, SetAlarm.class);
-                intent.putExtra(Alarms.ALARM_ID, id);
+                intent.putExtra(Alarms.ALARM_INTENT_EXTRA, alarm);
                 startActivity(intent);
                 return true;
+            }
 
             default:
                 break;
@@ -309,8 +315,11 @@ public class AlarmClock extends Activity implements OnItemClickListener {
     }
 
     public void onItemClick(AdapterView parent, View v, int pos, long id) {
+        final Cursor c = (Cursor) mAlarmsList.getAdapter()
+                .getItem(pos);
+        final Alarm alarm = new Alarm(c);
         Intent intent = new Intent(this, SetAlarm.class);
-        intent.putExtra(Alarms.ALARM_ID, (int) id);
+        intent.putExtra(Alarms.ALARM_INTENT_EXTRA, alarm);
         startActivity(intent);
     }
 }

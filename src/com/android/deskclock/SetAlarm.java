@@ -63,10 +63,6 @@ public class SetAlarm extends PreferenceActivity
     private boolean mTimePickerCancelled;
     private Alarm   mOriginalAlarm;
 
-    /**
-     * Set an alarm.  Requires an Alarms.ALARM_ID to be passed in as an
-     * extra. FIXME: Pass an Alarm object like every other Activity.
-     */
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -119,26 +115,16 @@ public class SetAlarm extends PreferenceActivity
         mRepeatPref.setOnPreferenceChangeListener(this);
 
         Intent i = getIntent();
-        mId = i.getIntExtra(Alarms.ALARM_ID, -1);
-        if (Log.LOGV) {
-            Log.v("In SetAlarm, alarm id = " + mId);
-        }
+        Alarm alarm = i.getParcelableExtra(Alarms.ALARM_INTENT_EXTRA);
 
-        Alarm alarm = null;
-        if (mId == -1) {
-            // No alarm id means create a new alarm.
+        if (alarm == null) {
+            // No alarm means create a new alarm.
             alarm = new Alarm();
-        } else {
-            /* load alarm details from database */
-            alarm = Alarms.getAlarm(getContentResolver(), mId);
-            // Bad alarm, bail to avoid a NPE.
-            if (alarm == null) {
-                finish();
-                return;
-            }
         }
         mOriginalAlarm = alarm;
 
+        // Populate the prefs with the original alarm data.  updatePrefs also
+        // sets mId so it must be called before checking mId below.
         updatePrefs(mOriginalAlarm);
 
         // We have to do this to get the save/cancel buttons to highlight on

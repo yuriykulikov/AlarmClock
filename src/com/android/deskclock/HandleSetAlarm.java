@@ -18,14 +18,17 @@ package com.android.deskclock;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import static android.provider.AlarmClock.ACTION_SET_ALARM;
 import static android.provider.AlarmClock.EXTRA_HOUR;
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 import static android.provider.AlarmClock.EXTRA_MINUTES;
+import static android.provider.AlarmClock.EXTRA_SKIP_UI;
 
 import java.util.Calendar;
 
@@ -50,6 +53,7 @@ public class HandleSetAlarm extends Activity {
                 calendar.get(Calendar.HOUR_OF_DAY));
         final int minutes = intent.getIntExtra(EXTRA_MINUTES,
                 calendar.get(Calendar.MINUTE));
+        final boolean skipUi = intent.getBooleanExtra(EXTRA_SKIP_UI, false);
         String message = intent.getStringExtra(EXTRA_MESSAGE);
         if (message == null) {
             message = "";
@@ -61,21 +65,20 @@ public class HandleSetAlarm extends Activity {
         try {
             c = getContentResolver().query(
                     Alarm.Columns.CONTENT_URI,
-                    new String[] { Alarm.Columns._ID },
+                    Alarm.Columns.ALARM_QUERY_COLUMNS,
                     Alarm.Columns.HOUR + "=" + hour + " AND " +
                     Alarm.Columns.MINUTES + "=" + minutes + " AND " +
                     Alarm.Columns.DAYS_OF_WEEK + "=0 AND " +
                     Alarm.Columns.MESSAGE + "=?",
                     new String[] { message }, null);
-            if (c != null && c.moveToFirst()) {
-                // Enable the first alarm we find.
-                Alarms.enableAlarm(this, c.getInt(0), true);
-                SetAlarm.popAlarmSetToast(this, timeInMillis);
+            if (handleCursorResult(c, timeInMillis, true, skipUi)) {
                 finish();
                 return;
             }
         } finally {
             if (c != null) c.close();
+            // Reset for use below.
+            c = null;
         }
 
         ContentValues values = new ContentValues();
@@ -87,12 +90,36 @@ public class HandleSetAlarm extends Activity {
         values.put(Alarm.Columns.DAYS_OF_WEEK, 0);
         values.put(Alarm.Columns.ALARM_TIME, timeInMillis);
 
-        if (getContentResolver().insert(
-                Alarm.Columns.CONTENT_URI, values) != null) {
-            SetAlarm.popAlarmSetToast(this, timeInMillis);
-            Alarms.setNextAlert(this);
+        ContentResolver cr = getContentResolver();
+        Uri result = cr.insert(Alarm.Columns.CONTENT_URI, values);
+        if (result != null) {
+            try {
+                c = cr.query(result, Alarm.Columns.ALARM_QUERY_COLUMNS, null,
+                        null, null);
+                handleCursorResult(c, timeInMillis, false, skipUi);
+            } finally {
+                if (c != null) c.close();
+            }
         }
 
         finish();
+    }
+
+    private boolean handleCursorResult(Cursor c, long timeInMillis,
+            boolean enable, boolean skipUi) {
+        if (c != null && c.moveToFirst()) {
+            Alarm alarm = new Alarm(c);
+            if (enable) {
+                Alarms.enableAlarm(this, alarm.id, true);
+            }
+            SetAlarm.popAlarmSetToast(this, timeInMillis);
+            if (!skipUi) {
+                Intent i = new Intent(this, SetAlarm.class);
+                i.putExtra(Alarms.ALARM_INTENT_EXTRA, alarm);
+                startActivity(i);
+            }
+            return true;
+        }
+        return false;
     }
 }
