@@ -79,19 +79,18 @@
     <item msgid="6048861883552402852">"25"</item>
     <item msgid="2740866721232379791">"30"</item>
   </string-array>
-    <!-- no translation found for auto_silence_title (8000666766495360928) -->
-    <skip />
-    <!-- no translation found for auto_silence_summary (5757272454196171758) -->
-    <skip />
-    <!-- no translation found for auto_silence_never (4302257878142130807) -->
-    <skip />
-    <!-- no translation found for auto_silence_entries:0 (7718972982871612080) -->
-    <!-- no translation found for auto_silence_entries:1 (5431906692406316549) -->
-    <!-- no translation found for auto_silence_entries:2 (7742728812068919959) -->
-    <!-- no translation found for auto_silence_entries:3 (2855948657259647629) -->
-    <!-- no translation found for auto_silence_entries:4 (6330196381284475079) -->
-    <!-- no translation found for auto_silence_entries:5 (7809240121716151904) -->
-    <!-- no translation found for auto_silence_entries:6 (2807487305575255986) -->
+    <string name="auto_silence_title" msgid="8000666766495360928">"Automatické stíšenie"</string>
+    <string name="auto_silence_summary" msgid="5757272454196171758">"Budíky budú stíšené po <xliff:g id="MINUTES">%d</xliff:g> min."</string>
+    <string name="auto_silence_never" msgid="4302257878142130807">"Vypnuté"</string>
+  <string-array name="auto_silence_entries">
+    <item msgid="7718972982871612080">"Vypnuté"</item>
+    <item msgid="5431906692406316549">"5 minút"</item>
+    <item msgid="7742728812068919959">"10 minút"</item>
+    <item msgid="2855948657259647629">"15 minút"</item>
+    <item msgid="6330196381284475079">"20 minút"</item>
+    <item msgid="7809240121716151904">"25 minút"</item>
+    <item msgid="2807487305575255986">"30 minút"</item>
+  </string-array>
     <string name="done" msgid="6509722361933858451">"Hotovo"</string>
     <string name="revert" msgid="9100911171235162926">"Vrátiť"</string>
     <string name="delete" msgid="5732434972457000541">"Odstrániť"</string>
@@ -101,7 +100,7 @@
     <string name="alarm_notify_text" msgid="4146350965933990093">"Vyberte, či budík chcete zrušiť alebo odložiť."</string>
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (odložené)"</string>
     <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"Budík bol nastavený na <xliff:g id="TIME">%s</xliff:g>. Výberom ho zrušíte."</string>
-    <!-- outdated translation 8155275533660105161 -->     <string name="volume_button_setting_title" msgid="6937131248843413357">"Hlasitosť a fotoaparát"</string>
+    <string name="volume_button_setting_title" msgid="6937131248843413357">"Tlačidlá na ovládanie hlasitosti"</string>
     <string name="volume_button_dialog_title" msgid="8768042543750036853">"Funkcie tlačidiel"</string>
     <string name="volume_button_setting_summary" msgid="4776447991226047070">"Nastavte funkciu týchto tlačidiel po stlačení pri zvonení budíka"</string>
   <string-array name="volume_button_setting_entries">
@@ -124,8 +123,6 @@
     <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g> <xliff:g id="PERCENT">%%</xliff:g>"</string>
     <string name="weather_fetch_failure" msgid="7517010911981312358">"Informácie o počasí aktuálne nie sú k dispozícii."</string>
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Nastavenie doku"</string>
-    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
-    <skip />
-    <!-- no translation found for loading_ringtone (6523322777415268044) -->
-    <skip />
+    <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Služba prehrávania zvuku budíkov nastavených v aplikácii DeskClock."</string>
+    <string name="loading_ringtone" msgid="6523322777415268044">"Prebieha načítavanie vyzváňacieho tónu..."</string>
 </resources>

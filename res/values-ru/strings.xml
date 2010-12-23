@@ -50,9 +50,9 @@
   </string-array>
     <string name="day" msgid="7984755014526510295">"1 день"</string>
     <string name="days" msgid="2070509222727852210">"<xliff:g id="DAYS">%s</xliff:g> дн."</string>
-    <string name="hour" msgid="2546819039651509323">"за 1 час"</string>
+    <string name="hour" msgid="2546819039651509323">"1 час"</string>
     <string name="hours" msgid="2071487018566991613">"<xliff:g id="HOURS">%s</xliff:g> ч."</string>
-    <string name="minute" msgid="2486157997434653710">"за 1 минуту"</string>
+    <string name="minute" msgid="2486157997434653710">"1 минуту"</string>
     <string name="minutes" msgid="6115838729146292526">"<xliff:g id="MINUTES">%s</xliff:g> мин."</string>
     <string name="every_day" msgid="1058994798884544691">"каждый день"</string>
     <string name="never" msgid="54104287800571769">"Не выбрано"</string>

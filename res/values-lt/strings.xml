@@ -79,19 +79,18 @@
     <item msgid="6048861883552402852">"25"</item>
     <item msgid="2740866721232379791">"30"</item>
   </string-array>
-    <!-- no translation found for auto_silence_title (8000666766495360928) -->
-    <skip />
-    <!-- no translation found for auto_silence_summary (5757272454196171758) -->
-    <skip />
-    <!-- no translation found for auto_silence_never (4302257878142130807) -->
-    <skip />
-    <!-- no translation found for auto_silence_entries:0 (7718972982871612080) -->
-    <!-- no translation found for auto_silence_entries:1 (5431906692406316549) -->
-    <!-- no translation found for auto_silence_entries:2 (7742728812068919959) -->
-    <!-- no translation found for auto_silence_entries:3 (2855948657259647629) -->
-    <!-- no translation found for auto_silence_entries:4 (6330196381284475079) -->
-    <!-- no translation found for auto_silence_entries:5 (7809240121716151904) -->
-    <!-- no translation found for auto_silence_entries:6 (2807487305575255986) -->
+    <string name="auto_silence_title" msgid="8000666766495360928">"Automatinis nutildymas"</string>
+    <string name="auto_silence_summary" msgid="5757272454196171758">"Signalai bus nutildyti po <xliff:g id="MINUTES">%d</xliff:g> min."</string>
+    <string name="auto_silence_never" msgid="4302257878142130807">"Išjungta"</string>
+  <string-array name="auto_silence_entries">
+    <item msgid="7718972982871612080">"Išjungta"</item>
+    <item msgid="5431906692406316549">"5 min."</item>
+    <item msgid="7742728812068919959">"10 min."</item>
+    <item msgid="2855948657259647629">"15 min."</item>
+    <item msgid="6330196381284475079">"20 min."</item>
+    <item msgid="7809240121716151904">"25 min."</item>
+    <item msgid="2807487305575255986">"30 min."</item>
+  </string-array>
     <string name="done" msgid="6509722361933858451">"Atlikta"</string>
     <string name="revert" msgid="9100911171235162926">"Grąžinti"</string>
     <string name="delete" msgid="5732434972457000541">"Ištrinti"</string>
@@ -101,7 +100,7 @@
     <string name="alarm_notify_text" msgid="4146350965933990093">"Pasirinkite, kad šis signalas veiktų snaudimo režimu, arba atsisakykite jo."</string>
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (snaudė)"</string>
     <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"Signalas nustatytas <xliff:g id="TIME">%s</xliff:g>. Pasirinkite, jei norite atšaukti."</string>
-    <!-- outdated translation 8155275533660105161 -->     <string name="volume_button_setting_title" msgid="6937131248843413357">"Garsumas ir vaizdo kamera"</string>
+    <string name="volume_button_setting_title" msgid="6937131248843413357">"Garsumo mygtukai"</string>
     <string name="volume_button_dialog_title" msgid="8768042543750036853">"Mygtuko efektas"</string>
     <string name="volume_button_setting_summary" msgid="4776447991226047070">"Nustatyti, kaip šie mygtukai veiks, kai bus paspausti signalui veikiant"</string>
   <string-array name="volume_button_setting_entries">
@@ -124,8 +123,6 @@
     <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g><xliff:g id="PERCENT">%%</xliff:g>"</string>
     <string name="weather_fetch_failure" msgid="7517010911981312358">"Informacija apie orus šiuo metu negalima."</string>
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Doko nustatymai"</string>
-    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
-    <skip />
-    <!-- no translation found for loading_ringtone (6523322777415268044) -->
-    <skip />
+    <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"„DeskClock“ nustatytų signalų garso atkūrimo paslauga."</string>
+    <string name="loading_ringtone" msgid="6523322777415268044">"Įkeliamas skambėjimo tonas..."</string>
 </resources>
