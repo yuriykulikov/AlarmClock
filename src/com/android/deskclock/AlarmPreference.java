@@ -59,6 +59,10 @@ public class AlarmPreference extends RingtonePreference {
     }
 
     public void setAlert(Uri alert) {
+        if (RingtoneManager.isDefault(alert)) {
+            alert = RingtoneManager.getActualDefaultRingtoneUri(getContext(),
+                    RingtoneManager.TYPE_ALARM);
+        }
         mAlert = alert;
         if (alert != null) {
             setSummary(R.string.loading_ringtone);
