@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+ -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_label" msgid="6674495003718166674">"Clock"</string>
+    <string name="alarm_list_title" msgid="7589940465292950600">"Alarms"</string>
+    <string name="add_alarm" msgid="5976616107390962899">"Add alarm"</string>
+    <string name="menu_desk_clock" msgid="3241995064554071588">"Desk clock"</string>
+    <string name="menu_edit_alarm" msgid="7204602994918829751">"Edit alarm"</string>
+    <string name="delete_alarm" msgid="3457780990646206817">"Delete alarm"</string>
+    <string name="enable_alarm" msgid="1834599140632142536">"Turn alarm on"</string>
+    <string name="disable_alarm" msgid="5889378670229554109">"Turn alarm off"</string>
+    <string name="delete_alarm_confirm" msgid="4237696873219106907">"This alarm will be deleted."</string>
+    <string name="show_clock" msgid="8358759982675616915">"Show clock"</string>
+    <string name="hide_clock" msgid="3217727306480505694">"Hide clock"</string>
+    <string name="label" msgid="162189613902857319">"Label"</string>
+    <string name="default_label" msgid="5590025289805630372">"Alarm"</string>
+    <string name="set_alarm" msgid="9148359866152726808">"Set alarm"</string>
+    <string name="alarm_vibrate" msgid="3476686921490362230">"Vibrate"</string>
+    <string name="alarm_repeat" msgid="7242985466344233206">"Repeat"</string>
+    <string name="alert" msgid="6539852766423700221">"Ring tone"</string>
+    <string name="time" msgid="8067216534232296518">"Time"</string>
+    <string name="alarm_alert_dismiss_text" msgid="4942914605480888820">"Dismiss"</string>
+    <string name="alarm_alert_alert_silenced" msgid="7918075929961104202">"Alarm silenced after <xliff:g id="MINUTES">%d</xliff:g> minutes"</string>
+    <string name="alarm_alert_snooze_text" msgid="1774416052207651584">"Snooze"</string>
+    <string name="alarm_alert_snooze_set" msgid="656470966696912087">"Snoozing for <xliff:g id="MINUTES">%d</xliff:g> minutes."</string>
+  <string-array name="alarm_set">
+    <item msgid="5163476010406761625">"This alarm is set for less than 1 minute from now."</item>
+    <item msgid="7110525731259629055">"This alarm is set for <xliff:g id="DAYS">%1$s</xliff:g> from now."</item>
+    <item msgid="7003982794086186185">"This alarm is set for <xliff:g id="HOURS">%2$s</xliff:g> from now."</item>
+    <item msgid="7311021123230077742">"This alarm is set for <xliff:g id="DAYS">%1$s</xliff:g> and <xliff:g id="HOURS">%2$s</xliff:g> from now."</item>
+    <item msgid="8431715191823114872">"This alarm is set for <xliff:g id="MINUTES">%3$s</xliff:g> from now."</item>
+    <item msgid="3244151088673185428">"This alarm is set for <xliff:g id="DAYS">%1$s</xliff:g> and <xliff:g id="MINUTES">%3$s</xliff:g> from now."</item>
+    <item msgid="3663661342600168814">"This alarm is set for <xliff:g id="HOURS">%2$s</xliff:g> and <xliff:g id="MINUTES">%3$s</xliff:g> from now."</item>
+    <item msgid="7779544127785487304">"This alarm is set for <xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> and <xliff:g id="MINUTES">%3$s</xliff:g> from now."</item>
+  </string-array>
+    <string name="day" msgid="7984755014526510295">"1 day"</string>
+    <string name="days" msgid="2070509222727852210">"<xliff:g id="DAYS">%s</xliff:g> days"</string>
+    <string name="hour" msgid="2546819039651509323">"1 hour"</string>
+    <string name="hours" msgid="2071487018566991613">"<xliff:g id="HOURS">%s</xliff:g> hours"</string>
+    <string name="minute" msgid="2486157997434653710">"1 minute"</string>
+    <string name="minutes" msgid="6115838729146292526">"<xliff:g id="MINUTES">%s</xliff:g> minutes"</string>
+    <string name="every_day" msgid="1058994798884544691">"every day"</string>
+    <string name="never" msgid="54104287800571769">"Never"</string>
+    <string name="day_concat" msgid="971998564991636532">", "</string>
+    <string name="clock_instructions" msgid="3118560284915857690">"Select a clock to display."</string>
+    <string name="analog_gadget" msgid="1670505720837152766">"Analogue clock"</string>
+    <string name="settings" msgid="5849739030579520686">"Settings"</string>
+    <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Alarm in silent mode"</string>
+    <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"Play alarm even when the phone is in silent mode"</string>
+    <string name="snooze_duration_title" msgid="1471249885139952670">"Snooze duration"</string>
+  <string-array name="snooze_duration_entries">
+    <item msgid="8337408933053603125">"5 minutes"</item>
+    <item msgid="5294206441496024610">"10 minutes"</item>
+    <item msgid="2165904039211935470">"15 minutes"</item>
+    <item msgid="7248236967714374250">"20 minutes"</item>
+    <item msgid="738394723625179423">"25 minutes"</item>
+    <item msgid="1180222611308391616">"30 minutes"</item>
+  </string-array>
+  <string-array name="snooze_duration_values">
+    <item msgid="3655014754453084122">"5"</item>
+    <item msgid="8939029597449573449">"10"</item>
+    <item msgid="3922647341176353315">"15"</item>
+    <item msgid="5821804105985044459">"20"</item>
+    <item msgid="6048861883552402852">"25"</item>
+    <item msgid="2740866721232379791">"30"</item>
+  </string-array>
+    <string name="done" msgid="6509722361933858451">"Done"</string>
+    <string name="revert" msgid="9100911171235162926">"Revert"</string>
+    <string name="delete" msgid="5732434972457000541">"Delete"</string>
+    <string name="alarm_volume_title" msgid="8506245173912428522">"Alarm volume"</string>
+    <string name="alarm_volume_summary" msgid="8957440373896242438">"Set the volume of alarms"</string>
+    <string name="silent_alarm_summary" msgid="8605302849408279221">"Silent"</string>
+    <string name="alarm_notify_text" msgid="4146350965933990093">"Select to snooze or dismiss this alarm."</string>
+    <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (snoozed)"</string>
+    <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"Alarm set for <xliff:g id="TIME">%s</xliff:g>. Select to cancel."</string>
+    <string name="volume_button_setting_title" msgid="8155275533660105161">"Volume and Camera"</string>
+    <string name="volume_button_dialog_title" msgid="8768042543750036853">"Button effect"</string>
+    <string name="volume_button_setting_summary" msgid="4776447991226047070">"Set what these buttons do when pressed during an alarm"</string>
+  <string-array name="volume_button_setting_entries">
+    <item msgid="4520420953175098625">"None"</item>
+    <item msgid="7111908302622811168">"Snooze"</item>
+    <item msgid="8573552194573068996">"Dismiss"</item>
+  </string-array>
+  <string-array name="volume_button_setting_values">
+    <item msgid="4851033050639608752">"0"</item>
+    <item msgid="3204893476515513084">"1"</item>
+    <item msgid="7687709558968154577">"2"</item>
+  </string-array>
+    <string name="alarm_button_description" msgid="740283647046258651">"Alarms"</string>
+    <string name="gallery_button_description" msgid="1151743663255257668">"Gallery"</string>
+    <string name="music_button_description" msgid="1626593420810117999">"Music"</string>
+    <string name="nightmode_button_description" msgid="990894208217576381">"Dim"</string>
+    <string name="home_button_description" msgid="3383859096809056157">"Launcher"</string>
+    <string name="desk_clock_button_description" msgid="968868045496561043">"Clock Display"</string>
+    <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g><xliff:g id="PERCENT">%%</xliff:g>"</string>
+    <string name="weather_fetch_failure" msgid="7517010911981312358">"Weather information currently unavailable."</string>
+    <string name="menu_item_dock_settings" msgid="3524235151132971114">"Dock settings"</string>
+    <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Sound playback service for alarms set in DeskClock."</string>
+</resources>
