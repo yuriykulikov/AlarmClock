@@ -27,7 +27,6 @@ import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
@@ -78,7 +77,7 @@ public class DigitalClock extends LinearLayout {
         }
 
         void setShowAmPm(boolean show) {
-            mAmPm.setVisibility(show ? View.VISIBLE : View.GONE);
+            mAmPm.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
         }
 
         void setIsMorning(boolean isMorning) {

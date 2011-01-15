@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2011 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="192dip">
+
+    <FrameLayout
+        android:id="@+id/time_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right">
+
+        <com.android.deskclock.DigitalClock
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <com.android.deskclock.AndroidClockTextView
+                    android:id="@+id/timeDisplay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="320sp"
+                    android:textColor="#FFFFFFFF" />
+
+                <com.android.deskclock.AndroidClockTextView
+                    android:id="@+id/am_pm"
+                    android:layout_width="176dip"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/timeDisplay"
+                    android:layout_alignBaseline="@id/timeDisplay"
+                    android:layout_marginLeft="32dip"
+                    android:textSize="160sp"
+                    android:textColor="#999999"
+                    fontHighlightsEnabled="false"
+                    shortForm="true" />
+
+                <TextView
+                    android:id="@+id/date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dip"
+                    android:layout_below="@id/timeDisplay"
+                    android:layout_alignRight="@id/timeDisplay"
+                    android:gravity="bottom|right"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:shadowColor="#C0000000"
+                    android:shadowDx="0"
+                    android:shadowDy="0"
+                    android:shadowRadius="3.0" />
+
+                <TextView
+                    android:id="@+id/nextAlarm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dip"
+                    android:layout_below="@id/date"
+                    android:layout_alignRight="@id/date"
+                    android:gravity="center_vertical|right"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:drawablePadding="6dip"
+                    android:drawableLeft="@drawable/ic_lock_idle_alarm"
+                    android:textColor="#999999"
+                    android:shadowColor="#C0000000"
+                    android:shadowDx="0"
+                    android:shadowDy="0"
+                    android:shadowRadius="3.0" />
+            </RelativeLayout>
+        </com.android.deskclock.DigitalClock>
+    </FrameLayout>
+    <View
+        android:id="@+id/window_tint"
+        android:layout_width="1dip"
+        android:layout_height="1dip"
+        android:background="#CC000000"
+        android:visibility="visible"
+        android:clickable="false" />
+</FrameLayout>

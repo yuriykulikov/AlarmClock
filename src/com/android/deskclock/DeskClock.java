@@ -16,77 +16,51 @@
 
 package com.android.deskclock;
 
+import static android.os.BatteryManager.BATTERY_STATUS_UNKNOWN;
+
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.app.UiModeManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.ContentResolver;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemClock;
-import android.os.PowerManager;
-import android.provider.Settings;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.View.OnClickListener;
-import android.view.View.OnCreateContextMenuListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.ViewTreeObserver.OnGlobalFocusChangeListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.AbsoluteLayout;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import static android.os.BatteryManager.BATTERY_STATUS_CHARGING;
-import static android.os.BatteryManager.BATTERY_STATUS_FULL;
-import static android.os.BatteryManager.BATTERY_STATUS_UNKNOWN;
-
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Random;
 
 /**
@@ -204,7 +178,8 @@ public class DeskClock extends Activity {
         @Override
         public void handleMessage(Message m) {
             if (m.what == QUERY_WEATHER_DATA_MSG) {
-                new Thread() { public void run() { queryWeatherData(); } }.start();
+                new Thread() { @Override
+                public void run() { queryWeatherData(); } }.start();
                 scheduleWeatherQueryDelayed(QUERY_WEATHER_DELAY);
             } else if (m.what == UPDATE_WEATHER_DISPLAY_MSG) {
                 updateWeatherDisplay();
@@ -223,6 +198,8 @@ public class DeskClock extends Activity {
             refreshWeather();
         }
     };
+
+    private View mAlarmButton;
 
 
     private void moveScreenSaver() {
@@ -323,8 +300,8 @@ public class DeskClock extends Activity {
 
         final int color = mDimmed ? SCREEN_SAVER_COLOR_DIM : SCREEN_SAVER_COLOR;
 
-        ((TextView)findViewById(R.id.timeDisplay)).setTextColor(color);
-        ((TextView)findViewById(R.id.am_pm)).setTextColor(color);
+        ((AndroidClockTextView)findViewById(R.id.timeDisplay)).setTextColor(color);
+        ((AndroidClockTextView)findViewById(R.id.am_pm)).setTextColor(color);
         mDate.setTextColor(color);
         mNextAlarm.setTextColor(color);
         mNextAlarm.setCompoundDrawablesWithIntrinsicBounds(
@@ -522,8 +499,11 @@ public class DeskClock extends Activity {
             //mNextAlarm.setCompoundDrawablesWithIntrinsicBounds(
             //    android.R.drawable.ic_lock_idle_alarm, 0, 0, 0);
             mNextAlarm.setVisibility(View.VISIBLE);
-        } else {
+        } else if (mAlarmButton != null) {
             mNextAlarm.setVisibility(View.INVISIBLE);
+        } else {
+            mNextAlarm.setText("");
+            mNextAlarm.setVisibility(View.VISIBLE);
         }
     }
 
@@ -576,7 +556,7 @@ public class DeskClock extends Activity {
         if (DEBUG) Log.d(LOG_TAG, "onNewIntent with intent: " + newIntent);
 
         // update our intent so that we can consult it to determine whether or
-        // not the most recent launch was via a dock event 
+        // not the most recent launch was via a dock event
         setIntent(newIntent);
     }
 
@@ -711,75 +691,86 @@ public class DeskClock extends Activity {
         mNextAlarm = (TextView) findViewById(R.id.nextAlarm);
         mNextAlarm.setOnClickListener(alarmClickListener);
 
-        final ImageButton alarmButton = (ImageButton) findViewById(R.id.alarm_button);
-        alarmButton.setOnClickListener(alarmClickListener);
+        mAlarmButton = findViewById(R.id.alarm_button);
+        View alarmControl = mAlarmButton != null ? mAlarmButton : findViewById(R.id.nextAlarm);
+        alarmControl.setOnClickListener(alarmClickListener);
 
         final ImageButton galleryButton = (ImageButton) findViewById(R.id.gallery_button);
-        galleryButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                try {
-                    startActivity(new Intent(
-                        Intent.ACTION_VIEW,
-                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                            .putExtra("slideshow", true)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP));
-                } catch (android.content.ActivityNotFoundException e) {
-                    Log.e(LOG_TAG, "Couldn't launch image browser", e);
+        if (galleryButton != null) {
+            galleryButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    try {
+                        startActivity(new Intent(
+                            Intent.ACTION_VIEW,
+                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                                .putExtra("slideshow", true)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                    } catch (android.content.ActivityNotFoundException e) {
+                        Log.e(LOG_TAG, "Couldn't launch image browser", e);
+                    }
                 }
-            }
-        });
+            });
+        }
 
         final ImageButton musicButton = (ImageButton) findViewById(R.id.music_button);
-        musicButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                try {
-                    startActivity(new Intent(MediaStore.INTENT_ACTION_MUSIC_PLAYER)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP));
+        if (musicButton != null) {
+            musicButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    try {
+                        startActivity(new Intent(MediaStore.INTENT_ACTION_MUSIC_PLAYER)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP));
 
-                } catch (android.content.ActivityNotFoundException e) {
-                    Log.e(LOG_TAG, "Couldn't launch music browser", e);
+                    } catch (android.content.ActivityNotFoundException e) {
+                        Log.e(LOG_TAG, "Couldn't launch music browser", e);
+                    }
                 }
-            }
-        });
+            });
+        }
 
         final ImageButton homeButton = (ImageButton) findViewById(R.id.home_button);
-        homeButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startActivity(
-                    new Intent(Intent.ACTION_MAIN)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        .addCategory(Intent.CATEGORY_HOME));
-            }
-        });
+        if (homeButton != null) {
+            homeButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    startActivity(
+                        new Intent(Intent.ACTION_MAIN)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                            .addCategory(Intent.CATEGORY_HOME));
+                }
+            });
+        }
 
         final ImageButton nightmodeButton = (ImageButton) findViewById(R.id.nightmode_button);
-        nightmodeButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mDimmed = ! mDimmed;
-                doDim(true);
-            }
-        });
+        if (nightmodeButton != null) {
+            nightmodeButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    mDimmed = ! mDimmed;
+                    doDim(true);
+                }
+            });
 
-        nightmodeButton.setOnLongClickListener(new View.OnLongClickListener() {
-            public boolean onLongClick(View v) {
-                saveScreen();
-                return true;
-            }
-        });
+            nightmodeButton.setOnLongClickListener(new View.OnLongClickListener() {
+                public boolean onLongClick(View v) {
+                    saveScreen();
+                    return true;
+                }
+            });
+        }
 
         final View weatherView = findViewById(R.id.weather);
-        weatherView.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (!supportsWeather()) return;
+        if (weatherView != null) {
+            weatherView.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    if (!supportsWeather()) return;
 
-                Intent genieAppQuery = getPackageManager()
-                    .getLaunchIntentForPackage(GENIE_PACKAGE_ID)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                if (genieAppQuery != null) {
-                    startActivity(genieAppQuery);
+                    Intent genieAppQuery = getPackageManager()
+                        .getLaunchIntentForPackage(GENIE_PACKAGE_ID)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    if (genieAppQuery != null) {
+                        startActivity(genieAppQuery);
+                    }
                 }
-            }
-        });
+            });
+        }
 
         final View tintView = findViewById(R.id.window_tint);
         tintView.setOnTouchListener(new View.OnTouchListener() {
@@ -805,11 +796,12 @@ public class DeskClock extends Activity {
 
         // Tidy up awkward focus behavior: the first view to be focused in
         // trackball mode should be the alarms button
-        final ViewTreeObserver vto = alarmButton.getViewTreeObserver();
+        final ViewTreeObserver vto = alarmControl.getViewTreeObserver();
+        final View alarmView = alarmControl;
         vto.addOnGlobalFocusChangeListener(new ViewTreeObserver.OnGlobalFocusChangeListener() {
             public void onGlobalFocusChanged(View oldFocus, View newFocus) {
                 if (oldFocus == null && newFocus == nightmodeButton) {
-                    alarmButton.requestFocus();
+                    alarmView.requestFocus();
                 }
             }
         });
