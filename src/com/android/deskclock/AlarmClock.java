@@ -22,12 +22,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.database.Cursor;
-import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -39,7 +35,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CursorAdapter;
 import android.widget.ImageButton;
@@ -81,6 +76,7 @@ public class AlarmClock extends Activity implements OnItemClickListener {
             super(context, cursor);
         }
 
+        @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             View ret = mFactory.inflate(R.layout.alarm_time, parent, false);
 
@@ -90,6 +86,7 @@ public class AlarmClock extends Activity implements OnItemClickListener {
             return ret;
         }
 
+        @Override
         public void bindView(View view, Context context, Cursor cursor) {
             final Alarm alarm = new Alarm(cursor);
 
@@ -123,7 +120,6 @@ public class AlarmClock extends Activity implements OnItemClickListener {
             c.set(Calendar.HOUR_OF_DAY, alarm.hour);
             c.set(Calendar.MINUTE, alarm.minutes);
             digitalClock.updateTime(c);
-            digitalClock.setTypeface(Typeface.DEFAULT);
 
             // Set the repeat text or leave it blank if it does not repeat.
             TextView daysOfWeekView =
@@ -266,7 +262,7 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         // Use the current item to create a custom view for the header.
         final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
         final Cursor c =
-                (Cursor) mAlarmsList.getAdapter().getItem((int) info.position);
+                (Cursor) mAlarmsList.getAdapter().getItem(info.position);
         final Alarm alarm = new Alarm(c);
 
         // Construct the Calendar to compute the time.

@@ -30,7 +30,8 @@
         android:layout_marginBottom="8dip"
         >
 
-        <TextView android:id="@+id/timeDisplay"
+        <com.android.deskclock.AndroidClockTextView 
+            android:id="@+id/timeDisplay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:singleLine="true"
@@ -46,7 +47,8 @@
             />
 
 
-        <TextView android:id="@+id/am_pm"
+        <com.android.deskclock.AndroidClockTextView 
+            android:id="@+id/am_pm"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="bottom"
