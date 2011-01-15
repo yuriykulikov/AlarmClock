@@ -20,9 +20,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Resources;
 import android.database.ContentObserver;
-import android.graphics.Typeface;
 import android.os.Handler;
 import android.provider.Settings;
 import android.text.format.DateFormat;
@@ -43,7 +41,7 @@ public class DigitalClock extends LinearLayout {
 
     private Calendar mCalendar;
     private String mFormat;
-    private TextView mTimeDisplay;
+    private AndroidClockTextView mTimeDisplay;
     private AmPm mAmPm;
     private ContentObserver mFormatChangeObserver;
     private boolean mLive = true;
@@ -67,14 +65,12 @@ public class DigitalClock extends LinearLayout {
             }
         };
 
-    private static Typeface sTypeface;
-
     static class AmPm {
-        private TextView mAmPm;
+        private AndroidClockTextView mAmPm;
         private String mAmString, mPmString;
 
         AmPm(View parent) {
-            mAmPm = (TextView) parent.findViewById(R.id.am_pm);
+            mAmPm = (AndroidClockTextView) parent.findViewById(R.id.am_pm);
 
             String[] ampm = new DateFormatSymbols().getAmPmStrings();
             mAmString = ampm[0];
@@ -113,12 +109,7 @@ public class DigitalClock extends LinearLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        if (sTypeface == null) {
-            sTypeface = Typeface.createFromAsset(getContext().getAssets(),
-                "fonts/Clockopia.ttf");
-        }
-        mTimeDisplay = (TextView) findViewById(R.id.timeDisplay);
-        mTimeDisplay.setTypeface(sTypeface);
+        mTimeDisplay = (AndroidClockTextView) findViewById(R.id.timeDisplay);
         mAmPm = new AmPm(this);
         mCalendar = Calendar.getInstance();
 
@@ -188,9 +179,5 @@ public class DigitalClock extends LinearLayout {
 
     void setLive(boolean live) {
         mLive = live;
-    }
-
-    void setTypeface(Typeface tf) {
-        mTimeDisplay.setTypeface(tf);
     }
 }

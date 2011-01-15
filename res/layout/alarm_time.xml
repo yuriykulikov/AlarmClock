@@ -76,7 +76,8 @@
             android:layout_height="wrap_content"
             android:baselineAligned="true">
 
-            <TextView android:id="@+id/timeDisplay"
+            <com.android.deskclock.AndroidClockTextView 
+                android:id="@+id/timeDisplay"
                 android:includeFontPadding="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -84,7 +85,8 @@
                 android:textSize="28sp"
                 android:textColor="?android:attr/textColorPrimary"/>
 
-            <TextView android:id="@+id/am_pm"
+            <com.android.deskclock.AndroidClockTextView 
+                android:id="@+id/am_pm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
