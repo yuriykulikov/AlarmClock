@@ -41,6 +41,7 @@
 
         <activity android:name="AlarmClock"
                 android:label="@string/alarm_list_title"
+                android:theme="@style/AlarmClockTheme"
                 android:taskAffinity=""
                 android:excludeFromRecents="true"
                 android:configChanges="orientation|keyboardHidden|keyboard|navigation"
@@ -60,12 +61,14 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="SetAlarm" android:label="@string/set_alarm"
+        <activity android:name="SetAlarm" 
+                android:label="@string/set_alarm"
+                android:theme="@style/SetAlarmTheme"
                 android:configChanges="orientation|keyboardHidden|keyboard|navigation" />
 
         <activity android:name="AlarmAlert"
                 android:excludeFromRecents="true"
-                android:theme="@style/alarm_alert"
+                android:theme="@style/AlarmAlertTheme"
                 android:launchMode="singleInstance"
                 android:taskAffinity=""
                 android:configChanges="orientation|keyboardHidden|keyboard|navigation"/>
@@ -75,7 +78,7 @@
              with the wallpaper background. -->
         <activity android:name="AlarmAlertFullScreen"
                 android:excludeFromRecents="true"
-                android:theme="@android:style/Theme.Wallpaper.NoTitleBar"
+                android:theme="@style/AlarmAlertFullScreenTheme"
                 android:launchMode="singleInstance"
                 android:taskAffinity=""
                 android:configChanges="orientation|keyboardHidden|keyboard|navigation"/>

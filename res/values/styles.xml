@@ -21,11 +21,16 @@
         <item name="android:layout_gravity">center_horizontal</item>
     </style>
 
+    <style name="AlarmClockTheme" parent="android:Theme.Holo"/>
+    <style name="SetAlarmTheme" parent="android:Theme.Holo"/>
+
     <!-- This theme is similar to the Theme.Dialog.Alert but does not rely on a
          non-public resource. -->
-    <style name="alarm_alert" parent="android:Theme.Dialog">
+    <style name="AlarmAlertTheme" parent="android:Theme.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
+
+    <style name="AlarmAlertFullScreenTheme" parent="android:Theme.Wallpaper.NoTitleBar"/>
 
     <style name="RoundTouchButton">
         <item name="android:gravity">center</item>
