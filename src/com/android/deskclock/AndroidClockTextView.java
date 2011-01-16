@@ -34,6 +34,9 @@ public class AndroidClockTextView extends View {
     private static final String SYSTEM_FONT_TIME_BACKGROUND = SYSTEM + "AndroidClock.ttf";
     private static final String SYSTEM_FONT_TIME_FOREGROUND = SYSTEM + "AndroidClock_Highlight.ttf";
 
+    private static final String ATTR_FONT_HIGHLIGHTS_ENABLED = "fontHighlightsEnabled";
+    private static final String ATTR_SHORT_FORM = "shortForm";
+
     private static Typeface sTypeface;
     private static Typeface sHighlightTypeface;
 
@@ -50,9 +53,11 @@ public class AndroidClockTextView extends View {
     private float mTextSize;
     private Rect mTextBounds = new Rect();
     private Rect mTempRect = new Rect();
-    private int mX;
-    private int mY;
+    private int mX = -1;
+    private int mY = -1;
     private float mFontDescent;
+    private boolean mHighlightsEnabled;
+    private boolean mShortForm;
 
     public AndroidClockTextView(Context context) {
         super(context);
@@ -60,7 +65,12 @@ public class AndroidClockTextView extends View {
 
     public AndroidClockTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
         mProperties = new TextView(context, attrs);
+
+        mHighlightsEnabled =
+            attrs.getAttributeBooleanValue(null, ATTR_FONT_HIGHLIGHTS_ENABLED, true);
+        mShortForm =attrs.getAttributeBooleanValue(null, ATTR_SHORT_FORM, false);
 
         mTextSize = mProperties.getTextSize();
         mColor = mProperties.getTextColors().getDefaultColor();
@@ -74,19 +84,29 @@ public class AndroidClockTextView extends View {
         mTextPaint.setTypeface(sTypeface);
         mTextPaint.setColor(mColor);
         mTextPaint.setTextAlign(Paint.Align.LEFT);
-        mTextPaint.setAlpha(mTextAlpha);
         mTextPaint.setAntiAlias(true);
         mTextPaint.setTextSize(mTextSize);
+        if (mHighlightsEnabled) {
+            mTextPaint.setAlpha(mTextAlpha);
+        }
 
         mHighlightPaint = new Paint();
         mHighlightPaint.setTypeface(sHighlightTypeface);
         mHighlightPaint.setColor(mColor);
-        mHighlightPaint.setAlpha(mHighlightAlpha);
         mHighlightPaint.setTextAlign(Paint.Align.LEFT);
         mHighlightPaint.setAntiAlias(true);
         mHighlightPaint.setTextSize(mTextSize);
+        if (mHighlightsEnabled) {
+            mHighlightPaint.setAlpha(mHighlightAlpha);
+        }
 
         mFontDescent = mTextPaint.getFontMetrics().descent;
+    }
+
+    public void setTextColor(int color) {
+        mColor = color;
+        mTextPaint.setColor(color);
+        mHighlightPaint.setColor(color);
     }
 
     @Override
@@ -106,30 +126,45 @@ public class AndroidClockTextView extends View {
         if (mode == MeasureSpec.EXACTLY) {
             measuredHeight = MeasureSpec.getSize(heightMeasureSpec);
         } else {
+            // Text bounds are measured from the bottom-left corner, so mTextBounds.top
+            // is a negative number
             measuredHeight = -mTextBounds.top + getPaddingTop() + getPaddingBottom();
         }
         setMeasuredDimension(measuredWidth, measuredHeight);
+
+        mX = getPaddingLeft();
+        mY = (int) (measuredHeight - getPaddingBottom() - mFontDescent);
     }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         mX = getPaddingLeft();
-        mY = getHeight() - getPaddingBottom();
+        mY = (int) (getHeight() - getPaddingBottom() - mFontDescent);
     }
 
     public void setText(CharSequence time) {
-        mText = String.valueOf(time);
+        if (mShortForm) {
+            if (time.length() > 0) {
+                mText = String.valueOf(time.charAt(0));
+            } else {
+                mText = null;
+            }
+        } else {
+            mText = String.valueOf(time);
+        }
         requestLayout();
     }
 
     @Override
     public int getBaseline() {
-        return (int) (getHeight() - mFontDescent);
+        return mY;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.drawText(mText, mX, mY, mTextPaint);
-        canvas.drawText(mText, mX, mY, mHighlightPaint);
+        if (mText != null) {
+            canvas.drawText(mText, mX, mY, mTextPaint);
+            canvas.drawText(mText, mX, mY, mHighlightPaint);
+        }
     }
 }
