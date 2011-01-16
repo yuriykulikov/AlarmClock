@@ -52,13 +52,15 @@
             android:baselineAligned="true"
             android:gravity="center_horizontal">
 
-            <TextView android:id="@+id/timeDisplay"
+            <com.android.deskclock.AndroidClockTextView 
+                android:id="@+id/timeDisplay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="64sp"
                 android:textColor="?android:attr/textColorPrimary"/>
 
-            <TextView android:id="@+id/am_pm"
+            <com.android.deskclock.AndroidClockTextView  
+                android:id="@+id/am_pm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
