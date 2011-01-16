@@ -20,40 +20,24 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <!-- I can't use a normal checkbox here for a couple reasons:
-         1. The checkbox button resources cannot contain layouts so I have to
-            use 2 views for the clock and the bar.
-         2. The normal checkbox has a really messed up layout. Using the button
-            attribute produces a left-aligned image that has some kind of
-            minimum height. If the bar is a checkbox, it is too tall and is
-            clipped on the right.
-    -->
-    <com.android.deskclock.DontPressWithParentLayout android:id="@+id/indicator"
+    <com.android.deskclock.DontPressWithParentLayout
+        android:id="@+id/indicator"
         style="@style/alarm_list_left_column"
-        android:background="@drawable/clock_selector"
         android:gravity="center"
         android:orientation="vertical">
-        <CheckBox android:id="@+id/clock_onoff"
+        <CheckBox
+            android:id="@+id/clock_onoff"
             android:focusable="false"
             android:clickable="false"
-            android:background="@drawable/indicator_clock_onoff"
             android:duplicateParentState="true"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:layout_gravity="center"
-            android:button="@null" />
-        <ImageView android:id="@+id/bar_onoff"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:paddingTop="4dip"
-            android:src="@drawable/ic_indicator_off" />
+            android:layout_gravity="center" />
     </com.android.deskclock.DontPressWithParentLayout>
 
     <ImageView
-        android:src="@drawable/divider_vertical_dark"
-        android:background="?android:attr/windowBackground"
-        android:layout_width="wrap_content"
+        android:src="?android:attr/dividerVertical"
+        android:layout_width="1dip"
         android:layout_height="match_parent"
         android:paddingTop="4dip"
         android:paddingBottom="4dip"
@@ -82,6 +66,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="6dip"
+                android:paddingBottom="3dip"
                 android:textSize="28sp"
                 android:textColor="?android:attr/textColorPrimary"/>
 
@@ -111,7 +96,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="?android:attr/textColorSecondary"/>
+            android:textColor="?android:attr/textColorTertiary"
+            />
 
     </com.android.deskclock.DigitalClock>
 

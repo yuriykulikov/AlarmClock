@@ -86,9 +86,7 @@ public class AndroidClockTextView extends View {
         mTextPaint.setTextAlign(Paint.Align.LEFT);
         mTextPaint.setAntiAlias(true);
         mTextPaint.setTextSize(mTextSize);
-        if (mHighlightsEnabled) {
-            mTextPaint.setAlpha(mTextAlpha);
-        }
+        mTextPaint.setAlpha(mTextAlpha);
 
         mHighlightPaint = new Paint();
         mHighlightPaint.setTypeface(sHighlightTypeface);
@@ -96,9 +94,7 @@ public class AndroidClockTextView extends View {
         mHighlightPaint.setTextAlign(Paint.Align.LEFT);
         mHighlightPaint.setAntiAlias(true);
         mHighlightPaint.setTextSize(mTextSize);
-        if (mHighlightsEnabled) {
-            mHighlightPaint.setAlpha(mHighlightAlpha);
-        }
+        mHighlightPaint.setAlpha(mHighlightsEnabled ? mHighlightAlpha : mTextAlpha);
 
         mFontDescent = mTextPaint.getFontMetrics().descent;
     }

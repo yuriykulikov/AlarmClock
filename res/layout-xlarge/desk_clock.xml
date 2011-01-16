@@ -50,7 +50,7 @@
                     android:layout_alignBaseline="@id/timeDisplay"
                     android:layout_marginLeft="32dip"
                     android:textSize="90sp"
-                    android:textColor="#999999"
+                    android:textColor="#FFFFFFFF"
                     fontHighlightsEnabled="false"
                     shortForm="true" />
 
