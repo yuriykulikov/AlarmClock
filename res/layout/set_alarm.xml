@@ -17,23 +17,32 @@
 */
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="450dip"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <ListView android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:drawSelectorOnTop="false"/>
+        android:layout_marginLeft="16dip"
+        android:layout_marginRight="16dip"
+        android:layout_weight="1"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:layout_marginLeft="16dip"
+        android:layout_marginRight="16dip"
+        android:background="?android:attr/dividerHorizontal" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        style="@android:style/ButtonBar">
+        style="?android:attr/buttonBarStyle">
 
         <Button android:id="@+id/alarm_save"
+            style="?android:attr/buttonBarButtonStyle"
             android:focusable="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -41,6 +50,7 @@
             android:text="@string/done"/>
 
         <Button android:id="@+id/alarm_revert"
+            style="?android:attr/buttonBarButtonStyle"
             android:focusable="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -48,6 +58,7 @@
             android:text="@string/revert"/>
 
         <Button android:id="@+id/alarm_delete"
+            style="?android:attr/buttonBarButtonStyle"
             android:focusable="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

@@ -38,7 +38,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CheckBox;
 import android.widget.CursorAdapter;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -60,10 +59,8 @@ public class AlarmClock extends Activity implements OnItemClickListener {
     private ListView mAlarmsList;
     private Cursor mCursor;
 
-    private void updateIndicatorAndAlarm(boolean enabled, ImageView bar,
+    private void updateAlarm(boolean enabled,
             Alarm alarm) {
-        bar.setImageResource(enabled ? R.drawable.ic_indicator_on
-                : R.drawable.ic_indicator_off);
         Alarms.enableAlarm(this, alarm.id, enabled);
         if (enabled) {
             SetAlarm.popAlarmSetToast(this, alarm.hour, alarm.minutes,
@@ -92,12 +89,6 @@ public class AlarmClock extends Activity implements OnItemClickListener {
 
             View indicator = view.findViewById(R.id.indicator);
 
-            // Set the initial resource for the bar image.
-            final ImageView barOnOff =
-                    (ImageView) indicator.findViewById(R.id.bar_onoff);
-            barOnOff.setImageResource(alarm.enabled ?
-                    R.drawable.ic_indicator_on : R.drawable.ic_indicator_off);
-
             // Set the initial state of the clock "checkbox"
             final CheckBox clockOnOff =
                     (CheckBox) indicator.findViewById(R.id.clock_onoff);
@@ -105,11 +96,10 @@ public class AlarmClock extends Activity implements OnItemClickListener {
 
             // Clicking outside the "checkbox" should also change the state.
             indicator.setOnClickListener(new OnClickListener() {
-                    public void onClick(View v) {
-                        clockOnOff.toggle();
-                        updateIndicatorAndAlarm(clockOnOff.isChecked(),
-                                barOnOff, alarm);
-                    }
+                public void onClick(View v) {
+                    clockOnOff.toggle();
+                    updateAlarm(clockOnOff.isChecked(), alarm);
+                }
             });
 
             DigitalClock digitalClock =
@@ -235,11 +225,13 @@ public class AlarmClock extends Activity implements OnItemClickListener {
 
         ImageButton deskClock =
                 (ImageButton) findViewById(R.id.desk_clock_button);
-        deskClock.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    startActivity(new Intent(AlarmClock.this, DeskClock.class));
-                }
-        });
+        if (deskClock != null) {
+            deskClock.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        startActivity(new Intent(AlarmClock.this, DeskClock.class));
+                    }
+            });
+        }
     }
 
     private void addNewAlarm() {
