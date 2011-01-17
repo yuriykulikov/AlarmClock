@@ -41,8 +41,7 @@ public class AnalogAppWidgetProvider extends BroadcastReceiver {
 
             views.setOnClickPendingIntent(R.id.analog_appwidget,
                     PendingIntent.getActivity(context, 0,
-                        new Intent(context, AlarmClock.class),
-                        PendingIntent.FLAG_CANCEL_CURRENT));
+                        new Intent(context, AlarmClock.class), 0));
 
             int[] appWidgetIds = intent.getIntArrayExtra(
                     AppWidgetManager.EXTRA_APPWIDGET_IDS);
