@@ -51,6 +51,7 @@
         android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:layout_weight="1"
+        android:layout_gravity="center_vertical"
         android:orientation="vertical"
         android:paddingLeft="16dip"
         android:paddingRight="16dip">
@@ -62,21 +63,22 @@
 
             <com.android.deskclock.AndroidClockTextView 
                 android:id="@+id/timeDisplay"
-                android:includeFontPadding="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="6dip"
-                android:paddingBottom="3dip"
-                android:textSize="28sp"
-                android:textColor="?android:attr/textColorPrimary"/>
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="?android:attr/textColorPrimary"
+                useClockTypeface="false"/>
 
             <com.android.deskclock.AndroidClockTextView 
                 android:id="@+id/am_pm"
-                android:layout_width="wrap_content"
+                android:layout_width="0dip"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
-                android:textColor="?android:attr/textColorPrimary"/>
+                android:textColor="?android:attr/textColorPrimary"
+                useClockTypeface="false"/>
 
             <TextView android:id="@+id/label"
                 android:layout_width="wrap_content"
@@ -92,7 +94,6 @@
         </LinearLayout>
 
         <TextView android:id="@+id/daysOfWeek"
-            android:includeFontPadding="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"

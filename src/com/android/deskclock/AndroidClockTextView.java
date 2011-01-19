@@ -19,6 +19,7 @@ package com.android.deskclock;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Paint.FontMetrics;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
@@ -36,6 +37,7 @@ public class AndroidClockTextView extends View {
 
     private static final String ATTR_FONT_HIGHLIGHTS_ENABLED = "fontHighlightsEnabled";
     private static final String ATTR_SHORT_FORM = "shortForm";
+    private static final String ATTR_USE_CLOCK_TYPEFACE = "useClockTypeface";
 
     private static Typeface sTypeface;
     private static Typeface sHighlightTypeface;
@@ -55,9 +57,9 @@ public class AndroidClockTextView extends View {
     private Rect mTempRect = new Rect();
     private int mX = -1;
     private int mY = -1;
-    private float mFontDescent;
     private boolean mHighlightsEnabled;
     private boolean mShortForm;
+    private boolean mUseClockTypeface;
 
     public AndroidClockTextView(Context context) {
         super(context);
@@ -71,6 +73,10 @@ public class AndroidClockTextView extends View {
         mHighlightsEnabled =
             attrs.getAttributeBooleanValue(null, ATTR_FONT_HIGHLIGHTS_ENABLED, true);
         mShortForm =attrs.getAttributeBooleanValue(null, ATTR_SHORT_FORM, false);
+        mUseClockTypeface =attrs.getAttributeBooleanValue(null, ATTR_USE_CLOCK_TYPEFACE, true);
+        if (!mUseClockTypeface) {
+            mHighlightsEnabled = false;
+        }
 
         mTextSize = mProperties.getTextSize();
         mColor = mProperties.getTextColors().getDefaultColor();
@@ -81,12 +87,13 @@ public class AndroidClockTextView extends View {
         }
 
         mTextPaint = new Paint();
-        mTextPaint.setTypeface(sTypeface);
+        mTextPaint.setTypeface(mUseClockTypeface ? sTypeface : mProperties.getTypeface());
         mTextPaint.setColor(mColor);
         mTextPaint.setTextAlign(Paint.Align.LEFT);
         mTextPaint.setAntiAlias(true);
         mTextPaint.setTextSize(mTextSize);
         mTextPaint.setAlpha(mTextAlpha);
+        mTextPaint.setFakeBoldText(!mUseClockTypeface);
 
         mHighlightPaint = new Paint();
         mHighlightPaint.setTypeface(sHighlightTypeface);
@@ -96,7 +103,6 @@ public class AndroidClockTextView extends View {
         mHighlightPaint.setTextSize(mTextSize);
         mHighlightPaint.setAlpha(mHighlightsEnabled ? mHighlightAlpha : mTextAlpha);
 
-        mFontDescent = mTextPaint.getFontMetrics().descent;
     }
 
     public void setTextColor(int color) {
@@ -108,9 +114,13 @@ public class AndroidClockTextView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int measuredWidth, measuredHeight;
+        FontMetrics fontMetrics = mTextPaint.getFontMetrics();
+
         mTextPaint.getTextBounds(mText, 0, mText.length(), mTextBounds);
-        mHighlightPaint.getTextBounds(mText, 0, mText.length(), mTempRect);
-        mTextBounds.union(mTempRect);
+        if (mUseClockTypeface) {
+            mHighlightPaint.getTextBounds(mText, 0, mText.length(), mTempRect);
+            mTextBounds.union(mTempRect);
+        }
 
         int mode = MeasureSpec.getMode(widthMeasureSpec);
         if (mode == MeasureSpec.EXACTLY) {
@@ -122,20 +132,15 @@ public class AndroidClockTextView extends View {
         if (mode == MeasureSpec.EXACTLY) {
             measuredHeight = MeasureSpec.getSize(heightMeasureSpec);
         } else {
-            // Text bounds are measured from the bottom-left corner, so mTextBounds.top
+            // Text bounds are measured from the bottom-left corner, so fontMetrics.top
             // is a negative number
-            measuredHeight = -mTextBounds.top + getPaddingTop() + getPaddingBottom();
+            measuredHeight = (int) (-fontMetrics.top + fontMetrics.bottom +
+                    getPaddingTop() + getPaddingBottom());
         }
         setMeasuredDimension(measuredWidth, measuredHeight);
 
         mX = getPaddingLeft();
-        mY = (int) (measuredHeight - getPaddingBottom() - mFontDescent);
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        mX = getPaddingLeft();
-        mY = (int) (getHeight() - getPaddingBottom() - mFontDescent);
+        mY = (int) (measuredHeight - getPaddingBottom() - fontMetrics.descent);
     }
 
     public void setText(CharSequence time) {
@@ -161,7 +166,9 @@ public class AndroidClockTextView extends View {
     protected void onDraw(Canvas canvas) {
         if (mText != null) {
             canvas.drawText(mText, mX, mY, mTextPaint);
-            canvas.drawText(mText, mX, mY, mHighlightPaint);
+            if (mUseClockTypeface) {
+                canvas.drawText(mText, mX, mY, mHighlightPaint);
+            }
         }
     }
 }
