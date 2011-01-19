@@ -149,6 +149,7 @@ public class AndroidClockTextView extends View {
             mText = String.valueOf(time);
         }
         requestLayout();
+        invalidate();
     }
 
     @Override
