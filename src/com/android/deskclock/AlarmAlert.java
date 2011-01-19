@@ -24,7 +24,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.view.WindowManager;
 
 /**
  * Full screen alarm alert: pops visible indicator and plays alarm tone. This
