@@ -77,7 +77,7 @@
                     android:gravity="center_vertical|right"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:drawablePadding="6dip"
-                    android:drawableLeft="@drawable/ic_lock_idle_alarm"
+                    android:drawableLeft="@drawable/ic_setalarm_holo_dark"
                     android:textColor="#999999"
                     android:shadowColor="#C0000000"
                     android:shadowDx="0"
