@@ -232,6 +232,15 @@ public class AlarmClock extends Activity implements OnItemClickListener {
                     }
             });
         }
+
+        View doneButton = findViewById(R.id.done);
+        if (doneButton != null) {
+            doneButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+        }
     }
 
     private void addNewAlarm() {
