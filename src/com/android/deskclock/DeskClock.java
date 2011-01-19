@@ -495,14 +495,12 @@ public class DeskClock extends Activity {
         String nextAlarm = Settings.System.getString(getContentResolver(),
                 Settings.System.NEXT_ALARM_FORMATTED);
         if (!TextUtils.isEmpty(nextAlarm)) {
-            mNextAlarm.setText(nextAlarm);
-            //mNextAlarm.setCompoundDrawablesWithIntrinsicBounds(
-            //    android.R.drawable.ic_lock_idle_alarm, 0, 0, 0);
+            mNextAlarm.setText(getString(R.string.control_set_alarm_with_existing, nextAlarm));
             mNextAlarm.setVisibility(View.VISIBLE);
         } else if (mAlarmButton != null) {
             mNextAlarm.setVisibility(View.INVISIBLE);
         } else {
-            mNextAlarm.setText("");
+            mNextAlarm.setText(R.string.control_set_alarm);
             mNextAlarm.setVisibility(View.VISIBLE);
         }
     }

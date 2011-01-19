@@ -298,6 +298,12 @@
          the media player. [CHAR LIMIT=NONE] -->
     <string name="loading_ringtone">Loading ringtone\u2026</string>
 
+    <!-- Label on the main screen control used to set alarm [CHAR LIMIT=30]-->
+    <string name="control_set_alarm">Set alarm</string>
+
+    <!-- Label on the main screen control used to set alarm when there is already an existing alarm [CHAR LIMIT=30]-->
+    <string name="control_set_alarm_with_existing">Alarm set: <xliff:g id="time">%s</xliff:g></string>
+
 </resources>
 
 
