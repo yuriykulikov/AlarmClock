@@ -17,7 +17,9 @@
 package com.android.deskclock;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
 import android.graphics.Rect;
@@ -39,12 +41,13 @@ public class AndroidClockTextView extends View {
     private static final String ATTR_SHORT_FORM = "shortForm";
     private static final String ATTR_USE_CLOCK_TYPEFACE = "useClockTypeface";
 
-    private static Typeface sTypeface;
+    private static Typeface sClockTypeface;
     private static Typeface sHighlightTypeface;
+    private static Typeface sStandardTypeface;
 
     // An invisible text view that is used for parsing properties
     private TextView mProperties;
-    private int mColor;
+    private ColorStateList mColor;
     private Paint mTextPaint;
     private Paint mHighlightPaint;
     private String mText = "";
@@ -79,36 +82,32 @@ public class AndroidClockTextView extends View {
         }
 
         mTextSize = mProperties.getTextSize();
-        mColor = mProperties.getTextColors().getDefaultColor();
+        mColor = mProperties.getTextColors();
 
-        if (sTypeface == null) {
-            sTypeface = Typeface.createFromFile(SYSTEM_FONT_TIME_BACKGROUND);
+        if (sClockTypeface == null) {
+            sClockTypeface = Typeface.createFromFile(SYSTEM_FONT_TIME_BACKGROUND);
             sHighlightTypeface = Typeface.createFromFile(SYSTEM_FONT_TIME_FOREGROUND);
+            sStandardTypeface = Typeface.DEFAULT_BOLD;
         }
 
         mTextPaint = new Paint();
-        mTextPaint.setTypeface(mUseClockTypeface ? sTypeface : mProperties.getTypeface());
-        mTextPaint.setColor(mColor);
+        mTextPaint.setTypeface(mUseClockTypeface ? sClockTypeface : sStandardTypeface);
         mTextPaint.setTextAlign(Paint.Align.LEFT);
         mTextPaint.setAntiAlias(true);
         mTextPaint.setTextSize(mTextSize);
-        mTextPaint.setAlpha(mTextAlpha);
-        mTextPaint.setFakeBoldText(!mUseClockTypeface);
 
         mHighlightPaint = new Paint();
         mHighlightPaint.setTypeface(sHighlightTypeface);
-        mHighlightPaint.setColor(mColor);
         mHighlightPaint.setTextAlign(Paint.Align.LEFT);
         mHighlightPaint.setAntiAlias(true);
         mHighlightPaint.setTextSize(mTextSize);
-        mHighlightPaint.setAlpha(mHighlightsEnabled ? mHighlightAlpha : mTextAlpha);
-
     }
 
     public void setTextColor(int color) {
-        mColor = color;
+        mColor = ColorStateList.valueOf(color);
         mTextPaint.setColor(color);
         mHighlightPaint.setColor(color);
+        refreshDrawableState();
     }
 
     @Override
@@ -160,6 +159,17 @@ public class AndroidClockTextView extends View {
     @Override
     public int getBaseline() {
         return mY;
+    }
+
+    @Override
+    protected void drawableStateChanged() {
+        int color = mColor.getColorForState(getDrawableState(), Color.RED);
+        mTextPaint.setColor(color);
+        mHighlightPaint.setColor(color);
+        if (mUseClockTypeface) {
+            mTextPaint.setAlpha(mTextAlpha);
+            mHighlightPaint.setAlpha(mHighlightsEnabled ? mHighlightAlpha : mTextAlpha);
+        }
     }
 
     @Override

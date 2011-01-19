@@ -67,7 +67,6 @@
                 android:layout_height="wrap_content"
                 android:paddingRight="6dip"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="?android:attr/textColorPrimary"
                 useClockTypeface="false"/>
 
             <com.android.deskclock.AndroidClockTextView 
@@ -75,9 +74,8 @@
                 android:layout_width="0dip"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textStyle="bold"
-                android:textColor="?android:attr/textColorPrimary"
                 useClockTypeface="false"/>
 
             <TextView android:id="@+id/label"
@@ -86,7 +84,7 @@
                 android:layout_weight="1"
                 android:paddingLeft="8dip"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="?android:attr/textColorTertiary"
+                android:textColor="?android:attr/textColorSecondary"
                 android:textStyle="bold"
                 android:gravity="right"
                 android:singleLine="true"/>
