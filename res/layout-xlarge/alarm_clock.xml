@@ -43,8 +43,7 @@
             android:layout_height="match_parent"
             android:layout_width="wrap_content"
             android:gravity="center_vertical"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="?android:attr/textColorPrimary"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/add_alarm" />
 
     </LinearLayout>
