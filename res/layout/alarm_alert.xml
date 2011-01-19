@@ -18,86 +18,62 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center">
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <com.android.deskclock.DigitalClock
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="30dip"
+        android:baselineAligned="true"
+        android:gravity="center_horizontal">
+
+        <com.android.deskclock.AndroidClockTextView
+            android:id="@+id/timeDisplay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="64sp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:layout_marginRight="6dip"/>
+
+        <com.android.deskclock.AndroidClockTextView
+            android:id="@+id/am_pm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="32sp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="?android:attr/textColorPrimary"/>
+
+    </com.android.deskclock.DigitalClock>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:layout_marginLeft="16dip"
+        android:layout_marginRight="16dip"
+        android:background="?android:attr/dividerHorizontal" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center_horizontal"
-        android:background="@drawable/dialog"
-        android:orientation="vertical">
+        style="?android:attr/buttonBarStyle">
 
-        <TextView android:id="@+id/alertTitle"
-            style="?android:attr/textAppearanceLarge"
-            android:padding="5dip"
-            android:singleLine="true"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="1dip"
-            android:scaleType="fitXY"
-            android:gravity="fill_horizontal"
-            android:src="@drawable/dialog_divider_horizontal_light"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="10dip"/>
-
-        <com.android.deskclock.DigitalClock
-            style="@style/clock"
-            android:paddingTop="30dip"
-            android:paddingBottom="30dip"
-            android:baselineAligned="true"
-            android:gravity="center_horizontal">
-
-            <com.android.deskclock.AndroidClockTextView 
-                android:id="@+id/timeDisplay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="64sp"
-                android:textColor="?android:attr/textColorPrimary"
-                android:layout_marginRight="6dip"/>
-
-            <com.android.deskclock.AndroidClockTextView  
-                android:id="@+id/am_pm"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textSize="32sp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="?android:attr/textColorPrimary"/>
-
-        </com.android.deskclock.DigitalClock>
-
-        <LinearLayout
+        <Button
+            android:id="@+id/snooze"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@android:style/ButtonBar">
+            android:layout_weight="3"
+            android:text="@string/alarm_alert_snooze_text" />
 
-            <Button
-                android:id="@+id/snooze"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:text="@string/alarm_alert_snooze_text" />
-
-            <!-- blank stretchable view -->
-            <View
-                android:layout_width="2dip"
-                android:layout_height="2dip"
-                android:layout_gravity="fill_horizontal"
-                android:layout_weight="1"/>
-
-            <Button
-                android:id="@+id/dismiss"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:text="@string/alarm_alert_dismiss_text" />
-
-        </LinearLayout>
+        <Button
+            android:id="@+id/dismiss"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="@string/alarm_alert_dismiss_text" />
 
     </LinearLayout>
 

@@ -68,7 +68,7 @@
 
         <activity android:name="AlarmAlert"
                 android:excludeFromRecents="true"
-                android:theme="@style/AlarmAlertTheme"
+                android:theme="@android:style/Theme.Holo.Dialog"
                 android:launchMode="singleInstance"
                 android:taskAffinity=""
                 android:configChanges="orientation|keyboardHidden|keyboard|navigation"/>

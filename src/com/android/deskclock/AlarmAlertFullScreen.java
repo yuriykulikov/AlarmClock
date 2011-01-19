@@ -20,23 +20,19 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
-import android.widget.TextView;
 
 import java.util.Calendar;
 
@@ -87,8 +83,6 @@ public class AlarmAlertFullScreen extends Activity {
                         DEFAULT_VOLUME_BEHAVIOR);
         mVolumeBehavior = Integer.parseInt(vol);
 
-        requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
-
         final Window win = getWindow();
         win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
@@ -110,9 +104,7 @@ public class AlarmAlertFullScreen extends Activity {
     }
 
     private void setTitle() {
-        String label = mAlarm.getLabelOrDefault(this);
-        TextView title = (TextView) findViewById(R.id.alertTitle);
-        title.setText(label);
+        setTitle(mAlarm.getLabelOrDefault(this));
     }
 
     private void updateLayout() {
