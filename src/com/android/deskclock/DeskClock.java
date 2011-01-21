@@ -251,6 +251,10 @@ public class DeskClock extends Activity {
     }
 
     private void scheduleScreenSaver() {
+        if (!getResources().getBoolean(R.bool.config_requiresScreenSaver)) {
+            return;
+        }
+
         // reschedule screen saver
         mHandy.removeMessages(SCREEN_SAVER_TIMEOUT_MSG);
         mHandy.sendMessageDelayed(
@@ -296,19 +300,12 @@ public class DeskClock extends Activity {
 
         mTime = (DigitalClock) findViewById(R.id.time);
         mDate = (TextView) findViewById(R.id.date);
-        mNextAlarm = (TextView) findViewById(R.id.nextAlarm);
 
         final int color = mDimmed ? SCREEN_SAVER_COLOR_DIM : SCREEN_SAVER_COLOR;
 
         ((AndroidClockTextView)findViewById(R.id.timeDisplay)).setTextColor(color);
         ((AndroidClockTextView)findViewById(R.id.am_pm)).setTextColor(color);
         mDate.setTextColor(color);
-        mNextAlarm.setTextColor(color);
-        mNextAlarm.setCompoundDrawablesWithIntrinsicBounds(
-            getResources().getDrawable(mDimmed
-                ? R.drawable.ic_lock_idle_alarm_saver_dim
-                : R.drawable.ic_lock_idle_alarm_saver),
-            null, null, null);
 
         mBatteryDisplay =
         mWeatherCurrentTemperature =

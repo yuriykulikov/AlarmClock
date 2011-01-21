@@ -33,21 +33,10 @@
         android:layout_height="wrap_content"
         android:layout_x="0dip"
         android:layout_y="0dip"
-        android:id="@+id/saver_view"
-        >
-        <TextView android:id="@+id/nextAlarm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dip"
-            android:layout_marginLeft="4dip"
-            android:gravity="left"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:drawablePadding="6dip"
-            />
+        android:id="@+id/saver_view">
         <include layout="@layout/desk_clock_time_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/nextAlarm"
             />
     </RelativeLayout>
 
