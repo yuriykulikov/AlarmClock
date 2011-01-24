@@ -125,4 +125,8 @@
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Cài đặt đế"</string>
     <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Dịch vụ phát âm thanh cho báo thức đã đặt trong DeskClock."</string>
     <string name="loading_ringtone" msgid="6523322777415268044">"Đang tải nhạc chuông…"</string>
+    <!-- no translation found for control_set_alarm (2194676418924016327) -->
+    <skip />
+    <!-- no translation found for control_set_alarm_with_existing (1128169496817859490) -->
+    <skip />
 </resources>
