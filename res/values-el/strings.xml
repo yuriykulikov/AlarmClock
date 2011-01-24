@@ -125,4 +125,8 @@
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Ρυθμίσεις βάσης σύνδεσης"</string>
     <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Η υπηρεσία αναπαραγωγής ήχου για ειδοποιήσεις έχει ρυθμιστεί στο DeskClock."</string>
     <string name="loading_ringtone" msgid="6523322777415268044">"Φόρτωση ήχου κλήσης"</string>
+    <!-- no translation found for control_set_alarm (2194676418924016327) -->
+    <skip />
+    <!-- no translation found for control_set_alarm_with_existing (1128169496817859490) -->
+    <skip />
 </resources>
