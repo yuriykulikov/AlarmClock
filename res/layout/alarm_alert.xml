@@ -55,7 +55,7 @@
         android:background="?android:attr/dividerHorizontal" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="?android:attr/buttonBarStyle">
 
