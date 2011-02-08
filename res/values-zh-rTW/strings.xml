@@ -125,8 +125,6 @@
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"座架設定"</string>
     <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"DeskClock 鬧鐘鈴聲播放服務。"</string>
     <string name="loading_ringtone" msgid="6523322777415268044">"正在載入鈴聲..."</string>
-    <!-- no translation found for control_set_alarm (2194676418924016327) -->
-    <skip />
-    <!-- no translation found for control_set_alarm_with_existing (1128169496817859490) -->
-    <skip />
+    <string name="control_set_alarm" msgid="2194676418924016327">"設定鬧鐘"</string>
+    <string name="control_set_alarm_with_existing" msgid="1128169496817859490">"鬧鐘已設定為：<xliff:g id="TIME">%s</xliff:g>"</string>
 </resources>
