@@ -126,5 +126,5 @@
     <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Servei de reproducció de so per a alarmes configurades a DeskClock."</string>
     <string name="loading_ringtone" msgid="6523322777415268044">"S\'està carregant el to de trucada..."</string>
     <string name="control_set_alarm" msgid="2194676418924016327">"Defineix l\'alarma"</string>
-    <string name="control_set_alarm_with_existing" msgid="1128169496817859490">"<xliff:g id="TIME">%s</xliff:g>"</string>
+    <string name="control_set_alarm_with_existing" msgid="1128169496817859490">"Alarma definida: <xliff:g id="TIME">%s</xliff:g>"</string>
 </resources>
