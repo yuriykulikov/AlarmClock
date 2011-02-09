@@ -22,8 +22,8 @@
     <string name="menu_desk_clock" msgid="3241995064554071588">"卓上時計"</string>
     <string name="menu_edit_alarm" msgid="7204602994918829751">"アラームを編集"</string>
     <string name="delete_alarm" msgid="3457780990646206817">"アラームを削除"</string>
-    <string name="enable_alarm" msgid="1834599140632142536">"アラームをオンにする"</string>
-    <string name="disable_alarm" msgid="5889378670229554109">"アラームをオフにする"</string>
+    <string name="enable_alarm" msgid="1834599140632142536">"アラームをONにする"</string>
+    <string name="disable_alarm" msgid="5889378670229554109">"アラームをOFFにする"</string>
     <string name="delete_alarm_confirm" msgid="4237696873219106907">"このアラームを削除します。"</string>
     <string name="show_clock" msgid="8358759982675616915">"時計を表示"</string>
     <string name="hide_clock" msgid="3217727306480505694">"時計を隠す"</string>
@@ -122,7 +122,7 @@
     <string name="desk_clock_button_description" msgid="968868045496561043">"時計のディスプレイ"</string>
     <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g><xliff:g id="PERCENT">%%</xliff:g>"</string>
     <string name="weather_fetch_failure" msgid="7517010911981312358">"天気予報は現在ご利用いただけません。"</string>
-    <string name="menu_item_dock_settings" msgid="3524235151132971114">"ドックの設定"</string>
+    <string name="menu_item_dock_settings" msgid="3524235151132971114">"ホルダーの設定"</string>
     <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"卓上時計で設定したアラーム用のサウンド再生サービスです。"</string>
     <string name="loading_ringtone" msgid="6523322777415268044">"着信音を読み込み中..."</string>
     <string name="control_set_alarm" msgid="2194676418924016327">"アラームを設定"</string>
