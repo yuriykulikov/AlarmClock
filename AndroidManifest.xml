@@ -83,7 +83,8 @@
                 android:taskAffinity=""
                 android:configChanges="orientation|keyboardHidden|keyboard|navigation"/>
 
-        <receiver android:name="AlarmReceiver">
+        <receiver android:name="AlarmReceiver"
+                android:exported="false">
             <intent-filter>
                 <action android:name="com.android.deskclock.ALARM_ALERT" />
                 <action android:name="alarm_killed" />
@@ -108,8 +109,8 @@
              This allows the alert to continue playing even if another activity
              causes the AlarmAlert activity to pause. -->
         <service android:name="AlarmKlaxon"
-                android:description="@string/alarm_klaxon_service_desc"
-                >
+                android:exported="false"
+                android:description="@string/alarm_klaxon_service_desc">
             <intent-filter>
                 <action android:name="com.android.deskclock.ALARM_ALERT" />
             </intent-filter>
