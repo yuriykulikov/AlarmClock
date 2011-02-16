@@ -126,5 +126,5 @@
     <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Layanan pemutaran suara untuk alarm yang disetel di DeskClock."</string>
     <string name="loading_ringtone" msgid="6523322777415268044">"Memuat nada dering…"</string>
     <string name="control_set_alarm" msgid="2194676418924016327">"Setel alarm"</string>
-    <string name="control_set_alarm_with_existing" msgid="1128169496817859490">"Setelan alarm: <xliff:g id="TIME">%s</xliff:g>"</string>
+    <string name="control_set_alarm_with_existing" msgid="1128169496817859490">"Alarm disetel: <xliff:g id="TIME">%s</xliff:g>"</string>
 </resources>
