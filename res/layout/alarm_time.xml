@@ -71,15 +71,15 @@
 
             <com.android.deskclock.AndroidClockTextView 
                 android:id="@+id/am_pm"
-                android:layout_width="0dip"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
+                android:paddingRight="10dip"
                 android:textStyle="bold"
                 useClockTypeface="false"/>
 
             <TextView android:id="@+id/label"
-                android:layout_width="wrap_content"
+                android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:paddingLeft="8dip"
