@@ -25,6 +25,7 @@
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
-    <style name="AlarmAlertFullScreenTheme" parent="android:Theme.Holo.Wallpaper.NoTitleBar"/>
+    <!-- On xlarge devices, use the dialog theme for the "full screen" activity. -->
+    <style name="AlarmAlertFullScreenTheme" parent="android:Theme.Holo.Dialog"/>
 
 </resources>
