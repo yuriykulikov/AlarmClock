@@ -101,7 +101,7 @@
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (répétition)"</string>
     <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"Prochaine alarme dans <xliff:g id="TIME">%s</xliff:g>. Sélectionnez l\'option appropriée pour annuler."</string>
     <string name="volume_button_setting_title" msgid="6937131248843413357">"Boutons du volume"</string>
-    <string name="volume_button_dialog_title" msgid="8768042543750036853">"Effet du bouton"</string>
+    <string name="volume_button_dialog_title" msgid="8768042543750036853">"Effet des boutons"</string>
     <string name="volume_button_setting_summary" msgid="4776447991226047070">"Définir les actions de ces boutons lorsqu\'ils sont utilisés pendant une alarme"</string>
   <string-array name="volume_button_setting_entries">
     <item msgid="4520420953175098625">"Aucun"</item>
@@ -123,7 +123,7 @@
     <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g> <xliff:g id="PERCENT">%%</xliff:g>"</string>
     <string name="weather_fetch_failure" msgid="7517010911981312358">"La météo n\'est pas disponible pour le moment."</string>
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Paramètres station d\'accueil"</string>
-    <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Lancez le service de lecture pour les alarmes définies via l\'Horloge de bureau."</string>
+    <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Lancer le service de lecture pour les alarmes définies via l\'Horloge de bureau"</string>
     <string name="loading_ringtone" msgid="6523322777415268044">"Chargement de la sonnerie..."</string>
     <string name="control_set_alarm" msgid="2194676418924016327">"Régler l\'alarme"</string>
     <string name="control_set_alarm_with_existing" msgid="1128169496817859490">"Alarme réglée : <xliff:g id="TIME">%s</xliff:g>"</string>
