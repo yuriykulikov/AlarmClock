@@ -34,7 +34,7 @@
     <string name="alarm_repeat" msgid="7242985466344233206">"Дни недели"</string>
     <string name="alert" msgid="6539852766423700221">"Звук сигнала"</string>
     <string name="time" msgid="8067216534232296518">"Время"</string>
-    <string name="alarm_alert_dismiss_text" msgid="4942914605480888820">"Отключить"</string>
+    <string name="alarm_alert_dismiss_text" msgid="4942914605480888820">"Выключить"</string>
     <string name="alarm_alert_alert_silenced" msgid="7918075929961104202">"Будильник звонил <xliff:g id="MINUTES">%d</xliff:g> мин."</string>
     <string name="alarm_alert_snooze_text" msgid="1774416052207651584">"Отложить"</string>
     <string name="alarm_alert_snooze_set" msgid="656470966696912087">"Повтор сигнала через <xliff:g id="MINUTES">%d</xliff:g> мин."</string>
