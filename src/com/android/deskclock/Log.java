@@ -21,7 +21,6 @@
 package com.android.deskclock;
 
 import android.os.SystemClock;
-import android.util.Config;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,7 +28,7 @@ import java.util.Date;
 class Log {
     public final static String LOGTAG = "AlarmClock";
 
-    static final boolean LOGV = AlarmClock.DEBUG ? Config.LOGD : Config.LOGV;
+    static final boolean LOGV = AlarmClock.DEBUG ? false : false;
 
     static void v(String logMe) {
         android.util.Log.v(LOGTAG, /* SystemClock.uptimeMillis() + " " + */ logMe);
