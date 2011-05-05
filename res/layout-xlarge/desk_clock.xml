@@ -21,71 +21,10 @@
     android:paddingBottom="432dip"
     android:background="@drawable/background_protector">
 
-    <FrameLayout
-        android:id="@+id/time_date"
+    <include layout="@layout/desk_clock_time_date"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right">
+        android:layout_height="wrap_content" />
 
-        <com.android.deskclock.DigitalClock
-            android:id="@+id/time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <com.android.deskclock.AndroidClockTextView
-                    android:id="@+id/timeDisplay"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="180sp"
-                    android:textColor="#FFFFFFFF" />
-
-                <com.android.deskclock.AndroidClockTextView
-                    android:id="@+id/am_pm"
-                    android:layout_width="128dip"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/timeDisplay"
-                    android:layout_alignBaseline="@id/timeDisplay"
-                    android:layout_marginLeft="32dip"
-                    android:textSize="90sp"
-                    android:textColor="#FFFFFFFF"
-                    fontHighlightsEnabled="false"
-                    shortForm="true" />
-
-                <TextView
-                    android:id="@+id/date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dip"
-                    android:layout_below="@id/timeDisplay"
-                    android:layout_alignRight="@id/timeDisplay"
-                    android:gravity="bottom|right"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:shadowColor="#C0000000"
-                    android:shadowDx="0"
-                    android:shadowDy="0"
-                    android:shadowRadius="3.0" />
-
-                <TextView
-                    android:id="@+id/nextAlarm"
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dip"
-                    android:layout_below="@id/date"
-                    android:layout_alignRight="@id/date"
-                    android:gravity="center_vertical|right"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:drawablePadding="6dip"
-                    android:drawableLeft="@drawable/ic_setalarm_holo_dark"
-                    android:textColor="#999999"
-                    android:shadowColor="#C0000000"
-                    android:shadowDx="0"
-                    android:shadowDy="0"
-                    android:shadowRadius="3.0" />
-            </RelativeLayout>
-        </com.android.deskclock.DigitalClock>
-    </FrameLayout>
     <View
         android:id="@+id/window_tint"
         android:layout_width="1dip"
