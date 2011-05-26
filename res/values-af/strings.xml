@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+ -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- no translation found for app_label (6674495003718166674) -->
+    <skip />
+    <!-- no translation found for alarm_list_title (7589940465292950600) -->
+    <skip />
+    <!-- no translation found for add_alarm (5976616107390962899) -->
+    <skip />
+    <!-- no translation found for menu_desk_clock (3241995064554071588) -->
+    <skip />
+    <!-- no translation found for menu_edit_alarm (7204602994918829751) -->
+    <skip />
+    <!-- no translation found for delete_alarm (3457780990646206817) -->
+    <skip />
+    <!-- outdated translation 7442658245797418741 -->     <string name="enable_alarm" msgid="1834599140632142536">"Aktiveer wekker"</string>
+    <!-- outdated translation 6665528499886549648 -->     <string name="disable_alarm" msgid="5889378670229554109">"Deaktiveer wekker"</string>
+    <string name="delete_alarm_confirm" msgid="4237696873219106907">"Hierdie wekker sal uitgevee word."</string>
+    <!-- no translation found for show_clock (8358759982675616915) -->
+    <skip />
+    <!-- no translation found for hide_clock (3217727306480505694) -->
+    <skip />
+    <string name="label" msgid="162189613902857319">"Etiket"</string>
+    <string name="default_label" msgid="5590025289805630372">"Wekker"</string>
+    <!-- no translation found for set_alarm (9148359866152726808) -->
+    <skip />
+    <!-- no translation found for alarm_vibrate (3476686921490362230) -->
+    <skip />
+    <!-- no translation found for alarm_repeat (7242985466344233206) -->
+    <skip />
+    <!-- no translation found for alert (6539852766423700221) -->
+    <skip />
+    <!-- no translation found for time (8067216534232296518) -->
+    <skip />
+    <!-- no translation found for alarm_alert_dismiss_text (4942914605480888820) -->
+    <skip />
+    <string name="alarm_alert_alert_silenced" msgid="7918075929961104202">"Wekker na <xliff:g id="MINUTES">%d</xliff:g> minute stil gemaak"</string>
+    <!-- no translation found for alarm_alert_snooze_text (1774416052207651584) -->
+    <skip />
+    <!-- no translation found for alarm_alert_snooze_set (656470966696912087) -->
+    <skip />
+  <string-array name="alarm_set">
+    <item msgid="5163476010406761625">"Hierdie wekker is vir minder as 1 minuut van nou af gestel."</item>
+    <item msgid="7110525731259629055">"Hierdie wekker is vir <xliff:g id="DAYS">%1$s</xliff:g> van nou af gestel."</item>
+    <item msgid="7003982794086186185">"Hierdie wekker is vir <xliff:g id="HOURS">%2$s</xliff:g> van nou af gestel."</item>
+    <item msgid="7311021123230077742">"Hierdie wekker is vir <xliff:g id="DAYS">%1$s</xliff:g> en <xliff:g id="HOURS">%2$s</xliff:g> van nou af gestel."</item>
+    <item msgid="8431715191823114872">"Hierdie wekker is vir <xliff:g id="MINUTES">%3$s</xliff:g> van nou af gestel."</item>
+    <item msgid="3244151088673185428">"Hierdie wekker is vir <xliff:g id="DAYS">%1$s</xliff:g> en <xliff:g id="MINUTES">%3$s</xliff:g> van nou af gestel."</item>
+    <item msgid="3663661342600168814">"Hierdie wekker is vir <xliff:g id="HOURS">%2$s</xliff:g> en <xliff:g id="MINUTES">%3$s</xliff:g> van nou af gestel."</item>
+    <item msgid="7779544127785487304">"Hierdie wekker is vir <xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> en <xliff:g id="MINUTES">%3$s</xliff:g> van nou af gestel."</item>
+  </string-array>
+    <string name="day" msgid="7984755014526510295">"1 dag"</string>
+    <string name="days" msgid="2070509222727852210">"<xliff:g id="DAYS">%s</xliff:g> dae"</string>
+    <!-- no translation found for hour (2546819039651509323) -->
+    <skip />
+    <!-- no translation found for hours (2071487018566991613) -->
+    <skip />
+    <string name="minute" msgid="2486157997434653710">"1 minuut"</string>
+    <string name="minutes" msgid="6115838729146292526">"<xliff:g id="MINUTES">%s</xliff:g> minute"</string>
+    <!-- no translation found for every_day (1058994798884544691) -->
+    <skip />
+    <!-- no translation found for never (54104287800571769) -->
+    <skip />
+    <string name="day_concat" msgid="971998564991636532">", "</string>
+    <!-- no translation found for clock_instructions (3118560284915857690) -->
+    <skip />
+    <string name="analog_gadget" msgid="1670505720837152766">"Wyserhorlosie"</string>
+    <string name="settings" msgid="5849739030579520686">"Instellings"</string>
+    <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Wekker in stilmodus"</string>
+    <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"Lui wekker selfs al is die foon in stilmodus"</string>
+    <string name="snooze_duration_title" msgid="1471249885139952670">"Sluimer-tydsduur"</string>
+  <string-array name="snooze_duration_entries">
+    <item msgid="8337408933053603125">"5 minute"</item>
+    <item msgid="5294206441496024610">"10 minute"</item>
+    <item msgid="2165904039211935470">"15 minute"</item>
+    <item msgid="7248236967714374250">"20 minute"</item>
+    <item msgid="738394723625179423">"25 minute"</item>
+    <item msgid="1180222611308391616">"30 minute"</item>
+  </string-array>
+  <string-array name="snooze_duration_values">
+    <item msgid="3655014754453084122">"5"</item>
+    <item msgid="8939029597449573449">"10"</item>
+    <item msgid="3922647341176353315">"15"</item>
+    <item msgid="5821804105985044459">"20"</item>
+    <item msgid="6048861883552402852">"25"</item>
+    <item msgid="2740866721232379791">"30"</item>
+  </string-array>
+    <!-- no translation found for auto_silence_title (8000666766495360928) -->
+    <skip />
+    <!-- no translation found for auto_silence_summary (5757272454196171758) -->
+    <skip />
+    <!-- no translation found for auto_silence_never (4302257878142130807) -->
+    <skip />
+    <!-- no translation found for auto_silence_entries:0 (7718972982871612080) -->
+    <!-- no translation found for auto_silence_entries:1 (5431906692406316549) -->
+    <!-- no translation found for auto_silence_entries:2 (7742728812068919959) -->
+    <!-- no translation found for auto_silence_entries:3 (2855948657259647629) -->
+    <!-- no translation found for auto_silence_entries:4 (6330196381284475079) -->
+    <!-- no translation found for auto_silence_entries:5 (7809240121716151904) -->
+    <!-- no translation found for auto_silence_entries:6 (2807487305575255986) -->
+    <string name="done" msgid="6509722361933858451">"Klaar"</string>
+    <string name="revert" msgid="9100911171235162926">"Laai terug"</string>
+    <!-- no translation found for delete (5732434972457000541) -->
+    <skip />
+    <string name="alarm_volume_title" msgid="8506245173912428522">"Wekkervolume"</string>
+    <string name="alarm_volume_summary" msgid="8957440373896242438">"Stel die wekkervolume"</string>
+    <string name="silent_alarm_summary" msgid="8605302849408279221">"Stil"</string>
+    <string name="alarm_notify_text" msgid="4146350965933990093">"Kies om te sluimer, of maak hierdie wekker toe."</string>
+    <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (sluimerend)"</string>
+    <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"Wekker vir <xliff:g id="TIME">%s</xliff:g> gestel. Kies om te kanselleer."</string>
+    <!-- outdated translation 1892885285888644234 -->     <string name="volume_button_setting_title" msgid="6937131248843413357">"Syknoppiegedrag"</string>
+    <!-- no translation found for volume_button_dialog_title (8768042543750036853) -->
+    <skip />
+    <!-- outdated translation 1594641247799573198 -->     <string name="volume_button_setting_summary" msgid="4776447991226047070">"Stel die verlangde gedrag van die syknoppies wanneer dit die wekker lui"</string>
+  <string-array name="volume_button_setting_entries">
+    <item msgid="4520420953175098625">"Geen"</item>
+    <item msgid="7111908302622811168">"Sluimer"</item>
+    <item msgid="8573552194573068996">"Maak toe"</item>
+  </string-array>
+  <string-array name="volume_button_setting_values">
+    <item msgid="4851033050639608752">"0"</item>
+    <item msgid="3204893476515513084">"1"</item>
+    <item msgid="7687709558968154577">"2"</item>
+  </string-array>
+    <!-- no translation found for default_ringtone_setting_title (4549726190682964245) -->
+    <skip />
+    <!-- no translation found for alarm_button_description (740283647046258651) -->
+    <skip />
+    <!-- no translation found for gallery_button_description (1151743663255257668) -->
+    <skip />
+    <!-- no translation found for music_button_description (1626593420810117999) -->
+    <skip />
+    <!-- no translation found for nightmode_button_description (990894208217576381) -->
+    <skip />
+    <!-- no translation found for home_button_description (3383859096809056157) -->
+    <skip />
+    <!-- no translation found for desk_clock_button_description (968868045496561043) -->
+    <skip />
+    <!-- no translation found for battery_charging_level (4391767951302394083) -->
+    <skip />
+    <!-- no translation found for weather_fetch_failure (7517010911981312358) -->
+    <skip />
+    <!-- no translation found for menu_item_dock_settings (3524235151132971114) -->
+    <!-- no translation found for menu_item_dock_settings (9161438664257429372) -->
+    <skip />
+    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
+    <skip />
+    <!-- no translation found for loading_ringtone (6523322777415268044) -->
+    <skip />
+    <!-- no translation found for control_set_alarm (2194676418924016327) -->
+    <skip />
+    <!-- no translation found for control_set_alarm_with_existing (1128169496817859490) -->
+    <skip />
+</resources>
