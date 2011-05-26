@@ -84,7 +84,7 @@ public class DeskClock extends Activity {
     private final long SCREEN_SAVER_TIMEOUT = 5 * 60 * 1000; // 5 min
 
     // Repositioning delay in screen saver.
-    private final long SCREEN_SAVER_MOVE_DELAY = 60 * 1000; // 1 min
+    public static final long SCREEN_SAVER_MOVE_DELAY = 60 * 1000; // 1 min
 
     // Color to use for text & graphics in screen saver mode.
     private final int SCREEN_SAVER_COLOR = 0xFF308030;
@@ -266,6 +266,7 @@ public class DeskClock extends Activity {
         if (!mScreenSaverMode) return;
         if (DEBUG) Log.d(LOG_TAG, "restoreScreen");
         mScreenSaverMode = false;
+
         initViews();
         doDim(false); // restores previous dim mode
         // policy: update weather info when returning from screen saver
@@ -306,6 +307,8 @@ public class DeskClock extends Activity {
         ((AndroidClockTextView)findViewById(R.id.timeDisplay)).setTextColor(color);
         ((AndroidClockTextView)findViewById(R.id.am_pm)).setTextColor(color);
         mDate.setTextColor(color);
+
+        mTime.setSystemUiVisibility(View.STATUS_BAR_HIDDEN);
 
         mBatteryDisplay =
         mWeatherCurrentTemperature =
@@ -513,6 +516,8 @@ public class DeskClock extends Activity {
         View tintView = findViewById(R.id.window_tint);
         if (tintView == null) return;
 
+        mTime.setSystemUiVisibility(fade ? View.STATUS_BAR_HIDDEN : View.STATUS_BAR_VISIBLE);
+
         Window win = getWindow();
         WindowManager.LayoutParams winParams = win.getAttributes();
 
@@ -669,6 +674,7 @@ public class DeskClock extends Activity {
         mDate = (TextView) findViewById(R.id.date);
         mBatteryDisplay = (TextView) findViewById(R.id.battery);
 
+        mTime.setSystemUiVisibility(View.STATUS_BAR_VISIBLE);
         mTime.getRootView().requestFocus();
 
         mWeatherCurrentTemperature = (TextView) findViewById(R.id.weather_temperature);
