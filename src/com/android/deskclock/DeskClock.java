@@ -394,8 +394,12 @@ public class DeskClock extends Activity {
                 Log.d(LOG_TAG, sb.toString());
             }
 
-            mWeatherIconDrawable = mGenieResources.getDrawable(cur.getInt(
-                cur.getColumnIndexOrThrow("iconResId")));
+            int weatherIconResID = cur.getInt(cur.getColumnIndexOrThrow("iconResId"));
+            if (weatherIconResID > 0) {
+                mWeatherIconDrawable = mGenieResources.getDrawable(weatherIconResID);
+            } else {
+                mWeatherIconDrawable = null;
+            }
 
             mWeatherLocationString = cur.getString(
                 cur.getColumnIndexOrThrow("location"));
