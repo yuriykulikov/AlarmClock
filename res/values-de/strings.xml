@@ -121,7 +121,7 @@
     <string name="home_button_description" msgid="3383859096809056157">"Übersicht"</string>
     <string name="desk_clock_button_description" msgid="968868045496561043">"Uhrenansicht"</string>
     <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g> <xliff:g id="PERCENT">%%</xliff:g>"</string>
-    <string name="weather_fetch_failure" msgid="7517010911981312358">"Wetterinformationen derzeit nicht verfügbar"</string>
+    <string name="weather_fetch_failure" msgid="7517010911981312358">"Wetterinformationen zurzeit nicht verfügbar"</string>
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Dock-Einstellungen"</string>
     <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Tonwiedergabedienst für in DeskClock eingestellte Alarme"</string>
     <string name="loading_ringtone" msgid="6523322777415268044">"Klingelton wird geladen..."</string>
