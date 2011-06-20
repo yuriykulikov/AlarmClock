@@ -16,19 +16,14 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- outdated translation 6642875149600019623 -->     <string name="app_label" msgid="6674495003718166674">"Jam Penggera"</string>
-    <!-- no translation found for alarm_list_title (7589940465292950600) -->
-    <skip />
+    <string name="app_label" msgid="6674495003718166674">"Jam"</string>
+    <string name="alarm_list_title" msgid="7589940465292950600">"Penggera"</string>
     <string name="add_alarm" msgid="5976616107390962899">"Tambah penggera"</string>
-    <!-- no translation found for menu_desk_clock (3241995064554071588) -->
-    <skip />
-    <!-- no translation found for menu_edit_alarm (7204602994918829751) -->
-    <skip />
+    <string name="menu_desk_clock" msgid="3241995064554071588">"Jam meja"</string>
+    <string name="menu_edit_alarm" msgid="7204602994918829751">"Edit penggera"</string>
     <string name="delete_alarm" msgid="3457780990646206817">"Padam penggera"</string>
-    <!-- no translation found for enable_alarm (1834599140632142536) -->
-    <skip />
-    <!-- no translation found for disable_alarm (5889378670229554109) -->
-    <skip />
+    <string name="enable_alarm" msgid="1834599140632142536">"Hidupkan penggera"</string>
+    <string name="disable_alarm" msgid="5889378670229554109">"Matikan penggera"</string>
     <string name="delete_alarm_confirm" msgid="4237696873219106907">"Penggera ini akan dipadamkan."</string>
     <string name="show_clock" msgid="8358759982675616915">"Tunjukkan jam"</string>
     <string name="hide_clock" msgid="3217727306480505694">"Sembunyikan jam"</string>
@@ -43,14 +38,16 @@
     <string name="alarm_alert_alert_silenced" msgid="7918075929961104202">"Penggera disenyapkan selepas <xliff:g id="MINUTES">%d</xliff:g> minit"</string>
     <string name="alarm_alert_snooze_text" msgid="1774416052207651584">"Tidur sekejap"</string>
     <string name="alarm_alert_snooze_set" msgid="656470966696912087">"Tidur sekejap untuk <xliff:g id="MINUTES">%d</xliff:g> minit."</string>
-    <!-- no translation found for alarm_set:0 (5163476010406761625) -->
-    <!-- no translation found for alarm_set:1 (7110525731259629055) -->
-    <!-- no translation found for alarm_set:2 (7003982794086186185) -->
-    <!-- no translation found for alarm_set:3 (7311021123230077742) -->
-    <!-- no translation found for alarm_set:4 (8431715191823114872) -->
-    <!-- no translation found for alarm_set:5 (3244151088673185428) -->
-    <!-- no translation found for alarm_set:6 (3663661342600168814) -->
-    <!-- no translation found for alarm_set:7 (7779544127785487304) -->
+  <string-array name="alarm_set">
+    <item msgid="5163476010406761625">"Penggera ini ditetapkan pada kurang daripada 1 minit dari sekarang."</item>
+    <item msgid="7110525731259629055">"Penggera ini ditetapkan pada <xliff:g id="DAYS">%1$s</xliff:g> dari sekarang."</item>
+    <item msgid="7003982794086186185">"Penggera ini ditetapkan pada <xliff:g id="HOURS">%2$s</xliff:g> dari sekarang."</item>
+    <item msgid="7311021123230077742">"Penggera ini ditetapkan pada <xliff:g id="DAYS">%1$s</xliff:g> dan <xliff:g id="HOURS">%2$s</xliff:g> dari sekarang."</item>
+    <item msgid="8431715191823114872">"Penggera ini ditetapkan pada <xliff:g id="MINUTES">%3$s</xliff:g> dari sekarang."</item>
+    <item msgid="3244151088673185428">"Penggera ini ditetapkan pada <xliff:g id="DAYS">%1$s</xliff:g> dan <xliff:g id="MINUTES">%3$s</xliff:g> dari sekarang."</item>
+    <item msgid="3663661342600168814">"Penggera ini ditetapkan pada <xliff:g id="HOURS">%2$s</xliff:g> dan <xliff:g id="MINUTES">%3$s</xliff:g> dari sekarang."</item>
+    <item msgid="7779544127785487304">"Penggera ini ditetapkan pada <xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> dan <xliff:g id="MINUTES">%3$s</xliff:g> dari sekarang."</item>
+  </string-array>
     <string name="day" msgid="7984755014526510295">"1 hari"</string>
     <string name="days" msgid="2070509222727852210">"<xliff:g id="DAYS">%s</xliff:g> hari"</string>
     <string name="hour" msgid="2546819039651509323">"1 jam"</string>
@@ -65,90 +62,69 @@
     <string name="settings" msgid="5849739030579520686">"Tetapan"</string>
     <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Penggera dalam mod senyap"</string>
     <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"Mainkan penggera walaupun telefon berada dalam mod senyap"</string>
-    <!-- no translation found for snooze_duration_title (1471249885139952670) -->
-    <skip />
-    <!-- no translation found for snooze_duration_entries:0 (8337408933053603125) -->
-    <!-- no translation found for snooze_duration_entries:1 (5294206441496024610) -->
-    <!-- no translation found for snooze_duration_entries:2 (2165904039211935470) -->
-    <!-- no translation found for snooze_duration_entries:3 (7248236967714374250) -->
-    <!-- no translation found for snooze_duration_entries:4 (738394723625179423) -->
-    <!-- no translation found for snooze_duration_entries:5 (1180222611308391616) -->
-    <!-- no translation found for snooze_duration_values:0 (3655014754453084122) -->
-    <!-- no translation found for snooze_duration_values:1 (8939029597449573449) -->
-    <!-- no translation found for snooze_duration_values:2 (3922647341176353315) -->
-    <!-- no translation found for snooze_duration_values:3 (5821804105985044459) -->
-    <!-- no translation found for snooze_duration_values:4 (6048861883552402852) -->
-    <!-- no translation found for snooze_duration_values:5 (2740866721232379791) -->
-    <!-- no translation found for auto_silence_title (8000666766495360928) -->
-    <skip />
-    <!-- no translation found for auto_silence_summary (5757272454196171758) -->
-    <skip />
-    <!-- no translation found for auto_silence_never (4302257878142130807) -->
-    <skip />
-    <!-- no translation found for auto_silence_entries:0 (7718972982871612080) -->
-    <!-- no translation found for auto_silence_entries:1 (5431906692406316549) -->
-    <!-- no translation found for auto_silence_entries:2 (7742728812068919959) -->
-    <!-- no translation found for auto_silence_entries:3 (2855948657259647629) -->
-    <!-- no translation found for auto_silence_entries:4 (6330196381284475079) -->
-    <!-- no translation found for auto_silence_entries:5 (7809240121716151904) -->
-    <!-- no translation found for auto_silence_entries:6 (2807487305575255986) -->
-    <!-- no translation found for done (6509722361933858451) -->
-    <skip />
-    <!-- no translation found for revert (9100911171235162926) -->
-    <skip />
-    <!-- no translation found for delete (5732434972457000541) -->
-    <skip />
-    <!-- no translation found for alarm_volume_title (8506245173912428522) -->
-    <skip />
-    <!-- no translation found for alarm_volume_summary (8957440373896242438) -->
-    <skip />
-    <!-- no translation found for silent_alarm_summary (8605302849408279221) -->
-    <skip />
-    <!-- no translation found for alarm_notify_text (4146350965933990093) -->
-    <skip />
-    <!-- no translation found for alarm_notify_snooze_label (5404083762646377829) -->
-    <skip />
-    <!-- no translation found for alarm_notify_snooze_text (8004830999152609519) -->
-    <skip />
-    <!-- no translation found for volume_button_setting_title (6937131248843413357) -->
-    <skip />
-    <!-- no translation found for volume_button_dialog_title (8768042543750036853) -->
-    <skip />
-    <!-- no translation found for volume_button_setting_summary (4776447991226047070) -->
-    <skip />
-    <!-- no translation found for volume_button_setting_entries:0 (4520420953175098625) -->
-    <!-- no translation found for volume_button_setting_entries:1 (7111908302622811168) -->
-    <!-- no translation found for volume_button_setting_entries:2 (8573552194573068996) -->
-    <!-- no translation found for volume_button_setting_values:0 (4851033050639608752) -->
-    <!-- no translation found for volume_button_setting_values:1 (3204893476515513084) -->
-    <!-- no translation found for volume_button_setting_values:2 (7687709558968154577) -->
-    <!-- no translation found for default_ringtone_setting_title (4549726190682964245) -->
-    <skip />
-    <!-- no translation found for alarm_button_description (740283647046258651) -->
-    <skip />
-    <!-- no translation found for gallery_button_description (1151743663255257668) -->
-    <skip />
-    <!-- no translation found for music_button_description (1626593420810117999) -->
-    <skip />
-    <!-- no translation found for nightmode_button_description (990894208217576381) -->
-    <skip />
-    <!-- no translation found for home_button_description (3383859096809056157) -->
-    <skip />
-    <!-- no translation found for desk_clock_button_description (968868045496561043) -->
-    <skip />
-    <!-- no translation found for battery_charging_level (4391767951302394083) -->
-    <skip />
-    <!-- no translation found for weather_fetch_failure (7517010911981312358) -->
-    <skip />
-    <!-- no translation found for menu_item_dock_settings (3524235151132971114) -->
-    <!-- no translation found for menu_item_dock_settings (9161438664257429372) -->
-    <skip />
-    <!-- no translation found for alarm_klaxon_service_desc (2153290655559916468) -->
-    <skip />
-    <!-- no translation found for loading_ringtone (6523322777415268044) -->
-    <skip />
-    <!-- no translation found for control_set_alarm (2194676418924016327) -->
-    <skip />
-    <!-- no translation found for control_set_alarm_with_existing (1128169496817859490) -->
-    <skip />
+    <string name="snooze_duration_title" msgid="1471249885139952670">"Tempoh tidur sekejap"</string>
+  <string-array name="snooze_duration_entries">
+    <item msgid="8337408933053603125">"5 minit"</item>
+    <item msgid="5294206441496024610">"10 minit"</item>
+    <item msgid="2165904039211935470">"15 minit"</item>
+    <item msgid="7248236967714374250">"20 minit"</item>
+    <item msgid="738394723625179423">"25 minit"</item>
+    <item msgid="1180222611308391616">"30 minit"</item>
+  </string-array>
+  <string-array name="snooze_duration_values">
+    <item msgid="3655014754453084122">"5"</item>
+    <item msgid="8939029597449573449">"10"</item>
+    <item msgid="3922647341176353315">"15"</item>
+    <item msgid="5821804105985044459">"20"</item>
+    <item msgid="6048861883552402852">"25"</item>
+    <item msgid="2740866721232379791">"30"</item>
+  </string-array>
+    <string name="auto_silence_title" msgid="8000666766495360928">"Autosenyap"</string>
+    <string name="auto_silence_summary" msgid="5757272454196171758">"Penggera akan senyap selepas <xliff:g id="MINUTES">%d</xliff:g> minit"</string>
+    <string name="auto_silence_never" msgid="4302257878142130807">"Mati"</string>
+  <string-array name="auto_silence_entries">
+    <item msgid="7718972982871612080">"Mati"</item>
+    <item msgid="5431906692406316549">"5 minit"</item>
+    <item msgid="7742728812068919959">"10 minit"</item>
+    <item msgid="2855948657259647629">"15 minit"</item>
+    <item msgid="6330196381284475079">"20 minit"</item>
+    <item msgid="7809240121716151904">"25 minit"</item>
+    <item msgid="2807487305575255986">"30 minit"</item>
+  </string-array>
+    <string name="done" msgid="6509722361933858451">"Selesai"</string>
+    <string name="revert" msgid="9100911171235162926">"Berbalik"</string>
+    <string name="delete" msgid="5732434972457000541">"Padam"</string>
+    <string name="alarm_volume_title" msgid="8506245173912428522">"Kelantangan penggera"</string>
+    <string name="alarm_volume_summary" msgid="8957440373896242438">"Tetapkan kelantangan penggera"</string>
+    <string name="silent_alarm_summary" msgid="8605302849408279221">"Senyap"</string>
+    <string name="alarm_notify_text" msgid="4146350965933990093">"Pilih untuk menidurkan sekejap atau mengetepikan penggera ini."</string>
+    <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (ditidurkan sekejap)"</string>
+    <string name="alarm_notify_snooze_text" msgid="8004830999152609519">"Penggera ditetapkan pada <xliff:g id="TIME">%s</xliff:g>. Pilih untuk membatalkan."</string>
+    <string name="volume_button_setting_title" msgid="6937131248843413357">"Butang kelantangan"</string>
+    <string name="volume_button_dialog_title" msgid="8768042543750036853">"Kesan butang"</string>
+    <string name="volume_button_setting_summary" msgid="4776447991226047070">"Tetapkan apa yang dilakukan butang ini apabila ditekan semasa penggera berbunyi"</string>
+  <string-array name="volume_button_setting_entries">
+    <item msgid="4520420953175098625">"Tiada"</item>
+    <item msgid="7111908302622811168">"Tidur sekejap"</item>
+    <item msgid="8573552194573068996">"Ketepikan"</item>
+  </string-array>
+  <string-array name="volume_button_setting_values">
+    <item msgid="4851033050639608752">"0"</item>
+    <item msgid="3204893476515513084">"1"</item>
+    <item msgid="7687709558968154577">"2"</item>
+  </string-array>
+    <string name="default_ringtone_setting_title" msgid="4549726190682964245">"Tetapkan nada dering lalai"</string>
+    <string name="alarm_button_description" msgid="740283647046258651">"Penggera"</string>
+    <string name="gallery_button_description" msgid="1151743663255257668">"Galeri"</string>
+    <string name="music_button_description" msgid="1626593420810117999">"Muzik"</string>
+    <string name="nightmode_button_description" msgid="990894208217576381">"Malap"</string>
+    <string name="home_button_description" msgid="3383859096809056157">"Pelancar"</string>
+    <string name="desk_clock_button_description" msgid="968868045496561043">"Paparan Jam"</string>
+    <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g><xliff:g id="PERCENT">%%</xliff:g>"</string>
+    <string name="weather_fetch_failure" msgid="7517010911981312358">"Maklumat cuaca tidak tersedia pada masa ini."</string>
+    <string name="menu_item_dock_settings" msgid="3524235151132971114">"Tetapan dok"</string>
+    <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Perkhidmatan main semula bunyi untuk penggera yang ditetapkan dalam DeskClock."</string>
+    <string name="loading_ringtone" msgid="6523322777415268044">"Memuatkan nada dering…"</string>
+    <string name="control_set_alarm" msgid="2194676418924016327">"Tetapkan penggera"</string>
+    <string name="control_set_alarm_with_existing" msgid="1128169496817859490">"Penggera ditetapkan: <xliff:g id="TIME">%s</xliff:g>"</string>
 </resources>
