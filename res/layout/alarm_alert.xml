@@ -14,19 +14,25 @@
      limitations under the License.
 -->
 
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical">
+    >
 
     <com.android.deskclock.DigitalClock
-        android:layout_width="wrap_content"
+        android:id="@+id/digitalClock"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="30dip"
+        android:gravity="center"
+        android:paddingTop="24dip"
+        android:paddingLeft="24dip"
+        android:paddingRight="24dip"
+        android:paddingBottom="80dp"
         android:baselineAligned="true"
-        android:gravity="center_horizontal">
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        >
 
         <com.android.deskclock.AndroidClockTextView
             android:id="@+id/timeDisplay"
@@ -47,34 +53,33 @@
 
     </com.android.deskclock.DigitalClock>
 
+    <Button
+        android:id="@+id/snooze"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignBottom="@id/digitalClock"
+        android:paddingBottom="16dp"
+        android:gravity="bottom|center_horizontal"
+        android:text="@string/alarm_alert_snooze_text" />
+
     <View
+        android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dip"
         android:layout_marginLeft="16dip"
         android:layout_marginRight="16dip"
+        android:layout_below="@id/snooze"
         android:background="?android:attr/dividerHorizontal" />
 
-    <LinearLayout
+    <Button
+        android:id="@+id/dismiss"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="?android:attr/buttonBarStyle">
+        android:layout_height="48dp"
+        android:gravity="center"
+        android:layout_below="@id/divider"
+        android:text="@string/alarm_alert_dismiss_text" />
 
-        <Button
-            android:id="@+id/snooze"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:text="@string/alarm_alert_snooze_text" />
-
-        <Button
-            android:id="@+id/dismiss"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:text="@string/alarm_alert_dismiss_text" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>
