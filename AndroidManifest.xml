@@ -14,7 +14,6 @@
     <uses-permission android:name="android.permission.DEVICE_POWER" />
 
     <application android:label="@string/app_label"
-                 android:hardwareAccelerated="false"
                  android:icon="@mipmap/ic_launcher_alarmclock">
 
         <provider android:name="AlarmProvider"
