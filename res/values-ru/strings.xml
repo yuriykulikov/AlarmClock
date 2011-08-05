@@ -40,13 +40,13 @@
     <string name="alarm_alert_snooze_set" msgid="656470966696912087">"Повтор сигнала через <xliff:g id="MINUTES">%d</xliff:g> мин."</string>
   <string-array name="alarm_set">
     <item msgid="5163476010406761625">"До срабатывания будильника осталось меньше одной минуты."</item>
-    <item msgid="7110525731259629055">"Будильник зазвонит через <xliff:g id="DAYS">%1$s</xliff:g>."</item>
-    <item msgid="7003982794086186185">"Будильник зазвонит через <xliff:g id="HOURS">%2$s</xliff:g>."</item>
-    <item msgid="7311021123230077742">"Будильник зазвонит через <xliff:g id="DAYS">%1$s</xliff:g> и <xliff:g id="HOURS">%2$s</xliff:g>."</item>
-    <item msgid="8431715191823114872">"Будильник зазвонит через <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
-    <item msgid="3244151088673185428">"Будильник зазвонит через <xliff:g id="DAYS">%1$s</xliff:g> и <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
-    <item msgid="3663661342600168814">"Будильник зазвонит через <xliff:g id="HOURS">%2$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
-    <item msgid="7779544127785487304">"Будильник зазвонит через <xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> и <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
+    <item msgid="7110525731259629055">"Будильник зазвонит через <xliff:g id="DAYS">%1$s</xliff:g>"</item>
+    <item msgid="7003982794086186185">"Будильник зазвонит через <xliff:g id="HOURS">%2$s</xliff:g>"</item>
+    <item msgid="7311021123230077742">"Будильник зазвонит через <xliff:g id="DAYS">%1$s</xliff:g> и <xliff:g id="HOURS">%2$s</xliff:g>"</item>
+    <item msgid="8431715191823114872">"Будильник зазвонит через <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
+    <item msgid="3244151088673185428">"Будильник зазвонит через <xliff:g id="DAYS">%1$s</xliff:g> и <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
+    <item msgid="3663661342600168814">"Будильник зазвонит через <xliff:g id="HOURS">%2$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
+    <item msgid="7779544127785487304">"Будильник зазвонит через <xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> и <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
   </string-array>
     <string name="day" msgid="7984755014526510295">"1 день"</string>
     <string name="days" msgid="2070509222727852210">"<xliff:g id="DAYS">%s</xliff:g> дн."</string>
