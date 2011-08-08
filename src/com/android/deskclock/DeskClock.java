@@ -849,6 +849,15 @@ public class DeskClock extends Activity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // Only show the "Dock settings" menu item if the device supports it.
+        boolean isDockSupported =
+                (getPackageManager().resolveActivity(new Intent(DOCK_SETTINGS_ACTION), 0) != null);
+        menu.findItem(R.id.menu_item_dock_settings).setVisible(isDockSupported);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
