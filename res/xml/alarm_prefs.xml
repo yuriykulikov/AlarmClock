@@ -19,9 +19,6 @@
     <CheckBoxPreference android:key="enabled"
         android:persistent="false"
         android:title="@string/enable_alarm" />
-    <Preference android:key="time"
-        android:persistent="false"
-        android:title="@string/time"/>
     <com.android.deskclock.RepeatPreference
         android:persistent="false"
         android:key="setRepeat"
