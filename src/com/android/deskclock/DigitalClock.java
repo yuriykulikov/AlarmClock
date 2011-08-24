@@ -51,10 +51,6 @@ public class DigitalClock extends LinearLayout {
     private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-
-                // STOPSHIP Investigating "stuck" clock issues. Remove before shipping.
-                if (intent != null) Log.v(intent.toString());
-
                 if (mLive && intent.getAction().equals(
                             Intent.ACTION_TIMEZONE_CHANGED)) {
                     mCalendar = Calendar.getInstance();
