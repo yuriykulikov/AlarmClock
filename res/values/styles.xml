@@ -32,7 +32,7 @@
 
     <!-- NOTE: This must be a fullscreen theme, or else the fullscreen alarm will 
          be unable to turn the screen on. -->
-    <style name="AlarmAlertFullScreenTheme" parent="android:Theme.Wallpaper.NoTitleBar"/>
+    <style name="AlarmAlertFullScreenTheme" parent="android:Theme.Holo.Wallpaper.NoTitleBar"/>
 
     <style name="RoundTouchButton">
         <item name="android:gravity">center</item>

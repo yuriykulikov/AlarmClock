@@ -77,6 +77,11 @@ public class AlarmAlert extends AlarmAlertFullScreen {
         finish();
     }
 
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.alarm_alert;
+    }
+    
     private boolean checkRetryCount() {
         if (mKeyguardRetryCount++ >= MAX_KEYGUARD_CHECKS) {
             Log.e("Tried to read keyguard status too many times, bailing...");
