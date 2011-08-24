@@ -76,7 +76,8 @@ public class AndroidClockTextView extends View {
         mHighlightsEnabled =
             attrs.getAttributeBooleanValue(null, ATTR_FONT_HIGHLIGHTS_ENABLED, true);
         mShortForm =attrs.getAttributeBooleanValue(null, ATTR_SHORT_FORM, false);
-        mUseClockTypeface =attrs.getAttributeBooleanValue(null, ATTR_USE_CLOCK_TYPEFACE, true);
+        mUseClockTypeface = attrs.getAttributeBooleanValue(null, ATTR_USE_CLOCK_TYPEFACE, true)
+                && ! mProperties.isInEditMode();
         if (!mUseClockTypeface) {
             mHighlightsEnabled = false;
         }
@@ -84,10 +85,10 @@ public class AndroidClockTextView extends View {
         mTextSize = mProperties.getTextSize();
         mColor = mProperties.getTextColors();
 
-        if (sClockTypeface == null) {
+        sStandardTypeface = Typeface.DEFAULT_BOLD;
+        if (sClockTypeface == null && mUseClockTypeface) {
             sClockTypeface = Typeface.createFromFile(SYSTEM_FONT_TIME_BACKGROUND);
             sHighlightTypeface = Typeface.createFromFile(SYSTEM_FONT_TIME_FOREGROUND);
-            sStandardTypeface = Typeface.DEFAULT_BOLD;
         }
 
         mTextPaint = new Paint();

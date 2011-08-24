@@ -32,6 +32,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -50,6 +51,7 @@ public class AlarmAlertFullScreen extends Activity {
 
     protected Alarm mAlarm;
     private int mVolumeBehavior;
+    boolean mFullscreenStyle;
 
     // Receives the ALARM_KILLED action from the AlarmKlaxon,
     // and also ALARM_SNOOZE_ACTION / ALARM_DISMISS_ACTION from other applications
@@ -87,7 +89,7 @@ public class AlarmAlertFullScreen extends Activity {
         win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         // Turn on the screen unless we are being launched from the AlarmAlert
-        // subclass.
+        // subclass as a result of the screen turning off.
         if (!getIntent().getBooleanExtra(SCREEN_OFF, false)) {
             win.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                     | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
@@ -104,13 +106,19 @@ public class AlarmAlertFullScreen extends Activity {
     }
 
     private void setTitle() {
-        setTitle(mAlarm.getLabelOrDefault(this));
+        final String titleText = mAlarm.getLabelOrDefault(this);
+        
+        setTitle(titleText);
     }
 
+    protected int getLayoutResId() {
+        return R.layout.alarm_alert_fullscreen;
+    }
+    
     private void updateLayout() {
         LayoutInflater inflater = LayoutInflater.from(this);
 
-        setContentView(inflater.inflate(R.layout.alarm_alert, null));
+        setContentView(inflater.inflate(getLayoutResId(), null));
 
         /* snooze behavior: pop a snooze confirmation view, kick alarm
            manager. */
