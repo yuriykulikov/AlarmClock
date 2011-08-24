@@ -32,81 +32,52 @@
         android:paddingTop="25dip"
         >
 
-        <!-- Entire display region (everything but bottom buttons) -->
-        <!-- Left margin is 4 dip shy of desired to allow for the time to
-             "hang off" the left-hand side, accommodating the extra glyph
-             escapement in Clockopia and 3px of text shadow -->
+        <!-- nightmode button, the time, the date, and the next alarm -->
         <LinearLayout
             android:orientation="vertical"
-            android:layout_gravity="left"
-            android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="22dip"
-            android:layout_marginTop="18dip"
-            android:layout_marginRight="18dip"
-            android:layout_marginBottom="14dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical|right"
             >
-
-            <!-- across the top: next alarm, nightmode button -->
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <ImageButton android:id="@+id/nightmode_button"
+                style="@style/RoundTouchButton"
                 android:layout_weight="0"
-                android:layout_marginLeft="4dip"
-                android:layout_marginBottom="6dip"
-                android:gravity="center_vertical"
-                >
-                <TextView android:id="@+id/nextAlarm"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:drawablePadding="6dip"
-                    android:drawableLeft="@drawable/ic_lock_idle_alarm"
-                    android:shadowColor="#C0000000"
-                    android:shadowDx="0"
-                    android:shadowDy="0"
-                    android:shadowRadius="3.0"                        
-                    />
-                <ImageButton android:id="@+id/nightmode_button"
-                    style="@style/RoundTouchButton"
-                    android:layout_weight="0"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:src="@drawable/ic_round_brightness"
-                    android:contentDescription="@string/nightmode_button_description"
-                    android:nextFocusDown="@+id/alarm_button"
-                    />
-            </LinearLayout>
-
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:src="@drawable/ic_clock_brightness"
+                android:layout_marginRight="@dimen/time_margin_right"
+                android:paddingRight="@dimen/font_margin_adjust"
+                android:contentDescription="@string/nightmode_button_description"
+                android:nextFocusDown="@+id/alarm_button"
+                />
             <include layout="@layout/desk_clock_time_date"
-                android:layout_weight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
-
-            <include layout="@layout/desk_clock_weather"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:layout_marginTop="12dip"
-                android:layout_marginBottom="40dip"
-                android:layout_marginLeft="4dip"
-                />
-
-            <include layout="@layout/desk_clock_battery"
-                android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:layout_weight="0"
-                android:layout_marginLeft="4dip"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/time_margin_top"
+                android:layout_marginBottom="@dimen/time_margin_bottom"
+                android:gravity="right"
                 />
-
+            <TextView android:id="@+id/nextAlarm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/time_margin_right"
+                android:paddingRight="@dimen/font_margin_adjust"
+                android:gravity="right"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="@dimen/next_alarm_text_size"
+                android:layout_marginTop="@dimen/next_alarm_margin_top"
+                android:drawablePadding="4dip"
+                android:drawableLeft="@drawable/ic_lock_idle_alarm"
+                />
         </LinearLayout>
 
-        <include layout="@layout/desk_clock_buttons" />
+        <include layout="@layout/desk_clock_battery"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_weight="0"
+            android:layout_marginLeft="4dip"
+            />
 
     </LinearLayout>
 

@@ -18,49 +18,42 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/time_date"
     android:orientation="vertical"
+    android:gravity="right"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:gravity="left|center_vertical"
-    android:layout_weight="1"
     >
 
     <com.android.deskclock.DigitalClock android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dip"
+        android:layout_marginBottom="@dimen/time_margin_bottom"
         >
 
         <com.android.deskclock.AndroidClockTextView 
             android:id="@+id/timeDisplay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingRight="@dimen/time_margin_right"
+            android:layout_alignParentRight="true"
             android:singleLine="true"
             android:ellipsize="none"
-            android:gravity="center"
-            android:textSize="106sp"
-            android:textColor="#FFFFFFFF"
-            android:shadowColor="#C0000000"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="3.0"
-            android:paddingBottom="3dip"
+            android:textSize="@dimen/time_text_size"
+            android:textColor="@color/time_text_color"
             />
-
 
         <com.android.deskclock.AndroidClockTextView 
             android:id="@+id/am_pm"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="bottom"
+            android:layout_width="@dimen/time_margin_right"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignBottom="@id/timeDisplay"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold"
             android:singleLine="true"
             android:ellipsize="none"
-            android:layout_marginLeft="4dip"
-            android:shadowColor="#C0000000"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="3.0"
+            android:gravity="center_horizontal"
+            android:textSize="@dimen/ampm_text_size"
+            android:textColor="@color/ampm_text_color"
             />
 
     </com.android.deskclock.DigitalClock>
@@ -68,13 +61,11 @@
     <TextView android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="left"
+        android:layout_marginRight="@dimen/time_margin_right"
+        android:paddingRight="@dimen/font_margin_adjust"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:shadowColor="#C0000000"
-        android:shadowDx="0"
-        android:shadowDy="0"
-        android:shadowRadius="3.0"
-        android:layout_marginLeft="4dip"
+        android:textSize="@dimen/date_text_size"
+        android:textColor="@color/ampm_text_color"
         />
 
 </LinearLayout>

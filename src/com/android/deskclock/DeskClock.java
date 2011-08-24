@@ -269,8 +269,6 @@ public class DeskClock extends Activity {
 
         initViews();
         doDim(false); // restores previous dim mode
-        // policy: update weather info when returning from screen saver
-        if (mPluggedIn) requestWeatherDataFetch();
 
         scheduleScreenSaver();
 
@@ -327,13 +325,6 @@ public class DeskClock extends Activity {
     public void onUserInteraction() {
         if (mScreenSaverMode)
             restoreScreen();
-    }
-
-    // Tell the Genie widget to load new data from the network.
-    private void requestWeatherDataFetch() {
-        if (DEBUG) Log.d(LOG_TAG, "forcing the Genie widget to update weather now...");
-        sendBroadcast(new Intent(ACTION_GENIE_REFRESH).putExtra("requestWeather", true));
-        // we expect the result to show up in our content observer
     }
 
     private boolean supportsWeather() {
@@ -460,11 +451,6 @@ public class DeskClock extends Activity {
         final boolean pluggedIn = (plugged != 0);
         if (pluggedIn != mPluggedIn) {
             setWakeLock(pluggedIn);
-
-            if (pluggedIn) {
-                // policy: update weather info when attaching to power
-                requestWeatherDataFetch();
-            }
         }
         if (pluggedIn != mPluggedIn || level != mBatteryLevel) {
             mBatteryLevel = level;
@@ -636,12 +622,6 @@ public class DeskClock extends Activity {
 
         final boolean launchedFromDock
             = getIntent().hasCategory(Intent.CATEGORY_DESK_DOCK);
-
-        if (supportsWeather() && launchedFromDock && !mLaunchedFromDock) {
-            // policy: fetch weather if launched via dock connection
-            if (DEBUG) Log.d(LOG_TAG, "Device now docked; forcing weather to refresh right now");
-            requestWeatherDataFetch();
-        }
 
         mLaunchedFromDock = launchedFromDock;
     }

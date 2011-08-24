@@ -31,8 +31,6 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_x="0dip"
-        android:layout_y="0dip"
         android:id="@+id/saver_view">
         <include layout="@layout/desk_clock_time_date"
             android:layout_width="wrap_content"

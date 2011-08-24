@@ -45,7 +45,7 @@ public class Screensaver extends Activity {
 
     static final boolean SLIDE = false;
 
-    private static TimeInterpolator mSlowStartWithBrakes = 
+    private static TimeInterpolator mSlowStartWithBrakes =
         new TimeInterpolator() {
             public float getInterpolation(float x) {
                 return (float)(Math.cos((Math.pow(x,3) + 1) * Math.PI) / 2.0f) + 0.5f;
@@ -60,7 +60,7 @@ public class Screensaver extends Activity {
             long delay = MOVE_DELAY;
 
             View parent = (View)mContainer.getParent();
-            //Log.d("DeskClock/Screensaver", String.format("parent=(%d x %d)", 
+            //Log.d("DeskClock/Screensaver", String.format("parent=(%d x %d)",
 //                        parent.getWidth(), parent.getHeight()));
             final float xrange = parent.getWidth() - mContainer.getWidth();
             final float yrange = parent.getHeight() - mContainer.getHeight();
@@ -142,13 +142,13 @@ public class Screensaver extends Activity {
         setContentView(R.layout.desk_clock_saver);
         mContainer = findViewById(R.id.saver_view);
         mContainer.setAlpha(0);
-        mContainer.setSystemUiVisibility(View.STATUS_BAR_HIDDEN);
+        mContainer.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
         mContainer.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         AndroidClockTextView timeDisplay = (AndroidClockTextView) findViewById(R.id.timeDisplay);
         if (timeDisplay != null) {
             timeDisplay.setTextColor(CLOCK_COLOR);
-            AndroidClockTextView amPm = (AndroidClockTextView)findViewById(R.id.am_pm); 
+            AndroidClockTextView amPm = (AndroidClockTextView)findViewById(R.id.am_pm);
             if (amPm != null) amPm.setTextColor(CLOCK_COLOR);
         }
 
@@ -173,6 +173,7 @@ public class Screensaver extends Activity {
         mHandler.removeCallbacks(mMoveSaverRunnable);
     }
 
+    @Override
     public void onUserInteraction() {
         finish();
     }

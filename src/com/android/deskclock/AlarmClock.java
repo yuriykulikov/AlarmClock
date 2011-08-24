@@ -251,7 +251,9 @@ public class AlarmClock extends Activity implements OnItemClickListener {
     protected void onDestroy() {
         super.onDestroy();
         ToastMaster.cancelToast();
-        mCursor.close();
+        if (mCursor != null) {
+            mCursor.close();
+        }
     }
 
     @Override

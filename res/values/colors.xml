@@ -17,6 +17,8 @@
 <resources>
     <color name="ampm_off">#ff404040</color>
     <color name="ampm_on">#ffffffff</color>
+    <color name="time_text_color">#E6FFFFFF</color>
+    <color name="ampm_text_color">#99FFFFFF</color>
 
     <color name="white">#ffffffff</color>
     <color name="red">#ffee0000</color>

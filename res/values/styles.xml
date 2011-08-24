@@ -21,8 +21,8 @@
         <item name="android:layout_gravity">center_horizontal</item>
     </style>
 
-    <style name="AlarmClockTheme" parent="android:Theme.Holo"/>
-    <style name="SetAlarmTheme" parent="android:Theme.Holo"/>
+    <style name="AlarmClockTheme" parent="android:Theme.Holo.DialogWhenLarge"/>
+    <style name="SetAlarmTheme" parent="android:Theme.Holo.DialogWhenLarge"/>
 
     <!-- This theme is similar to the Theme.Dialog.Alert but does not rely on a
          non-public resource. -->
@@ -38,7 +38,7 @@
         <item name="android:gravity">center</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@drawable/incall_round_button</item>
+        <item name="android:background">@null</item>
     </style>
 
     <style name="ButtonStripLeft">

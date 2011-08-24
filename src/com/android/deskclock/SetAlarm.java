@@ -142,17 +142,18 @@ public class SetAlarm extends PreferenceActivity
         final Button revert = (Button) findViewById(R.id.alarm_revert);
         revert.setEnabled(false);
         revert.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    int newId = mId;
-                    updatePrefs(mOriginalAlarm);
-                    // "Revert" on a newly created alarm should delete it.
-                    if (mOriginalAlarm.id == -1) {
-                        Alarms.deleteAlarm(SetAlarm.this, newId);
-                    } else {
-                        saveAlarm();
-                    }
-                    revert.setEnabled(false);
+            public void onClick(View v) {
+                int newId = mId;
+                updatePrefs(mOriginalAlarm);
+                // "Revert" on a newly created alarm should delete it.
+                if (mOriginalAlarm.id == -1) {
+                    Alarms.deleteAlarm(SetAlarm.this, newId);
+                } else {
+                    saveAlarm();
                 }
+                revert.setEnabled(false);
+                finish();
+            }
         });
         b = (Button) findViewById(R.id.alarm_delete);
         if (mId == -1) {
