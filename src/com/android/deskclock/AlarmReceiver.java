@@ -60,7 +60,21 @@ public class AlarmReceiver extends BroadcastReceiver {
                     intent.getIntExtra(Alarms.ALARM_KILLED_TIMEOUT, -1));
             return;
         } else if (Alarms.CANCEL_SNOOZE.equals(intent.getAction())) {
-            Alarms.saveSnoozeAlert(context, -1, -1);
+            Alarm alarm = null;
+            if (intent.hasExtra(Alarms.ALARM_INTENT_EXTRA)) {
+                // Get the alarm out of the Intent
+                alarm = intent.getParcelableExtra(Alarms.ALARM_INTENT_EXTRA);
+            }
+
+            if (alarm != null) {
+                Alarms.disableSnoozeAlert(context, alarm.id);
+                Alarms.setNextAlert(context);
+            } else {
+                // Don't know what snoozed alarm to cancel, so cancel them all.  This
+                // shouldn't happen
+                Log.wtf("Unable to parse Alarm from intent.");
+                Alarms.saveSnoozeAlert(context, Alarms.INVALID_ALARM_ID, -1);
+            }
             return;
         } else if (!Alarms.ALARM_ALERT_ACTION.equals(intent.getAction())) {
             // Unknown intent, bail.
