@@ -39,15 +39,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="64sp"
+            android:layout_alignParentRight="true"
             android:textColor="?android:attr/textColorPrimary"
-            android:layout_marginRight="6dip"/>
+            android:layout_marginRight="48dip"/>
 
         <com.android.deskclock.AndroidClockTextView
             android:id="@+id/am_pm"
-            android:layout_width="wrap_content"
+            android:layout_width="48dip"
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:textSize="32sp"
+            android:layout_alignParentRight="true"
+            android:layout_alignBottom="@id/timeDisplay"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="?android:attr/textColorPrimary"/>
 
