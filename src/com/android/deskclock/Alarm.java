@@ -227,6 +227,19 @@ public final class Alarm implements Parcelable {
         return label;
     }
 
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Alarm)) return false;
+        final Alarm other = (Alarm) o;
+        return id == other.id;
+    }
+
+
     /*
      * Days of week code as a single int.
      * 0x00: no day

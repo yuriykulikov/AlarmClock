@@ -32,7 +32,8 @@ import android.provider.Settings;
 import android.text.format.DateFormat;
 
 import java.util.Calendar;
-import java.text.DateFormatSymbols;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The Alarms provider supplies info about Alarm Clock settings
@@ -80,8 +81,8 @@ public class Alarms {
     // the Intent extras.
     public static final String ALARM_RAW_DATA = "intent.extra.alarm_raw";
 
-    final static String PREF_SNOOZE_ID = "snooze_id";
-    final static String PREF_SNOOZE_TIME = "snooze_time";
+    private static final String PREF_SNOOZE_IDS = "snooze_ids";
+    private static final String PREF_SNOOZE_TIME = "snooze_time";
 
     private final static String DM12 = "E h:mm aa";
     private final static String DM24 = "E kk:mm";
@@ -89,6 +90,8 @@ public class Alarms {
     private final static String M12 = "h:mm aa";
     // Shared with DigitalClock
     final static String M24 = "kk:mm";
+
+    final static int INVALID_ALARM_ID = -1;
 
     /**
      * Creates a new Alarm and fills in the given alarm's id.
@@ -112,7 +115,7 @@ public class Alarms {
      * snooze.  Sets next alert.
      */
     public static void deleteAlarm(Context context, int alarmId) {
-        if (alarmId == -1) return;
+        if (alarmId == INVALID_ALARM_ID) return;
 
         ContentResolver contentResolver = context.getContentResolver();
         /* If alarm is snoozing, lose it */
@@ -169,11 +172,16 @@ public class Alarms {
     private static void clearSnoozeIfNeeded(Context context, long alarmTime) {
         // If this alarm fires before the next snooze, clear the snooze to
         // enable this alarm.
-        SharedPreferences prefs =
-                context.getSharedPreferences(AlarmClock.PREFERENCES, 0);
-        long snoozeTime = prefs.getLong(PREF_SNOOZE_TIME, 0);
-        if (alarmTime < snoozeTime) {
-            clearSnoozePreference(context, prefs);
+        SharedPreferences prefs = context.getSharedPreferences(AlarmClock.PREFERENCES, 0);
+
+        // Get the list of snoozed alarms
+        final Set<String> snoozedIds = prefs.getStringSet(PREF_SNOOZE_IDS, new HashSet<String>());
+        for (String snoozedAlarm : snoozedIds) {
+            final long snoozeTime = prefs.getLong(getAlarmPrefSnoozeTimeKey(snoozedAlarm), 0);
+            if (alarmTime < snoozeTime) {
+                final int alarmId = Integer.parseInt(snoozedAlarm);
+                clearSnoozePreference(context, prefs, alarmId);
+            }
         }
     }
 
@@ -275,34 +283,64 @@ public class Alarms {
                 Alarm.Columns.CONTENT_URI, alarm.id), values, null, null);
     }
 
-    public static Alarm calculateNextAlert(final Context context) {
-        Alarm alarm = null;
+    private static Alarm calculateNextAlert(final Context context) {
         long minTime = Long.MAX_VALUE;
         long now = System.currentTimeMillis();
-        Cursor cursor = getFilteredAlarmsCursor(context.getContentResolver());
+        final SharedPreferences prefs = context.getSharedPreferences(AlarmClock.PREFERENCES, 0);
+
+        Set<Alarm> alarms = new HashSet<Alarm>();
+
+        // We need to to build the list of alarms from both the snoozed list and the scheduled
+        // list.  For a non-repeating alarm, when it goes of, it becomes disabled.  A snoozed
+        // non-repeating alarm is not in the active list in the database.
+
+        // first go through the snoozed alarms
+        final Set<String> snoozedIds = prefs.getStringSet(PREF_SNOOZE_IDS, new HashSet<String>());
+        for (String snoozedAlarm : snoozedIds) {
+            final int alarmId = Integer.parseInt(snoozedAlarm);
+            final Alarm a = getAlarm(context.getContentResolver(), alarmId);
+            alarms.add(a);
+        }
+
+        // Now add the scheduled alarms
+        final Cursor cursor = getFilteredAlarmsCursor(context.getContentResolver());
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                do {
-                    Alarm a = new Alarm(cursor);
-                    // A time of 0 indicates this is a repeating alarm, so
-                    // calculate the time to get the next alert.
-                    if (a.time == 0) {
-                        a.time = calculateAlarm(a);
-                    } else if (a.time < now) {
-                        Log.v("Disabling expired alarm set for " +
-                              Log.formatTime(a.time));
-                        // Expired alarm, disable it and move along.
-                        enableAlarmInternal(context, a, false);
-                        continue;
-                    }
-                    if (a.time < minTime) {
-                        minTime = a.time;
-                        alarm = a;
-                    }
-                } while (cursor.moveToNext());
+                try {
+                    do {
+                        final Alarm a = new Alarm(cursor);
+                        alarms.add(a);
+                    } while (cursor.moveToNext());
+                } finally {
+                    cursor.close();
+                }
             }
-            cursor.close();
         }
+
+        Alarm alarm = null;
+
+        for (Alarm a : alarms) {
+            // A time of 0 indicates this is a repeating alarm, so
+            // calculate the time to get the next alert.
+            if (a.time == 0) {
+                a.time = calculateAlarm(a);
+            }
+
+            // Update the alarm if it has been snoozed
+            updateAlarmTimeForSnooze(prefs, a);
+
+            if (a.time < now) {
+                Log.v("Disabling expired alarm set for " + Log.formatTime(a.time));
+                // Expired alarm, disable it and move along.
+                enableAlarmInternal(context, a, false);
+                continue;
+            }
+            if (a.time < minTime) {
+                minTime = a.time;
+                alarm = a;
+            }
+        }
+
         return alarm;
     }
 
@@ -335,13 +373,11 @@ public class Alarms {
      * otherwise loads all alarms, activates next alert.
      */
     public static void setNextAlert(final Context context) {
-        if (!enableSnoozeAlert(context)) {
-            Alarm alarm = calculateNextAlert(context);
-            if (alarm != null) {
-                enableAlert(context, alarm, alarm.time);
-            } else {
-                disableAlert(context);
-            }
+        final Alarm alarm = calculateNextAlert(context);
+        if (alarm != null) {
+            enableAlert(context, alarm, alarm.time);
+        } else {
+            disableAlert(context);
         }
     }
 
@@ -410,16 +446,27 @@ public class Alarms {
             final long time) {
         SharedPreferences prefs = context.getSharedPreferences(
                 AlarmClock.PREFERENCES, 0);
-        if (id == -1) {
-            clearSnoozePreference(context, prefs);
+        if (id == INVALID_ALARM_ID) {
+            clearAllSnoozePreferences(context, prefs);
         } else {
-            SharedPreferences.Editor ed = prefs.edit();
-            ed.putInt(PREF_SNOOZE_ID, id);
-            ed.putLong(PREF_SNOOZE_TIME, time);
+            final Set<String> snoozedIds =
+                    prefs.getStringSet(PREF_SNOOZE_IDS, new HashSet<String>());
+            snoozedIds.add(Integer.toString(id));
+            final SharedPreferences.Editor ed = prefs.edit();
+            ed.putStringSet(PREF_SNOOZE_IDS, snoozedIds);
+            ed.putLong(getAlarmPrefSnoozeTimeKey(id), time);
             ed.apply();
         }
         // Set the next alert after updating the snooze.
         setNextAlert(context);
+    }
+
+    private static String getAlarmPrefSnoozeTimeKey(int id) {
+        return getAlarmPrefSnoozeTimeKey(Integer.toString(id));
+    }
+
+    private static String getAlarmPrefSnoozeTimeKey(String id) {
+        return PREF_SNOOZE_TIME + id;
     }
 
     /**
@@ -428,13 +475,9 @@ public class Alarms {
     static void disableSnoozeAlert(final Context context, final int id) {
         SharedPreferences prefs = context.getSharedPreferences(
                 AlarmClock.PREFERENCES, 0);
-        int snoozeId = prefs.getInt(PREF_SNOOZE_ID, -1);
-        if (snoozeId == -1) {
-            // No snooze set, do nothing.
-            return;
-        } else if (snoozeId == id) {
+        if (hasAlarmBeenSnoozed(prefs, id)) {
             // This is the same id so clear the shared prefs.
-            clearSnoozePreference(context, prefs);
+            clearSnoozePreference(context, prefs, id);
         }
     }
 
@@ -442,45 +485,63 @@ public class Alarms {
     // will erase the clock preferences. Also clear the snooze notification in
     // the window shade.
     private static void clearSnoozePreference(final Context context,
-            final SharedPreferences prefs) {
-        final int alarmId = prefs.getInt(PREF_SNOOZE_ID, -1);
-        if (alarmId != -1) {
+            final SharedPreferences prefs, final int id) {
+        final String alarmStr = Integer.toString(id);
+        final Set<String> snoozedIds =
+                prefs.getStringSet(PREF_SNOOZE_IDS, new HashSet<String>());
+        if (snoozedIds.contains(alarmStr)) {
             NotificationManager nm = (NotificationManager)
                     context.getSystemService(Context.NOTIFICATION_SERVICE);
-            nm.cancel(alarmId);
+            nm.cancel(id);
         }
 
         final SharedPreferences.Editor ed = prefs.edit();
-        ed.remove(PREF_SNOOZE_ID);
-        ed.remove(PREF_SNOOZE_TIME);
+        snoozedIds.remove(alarmStr);
+        ed.putStringSet(PREF_SNOOZE_IDS, snoozedIds);
+        ed.remove(getAlarmPrefSnoozeTimeKey(alarmStr));
         ed.apply();
-    };
+    }
+
+    private static void clearAllSnoozePreferences(final Context context,
+            final SharedPreferences prefs) {
+        NotificationManager nm = (NotificationManager)
+                context.getSystemService(Context.NOTIFICATION_SERVICE);
+        final Set<String> snoozedIds =
+                prefs.getStringSet(PREF_SNOOZE_IDS, new HashSet<String>());
+        final SharedPreferences.Editor ed = prefs.edit();
+        for (String snoozeId : snoozedIds) {
+            nm.cancel(Integer.parseInt(snoozeId));
+            ed.remove(getAlarmPrefSnoozeTimeKey(snoozeId));
+        }
+
+        ed.remove(PREF_SNOOZE_IDS);
+        ed.apply();
+    }
+
+    private static boolean hasAlarmBeenSnoozed(final SharedPreferences prefs, final int alarmId) {
+        final Set<String> snoozedIds = prefs.getStringSet(PREF_SNOOZE_IDS, null);
+
+        // Return true if there a valid snoozed alarmId was saved
+        return snoozedIds != null && snoozedIds.contains(Integer.toString(alarmId));
+    }
 
     /**
-     * If there is a snooze set, enable it in AlarmManager
-     * @return true if snooze is set
+     * Updates the specified Alarm with the additional snooze time.
+     * Returns a boolean indicating whether the alarm was updated.
      */
-    private static boolean enableSnoozeAlert(final Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(
-                AlarmClock.PREFERENCES, 0);
-
-        int id = prefs.getInt(PREF_SNOOZE_ID, -1);
-        if (id == -1) {
+    private static boolean updateAlarmTimeForSnooze(
+            final SharedPreferences prefs, final Alarm alarm) {
+        if (!hasAlarmBeenSnoozed(prefs, alarm.id)) {
+            // No need to modify the alarm
             return false;
         }
-        long time = prefs.getLong(PREF_SNOOZE_TIME, -1);
 
-        // Get the alarm from the db.
-        final Alarm alarm = getAlarm(context.getContentResolver(), id);
-        if (alarm == null) {
-            return false;
-        }
+        final long time = prefs.getLong(getAlarmPrefSnoozeTimeKey(alarm.id), -1);
         // The time in the database is either 0 (repeating) or a specific time
         // for a non-repeating alarm. Update this value so the AlarmReceiver
         // has the right time to compare.
         alarm.time = time;
 
-        enableAlert(context, alarm, time);
         return true;
     }
 
