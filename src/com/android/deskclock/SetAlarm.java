@@ -17,7 +17,6 @@
 package com.android.deskclock;
 
 import android.app.AlertDialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -41,13 +40,13 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import android.widget.TimePicker.OnTimeChangedListener;
 
 /**
  * Manages each alarm
  */
-public class SetAlarm extends PreferenceActivity
-        implements TimePickerDialog.OnTimeSetListener,
-        Preference.OnPreferenceChangeListener {
+public class SetAlarm extends PreferenceActivity implements Preference.OnPreferenceChangeListener,
+        OnTimeChangedListener {
 
     private EditTextPreference mLabel;
     private CheckBoxPreference mEnabledPref;
@@ -55,7 +54,7 @@ public class SetAlarm extends PreferenceActivity
     private AlarmPreference mAlarmPref;
     private CheckBoxPreference mVibratePref;
     private RepeatPreference mRepeatPref;
-    private MenuItem mTestAlarmItem;
+    private TimePicker mTimePicker;
 
     private int     mId;
     private int     mHour;
@@ -140,7 +139,7 @@ public class SetAlarm extends PreferenceActivity
                 }
         });
         final Button revert = (Button) findViewById(R.id.alarm_revert);
-        revert.setEnabled(false);
+        revert.setEnabled(true);
         revert.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 int newId = mId;
@@ -151,14 +150,16 @@ public class SetAlarm extends PreferenceActivity
                 } else {
                     saveAlarm();
                 }
-                revert.setEnabled(false);
+                revert.setEnabled(true);
                 finish();
             }
         });
         b = (Button) findViewById(R.id.alarm_delete);
         if (mId == -1) {
             b.setEnabled(false);
+            b.setVisibility(View.GONE);
         } else {
+            b.setVisibility(View.VISIBLE);
             b.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     deleteAlarm();
@@ -228,15 +229,21 @@ public class SetAlarm extends PreferenceActivity
     }
 
     private void showTimePicker() {
-        new TimePickerDialog(this, this, mHour, mMinutes,
-                DateFormat.is24HourFormat(this)).show();
+        mTimePicker = (TimePicker) findViewById(R.id.timePicker);
+        mTimePicker.setCurrentHour(mHour);
+        mTimePicker.setCurrentMinute(mMinutes);
+        mTimePicker.setIs24HourView(DateFormat.is24HourFormat(this));
+        mTimePicker.setVisibility(View.VISIBLE);
+        mTimePicker.setOnTimeChangedListener(this);
     }
 
-    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+
+    @Override
+    public void onTimeChanged(TimePicker timePicker, int hourOfDay, int minute) {
         // onTimeSet is called when the user clicks "Set"
         mTimePickerCancelled = false;
-        mHour = hourOfDay;
-        mMinutes = minute;
+        mHour = timePicker.getCurrentHour();
+        mMinutes = timePicker.getCurrentMinute();
         updateTime();
         // If the time has been changed, enable the alarm.
         mEnabledPref.setChecked(true);
