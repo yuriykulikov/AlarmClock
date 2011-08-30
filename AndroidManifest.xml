@@ -91,6 +91,13 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name="DeskClock$DeskClockReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.DOCK_EVENT" />
+            </intent-filter>
+        </receiver>
+
         <activity android:name="HandleSetAlarm"
                 android:theme="@android:style/Theme.NoDisplay"
                 android:excludeFromRecents="true"
