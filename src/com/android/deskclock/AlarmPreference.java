@@ -59,10 +59,6 @@ public class AlarmPreference extends RingtonePreference {
     }
 
     public void setAlert(Uri alert) {
-        if (RingtoneManager.isDefault(alert)) {
-            alert = RingtoneManager.getActualDefaultRingtoneUri(getContext(),
-                    RingtoneManager.TYPE_ALARM);
-        }
         mAlert = alert;
         if (alert != null) {
             setSummary(R.string.loading_ringtone);
@@ -74,6 +70,10 @@ public class AlarmPreference extends RingtonePreference {
                 protected String doInBackground(Uri... params) {
                     Ringtone r = RingtoneManager.getRingtone(
                             getContext(), params[0]);
+                    if (r == null) {
+                        r = RingtoneManager.getRingtone(getContext(),
+                                Settings.System.DEFAULT_ALARM_ALERT_URI);
+                    }
                     if (r != null) {
                         return r.getTitle(getContext());
                     }
@@ -83,9 +83,7 @@ public class AlarmPreference extends RingtonePreference {
                 @Override
                 protected void onPostExecute(String title) {
                     if (!isCancelled()) {
-                        if (title != null) {
-                            setSummary(title);
-                        }
+                        setSummary(title);
                         mRingtoneTask = null;
                     }
                 }
