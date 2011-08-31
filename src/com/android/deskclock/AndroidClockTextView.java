@@ -47,7 +47,7 @@ public class AndroidClockTextView extends TextView {
         mUseClockTypeface = attrs.getAttributeBooleanValue(null, ATTR_USE_CLOCK_TYPEFACE, true)
                 && !isInEditMode();
 
-        sStandardTypeface = Typeface.DEFAULT_BOLD;
+        sStandardTypeface = Typeface.DEFAULT;
         if (sClockTypeface == null && mUseClockTypeface) {
             sClockTypeface = Typeface.createFromFile(SYSTEM_FONT_TIME_BACKGROUND);
         }

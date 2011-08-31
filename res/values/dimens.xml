@@ -21,12 +21,13 @@
      for different hardware and product builds. -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <dimen name="time_text_size">74sp</dimen>
-    <dimen name="ampm_text_size">26sp</dimen>
+    <dimen name="ampm_text_size">15dip</dimen>
     <dimen name="date_text_size">15sp</dimen>
     <dimen name="next_alarm_text_size">15sp</dimen>
     <dimen name="time_margin_right">64dip</dimen>
     <dimen name="time_margin_bottom">14dip</dimen>
     <dimen name="time_margin_top">16dip</dimen>
+    <dimen name="ampm_margin_top">8dip</dimen>
     <dimen name="font_margin_adjust">4dip</dimen>
     <dimen name="next_alarm_margin_top">-4dip</dimen>
 </resources>
