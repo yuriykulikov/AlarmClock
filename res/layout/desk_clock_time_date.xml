@@ -54,6 +54,7 @@
             android:gravity="center_horizontal"
             android:textSize="@dimen/ampm_text_size"
             android:textColor="@color/ampm_text_color"
+            useClockTypeface="false"
             />
 
     </com.android.deskclock.DigitalClock>

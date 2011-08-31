@@ -58,6 +58,7 @@
             android:textSize="@dimen/ampm_text_size"
             android:textColor="@color/ampm_text_color"
             android:gravity="left"
+            useClockTypeface="false"
             />
 
         <TextView android:id="@+id/date"
