@@ -222,17 +222,6 @@ public class AlarmClock extends Activity implements OnItemClickListener {
                     v.setSelected(hasFocus);
                 }
         });
-
-        ImageButton deskClock =
-                (ImageButton) findViewById(R.id.desk_clock_button);
-        if (deskClock != null) {
-            deskClock.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        startActivity(new Intent(AlarmClock.this, DeskClock.class));
-                    }
-            });
-        }
-
         View doneButton = findViewById(R.id.done);
         if (doneButton != null) {
             doneButton.setOnClickListener(new View.OnClickListener() {
@@ -301,6 +290,9 @@ public class AlarmClock extends Activity implements OnItemClickListener {
             case R.id.menu_item_add_alarm:
                 addNewAlarm();
                 return true;
+            case R.id.menu_item_done:
+                finish();
+                return true;
             default:
                 break;
         }
@@ -313,6 +305,7 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
     public void onItemClick(AdapterView parent, View v, int pos, long id) {
         final Cursor c = (Cursor) mAlarmsList.getAdapter()
                 .getItem(pos);

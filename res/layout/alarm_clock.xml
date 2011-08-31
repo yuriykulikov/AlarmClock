@@ -35,7 +35,7 @@
             android:duplicateParentState="true"
             android:gravity="center"
             android:scaleType="center"
-            android:src="@drawable/add_alarm" />
+            android:src="@drawable/ic_menu_add" />
 
         <TextView
             android:duplicateParentState="true"
@@ -60,49 +60,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-        <ImageButton android:id="@+id/desk_clock_button"
-            style="@style/ButtonStripLeft"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_clock_strip_desk_clock"
-            android:contentDescription="@string/desk_clock_button_description"/>
-
-        <com.android.deskclock.DigitalClock
-            style="@style/ButtonStripRight"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:baselineAligned="true">
-
-                <com.android.deskclock.AndroidClockTextView 
-                    android:id="@+id/timeDisplay"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="6dip"
-                    android:textSize="48sp"
-                    android:textColor="?android:attr/textColorPrimary" />
-
-                <com.android.deskclock.AndroidClockTextView 
-                    android:id="@+id/am_pm"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textStyle="bold"
-                    android:textColor="?android:attr/textColorPrimary" />
-
-            </LinearLayout>
-
-      </com.android.deskclock.DigitalClock>
-
-    </LinearLayout>
 
 </LinearLayout>

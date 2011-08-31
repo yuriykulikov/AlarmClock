@@ -36,7 +36,7 @@
             android:layout_marginRight="8dip"
             android:gravity="center"
             android:scaleType="center"
-            android:src="@drawable/add_alarm" />
+            android:src="@drawable/ic_menu_add" />
 
         <TextView
             android:duplicateParentState="true"
