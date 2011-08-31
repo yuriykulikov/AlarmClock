@@ -37,7 +37,7 @@ import android.util.Log;
 public class Screensaver extends Activity {
     View mContainer;
 
-    static final int CLOCK_COLOR = 0xFF66AAFF;
+    static int CLOCK_COLOR = 0xFF66AAFF;
 
     static final long MOVE_DELAY = 60000; // DeskClock.SCREEN_SAVER_MOVE_DELAY;
     static final long SLIDE_TIME = 10000;
@@ -139,6 +139,7 @@ public class Screensaver extends Activity {
     @Override
     public void onStart() {
         super.onStart();
+        CLOCK_COLOR = getResources().getColor(R.color.screen_saver_color);
         setContentView(R.layout.desk_clock_saver);
         mContainer = findViewById(R.id.saver_view);
         mContainer.setAlpha(0);

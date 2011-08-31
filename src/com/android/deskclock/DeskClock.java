@@ -84,8 +84,8 @@ public class DeskClock extends Activity {
     public static final long SCREEN_SAVER_MOVE_DELAY = 60 * 1000; // 1 min
 
     // Color to use for text & graphics in screen saver mode.
-    private final int SCREEN_SAVER_COLOR = 0xFF308030;
-    private final int SCREEN_SAVER_COLOR_DIM = 0xFF183018;
+    private int SCREEN_SAVER_COLOR = 0xFF006688;
+    private int SCREEN_SAVER_COLOR_DIM = 0xFF001634;
 
     // Opacity of black layer between clock display and wallpaper.
     private final float DIM_BEHIND_AMOUNT_NORMAL = 0.4f;
@@ -359,7 +359,8 @@ public class DeskClock extends Activity {
         View tintView = findViewById(R.id.window_tint);
         if (tintView == null) return;
 
-        mTime.setSystemUiVisibility(fade ? View.STATUS_BAR_HIDDEN : View.STATUS_BAR_VISIBLE);
+        mTime.setSystemUiVisibility(mDimmed ? View.SYSTEM_UI_FLAG_LOW_PROFILE
+                : View.SYSTEM_UI_FLAG_VISIBLE);
 
         Window win = getWindow();
         WindowManager.LayoutParams winParams = win.getAttributes();
@@ -406,6 +407,9 @@ public class DeskClock extends Activity {
     @Override
     public void onStart() {
         super.onStart();
+
+        SCREEN_SAVER_COLOR = getResources().getColor(R.color.screen_saver_color);
+        SCREEN_SAVER_COLOR_DIM = getResources().getColor(R.color.screen_saver_dim_color);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_DATE_CHANGED);
