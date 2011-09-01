@@ -17,8 +17,10 @@
 package com.android.deskclock;
 
 import android.app.AlertDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,24 +35,27 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TimePicker;
 import android.widget.Toast;
-import android.widget.TimePicker.OnTimeChangedListener;
 
 /**
  * Manages each alarm
  */
 public class SetAlarm extends PreferenceActivity implements Preference.OnPreferenceChangeListener,
-        OnTimeChangedListener {
-    private static String KEY_CURRENT_ALARM = "currentAlarm";
-    private static String KEY_ORIGINAL_ALARM = "originalAlarm";
+        TimePickerDialog.OnTimeSetListener, OnCancelListener {
+    private static final String KEY_CURRENT_ALARM = "currentAlarm";
+    private static final String KEY_ORIGINAL_ALARM = "originalAlarm";
+    private static final String KEY_TIME_PICKER_BUNDLE = "timePickerBundle";
 
     private EditTextPreference mLabel;
     private CheckBoxPreference mEnabledPref;
+    private Preference mTimePref;
     private AlarmPreference mAlarmPref;
     private CheckBoxPreference mVibratePref;
     private RepeatPreference mRepeatPref;
-    private TimePicker mTimePicker;
 
     private int     mId;
+    private int     mHour;
+    private int     mMinute;
+    private TimePickerDialog mTimePickerDialog;
     private Alarm   mOriginalAlarm;
 
     @Override
@@ -81,6 +86,7 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
                 });
         mEnabledPref = (CheckBoxPreference) findPreference("enabled");
         mEnabledPref.setOnPreferenceChangeListener(this);
+        mTimePref = findPreference("time");
         mAlarmPref = (AlarmPreference) findPreference("alarm");
         mAlarmPref.setOnPreferenceChangeListener(this);
         mVibratePref = (CheckBoxPreference) findPreference("vibrate");
@@ -91,8 +97,6 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
         }
         mRepeatPref = (RepeatPreference) findPreference("setRepeat");
         mRepeatPref.setOnPreferenceChangeListener(this);
-        mTimePicker = (TimePicker) findViewById(R.id.timePicker);
-        mTimePicker.setOnTimeChangedListener(this);
 
         Intent i = getIntent();
         Alarm alarm = i.getParcelableExtra(Alarms.ALARM_INTENT_EXTRA);
@@ -146,6 +150,14 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
         super.onSaveInstanceState(outState);
         outState.putParcelable(KEY_ORIGINAL_ALARM, mOriginalAlarm);
         outState.putParcelable(KEY_CURRENT_ALARM, buildAlarmFromUi());
+        if (mTimePickerDialog != null) {
+            if (mTimePickerDialog.isShowing()) {
+                outState.putParcelable(KEY_TIME_PICKER_BUNDLE, mTimePickerDialog
+                        .onSaveInstanceState());
+                mTimePickerDialog.dismiss();
+            }
+            mTimePickerDialog = null;
+        }
     }
 
     @Override
@@ -160,6 +172,12 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
         alarmFromBundle = state.getParcelable(KEY_CURRENT_ALARM);
         if (alarmFromBundle != null) {
             updatePrefs(alarmFromBundle);
+        }
+
+        Bundle b = state.getParcelable(KEY_TIME_PICKER_BUNDLE);
+        if (b != null) {
+            showTimePicker();
+            mTimePickerDialog.onRestoreInstanceState(b);
         }
     }
 
@@ -186,13 +204,23 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
         mEnabledPref.setChecked(alarm.enabled);
         mLabel.setText(alarm.label);
         mLabel.setSummary(alarm.label);
-        mTimePicker.setCurrentHour(alarm.hour);
-        mTimePicker.setCurrentMinute(alarm.minutes);
-        mTimePicker.setIs24HourView(DateFormat.is24HourFormat(this));
+        mHour = alarm.hour;
+        mMinute = alarm.minutes;
         mRepeatPref.setDaysOfWeek(alarm.daysOfWeek);
         mVibratePref.setChecked(alarm.vibrate);
         // Give the alert uri to the preference.
         mAlarmPref.setAlert(alarm.alert);
+        updateTime();
+    }
+
+    @Override
+    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
+            Preference preference) {
+        if (preference == mTimePref) {
+            showTimePicker();
+        }
+
+        return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
 
     @Override
@@ -201,10 +229,41 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
         finish();
     }
 
-    @Override
-    public void onTimeChanged(TimePicker timePicker, int hourOfDay, int minute) {
-        // If the time has been changed, enable the alarm
+    private void showTimePicker() {
+        if (mTimePickerDialog != null) {
+            if (mTimePickerDialog.isShowing()) {
+                Log.e("mTimePickerDialog is already showing.");
+                mTimePickerDialog.dismiss();
+            } else {
+                Log.e("mTimePickerDialog is not null");
+            }
+            mTimePickerDialog.dismiss();
+        }
+
+        mTimePickerDialog = new TimePickerDialog(this, this, mHour, mMinute,
+                DateFormat.is24HourFormat(this));
+        mTimePickerDialog.setOnCancelListener(this);
+        mTimePickerDialog.show();
+    }
+
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        // onTimeSet is called when the user clicks "Set"
+        mTimePickerDialog = null;
+        mHour = hourOfDay;
+        mMinute = minute;
+        updateTime();
+        // If the time has been changed, enable the alarm.
         mEnabledPref.setChecked(true);
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        mTimePickerDialog = null;
+    }
+
+    private void updateTime() {
+        mTimePref.setSummary(Alarms.formatTime(this, mHour, mMinute,
+                mRepeatPref.getDaysOfWeek()));
     }
 
     private long saveAlarm(Alarm alarm) {
@@ -228,8 +287,8 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
         Alarm alarm = new Alarm();
         alarm.id = mId;
         alarm.enabled = mEnabledPref.isChecked();
-        alarm.hour = mTimePicker.getCurrentHour();
-        alarm.minutes = mTimePicker.getCurrentMinute();
+        alarm.hour = mHour;
+        alarm.minutes = mMinute;
         alarm.daysOfWeek = mRepeatPref.getDaysOfWeek();
         alarm.vibrate = mVibratePref.isChecked();
         alarm.label = mLabel.getText();
