@@ -36,8 +36,4 @@
     <CheckBoxPreference android:key="vibrate"
         android:persistent="false"
         android:title="@string/alarm_vibrate"/>
-    <EditTextPreference android:key="label"
-        android:persistent="false"
-        android:title="@string/label"
-        android:dialogTitle="@string/label" />
 </PreferenceScreen>

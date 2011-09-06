@@ -26,13 +26,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.preference.CheckBoxPreference;
-import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -45,7 +46,7 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
     private static final String KEY_ORIGINAL_ALARM = "originalAlarm";
     private static final String KEY_TIME_PICKER_BUNDLE = "timePickerBundle";
 
-    private EditTextPreference mLabel;
+    private EditText mLabel;
     private CheckBoxPreference mEnabledPref;
     private Preference mTimePref;
     private AlarmPreference mAlarmPref;
@@ -65,25 +66,16 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
         // Override the default content view.
         setContentView(R.layout.set_alarm);
 
+        EditText label = (EditText) getLayoutInflater().inflate(R.layout.alarm_label, null);
+        ListView list = (ListView) findViewById(android.R.id.list);
+        list.addFooterView(label);
+
+        // TODO Stop using preferences for this view. Save on done, not after
+        // each change.
         addPreferencesFromResource(R.xml.alarm_prefs);
 
         // Get each preference so we can retrieve the value later.
-        mLabel = (EditTextPreference) findPreference("label");
-        mLabel.setOnPreferenceChangeListener(
-                new Preference.OnPreferenceChangeListener() {
-                    public boolean onPreferenceChange(Preference p,
-                            Object newValue) {
-                        String val = (String) newValue;
-                        // Set the summary based on the new label.
-                        p.setSummary(val);
-                        if (val != null && !val.equals(mLabel.getText())) {
-                            // Call through to the generic listener.
-                            return SetAlarm.this.onPreferenceChange(p,
-                                newValue);
-                        }
-                        return true;
-                    }
-                });
+        mLabel = label;
         mEnabledPref = (CheckBoxPreference) findPreference("enabled");
         mEnabledPref.setOnPreferenceChangeListener(this);
         mTimePref = findPreference("time");
@@ -120,7 +112,9 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
         b.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     long time = saveAlarm(null);
-                    popAlarmSetToast(SetAlarm.this, time);
+                    if(mEnabledPref.isChecked()) {
+                        popAlarmSetToast(SetAlarm.this, time);
+                    }
                     finish();
                 }
         });
@@ -203,7 +197,6 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
         mId = alarm.id;
         mEnabledPref.setChecked(alarm.enabled);
         mLabel.setText(alarm.label);
-        mLabel.setSummary(alarm.label);
         mHour = alarm.hour;
         mMinute = alarm.minutes;
         mRepeatPref.setDaysOfWeek(alarm.daysOfWeek);
@@ -291,7 +284,7 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
         alarm.minutes = mMinute;
         alarm.daysOfWeek = mRepeatPref.getDaysOfWeek();
         alarm.vibrate = mVibratePref.isChecked();
-        alarm.label = mLabel.getText();
+        alarm.label = mLabel.getText().toString();
         alarm.alert = mAlarmPref.getAlert();
         return alarm;
     }
