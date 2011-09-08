@@ -74,6 +74,10 @@ public class DeskClock extends Activity {
     // Alarm action for midnight (so we can update the date display).
     private static final String ACTION_MIDNIGHT = "com.android.deskclock.MIDNIGHT";
 
+    // This controls whether or not we will show a battery display when plugged
+    // in.
+    private static final boolean USE_BATTERY_DISPLAY = false;
+
     // Intent to broadcast for dock settings.
     private static final String DOCK_SETTINGS_ACTION = "com.android.settings.DOCK_SETTINGS";
 
@@ -314,6 +318,10 @@ public class DeskClock extends Activity {
     }
 
     private void refreshBattery() {
+        // UX wants the battery level removed. This makes it not visible but
+        // allows it to be easily turned back on if they change their mind.
+        if (!USE_BATTERY_DISPLAY)
+            return;
         if (mBatteryDisplay == null) return;
 
         if (mPluggedIn /* || mBatteryLevel < LOW_BATTERY_THRESHOLD */) {
