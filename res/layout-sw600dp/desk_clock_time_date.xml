@@ -32,21 +32,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/time_margin_right"
-            android:layout_below="@id/nightmode_button"
             android:textSize="@dimen/time_text_size"
             android:textColor="@color/time_text_color"
             android:gravity="left"
-            />
-
-        <ImageButton android:id="@+id/nightmode_button"
-            style="@style/RoundTouchButton"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:src="@drawable/ic_clock_brightness"
-            android:layout_alignRight="@id/timeDisplay"
-            android:layout_marginRight="@dimen/font_margin_adjust"
-            android:contentDescription="@string/nightmode_button_description"
-            android:nextFocusDown="@+id/alarm_button"
             />
 
         <com.android.deskclock.AndroidClockTextView

@@ -42,7 +42,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/time_margin_right"
-                android:layout_below="@id/nightmode_button"
                 android:textSize="@dimen/time_text_size"
                 android:textColor="@color/time_text_color"
                 android:gravity="left"

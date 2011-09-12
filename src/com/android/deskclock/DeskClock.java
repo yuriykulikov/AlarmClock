@@ -44,6 +44,7 @@ import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -182,7 +183,6 @@ public class DeskClock extends Activity {
     };
 
     private View mAlarmButton;
-
 
     private void moveScreenSaver() {
         moveScreenSaverTo(-1,-1);
@@ -526,54 +526,22 @@ public class DeskClock extends Activity {
         View alarmControl = mAlarmButton != null ? mAlarmButton : findViewById(R.id.nextAlarm);
         alarmControl.setOnClickListener(alarmClickListener);
 
-        final ImageButton nightmodeButton = (ImageButton) findViewById(R.id.nightmode_button);
-        if (nightmodeButton != null) {
-            nightmodeButton.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    mDimmed = ! mDimmed;
+        View touchView = findViewById(R.id.window_touch);
+        touchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // If the screen saver is on let onUserInteraction handle it
+                if (!mScreenSaverMode) {
+                    mDimmed = !mDimmed;
                     doDim(true);
                 }
-            });
-
-            nightmodeButton.setOnLongClickListener(new View.OnLongClickListener() {
-                public boolean onLongClick(View v) {
-                    saveScreen();
-                    return true;
-                }
-            });
-        }
-
-        final View tintView = findViewById(R.id.window_tint);
-        tintView.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                if (mDimmed && event.getAction() == MotionEvent.ACTION_DOWN) {
-                    // We want to un-dim the whole screen on tap.
-                    // ...Unless the user is specifically tapping on the dim
-                    // widget, in which case let it do the work.
-                    Rect r = new Rect();
-                    nightmodeButton.getHitRect(r);
-                    int[] gloc = new int[2];
-                    nightmodeButton.getLocationInWindow(gloc);
-                    r.offsetTo(gloc[0], gloc[1]); // convert to window coords
-
-                    if (!r.contains((int) event.getX(), (int) event.getY())) {
-                        mDimmed = false;
-                        doDim(true);
-                    }
-                }
-                return false; // always pass the click through
             }
         });
-
-        // Tidy up awkward focus behavior: the first view to be focused in
-        // trackball mode should be the alarms button
-        final ViewTreeObserver vto = alarmControl.getViewTreeObserver();
-        final View alarmView = alarmControl;
-        vto.addOnGlobalFocusChangeListener(new ViewTreeObserver.OnGlobalFocusChangeListener() {
-            public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-                if (oldFocus == null && newFocus == nightmodeButton) {
-                    alarmView.requestFocus();
-                }
+        touchView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                saveScreen();
+                return true;
             }
         });
     }
