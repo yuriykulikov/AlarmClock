@@ -305,15 +305,15 @@ public class Alarms {
         // Now add the scheduled alarms
         final Cursor cursor = getFilteredAlarmsCursor(context.getContentResolver());
         if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                try {
+            try {
+                if (cursor.moveToFirst()) {
                     do {
                         final Alarm a = new Alarm(cursor);
                         alarms.add(a);
                     } while (cursor.moveToNext());
-                } finally {
-                    cursor.close();
                 }
+            } finally {
+                cursor.close();
             }
         }
 
@@ -352,19 +352,22 @@ public class Alarms {
         Cursor cur = getFilteredAlarmsCursor(context.getContentResolver());
         long now = System.currentTimeMillis();
 
-        if (cur.moveToFirst()) {
-            do {
-                Alarm alarm = new Alarm(cur);
-                // A time of 0 means this alarm repeats. If the time is
-                // non-zero, check if the time is before now.
-                if (alarm.time != 0 && alarm.time < now) {
-                    Log.v("Disabling expired alarm set for " +
-                          Log.formatTime(alarm.time));
-                    enableAlarmInternal(context, alarm, false);
-                }
-            } while (cur.moveToNext());
+        try {
+            if (cur.moveToFirst()) {
+                do {
+                    Alarm alarm = new Alarm(cur);
+                    // A time of 0 means this alarm repeats. If the time is
+                    // non-zero, check if the time is before now.
+                    if (alarm.time != 0 && alarm.time < now) {
+                        Log.v("Disabling expired alarm set for " +
+                              Log.formatTime(alarm.time));
+                        enableAlarmInternal(context, alarm, false);
+                    }
+                } while (cur.moveToNext());
+            }
+        } finally {
+            cur.close();
         }
-        cur.close();
     }
 
     /**
