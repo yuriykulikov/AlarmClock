@@ -67,6 +67,7 @@
                 android:layout_marginTop="@dimen/next_alarm_margin_top"
                 android:drawablePadding="4dip"
                 android:drawableLeft="@drawable/ic_lock_idle_alarm"
+                android:textColor="@color/ampm_text_color"
                 />
         </LinearLayout>
 
