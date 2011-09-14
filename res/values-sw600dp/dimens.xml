@@ -30,4 +30,5 @@
     <dimen name="ampm_margin_top">15dip</dimen>
     <dimen name="font_margin_adjust">8dip</dimen>
     <dimen name="next_alarm_margin_top">-5dip</dimen>
+    <dimen name="alarm_label_padding">64dip</dimen>
 </resources>
