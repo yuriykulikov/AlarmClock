@@ -81,9 +81,9 @@
   </string-array>
     <string name="auto_silence_title" msgid="8000666766495360928">"自动停止闹铃"</string>
     <string name="auto_silence_summary" msgid="5757272454196171758">"闹钟将会在 <xliff:g id="MINUTES">%d</xliff:g> 分钟后停止闹铃"</string>
-    <string name="auto_silence_never" msgid="4302257878142130807">"关"</string>
+    <string name="auto_silence_never" msgid="4302257878142130807">"关闭"</string>
   <string-array name="auto_silence_entries">
-    <item msgid="7718972982871612080">"关"</item>
+    <item msgid="7718972982871612080">"关闭"</item>
     <item msgid="5431906692406316549">"5 分钟"</item>
     <item msgid="7742728812068919959">"10 分钟"</item>
     <item msgid="2855948657259647629">"15 分钟"</item>
