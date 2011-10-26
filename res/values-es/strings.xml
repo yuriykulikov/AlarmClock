@@ -27,7 +27,7 @@
     <string name="delete_alarm_confirm" msgid="6578572637340860840">"¿Eliminar esta alarma?"</string>
     <string name="show_clock" msgid="8358759982675616915">"Mostrar reloj"</string>
     <string name="hide_clock" msgid="3217727306480505694">"Ocultar reloj"</string>
-    <string name="label" msgid="162189613902857319">"Nombre"</string>
+    <string name="label" msgid="162189613902857319">"Nombre de la alarma"</string>
     <string name="default_label" msgid="5590025289805630372">"Alarma"</string>
     <string name="set_alarm" msgid="9148359866152726808">"Establecer alarma"</string>
     <string name="alarm_vibrate" msgid="3476686921490362230">"Vibración"</string>
@@ -35,7 +35,7 @@
     <string name="alert" msgid="6539852766423700221">"Tono"</string>
     <string name="time" msgid="8067216534232296518">"Hora"</string>
     <string name="alarm_alert_dismiss_text" msgid="4942914605480888820">"Descartar"</string>
-    <string name="alarm_alert_alert_silenced" msgid="7918075929961104202">"La alarma se ha silenciado después de <xliff:g id="MINUTES">%d</xliff:g> minutos."</string>
+    <string name="alarm_alert_alert_silenced" msgid="2704775170733835993">"La alarma se ha silenciado después de <xliff:g id="MINUTES">%d</xliff:g> minutos."</string>
     <string name="alarm_alert_snooze_text" msgid="1774416052207651584">"Posponer"</string>
     <string name="alarm_alert_snooze_set" msgid="656470966696912087">"La alarma volverá a sonar en <xliff:g id="MINUTES">%d</xliff:g> minutos."</string>
   <string-array name="alarm_set">
@@ -43,7 +43,7 @@
     <item msgid="6002066367368421848">"La alarma sonará en <xliff:g id="DAYS">%1$s</xliff:g>."</item>
     <item msgid="8824719306247973774">"La alarma sonará en <xliff:g id="HOURS">%2$s</xliff:g>."</item>
     <item msgid="8182406852935468862">"La alarma sonará en <xliff:g id="DAYS">%1$s</xliff:g> y <xliff:g id="HOURS">%2$s</xliff:g>."</item>
-    <item msgid="5825415085802813833">"La alarma sonará en <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
+    <item msgid="2532279224777213194">"La alarma sonará en <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
     <item msgid="5936557894247187717">"La alarma sonará en <xliff:g id="DAYS">%1$s</xliff:g> y <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
     <item msgid="9115697840826129603">"La alarma sonará en <xliff:g id="HOURS">%2$s</xliff:g> y <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
     <item msgid="2332583385137381060">"La alarma sonará en <xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> y <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
@@ -54,7 +54,7 @@
     <string name="hours" msgid="2071487018566991613">"<xliff:g id="HOURS">%s</xliff:g> horas"</string>
     <string name="minute" msgid="2486157997434653710">"1 minuto"</string>
     <string name="minutes" msgid="6115838729146292526">"<xliff:g id="MINUTES">%s</xliff:g> minutos"</string>
-    <string name="every_day" msgid="1058994798884544691">"todos los días"</string>
+    <string name="every_day" msgid="4100909974923444602">"Todos los días"</string>
     <string name="never" msgid="54104287800571769">"Nunca"</string>
     <string name="day_concat" msgid="971998564991636532">", "</string>
     <string name="clock_instructions" msgid="2656876819515011590">"Seleccionar un reloj"</string>
@@ -80,7 +80,7 @@
     <item msgid="2740866721232379791">"30"</item>
   </string-array>
     <string name="auto_silence_title" msgid="6940612987809171112">"Silenciar automáticamente"</string>
-    <string name="auto_silence_summary" msgid="5757272454196171758">"Las alarmas se silenciarán tras <xliff:g id="MINUTES">%d</xliff:g> minutos."</string>
+    <string name="auto_silence_summary" msgid="5757272454196171758">"Las alarmas se silenciarán tras <xliff:g id="MINUTES">%d</xliff:g> minutos"</string>
     <string name="auto_silence_never" msgid="4302257878142130807">"Desactivado"</string>
   <string-array name="auto_silence_entries">
     <item msgid="7718972982871612080">"Desactivada"</item>
@@ -94,15 +94,15 @@
     <string name="done" msgid="6509722361933858451">"Listo"</string>
     <string name="revert" msgid="9100911171235162926">"Revertir"</string>
     <string name="delete" msgid="5732434972457000541">"Eliminar"</string>
-    <string name="alarm_volume_title" msgid="8506245173912428522">"Volumen de alarma"</string>
-    <string name="alarm_volume_summary" msgid="8957440373896242438">"Establecer el volumen de las alarmas"</string>
+    <string name="alarm_volume_title" msgid="8506245173912428522">"Volumen de la alarma"</string>
+    <string name="alarm_volume_summary" msgid="8957440373896242438">"Establecer el volumen de la alarma"</string>
     <string name="silent_alarm_summary" msgid="8605302849408279221">"Silencio"</string>
     <string name="alarm_notify_text" msgid="4891014685945904766">"Posponer o ignorar alarma"</string>
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (pospuesta)"</string>
     <string name="alarm_notify_snooze_text" msgid="4819324081410990368">"La alarma sonará a las <xliff:g id="TIME">%s</xliff:g>. Toca para cancelar."</string>
     <string name="volume_button_setting_title" msgid="6937131248843413357">"Botones de volumen"</string>
-    <string name="volume_button_dialog_title" msgid="8768042543750036853">"Efecto de botón"</string>
-    <string name="volume_button_setting_summary" msgid="4776447991226047070">"Establecer la función de los botones de una alarma"</string>
+    <string name="volume_button_dialog_title" msgid="8768042543750036853">"Acción de los botones"</string>
+    <string name="volume_button_setting_summary" msgid="4776447991226047070">"Establecer la función de los botones de volumen durante una alarma"</string>
   <string-array name="volume_button_setting_entries">
     <item msgid="4520420953175098625">"Ninguno"</item>
     <item msgid="7111908302622811168">"Posponer"</item>
@@ -123,7 +123,7 @@
     <string name="battery_charging_level" msgid="4391767951302394083">"<xliff:g id="NUMBER">%d</xliff:g> <xliff:g id="PERCENT">%%</xliff:g>"</string>
     <string name="weather_fetch_failure" msgid="3425804832021006835">"La información meteorológica no está disponible en este momento."</string>
     <string name="menu_item_dock_settings" msgid="3524235151132971114">"Ajustes del conector"</string>
-    <string name="alarm_klaxon_service_desc" msgid="2153290655559916468">"Reproducción de alarmas definidas en reloj de escritorio"</string>
+    <string name="alarm_klaxon_service_desc" msgid="3900885253055070760">"Reproducción de alarmas definidas en el reloj de escritorio."</string>
     <string name="loading_ringtone" msgid="6523322777415268044">"Cargando tono…"</string>
     <string name="control_set_alarm" msgid="2194676418924016327">"Establecer alarma"</string>
     <string name="control_set_alarm_with_existing" msgid="1128169496817859490">"Alarma establecida: <xliff:g id="TIME">%s</xliff:g>"</string>
