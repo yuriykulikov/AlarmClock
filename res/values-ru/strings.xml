@@ -58,7 +58,7 @@
     <string name="never" msgid="54104287800571769">"Не выбрано"</string>
     <string name="day_concat" msgid="971998564991636532">", "</string>
     <string name="clock_instructions" msgid="2656876819515011590">"Выберите часы"</string>
-    <string name="analog_gadget" msgid="1670505720837152766">"Часы со стрелками"</string>
+    <string name="analog_gadget" msgid="1670505720837152766">"Часы"</string>
     <string name="settings" msgid="5849739030579520686">"Настройки"</string>
     <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Включать всегда"</string>
     <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"Подавать сигнал, даже если телефон работает в режиме без звука"</string>
@@ -97,7 +97,7 @@
     <string name="alarm_volume_title" msgid="8506245173912428522">"Громкость будильника"</string>
     <string name="alarm_volume_summary" msgid="8957440373896242438">"Настройка громкости будильника"</string>
     <string name="silent_alarm_summary" msgid="8605302849408279221">"Без звука"</string>
-    <string name="alarm_notify_text" msgid="4891014685945904766">"Отложить или выключить будильник."</string>
+    <string name="alarm_notify_text" msgid="4891014685945904766">"Отложить/выключить будильник"</string>
     <string name="alarm_notify_snooze_label" msgid="5404083762646377829">"<xliff:g id="LABEL">%s</xliff:g> (отложено)"</string>
     <string name="alarm_notify_snooze_text" msgid="4819324081410990368">"Будильник зазвонит в <xliff:g id="TIME">%s</xliff:g>. Нажмите, чтобы отменить."</string>
     <string name="volume_button_setting_title" msgid="6937131248843413357">"Громкость"</string>
