@@ -15,7 +15,6 @@
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.DEVICE_POWER" />
 
     <application android:label="@string/app_label"
                  android:icon="@mipmap/ic_launcher_alarmclock">
@@ -24,29 +23,18 @@
                 android:authorities="com.better.alarm"
                 android:exported="false" />
 
-        <activity android:name="DeskClock"
-                android:label="@string/app_label"
-                android:theme="@android:style/Theme.Holo.Wallpaper.NoTitleBar"
-                android:icon="@mipmap/ic_launcher_alarmclock"
-                android:launchMode="singleInstance"
-                android:configChanges="orientation|keyboardHidden|keyboard|navigation">
-                >
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.DESK_DOCK" />
-            </intent-filter>
-        </activity>
-
         <activity android:name="AlarmClock"
                 android:label="@string/alarm_list_title"
                 android:theme="@style/AlarmClockTheme"
                 android:taskAffinity=""
                 android:excludeFromRecents="true"
                 android:configChanges="orientation|keyboardHidden|keyboard|navigation"
-                android:exported="true" />
+                android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <activity-alias android:name="com.android.alarmclock.AlarmClock"
                 android:targetActivity="com.better.alarm.AlarmClock"
@@ -125,26 +113,6 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="com.android.alarmclock.AnalogAppWidgetProvider" android:label="@string/analog_gadget"
-        	android:icon="@mipmap/ic_widget_analog_clock">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data android:name="android.appwidget.oldName" android:value="com.better.alarm.AnalogAppWidgetProvider" />
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/analog_appwidget" />
-        </receiver>
-
-        <activity android:name=".Screensaver"
-            android:label="@string/app_label"
-            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
-            android:hardwareAccelerated="true"
-            >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.DREAM" />
-            </intent-filter>
-        </activity>
     </application>
 </manifest>
 
