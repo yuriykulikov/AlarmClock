@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.deskclock;
+package com.better.alarm;
 
 import android.app.Activity;
 import android.app.Notification;
@@ -36,6 +36,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Calendar;
+
+import com.better.alarm.R;
 
 /**
  * Alarm Clock alarm alert: pops visible indicator and plays alarm

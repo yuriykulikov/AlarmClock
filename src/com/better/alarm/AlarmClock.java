@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.deskclock;
+package com.better.alarm;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -42,6 +42,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.Calendar;
+
+import com.better.alarm.R;
 
 /**
  * AlarmClock application.

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        package="com.android.deskclock"
+        package="com.better.alarm"
         android:versionCode="203" android:versionName="2.0.3">
     <uses-sdk
         android:minSdkVersion="10"
@@ -7,7 +7,7 @@
     </uses-sdk>
 
     <original-package android:name="com.android.alarmclock" />
-    <original-package android:name="com.android.deskclock" />
+    <original-package android:name="com.better.alarm" />
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
@@ -21,7 +21,7 @@
                  android:icon="@mipmap/ic_launcher_alarmclock">
 
         <provider android:name="AlarmProvider"
-                android:authorities="com.android.deskclock"
+                android:authorities="com.better.alarm"
                 android:exported="false" />
 
         <activity android:name="DeskClock"
@@ -49,7 +49,7 @@
                 android:exported="true" />
 
         <activity-alias android:name="com.android.alarmclock.AlarmClock"
-                android:targetActivity="com.android.deskclock.AlarmClock"
+                android:targetActivity="com.better.alarm.AlarmClock"
                 android:exported="true" />
 
         <activity android:name="SettingsActivity"
@@ -86,7 +86,7 @@
         <receiver android:name="AlarmReceiver"
                 android:exported="false">
             <intent-filter>
-                <action android:name="com.android.deskclock.ALARM_ALERT" />
+                <action android:name="com.better.alarm.ALARM_ALERT" />
                 <action android:name="alarm_killed" />
                 <action android:name="cancel_snooze" />
             </intent-filter>
@@ -112,7 +112,7 @@
                 android:exported="false"
                 android:description="@string/alarm_klaxon_service_desc">
             <intent-filter>
-                <action android:name="com.android.deskclock.ALARM_ALERT" />
+                <action android:name="com.better.alarm.ALARM_ALERT" />
             </intent-filter>
         </service>
 
@@ -130,7 +130,7 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-            <meta-data android:name="android.appwidget.oldName" android:value="com.android.deskclock.AnalogAppWidgetProvider" />
+            <meta-data android:name="android.appwidget.oldName" android:value="com.better.alarm.AnalogAppWidgetProvider" />
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/analog_appwidget" />
         </receiver>
 

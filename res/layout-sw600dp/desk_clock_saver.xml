@@ -32,12 +32,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/saver_view">
-        <com.android.deskclock.DigitalClock android:id="@+id/time"
+        <com.better.alarm.DigitalClock android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/time_margin_bottom"
             >
-            <com.android.deskclock.AndroidClockTextView
+            <com.better.alarm.AndroidClockTextView
                 android:id="@+id/timeDisplay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
                 android:textColor="@color/time_text_color"
                 android:gravity="left"
                 />
-            <com.android.deskclock.AndroidClockTextView
+            <com.better.alarm.AndroidClockTextView
                 android:id="@+id/am_pm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -69,7 +69,7 @@
                 android:textSize="@dimen/date_text_size"
                 android:textColor="@color/time_text_color"
                 />
-        </com.android.deskclock.DigitalClock>
+        </com.better.alarm.DigitalClock>
     </RelativeLayout>
 
 </AbsoluteLayout>

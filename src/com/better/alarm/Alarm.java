@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.deskclock;
+package com.better.alarm;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -26,6 +26,8 @@ import android.provider.BaseColumns;
 
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
+
+import com.better.alarm.R;
 
 public final class Alarm implements Parcelable {
 
@@ -71,7 +73,7 @@ public final class Alarm implements Parcelable {
          * The content:// style URL for this table
          */
         public static final Uri CONTENT_URI =
-                Uri.parse("content://com.android.deskclock/alarm");
+                Uri.parse("content://com.better.alarm/alarm");
 
         /**
          * Hour in 24-hour localtime 0 - 23.

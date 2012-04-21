@@ -20,7 +20,7 @@
     android:layout_height="match_parent"
     >
 
-    <com.android.deskclock.DigitalClock
+    <com.better.alarm.DigitalClock
         android:id="@+id/digitalClock"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
         android:layout_centerHorizontal="true"
         >
 
-        <com.android.deskclock.AndroidClockTextView
+        <com.better.alarm.AndroidClockTextView
             android:id="@+id/timeDisplay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
             android:textColor="?android:attr/textColorPrimary"
             android:layout_marginRight="44dip"/>
 
-        <com.android.deskclock.AndroidClockTextView
+        <com.better.alarm.AndroidClockTextView
             useClockTypeface="false"
             android:id="@+id/am_pm"
             android:layout_width="40dip"
@@ -54,7 +54,7 @@
             android:layout_alignBaseline="@id/timeDisplay"
             android:textColor="?android:attr/textColorPrimary"/>
 
-    </com.android.deskclock.DigitalClock>
+    </com.better.alarm.DigitalClock>
 
     <Button
         android:id="@+id/snooze"

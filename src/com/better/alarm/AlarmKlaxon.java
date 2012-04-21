@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.android.deskclock;
+package com.better.alarm;
+
+import com.better.alarm.R;
 
 import android.app.Service;
 import android.content.Context;

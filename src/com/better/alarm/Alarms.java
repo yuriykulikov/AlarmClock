@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.deskclock;
+package com.better.alarm;
 
 import android.app.AlarmManager;
 import android.app.NotificationManager;
@@ -43,20 +43,20 @@ public class Alarms {
     // This action triggers the AlarmReceiver as well as the AlarmKlaxon. It
     // is a public action used in the manifest for receiving Alarm broadcasts
     // from the alarm manager.
-    public static final String ALARM_ALERT_ACTION = "com.android.deskclock.ALARM_ALERT";
+    public static final String ALARM_ALERT_ACTION = "com.better.alarm.ALARM_ALERT";
 
     // A public action sent by AlarmKlaxon when the alarm has stopped sounding
     // for any reason (e.g. because it has been dismissed from AlarmAlertFullScreen,
     // or killed due to an incoming phone call, etc).
-    public static final String ALARM_DONE_ACTION = "com.android.deskclock.ALARM_DONE";
+    public static final String ALARM_DONE_ACTION = "com.better.alarm.ALARM_DONE";
 
     // AlarmAlertFullScreen listens for this broadcast intent, so that other applications
     // can snooze the alarm (after ALARM_ALERT_ACTION and before ALARM_DONE_ACTION).
-    public static final String ALARM_SNOOZE_ACTION = "com.android.deskclock.ALARM_SNOOZE";
+    public static final String ALARM_SNOOZE_ACTION = "com.better.alarm.ALARM_SNOOZE";
 
     // AlarmAlertFullScreen listens for this broadcast intent, so that other applications
     // can dismiss the alarm (after ALARM_ALERT_ACTION and before ALARM_DONE_ACTION).
-    public static final String ALARM_DISMISS_ACTION = "com.android.deskclock.ALARM_DISMISS";
+    public static final String ALARM_DISMISS_ACTION = "com.better.alarm.ALARM_DISMISS";
 
     // This is a private action used by the AlarmKlaxon to update the UI to
     // show the alarm has been killed.

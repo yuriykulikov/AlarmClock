@@ -55,7 +55,7 @@
         android:summary="@string/volume_button_setting_summary"
         android:defaultValue="2" />
 
-    <com.android.deskclock.AlarmPreference
+    <com.better.alarm.AlarmPreference
         android:key="default_ringtone"
         android:title="@string/default_ringtone_setting_title"
         android:ringtoneType="alarm"

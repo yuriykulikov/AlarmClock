@@ -18,7 +18,7 @@
  * package-level logging flag
  */
 
-package com.android.deskclock;
+package com.better.alarm;
 
 import android.os.SystemClock;
 

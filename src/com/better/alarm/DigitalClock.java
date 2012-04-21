@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.deskclock;
+package com.better.alarm;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -30,6 +30,8 @@ import android.widget.RelativeLayout;
 
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
+
+import com.better.alarm.R;
 
 /**
  * Displays the time

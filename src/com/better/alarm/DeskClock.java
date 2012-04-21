@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.deskclock;
+package com.better.alarm;
 
 import static android.os.BatteryManager.BATTERY_STATUS_UNKNOWN;
 
@@ -64,6 +64,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
+import com.better.alarm.R;
+
 /**
  * DeskClock clock view for desk docks.
  */
@@ -73,7 +75,7 @@ public class DeskClock extends Activity {
     private static final String LOG_TAG = "DeskClock";
 
     // Alarm action for midnight (so we can update the date display).
-    private static final String ACTION_MIDNIGHT = "com.android.deskclock.MIDNIGHT";
+    private static final String ACTION_MIDNIGHT = "com.better.alarm.MIDNIGHT";
 
     // This controls whether or not we will show a battery display when plugged
     // in.
