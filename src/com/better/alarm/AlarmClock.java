@@ -212,18 +212,6 @@ public class AlarmClock extends Activity implements OnItemClickListener {
         mAlarmsList.setOnItemClickListener(this);
         mAlarmsList.setOnCreateContextMenuListener(this);
 
-        View addAlarm = findViewById(R.id.add_alarm);
-        addAlarm.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    addNewAlarm();
-                }
-            });
-        // Make the entire view selected when focused.
-        addAlarm.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                public void onFocusChange(View v, boolean hasFocus) {
-                    v.setSelected(hasFocus);
-                }
-        });
         View doneButton = findViewById(R.id.done);
         if (doneButton != null) {
             doneButton.setOnClickListener(new View.OnClickListener() {
