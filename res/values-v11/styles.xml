@@ -21,8 +21,8 @@
         <item name="android:layout_gravity">center_horizontal</item>
     </style>
 
-    <style name="AlarmClockTheme" parent="android:Theme.Dialog"/>
-    <style name="SetAlarmTheme" parent="android:Theme.Dialog"/>
+    <style name="AlarmClockTheme" parent="android:Theme.Holo.DialogWhenLarge"/>
+    <style name="SetAlarmTheme" parent="android:Theme.Holo.DialogWhenLarge"/>
 
     <!-- This theme is similar to the Theme.Dialog.Alert but does not rely on a
          non-public resource. -->
@@ -32,7 +32,7 @@
 
     <!-- NOTE: This must be a fullscreen theme, or else the fullscreen alarm will 
          be unable to turn the screen on. -->
-    <style name="AlarmAlertFullScreenTheme" parent="android:Theme.Wallpaper.NoTitleBar"/>
+    <style name="AlarmAlertFullScreenTheme" parent="android:Theme.Holo.Wallpaper.NoTitleBar"/>
 
     <style name="RoundTouchButton">
         <item name="android:gravity">center</item>
