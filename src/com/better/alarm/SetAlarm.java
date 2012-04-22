@@ -34,8 +34,6 @@ import android.preference.PreferenceScreen;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -48,7 +46,6 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
     private static final String KEY_ORIGINAL_ALARM = "originalAlarm";
     private static final String KEY_TIME_PICKER_BUNDLE = "timePickerBundle";
 
-    private EditText mLabel;
     private CheckBoxPreference mEnabledPref;
     private Preference mTimePref;
     private AlarmPreference mAlarmPref;
@@ -68,16 +65,11 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
         // Override the default content view.
         setContentView(R.layout.set_alarm);
 
-        EditText label = (EditText) getLayoutInflater().inflate(R.layout.alarm_label, null);
-        ListView list = (ListView) findViewById(android.R.id.list);
-        list.addFooterView(label);
-
         // TODO Stop using preferences for this view. Save on done, not after
         // each change.
         addPreferencesFromResource(R.xml.alarm_prefs);
 
         // Get each preference so we can retrieve the value later.
-        mLabel = label;
         mEnabledPref = (CheckBoxPreference) findPreference("enabled");
         mEnabledPref.setOnPreferenceChangeListener(this);
         //remove enable preference from screen
@@ -200,7 +192,6 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
     private void updatePrefs(Alarm alarm) {
         mId = alarm.id;
         mEnabledPref.setChecked(alarm.enabled);
-        mLabel.setText(alarm.label);
         mHour = alarm.hour;
         mMinute = alarm.minutes;
         mRepeatPref.setDaysOfWeek(alarm.daysOfWeek);
@@ -288,7 +279,7 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
         alarm.minutes = mMinute;
         alarm.daysOfWeek = mRepeatPref.getDaysOfWeek();
         alarm.vibrate = mVibratePref.isChecked();
-        alarm.label = mLabel.getText().toString();
+        alarm.label = "";
         alarm.alert = mAlarmPref.getAlert();
         return alarm;
     }
