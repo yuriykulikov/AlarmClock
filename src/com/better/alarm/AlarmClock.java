@@ -277,9 +277,6 @@ public class AlarmClock extends Activity implements OnItemClickListener {
             case R.id.menu_item_add_alarm:
                 addNewAlarm();
                 return true;
-            case R.id.menu_item_done:
-                finish();
-                return true;
             default:
                 break;
         }

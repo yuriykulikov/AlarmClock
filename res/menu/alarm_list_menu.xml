@@ -17,14 +17,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/menu_item_add_alarm"
         android:title="@string/add_alarm"
+        android:showAsAction="ifRoom|withText"
         android:icon="@drawable/ic_menu_add"/>
     <item android:id="@+id/menu_item_settings"
         android:title="@string/settings"
+        android:showAsAction="ifRoom|withText"
         android:icon="@android:drawable/ic_menu_preferences"/>
-    <item android:id="@+id/menu_item_done"
-        android:title="@string/done"
-        android:icon="?android:attr/actionModeCloseDrawable"
-        android:showAsAction="ifRoom|withText" />
 </menu>
 
 
