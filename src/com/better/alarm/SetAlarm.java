@@ -26,7 +26,6 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Vibrator;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -49,7 +48,6 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
     private CheckBoxPreference mEnabledPref;
     private Preference mTimePref;
     private AlarmPreference mAlarmPref;
-    private CheckBoxPreference mVibratePref;
     private RepeatPreference mRepeatPref;
 
     private int     mId;
@@ -77,12 +75,6 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
         mTimePref = findPreference("time");
         mAlarmPref = (AlarmPreference) findPreference("alarm");
         mAlarmPref.setOnPreferenceChangeListener(this);
-        mVibratePref = (CheckBoxPreference) findPreference("vibrate");
-        mVibratePref.setOnPreferenceChangeListener(this);
-        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        if (!v.hasVibrator()) {
-            getPreferenceScreen().removePreference(mVibratePref);
-        }
         mRepeatPref = (RepeatPreference) findPreference("setRepeat");
         mRepeatPref.setOnPreferenceChangeListener(this);
 
@@ -195,7 +187,6 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
         mHour = alarm.hour;
         mMinute = alarm.minutes;
         mRepeatPref.setDaysOfWeek(alarm.daysOfWeek);
-        mVibratePref.setChecked(alarm.vibrate);
         // Give the alert uri to the preference.
         mAlarmPref.setAlert(alarm.alert);
         updateTime();
@@ -278,7 +269,8 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
         alarm.hour = mHour;
         alarm.minutes = mMinute;
         alarm.daysOfWeek = mRepeatPref.getDaysOfWeek();
-        alarm.vibrate = mVibratePref.isChecked();
+        //TODO fetch from settings
+        alarm.vibrate = true;
         alarm.label = "";
         alarm.alert = mAlarmPref.getAlert();
         return alarm;
