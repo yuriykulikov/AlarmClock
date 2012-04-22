@@ -80,6 +80,8 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
         mLabel = label;
         mEnabledPref = (CheckBoxPreference) findPreference("enabled");
         mEnabledPref.setOnPreferenceChangeListener(this);
+        //remove enable preference from screen
+        getPreferenceScreen().removePreference(mEnabledPref);
         mTimePref = findPreference("time");
         mAlarmPref = (AlarmPreference) findPreference("alarm");
         mAlarmPref.setOnPreferenceChangeListener(this);
