@@ -236,6 +236,31 @@
     <!-- Summary for the alarm preference when silent is chosen. -->
     <string name="silent_alarm_summary">Silent</string>
 
+    <!-- Pre-alarm duration title-->
+    <string name="prealarm_duration_title">Pre-alarm duration</string>
+    <!-- Entries listed in the ListPreference when invoking the pre-alarm duration
+         preference. -->
+    <string-array name="prealarm_duration_entries">
+      <item>10 minutes</item>
+      <item>20 minutes</item>
+      <item>30 minutes</item>
+      <item>45 minutes</item>
+      <item>60 minutes</item>
+    </string-array>
+
+    <!-- Values that are retrieved from the ListPreference. These must match
+         the prealarm_duration_entries above. -->
+    <string-array name="prealarm_duration_values">
+      <item>10</item>
+      <item>20</item>
+      <item>30</item>
+      <item>45</item>
+      <item>60</item>
+    </string-array>
+    <!-- Pre-alarm duration summary string set based on the preference value. -->
+    <string name="prealarm_summary">Pre-alarm will start
+      <xliff:g id="minutes">%d</xliff:g> minutes before the main alarm</string>
+
     <!-- Text to display in the small text of the notification -->
     <string name="alarm_notify_text">Snooze or dismiss alarm.</string>
 

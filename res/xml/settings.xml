@@ -31,6 +31,14 @@
         android:streamType="alarm" />
 
     <ListPreference
+        android:key="prealarm_duration"
+        android:title="@string/prealarm_duration_title"
+        android:entries="@array/prealarm_duration_entries"
+        android:entryValues="@array/prealarm_duration_values"
+        android:defaultValue="30"
+        android:dialogTitle="@string/prealarm_duration_title" />
+
+    <ListPreference
         android:key="snooze_duration"
         android:title="@string/snooze_duration_title"
         android:entries="@array/snooze_duration_entries"

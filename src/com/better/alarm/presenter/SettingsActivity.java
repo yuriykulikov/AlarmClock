@@ -41,6 +41,7 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
     static final String KEY_VOLUME_BEHAVIOR = "volume_button_setting";
     static final String KEY_DEFAULT_RINGTONE = "default_ringtone";
     static final String KEY_AUTO_SILENCE = "auto_silence";
+    static final String KEY_PREALARM_DURATION = "prealarm_duration";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +93,8 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
             final ListPreference listPref = (ListPreference) pref;
             String delay = (String) newValue;
             updateAutoSnoozeSummary(listPref, delay);
+        } else if (KEY_PREALARM_DURATION.equals(pref.getKey())) {
+            updatePreAlarmDurationSummary((ListPreference) pref, (String) newValue);
         }
         return true;
     }
@@ -103,6 +106,11 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         } else {
             listPref.setSummary(getString(R.string.auto_silence_summary, i));
         }
+    }
+
+    private void updatePreAlarmDurationSummary(ListPreference listPref, String duration) {
+        int i = Integer.parseInt(duration);
+        listPref.setSummary(getString(R.string.prealarm_summary, i));
     }
 
     private void refresh() {
@@ -118,6 +126,10 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         listPref = (ListPreference) findPreference(KEY_AUTO_SILENCE);
         String delay = listPref.getValue();
         updateAutoSnoozeSummary(listPref, delay);
+        listPref.setOnPreferenceChangeListener(this);
+
+        listPref = (ListPreference) findPreference(KEY_PREALARM_DURATION);
+        updatePreAlarmDurationSummary(listPref, listPref.getValue());
         listPref.setOnPreferenceChangeListener(this);
     }
 }
