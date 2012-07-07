@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-package com.better.alarm;
-
-import com.better.alarm.R;
+package com.better.alarm.presenter;
 
 import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ContentUris;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.BroadcastReceiver;
-import android.database.Cursor;
 import android.os.Parcel;
 import android.os.PowerManager.WakeLock;
+
+import com.better.alarm.AsyncHandler;
+import com.better.alarm.Log;
+import com.better.alarm.R;
+import com.better.alarm.model.Alarm;
+import com.better.alarm.model.Alarms;
 
 /**
  * Glue class: connects AlarmAlert IntentReceiver to AlarmAlert

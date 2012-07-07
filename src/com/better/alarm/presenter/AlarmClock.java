@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.better.alarm;
+package com.better.alarm.presenter;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -44,17 +44,24 @@ import android.widget.TextView;
 import java.util.Calendar;
 
 import com.better.alarm.R;
+import com.better.alarm.R.id;
+import com.better.alarm.R.layout;
+import com.better.alarm.R.menu;
+import com.better.alarm.R.string;
+import com.better.alarm.model.Alarm;
+import com.better.alarm.model.Alarms;
+import com.better.alarm.view.DigitalClock;
 
 /**
  * AlarmClock application.
  */
 public class AlarmClock extends Activity implements OnItemClickListener {
 
-    static final String PREFERENCES = "AlarmClock";
+    public static final String PREFERENCES = "AlarmClock";
 
     /** This must be false for production.  If true, turns on logging,
         test code, etc. */
-    static final boolean DEBUG = false;
+    public static final boolean DEBUG = false;
 
     private SharedPreferences mPrefs;
     private LayoutInflater mFactory;

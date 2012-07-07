@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.better.alarm;
+package com.better.alarm.model;
+
+import com.better.alarm.Log;
 
 import android.content.ContentUris;
 import android.content.ContentValues;

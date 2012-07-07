@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.better.alarm;
+package com.better.alarm.presenter;
+
+import com.better.alarm.Log;
 
 import android.content.Context;
 import android.os.PowerManager;
@@ -23,11 +25,11 @@ import android.os.PowerManager;
  * Hold a wakelock that can be acquired in the AlarmReceiver and
  * released in the AlarmAlert activity
  */
-class AlarmAlertWakeLock {
+public class AlarmAlertWakeLock {
 
     private static PowerManager.WakeLock sCpuWakeLock;
 
-    static PowerManager.WakeLock createPartialWakeLock(Context context) {
+    public static PowerManager.WakeLock createPartialWakeLock(Context context) {
         PowerManager pm =
                 (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         return pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, Log.LOGTAG);

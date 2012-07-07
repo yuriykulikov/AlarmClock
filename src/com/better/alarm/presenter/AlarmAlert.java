@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package com.better.alarm;
+package com.better.alarm.presenter;
 
+import com.better.alarm.Log;
 import com.better.alarm.R;
+import com.better.alarm.R.layout;
+import com.better.alarm.model.Alarms;
 
 import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;

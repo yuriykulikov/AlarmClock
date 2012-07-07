@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.better.alarm;
+package com.better.alarm.presenter;
+
+import java.util.Calendar;
 
 import android.app.Activity;
 import android.app.Notification;
@@ -32,12 +34,12 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Calendar;
-
+import com.better.alarm.Log;
 import com.better.alarm.R;
+import com.better.alarm.model.Alarm;
+import com.better.alarm.model.Alarms;
 
 /**
  * Alarm Clock alarm alert: pops visible indicator and plays alarm

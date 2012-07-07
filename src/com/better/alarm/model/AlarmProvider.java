@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.better.alarm;
+package com.better.alarm.model;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
+
+import com.better.alarm.Log;
 
 public class AlarmProvider extends ContentProvider {
     private AlarmDatabaseHelper mOpenHelper;
@@ -36,8 +36,8 @@ public class AlarmProvider extends ContentProvider {
             UriMatcher.NO_MATCH);
 
     static {
-        sURLMatcher.addURI("com.better.alarm", "alarm", ALARMS);
-        sURLMatcher.addURI("com.better.alarm", "alarm/#", ALARMS_ID);
+        sURLMatcher.addURI("com.better.alarm.model", "alarm", ALARMS);
+        sURLMatcher.addURI("com.better.alarm.model", "alarm/#", ALARMS_ID);
     }
 
     public AlarmProvider() {

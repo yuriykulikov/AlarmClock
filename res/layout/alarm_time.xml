@@ -20,7 +20,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <com.better.alarm.DontPressWithParentLayout
+    <com.better.alarm.view.DontPressWithParentLayout
         android:id="@+id/indicator"
         style="@style/alarm_list_left_column"
         android:gravity="center"
@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_gravity="center" />
-    </com.better.alarm.DontPressWithParentLayout>
+    </com.better.alarm.view.DontPressWithParentLayout>
 
     <ImageView
         android:src="?android:attr/dividerVertical"
@@ -46,7 +46,7 @@
 
     <!-- A layout that displays the time.  Shows time, am/pm (if 12-hour),
          and an optional line below, used for day/days of week -->
-    <com.better.alarm.DigitalClock android:id="@+id/digitalClock"
+    <com.better.alarm.view.DigitalClock android:id="@+id/digitalClock"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:baselineAligned="true">
 
-            <com.better.alarm.AndroidClockTextView 
+            <com.better.alarm.view.AndroidClockTextView 
                 android:id="@+id/timeDisplay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 useClockTypeface="false"/>
 
-            <com.better.alarm.AndroidClockTextView 
+            <com.better.alarm.view.AndroidClockTextView 
                 android:id="@+id/am_pm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -101,6 +101,6 @@
             android:textColor="?android:attr/textColorTertiary"
             />
 
-    </com.better.alarm.DigitalClock>
+    </com.better.alarm.view.DigitalClock>
 
 </LinearLayout>

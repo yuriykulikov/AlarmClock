@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package com.better.alarm;
+package com.better.alarm.view;
+
+import java.text.DateFormatSymbols;
+import java.util.Calendar;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -28,10 +31,9 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import java.text.DateFormatSymbols;
-import java.util.Calendar;
-
+import com.better.alarm.Log;
 import com.better.alarm.R;
+import com.better.alarm.model.Alarms;
 
 /**
  * Displays the time
@@ -158,7 +160,7 @@ public class DigitalClock extends RelativeLayout {
     }
 
 
-    void updateTime(Calendar c) {
+    public void updateTime(Calendar c) {
         mCalendar = c;
         updateTime();
     }
@@ -178,7 +180,7 @@ public class DigitalClock extends RelativeLayout {
         mAmPm.setShowAmPm(mFormat == M12);
     }
 
-    void setLive(boolean live) {
+    public void setLive(boolean live) {
         mLive = live;
     }
 }

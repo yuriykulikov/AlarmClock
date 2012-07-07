@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.better.alarm;
+package com.better.alarm.presenter;
 
 import android.widget.Toast;
 

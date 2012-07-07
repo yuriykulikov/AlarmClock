@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-package com.better.alarm;
+package com.better.alarm.model;
+
+import com.better.alarm.AsyncHandler;
+import com.better.alarm.Log;
+import com.better.alarm.presenter.AlarmAlertWakeLock;
 
 import android.content.Context;
 import android.content.Intent;

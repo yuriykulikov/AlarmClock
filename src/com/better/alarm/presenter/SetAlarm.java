@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package com.better.alarm;
-
-import com.better.alarm.R;
+package com.better.alarm.presenter;
 
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
@@ -35,6 +33,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import com.better.alarm.Log;
+import com.better.alarm.R;
+import com.better.alarm.model.Alarm;
+import com.better.alarm.model.Alarms;
 
 /**
  * Manages each alarm

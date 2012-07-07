@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-package com.better.alarm;
+package com.better.alarm.presenter;
 
-import com.better.alarm.R;
-
-import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -28,8 +25,9 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
-import android.preference.RingtonePreference;
 import android.provider.Settings;
+
+import com.better.alarm.R;
 
 /**
  * Settings for the Alarm Clock.

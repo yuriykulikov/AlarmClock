@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.better.alarm;
+package com.better.alarm.model;
 
 import android.app.AlarmManager;
 import android.app.NotificationManager;
@@ -34,6 +34,9 @@ import android.text.format.DateFormat;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.better.alarm.Log;
+import com.better.alarm.presenter.AlarmClock;
 
 /**
  * The Alarms provider supplies info about Alarm Clock settings
@@ -89,9 +92,9 @@ public class Alarms {
 
     private final static String M12 = "h:mm aa";
     // Shared with DigitalClock
-    final static String M24 = "kk:mm";
+    public final static String M24 = "kk:mm";
 
-    final static int INVALID_ALARM_ID = -1;
+    public final static int INVALID_ALARM_ID = -1;
 
     /**
      * Creates a new Alarm and fills in the given alarm's id.
@@ -434,7 +437,7 @@ public class Alarms {
      *
      * @param id Alarm ID.
      */
-    static void disableAlert(Context context) {
+    public static void disableAlert(Context context) {
         AlarmManager am = (AlarmManager)
                 context.getSystemService(Context.ALARM_SERVICE);
         PendingIntent sender = PendingIntent.getBroadcast(
@@ -445,7 +448,7 @@ public class Alarms {
         saveNextAlarm(context, "");
     }
 
-    static void saveSnoozeAlert(final Context context, final int id,
+    public static void saveSnoozeAlert(final Context context, final int id,
             final long time) {
         SharedPreferences prefs = context.getSharedPreferences(
                 AlarmClock.PREFERENCES, 0);
@@ -475,7 +478,7 @@ public class Alarms {
     /**
      * Disable the snooze alert if the given id matches the snooze id.
      */
-    static void disableSnoozeAlert(final Context context, final int id) {
+    public static void disableSnoozeAlert(final Context context, final int id) {
         SharedPreferences prefs = context.getSharedPreferences(
                 AlarmClock.PREFERENCES, 0);
         if (hasAlarmBeenSnoozed(prefs, id)) {
@@ -566,7 +569,7 @@ public class Alarms {
      * Given an alarm in hours and minutes, return a time suitable for
      * setting in AlarmManager.
      */
-    static Calendar calculateAlarm(int hour, int minute,
+    public static Calendar calculateAlarm(int hour, int minute,
             Alarm.DaysOfWeek daysOfWeek) {
 
         // start with now
@@ -591,14 +594,14 @@ public class Alarms {
         return c;
     }
 
-    static String formatTime(final Context context, int hour, int minute,
+    public static String formatTime(final Context context, int hour, int minute,
                              Alarm.DaysOfWeek daysOfWeek) {
         Calendar c = calculateAlarm(hour, minute, daysOfWeek);
         return formatTime(context, c);
     }
 
     /* used by AlarmAlert */
-    static String formatTime(final Context context, Calendar c) {
+    public static String formatTime(final Context context, Calendar c) {
         String format = get24HourMode(context) ? M24 : M12;
         return (c == null) ? "" : (String)DateFormat.format(format, c);
     }
@@ -615,7 +618,7 @@ public class Alarms {
      * Save time of the next alarm, as a formatted string, into the system
      * settings so those who care can make use of it.
      */
-    static void saveNextAlarm(final Context context, String timeString) {
+    public static void saveNextAlarm(final Context context, String timeString) {
         Settings.System.putString(context.getContentResolver(),
                                   Settings.System.NEXT_ALARM_FORMATTED,
                                   timeString);
@@ -624,7 +627,7 @@ public class Alarms {
     /**
      * @return true if clock is set to 24-hour mode
      */
-    static boolean get24HourMode(final Context context) {
+    public static boolean get24HourMode(final Context context) {
         return android.text.format.DateFormat.is24HourFormat(context);
     }
 }

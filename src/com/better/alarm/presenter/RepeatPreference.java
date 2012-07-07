@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package com.better.alarm;
+package com.better.alarm.presenter;
+
+import java.text.DateFormatSymbols;
+import java.util.Calendar;
 
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -22,8 +25,7 @@ import android.content.DialogInterface;
 import android.preference.ListPreference;
 import android.util.AttributeSet;
 
-import java.text.DateFormatSymbols;
-import java.util.Calendar;
+import com.better.alarm.model.Alarm;
 
 public class RepeatPreference extends ListPreference {
 

@@ -2,7 +2,7 @@
         package="com.better.alarm"
         android:versionCode="203" android:versionName="2.0.3">
     <uses-sdk
-        android:minSdkVersion="10"
+        android:minSdkVersion="15"
         android:targetSdkVersion="15" >
     </uses-sdk>
 
@@ -19,11 +19,11 @@
     <application android:label="@string/app_label"
                  android:icon="@mipmap/ic_launcher_alarmclock">
 
-        <provider android:name="AlarmProvider"
-                android:authorities="com.better.alarm"
+        <provider android:name=".model.AlarmProvider"
+                android:authorities="com.better.alarm.model"
                 android:exported="false" />
 
-        <activity android:name="AlarmClock"
+        <activity android:name=".presenter.AlarmClock"
                 android:label="@string/alarm_list_title"
                 android:theme="@style/AlarmClockTheme"
                 android:taskAffinity=""
@@ -37,10 +37,10 @@
         </activity>
 
         <activity-alias android:name="com.android.alarmclock.AlarmClock"
-                android:targetActivity="com.better.alarm.AlarmClock"
+                android:targetActivity="com.better.alarm.presenter.AlarmClock"
                 android:exported="true" />
 
-        <activity android:name="SettingsActivity"
+        <activity android:name=".presenter.SettingsActivity"
                 android:label="@string/settings"
                 android:taskAffinity=""
                 android:excludeFromRecents="true"
@@ -50,12 +50,12 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="SetAlarm" 
+        <activity android:name=".presenter.SetAlarm" 
                 android:label="@string/set_alarm"
                 android:theme="@style/SetAlarmTheme"
                 android:configChanges="orientation|keyboardHidden|keyboard|navigation" />
 
-        <activity android:name="AlarmAlert"
+        <activity android:name=".presenter.AlarmAlert"
                 android:excludeFromRecents="true"
                 android:theme="@android:style/Theme.Holo.Dialog"
                 android:launchMode="singleInstance"
@@ -64,14 +64,14 @@
 
         <!-- This activity is basically the same as AlarmAlert 
              but full-screen so that it can turn the display on. -->
-        <activity android:name="AlarmAlertFullScreen"
+        <activity android:name=".presenter.AlarmAlertFullScreen"
                 android:excludeFromRecents="true"
                 android:theme="@style/AlarmAlertFullScreenTheme"
                 android:launchMode="singleInstance"
                 android:taskAffinity=""
                 android:configChanges="orientation|keyboardHidden|keyboard|navigation"/>
 
-        <receiver android:name="AlarmReceiver"
+        <receiver android:name=".presenter.AlarmReceiver"
                 android:exported="false">
             <intent-filter>
                 <action android:name="com.better.alarm.ALARM_ALERT" />
@@ -80,7 +80,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name="HandleSetAlarm"
+        <activity android:name=".presenter.HandleSetAlarm"
                 android:theme="@android:style/Theme.NoDisplay"
                 android:excludeFromRecents="true"
                 android:permission="com.android.alarm.permission.SET_ALARM">
@@ -96,7 +96,7 @@
              intent. The service plays the alarm alert and vibrates the device.
              This allows the alert to continue playing even if another activity
              causes the AlarmAlert activity to pause. -->
-        <service android:name="AlarmKlaxon"
+        <service android:name=".presenter.AlarmKlaxon"
                 android:exported="false"
                 android:description="@string/alarm_klaxon_service_desc">
             <intent-filter>
@@ -104,7 +104,7 @@
             </intent-filter>
         </service>
 
-        <receiver android:name="AlarmInitReceiver">
+        <receiver android:name=".model.AlarmInitReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.TIME_SET" />

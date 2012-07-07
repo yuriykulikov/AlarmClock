@@ -22,11 +22,11 @@
     <Preference android:key="time"
         android:persistent="false"
         android:title="@string/time"/>
-    <com.better.alarm.RepeatPreference
+    <com.better.alarm.presenter.RepeatPreference
         android:persistent="false"
         android:key="setRepeat"
         android:title="@string/alarm_repeat" />
-    <com.better.alarm.AlarmPreference
+    <com.better.alarm.presenter.AlarmPreference
         android:key="alarm"
         android:title="@string/alert"
         android:ringtoneType="alarm"
