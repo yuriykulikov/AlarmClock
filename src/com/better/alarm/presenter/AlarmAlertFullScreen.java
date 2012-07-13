@@ -168,7 +168,7 @@ public class AlarmAlertFullScreen extends Activity {
         label = getString(R.string.alarm_notify_snooze_label, label);
 
         // Notify the user that the alarm has been snoozed.
-        Intent cancelSnooze = new Intent(this, AlarmReceiver.class);
+        Intent cancelSnooze = new Intent(this, AlarmAlertReceiver.class);
         cancelSnooze.setAction(Alarms.CANCEL_SNOOZE);
         cancelSnooze.putExtra(Alarms.ALARM_INTENT_EXTRA, mAlarm);
         PendingIntent broadcast = PendingIntent.getBroadcast(this, mAlarm.id, cancelSnooze, 0);

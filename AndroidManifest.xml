@@ -27,7 +27,7 @@
             android:exported="false" />
 
         <activity
-            android:name=".presenter.AlarmClock"
+            android:name=".presenter.AlarmsListActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
             android:excludeFromRecents="true"
             android:exported="true"
@@ -44,7 +44,7 @@
         <activity-alias
             android:name="com.android.alarmclock.AlarmClock"
             android:exported="true"
-            android:targetActivity="com.better.alarm.presenter.AlarmClock" />
+            android:targetActivity=".presenter.AlarmsListActivity" />
 
         <activity
             android:name=".presenter.SettingsActivity"
@@ -56,7 +56,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presenter.SetAlarm"
+            android:name=".presenter.SetAlarmActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
             android:label="@string/set_alarm"
             android:theme="@style/SetAlarmTheme" />
@@ -81,7 +81,7 @@
             android:theme="@style/AlarmAlertFullScreenTheme" />
 
         <receiver
-            android:name=".presenter.AlarmReceiver"
+            android:name=".presenter.AlarmAlertReceiver"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.better.alarm.ALARM_ALERT" />
@@ -111,7 +111,7 @@
              causes the AlarmAlert activity to pause.
         -->
         <service
-            android:name=".presenter.AlarmKlaxon"
+            android:name=".presenter.AlarmKlaxonService"
             android:description="@string/alarm_klaxon_service_desc"
             android:exported="false" >
             <intent-filter>

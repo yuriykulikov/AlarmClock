@@ -36,7 +36,7 @@ import android.provider.Settings;
 import android.text.format.DateFormat;
 
 import com.better.alarm.Log;
-import com.better.alarm.presenter.AlarmClock;
+import com.better.alarm.presenter.AlarmsListActivity;
 
 /**
  * The Alarms provider supplies info about Alarm Clock settings
@@ -176,7 +176,7 @@ public class Alarms {
     private static void clearSnoozeIfNeeded(Context context, long alarmTime) {
         // If this alarm fires before the next snooze, clear the snooze to
         // enable this alarm.
-        SharedPreferences prefs = context.getSharedPreferences(AlarmClock.PREFERENCES, 0);
+        SharedPreferences prefs = context.getSharedPreferences(AlarmsListActivity.PREFERENCES, 0);
 
         // Get the list of snoozed alarms
         final Set<String> snoozedIds = prefs.getStringSet(PREF_SNOOZE_IDS, new HashSet<String>());
@@ -282,7 +282,7 @@ public class Alarms {
     private static Alarm calculateNextAlert(final Context context) {
         long minTime = Long.MAX_VALUE;
         long now = System.currentTimeMillis();
-        final SharedPreferences prefs = context.getSharedPreferences(AlarmClock.PREFERENCES, 0);
+        final SharedPreferences prefs = context.getSharedPreferences(AlarmsListActivity.PREFERENCES, 0);
 
         Set<Alarm> alarms = new HashSet<Alarm>();
 
@@ -440,7 +440,7 @@ public class Alarms {
     }
 
     public static void saveSnoozeAlert(final Context context, final int id, final long time) {
-        SharedPreferences prefs = context.getSharedPreferences(AlarmClock.PREFERENCES, 0);
+        SharedPreferences prefs = context.getSharedPreferences(AlarmsListActivity.PREFERENCES, 0);
         if (id == INVALID_ALARM_ID) {
             clearAllSnoozePreferences(context, prefs);
         } else {
@@ -467,7 +467,7 @@ public class Alarms {
      * Disable the snooze alert if the given id matches the snooze id.
      */
     public static void disableSnoozeAlert(final Context context, final int id) {
-        SharedPreferences prefs = context.getSharedPreferences(AlarmClock.PREFERENCES, 0);
+        SharedPreferences prefs = context.getSharedPreferences(AlarmsListActivity.PREFERENCES, 0);
         if (hasAlarmBeenSnoozed(prefs, id)) {
             // This is the same id so clear the shared prefs.
             clearSnoozePreference(context, prefs, id);

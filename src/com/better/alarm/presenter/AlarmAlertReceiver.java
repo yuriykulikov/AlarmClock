@@ -36,7 +36,7 @@ import com.better.alarm.model.Alarms;
  * Glue class: connects AlarmAlert IntentReceiver to AlarmAlert activity. Passes
  * through Alarm ID.
  */
-public class AlarmReceiver extends BroadcastReceiver {
+public class AlarmAlertReceiver extends BroadcastReceiver {
 
     /**
      * If the alarm is older than STALE_WINDOW, ignore. It is probably the
@@ -195,7 +195,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
 
         // Launch SetAlarm when clicked.
-        Intent viewAlarm = new Intent(context, SetAlarm.class);
+        Intent viewAlarm = new Intent(context, SetAlarmActivity.class);
         viewAlarm.putExtra(Alarms.ALARM_INTENT_EXTRA, alarm);
         PendingIntent intent = PendingIntent.getActivity(context, alarm.id, viewAlarm, 0);
 

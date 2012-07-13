@@ -42,7 +42,7 @@ import com.better.alarm.model.Alarms;
 /**
  * Manages each alarm
  */
-public class SetAlarm extends PreferenceActivity implements Preference.OnPreferenceChangeListener,
+public class SetAlarmActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener,
         TimePickerDialog.OnTimeSetListener, OnCancelListener {
     private static final String KEY_CURRENT_ALARM = "currentAlarm";
     private static final String KEY_ORIGINAL_ALARM = "originalAlarm";
@@ -104,7 +104,7 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
             public void onClick(View v) {
                 long time = saveAlarm(null);
                 if (mEnabledPref.isChecked()) {
-                    popAlarmSetToast(SetAlarm.this, time);
+                    popAlarmSetToast(SetAlarmActivity.this, time);
                 }
                 finish();
             }
@@ -280,7 +280,7 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
                 .setMessage(getString(R.string.delete_alarm_confirm))
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface d, int w) {
-                        Alarms.deleteAlarm(SetAlarm.this, mId);
+                        Alarms.deleteAlarm(SetAlarmActivity.this, mId);
                         finish();
                     }
                 }).setNegativeButton(android.R.string.cancel, null).show();
@@ -290,7 +290,7 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
         int newId = mId;
         // "Revert" on a newly created alarm should delete it.
         if (mOriginalAlarm.id == -1) {
-            Alarms.deleteAlarm(SetAlarm.this, newId);
+            Alarms.deleteAlarm(SetAlarmActivity.this, newId);
         } else {
             saveAlarm(mOriginalAlarm);
         }

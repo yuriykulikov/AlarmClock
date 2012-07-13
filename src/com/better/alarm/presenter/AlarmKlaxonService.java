@@ -43,7 +43,7 @@ import com.better.alarm.model.Alarms;
  * Manages alarms and vibe. Runs as a service so that it can continue to play if
  * another activity overrides the AlarmAlert dialog.
  */
-public class AlarmKlaxon extends Service {
+public class AlarmKlaxonService extends Service {
     // Default of 10 minutes until alarm is silenced.
     private static final String DEFAULT_ALARM_TIMEOUT = "10";
 

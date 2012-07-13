@@ -23,12 +23,12 @@ package com.better.alarm;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.better.alarm.presenter.AlarmClock;
+import com.better.alarm.presenter.AlarmsListActivity;
 
 public class Log {
     public final static String LOGTAG = "AlarmClock";
 
-    public static final boolean LOGV = AlarmClock.DEBUG ? false : false;
+    public static final boolean LOGV = AlarmsListActivity.DEBUG ? false : false;
 
     public static void v(String logMe) {
         android.util.Log.v(LOGTAG, /* SystemClock.uptimeMillis() + " " + */logMe);
