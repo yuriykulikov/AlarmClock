@@ -31,16 +31,14 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.better.alarm.Log;
 import com.better.alarm.R;
-import com.better.alarm.model.Alarms;
 
 /**
  * Displays the time
  */
 public class DigitalClock extends RelativeLayout {
-
-    private final static String M12 = "h:mm";
+    public final static String M12 = "h:mm";
+    public final static String M24 = "kk:mm";
 
     private Calendar mCalendar;
     private String mFormat;
@@ -123,8 +121,6 @@ public class DigitalClock extends RelativeLayout {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-        if (Log.LOGV) Log.v("onAttachedToWindow " + this);
-
         if (mAttached) return;
         mAttached = true;
 
@@ -174,7 +170,8 @@ public class DigitalClock extends RelativeLayout {
     }
 
     private void setDateFormat() {
-        mFormat = Alarms.get24HourMode(getContext()) ? Alarms.M24 : M12;
+        // XXX this should not query Alarms for this
+        mFormat = android.text.format.DateFormat.is24HourFormat(getContext()) ? M24 : M12;
         mAmPm.setShowAmPm(mFormat == M12);
     }
 

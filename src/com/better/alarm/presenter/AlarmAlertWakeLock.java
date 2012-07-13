@@ -18,20 +18,20 @@ package com.better.alarm.presenter;
 
 import android.content.Context;
 import android.os.PowerManager;
-
-import com.better.alarm.Log;
+import android.util.Log;
 
 /**
  * Hold a wakelock that can be acquired in the AlarmReceiver and released in the
  * AlarmAlert activity
  */
 public class AlarmAlertWakeLock {
-
+    private static final String TAG = "AlarmAlertWakeLock";
+    private static final boolean DBG = true;
     private static PowerManager.WakeLock sCpuWakeLock;
 
     public static PowerManager.WakeLock createPartialWakeLock(Context context) {
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        return pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, Log.LOGTAG);
+        return pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
     }
 
     static void acquireCpuWakeLock(Context context) {
@@ -41,6 +41,7 @@ public class AlarmAlertWakeLock {
 
         sCpuWakeLock = createPartialWakeLock(context);
         sCpuWakeLock.acquire();
+        if (DBG) Log.d(TAG, "WakeLock acquired");
     }
 
     static void releaseCpuLock() {
@@ -48,5 +49,6 @@ public class AlarmAlertWakeLock {
             sCpuWakeLock.release();
             sCpuWakeLock = null;
         }
+        if (DBG) Log.d(TAG, "WakeLock released");
     }
 }

@@ -14,24 +14,31 @@
  * limitations under the License.
  */
 
-package com.better.alarm.model;
+package com.better.alarm.presenter;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
-public class AlarmInitReceiver extends BroadcastReceiver {
-    private static final String TAG = "AlarmInitReceiver";
-    private static final boolean DBG = true;
-    /**
-     * Sets alarm on ACTION_BOOT_COMPLETED. Resets alarm on TIME_SET,
-     * TIMEZONE_CHANGED
-     */
+import com.better.alarm.model.Alarm;
+import com.better.alarm.model.Intents;
+
+/**
+ * Dispatches intents to the KlaxonService
+ */
+public class AlarmKlaxonReceiver extends BroadcastReceiver {
+
     @Override
-    public void onReceive(final Context context, Intent intent) {
-        final String action = intent.getAction();
-        if (DBG) Log.d(TAG, "AlarmInitReceiver" + action);
-        Alarms.init(context);
+    public void onReceive(final Context context, final Intent intent) {
+        Alarm alarm = intent.getParcelableExtra(Intents.ALARM_INTENT_EXTRA);
+
+        // Maintain a cpu wake lock until the and AlarmKlaxonService can pick it
+        // up.
+        AlarmAlertWakeLock.acquireCpuWakeLock(context);
+
+        // Dispatch intent to the service
+        Intent playAlarm = new Intent(intent.getAction());
+        playAlarm.putExtra(Intents.ALARM_INTENT_EXTRA, alarm);
+        context.startService(playAlarm);
     }
 }

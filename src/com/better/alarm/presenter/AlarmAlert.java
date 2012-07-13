@@ -24,17 +24,17 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
-import com.better.alarm.Log;
 import com.better.alarm.R;
-import com.better.alarm.model.Alarms;
+import com.better.alarm.model.Intents;
 
 /**
  * Full screen alarm alert: pops visible indicator and plays alarm tone. This
  * activity shows the alert as a dialog.
  */
 public class AlarmAlert extends AlarmAlertFullScreen {
-
+    private static final String TAG = "AlarmAlert";
     // If we try to check the keyguard more than 5 times, just launch the full
     // screen activity.
     private int mKeyguardRetryCount;
@@ -84,7 +84,7 @@ public class AlarmAlert extends AlarmAlertFullScreen {
 
     private boolean checkRetryCount() {
         if (mKeyguardRetryCount++ >= MAX_KEYGUARD_CHECKS) {
-            Log.e("Tried to read keyguard status too many times, bailing...");
+            Log.e(TAG, "Tried to read keyguard status too many times, bailing...");
             return false;
         }
         return true;
@@ -98,7 +98,7 @@ public class AlarmAlert extends AlarmAlertFullScreen {
         } else {
             // Launch the full screen activity but do not turn the screen on.
             Intent i = new Intent(this, AlarmAlertFullScreen.class);
-            i.putExtra(Alarms.ALARM_INTENT_EXTRA, mAlarm);
+            i.putExtra(Intents.ALARM_INTENT_EXTRA, mAlarm);
             i.putExtra(SCREEN_OFF, true);
             startActivity(i);
             finish();

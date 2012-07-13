@@ -60,8 +60,6 @@ public class RepeatPreference extends ListPreference {
     @Override
     protected void onPrepareDialogBuilder(Builder builder) {
         CharSequence[] entries = getEntries();
-        CharSequence[] entryValues = getEntryValues();
-
         builder.setMultiChoiceItems(entries, mDaysOfWeek.getBooleanArray(),
                 new DialogInterface.OnMultiChoiceClickListener() {
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {

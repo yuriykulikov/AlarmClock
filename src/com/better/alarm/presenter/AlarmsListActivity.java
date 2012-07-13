@@ -23,9 +23,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -45,6 +45,8 @@ import android.widget.TextView;
 import com.better.alarm.R;
 import com.better.alarm.model.Alarm;
 import com.better.alarm.model.Alarms;
+import com.better.alarm.model.IAlarmsSetup;
+import com.better.alarm.model.Intents;
 import com.better.alarm.view.DigitalClock;
 
 /**
@@ -60,16 +62,17 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
      */
     public static final boolean DEBUG = false;
 
-    private SharedPreferences mPrefs;
+    public final static String M12 = "h:mm aa";
+    public final static String M24 = "kk:mm";
+
     private LayoutInflater mFactory;
     private ListView mAlarmsList;
     private Cursor mCursor;
 
+    IAlarmsSetup alarms;
+
     private void updateAlarm(boolean enabled, Alarm alarm) {
-        Alarms.enableAlarm(this, alarm.id, enabled);
-        if (enabled) {
-            SetAlarmActivity.popAlarmSetToast(this, alarm.hour, alarm.minutes, alarm.daysOfWeek);
-        }
+        alarms.enable(alarm);
     }
 
     private class AlarmTimeAdapter extends CursorAdapter {
@@ -148,7 +151,7 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
                     .setMessage(getString(R.string.delete_alarm_confirm))
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface d, int w) {
-                            Alarms.deleteAlarm(AlarmsListActivity.this, id);
+                            alarms.delete(id);
                         }
                     }).setNegativeButton(android.R.string.cancel, null).show();
             return true;
@@ -157,10 +160,7 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
         case R.id.enable_alarm: {
             final Cursor c = (Cursor) mAlarmsList.getAdapter().getItem(info.position);
             final Alarm alarm = new Alarm(c);
-            Alarms.enableAlarm(this, alarm.id, !alarm.enabled);
-            if (!alarm.enabled) {
-                SetAlarmActivity.popAlarmSetToast(this, alarm.hour, alarm.minutes, alarm.daysOfWeek);
-            }
+            alarms.enable(alarm);
             return true;
         }
 
@@ -168,7 +168,7 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
             final Cursor c = (Cursor) mAlarmsList.getAdapter().getItem(info.position);
             final Alarm alarm = new Alarm(c);
             Intent intent = new Intent(this, SetAlarmActivity.class);
-            intent.putExtra(Alarms.ALARM_INTENT_EXTRA, alarm);
+            intent.putExtra(Intents.ALARM_INTENT_EXTRA, alarm);
             startActivity(intent);
             return true;
         }
@@ -183,9 +183,9 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
+        alarms = Alarms.getAlarmsSetup();
         mFactory = LayoutInflater.from(this);
-        mPrefs = getSharedPreferences(PREFERENCES, 0);
-        mCursor = Alarms.getAlarmsCursor(getContentResolver());
+        mCursor = alarms.getCursor();
 
         updateLayout();
     }
@@ -216,7 +216,6 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ToastMaster.cancelToast();
         if (mCursor != null) {
             mCursor.close();
         }
@@ -236,7 +235,8 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
         final Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, alarm.hour);
         cal.set(Calendar.MINUTE, alarm.minutes);
-        final String time = Alarms.formatTime(this, cal);
+        String format = android.text.format.DateFormat.is24HourFormat(this) ? M24 : M12;
+        final String time = (cal == null) ? "" : (String) DateFormat.format(format, cal);
 
         // Inflate the custom view and set each TextView's text.
         final View v = mFactory.inflate(R.layout.context_menu_header, null);
@@ -275,11 +275,11 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
     }
 
     @Override
-    public void onItemClick(AdapterView parent, View v, int pos, long id) {
+    public void onItemClick(@SuppressWarnings("rawtypes") AdapterView parent, View v, int pos, long id) {
         final Cursor c = (Cursor) mAlarmsList.getAdapter().getItem(pos);
         final Alarm alarm = new Alarm(c);
         Intent intent = new Intent(this, SetAlarmActivity.class);
-        intent.putExtra(Alarms.ALARM_INTENT_EXTRA, alarm);
+        intent.putExtra(Intents.ALARM_INTENT_EXTRA, alarm);
         startActivity(intent);
     }
 }

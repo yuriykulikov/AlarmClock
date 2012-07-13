@@ -26,12 +26,13 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.BaseColumns;
+import android.util.Log;
 
-import com.better.alarm.Log;
 import com.better.alarm.R;
 
 public final class Alarm implements Parcelable {
-
+    private static final String TAG = "Alarm";
+    private static final boolean DBG = true;
     // ////////////////////////////
     // Parcelable apis
     // ////////////////////////////
@@ -192,9 +193,7 @@ public final class Alarm implements Parcelable {
         label = c.getString(Columns.ALARM_MESSAGE_INDEX);
         String alertString = c.getString(Columns.ALARM_ALERT_INDEX);
         if (Alarms.ALARM_ALERT_SILENT.equals(alertString)) {
-            if (Log.LOGV) {
-                Log.v("Alarm is marked as silent");
-            }
+            if (DBG) Log.d(TAG, "Alarm is marked as silent");
             silent = true;
         } else {
             if (alertString != null && alertString.length() != 0) {
@@ -361,5 +360,36 @@ public final class Alarm implements Parcelable {
             }
             return dayCount;
         }
+    }
+
+    /**
+     * Given an alarm in hours and minutes, return a time suitable for setting
+     * in AlarmManager.
+     */
+    public Calendar calculateCalendar() {
+
+        // start with now
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(System.currentTimeMillis());
+
+        int nowHour = c.get(Calendar.HOUR_OF_DAY);
+        int nowMinute = c.get(Calendar.MINUTE);
+
+        // if alarm is behind current time, advance one day
+        if (hour < nowHour || hour == nowHour && minutes <= nowMinute) {
+            c.add(Calendar.DAY_OF_YEAR, 1);
+        }
+        c.set(Calendar.HOUR_OF_DAY, hour);
+        c.set(Calendar.MINUTE, minutes);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+
+        int addDays = daysOfWeek.getNextAlarm(c);
+        if (addDays > 0) c.add(Calendar.DAY_OF_WEEK, addDays);
+        return c;
+    }
+
+    public long getTimeInMillis() {
+        return calculateCalendar().getTimeInMillis();
     }
 }

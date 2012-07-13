@@ -34,7 +34,7 @@ import com.better.alarm.R;
 public class AlarmPreference extends RingtonePreference {
     private Uri mAlert;
     private boolean mChangeDefault;
-    private AsyncTask mRingtoneTask;
+    private AsyncTask<Uri, Void, String> mRingtoneTask;
 
     public AlarmPreference(Context context, AttributeSet attrs) {
         super(context, attrs);

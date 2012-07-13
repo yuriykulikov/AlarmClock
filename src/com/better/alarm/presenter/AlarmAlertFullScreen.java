@@ -16,30 +16,26 @@
 
 package com.better.alarm.presenter;
 
-import java.util.Calendar;
-
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.Toast;
 
-import com.better.alarm.Log;
 import com.better.alarm.R;
 import com.better.alarm.model.Alarm;
 import com.better.alarm.model.Alarms;
+import com.better.alarm.model.IAlarmsManager;
+import com.better.alarm.model.Intents;
 
 /**
  * Alarm Clock alarm alert: pops visible indicator and plays alarm tone. This
@@ -47,9 +43,8 @@ import com.better.alarm.model.Alarms;
  * wallpaper as the background.
  */
 public class AlarmAlertFullScreen extends Activity {
-
-    // These defaults must match the values in res/xml/settings.xml
-    private static final String DEFAULT_SNOOZE = "10";
+    private static final String TAG = "AlarmAlertFullScreen";
+    private static final boolean DBG = true;
     private static final String DEFAULT_VOLUME_BEHAVIOR = "2";
     protected static final String SCREEN_OFF = "screen_off";
 
@@ -57,21 +52,23 @@ public class AlarmAlertFullScreen extends Activity {
     private int mVolumeBehavior;
     boolean mFullscreenStyle;
 
-    // Receives the ALARM_KILLED action from the AlarmKlaxon,
-    // and also ALARM_SNOOZE_ACTION / ALARM_DISMISS_ACTION from other
-    // applications
+    private IAlarmsManager alarmsManager;
+
+    /**
+     * Receives Intents from the model
+     */
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (action.equals(Alarms.ALARM_SNOOZE_ACTION)) {
-                snooze();
-            } else if (action.equals(Alarms.ALARM_DISMISS_ACTION)) {
-                dismiss(false);
-            } else {
-                Alarm alarm = intent.getParcelableExtra(Alarms.ALARM_INTENT_EXTRA);
-                if (alarm != null && mAlarm.id == alarm.id) {
-                    dismiss(true);
+            Alarm alarm = intent.getParcelableExtra(Intents.ALARM_INTENT_EXTRA);
+            if (action.equals(Intents.ALARM_SNOOZE_ACTION)) {
+                if (mAlarm.id == alarm.id) {
+                    finish();
+                }
+            } else if (action.equals(Intents.ALARM_DISMISS_ACTION)) {
+                if (mAlarm.id == alarm.id) {
+                    finish();
                 }
             }
         }
@@ -81,7 +78,9 @@ public class AlarmAlertFullScreen extends Activity {
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        mAlarm = getIntent().getParcelableExtra(Alarms.ALARM_INTENT_EXTRA);
+        mAlarm = getIntent().getParcelableExtra(Intents.ALARM_INTENT_EXTRA);
+
+        alarmsManager = Alarms.getAlarmsManager();
 
         // Get the volume/camera button behavior setting
         final String vol = PreferenceManager.getDefaultSharedPreferences(this).getString(
@@ -102,9 +101,9 @@ public class AlarmAlertFullScreen extends Activity {
         updateLayout();
 
         // Register to get the alarm killed/snooze/dismiss intent.
-        IntentFilter filter = new IntentFilter(Alarms.ALARM_KILLED);
-        filter.addAction(Alarms.ALARM_SNOOZE_ACTION);
-        filter.addAction(Alarms.ALARM_DISMISS_ACTION);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intents.ALARM_SNOOZE_ACTION);
+        filter.addAction(Intents.ALARM_DISMISS_ACTION);
         registerReceiver(mReceiver, filter);
     }
 
@@ -137,7 +136,7 @@ public class AlarmAlertFullScreen extends Activity {
         /* dismiss button: close notification */
         findViewById(R.id.dismiss).setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-                dismiss(false);
+                dismiss();
             }
         });
 
@@ -147,64 +146,17 @@ public class AlarmAlertFullScreen extends Activity {
 
     // Attempt to snooze this alert.
     private void snooze() {
+        alarmsManager.snooze(mAlarm);
         // Do not snooze if the snooze button is disabled.
         if (!findViewById(R.id.snooze).isEnabled()) {
-            dismiss(false);
+            dismiss();
             return;
         }
-        final String snooze = PreferenceManager.getDefaultSharedPreferences(this).getString(
-                SettingsActivity.KEY_ALARM_SNOOZE, DEFAULT_SNOOZE);
-        int snoozeMinutes = Integer.parseInt(snooze);
-
-        final long snoozeTime = System.currentTimeMillis() + (1000 * 60 * snoozeMinutes);
-        Alarms.saveSnoozeAlert(AlarmAlertFullScreen.this, mAlarm.id, snoozeTime);
-
-        // Get the display time for the snooze and update the notification.
-        final Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(snoozeTime);
-
-        // Append (snoozed) to the label.
-        String label = mAlarm.getLabelOrDefault(this);
-        label = getString(R.string.alarm_notify_snooze_label, label);
-
-        // Notify the user that the alarm has been snoozed.
-        Intent cancelSnooze = new Intent(this, AlarmAlertReceiver.class);
-        cancelSnooze.setAction(Alarms.CANCEL_SNOOZE);
-        cancelSnooze.putExtra(Alarms.ALARM_INTENT_EXTRA, mAlarm);
-        PendingIntent broadcast = PendingIntent.getBroadcast(this, mAlarm.id, cancelSnooze, 0);
-        NotificationManager nm = getNotificationManager();
-        Notification n = new Notification(R.drawable.stat_notify_alarm, label, 0);
-        n.setLatestEventInfo(this, label, getString(R.string.alarm_notify_snooze_text, Alarms.formatTime(this, c)),
-                broadcast);
-        n.flags |= Notification.FLAG_AUTO_CANCEL | Notification.FLAG_ONGOING_EVENT;
-        nm.notify(mAlarm.id, n);
-
-        String displayTime = getString(R.string.alarm_alert_snooze_set, snoozeMinutes);
-        // Intentionally log the snooze time for debugging.
-        Log.v(displayTime);
-
-        // Display the snooze minutes in a toast.
-        Toast.makeText(AlarmAlertFullScreen.this, displayTime, Toast.LENGTH_LONG).show();
-        stopService(new Intent(Alarms.ALARM_ALERT_ACTION));
-        finish();
-    }
-
-    private NotificationManager getNotificationManager() {
-        return (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 
     // Dismiss the alarm.
-    private void dismiss(boolean killed) {
-        Log.i(killed ? "Alarm killed" : "Alarm dismissed by user");
-        // The service told us that the alarm has been killed, do not modify
-        // the notification or stop the service.
-        if (!killed) {
-            // Cancel the notification and stop playing the alarm
-            NotificationManager nm = getNotificationManager();
-            nm.cancel(mAlarm.id);
-            stopService(new Intent(Alarms.ALARM_ALERT_ACTION));
-        }
-        finish();
+    private void dismiss() {
+        alarmsManager.dismiss(mAlarm);
     }
 
     /**
@@ -215,9 +167,9 @@ public class AlarmAlertFullScreen extends Activity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        if (Log.LOGV) Log.v("AlarmAlert.OnNewIntent()");
+        if (DBG) Log.d(TAG, "AlarmAlert.OnNewIntent()");
 
-        mAlarm = intent.getParcelableExtra(Alarms.ALARM_INTENT_EXTRA);
+        mAlarm = intent.getParcelableExtra(Intents.ALARM_INTENT_EXTRA);
 
         setTitle();
     }
@@ -225,17 +177,18 @@ public class AlarmAlertFullScreen extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        // XXX this is some wierd logic and should not be here
         // If the alarm was deleted at some point, disable snooze.
-        if (Alarms.getAlarm(getContentResolver(), mAlarm.id) == null) {
-            Button snooze = (Button) findViewById(R.id.snooze);
-            snooze.setEnabled(false);
-        }
+        // if (Alarms.getAlarm(getContentResolver(), mAlarm.id) == null) {
+        // Button snooze = (Button) findViewById(R.id.snooze);
+        // snooze.setEnabled(false);
+        // }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (Log.LOGV) Log.v("AlarmAlert.onDestroy()");
+        if (DBG) Log.d(TAG, "AlarmAlert.onDestroy()");
         // No longer care about the alarm being killed.
         unregisterReceiver(mReceiver);
     }
@@ -258,7 +211,7 @@ public class AlarmAlertFullScreen extends Activity {
                     break;
 
                 case 2:
-                    dismiss(false);
+                    dismiss();
                     break;
 
                 default:

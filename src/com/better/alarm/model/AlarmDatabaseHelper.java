@@ -23,15 +23,15 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-
-import com.better.alarm.Log;
+import android.util.Log;
 
 /**
  * Helper class for opening the database from multiple providers. Also provides
  * some common functionality.
  */
 class AlarmDatabaseHelper extends SQLiteOpenHelper {
-
+    private static final String TAG = "AlarmDatabaseHelper";
+    private static final boolean DBG = true;
     private static final String DATABASE_NAME = "alarms.db";
     private static final int DATABASE_VERSION = 5;
 
@@ -63,8 +63,8 @@ class AlarmDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int currentVersion) {
-        if (Log.LOGV)
-            Log.v("Upgrading alarms database from version " + oldVersion + " to " + currentVersion
+        if (DBG)
+            Log.d(TAG, "Upgrading alarms database from version " + oldVersion + " to " + currentVersion
                     + ", which will destroy all old data");
         db.execSQL("DROP TABLE IF EXISTS alarms");
         onCreate(db);
@@ -76,7 +76,7 @@ class AlarmDatabaseHelper extends SQLiteOpenHelper {
         if (rowId < 0) {
             throw new SQLException("Failed to insert row");
         }
-        if (Log.LOGV) Log.v("Added alarm rowId = " + rowId);
+        if (DBG) Log.d(TAG, "Added alarm rowId = " + rowId);
 
         return ContentUris.withAppendedId(Alarm.Columns.CONTENT_URI, rowId);
     }

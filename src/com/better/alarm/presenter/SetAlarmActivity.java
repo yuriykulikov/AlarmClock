@@ -16,9 +16,10 @@
 
 package com.better.alarm.presenter;
 
+import java.util.Calendar;
+
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
@@ -29,24 +30,31 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
-import com.better.alarm.Log;
 import com.better.alarm.R;
 import com.better.alarm.model.Alarm;
 import com.better.alarm.model.Alarms;
+import com.better.alarm.model.IAlarmsSetup;
+import com.better.alarm.model.Intents;
 
 /**
  * Manages each alarm
  */
 public class SetAlarmActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener,
         TimePickerDialog.OnTimeSetListener, OnCancelListener {
+    private static final String TAG = "SetAlarmActivity";
     private static final String KEY_CURRENT_ALARM = "currentAlarm";
     private static final String KEY_ORIGINAL_ALARM = "originalAlarm";
     private static final String KEY_TIME_PICKER_BUNDLE = "timePickerBundle";
+
+    public final static String M12 = "h:mm aa";
+    public final static String M24 = "kk:mm";
+
+    private IAlarmsSetup alarms;
 
     private CheckBoxPreference mEnabledPref;
     private Preference mTimePref;
@@ -70,6 +78,8 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         // each change.
         addPreferencesFromResource(R.xml.alarm_prefs);
 
+        alarms = Alarms.getAlarmsSetup();
+
         // Get each preference so we can retrieve the value later.
         mEnabledPref = (CheckBoxPreference) findPreference("enabled");
         mEnabledPref.setOnPreferenceChangeListener(this);
@@ -82,7 +92,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         mRepeatPref.setOnPreferenceChangeListener(this);
 
         Intent i = getIntent();
-        Alarm alarm = i.getParcelableExtra(Alarms.ALARM_INTENT_EXTRA);
+        Alarm alarm = i.getParcelableExtra(Intents.ALARM_INTENT_EXTRA);
 
         if (alarm == null) {
             // No alarm means create a new alarm.
@@ -102,10 +112,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         Button b = (Button) findViewById(R.id.alarm_save);
         b.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                long time = saveAlarm(null);
-                if (mEnabledPref.isChecked()) {
-                    popAlarmSetToast(SetAlarmActivity.this, time);
-                }
+                saveAlarm(null);
                 finish();
             }
         });
@@ -191,7 +198,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         mRepeatPref.setDaysOfWeek(alarm.daysOfWeek);
         // Give the alert uri to the preference.
         mAlarmPref.setAlert(alarm.alert);
-        updateTime();
+        updateTime(alarm);
     }
 
     @Override
@@ -212,10 +219,10 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
     private void showTimePicker() {
         if (mTimePickerDialog != null) {
             if (mTimePickerDialog.isShowing()) {
-                Log.e("mTimePickerDialog is already showing.");
+                Log.e(TAG, "mTimePickerDialog is already showing.");
                 mTimePickerDialog.dismiss();
             } else {
-                Log.e("mTimePickerDialog is not null");
+                Log.e(TAG, "mTimePickerDialog is not null");
             }
             mTimePickerDialog.dismiss();
         }
@@ -230,7 +237,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         mTimePickerDialog = null;
         mHour = hourOfDay;
         mMinute = minute;
-        updateTime();
+        updateTime(buildAlarmFromUi());
         // If the time has been changed, enable the alarm.
         mEnabledPref.setChecked(true);
     }
@@ -240,8 +247,11 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         mTimePickerDialog = null;
     }
 
-    private void updateTime() {
-        mTimePref.setSummary(Alarms.formatTime(this, mHour, mMinute, mRepeatPref.getDaysOfWeek()));
+    private void updateTime(Alarm alarm) {
+        Calendar c = alarm.calculateCalendar();
+        String format = android.text.format.DateFormat.is24HourFormat(this) ? M24 : M12;
+        CharSequence summary = (c == null) ? "" : (String) DateFormat.format(format, c);
+        mTimePref.setSummary(summary);
     }
 
     private long saveAlarm(Alarm alarm) {
@@ -251,12 +261,12 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
 
         long time;
         if (alarm.id == -1) {
-            time = Alarms.addAlarm(this, alarm);
+            time = alarms.add(alarm);
             // addAlarm populates the alarm with the new id. Update mId so that
             // changes to other preferences update the new alarm.
             mId = alarm.id;
         } else {
-            time = Alarms.setAlarm(this, alarm);
+            time = alarms.set(alarm);
         }
         return time;
     }
@@ -280,7 +290,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
                 .setMessage(getString(R.string.delete_alarm_confirm))
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface d, int w) {
-                        Alarms.deleteAlarm(SetAlarmActivity.this, mId);
+                        alarms.delete(mId);
                         finish();
                     }
                 }).setNegativeButton(android.R.string.cancel, null).show();
@@ -290,53 +300,9 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         int newId = mId;
         // "Revert" on a newly created alarm should delete it.
         if (mOriginalAlarm.id == -1) {
-            Alarms.deleteAlarm(SetAlarmActivity.this, newId);
+            alarms.delete(newId);
         } else {
             saveAlarm(mOriginalAlarm);
         }
-    }
-
-    /**
-     * Display a toast that tells the user how long until the alarm goes off.
-     * This helps prevent "am/pm" mistakes.
-     */
-    static void popAlarmSetToast(Context context, int hour, int minute, Alarm.DaysOfWeek daysOfWeek) {
-        popAlarmSetToast(context, Alarms.calculateAlarm(hour, minute, daysOfWeek).getTimeInMillis());
-    }
-
-    static void popAlarmSetToast(Context context, long timeInMillis) {
-        String toastText = formatToast(context, timeInMillis);
-        Toast toast = Toast.makeText(context, toastText, Toast.LENGTH_LONG);
-        ToastMaster.setToast(toast);
-        toast.show();
-    }
-
-    /**
-     * format "Alarm set for 2 days 7 hours and 53 minutes from now"
-     */
-    static String formatToast(Context context, long timeInMillis) {
-        long delta = timeInMillis - System.currentTimeMillis();
-        long hours = delta / (1000 * 60 * 60);
-        long minutes = delta / (1000 * 60) % 60;
-        long days = hours / 24;
-        hours = hours % 24;
-
-        String daySeq = (days == 0) ? "" : (days == 1) ? context.getString(R.string.day) : context.getString(
-                R.string.days, Long.toString(days));
-
-        String minSeq = (minutes == 0) ? "" : (minutes == 1) ? context.getString(R.string.minute) : context.getString(
-                R.string.minutes, Long.toString(minutes));
-
-        String hourSeq = (hours == 0) ? "" : (hours == 1) ? context.getString(R.string.hour) : context.getString(
-                R.string.hours, Long.toString(hours));
-
-        boolean dispDays = days > 0;
-        boolean dispHour = hours > 0;
-        boolean dispMinute = minutes > 0;
-
-        int index = (dispDays ? 1 : 0) | (dispHour ? 2 : 0) | (dispMinute ? 4 : 0);
-
-        String[] formats = context.getResources().getStringArray(R.array.alarm_set);
-        return String.format(formats[index], daySeq, hourSeq, minSeq);
     }
 }

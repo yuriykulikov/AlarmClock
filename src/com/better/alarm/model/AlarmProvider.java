@@ -24,10 +24,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
-
-import com.better.alarm.Log;
+import android.util.Log;
 
 public class AlarmProvider extends ContentProvider {
+    private static final String TAG = "AlarmProvider";
+    private static final boolean DBG = true;
     private AlarmDatabaseHelper mOpenHelper;
 
     private static final int ALARMS = 1;
@@ -71,7 +72,7 @@ public class AlarmProvider extends ContentProvider {
         Cursor ret = qb.query(db, projectionIn, selection, selectionArgs, null, null, sort);
 
         if (ret == null) {
-            if (Log.LOGV) Log.v("Alarms.query: failed");
+            if (DBG) Log.d(TAG, "Alarms.query: failed");
         } else {
             ret.setNotificationUri(getContext().getContentResolver(), url);
         }
@@ -109,7 +110,7 @@ public class AlarmProvider extends ContentProvider {
             throw new UnsupportedOperationException("Cannot update URL: " + url);
         }
         }
-        if (Log.LOGV) Log.v("*** notifyChange() rowId: " + rowId + " url " + url);
+        if (DBG) Log.d(TAG, "*** notifyChange() rowId: " + rowId + " url " + url);
         getContext().getContentResolver().notifyChange(url, null);
         return count;
     }
@@ -128,14 +129,12 @@ public class AlarmProvider extends ContentProvider {
     public int delete(Uri url, String where, String[] whereArgs) {
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int count;
-        long rowId = 0;
         switch (sURLMatcher.match(url)) {
         case ALARMS:
             count = db.delete("alarms", where, whereArgs);
             break;
         case ALARMS_ID:
             String segment = url.getPathSegments().get(1);
-            rowId = Long.parseLong(segment);
             if (TextUtils.isEmpty(where)) {
                 where = "_id=" + segment;
             } else {

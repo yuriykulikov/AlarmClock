@@ -1,0 +1,61 @@
+@startuml
+
+    class Klaxon
+    class KlaxonReceiver
+    class AlertReciever
+    class NM
+    class AlertActivity
+    class AlertActivityFS
+
+    class SetUpActivity
+    class ListActivity
+
+    ListActivity --* SetUpActivity
+    ListActivity --* model.AlarmsSetup
+    SetUpActivity --* model.AlarmsSetup
+
+    AlertReciever o.. model.Notifier
+    AlertReciever --* NM
+    NM --* AlertActivity
+    NM --* AlertActivityFS
+    AlertActivity --* model.AlarmsIntercation
+    AlertActivityFS --* model.AlarmsIntercation
+
+    KlaxonReceiver *.. model.Notifier
+    KlaxonReceiver --* Klaxon
+
+package model {
+    interface Notifier {
+    PLAY, DISMISSED, SNOOZED
+    }
+    interface AlarmsSetup {
+        public void delete(int id);
+        public long add(Alarm alarm);
+        public void enable(final int id, boolean enabled);
+        public Cursor getCursor();
+    }
+    interface AlarmsIntercation {
+        dismiss()
+        snooze()
+    }
+
+    class Alarms {
+        getAlarmsManager()
+        getAlarmsSetup()
+        onIntentReceived()
+    }
+    class Alarms implements model.AlarmsSetup
+    class Alarms implements model.AlarmsIntercation
+    class AlarmsReceiver
+
+    AlarmsReceiver *--* Alarms
+    Alarms--*model.Notifier
+    
+    package os <<Database>> {
+        class AlarmManager
+        model.AlarmsReceiver --* AlarmManager
+        AlarmManager ..* model.AlarmsReceiver
+    }
+}
+
+@enduml
