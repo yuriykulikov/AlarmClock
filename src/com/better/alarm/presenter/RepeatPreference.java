@@ -39,15 +39,9 @@ public class RepeatPreference extends ListPreference {
         super(context, attrs);
 
         String[] weekdays = new DateFormatSymbols().getWeekdays();
-        String[] values = new String[] {
-            weekdays[Calendar.MONDAY],
-            weekdays[Calendar.TUESDAY],
-            weekdays[Calendar.WEDNESDAY],
-            weekdays[Calendar.THURSDAY],
-            weekdays[Calendar.FRIDAY],
-            weekdays[Calendar.SATURDAY],
-            weekdays[Calendar.SUNDAY],
-        };
+        String[] values = new String[] { weekdays[Calendar.MONDAY], weekdays[Calendar.TUESDAY],
+                weekdays[Calendar.WEDNESDAY], weekdays[Calendar.THURSDAY], weekdays[Calendar.FRIDAY],
+                weekdays[Calendar.SATURDAY], weekdays[Calendar.SUNDAY], };
         setEntries(values);
         setEntryValues(values);
     }
@@ -68,11 +62,9 @@ public class RepeatPreference extends ListPreference {
         CharSequence[] entries = getEntries();
         CharSequence[] entryValues = getEntryValues();
 
-        builder.setMultiChoiceItems(
-                entries, mDaysOfWeek.getBooleanArray(),
+        builder.setMultiChoiceItems(entries, mDaysOfWeek.getBooleanArray(),
                 new DialogInterface.OnMultiChoiceClickListener() {
-                    public void onClick(DialogInterface dialog, int which,
-                            boolean isChecked) {
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                         mNewDaysOfWeek.set(which, isChecked);
                     }
                 });

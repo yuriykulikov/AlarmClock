@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        package="com.better.alarm"
-        android:versionCode="203" android:versionName="2.0.3">
+    package="com.better.alarm"
+    android:versionCode="203"
+    android:versionName="2.0.3" >
+
     <uses-sdk
         android:minSdkVersion="15"
         android:targetSdkVersion="15" >
@@ -10,69 +12,77 @@
     <original-package android:name="com.better.alarm" />
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
-    <application android:label="@string/app_label"
-                 android:icon="@mipmap/ic_launcher_alarmclock">
+    <application
+        android:icon="@mipmap/ic_launcher_alarmclock"
+        android:label="@string/app_label" >
+        <provider
+            android:name=".model.AlarmProvider"
+            android:authorities="com.better.alarm.model"
+            android:exported="false" />
 
-        <provider android:name=".model.AlarmProvider"
-                android:authorities="com.better.alarm.model"
-                android:exported="false" />
-
-        <activity android:name=".presenter.AlarmClock"
-                android:label="@string/alarm_list_title"
-                android:theme="@style/AlarmClockTheme"
-                android:taskAffinity=""
-                android:excludeFromRecents="true"
-                android:configChanges="orientation|keyboardHidden|keyboard|navigation"
-                android:exported="true" >
+        <activity
+            android:name=".presenter.AlarmClock"
+            android:configChanges="orientation|keyboardHidden|keyboard|navigation"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:label="@string/alarm_list_title"
+            android:taskAffinity=""
+            android:theme="@style/AlarmClockTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity-alias android:name="com.android.alarmclock.AlarmClock"
-                android:targetActivity="com.better.alarm.presenter.AlarmClock"
-                android:exported="true" />
+        <activity-alias
+            android:name="com.android.alarmclock.AlarmClock"
+            android:exported="true"
+            android:targetActivity="com.better.alarm.presenter.AlarmClock" />
 
-        <activity android:name=".presenter.SettingsActivity"
-                android:label="@string/settings"
-                android:taskAffinity=""
-                android:excludeFromRecents="true"
-                >
+        <activity
+            android:name=".presenter.SettingsActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/settings"
+            android:taskAffinity="" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".presenter.SetAlarm"
+            android:configChanges="orientation|keyboardHidden|keyboard|navigation"
+            android:label="@string/set_alarm"
+            android:theme="@style/SetAlarmTheme" />
+        <activity
+            android:name=".presenter.AlarmAlert"
+            android:configChanges="orientation|keyboardHidden|keyboard|navigation"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.Holo.Dialog" />
 
-        <activity android:name=".presenter.SetAlarm" 
-                android:label="@string/set_alarm"
-                android:theme="@style/SetAlarmTheme"
-                android:configChanges="orientation|keyboardHidden|keyboard|navigation" />
+        <!--
+             This activity is basically the same as AlarmAlert 
+             but full-screen so that it can turn the display on.
+        -->
+        <activity
+            android:name=".presenter.AlarmAlertFullScreen"
+            android:configChanges="orientation|keyboardHidden|keyboard|navigation"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:taskAffinity=""
+            android:theme="@style/AlarmAlertFullScreenTheme" />
 
-        <activity android:name=".presenter.AlarmAlert"
-                android:excludeFromRecents="true"
-                android:theme="@android:style/Theme.Holo.Dialog"
-                android:launchMode="singleInstance"
-                android:taskAffinity=""
-                android:configChanges="orientation|keyboardHidden|keyboard|navigation"/>
-
-        <!-- This activity is basically the same as AlarmAlert 
-             but full-screen so that it can turn the display on. -->
-        <activity android:name=".presenter.AlarmAlertFullScreen"
-                android:excludeFromRecents="true"
-                android:theme="@style/AlarmAlertFullScreenTheme"
-                android:launchMode="singleInstance"
-                android:taskAffinity=""
-                android:configChanges="orientation|keyboardHidden|keyboard|navigation"/>
-
-        <receiver android:name=".presenter.AlarmReceiver"
-                android:exported="false">
+        <receiver
+            android:name=".presenter.AlarmReceiver"
+            android:exported="false" >
             <intent-filter>
                 <action android:name="com.better.alarm.ALARM_ALERT" />
                 <action android:name="alarm_killed" />
@@ -80,31 +90,36 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".presenter.HandleSetAlarm"
-                android:theme="@android:style/Theme.NoDisplay"
-                android:excludeFromRecents="true"
-                android:permission="com.android.alarm.permission.SET_ALARM">
+        <activity
+            android:name=".presenter.HandleSetAlarm"
+            android:excludeFromRecents="true"
+            android:permission="com.android.alarm.permission.SET_ALARM"
+            android:theme="@android:style/Theme.NoDisplay" >
             <intent-filter>
                 <action android:name="android.intent.action.SET_ALARM" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
-        <!-- This service receives the same intent as AlarmReceiver but it does
+        <!--
+             This service receives the same intent as AlarmReceiver but it does
              not respond to the same broadcast. The AlarmReceiver will receive
              the alert broadcast and will start this service with the same
              intent. The service plays the alarm alert and vibrates the device.
              This allows the alert to continue playing even if another activity
-             causes the AlarmAlert activity to pause. -->
-        <service android:name=".presenter.AlarmKlaxon"
-                android:exported="false"
-                android:description="@string/alarm_klaxon_service_desc">
+             causes the AlarmAlert activity to pause.
+        -->
+        <service
+            android:name=".presenter.AlarmKlaxon"
+            android:description="@string/alarm_klaxon_service_desc"
+            android:exported="false" >
             <intent-filter>
                 <action android:name="com.better.alarm.ALARM_ALERT" />
             </intent-filter>
         </service>
 
-        <receiver android:name=".model.AlarmInitReceiver">
+        <receiver android:name=".model.AlarmInitReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.TIME_SET" />
@@ -112,7 +127,6 @@
                 <action android:name="android.intent.action.LOCALE_CHANGED" />
             </intent-filter>
         </receiver>
-
     </application>
-</manifest>
 
+</manifest>

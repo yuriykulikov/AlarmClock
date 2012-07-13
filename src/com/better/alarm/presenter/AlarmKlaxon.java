@@ -16,12 +16,6 @@
 
 package com.better.alarm.presenter;
 
-import com.better.alarm.Log;
-import com.better.alarm.R;
-import com.better.alarm.R.raw;
-import com.better.alarm.model.Alarm;
-import com.better.alarm.model.Alarms;
-
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -32,7 +26,6 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -41,9 +34,14 @@ import android.preference.PreferenceManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
+import com.better.alarm.Log;
+import com.better.alarm.R;
+import com.better.alarm.model.Alarm;
+import com.better.alarm.model.Alarms;
+
 /**
- * Manages alarms and vibe. Runs as a service so that it can continue to play
- * if another activity overrides the AlarmAlert dialog.
+ * Manages alarms and vibe. Runs as a service so that it can continue to play if
+ * another activity overrides the AlarmAlert dialog.
  */
 public class AlarmKlaxon extends Service {
     // Default of 10 minutes until alarm is silenced.
@@ -64,13 +62,13 @@ public class AlarmKlaxon extends Service {
     private Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case KILLER:
-                    if (Log.LOGV) {
-                        Log.v("*********** Alarm killer triggered ***********");
-                    }
-                    sendKillBroadcast((Alarm) msg.obj);
-                    stopSelf();
-                    break;
+            case KILLER:
+                if (Log.LOGV) {
+                    Log.v("*********** Alarm killer triggered ***********");
+                }
+                sendKillBroadcast((Alarm) msg.obj);
+                stopSelf();
+                break;
             }
         }
     };
@@ -82,8 +80,7 @@ public class AlarmKlaxon extends Service {
             // we register onCallStateChanged, we get the initial in-call state
             // which kills the alarm. Check against the initial call state so
             // we don't kill the alarm during a call.
-            if (state != TelephonyManager.CALL_STATE_IDLE
-                    && state != mInitialCallState) {
+            if (state != TelephonyManager.CALL_STATE_IDLE && state != mInitialCallState) {
                 sendKillBroadcast(mCurrentAlarm);
                 stopSelf();
             }
@@ -94,10 +91,8 @@ public class AlarmKlaxon extends Service {
     public void onCreate() {
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         // Listen for incoming calls to kill the alarm.
-        mTelephonyManager =
-                (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        mTelephonyManager.listen(
-                mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+        mTelephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
         AlarmAlertWakeLock.acquireCpuWakeLock(this);
     }
 
@@ -122,8 +117,7 @@ public class AlarmKlaxon extends Service {
             return START_NOT_STICKY;
         }
 
-        final Alarm alarm = intent.getParcelableExtra(
-                Alarms.ALARM_INTENT_EXTRA);
+        final Alarm alarm = intent.getParcelableExtra(Alarms.ALARM_INTENT_EXTRA);
 
         if (alarm == null) {
             Log.v("AlarmKlaxon failed to parse the alarm from the intent");
@@ -169,8 +163,7 @@ public class AlarmKlaxon extends Service {
             // Fall back on the default alarm if the database does not have an
             // alarm stored.
             if (alert == null) {
-                alert = RingtoneManager.getDefaultUri(
-                        RingtoneManager.TYPE_ALARM);
+                alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
                 if (Log.LOGV) {
                     Log.v("Using default alarm: " + alert.toString());
                 }
@@ -192,12 +185,10 @@ public class AlarmKlaxon extends Service {
             try {
                 // Check if we are in a call. If we are, use the in-call alarm
                 // resource at a low volume to not disrupt the call.
-                if (mTelephonyManager.getCallState()
-                        != TelephonyManager.CALL_STATE_IDLE) {
+                if (mTelephonyManager.getCallState() != TelephonyManager.CALL_STATE_IDLE) {
                     Log.v("Using the in-call alarm");
                     mMediaPlayer.setVolume(IN_CALL_VOLUME, IN_CALL_VOLUME);
-                    setDataSourceFromResource(getResources(), mMediaPlayer,
-                            R.raw.in_call_alarm);
+                    setDataSourceFromResource(getResources(), mMediaPlayer, R.raw.in_call_alarm);
                 } else {
                     mMediaPlayer.setDataSource(this, alert);
                 }
@@ -209,8 +200,7 @@ public class AlarmKlaxon extends Service {
                 try {
                     // Must reset the media player to clear the error state.
                     mMediaPlayer.reset();
-                    setDataSourceFromResource(getResources(), mMediaPlayer,
-                            R.raw.fallbackring);
+                    setDataSourceFromResource(getResources(), mMediaPlayer, R.raw.fallbackring);
                     startAlarm(mMediaPlayer);
                 } catch (Exception ex2) {
                     // At this point we just don't play anything.
@@ -232,10 +222,9 @@ public class AlarmKlaxon extends Service {
     }
 
     // Do the common stuff when starting the alarm.
-    private void startAlarm(MediaPlayer player)
-            throws java.io.IOException, IllegalArgumentException,
-                   IllegalStateException {
-        final AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+    private void startAlarm(MediaPlayer player) throws java.io.IOException, IllegalArgumentException,
+            IllegalStateException {
+        final AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         // do not play alarms if stream volume is 0
         // (typically because ringer mode is silent).
         if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0) {
@@ -246,19 +235,16 @@ public class AlarmKlaxon extends Service {
         }
     }
 
-    private void setDataSourceFromResource(Resources resources,
-            MediaPlayer player, int res) throws java.io.IOException {
+    private void setDataSourceFromResource(Resources resources, MediaPlayer player, int res) throws java.io.IOException {
         AssetFileDescriptor afd = resources.openRawResourceFd(res);
         if (afd != null) {
-            player.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(),
-                    afd.getLength());
+            player.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             afd.close();
         }
     }
 
     /**
-     * Stops alarm audio and disables alarm if it not snoozed and not
-     * repeating
+     * Stops alarm audio and disables alarm if it not snoozed and not repeating
      */
     public void stop() {
         if (Log.LOGV) Log.v("AlarmKlaxon.stop()");
@@ -282,27 +268,23 @@ public class AlarmKlaxon extends Service {
     }
 
     /**
-     * Kills alarm audio after ALARM_TIMEOUT_SECONDS, so the alarm
-     * won't run all day.
-     *
-     * This just cancels the audio, but leaves the notification
-     * popped, so the user will know that the alarm tripped.
+     * Kills alarm audio after ALARM_TIMEOUT_SECONDS, so the alarm won't run all
+     * day.
+     * 
+     * This just cancels the audio, but leaves the notification popped, so the
+     * user will know that the alarm tripped.
      */
     private void enableKiller(Alarm alarm) {
-        final String autoSnooze =
-                PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(SettingsActivity.KEY_AUTO_SILENCE,
-                        DEFAULT_ALARM_TIMEOUT);
+        final String autoSnooze = PreferenceManager.getDefaultSharedPreferences(this).getString(
+                SettingsActivity.KEY_AUTO_SILENCE, DEFAULT_ALARM_TIMEOUT);
         int autoSnoozeMinutes = Integer.parseInt(autoSnooze);
         if (autoSnoozeMinutes != -1) {
-            mHandler.sendMessageDelayed(mHandler.obtainMessage(KILLER, alarm),
-                    1000 * autoSnoozeMinutes * 60);
+            mHandler.sendMessageDelayed(mHandler.obtainMessage(KILLER, alarm), 1000 * autoSnoozeMinutes * 60);
         }
     }
 
     private void disableKiller() {
         mHandler.removeMessages(KILLER);
     }
-
 
 }

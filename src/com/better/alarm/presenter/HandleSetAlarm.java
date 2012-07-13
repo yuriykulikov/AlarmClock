@@ -52,10 +52,8 @@ public class HandleSetAlarm extends Activity {
 
         final Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        final int hour = intent.getIntExtra(EXTRA_HOUR,
-                calendar.get(Calendar.HOUR_OF_DAY));
-        final int minutes = intent.getIntExtra(EXTRA_MINUTES,
-                calendar.get(Calendar.MINUTE));
+        final int hour = intent.getIntExtra(EXTRA_HOUR, calendar.get(Calendar.HOUR_OF_DAY));
+        final int minutes = intent.getIntExtra(EXTRA_MINUTES, calendar.get(Calendar.MINUTE));
         final boolean skipUi = intent.getBooleanExtra(EXTRA_SKIP_UI, false);
         String message = intent.getStringExtra(EXTRA_MESSAGE);
         if (message == null) {
@@ -63,16 +61,13 @@ public class HandleSetAlarm extends Activity {
         }
 
         Cursor c = null;
-        long timeInMillis = Alarms.calculateAlarm(hour, minutes,
-                new Alarm.DaysOfWeek(0)).getTimeInMillis();
+        long timeInMillis = Alarms.calculateAlarm(hour, minutes, new Alarm.DaysOfWeek(0)).getTimeInMillis();
         try {
             c = getContentResolver().query(
                     Alarm.Columns.CONTENT_URI,
                     Alarm.Columns.ALARM_QUERY_COLUMNS,
-                    Alarm.Columns.HOUR + "=" + hour + " AND " +
-                    Alarm.Columns.MINUTES + "=" + minutes + " AND " +
-                    Alarm.Columns.DAYS_OF_WEEK + "=0 AND " +
-                    Alarm.Columns.MESSAGE + "=?",
+                    Alarm.Columns.HOUR + "=" + hour + " AND " + Alarm.Columns.MINUTES + "=" + minutes + " AND "
+                            + Alarm.Columns.DAYS_OF_WEEK + "=0 AND " + Alarm.Columns.MESSAGE + "=?",
                     new String[] { message }, null);
             if (handleCursorResult(c, timeInMillis, true, skipUi)) {
                 finish();
@@ -97,8 +92,7 @@ public class HandleSetAlarm extends Activity {
         Uri result = cr.insert(Alarm.Columns.CONTENT_URI, values);
         if (result != null) {
             try {
-                c = cr.query(result, Alarm.Columns.ALARM_QUERY_COLUMNS, null,
-                        null, null);
+                c = cr.query(result, Alarm.Columns.ALARM_QUERY_COLUMNS, null, null, null);
                 handleCursorResult(c, timeInMillis, false, skipUi);
             } finally {
                 if (c != null) c.close();
@@ -108,8 +102,7 @@ public class HandleSetAlarm extends Activity {
         finish();
     }
 
-    private boolean handleCursorResult(Cursor c, long timeInMillis,
-            boolean enable, boolean skipUi) {
+    private boolean handleCursorResult(Cursor c, long timeInMillis, boolean enable, boolean skipUi) {
         if (c != null && c.moveToFirst()) {
             Alarm alarm = new Alarm(c);
             if (enable) {

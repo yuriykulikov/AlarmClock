@@ -53,20 +53,19 @@ public class DigitalClock extends RelativeLayout {
     /* called by system on minute ticks */
     private final Handler mHandler = new Handler();
     private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (mLive && intent.getAction().equals(
-                            Intent.ACTION_TIMEZONE_CHANGED)) {
-                    mCalendar = Calendar.getInstance();
-                }
-                // Post a runnable to avoid blocking the broadcast.
-                mHandler.post(new Runnable() {
-                        public void run() {
-                            updateTime();
-                        }
-                });
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (mLive && intent.getAction().equals(Intent.ACTION_TIMEZONE_CHANGED)) {
+                mCalendar = Calendar.getInstance();
             }
-        };
+            // Post a runnable to avoid blocking the broadcast.
+            mHandler.post(new Runnable() {
+                public void run() {
+                    updateTime();
+                }
+            });
+        }
+    };
 
     static class AmPm {
         private AndroidClockTextView mAmPm;
@@ -93,6 +92,7 @@ public class DigitalClock extends RelativeLayout {
         public FormatChangeObserver() {
             super(new Handler());
         }
+
         @Override
         public void onChange(boolean selfChange) {
             setDateFormat();
@@ -139,8 +139,8 @@ public class DigitalClock extends RelativeLayout {
 
         /* monitor 12/24-hour display preference */
         mFormatChangeObserver = new FormatChangeObserver();
-        getContext().getContentResolver().registerContentObserver(
-                Settings.System.CONTENT_URI, true, mFormatChangeObserver);
+        getContext().getContentResolver().registerContentObserver(Settings.System.CONTENT_URI, true,
+                mFormatChangeObserver);
 
         updateTime();
     }
@@ -155,10 +155,8 @@ public class DigitalClock extends RelativeLayout {
         if (mLive) {
             getContext().unregisterReceiver(mIntentReceiver);
         }
-        getContext().getContentResolver().unregisterContentObserver(
-                mFormatChangeObserver);
+        getContext().getContentResolver().unregisterContentObserver(mFormatChangeObserver);
     }
-
 
     public void updateTime(Calendar c) {
         mCalendar = c;

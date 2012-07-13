@@ -27,14 +27,12 @@ public class ToastMaster {
     }
 
     public static void setToast(Toast toast) {
-        if (sToast != null)
-            sToast.cancel();
+        if (sToast != null) sToast.cancel();
         sToast = toast;
     }
 
     public static void cancelToast() {
-        if (sToast != null)
-            sToast.cancel();
+        if (sToast != null) sToast.cancel();
         sToast = null;
     }
 

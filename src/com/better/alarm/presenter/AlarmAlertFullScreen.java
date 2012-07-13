@@ -42,9 +42,9 @@ import com.better.alarm.model.Alarm;
 import com.better.alarm.model.Alarms;
 
 /**
- * Alarm Clock alarm alert: pops visible indicator and plays alarm
- * tone. This activity is the full screen version which shows over the lock
- * screen with the wallpaper as the background.
+ * Alarm Clock alarm alert: pops visible indicator and plays alarm tone. This
+ * activity is the full screen version which shows over the lock screen with the
+ * wallpaper as the background.
  */
 public class AlarmAlertFullScreen extends Activity {
 
@@ -58,7 +58,8 @@ public class AlarmAlertFullScreen extends Activity {
     boolean mFullscreenStyle;
 
     // Receives the ALARM_KILLED action from the AlarmKlaxon,
-    // and also ALARM_SNOOZE_ACTION / ALARM_DISMISS_ACTION from other applications
+    // and also ALARM_SNOOZE_ACTION / ALARM_DISMISS_ACTION from other
+    // applications
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -83,10 +84,8 @@ public class AlarmAlertFullScreen extends Activity {
         mAlarm = getIntent().getParcelableExtra(Alarms.ALARM_INTENT_EXTRA);
 
         // Get the volume/camera button behavior setting
-        final String vol =
-                PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(SettingsActivity.KEY_VOLUME_BEHAVIOR,
-                        DEFAULT_VOLUME_BEHAVIOR);
+        final String vol = PreferenceManager.getDefaultSharedPreferences(this).getString(
+                SettingsActivity.KEY_VOLUME_BEHAVIOR, DEFAULT_VOLUME_BEHAVIOR);
         mVolumeBehavior = Integer.parseInt(vol);
 
         final Window win = getWindow();
@@ -111,21 +110,22 @@ public class AlarmAlertFullScreen extends Activity {
 
     private void setTitle() {
         final String titleText = mAlarm.getLabelOrDefault(this);
-        
+
         setTitle(titleText);
     }
 
     protected int getLayoutResId() {
         return R.layout.alarm_alert_fullscreen;
     }
-    
+
     private void updateLayout() {
         LayoutInflater inflater = LayoutInflater.from(this);
 
         setContentView(inflater.inflate(getLayoutResId(), null));
 
-        /* snooze behavior: pop a snooze confirmation view, kick alarm
-           manager. */
+        /*
+         * snooze behavior: pop a snooze confirmation view, kick alarm manager.
+         */
         Button snooze = (Button) findViewById(R.id.snooze);
         snooze.requestFocus();
         snooze.setOnClickListener(new Button.OnClickListener() {
@@ -135,12 +135,11 @@ public class AlarmAlertFullScreen extends Activity {
         });
 
         /* dismiss button: close notification */
-        findViewById(R.id.dismiss).setOnClickListener(
-                new Button.OnClickListener() {
-                    public void onClick(View v) {
-                        dismiss(false);
-                    }
-                });
+        findViewById(R.id.dismiss).setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                dismiss(false);
+            }
+        });
 
         /* Set the title from the passed in alarm */
         setTitle();
@@ -153,15 +152,12 @@ public class AlarmAlertFullScreen extends Activity {
             dismiss(false);
             return;
         }
-        final String snooze =
-                PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(SettingsActivity.KEY_ALARM_SNOOZE, DEFAULT_SNOOZE);
+        final String snooze = PreferenceManager.getDefaultSharedPreferences(this).getString(
+                SettingsActivity.KEY_ALARM_SNOOZE, DEFAULT_SNOOZE);
         int snoozeMinutes = Integer.parseInt(snooze);
 
-        final long snoozeTime = System.currentTimeMillis()
-                + (1000 * 60 * snoozeMinutes);
-        Alarms.saveSnoozeAlert(AlarmAlertFullScreen.this, mAlarm.id,
-                snoozeTime);
+        final long snoozeTime = System.currentTimeMillis() + (1000 * 60 * snoozeMinutes);
+        Alarms.saveSnoozeAlert(AlarmAlertFullScreen.this, mAlarm.id, snoozeTime);
 
         // Get the display time for the snooze and update the notification.
         final Calendar c = Calendar.getInstance();
@@ -175,26 +171,20 @@ public class AlarmAlertFullScreen extends Activity {
         Intent cancelSnooze = new Intent(this, AlarmReceiver.class);
         cancelSnooze.setAction(Alarms.CANCEL_SNOOZE);
         cancelSnooze.putExtra(Alarms.ALARM_INTENT_EXTRA, mAlarm);
-        PendingIntent broadcast =
-                PendingIntent.getBroadcast(this, mAlarm.id, cancelSnooze, 0);
+        PendingIntent broadcast = PendingIntent.getBroadcast(this, mAlarm.id, cancelSnooze, 0);
         NotificationManager nm = getNotificationManager();
-        Notification n = new Notification(R.drawable.stat_notify_alarm,
-                label, 0);
-        n.setLatestEventInfo(this, label,
-                getString(R.string.alarm_notify_snooze_text,
-                    Alarms.formatTime(this, c)), broadcast);
-        n.flags |= Notification.FLAG_AUTO_CANCEL
-                | Notification.FLAG_ONGOING_EVENT;
+        Notification n = new Notification(R.drawable.stat_notify_alarm, label, 0);
+        n.setLatestEventInfo(this, label, getString(R.string.alarm_notify_snooze_text, Alarms.formatTime(this, c)),
+                broadcast);
+        n.flags |= Notification.FLAG_AUTO_CANCEL | Notification.FLAG_ONGOING_EVENT;
         nm.notify(mAlarm.id, n);
 
-        String displayTime = getString(R.string.alarm_alert_snooze_set,
-                snoozeMinutes);
+        String displayTime = getString(R.string.alarm_alert_snooze_set, snoozeMinutes);
         // Intentionally log the snooze time for debugging.
         Log.v(displayTime);
 
         // Display the snooze minutes in a toast.
-        Toast.makeText(AlarmAlertFullScreen.this, displayTime,
-                Toast.LENGTH_LONG).show();
+        Toast.makeText(AlarmAlertFullScreen.this, displayTime, Toast.LENGTH_LONG).show();
         stopService(new Intent(Alarms.ALARM_ALERT_ACTION));
         finish();
     }
@@ -218,8 +208,8 @@ public class AlarmAlertFullScreen extends Activity {
     }
 
     /**
-     * this is called when a second alarm is triggered while a
-     * previous alert window is still active.
+     * this is called when a second alarm is triggered while a previous alert
+     * window is still active.
      */
     @Override
     protected void onNewIntent(Intent intent) {
@@ -255,29 +245,29 @@ public class AlarmAlertFullScreen extends Activity {
         // Do this on key down to handle a few of the system keys.
         boolean up = event.getAction() == KeyEvent.ACTION_UP;
         switch (event.getKeyCode()) {
-            // Volume keys and camera keys dismiss the alarm
-            case KeyEvent.KEYCODE_VOLUME_UP:
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-            case KeyEvent.KEYCODE_VOLUME_MUTE:
-            case KeyEvent.KEYCODE_CAMERA:
-            case KeyEvent.KEYCODE_FOCUS:
-                if (up) {
-                    switch (mVolumeBehavior) {
-                        case 1:
-                            snooze();
-                            break;
+        // Volume keys and camera keys dismiss the alarm
+        case KeyEvent.KEYCODE_VOLUME_UP:
+        case KeyEvent.KEYCODE_VOLUME_DOWN:
+        case KeyEvent.KEYCODE_VOLUME_MUTE:
+        case KeyEvent.KEYCODE_CAMERA:
+        case KeyEvent.KEYCODE_FOCUS:
+            if (up) {
+                switch (mVolumeBehavior) {
+                case 1:
+                    snooze();
+                    break;
 
-                        case 2:
-                            dismiss(false);
-                            break;
+                case 2:
+                    dismiss(false);
+                    break;
 
-                        default:
-                            break;
-                    }
+                default:
+                    break;
                 }
-                return true;
-            default:
-                break;
+            }
+            return true;
+        default:
+            break;
         }
         return super.dispatchKeyEvent(event);
     }

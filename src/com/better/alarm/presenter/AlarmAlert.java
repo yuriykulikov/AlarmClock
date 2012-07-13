@@ -16,11 +16,6 @@
 
 package com.better.alarm.presenter;
 
-import com.better.alarm.Log;
-import com.better.alarm.R;
-import com.better.alarm.R.layout;
-import com.better.alarm.model.Alarms;
-
 import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -29,6 +24,10 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+
+import com.better.alarm.Log;
+import com.better.alarm.R;
+import com.better.alarm.model.Alarms;
 
 /**
  * Full screen alarm alert: pops visible indicator and plays alarm tone. This
@@ -48,16 +47,13 @@ public class AlarmAlert extends AlarmAlertFullScreen {
         }
     };
 
-    private final BroadcastReceiver mScreenOffReceiver =
-            new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    KeyguardManager km =
-                            (KeyguardManager) context.getSystemService(
-                            Context.KEYGUARD_SERVICE);
-                    handleScreenOff(km);
-                }
-            };
+    private final BroadcastReceiver mScreenOffReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            KeyguardManager km = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+            handleScreenOff(km);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle icicle) {
@@ -65,8 +61,7 @@ public class AlarmAlert extends AlarmAlertFullScreen {
 
         // Listen for the screen turning off so that when the screen comes back
         // on, the user does not need to unlock the phone to dismiss the alarm.
-        registerReceiver(mScreenOffReceiver,
-                new IntentFilter(Intent.ACTION_SCREEN_OFF));
+        registerReceiver(mScreenOffReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
     }
 
     @Override
@@ -86,7 +81,7 @@ public class AlarmAlert extends AlarmAlertFullScreen {
     protected int getLayoutResId() {
         return R.layout.alarm_alert;
     }
-    
+
     private boolean checkRetryCount() {
         if (mKeyguardRetryCount++ >= MAX_KEYGUARD_CHECKS) {
             Log.e("Tried to read keyguard status too many times, bailing...");

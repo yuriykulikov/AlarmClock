@@ -31,7 +31,7 @@ public class Log {
     public static final boolean LOGV = AlarmClock.DEBUG ? false : false;
 
     public static void v(String logMe) {
-        android.util.Log.v(LOGTAG, /* SystemClock.uptimeMillis() + " " + */ logMe);
+        android.util.Log.v(LOGTAG, /* SystemClock.uptimeMillis() + " " + */logMe);
     }
 
     public static void i(String logMe) {

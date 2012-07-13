@@ -16,8 +16,6 @@
 
 package com.better.alarm.model;
 
-import com.better.alarm.Log;
-
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -26,8 +24,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 
+import com.better.alarm.Log;
+
 /**
- * Helper class for opening the database from multiple providers.  Also provides
+ * Helper class for opening the database from multiple providers. Also provides
  * some common functionality.
  */
 class AlarmDatabaseHelper extends SQLiteOpenHelper {
@@ -41,32 +41,31 @@ class AlarmDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        // @formatter:off
         db.execSQL("CREATE TABLE alarms (" +
-                   "_id INTEGER PRIMARY KEY," +
-                   "hour INTEGER, " +
-                   "minutes INTEGER, " +
-                   "daysofweek INTEGER, " +
-                   "alarmtime INTEGER, " +
-                   "enabled INTEGER, " +
-                   "vibrate INTEGER, " +
-                   "message TEXT, " +
-                   "alert TEXT);");
+                "_id INTEGER PRIMARY KEY," +
+                "hour INTEGER, " +
+                "minutes INTEGER, " +
+                "daysofweek INTEGER, " +
+                "alarmtime INTEGER, " +
+                "enabled INTEGER, " +
+                "vibrate INTEGER, " +
+                "message TEXT, " +
+                "alert TEXT);");
+        // @formatter:on
 
         // insert default alarms
-        String insertMe = "INSERT INTO alarms " +
-                "(hour, minutes, daysofweek, alarmtime, enabled, vibrate, " +
-                " message, alert) VALUES ";
+        String insertMe = "INSERT INTO alarms " + "(hour, minutes, daysofweek, alarmtime, enabled, vibrate, "
+                + " message, alert) VALUES ";
         db.execSQL(insertMe + "(8, 30, 31, 0, 0, 1, '', '');");
         db.execSQL(insertMe + "(9, 00, 96, 0, 0, 1, '', '');");
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion,
-            int currentVersion) {
-        if (Log.LOGV) Log.v(
-                "Upgrading alarms database from version " +
-                oldVersion + " to " + currentVersion +
-                ", which will destroy all old data");
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int currentVersion) {
+        if (Log.LOGV)
+            Log.v("Upgrading alarms database from version " + oldVersion + " to " + currentVersion
+                    + ", which will destroy all old data");
         db.execSQL("DROP TABLE IF EXISTS alarms");
         onCreate(db);
     }

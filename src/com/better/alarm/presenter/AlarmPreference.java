@@ -16,9 +16,6 @@
 
 package com.better.alarm.presenter;
 
-import com.better.alarm.R;
-import com.better.alarm.R.string;
-
 import android.content.Context;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -27,6 +24,8 @@ import android.os.AsyncTask;
 import android.preference.RingtonePreference;
 import android.provider.Settings;
 import android.util.AttributeSet;
+
+import com.better.alarm.R;
 
 /**
  * The RingtonePreference does not have a way to get/set the current ringtone so
@@ -46,8 +45,7 @@ public class AlarmPreference extends RingtonePreference {
         setAlert(ringtoneUri);
         if (mChangeDefault) {
             // Update the default alert in the system.
-            Settings.System.putString(getContext().getContentResolver(),
-                    Settings.System.ALARM_ALERT,
+            Settings.System.putString(getContext().getContentResolver(), Settings.System.ALARM_ALERT,
                     ringtoneUri == null ? null : ringtoneUri.toString());
         }
     }
@@ -55,8 +53,7 @@ public class AlarmPreference extends RingtonePreference {
     @Override
     protected Uri onRestoreRingtone() {
         if (RingtoneManager.isDefault(mAlert)) {
-            return RingtoneManager.getActualDefaultRingtoneUri(getContext(),
-                    RingtoneManager.TYPE_ALARM);
+            return RingtoneManager.getActualDefaultRingtoneUri(getContext(), RingtoneManager.TYPE_ALARM);
         }
         return mAlert;
     }
@@ -71,11 +68,9 @@ public class AlarmPreference extends RingtonePreference {
             mRingtoneTask = new AsyncTask<Uri, Void, String>() {
                 @Override
                 protected String doInBackground(Uri... params) {
-                    Ringtone r = RingtoneManager.getRingtone(
-                            getContext(), params[0]);
+                    Ringtone r = RingtoneManager.getRingtone(getContext(), params[0]);
                     if (r == null) {
-                        r = RingtoneManager.getRingtone(getContext(),
-                                Settings.System.DEFAULT_ALARM_ALERT_URI);
+                        r = RingtoneManager.getRingtone(getContext(), Settings.System.DEFAULT_ALARM_ALERT_URI);
                     }
                     if (r != null) {
                         return r.getTitle(getContext());

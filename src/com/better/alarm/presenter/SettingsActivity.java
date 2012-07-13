@@ -32,32 +32,23 @@ import com.better.alarm.R;
 /**
  * Settings for the Alarm Clock.
  */
-public class SettingsActivity extends PreferenceActivity
-        implements Preference.OnPreferenceChangeListener {
+public class SettingsActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener {
 
-    private static final int ALARM_STREAM_TYPE_BIT =
-            1 << AudioManager.STREAM_ALARM;
+    private static final int ALARM_STREAM_TYPE_BIT = 1 << AudioManager.STREAM_ALARM;
 
-    private static final String KEY_ALARM_IN_SILENT_MODE =
-            "alarm_in_silent_mode";
-    static final String KEY_ALARM_SNOOZE =
-            "snooze_duration";
-    static final String KEY_VOLUME_BEHAVIOR =
-            "volume_button_setting";
-    static final String KEY_DEFAULT_RINGTONE =
-            "default_ringtone";
-    static final String KEY_AUTO_SILENCE =
-            "auto_silence";
+    private static final String KEY_ALARM_IN_SILENT_MODE = "alarm_in_silent_mode";
+    static final String KEY_ALARM_SNOOZE = "snooze_duration";
+    static final String KEY_VOLUME_BEHAVIOR = "volume_button_setting";
+    static final String KEY_DEFAULT_RINGTONE = "default_ringtone";
+    static final String KEY_AUTO_SILENCE = "auto_silence";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
 
-        final AlarmPreference ringtone =
-                (AlarmPreference) findPreference(KEY_DEFAULT_RINGTONE);
-        Uri alert = RingtoneManager.getActualDefaultRingtoneUri(this,
-                RingtoneManager.TYPE_ALARM);
+        final AlarmPreference ringtone = (AlarmPreference) findPreference(KEY_DEFAULT_RINGTONE);
+        Uri alert = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_ALARM);
         if (alert != null) {
             ringtone.setAlert(alert);
         }
@@ -71,12 +62,10 @@ public class SettingsActivity extends PreferenceActivity
     }
 
     @Override
-    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
-            Preference preference) {
+    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
         if (KEY_ALARM_IN_SILENT_MODE.equals(preference.getKey())) {
             CheckBoxPreference pref = (CheckBoxPreference) preference;
-            int ringerModeStreamTypes = Settings.System.getInt(
-                    getContentResolver(),
+            int ringerModeStreamTypes = Settings.System.getInt(getContentResolver(),
                     Settings.System.MODE_RINGER_STREAMS_AFFECTED, 0);
 
             if (pref.isChecked()) {
@@ -85,8 +74,7 @@ public class SettingsActivity extends PreferenceActivity
                 ringerModeStreamTypes |= ALARM_STREAM_TYPE_BIT;
             }
 
-            Settings.System.putInt(getContentResolver(),
-                    Settings.System.MODE_RINGER_STREAMS_AFFECTED,
+            Settings.System.putInt(getContentResolver(), Settings.System.MODE_RINGER_STREAMS_AFFECTED,
                     ringerModeStreamTypes);
 
             return true;
@@ -108,8 +96,7 @@ public class SettingsActivity extends PreferenceActivity
         return true;
     }
 
-    private void updateAutoSnoozeSummary(ListPreference listPref,
-            String delay) {
+    private void updateAutoSnoozeSummary(ListPreference listPref, String delay) {
         int i = Integer.parseInt(delay);
         if (i == -1) {
             listPref.setSummary(R.string.auto_silence_never);
@@ -118,18 +105,13 @@ public class SettingsActivity extends PreferenceActivity
         }
     }
 
-
     private void refresh() {
-        final CheckBoxPreference alarmInSilentModePref =
-                (CheckBoxPreference) findPreference(KEY_ALARM_IN_SILENT_MODE);
-        final int silentModeStreams =
-                Settings.System.getInt(getContentResolver(),
-                        Settings.System.MODE_RINGER_STREAMS_AFFECTED, 0);
-        alarmInSilentModePref.setChecked(
-                (silentModeStreams & ALARM_STREAM_TYPE_BIT) == 0);
+        final CheckBoxPreference alarmInSilentModePref = (CheckBoxPreference) findPreference(KEY_ALARM_IN_SILENT_MODE);
+        final int silentModeStreams = Settings.System.getInt(getContentResolver(),
+                Settings.System.MODE_RINGER_STREAMS_AFFECTED, 0);
+        alarmInSilentModePref.setChecked((silentModeStreams & ALARM_STREAM_TYPE_BIT) == 0);
 
-        ListPreference listPref =
-                (ListPreference) findPreference(KEY_ALARM_SNOOZE);
+        ListPreference listPref = (ListPreference) findPreference(KEY_ALARM_SNOOZE);
         listPref.setSummary(listPref.getEntry());
         listPref.setOnPreferenceChangeListener(this);
 

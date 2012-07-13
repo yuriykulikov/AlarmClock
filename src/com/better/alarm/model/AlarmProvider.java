@@ -32,8 +32,7 @@ public class AlarmProvider extends ContentProvider {
 
     private static final int ALARMS = 1;
     private static final int ALARMS_ID = 2;
-    private static final UriMatcher sURLMatcher = new UriMatcher(
-            UriMatcher.NO_MATCH);
+    private static final UriMatcher sURLMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
         sURLMatcher.addURI("com.better.alarm.model", "alarm", ALARMS);
@@ -50,28 +49,26 @@ public class AlarmProvider extends ContentProvider {
     }
 
     @Override
-    public Cursor query(Uri url, String[] projectionIn, String selection,
-            String[] selectionArgs, String sort) {
+    public Cursor query(Uri url, String[] projectionIn, String selection, String[] selectionArgs, String sort) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 
         // Generate the body of the query
         int match = sURLMatcher.match(url);
         switch (match) {
-            case ALARMS:
-                qb.setTables("alarms");
-                break;
-            case ALARMS_ID:
-                qb.setTables("alarms");
-                qb.appendWhere("_id=");
-                qb.appendWhere(url.getPathSegments().get(1));
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown URL " + url);
+        case ALARMS:
+            qb.setTables("alarms");
+            break;
+        case ALARMS_ID:
+            qb.setTables("alarms");
+            qb.appendWhere("_id=");
+            qb.appendWhere(url.getPathSegments().get(1));
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown URL " + url);
         }
 
         SQLiteDatabase db = mOpenHelper.getReadableDatabase();
-        Cursor ret = qb.query(db, projectionIn, selection, selectionArgs,
-                              null, null, sort);
+        Cursor ret = qb.query(db, projectionIn, selection, selectionArgs, null, null, sort);
 
         if (ret == null) {
             if (Log.LOGV) Log.v("Alarms.query: failed");
@@ -86,12 +83,12 @@ public class AlarmProvider extends ContentProvider {
     public String getType(Uri url) {
         int match = sURLMatcher.match(url);
         switch (match) {
-            case ALARMS:
-                return "vnd.android.cursor.dir/alarms";
-            case ALARMS_ID:
-                return "vnd.android.cursor.item/alarms";
-            default:
-                throw new IllegalArgumentException("Unknown URL");
+        case ALARMS:
+            return "vnd.android.cursor.dir/alarms";
+        case ALARMS_ID:
+            return "vnd.android.cursor.item/alarms";
+        default:
+            throw new IllegalArgumentException("Unknown URL");
         }
     }
 
@@ -102,16 +99,15 @@ public class AlarmProvider extends ContentProvider {
         int match = sURLMatcher.match(url);
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         switch (match) {
-            case ALARMS_ID: {
-                String segment = url.getPathSegments().get(1);
-                rowId = Long.parseLong(segment);
-                count = db.update("alarms", values, "_id=" + rowId, null);
-                break;
-            }
-            default: {
-                throw new UnsupportedOperationException(
-                        "Cannot update URL: " + url);
-            }
+        case ALARMS_ID: {
+            String segment = url.getPathSegments().get(1);
+            rowId = Long.parseLong(segment);
+            count = db.update("alarms", values, "_id=" + rowId, null);
+            break;
+        }
+        default: {
+            throw new UnsupportedOperationException("Cannot update URL: " + url);
+        }
         }
         if (Log.LOGV) Log.v("*** notifyChange() rowId: " + rowId + " url " + url);
         getContext().getContentResolver().notifyChange(url, null);
@@ -134,21 +130,21 @@ public class AlarmProvider extends ContentProvider {
         int count;
         long rowId = 0;
         switch (sURLMatcher.match(url)) {
-            case ALARMS:
-                count = db.delete("alarms", where, whereArgs);
-                break;
-            case ALARMS_ID:
-                String segment = url.getPathSegments().get(1);
-                rowId = Long.parseLong(segment);
-                if (TextUtils.isEmpty(where)) {
-                    where = "_id=" + segment;
-                } else {
-                    where = "_id=" + segment + " AND (" + where + ")";
-                }
-                count = db.delete("alarms", where, whereArgs);
-                break;
-            default:
-                throw new IllegalArgumentException("Cannot delete from URL: " + url);
+        case ALARMS:
+            count = db.delete("alarms", where, whereArgs);
+            break;
+        case ALARMS_ID:
+            String segment = url.getPathSegments().get(1);
+            rowId = Long.parseLong(segment);
+            if (TextUtils.isEmpty(where)) {
+                where = "_id=" + segment;
+            } else {
+                where = "_id=" + segment + " AND (" + where + ")";
+            }
+            count = db.delete("alarms", where, whereArgs);
+            break;
+        default:
+            throw new IllegalArgumentException("Cannot delete from URL: " + url);
         }
 
         getContext().getContentResolver().notifyChange(url, null);

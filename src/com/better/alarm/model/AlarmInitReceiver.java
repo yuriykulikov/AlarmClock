@@ -16,20 +16,20 @@
 
 package com.better.alarm.model;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.os.PowerManager.WakeLock;
+
 import com.better.alarm.AsyncHandler;
 import com.better.alarm.Log;
 import com.better.alarm.presenter.AlarmAlertWakeLock;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.BroadcastReceiver;
-import android.os.PowerManager.WakeLock;
-
 public class AlarmInitReceiver extends BroadcastReceiver {
 
     /**
-     * Sets alarm on ACTION_BOOT_COMPLETED.  Resets alarm on
-     * TIME_SET, TIMEZONE_CHANGED
+     * Sets alarm on ACTION_BOOT_COMPLETED. Resets alarm on TIME_SET,
+     * TIMEZONE_CHANGED
      */
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -40,7 +40,8 @@ public class AlarmInitReceiver extends BroadcastReceiver {
         final WakeLock wl = AlarmAlertWakeLock.createPartialWakeLock(context);
         wl.acquire();
         AsyncHandler.post(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 // Remove the snooze alarm after a boot.
                 if (action.equals(Intent.ACTION_BOOT_COMPLETED)) {
                     Alarms.saveSnoozeAlert(context, Alarms.INVALID_ALARM_ID, -1);
