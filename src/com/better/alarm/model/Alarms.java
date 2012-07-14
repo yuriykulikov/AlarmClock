@@ -24,11 +24,8 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
-
-import com.better.alarm.presenter.AlarmsListActivity;
 
 /**
  * The Alarms provider supplies info about Alarm Clock settings
@@ -37,8 +34,6 @@ public class Alarms implements IAlarmsManager, IAlarmsSetup {
     private static final String TAG = "Alarms";
     private static final boolean DBG = true;
     private static final String DEFAULT_SNOOZE = "10";
-    // This string is used to indicate a silent alarm in the db.
-    public static final String ALARM_ALERT_SILENT = "silent";
 
     private static final String PREF_SNOOZE_IDS = "snooze_ids";
     private static final String PREF_SNOOZE_TIME = "snooze_time";
@@ -86,7 +81,7 @@ public class Alarms implements IAlarmsManager, IAlarmsSetup {
      */
     @Override
     public long add(Alarm alarm) {
-        ContentValues values = createContentValues(alarm);
+        ContentValues values = alarm.createContentValues();
         Uri uri = mContext.getContentResolver().insert(Alarm.Columns.CONTENT_URI, values);
         alarm.id = (int) ContentUris.parseId(uri);
 
@@ -151,29 +146,6 @@ public class Alarms implements IAlarmsManager, IAlarmsSetup {
         // TODO
     }
 
-    private ContentValues createContentValues(Alarm alarm) {
-        ContentValues values = new ContentValues(8);
-        // Set the alarm_time value if this alarm does not repeat. This will be
-        // used later to disable expire alarms.
-        long time = 0;
-        if (!alarm.daysOfWeek.isRepeatSet()) {
-            time = alarm.getTimeInMillis();
-        }
-
-        values.put(Alarm.Columns.ENABLED, alarm.enabled ? 1 : 0);
-        values.put(Alarm.Columns.HOUR, alarm.hour);
-        values.put(Alarm.Columns.MINUTES, alarm.minutes);
-        values.put(Alarm.Columns.ALARM_TIME, time);
-        values.put(Alarm.Columns.DAYS_OF_WEEK, alarm.daysOfWeek.getCoded());
-        values.put(Alarm.Columns.VIBRATE, alarm.vibrate);
-        values.put(Alarm.Columns.MESSAGE, alarm.label);
-
-        // A null alert Uri indicates a silent alarm.
-        values.put(Alarm.Columns.ALERT, alarm.alert == null ? ALARM_ALERT_SILENT : alarm.alert.toString());
-
-        return values;
-    }
-
     /**
      * Return an Alarm object representing the alarm id in the database. Returns
      * null if no alarm exists.
@@ -199,7 +171,7 @@ public class Alarms implements IAlarmsManager, IAlarmsSetup {
      */
     @Override
     public long set(Alarm alarm) {
-        ContentValues values = createContentValues(alarm);
+        ContentValues values = alarm.createContentValues();
         ContentResolver resolver = mContext.getContentResolver();
         resolver.update(ContentUris.withAppendedId(Alarm.Columns.CONTENT_URI, alarm.id), values, null, null);
 

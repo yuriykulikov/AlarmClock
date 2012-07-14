@@ -19,6 +19,7 @@ package com.better.alarm.model;
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.media.RingtoneManager;
@@ -170,6 +171,9 @@ public final class Alarm implements Parcelable {
     // End column definitions
     // ////////////////////////////
 
+    // This string is used to indicate a silent alarm in the db.
+    private static final String ALARM_ALERT_SILENT = "silent";
+
     // Public fields
     public int id;
     public boolean enabled;
@@ -192,7 +196,7 @@ public final class Alarm implements Parcelable {
         vibrate = c.getInt(Columns.ALARM_VIBRATE_INDEX) == 1;
         label = c.getString(Columns.ALARM_MESSAGE_INDEX);
         String alertString = c.getString(Columns.ALARM_ALERT_INDEX);
-        if (Alarms.ALARM_ALERT_SILENT.equals(alertString)) {
+        if (ALARM_ALERT_SILENT.equals(alertString)) {
             if (DBG) Log.d(TAG, "Alarm is marked as silent");
             silent = true;
         } else {
@@ -391,5 +395,28 @@ public final class Alarm implements Parcelable {
 
     public long getTimeInMillis() {
         return calculateCalendar().getTimeInMillis();
+    }
+
+    ContentValues createContentValues() {
+        ContentValues values = new ContentValues(8);
+        // Set the alarm_time value if this alarm does not repeat. This will be
+        // used later to disable expire alarms.
+        long time = 0;
+        if (!daysOfWeek.isRepeatSet()) {
+            time = getTimeInMillis();
+        }
+
+        values.put(Alarm.Columns.ENABLED, enabled ? 1 : 0);
+        values.put(Alarm.Columns.HOUR, hour);
+        values.put(Alarm.Columns.MINUTES, minutes);
+        values.put(Alarm.Columns.ALARM_TIME, time);
+        values.put(Alarm.Columns.DAYS_OF_WEEK, daysOfWeek.getCoded());
+        values.put(Alarm.Columns.VIBRATE, vibrate);
+        values.put(Alarm.Columns.MESSAGE, label);
+
+        // A null alert Uri indicates a silent
+        values.put(Alarm.Columns.ALERT, alert == null ? ALARM_ALERT_SILENT : alert.toString());
+
+        return values;
     }
 }
