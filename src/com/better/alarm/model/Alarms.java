@@ -74,7 +74,7 @@ public class Alarms implements IAlarmsManager, IAlarmsSetup {
             sModelInstance = new Alarms(context);
         }
         sModelInstance.disableExpiredAlarms();
-        // TODO do init stuff here sModelInstance
+        sModelInstance.setNextAlert();
     }
 
     private Alarms(Context context) {
