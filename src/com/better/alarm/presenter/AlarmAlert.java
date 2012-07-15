@@ -98,7 +98,7 @@ public class AlarmAlert extends AlarmAlertFullScreen {
         } else {
             // Launch the full screen activity but do not turn the screen on.
             Intent i = new Intent(this, AlarmAlertFullScreen.class);
-            i.putExtra(Intents.ALARM_INTENT_EXTRA, mAlarm);
+            i.putExtra(Intents.EXTRA_ID, mAlarm.id);
             i.putExtra(SCREEN_OFF, true);
             startActivity(i);
             finish();

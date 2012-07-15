@@ -7,7 +7,7 @@ import android.database.Cursor;
  * {@link #dismiss(Alarm)}, {@link #snooze(Alarm)} as a result of user
  * interaction. Model broadcasts intents representing lifecycle of the
  * {@link Alarm}. Each intent contains an {@link Alarm} as a parceable extra
- * with the key {@link #ALARM_INTENT_EXTRA}
+ * with the key {@link #EXTRA_ID}
  * 
  * @author Yuriy
  * 
@@ -40,6 +40,8 @@ public interface IAlarmsManager {
     public void enable(Alarm alarm);
 
     public long set(Alarm alarm);
+
+    public Alarm getAlarm(int alarmId);
 
     public Cursor getCursor();
 }

@@ -61,13 +61,13 @@ public class AlarmAlertFullScreen extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            Alarm alarm = intent.getParcelableExtra(Intents.ALARM_INTENT_EXTRA);
+            int id = intent.getIntExtra(Intents.EXTRA_ID, AlarmsManager.INVALID_ALARM_ID);
             if (action.equals(Intents.ALARM_SNOOZE_ACTION)) {
-                if (mAlarm.id == alarm.id) {
+                if (mAlarm.id == id) {
                     finish();
                 }
             } else if (action.equals(Intents.ALARM_DISMISS_ACTION)) {
-                if (mAlarm.id == alarm.id) {
+                if (mAlarm.id == id) {
                     finish();
                 }
             }
@@ -77,10 +77,10 @@ public class AlarmAlertFullScreen extends Activity {
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-
-        mAlarm = getIntent().getParcelableExtra(Intents.ALARM_INTENT_EXTRA);
-
         alarmsManager = AlarmsManager.getAlarmsManager();
+
+        int id = getIntent().getIntExtra(Intents.EXTRA_ID, AlarmsManager.INVALID_ALARM_ID);
+        mAlarm = alarmsManager.getAlarm(id);
 
         // Get the volume/camera button behavior setting
         final String vol = PreferenceManager.getDefaultSharedPreferences(this).getString(
@@ -169,7 +169,8 @@ public class AlarmAlertFullScreen extends Activity {
 
         if (DBG) Log.d(TAG, "AlarmAlert.OnNewIntent()");
 
-        mAlarm = intent.getParcelableExtra(Intents.ALARM_INTENT_EXTRA);
+        int id = intent.getIntExtra(Intents.EXTRA_ID, AlarmsManager.INVALID_ALARM_ID);
+        mAlarm = alarmsManager.getAlarm(id);
 
         setTitle();
     }

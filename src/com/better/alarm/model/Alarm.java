@@ -24,49 +24,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.better.alarm.R;
 
-public final class Alarm implements Parcelable {
+public final class Alarm {
     private static final String TAG = "Alarm";
     private static final boolean DBG = true;
-    // ////////////////////////////
-    // Parcelable apis
-    // ////////////////////////////
-    public static final Parcelable.Creator<Alarm> CREATOR = new Parcelable.Creator<Alarm>() {
-        public Alarm createFromParcel(Parcel p) {
-            return new Alarm(p);
-        }
-
-        public Alarm[] newArray(int size) {
-            return new Alarm[size];
-        }
-    };
-
-    public int describeContents() {
-        return 0;
-    }
-
-    public void writeToParcel(Parcel p, int flags) {
-        p.writeInt(id);
-        p.writeInt(enabled ? 1 : 0);
-        p.writeInt(hour);
-        p.writeInt(minutes);
-        p.writeInt(daysOfWeek.getCoded());
-        p.writeLong(time);
-        p.writeInt(vibrate ? 1 : 0);
-        p.writeString(label);
-        p.writeParcelable(alert, flags);
-        p.writeInt(silent ? 1 : 0);
-    }
-
-    // ////////////////////////////
-    // end Parcelable apis
-    // ////////////////////////////
 
     // ////////////////////////////
     // Column definitions
@@ -186,7 +151,7 @@ public final class Alarm implements Parcelable {
     public Uri alert;
     public boolean silent;
 
-    public Alarm(Cursor c) {
+    Alarm(Cursor c) {
         id = c.getInt(Columns.ALARM_ID_INDEX);
         enabled = c.getInt(Columns.ALARM_ENABLED_INDEX) == 1;
         hour = c.getInt(Columns.ALARM_HOUR_INDEX);
@@ -210,19 +175,6 @@ public final class Alarm implements Parcelable {
                 alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
             }
         }
-    }
-
-    public Alarm(Parcel p) {
-        id = p.readInt();
-        enabled = p.readInt() == 1;
-        hour = p.readInt();
-        minutes = p.readInt();
-        daysOfWeek = new DaysOfWeek(p.readInt());
-        time = p.readLong();
-        vibrate = p.readInt() == 1;
-        label = p.readString();
-        alert = (Uri) p.readParcelable(null);
-        silent = p.readInt() == 1;
     }
 
     // Creates a default alarm at the current time.

@@ -7,6 +7,7 @@ import android.provider.Settings;
 import android.text.format.DateFormat;
 
 import com.better.alarm.model.Alarm;
+import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.Intents;
 
 /**
@@ -22,8 +23,8 @@ public class ScheduledReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         
         if (intent.getAction().equals(Intents.ACTION_ALARM_SCHEDULED)) {
-            Alarm alarm = intent.getParcelableExtra(Intents.ALARM_INTENT_EXTRA);
-
+            int id = intent.getIntExtra(Intents.EXTRA_ID, AlarmsManager.INVALID_ALARM_ID);
+            Alarm alarm = AlarmsManager.getAlarmsManager().getAlarm(id);
             // Broadcast intent for the notification bar
             Intent alarmChanged = new Intent("android.intent.action.ALARM_CHANGED");
             alarmChanged.putExtra("alarmSet", true);

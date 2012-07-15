@@ -47,6 +47,7 @@ import com.better.alarm.model.Alarm;
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.IAlarmsManager;
 import com.better.alarm.model.Intents;
+import com.better.alarm.model.Alarm.Columns;
 import com.better.alarm.view.DigitalClock;
 
 /**
@@ -91,7 +92,7 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
-            final Alarm alarm = new Alarm(cursor);
+            final Alarm alarm = alarms.getAlarm(cursor.getInt(Columns.ALARM_ID_INDEX));
 
             View indicator = view.findViewById(R.id.indicator);
 
@@ -139,6 +140,7 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
     @Override
     public boolean onContextItemSelected(final MenuItem item) {
         final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+        //XXX ? ah?
         final int id = (int) info.id;
         // Error check just in case.
         if (id == -1) {
@@ -159,16 +161,17 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
 
         case R.id.enable_alarm: {
             final Cursor c = (Cursor) mAlarmsList.getAdapter().getItem(info.position);
-            final Alarm alarm = new Alarm(c);
-            alarms.enable(alarm);
+            int alarmId = c.getInt(Columns.ALARM_ID_INDEX);
+            alarms.enable(alarms.getAlarm(alarmId));
             return true;
         }
 
         case R.id.edit_alarm: {
+            // XXX i don't like this whole cursor thing, but for now just remove
+            // the constructor
             final Cursor c = (Cursor) mAlarmsList.getAdapter().getItem(info.position);
-            final Alarm alarm = new Alarm(c);
             Intent intent = new Intent(this, SetAlarmActivity.class);
-            intent.putExtra(Intents.ALARM_INTENT_EXTRA, alarm);
+            intent.putExtra(Intents.EXTRA_ID, c.getInt(Columns.ALARM_ID_INDEX));
             startActivity(intent);
             return true;
         }
@@ -229,7 +232,8 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
         // Use the current item to create a custom view for the header.
         final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
         final Cursor c = (Cursor) mAlarmsList.getAdapter().getItem(info.position);
-        final Alarm alarm = new Alarm(c);
+
+        final Alarm alarm = alarms.getAlarm(c.getInt(Columns.ALARM_ID_INDEX));
 
         // Construct the Calendar to compute the time.
         final Calendar cal = Calendar.getInstance();
@@ -277,9 +281,8 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
     @Override
     public void onItemClick(@SuppressWarnings("rawtypes") AdapterView parent, View v, int pos, long id) {
         final Cursor c = (Cursor) mAlarmsList.getAdapter().getItem(pos);
-        final Alarm alarm = new Alarm(c);
         Intent intent = new Intent(this, SetAlarmActivity.class);
-        intent.putExtra(Intents.ALARM_INTENT_EXTRA, alarm);
+        intent.putExtra(Intents.EXTRA_ID, c.getInt(Columns.ALARM_ID_INDEX));
         startActivity(intent);
     }
 }

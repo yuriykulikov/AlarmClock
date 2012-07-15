@@ -34,6 +34,7 @@ import android.util.Log;
 
 import com.better.alarm.R;
 import com.better.alarm.model.Alarm;
+import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.Intents;
 
 /**
@@ -84,10 +85,11 @@ public class AlarmKlaxonService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Alarm alarm = intent.getParcelableExtra(Intents.ALARM_INTENT_EXTRA);
+        int id = intent.getIntExtra(Intents.EXTRA_ID, AlarmsManager.INVALID_ALARM_ID);
         String action = intent.getAction();
 
         if (action.equals(Intents.ALARM_ALERT_ACTION)) {
+            Alarm alarm = AlarmsManager.getAlarmsManager().getAlarm(id);
             play(alarm);
             return START_STICKY;
 

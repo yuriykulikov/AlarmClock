@@ -26,6 +26,7 @@ import android.content.Intent;
 
 import com.better.alarm.R;
 import com.better.alarm.model.Alarm;
+import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.Intents;
 
 /**
@@ -37,7 +38,7 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, final Intent intent) {
         String action = intent.getAction();
-        Alarm alarm = intent.getParcelableExtra(Intents.ALARM_INTENT_EXTRA);
+        int id = intent.getIntExtra(Intents.EXTRA_ID, AlarmsManager.INVALID_ALARM_ID);
 
         if (action.equals(Intents.ALARM_ALERT_ACTION)) {
             /* Close dialogs and window shade */
@@ -58,9 +59,10 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
             // dialog. No need to check for fullscreen since this will always be
             // launched from a user action.
             Intent notify = new Intent(context, AlarmAlert.class);
-            notify.putExtra(Intents.ALARM_INTENT_EXTRA, alarm);
-            PendingIntent pendingNotify = PendingIntent.getActivity(context, alarm.id, notify, 0);
+            notify.putExtra(Intents.EXTRA_ID, id);
+            PendingIntent pendingNotify = PendingIntent.getActivity(context, id, notify, 0);
 
+            Alarm alarm = AlarmsManager.getAlarmsManager().getAlarm(id);
             // Use the alarm's label or the default label as the ticker text and
             // main text of the notification.
             String label = alarm.getLabelOrDefault(context);
@@ -72,18 +74,18 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
             // NEW: Embed the full-screen UI here. The notification manager will
             // take care of displaying it if it's OK to do so.
             Intent alarmAlert = new Intent(context, c);
-            alarmAlert.putExtra(Intents.ALARM_INTENT_EXTRA, alarm);
+            alarmAlert.putExtra(Intents.EXTRA_ID, id);
             alarmAlert.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_USER_ACTION);
-            n.fullScreenIntent = PendingIntent.getActivity(context, alarm.id, alarmAlert, 0);
+            n.fullScreenIntent = PendingIntent.getActivity(context, id, alarmAlert, 0);
 
             // Send the notification using the alarm id to easily identify the
             // correct notification.
             NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            nm.notify(alarm.id, n);
+            nm.notify(id, n);
 
         } else if (action.equals(Intents.ALARM_DISMISS_ACTION)) {
             NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            nm.cancel(alarm.id);
+            nm.cancel(id);
         }
     }
 }

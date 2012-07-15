@@ -91,12 +91,14 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         mRepeatPref = (RepeatPreference) findPreference("setRepeat");
         mRepeatPref.setOnPreferenceChangeListener(this);
 
-        Intent i = getIntent();
-        Alarm alarm = i.getParcelableExtra(Intents.ALARM_INTENT_EXTRA);
+        int id = getIntent().getIntExtra(Intents.EXTRA_ID, AlarmsManager.INVALID_ALARM_ID);
 
-        if (alarm == null) {
+        Alarm alarm;
+        if (id == AlarmsManager.INVALID_ALARM_ID) {
             // No alarm means create a new alarm.
             alarm = new Alarm();
+        } else {
+            alarm = AlarmsManager.getAlarmsManager().getAlarm(id);
         }
         mOriginalAlarm = alarm;
 
@@ -137,40 +139,28 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         }
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(KEY_ORIGINAL_ALARM, mOriginalAlarm);
-        outState.putParcelable(KEY_CURRENT_ALARM, buildAlarmFromUi());
-        if (mTimePickerDialog != null) {
-            if (mTimePickerDialog.isShowing()) {
-                outState.putParcelable(KEY_TIME_PICKER_BUNDLE, mTimePickerDialog.onSaveInstanceState());
-                mTimePickerDialog.dismiss();
-            }
-            mTimePickerDialog = null;
-        }
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle state) {
-        super.onRestoreInstanceState(state);
-
-        Alarm alarmFromBundle = state.getParcelable(KEY_ORIGINAL_ALARM);
-        if (alarmFromBundle != null) {
-            mOriginalAlarm = alarmFromBundle;
-        }
-
-        alarmFromBundle = state.getParcelable(KEY_CURRENT_ALARM);
-        if (alarmFromBundle != null) {
-            updatePrefs(alarmFromBundle);
-        }
-
-        Bundle b = state.getParcelable(KEY_TIME_PICKER_BUNDLE);
-        if (b != null) {
-            showTimePicker();
-            mTimePickerDialog.onRestoreInstanceState(b);
-        }
-    }
+    /*
+     * @Override protected void onSaveInstanceState(Bundle outState) {
+     * super.onSaveInstanceState(outState);
+     * outState.putParcelable(KEY_ORIGINAL_ALARM, mOriginalAlarm);
+     * outState.putParcelable(KEY_CURRENT_ALARM, buildAlarmFromUi()); if
+     * (mTimePickerDialog != null) { if (mTimePickerDialog.isShowing()) {
+     * outState.putParcelable(KEY_TIME_PICKER_BUNDLE,
+     * mTimePickerDialog.onSaveInstanceState()); mTimePickerDialog.dismiss(); }
+     * mTimePickerDialog = null; } }
+     * 
+     * @Override protected void onRestoreInstanceState(Bundle state) {
+     * super.onRestoreInstanceState(state);
+     * 
+     * Alarm alarmFromBundle = state.getParcelable(KEY_ORIGINAL_ALARM); if
+     * (alarmFromBundle != null) { mOriginalAlarm = alarmFromBundle; }
+     * 
+     * alarmFromBundle = state.getParcelable(KEY_CURRENT_ALARM); if
+     * (alarmFromBundle != null) { updatePrefs(alarmFromBundle); }
+     * 
+     * Bundle b = state.getParcelable(KEY_TIME_PICKER_BUNDLE); if (b != null) {
+     * showTimePicker(); mTimePickerDialog.onRestoreInstanceState(b); } }
+     */
 
     // Used to post runnables asynchronously.
     private static final Handler sHandler = new Handler();

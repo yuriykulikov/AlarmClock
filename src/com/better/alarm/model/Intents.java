@@ -30,5 +30,5 @@ public class Intents {
     /**
      * Key of the Alarm attached as a parceble extra
      */
-    public static final String ALARM_INTENT_EXTRA = "intent.extra.alarm";
+    public static final String EXTRA_ID = "intent.extra.alarm";
 }

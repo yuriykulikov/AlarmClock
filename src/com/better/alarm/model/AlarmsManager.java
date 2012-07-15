@@ -38,7 +38,7 @@ public class AlarmsManager implements IAlarmsManager {
     private static final String PREF_SNOOZE_IDS = "snooze_ids";
     private static final String PREF_SNOOZE_TIME = "snooze_time";
 
-    private static final int INVALID_ALARM_ID = -1;
+    public static final int INVALID_ALARM_ID = -1;
     private Context mContext;
 
     private static AlarmsManager sModelInstance;
@@ -143,7 +143,8 @@ public class AlarmsManager implements IAlarmsManager {
      * Return an Alarm object representing the alarm id in the database. Returns
      * null if no alarm exists.
      */
-    private Alarm getAlarm(int alarmId) {
+    @Override
+    public Alarm getAlarm(int alarmId) {
         Cursor cursor = mContext.getContentResolver().query(
                 ContentUris.withAppendedId(Alarm.Columns.CONTENT_URI, alarmId), Alarm.Columns.ALARM_QUERY_COLUMNS,
                 null, null, null);
@@ -327,7 +328,7 @@ public class AlarmsManager implements IAlarmsManager {
 
     private void broadcastAlarmState(Alarm alarm, String action) {
         Intent intent = new Intent(action);
-        intent.putExtra(Intents.ALARM_INTENT_EXTRA, alarm);
+        intent.putExtra(Intents.EXTRA_ID, alarm == null? -1 : alarm.id);
         mContext.sendBroadcast(intent);
     }
 }
