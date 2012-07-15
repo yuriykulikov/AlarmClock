@@ -196,8 +196,8 @@ public class AlarmsManager implements IAlarmsManager {
      *            corresponds to the ENABLED column
      */
     @Override
-    public void enable(Alarm alarm) {
-        enableAlarmInternal(getAlarm(alarm.id), !alarm.enabled);
+    public void enable(int id, boolean enable) {
+        enableAlarmInternal(getAlarm(id), enable);
         setNextAlert();
     }
 

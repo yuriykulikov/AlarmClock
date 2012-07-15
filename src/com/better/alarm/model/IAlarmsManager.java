@@ -37,7 +37,7 @@ public interface IAlarmsManager {
 
     public long add(Alarm alarm);
 
-    public void enable(Alarm alarm);
+    public void enable(int id, boolean enable);
 
     public long set(Alarm alarm);
 

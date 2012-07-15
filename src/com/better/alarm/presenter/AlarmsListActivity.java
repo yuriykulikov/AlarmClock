@@ -73,7 +73,7 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
     IAlarmsManager alarms;
 
     private void updateAlarm(boolean enabled, Alarm alarm) {
-        alarms.enable(alarm);
+        alarms.enable(alarm.id, enabled);
     }
 
     private class AlarmTimeAdapter extends CursorAdapter {
@@ -162,7 +162,8 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
         case R.id.enable_alarm: {
             final Cursor c = (Cursor) mAlarmsList.getAdapter().getItem(info.position);
             int alarmId = c.getInt(Columns.ALARM_ID_INDEX);
-            alarms.enable(alarms.getAlarm(alarmId));
+            Alarm alarm = alarms.getAlarm(alarmId);
+            alarms.enable(alarmId, !alarm.enabled);
             return true;
         }
 
