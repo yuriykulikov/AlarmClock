@@ -1,5 +1,7 @@
 package com.better.alarm.model;
 
+import android.database.Cursor;
+
 /**
  * An interface for Presenter-Model interaction. Presenters can invoke
  * {@link #dismiss(Alarm)}, {@link #snooze(Alarm)} as a result of user
@@ -26,4 +28,18 @@ public interface IAlarmsManager {
      * @param alarm
      */
     public void dismiss(Alarm alarm);
+
+    /**
+     *  Delete an Alarm with the given id from the database
+     * @param id
+     */
+    public void delete(int id);
+
+    public long add(Alarm alarm);
+
+    public void enable(Alarm alarm);
+
+    public long set(Alarm alarm);
+
+    public Cursor getCursor();
 }

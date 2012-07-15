@@ -32,6 +32,6 @@ public class AlarmInitReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
         final String action = intent.getAction();
         if (DBG) Log.d(TAG, "AlarmInitReceiver" + action);
-        Alarms.init(context);
+        AlarmsManager.init(context);
     }
 }

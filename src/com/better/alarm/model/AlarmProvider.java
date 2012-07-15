@@ -72,7 +72,7 @@ public class AlarmProvider extends ContentProvider {
         Cursor ret = qb.query(db, projectionIn, selection, selectionArgs, null, null, sort);
 
         if (ret == null) {
-            if (DBG) Log.d(TAG, "Alarms.query: failed");
+            if (DBG) Log.d(TAG, "AlarmsManager.query: failed");
         } else {
             ret.setNotificationUri(getContext().getContentResolver(), url);
         }

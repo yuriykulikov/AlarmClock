@@ -51,13 +51,13 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         String action = intent.getAction();
         if (action.equals(ACTION_FIRED)) {
-            Alarms.getAlarms().onAlarmFired(alarm);
+            AlarmsManager.getInstance().onAlarmFired(alarm);
 
         } else if (action.equals(ACTION_SNOOZED_FIRED)) {
-            Alarms.getAlarms().onAlarmSnoozedFired(alarm);
+            AlarmsManager.getInstance().onAlarmSnoozedFired(alarm);
 
         } else if (action.equals(ACTION_SOUND_EXPIRED)) {
-            Alarms.getAlarms().onAlarmSoundExpired(alarm);
+            AlarmsManager.getInstance().onAlarmSoundExpired(alarm);
 
         }
     }

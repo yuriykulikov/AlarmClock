@@ -44,8 +44,8 @@ import android.widget.TextView;
 
 import com.better.alarm.R;
 import com.better.alarm.model.Alarm;
-import com.better.alarm.model.Alarms;
-import com.better.alarm.model.IAlarmsSetup;
+import com.better.alarm.model.AlarmsManager;
+import com.better.alarm.model.IAlarmsManager;
 import com.better.alarm.model.Intents;
 import com.better.alarm.view.DigitalClock;
 
@@ -69,7 +69,7 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
     private ListView mAlarmsList;
     private Cursor mCursor;
 
-    IAlarmsSetup alarms;
+    IAlarmsManager alarms;
 
     private void updateAlarm(boolean enabled, Alarm alarm) {
         alarms.enable(alarm);
@@ -183,7 +183,7 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        alarms = Alarms.getAlarmsSetup();
+        alarms = AlarmsManager.getAlarmsManager();
         mFactory = LayoutInflater.from(this);
         mCursor = alarms.getCursor();
 

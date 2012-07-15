@@ -33,7 +33,7 @@ import android.widget.Button;
 
 import com.better.alarm.R;
 import com.better.alarm.model.Alarm;
-import com.better.alarm.model.Alarms;
+import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.IAlarmsManager;
 import com.better.alarm.model.Intents;
 
@@ -80,7 +80,7 @@ public class AlarmAlertFullScreen extends Activity {
 
         mAlarm = getIntent().getParcelableExtra(Intents.ALARM_INTENT_EXTRA);
 
-        alarmsManager = Alarms.getAlarmsManager();
+        alarmsManager = AlarmsManager.getAlarmsManager();
 
         // Get the volume/camera button behavior setting
         final String vol = PreferenceManager.getDefaultSharedPreferences(this).getString(
@@ -179,7 +179,7 @@ public class AlarmAlertFullScreen extends Activity {
         super.onResume();
         // XXX this is some wierd logic and should not be here
         // If the alarm was deleted at some point, disable snooze.
-        // if (Alarms.getAlarm(getContentResolver(), mAlarm.id) == null) {
+        // if (AlarmsManager.getAlarm(getContentResolver(), mAlarm.id) == null) {
         // Button snooze = (Button) findViewById(R.id.snooze);
         // snooze.setEnabled(false);
         // }

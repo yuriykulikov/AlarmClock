@@ -5,7 +5,7 @@ import java.util.Calendar;
 import com.better.alarm.Log;
 import com.better.alarm.R;
 import com.better.alarm.model.Alarm;
-import com.better.alarm.model.Alarms;
+import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.Intents;
 import com.better.alarm.presenter.AlarmAlert;
 import com.better.alarm.presenter.AlarmReceiver;

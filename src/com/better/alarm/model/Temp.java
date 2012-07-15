@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.better.alarm.Log;
 import com.better.alarm.R;
-import com.better.alarm.model.Alarms;
+import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.presenter.AlarmAlertFullScreen;
 import com.better.alarm.presenter.AlarmReceiver;
 import com.better.alarm.presenter.SettingsActivity;

@@ -37,8 +37,8 @@ import android.widget.TimePicker;
 
 import com.better.alarm.R;
 import com.better.alarm.model.Alarm;
-import com.better.alarm.model.Alarms;
-import com.better.alarm.model.IAlarmsSetup;
+import com.better.alarm.model.AlarmsManager;
+import com.better.alarm.model.IAlarmsManager;
 import com.better.alarm.model.Intents;
 
 /**
@@ -54,7 +54,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
     public final static String M12 = "h:mm aa";
     public final static String M24 = "kk:mm";
 
-    private IAlarmsSetup alarms;
+    private IAlarmsManager alarms;
 
     private CheckBoxPreference mEnabledPref;
     private Preference mTimePref;
@@ -78,7 +78,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         // each change.
         addPreferencesFromResource(R.xml.alarm_prefs);
 
-        alarms = Alarms.getAlarmsSetup();
+        alarms = AlarmsManager.getAlarmsManager();
 
         // Get each preference so we can retrieve the value later.
         mEnabledPref = (CheckBoxPreference) findPreference("enabled");

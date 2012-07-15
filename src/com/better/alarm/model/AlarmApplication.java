@@ -6,7 +6,7 @@ public class AlarmApplication extends Application {
 
     @Override
     public void onCreate() {
-        Alarms.init(getApplicationContext());
+        AlarmsManager.init(getApplicationContext());
         super.onCreate();
     }
 

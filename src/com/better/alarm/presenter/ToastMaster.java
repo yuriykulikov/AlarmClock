@@ -19,7 +19,7 @@ package com.better.alarm.presenter;
 import com.better.alarm.Log;
 import com.better.alarm.R;
 import com.better.alarm.model.Alarm;
-import com.better.alarm.model.Alarms;
+import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.presenter.AlarmAlertFullScreen;
 
 import android.content.Context;

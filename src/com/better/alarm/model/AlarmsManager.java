@@ -28,10 +28,10 @@ import android.database.Cursor;
 import android.net.Uri;
 
 /**
- * The Alarms provider supplies info about Alarm Clock settings
+ * The AlarmsManager provider supplies info about Alarm Clock settings
  */
-public class Alarms implements IAlarmsManager, IAlarmsSetup {
-    private static final String TAG = "Alarms";
+public class AlarmsManager implements IAlarmsManager {
+    private static final String TAG = "AlarmsManager";
     private static final boolean DBG = true;
     private static final String DEFAULT_SNOOZE = "10";
 
@@ -41,38 +41,31 @@ public class Alarms implements IAlarmsManager, IAlarmsSetup {
     private static final int INVALID_ALARM_ID = -1;
     private Context mContext;
 
-    private static Alarms sModelInstance;
+    private static AlarmsManager sModelInstance;
 
     public static IAlarmsManager getAlarmsManager() {
         if (sModelInstance == null) {
-            throw new NullPointerException("Alarms not initialized yet");
+            throw new NullPointerException("AlarmsManager not initialized yet");
         }
         return sModelInstance;
     }
 
-    public static IAlarmsSetup getAlarmsSetup() {
+    static AlarmsManager getInstance() {
         if (sModelInstance == null) {
-            throw new NullPointerException("Alarms not initialized yet");
-        }
-        return sModelInstance;
-    }
-
-    static Alarms getAlarms() {
-        if (sModelInstance == null) {
-            throw new NullPointerException("Alarms not initialized yet");
+            throw new NullPointerException("AlarmsManager not initialized yet");
         }
         return sModelInstance;
     }
 
     static void init(Context context) {
         if (sModelInstance == null) {
-            sModelInstance = new Alarms(context);
+            sModelInstance = new AlarmsManager(context);
         }
         sModelInstance.disableExpiredAlarms();
         sModelInstance.setNextAlert();
     }
 
-    private Alarms(Context context) {
+    private AlarmsManager(Context context) {
         mContext = context;
     }
 
@@ -165,7 +158,7 @@ public class Alarms implements IAlarmsManager, IAlarmsSetup {
     }
 
     /**
-     * A convenience method to set an alarm in the Alarms content provider.
+     * A convenience method to set an alarm in the AlarmsManager content provider.
      * 
      * @return Time when the alarm will fire.
      */
