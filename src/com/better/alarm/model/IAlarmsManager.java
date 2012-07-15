@@ -30,18 +30,42 @@ public interface IAlarmsManager {
     public void dismiss(Alarm alarm);
 
     /**
-     *  Delete an Alarm with the given id from the database
+     * Delete an Alarm with the given id from the database
+     * 
      * @param id
      */
     public void delete(int id);
 
+    /**
+     * Creates a new Alarm and fills in the given alarm's id.
+     * 
+     * @Deprecated use {@link #set(Alarm)}
+     * @param alarm
+     * @return
+     */
+    @Deprecated
     public long add(Alarm alarm);
 
     public void enable(int id, boolean enable);
 
+    /**
+     * A convenience method to set an alarm in the AlarmsManager content
+     * provider.
+     * 
+     * @return Time when the alarm will fire.
+     */
     public long set(Alarm alarm);
 
+    /**
+     * Return an Alarm object representing the alarm id in the database. Returns
+     * null if no alarm exists.
+     */
     public Alarm getAlarm(int alarmId);
 
+    /**
+     * Queries all alarms
+     * 
+     * @return cursor over all alarms
+     */
     public Cursor getCursor();
 }
