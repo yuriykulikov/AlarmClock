@@ -36,7 +36,7 @@ public final class Alarm {
     // ////////////////////////////
     // Column definitions
     // ////////////////////////////
-    public static class Columns implements BaseColumns {
+    static class Columns implements BaseColumns {
         /**
          * The content:// style URL for this table
          */

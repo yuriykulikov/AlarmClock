@@ -1,6 +1,6 @@
 package com.better.alarm.model;
 
-import android.database.Cursor;
+import java.util.List;
 
 /**
  * An interface for Presenter-Model interaction. Presenters can invoke
@@ -13,6 +13,10 @@ import android.database.Cursor;
  * 
  */
 public interface IAlarmsManager {
+    public interface OnAlarmListChangedListener {
+        void onAlarmListChanged(List<Alarm> newList);
+    }
+
     /**
      * Tell the model that a certain alarm has to be snoozed because of the user
      * interaction
@@ -65,7 +69,17 @@ public interface IAlarmsManager {
     /**
      * Queries all alarms
      * 
-     * @return cursor over all alarms
+     * @return List of all alarms as a copy
      */
-    public Cursor getCursor();
+    public List<Alarm> getAlarmsList();
+    /**
+     * Register a listener. Newly registered listener will be notified within the call
+     * @param listener
+     */
+    public void registerOnAlarmListChangedListener(OnAlarmListChangedListener listener);
+    /**
+     * Unregister the listener
+     * @param listener
+     */
+    public void unRegisterOnAlarmListChangedListener(OnAlarmListChangedListener listener);
 }

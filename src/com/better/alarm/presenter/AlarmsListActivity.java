@@ -16,14 +16,15 @@
 
 package com.better.alarm.presenter;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.ContextMenu;
@@ -34,11 +35,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -46,14 +45,14 @@ import com.better.alarm.R;
 import com.better.alarm.model.Alarm;
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.IAlarmsManager;
+import com.better.alarm.model.IAlarmsManager.OnAlarmListChangedListener;
 import com.better.alarm.model.Intents;
-import com.better.alarm.model.Alarm.Columns;
 import com.better.alarm.view.DigitalClock;
 
 /**
  * AlarmClock application.
  */
-public class AlarmsListActivity extends Activity implements OnItemClickListener {
+public class AlarmsListActivity extends ListActivity implements OnAlarmListChangedListener {
 
     public static final String PREFERENCES = "AlarmClock";
 
@@ -66,35 +65,31 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
     public final static String M12 = "h:mm aa";
     public final static String M24 = "kk:mm";
 
-    private LayoutInflater mFactory;
-    private ListView mAlarmsList;
-    private Cursor mCursor;
-
     IAlarmsManager alarms;
 
-    private void updateAlarm(boolean enabled, Alarm alarm) {
-        alarms.enable(alarm.id, enabled);
-    }
+    public class AlarmListAdapter extends ArrayAdapter<Alarm> {
+        private final Context context;
+        private List<Alarm> values;
 
-    private class AlarmTimeAdapter extends CursorAdapter {
-        public AlarmTimeAdapter(Context context, Cursor cursor) {
-            super(context, cursor);
+        public AlarmListAdapter(Context context, int alarmTime, int label, List<Alarm> values) {
+            super(context, alarmTime, label, values);
+            this.context = context;
+            this.values = values;
         }
 
         @Override
-        public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            View ret = mFactory.inflate(R.layout.alarm_time, parent, false);
+        public View getView(int position, View convertView, ViewGroup parent) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View rowView = inflater.inflate(R.layout.alarm_time, parent, false);
 
-            DigitalClock digitalClock = (DigitalClock) ret.findViewById(R.id.digitalClock);
+            DigitalClock digitalClock = (DigitalClock) rowView.findViewById(R.id.digitalClock);
             digitalClock.setLive(false);
-            return ret;
-        }
 
-        @Override
-        public void bindView(View view, Context context, Cursor cursor) {
-            final Alarm alarm = alarms.getAlarm(cursor.getInt(Columns.ALARM_ID_INDEX));
+            // get the alarm which we have to display
+            final Alarm alarm = values.get(position);
 
-            View indicator = view.findViewById(R.id.indicator);
+            // now populate rows views
+            View indicator = rowView.findViewById(R.id.indicator);
 
             // Set the initial state of the clock "checkbox"
             final CheckBox clockOnOff = (CheckBox) indicator.findViewById(R.id.clock_onoff);
@@ -104,11 +99,9 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
             indicator.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     clockOnOff.toggle();
-                    updateAlarm(clockOnOff.isChecked(), alarm);
+                    alarms.enable(alarm.id, clockOnOff.isChecked());
                 }
             });
-
-            DigitalClock digitalClock = (DigitalClock) view.findViewById(R.id.digitalClock);
 
             // set the alarm text
             final Calendar c = Calendar.getInstance();
@@ -127,25 +120,22 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
             }
 
             // Display the label
-            TextView labelView = (TextView) view.findViewById(R.id.label);
+            TextView labelView = (TextView) rowView.findViewById(R.id.label);
             if (alarm.label != null && alarm.label.length() != 0) {
                 labelView.setText(alarm.label);
                 labelView.setVisibility(View.VISIBLE);
             } else {
                 labelView.setVisibility(View.GONE);
             }
+
+            return rowView;
         }
-    };
+    }
 
     @Override
     public boolean onContextItemSelected(final MenuItem item) {
         final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-        //XXX ? ah?
-        final int id = (int) info.id;
-        // Error check just in case.
-        if (id == -1) {
-            return super.onContextItemSelected(item);
-        }
+        final Alarm alarm = (Alarm) getListAdapter().getItem(info.position);
         switch (item.getItemId()) {
         case R.id.delete_alarm: {
             // Confirm that the alarm will be deleted.
@@ -153,26 +143,20 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
                     .setMessage(getString(R.string.delete_alarm_confirm))
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface d, int w) {
-                            alarms.delete(id);
+                            alarms.delete(alarm.id);
                         }
                     }).setNegativeButton(android.R.string.cancel, null).show();
             return true;
         }
 
         case R.id.enable_alarm: {
-            final Cursor c = (Cursor) mAlarmsList.getAdapter().getItem(info.position);
-            int alarmId = c.getInt(Columns.ALARM_ID_INDEX);
-            Alarm alarm = alarms.getAlarm(alarmId);
-            alarms.enable(alarmId, !alarm.enabled);
+            alarms.enable(alarm.id, !alarm.enabled);
             return true;
         }
 
         case R.id.edit_alarm: {
-            // XXX i don't like this whole cursor thing, but for now just remove
-            // the constructor
-            final Cursor c = (Cursor) mAlarmsList.getAdapter().getItem(info.position);
             Intent intent = new Intent(this, SetAlarmActivity.class);
-            intent.putExtra(Intents.EXTRA_ID, c.getInt(Columns.ALARM_ID_INDEX));
+            intent.putExtra(Intents.EXTRA_ID, alarm.id);
             startActivity(intent);
             return true;
         }
@@ -188,20 +172,13 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
         super.onCreate(icicle);
 
         alarms = AlarmsManager.getAlarmsManager();
-        mFactory = LayoutInflater.from(this);
-        mCursor = alarms.getCursor();
 
-        updateLayout();
-    }
-
-    private void updateLayout() {
         setContentView(R.layout.alarm_clock);
-        mAlarmsList = (ListView) findViewById(R.id.alarms_list);
-        AlarmTimeAdapter adapter = new AlarmTimeAdapter(this, mCursor);
-        mAlarmsList.setAdapter(adapter);
-        mAlarmsList.setVerticalScrollBarEnabled(true);
-        mAlarmsList.setOnItemClickListener(this);
-        mAlarmsList.setOnCreateContextMenuListener(this);
+
+        ArrayAdapter<Alarm> adapter = new AlarmListAdapter(this, R.layout.alarm_time, R.id.label, new ArrayList<Alarm>());
+        setListAdapter(adapter);
+        getListView().setVerticalScrollBarEnabled(true);
+        getListView().setOnCreateContextMenuListener(this);
 
         View doneButton = findViewById(R.id.done);
         if (doneButton != null) {
@@ -213,16 +190,16 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
         }
     }
 
-    private void addNewAlarm() {
-        startActivity(new Intent(this, SetAlarmActivity.class));
+    @Override
+    protected void onResume() {
+        alarms.registerOnAlarmListChangedListener(this);
+        super.onResume();
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mCursor != null) {
-            mCursor.close();
-        }
+    protected void onPause() {
+        alarms.unRegisterOnAlarmListChangedListener(this);
+        super.onPause();
     }
 
     @Override
@@ -232,9 +209,7 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
 
         // Use the current item to create a custom view for the header.
         final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-        final Cursor c = (Cursor) mAlarmsList.getAdapter().getItem(info.position);
-
-        final Alarm alarm = alarms.getAlarm(c.getInt(Columns.ALARM_ID_INDEX));
+        final Alarm alarm = (Alarm) getListAdapter().getItem(info.position);
 
         // Construct the Calendar to compute the time.
         final Calendar cal = Calendar.getInstance();
@@ -244,7 +219,7 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
         final String time = (cal == null) ? "" : (String) DateFormat.format(format, cal);
 
         // Inflate the custom view and set each TextView's text.
-        final View v = mFactory.inflate(R.layout.context_menu_header, null);
+        final View v = getLayoutInflater().inflate(R.layout.context_menu_header, null);
         TextView textView = (TextView) v.findViewById(R.id.header_time);
         textView.setText(time);
         textView = (TextView) v.findViewById(R.id.header_label);
@@ -265,7 +240,7 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
         case R.id.menu_item_add_alarm:
-            addNewAlarm();
+            startActivity(new Intent(this, SetAlarmActivity.class));
             return true;
         default:
             break;
@@ -280,10 +255,18 @@ public class AlarmsListActivity extends Activity implements OnItemClickListener 
     }
 
     @Override
-    public void onItemClick(@SuppressWarnings("rawtypes") AdapterView parent, View v, int pos, long id) {
-        final Cursor c = (Cursor) mAlarmsList.getAdapter().getItem(pos);
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        Alarm alarm = (Alarm) getListAdapter().getItem(position);
         Intent intent = new Intent(this, SetAlarmActivity.class);
-        intent.putExtra(Intents.EXTRA_ID, c.getInt(Columns.ALARM_ID_INDEX));
+        intent.putExtra(Intents.EXTRA_ID, alarm.id);
         startActivity(intent);
+        super.onListItemClick(l, v, position, id);
+    }
+
+    @Override
+    public void onAlarmListChanged(List<Alarm> newList) {
+        AlarmListAdapter adapter = (AlarmListAdapter) getListAdapter();
+        adapter.clear();
+        adapter.addAll(newList);
     }
 }

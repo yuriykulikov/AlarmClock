@@ -17,6 +17,8 @@
 package com.better.alarm.model;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import android.content.ContentResolver;
@@ -40,6 +42,7 @@ public class AlarmsManager implements IAlarmsManager {
 
     public static final int INVALID_ALARM_ID = -1;
     private Context mContext;
+    private Set<IAlarmsManager.OnAlarmListChangedListener> mAlarmListChangedListeners;
 
     private static AlarmsManager sModelInstance;
 
@@ -61,13 +64,14 @@ public class AlarmsManager implements IAlarmsManager {
         if (sModelInstance == null) {
             sModelInstance = new AlarmsManager(context);
         }
-        //TODO fill the sorted set when we have it
+        // TODO fill the sorted set when we have it
         sModelInstance.disableExpiredAlarms();
         sModelInstance.setNextAlert();
     }
 
     private AlarmsManager(Context context) {
         mContext = context;
+        mAlarmListChangedListeners = new HashSet<IAlarmsManager.OnAlarmListChangedListener>();
     }
 
     @Override
@@ -85,14 +89,29 @@ public class AlarmsManager implements IAlarmsManager {
         contentResolver.delete(uri, "", null);
 
         broadcastAlarmState(getAlarm(alarmId), Intents.ALARM_DISMISS_ACTION);
+        notifyAlarmListChangedListeners();
 
         setNextAlert();
     }
 
     @Override
-    public Cursor getCursor() {
-        return mContext.getContentResolver().query(Alarm.Columns.CONTENT_URI, Alarm.Columns.ALARM_QUERY_COLUMNS, null,
-                null, Alarm.Columns.DEFAULT_SORT_ORDER);
+    public List<Alarm> getAlarmsList() {
+        List<Alarm> alarms = new LinkedList<Alarm>();
+        final Cursor cursor = mContext.getContentResolver().query(Alarm.Columns.CONTENT_URI,
+                Alarm.Columns.ALARM_QUERY_COLUMNS, null, null, Alarm.Columns.DEFAULT_SORT_ORDER);
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    final Alarm a = new Alarm(cursor);
+                    alarms.add(a);
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return alarms;
+
     }
 
     // Private method to get a more limited set of alarms from the database.
@@ -161,6 +180,7 @@ public class AlarmsManager implements IAlarmsManager {
             // clearSnoozeIfNeeded(timeInMillis);
         }
         setNextAlert();
+        notifyAlarmListChangedListeners();
         return timeInMillis;
     }
 
@@ -284,5 +304,22 @@ public class AlarmsManager implements IAlarmsManager {
         Intent intent = new Intent(action);
         intent.putExtra(Intents.EXTRA_ID, alarm == null ? -1 : alarm.id);
         mContext.sendBroadcast(intent);
+    }
+
+    @Override
+    public void registerOnAlarmListChangedListener(OnAlarmListChangedListener listener) {
+        mAlarmListChangedListeners.add(listener);
+        notifyAlarmListChangedListeners();
+    }
+
+    @Override
+    public void unRegisterOnAlarmListChangedListener(OnAlarmListChangedListener listener) {
+        mAlarmListChangedListeners.remove(listener);
+    }
+
+    private void notifyAlarmListChangedListeners() {
+        for (OnAlarmListChangedListener listener : mAlarmListChangedListeners) {
+            listener.onAlarmListChanged(getAlarmsList());
+        }
     }
 }
