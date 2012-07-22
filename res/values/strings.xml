@@ -64,6 +64,9 @@
     <!-- Setting labels on Set alarm screen: Repeat -->
     <string name="alarm_repeat">Repeat</string>
 
+    <!-- Setting labels on Set alarm screen: Prealarm -->
+    <string name="alarm_prealarm">Gentle pre-alarm</string>
+
     <!-- Setting labels on Set alarm screen: Select alarm ringtone  -->
     <string name="alert">Ringtone</string>
 

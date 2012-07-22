@@ -33,4 +33,9 @@
         android:persistent="false"
         android:showDefault="false"
         android:showSilent="true" />
+    <CheckBoxPreference
+        android:key="prealarm"
+        android:persistent="false"
+        android:title="@string/alarm_prealarm" />
+
 </PreferenceScreen>

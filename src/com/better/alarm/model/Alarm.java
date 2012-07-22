@@ -107,6 +107,14 @@ public final class Alarm implements Comparable<Alarm> {
         public static final String ALERT = "alert";
 
         /**
+         * Use prealarm
+         * <P>
+         * Type: STRING
+         * </P>
+         */
+        public static final String PREALARM = "prealarm";
+
+        /**
          * The default sort order for this table
          */
         public static final String DEFAULT_SORT_ORDER = HOUR + ", " + MINUTES + " ASC";
@@ -114,8 +122,8 @@ public final class Alarm implements Comparable<Alarm> {
         // Used when filtering enabled alarms.
         public static final String WHERE_ENABLED = ENABLED + "=1";
 
-        public static final String[] ALARM_QUERY_COLUMNS = { _ID, HOUR, MINUTES, DAYS_OF_WEEK, ALARM_TIME, ENABLED,
-                VIBRATE, MESSAGE, ALERT };
+        static final String[] ALARM_QUERY_COLUMNS = { _ID, HOUR, MINUTES, DAYS_OF_WEEK, ALARM_TIME, ENABLED, VIBRATE,
+                MESSAGE, ALERT, PREALARM };
 
         /**
          * These save calls to cursor.getColumnIndexOrThrow() THEY MUST BE KEPT
@@ -131,6 +139,7 @@ public final class Alarm implements Comparable<Alarm> {
         public static final int ALARM_VIBRATE_INDEX = 6;
         public static final int ALARM_MESSAGE_INDEX = 7;
         public static final int ALARM_ALERT_INDEX = 8;
+        public static final int ALARM_PREALARM_INDEX = 9;
     }
 
     // ////////////////////////////
@@ -149,6 +158,7 @@ public final class Alarm implements Comparable<Alarm> {
     private String label;
     private Uri alert;
     private boolean silent;
+    private boolean prealarm;
 
     Alarm(Cursor c) {
         id = c.getInt(Columns.ALARM_ID_INDEX);
@@ -159,6 +169,7 @@ public final class Alarm implements Comparable<Alarm> {
         vibrate = c.getInt(Columns.ALARM_VIBRATE_INDEX) == 1;
         label = c.getString(Columns.ALARM_MESSAGE_INDEX);
         String alertString = c.getString(Columns.ALARM_ALERT_INDEX);
+        prealarm = c.getInt(Columns.ALARM_PREALARM_INDEX) == 1;
         if (ALARM_ALERT_SILENT.equals(alertString)) {
             if (DBG) Log.d(TAG, "Alarm is marked as silent");
             silent = true;
@@ -185,6 +196,7 @@ public final class Alarm implements Comparable<Alarm> {
         vibrate = true;
         daysOfWeek = new DaysOfWeek(0);
         alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        prealarm = false;
     }
 
     public String getLabelOrDefault(Context context) {
@@ -361,6 +373,10 @@ public final class Alarm implements Comparable<Alarm> {
         return calculateCalendar().getTimeInMillis();
     }
 
+    public boolean isPrealarm() {
+        return prealarm;
+    }
+
     public boolean isSilent() {
         return silent;
     }
@@ -413,6 +429,7 @@ public final class Alarm implements Comparable<Alarm> {
         values.put(Alarm.Columns.DAYS_OF_WEEK, daysOfWeek.getCoded());
         values.put(Alarm.Columns.VIBRATE, vibrate);
         values.put(Alarm.Columns.MESSAGE, label);
+        values.put(Alarm.Columns.PREALARM, prealarm);
 
         // A null alert Uri indicates a silent
         values.put(Alarm.Columns.ALERT, alert == null ? ALARM_ALERT_SILENT : alert.toString());
@@ -443,6 +460,10 @@ public final class Alarm implements Comparable<Alarm> {
             return 0;
         }
         throw new RuntimeException("should never get here!");
+    }
+
+    void setPrealarm(boolean prealarm) {
+        this.prealarm = prealarm;
     }
 
     void setSilent(boolean silent) {
@@ -487,6 +508,7 @@ public final class Alarm implements Comparable<Alarm> {
         sb.append("Alarm [");
         sb.append(enabled ? " enabled" : "disabled").append(", ");
         sb.append(hour).append(":").append(minutes).append(", ");
+        sb.append(prealarm ? "prealarm" : " regular ").append(", ");
         sb.append(getTimeInMillis()).append(", ");
         sb.append(daysOfWeek.toString());
         sb.append("]");

@@ -22,7 +22,6 @@ import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
-import android.content.Intent;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -59,6 +58,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
     private Preference mTimePref;
     private AlarmPreference mAlarmPref;
     private RepeatPreference mRepeatPref;
+    private CheckBoxPreference mPreAlarmPref;
 
     private int mId;
     private boolean isNewAlarm;
@@ -89,6 +89,8 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         mAlarmPref.setOnPreferenceChangeListener(this);
         mRepeatPref = (RepeatPreference) findPreference("setRepeat");
         mRepeatPref.setOnPreferenceChangeListener(this);
+        mPreAlarmPref = (CheckBoxPreference) findPreference("prealarm");
+        mPreAlarmPref.setOnPreferenceChangeListener(this);
 
         int id = getIntent().getIntExtra(Intents.EXTRA_ID, AlarmsManager.INVALID_ALARM_ID);
 
@@ -179,6 +181,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         mRepeatPref.setDaysOfWeek(alarm.getDaysOfWeek());
         // Give the alert uri to the preference.
         mAlarmPref.setAlert(alarm.getAlert());
+        mPreAlarmPref.setChecked(alarm.isPrealarm());
         updateTime();
     }
 
@@ -239,7 +242,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
 
     private long saveAlarm() {
         alarms.changeAlarm(mId, mEnabledPref.isChecked(), mHour, mMinute, mRepeatPref.getDaysOfWeek(), true, "",
-                mAlarmPref.getAlert());
+                mAlarmPref.getAlert(), mPreAlarmPref.isChecked());
         return alarms.getAlarm(mId).getTimeInMillis();
     }
 

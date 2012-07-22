@@ -113,7 +113,7 @@ public class AlarmsManager implements IAlarmsManager {
 
     @Override
     public void changeAlarm(int id, boolean enabled, int hour, int minute, DaysOfWeek daysOfWeek, boolean vibrate,
-            String label, Uri alert) {
+            String label, Uri alert, boolean preAlarm) {
         Alarm alarm = getAlarm(id);
         alarm.setEnabled(enabled);
         alarm.setHour(hour);
@@ -122,6 +122,7 @@ public class AlarmsManager implements IAlarmsManager {
         alarm.setVibrate(vibrate);
         alarm.setLabel(label);
         alarm.setAlert(alert);
+        alarm.setPrealarm(preAlarm);
         changeAlarm(alarm);
     }
 

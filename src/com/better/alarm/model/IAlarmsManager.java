@@ -101,5 +101,5 @@ public interface IAlarmsManager {
      * @param preAlarm
      */
     void changeAlarm(int id, boolean enabled, int hour, int minute, DaysOfWeek daysOfWeek, boolean vibrate,
-            String label, Uri alert);
+            String label, Uri alert, boolean preAlarm);
 }
