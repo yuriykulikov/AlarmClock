@@ -23,7 +23,7 @@ public class ScheduledReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         
         if (intent.getAction().equals(Intents.ACTION_ALARM_SCHEDULED)) {
-            int id = intent.getIntExtra(Intents.EXTRA_ID, AlarmsManager.INVALID_ALARM_ID);
+            int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
             Alarm alarm = AlarmsManager.getAlarmsManager().getAlarm(id);
             // Broadcast intent for the notification bar
             Intent alarmChanged = new Intent("android.intent.action.ALARM_CHANGED");

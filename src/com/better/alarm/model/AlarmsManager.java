@@ -39,16 +39,7 @@ import com.better.alarm.model.Alarm.DaysOfWeek;
 public class AlarmsManager implements IAlarmsManager {
     private static final String TAG = "AlarmsManager";
     private static final boolean DBG = true;
-    private static final String DEFAULT_SNOOZE = "10";
 
-    private static final String PREF_SNOOZE_IDS = "snooze_ids";
-    private static final String PREF_SNOOZE_TIME = "snooze_time";
-
-    /**
-     * Should not be public
-     */
-    @Deprecated
-    public static final int INVALID_ALARM_ID = -1;
     private Context mContext;
     private Set<IAlarmsManager.OnAlarmListChangedListener> mAlarmListChangedListeners;
 
@@ -75,7 +66,6 @@ public class AlarmsManager implements IAlarmsManager {
         if (sModelInstance == null) {
             sModelInstance = new AlarmsManager(context);
         }
-        // TODO fill the sorted set when we have it
         sModelInstance.disableExpiredAlarms();
         sModelInstance.setNextAlert();
     }
@@ -97,6 +87,12 @@ public class AlarmsManager implements IAlarmsManager {
             }
         } finally {
             cursor.close();
+        }
+        if (DBG) {
+            Log.d(TAG, "Alarms:");
+            for (Alarm alarm : set) {
+                Log.d(TAG, alarm.toString());
+            }
         }
     }
 
@@ -231,14 +227,14 @@ public class AlarmsManager implements IAlarmsManager {
         Alarm alarm = null;
 
         if (getAlarmsList().isEmpty()) {
-            Log.d(TAG, "no alarms");
+            if (DBG) Log.d(TAG, "no alarms");
         } else {
             alarm = Collections.min(getAlarmsList());
             if (!alarm.isEnabled()) {
                 alarm = null;
-                Log.d(TAG, "no alarms");
+                if (DBG) Log.d(TAG, "no alarms");
             } else {
-                Log.d(TAG, "next: " + alarm.toString());
+                if (DBG) Log.d(TAG, "next: " + alarm.toString());
             }
         }
         return alarm;

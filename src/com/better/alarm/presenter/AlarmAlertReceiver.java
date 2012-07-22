@@ -38,7 +38,7 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, final Intent intent) {
         String action = intent.getAction();
-        int id = intent.getIntExtra(Intents.EXTRA_ID, AlarmsManager.INVALID_ALARM_ID);
+        int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
 
         if (action.equals(Intents.ALARM_ALERT_ACTION)) {
             /* Close dialogs and window shade */

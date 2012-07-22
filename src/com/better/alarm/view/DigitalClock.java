@@ -170,7 +170,6 @@ public class DigitalClock extends RelativeLayout {
     }
 
     private void setDateFormat() {
-        // XXX this should not query AlarmsManager for this
         mFormat = android.text.format.DateFormat.is24HourFormat(getContext()) ? M24 : M12;
         mAmPm.setShowAmPm(mFormat == M12);
     }

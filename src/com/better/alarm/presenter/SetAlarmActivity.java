@@ -45,9 +45,6 @@ import com.better.alarm.model.Intents;
 public class SetAlarmActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener,
         TimePickerDialog.OnTimeSetListener, OnCancelListener {
     private static final String TAG = "SetAlarmActivity";
-    private static final String KEY_CURRENT_ALARM = "currentAlarm";
-    private static final String KEY_ORIGINAL_ALARM = "originalAlarm";
-    private static final String KEY_TIME_PICKER_BUNDLE = "timePickerBundle";
 
     public final static String M12 = "h:mm aa";
     public final static String M24 = "kk:mm";
@@ -92,15 +89,12 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         mPreAlarmPref = (CheckBoxPreference) findPreference("prealarm");
         mPreAlarmPref.setOnPreferenceChangeListener(this);
 
-        int id = getIntent().getIntExtra(Intents.EXTRA_ID, AlarmsManager.INVALID_ALARM_ID);
-
-        // TODO use different intent action to distinguish
-        if (id == AlarmsManager.INVALID_ALARM_ID) {
+        if (getIntent().hasExtra(Intents.EXTRA_ID)) {
+            mId = getIntent().getIntExtra(Intents.EXTRA_ID, -1);
+        } else {
             // No alarm means create a new alarm.
             mId = alarms.createNewAlarm();
             isNewAlarm = true;
-        } else {
-            mId = id;
         }
 
         // Populate the prefs with the original alarm data. updatePrefs also

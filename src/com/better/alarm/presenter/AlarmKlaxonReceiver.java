@@ -20,7 +20,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.Intents;
 
 /**
@@ -30,7 +29,7 @@ public class AlarmKlaxonReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
-        int id = intent.getIntExtra(Intents.EXTRA_ID, AlarmsManager.INVALID_ALARM_ID);
+        int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
 
         // Maintain a cpu wake lock until the and AlarmKlaxonService can pick it
         // up.

@@ -26,7 +26,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        int id = intent.getIntExtra(EXTRA_ID, AlarmsManager.INVALID_ALARM_ID);
+        int id = intent.getIntExtra(EXTRA_ID, -1);
         Alarm alarm = AlarmsManager.getInstance().getAlarm(id);
 
         if (alarm == null) {

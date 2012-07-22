@@ -61,7 +61,7 @@ public class AlarmAlertFullScreen extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            int id = intent.getIntExtra(Intents.EXTRA_ID, AlarmsManager.INVALID_ALARM_ID);
+            int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
             if (action.equals(Intents.ALARM_SNOOZE_ACTION)) {
                 if (mAlarm.getId() == id) {
                     finish();
@@ -79,7 +79,7 @@ public class AlarmAlertFullScreen extends Activity {
         super.onCreate(icicle);
         alarmsManager = AlarmsManager.getAlarmsManager();
 
-        int id = getIntent().getIntExtra(Intents.EXTRA_ID, AlarmsManager.INVALID_ALARM_ID);
+        int id = getIntent().getIntExtra(Intents.EXTRA_ID, -1);
         mAlarm = alarmsManager.getAlarm(id);
 
         // Get the volume/camera button behavior setting
@@ -169,7 +169,7 @@ public class AlarmAlertFullScreen extends Activity {
 
         if (DBG) Log.d(TAG, "AlarmAlert.OnNewIntent()");
 
-        int id = intent.getIntExtra(Intents.EXTRA_ID, AlarmsManager.INVALID_ALARM_ID);
+        int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
         mAlarm = alarmsManager.getAlarm(id);
 
         setTitle();

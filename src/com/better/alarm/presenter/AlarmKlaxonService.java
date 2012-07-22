@@ -85,7 +85,7 @@ public class AlarmKlaxonService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        int id = intent.getIntExtra(Intents.EXTRA_ID, AlarmsManager.INVALID_ALARM_ID);
+        int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
         String action = intent.getAction();
 
         if (action.equals(Intents.ALARM_ALERT_ACTION)) {
