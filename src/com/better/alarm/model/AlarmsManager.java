@@ -16,6 +16,7 @@
 
 package com.better.alarm.model;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +29,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
+
+import com.better.alarm.model.Alarm.DaysOfWeek;
 
 /**
  * The AlarmsManager provider supplies info about Alarm Clock settings
@@ -40,9 +44,16 @@ public class AlarmsManager implements IAlarmsManager {
     private static final String PREF_SNOOZE_IDS = "snooze_ids";
     private static final String PREF_SNOOZE_TIME = "snooze_time";
 
+    /**
+     * Should not be public
+     */
+    @Deprecated
     public static final int INVALID_ALARM_ID = -1;
     private Context mContext;
     private Set<IAlarmsManager.OnAlarmListChangedListener> mAlarmListChangedListeners;
+
+    private ContentResolver mContentResolver;
+    private Set<Alarm> set;
 
     private static AlarmsManager sModelInstance;
 
@@ -72,21 +83,54 @@ public class AlarmsManager implements IAlarmsManager {
     private AlarmsManager(Context context) {
         mContext = context;
         mAlarmListChangedListeners = new HashSet<IAlarmsManager.OnAlarmListChangedListener>();
+        mContentResolver = mContext.getContentResolver();
+        set = new HashSet<Alarm>();
+
+        final Cursor cursor = mContentResolver.query(Alarm.Columns.CONTENT_URI, Alarm.Columns.ALARM_QUERY_COLUMNS,
+                null, null, Alarm.Columns.DEFAULT_SORT_ORDER);
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    final Alarm a = new Alarm(cursor);
+                    set.add(a);
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            cursor.close();
+        }
     }
 
     @Override
-    @Deprecated
-    public long add(Alarm alarm) {
-        return set(alarm);
+    public int createNewAlarm() {
+        Alarm alarm = new Alarm();
+        Uri uri = mContentResolver.insert(Alarm.Columns.CONTENT_URI, alarm.createContentValues());
+        alarm.setId((int) ContentUris.parseId(uri));
+        set.add(alarm);
+        // new alarm is not enabled, no need to check if it can fire. It can't
+        notifyAlarmListChangedListeners();
+        return alarm.getId();
+    }
+
+    @Override
+    public void changeAlarm(int id, boolean enabled, int hour, int minute, DaysOfWeek daysOfWeek, boolean vibrate,
+            String label, Uri alert) {
+        Alarm alarm = getAlarm(id);
+        alarm.setEnabled(enabled);
+        alarm.setHour(hour);
+        alarm.setMinutes(minute);
+        alarm.setDaysOfWeek(daysOfWeek);
+        alarm.setVibrate(vibrate);
+        alarm.setLabel(label);
+        alarm.setAlert(alert);
+        changeAlarm(alarm);
     }
 
     @Override
     public void delete(int alarmId) {
-        if (alarmId == INVALID_ALARM_ID) return;
-
-        ContentResolver contentResolver = mContext.getContentResolver();
+        Alarm alarm = getAlarm(alarmId);
+        set.remove(alarm);
         Uri uri = ContentUris.withAppendedId(Alarm.Columns.CONTENT_URI, alarmId);
-        contentResolver.delete(uri, "", null);
+        mContentResolver.delete(uri, "", null);
 
         broadcastAlarmState(getAlarm(alarmId), Intents.ALARM_DISMISS_ACTION);
         notifyAlarmListChangedListeners();
@@ -96,36 +140,16 @@ public class AlarmsManager implements IAlarmsManager {
 
     @Override
     public List<Alarm> getAlarmsList() {
-        List<Alarm> alarms = new LinkedList<Alarm>();
-        final Cursor cursor = mContext.getContentResolver().query(Alarm.Columns.CONTENT_URI,
-                Alarm.Columns.ALARM_QUERY_COLUMNS, null, null, Alarm.Columns.DEFAULT_SORT_ORDER);
-        try {
-            if (cursor.moveToFirst()) {
-                do {
-                    final Alarm a = new Alarm(cursor);
-                    alarms.add(a);
-                } while (cursor.moveToNext());
-            }
-        } finally {
-            cursor.close();
-        }
-
+        List<Alarm> alarms = new LinkedList<Alarm>(set);
         return alarms;
-
-    }
-
-    // Private method to get a more limited set of alarms from the database.
-    private Cursor getFilteredAlarmsCursor(ContentResolver contentResolver) {
-        return contentResolver.query(Alarm.Columns.CONTENT_URI, Alarm.Columns.ALARM_QUERY_COLUMNS,
-                Alarm.Columns.WHERE_ENABLED, null, null);
     }
 
     void onAlarmFired(Alarm alarm) {
         broadcastAlarmState(alarm, Intents.ALARM_ALERT_ACTION);
 
         // Disable this alarm if it does not repeat.
-        if (!alarm.daysOfWeek.isRepeatSet()) {
-            enable(alarm.id, false);
+        if (!alarm.getDaysOfWeek().isRepeatSet()) {
+            enable(alarm.getId(), false);
         } else {
             setNextAlert();
         }
@@ -141,34 +165,25 @@ public class AlarmsManager implements IAlarmsManager {
 
     @Override
     public Alarm getAlarm(int alarmId) {
-        Cursor cursor = mContext.getContentResolver().query(
-                ContentUris.withAppendedId(Alarm.Columns.CONTENT_URI, alarmId), Alarm.Columns.ALARM_QUERY_COLUMNS,
-                null, null, null);
-        Alarm alarm = null;
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                alarm = new Alarm(cursor);
+        for (Alarm alarm : set) {
+            if (alarm.getId() == alarmId) {
+                return alarm;
             }
-            cursor.close();
         }
-        return alarm;
+        return null;
     }
 
-    @Override
-    public long set(Alarm alarm) {
+    private int changeAlarm(Alarm alarm) {
+        // first add to the DB
         ContentValues values = alarm.createContentValues();
-        ContentResolver resolver = mContext.getContentResolver();
-        if (alarm.id == INVALID_ALARM_ID) {
-            // this is a new alarm
-            Uri uri = resolver.insert(Alarm.Columns.CONTENT_URI, values);
-            alarm.id = (int) ContentUris.parseId(uri);
-        } else {
-            // this is an existing alarm
-            resolver.update(ContentUris.withAppendedId(Alarm.Columns.CONTENT_URI, alarm.id), values, null, null);
-        }
 
-        long timeInMillis = alarm.getTimeInMillis();
-        if (alarm.enabled) {
+        // this is an existing alarm
+        mContentResolver.update(ContentUris.withAppendedId(Alarm.Columns.CONTENT_URI, alarm.getId()), values, null,
+                null);
+        set.remove(alarm);
+        set.add(alarm);
+
+        if (alarm.isEnabled()) {
             // Disable the snooze if we just changed the snoozed alarm. This
             // only does work if the snoozed alarm is the same as the given
             // alarm.
@@ -181,7 +196,7 @@ public class AlarmsManager implements IAlarmsManager {
         }
         setNextAlert();
         notifyAlarmListChangedListeners();
-        return timeInMillis;
+        return alarm.getId();
     }
 
     /**
@@ -195,8 +210,8 @@ public class AlarmsManager implements IAlarmsManager {
     @Override
     public void enable(int id, boolean enable) {
         Alarm alarm = getAlarm(id);
-        alarm.enabled = enable;
-        set(alarm);
+        alarm.setEnabled(enable);
+        changeAlarm(alarm);
     }
 
     @Override
@@ -212,52 +227,19 @@ public class AlarmsManager implements IAlarmsManager {
     }
 
     private Alarm calculateNextAlert() {
-        long minTime = Long.MAX_VALUE;
-        long now = System.currentTimeMillis();
-
-        Set<Alarm> alarms = new HashSet<Alarm>();
-
-        // We need to to build the list of alarms from both the snoozed list and
-        // the scheduled
-        // list. For a non-repeating alarm, when it goes of, it becomes
-        // disabled. A snoozed
-        // non-repeating alarm is not in the active list in the database.
-
-        // Now add the scheduled alarms
-        final Cursor cursor = getFilteredAlarmsCursor(mContext.getContentResolver());
-        if (cursor != null) {
-            try {
-                if (cursor.moveToFirst()) {
-                    do {
-                        final Alarm a = new Alarm(cursor);
-                        alarms.add(a);
-                    } while (cursor.moveToNext());
-                }
-            } finally {
-                cursor.close();
-            }
-        }
-
         Alarm alarm = null;
 
-        for (Alarm a : alarms) {
-            // A time of 0 indicates this is a repeating alarm, so
-            // calculate the time to get the next alert.
-            if (a.time == 0) {
-                a.time = a.getTimeInMillis();
-            }
-
-            if (a.time < now) {
-                // Expired alarm, disable it and move along.
-                enable(a.id, false);
-                continue;
-            }
-            if (a.time < minTime) {
-                minTime = a.time;
-                alarm = a;
+        if (getAlarmsList().isEmpty()) {
+            Log.d(TAG, "no alarms");
+        } else {
+            alarm = Collections.min(getAlarmsList());
+            if (!alarm.isEnabled()) {
+                alarm = null;
+                Log.d(TAG, "no alarms");
+            } else {
+                Log.d(TAG, "next: " + alarm.toString());
             }
         }
-
         return alarm;
     }
 
@@ -265,22 +247,11 @@ public class AlarmsManager implements IAlarmsManager {
      * Disables non-repeating alarms that have passed. Called at boot.
      */
     private void disableExpiredAlarms() {
-        Cursor cur = getFilteredAlarmsCursor(mContext.getContentResolver());
         long now = System.currentTimeMillis();
-
-        try {
-            if (cur.moveToFirst()) {
-                do {
-                    Alarm alarm = new Alarm(cur);
-                    // A time of 0 means this alarm repeats. If the time is
-                    // non-zero, check if the time is before now.
-                    if (alarm.time != 0 && alarm.time < now) {
-                        enable(alarm.id, false);
-                    }
-                } while (cur.moveToNext());
+        for (Alarm alarm : set) {
+            if (!alarm.isEnabled() && alarm.getTimeInMillis() != 0 && alarm.getTimeInMillis() < now) {
+                enable(alarm.getId(), false);
             }
-        } finally {
-            cur.close();
         }
     }
 
@@ -292,7 +263,7 @@ public class AlarmsManager implements IAlarmsManager {
     private void setNextAlert() {
         final Alarm alarm = calculateNextAlert();
         if (alarm != null) {
-            AlarmReceiver.setUpRTCAlarm(mContext, alarm, alarm.time);
+            AlarmReceiver.setUpRTCAlarm(mContext, alarm, alarm.getTimeInMillis());
             broadcastAlarmState(alarm, Intents.ACTION_ALARM_SCHEDULED);
         } else {
             AlarmReceiver.removeRTCAlarm(mContext);
@@ -302,7 +273,7 @@ public class AlarmsManager implements IAlarmsManager {
 
     private void broadcastAlarmState(Alarm alarm, String action) {
         Intent intent = new Intent(action);
-        intent.putExtra(Intents.EXTRA_ID, alarm == null ? -1 : alarm.id);
+        intent.putExtra(Intents.EXTRA_ID, alarm == null ? -1 : alarm.getId());
         mContext.sendBroadcast(intent);
     }
 

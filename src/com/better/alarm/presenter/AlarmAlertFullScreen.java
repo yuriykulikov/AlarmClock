@@ -63,11 +63,11 @@ public class AlarmAlertFullScreen extends Activity {
             String action = intent.getAction();
             int id = intent.getIntExtra(Intents.EXTRA_ID, AlarmsManager.INVALID_ALARM_ID);
             if (action.equals(Intents.ALARM_SNOOZE_ACTION)) {
-                if (mAlarm.id == id) {
+                if (mAlarm.getId() == id) {
                     finish();
                 }
             } else if (action.equals(Intents.ALARM_DISMISS_ACTION)) {
-                if (mAlarm.id == id) {
+                if (mAlarm.getId() == id) {
                     finish();
                 }
             }

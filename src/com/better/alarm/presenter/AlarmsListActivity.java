@@ -93,25 +93,25 @@ public class AlarmsListActivity extends ListActivity implements OnAlarmListChang
 
             // Set the initial state of the clock "checkbox"
             final CheckBox clockOnOff = (CheckBox) indicator.findViewById(R.id.clock_onoff);
-            clockOnOff.setChecked(alarm.enabled);
+            clockOnOff.setChecked(alarm.isEnabled());
 
             // Clicking outside the "checkbox" should also change the state.
             indicator.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     clockOnOff.toggle();
-                    alarms.enable(alarm.id, clockOnOff.isChecked());
+                    alarms.enable(alarm.getId(), clockOnOff.isChecked());
                 }
             });
 
             // set the alarm text
             final Calendar c = Calendar.getInstance();
-            c.set(Calendar.HOUR_OF_DAY, alarm.hour);
-            c.set(Calendar.MINUTE, alarm.minutes);
+            c.set(Calendar.HOUR_OF_DAY, alarm.getHour());
+            c.set(Calendar.MINUTE, alarm.getMinutes());
             digitalClock.updateTime(c);
 
             // Set the repeat text or leave it blank if it does not repeat.
             TextView daysOfWeekView = (TextView) digitalClock.findViewById(R.id.daysOfWeek);
-            final String daysOfWeekStr = alarm.daysOfWeek.toString(AlarmsListActivity.this, false);
+            final String daysOfWeekStr = alarm.getDaysOfWeek().toString(AlarmsListActivity.this, false);
             if (daysOfWeekStr != null && daysOfWeekStr.length() != 0) {
                 daysOfWeekView.setText(daysOfWeekStr);
                 daysOfWeekView.setVisibility(View.VISIBLE);
@@ -121,8 +121,8 @@ public class AlarmsListActivity extends ListActivity implements OnAlarmListChang
 
             // Display the label
             TextView labelView = (TextView) rowView.findViewById(R.id.label);
-            if (alarm.label != null && alarm.label.length() != 0) {
-                labelView.setText(alarm.label);
+            if (alarm.getLabel() != null && alarm.getLabel().length() != 0) {
+                labelView.setText(alarm.getLabel());
                 labelView.setVisibility(View.VISIBLE);
             } else {
                 labelView.setVisibility(View.GONE);
@@ -143,20 +143,20 @@ public class AlarmsListActivity extends ListActivity implements OnAlarmListChang
                     .setMessage(getString(R.string.delete_alarm_confirm))
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface d, int w) {
-                            alarms.delete(alarm.id);
+                            alarms.delete(alarm.getId());
                         }
                     }).setNegativeButton(android.R.string.cancel, null).show();
             return true;
         }
 
         case R.id.enable_alarm: {
-            alarms.enable(alarm.id, !alarm.enabled);
+            alarms.enable(alarm.getId(), !alarm.isEnabled());
             return true;
         }
 
         case R.id.edit_alarm: {
             Intent intent = new Intent(this, SetAlarmActivity.class);
-            intent.putExtra(Intents.EXTRA_ID, alarm.id);
+            intent.putExtra(Intents.EXTRA_ID, alarm.getId());
             startActivity(intent);
             return true;
         }
@@ -213,8 +213,8 @@ public class AlarmsListActivity extends ListActivity implements OnAlarmListChang
 
         // Construct the Calendar to compute the time.
         final Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, alarm.hour);
-        cal.set(Calendar.MINUTE, alarm.minutes);
+        cal.set(Calendar.HOUR_OF_DAY, alarm.getHour());
+        cal.set(Calendar.MINUTE, alarm.getMinutes());
         String format = android.text.format.DateFormat.is24HourFormat(this) ? M24 : M12;
         final String time = (cal == null) ? "" : (String) DateFormat.format(format, cal);
 
@@ -223,12 +223,12 @@ public class AlarmsListActivity extends ListActivity implements OnAlarmListChang
         TextView textView = (TextView) v.findViewById(R.id.header_time);
         textView.setText(time);
         textView = (TextView) v.findViewById(R.id.header_label);
-        textView.setText(alarm.label);
+        textView.setText(alarm.getLabel());
 
         // Set the custom view on the menu.
         menu.setHeaderView(v);
         // Change the text based on the state of the alarm.
-        if (alarm.enabled) {
+        if (alarm.isEnabled()) {
             menu.findItem(R.id.enable_alarm).setTitle(R.string.disable_alarm);
         }
     }
@@ -258,7 +258,7 @@ public class AlarmsListActivity extends ListActivity implements OnAlarmListChang
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Alarm alarm = (Alarm) getListAdapter().getItem(position);
         Intent intent = new Intent(this, SetAlarmActivity.class);
-        intent.putExtra(Intents.EXTRA_ID, alarm.id);
+        intent.putExtra(Intents.EXTRA_ID, alarm.getId());
         startActivity(intent);
         super.onListItemClick(l, v, position, id);
     }

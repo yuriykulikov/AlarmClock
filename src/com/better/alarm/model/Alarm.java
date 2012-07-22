@@ -29,7 +29,7 @@ import android.util.Log;
 
 import com.better.alarm.R;
 
-public final class Alarm {
+public final class Alarm implements Comparable<Alarm> {
     private static final String TAG = "Alarm";
     private static final boolean DBG = true;
 
@@ -125,6 +125,7 @@ public final class Alarm {
         public static final int ALARM_HOUR_INDEX = 1;
         public static final int ALARM_MINUTES_INDEX = 2;
         public static final int ALARM_DAYS_OF_WEEK_INDEX = 3;
+        @Deprecated
         public static final int ALARM_TIME_INDEX = 4;
         public static final int ALARM_ENABLED_INDEX = 5;
         public static final int ALARM_VIBRATE_INDEX = 6;
@@ -139,17 +140,15 @@ public final class Alarm {
     // This string is used to indicate a silent alarm in the db.
     private static final String ALARM_ALERT_SILENT = "silent";
 
-    // Public fields
-    public int id;
-    public boolean enabled;
-    public int hour;
-    public int minutes;
-    public DaysOfWeek daysOfWeek;
-    public long time;
-    public boolean vibrate;
-    public String label;
-    public Uri alert;
-    public boolean silent;
+    private int id;
+    private boolean enabled;
+    private int hour;
+    private int minutes;
+    private DaysOfWeek daysOfWeek;
+    private boolean vibrate;
+    private String label;
+    private Uri alert;
+    private boolean silent;
 
     Alarm(Cursor c) {
         id = c.getInt(Columns.ALARM_ID_INDEX);
@@ -157,7 +156,6 @@ public final class Alarm {
         hour = c.getInt(Columns.ALARM_HOUR_INDEX);
         minutes = c.getInt(Columns.ALARM_MINUTES_INDEX);
         daysOfWeek = new DaysOfWeek(c.getInt(Columns.ALARM_DAYS_OF_WEEK_INDEX));
-        time = c.getLong(Columns.ALARM_TIME_INDEX);
         vibrate = c.getInt(Columns.ALARM_VIBRATE_INDEX) == 1;
         label = c.getString(Columns.ALARM_MESSAGE_INDEX);
         String alertString = c.getString(Columns.ALARM_ALERT_INDEX);
@@ -178,7 +176,7 @@ public final class Alarm {
     }
 
     // Creates a default alarm at the current time.
-    public Alarm() {
+    Alarm() {
         id = -1;
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis());
@@ -316,6 +314,20 @@ public final class Alarm {
             }
             return dayCount;
         }
+
+        @Override
+        public String toString() {
+            if (mDays == 0) return "never";
+            if (mDays == 0x7f) return "everyday";
+            StringBuilder ret = new StringBuilder();
+            String[] dayList = new DateFormatSymbols().getShortWeekdays();
+            for (int i = 0; i < 7; i++) {
+                if ((mDays & (1 << i)) != 0) {
+                    ret.append(dayList[DAY_MAP[i]]);
+                }
+            }
+            return ret.toString();
+        }
     }
 
     /**
@@ -349,6 +361,42 @@ public final class Alarm {
         return calculateCalendar().getTimeInMillis();
     }
 
+    public boolean isSilent() {
+        return silent;
+    }
+
+    public Uri getAlert() {
+        return alert;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public boolean isVibrate() {
+        return vibrate;
+    }
+
+    public DaysOfWeek getDaysOfWeek() {
+        return daysOfWeek;
+    }
+
+    public int getMinutes() {
+        return minutes;
+    }
+
+    public int getHour() {
+        return hour;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public int getId() {
+        return id;
+    }
+
     ContentValues createContentValues() {
         ContentValues values = new ContentValues(8);
         // Set the alarm_time value if this alarm does not repeat. This will be
@@ -370,5 +418,78 @@ public final class Alarm {
         values.put(Alarm.Columns.ALERT, alert == null ? ALARM_ALERT_SILENT : alert.toString());
 
         return values;
+    }
+
+    @Override
+    public int compareTo(Alarm another) {
+        if (!this.enabled && !another.enabled) {
+            return 0;
+        }
+        if (!this.enabled && another.enabled) {
+            return 1;
+        }
+        if (this.enabled && !another.enabled) {
+            return -1;
+        }
+        if (this.enabled && another.enabled) {
+            // both are enabled, let's see which one is closer
+            if (getTimeInMillis() < another.getTimeInMillis()) {
+                return -1;
+            }
+            if (getTimeInMillis() > another.getTimeInMillis()) {
+                return 1;
+            }
+            // probably equal
+            return 0;
+        }
+        throw new RuntimeException("should never get here!");
+    }
+
+    void setSilent(boolean silent) {
+        this.silent = silent;
+    }
+
+    void setAlert(Uri alert) {
+        this.alert = alert;
+    }
+
+    void setLabel(String label) {
+        this.label = label;
+    }
+
+    void setVibrate(boolean vibrate) {
+        this.vibrate = vibrate;
+    }
+
+    void setDaysOfWeek(DaysOfWeek daysOfWeek) {
+        this.daysOfWeek = daysOfWeek;
+    }
+
+    void setMinutes(int minutes) {
+        this.minutes = minutes;
+    }
+
+    void setHour(int hour) {
+        this.hour = hour;
+    }
+
+    void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Alarm [");
+        sb.append(enabled ? " enabled" : "disabled").append(", ");
+        sb.append(hour).append(":").append(minutes).append(", ");
+        sb.append(getTimeInMillis()).append(", ");
+        sb.append(daysOfWeek.toString());
+        sb.append("]");
+        return sb.toString();
     }
 }

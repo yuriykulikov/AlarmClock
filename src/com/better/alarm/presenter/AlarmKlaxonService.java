@@ -114,10 +114,10 @@ public class AlarmKlaxonService extends Service {
         // stop() checks to see if we are already playing.
         stop();
 
-        if (DBG) Log.d(TAG, "AlarmKlaxon.play() " + alarm.id + " alert " + alarm.alert);
+        if (DBG) Log.d(TAG, "AlarmKlaxon.play() " + alarm.getId() + " alert " + alarm.getAlert());
 
-        if (!alarm.silent) {
-            Uri alert = alarm.alert;
+        if (!alarm.isSilent()) {
+            Uri alert = alarm.getAlert();
             // Fall back on the default alarm if the database does not have an
             // alarm stored.
             if (alert == null) {
@@ -166,7 +166,7 @@ public class AlarmKlaxonService extends Service {
         }
 
         /* Start the vibrator after everything is ok with the media player */
-        if (alarm.vibrate) {
+        if (alarm.isVibrate()) {
             mVibrator.vibrate(sVibratePattern, 0);
         } else {
             mVibrator.cancel();

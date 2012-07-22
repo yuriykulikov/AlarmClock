@@ -2,6 +2,10 @@ package com.better.alarm.model;
 
 import java.util.List;
 
+import android.net.Uri;
+
+import com.better.alarm.model.Alarm.DaysOfWeek;
+
 /**
  * An interface for Presenter-Model interaction. Presenters can invoke
  * {@link #dismiss(Alarm)}, {@link #snooze(Alarm)} as a result of user
@@ -41,24 +45,11 @@ public interface IAlarmsManager {
     public void delete(int id);
 
     /**
-     * Creates a new Alarm and fills in the given alarm's id.
-     * 
-     * @Deprecated use {@link #set(Alarm)}
-     * @param alarm
-     * @return
+     * Enable of disable an alarm with a given id
+     * @param id
+     * @param enable
      */
-    @Deprecated
-    public long add(Alarm alarm);
-
     public void enable(int id, boolean enable);
-
-    /**
-     * A convenience method to set an alarm in the AlarmsManager content
-     * provider.
-     * 
-     * @return Time when the alarm will fire.
-     */
-    public long set(Alarm alarm);
 
     /**
      * Return an Alarm object representing the alarm id in the database. Returns
@@ -72,14 +63,43 @@ public interface IAlarmsManager {
      * @return List of all alarms as a copy
      */
     public List<Alarm> getAlarmsList();
+
     /**
-     * Register a listener. Newly registered listener will be notified within the call
+     * Register a listener. Newly registered listener will be notified within
+     * the call
+     * 
      * @param listener
      */
     public void registerOnAlarmListChangedListener(OnAlarmListChangedListener listener);
+
     /**
      * Unregister the listener
+     * 
      * @param listener
      */
     public void unRegisterOnAlarmListChangedListener(OnAlarmListChangedListener listener);
+
+    /**
+     * Create new Alarm with default settings
+     * 
+     * @return id of newly created Alarm
+     */
+    int createNewAlarm();
+
+    /**
+     * A convenience method to change an existing alarm
+     * 
+     * @param id
+     *            - Alarm which has to be changed
+     * @param enabled
+     * @param hour
+     * @param minute
+     * @param daysOfWeek
+     * @param vibrate
+     * @param label
+     * @param alert
+     * @param preAlarm
+     */
+    void changeAlarm(int id, boolean enabled, int hour, int minute, DaysOfWeek daysOfWeek, boolean vibrate,
+            String label, Uri alert);
 }

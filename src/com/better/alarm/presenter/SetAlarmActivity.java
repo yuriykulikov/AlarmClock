@@ -24,7 +24,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -62,10 +61,11 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
     private RepeatPreference mRepeatPref;
 
     private int mId;
+    private boolean isNewAlarm;
+    // these are to get data from TimerPicker
     private int mHour;
     private int mMinute;
     private TimePickerDialog mTimePickerDialog;
-    private Alarm mOriginalAlarm;
 
     @Override
     protected void onCreate(Bundle icicle) {
@@ -82,7 +82,6 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
 
         // Get each preference so we can retrieve the value later.
         mEnabledPref = (CheckBoxPreference) findPreference("enabled");
-        mEnabledPref.setOnPreferenceChangeListener(this);
         // remove enable preference from screen
         getPreferenceScreen().removePreference(mEnabledPref);
         mTimePref = findPreference("time");
@@ -93,18 +92,18 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
 
         int id = getIntent().getIntExtra(Intents.EXTRA_ID, AlarmsManager.INVALID_ALARM_ID);
 
-        Alarm alarm;
+        // TODO use different intent action to distinguish
         if (id == AlarmsManager.INVALID_ALARM_ID) {
             // No alarm means create a new alarm.
-            alarm = new Alarm();
+            mId = alarms.createNewAlarm();
+            isNewAlarm = true;
         } else {
-            alarm = AlarmsManager.getAlarmsManager().getAlarm(id);
+            mId = id;
         }
-        mOriginalAlarm = alarm;
 
         // Populate the prefs with the original alarm data. updatePrefs also
         // sets mId so it must be called before checking mId below.
-        updatePrefs(mOriginalAlarm);
+        updatePrefs();
 
         // We have to do this to get the save/cancel buttons to highlight on
         // their own.
@@ -114,7 +113,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         Button b = (Button) findViewById(R.id.alarm_save);
         b.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                saveAlarm(null);
+                saveAlarm();
                 finish();
             }
         });
@@ -126,7 +125,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
             }
         });
         b = (Button) findViewById(R.id.alarm_delete);
-        if (mId == -1) {
+        if (isNewAlarm) {
             b.setEnabled(false);
             b.setVisibility(View.GONE);
         } else {
@@ -162,33 +161,25 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
      * showTimePicker(); mTimePickerDialog.onRestoreInstanceState(b); } }
      */
 
-    // Used to post runnables asynchronously.
-    private static final Handler sHandler = new Handler();
-
     public boolean onPreferenceChange(final Preference p, Object newValue) {
-        // Asynchronously save the alarm since this method is called _before_
+        // this method is called _before_
         // the value of the preference has changed.
-        sHandler.post(new Runnable() {
-            public void run() {
-                // Editing any preference (except enable) enables the alarm.
-                if (p != mEnabledPref) {
-                    mEnabledPref.setChecked(true);
-                }
-                saveAlarm(null);
-            }
-        });
+        // Editing any preference (except enable) enables the alarm.
+        if (p != mEnabledPref) {
+            mEnabledPref.setChecked(true);
+        }
         return true;
     }
 
-    private void updatePrefs(Alarm alarm) {
-        mId = alarm.id;
-        mEnabledPref.setChecked(alarm.enabled);
-        mHour = alarm.hour;
-        mMinute = alarm.minutes;
-        mRepeatPref.setDaysOfWeek(alarm.daysOfWeek);
+    private void updatePrefs() {
+        Alarm alarm = alarms.getAlarm(mId);
+        mEnabledPref.setChecked(alarm.isEnabled());
+        mHour = alarm.getHour();
+        mMinute = alarm.getMinutes();
+        mRepeatPref.setDaysOfWeek(alarm.getDaysOfWeek());
         // Give the alert uri to the preference.
-        mAlarmPref.setAlert(alarm.alert);
-        updateTime(alarm);
+        mAlarmPref.setAlert(alarm.getAlert());
+        updateTime();
     }
 
     @Override
@@ -227,7 +218,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         mTimePickerDialog = null;
         mHour = hourOfDay;
         mMinute = minute;
-        updateTime(buildAlarmFromUi());
+        updateTime();
         // If the time has been changed, enable the alarm.
         mEnabledPref.setChecked(true);
     }
@@ -237,42 +228,19 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         mTimePickerDialog = null;
     }
 
-    private void updateTime(Alarm alarm) {
-        Calendar c = alarm.calculateCalendar();
+    private void updateTime() {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, mHour);
+        c.set(Calendar.MINUTE, mMinute);
         String format = android.text.format.DateFormat.is24HourFormat(this) ? M24 : M12;
         CharSequence summary = (c == null) ? "" : (String) DateFormat.format(format, c);
         mTimePref.setSummary(summary);
     }
 
-    private long saveAlarm(Alarm alarm) {
-        if (alarm == null) {
-            alarm = buildAlarmFromUi();
-        }
-
-        long time;
-        if (alarm.id == -1) {
-            time = alarms.add(alarm);
-            // addAlarm populates the alarm with the new id. Update mId so that
-            // changes to other preferences update the new alarm.
-            mId = alarm.id;
-        } else {
-            time = alarms.set(alarm);
-        }
-        return time;
-    }
-
-    private Alarm buildAlarmFromUi() {
-        Alarm alarm = new Alarm();
-        alarm.id = mId;
-        alarm.enabled = mEnabledPref.isChecked();
-        alarm.hour = mHour;
-        alarm.minutes = mMinute;
-        alarm.daysOfWeek = mRepeatPref.getDaysOfWeek();
-        // TODO fetch from settings
-        alarm.vibrate = true;
-        alarm.label = "";
-        alarm.alert = mAlarmPref.getAlert();
-        return alarm;
+    private long saveAlarm() {
+        alarms.changeAlarm(mId, mEnabledPref.isChecked(), mHour, mMinute, mRepeatPref.getDaysOfWeek(), true, "",
+                mAlarmPref.getAlert());
+        return alarms.getAlarm(mId).getTimeInMillis();
     }
 
     private void deleteAlarm() {
@@ -287,12 +255,11 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
     }
 
     private void revert() {
-        int newId = mId;
         // "Revert" on a newly created alarm should delete it.
-        if (mOriginalAlarm.id == -1) {
-            alarms.delete(newId);
+        if (isNewAlarm) {
+            alarms.delete(mId);
         } else {
-            saveAlarm(mOriginalAlarm);
+            // do not save changes
         }
     }
 }

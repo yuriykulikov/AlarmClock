@@ -65,10 +65,10 @@ public class AlarmReceiver extends BroadcastReceiver {
     static void setUpRTCAlarm(Context context, final Alarm alarm, final long atTimeInMillis) {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        if (DBG) Log.d(TAG, "** setAlert id " + alarm.id + " atTime " + atTimeInMillis);
+        if (DBG) Log.d(TAG, "** setAlert id " + alarm.getId() + " atTime " + atTimeInMillis);
 
         Intent intent = new Intent(ACTION_FIRED);
-        intent.putExtra(EXTRA_ID, alarm.id);
+        intent.putExtra(EXTRA_ID, alarm.getId());
         PendingIntent sender = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
         am.set(AlarmManager.RTC_WAKEUP, atTimeInMillis, sender);
     }
