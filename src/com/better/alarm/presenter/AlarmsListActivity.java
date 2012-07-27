@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,7 +35,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
@@ -52,7 +54,7 @@ import com.better.alarm.view.DigitalClock;
 /**
  * AlarmClock application.
  */
-public class AlarmsListActivity extends ListActivity implements OnAlarmListChangedListener {
+public class AlarmsListActivity extends Activity implements OnAlarmListChangedListener {
 
     public static final String PREFERENCES = "AlarmClock";
 
@@ -66,6 +68,9 @@ public class AlarmsListActivity extends ListActivity implements OnAlarmListChang
     public final static String M24 = "kk:mm";
 
     IAlarmsManager alarms;
+
+    private AlarmListAdapter mAdapter;
+    private ListView mListView;
 
     public class AlarmListAdapter extends ArrayAdapter<Alarm> {
         private final Context context;
@@ -135,7 +140,7 @@ public class AlarmsListActivity extends ListActivity implements OnAlarmListChang
     @Override
     public boolean onContextItemSelected(final MenuItem item) {
         final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-        final Alarm alarm = (Alarm) getListAdapter().getItem(info.position);
+        final Alarm alarm = (Alarm) mAdapter.getItem(info.position);
         switch (item.getItemId()) {
         case R.id.delete_alarm: {
             // Confirm that the alarm will be deleted.
@@ -174,11 +179,21 @@ public class AlarmsListActivity extends ListActivity implements OnAlarmListChang
         alarms = AlarmsManager.getAlarmsManager();
 
         setContentView(R.layout.alarm_clock);
+        mListView = (ListView) findViewById(R.id.alarms_list);
 
-        ArrayAdapter<Alarm> adapter = new AlarmListAdapter(this, R.layout.alarm_time, R.id.label, new ArrayList<Alarm>());
-        setListAdapter(adapter);
-        getListView().setVerticalScrollBarEnabled(true);
-        getListView().setOnCreateContextMenuListener(this);
+        mAdapter = new AlarmListAdapter(this, R.layout.alarm_time, R.id.label, new ArrayList<Alarm>());
+        mListView.setAdapter(mAdapter);
+        mListView.setVerticalScrollBarEnabled(true);
+        mListView.setOnCreateContextMenuListener(this);
+        mListView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Alarm alarm = (Alarm) mAdapter.getItem(position);
+                Intent intent = new Intent(AlarmsListActivity.this, SetAlarmActivity.class);
+                intent.putExtra(Intents.EXTRA_ID, alarm.getId());
+                startActivity(intent);
+            }
+        });
 
         View doneButton = findViewById(R.id.done);
         if (doneButton != null) {
@@ -209,7 +224,7 @@ public class AlarmsListActivity extends ListActivity implements OnAlarmListChang
 
         // Use the current item to create a custom view for the header.
         final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-        final Alarm alarm = (Alarm) getListAdapter().getItem(info.position);
+        final Alarm alarm = (Alarm) mAdapter.getItem(info.position);
 
         // Construct the Calendar to compute the time.
         final Calendar cal = Calendar.getInstance();
@@ -255,17 +270,8 @@ public class AlarmsListActivity extends ListActivity implements OnAlarmListChang
     }
 
     @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        Alarm alarm = (Alarm) getListAdapter().getItem(position);
-        Intent intent = new Intent(this, SetAlarmActivity.class);
-        intent.putExtra(Intents.EXTRA_ID, alarm.getId());
-        startActivity(intent);
-        super.onListItemClick(l, v, position, id);
-    }
-
-    @Override
     public void onAlarmListChanged(List<Alarm> newList) {
-        AlarmListAdapter adapter = (AlarmListAdapter) getListAdapter();
+        AlarmListAdapter adapter = (AlarmListAdapter) mAdapter;
         adapter.clear();
         adapter.addAll(newList);
     }
