@@ -135,6 +135,16 @@
             </intent-filter>
         </receiver>
 
+        <!-- Reacts on Alarms being snoozed and displays a notification -->
+        <receiver
+            android:name=".presenter.NotificationReceiver"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.better.alarm.ALARM_SNOOZE" />
+                <action android:name="com.better.alarm.ALARM_DISMISS" />
+            </intent-filter>
+        </receiver>
+
         <!-- Model -->
         <!-- Receiver which receives intents and forwards them to the AlarmsService -->
         <receiver
