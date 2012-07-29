@@ -136,23 +136,34 @@
         </receiver>
 
         <!-- Model -->
-        <receiver android:name=".model.AlarmInitReceiver" >
+        <!-- Receiver which receives intents and forwards them to the AlarmsService -->
+        <receiver
+            android:name=".model.AlarmReceiver"
+            android:exported="false" >
             <intent-filter>
+                <action android:name="com.better.alarm.ACTION_FIRED" />
+                <action android:name="com.better.alarm.ACTION_SNOOZED_FIRED" />
+                <action android:name="com.better.alarm.ACTION_SOUND_EXPIRED" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.TIME_SET" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
                 <action android:name="android.intent.action.LOCALE_CHANGED" />
             </intent-filter>
         </receiver>
-
-        <!-- Receiver which receives intents from the AlarmManager -->
-        <receiver android:name=".model.AlarmReceiver" >
+        <!-- This service is responsible for handling intents -->
+        <service
+            android:name=".model.AlarmsService"
+            android:exported="false" >
             <intent-filter>
                 <action android:name="com.better.alarm.ACTION_FIRED" />
                 <action android:name="com.better.alarm.ACTION_SNOOZED_FIRED" />
                 <action android:name="com.better.alarm.ACTION_SOUND_EXPIRED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.LOCALE_CHANGED" />
             </intent-filter>
-        </receiver>
+        </service>
     </application>
 
 </manifest>

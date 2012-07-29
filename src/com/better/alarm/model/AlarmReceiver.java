@@ -15,8 +15,6 @@
  */
 package com.better.alarm.model;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -33,59 +31,14 @@ import android.util.Log;
 public class AlarmReceiver extends BroadcastReceiver {
     private static final String TAG = "AlarmReceiver";
     private static final boolean DBG = true;
-    private static final String ACTION_FIRED = "com.better.alarm.ACTION_FIRED";
-    private static final String ACTION_SNOOZED_FIRED = "com.better.alarm.ACTION_SNOOZED_FIRED";
-    private static final String ACTION_SOUND_EXPIRED = "com.better.alarm.ACTION_SOUND_EXPIRED";
-
-    private static final String EXTRA_ID = "intent.extra.alarm";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        int id = intent.getIntExtra(EXTRA_ID, -1);
-        Alarm alarm = AlarmsManager.getInstance().getAlarm(id);
-
-        if (alarm == null) {
-            Log.wtf(TAG, "Failed to parse the alarm from the intent");
-            return;
-        }
-
-        String action = intent.getAction();
-        if (action.equals(ACTION_FIRED)) {
-            AlarmsManager.getInstance().onAlarmFired(alarm);
-
-        } else if (action.equals(ACTION_SNOOZED_FIRED)) {
-            AlarmsManager.getInstance().onAlarmSnoozedFired(alarm);
-
-        } else if (action.equals(ACTION_SOUND_EXPIRED)) {
-            AlarmsManager.getInstance().onAlarmSoundExpired(alarm);
-
-        }
+        //TODO wakelock
+        final String action = intent.getAction();
+        if (DBG) Log.d(TAG, "Forwarding to the service: " + action);
+        Intent serviceIntent = new Intent(action);
+        serviceIntent.putExtras(intent);
+        context.startService(serviceIntent);
     }
-
-    /**
-     * @param context
-     */
-    static void removeRTCAlarm(Context context) {
-        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent sender = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_FIRED),
-                PendingIntent.FLAG_CANCEL_CURRENT);
-        am.cancel(sender);
-    }
-
-    /**
-     * @param context
-     * @param alarm
-     * @param atTimeInMillis
-     */
-    static void setUpRTCAlarm(Context context, final Alarm alarm, final long atTimeInMillis) {
-        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
-        if (DBG) Log.d(TAG, "** setAlert id " + alarm.getId() + " atTime " + atTimeInMillis);
-
-        Intent intent = new Intent(ACTION_FIRED);
-        intent.putExtra(EXTRA_ID, alarm.getId());
-        PendingIntent sender = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        am.set(AlarmManager.RTC_WAKEUP, atTimeInMillis, sender);
-    }
-
 }

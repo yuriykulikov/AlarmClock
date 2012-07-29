@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2007 The Android Open Source Project
  * Copyright (C) 2012 Yuriy Kulikov yuriy.kulikov.87@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,9 +44,10 @@ public class AlarmsManager {
 
     static void init(Context context) {
         if (sModelInstance == null) {
-            sModelInstance = new Alarms(context);
+            sModelInstance = new Alarms(context, new AlarmsScheduler(context));
         }
         sModelInstance.disableExpiredAlarms();
         sModelInstance.setNextAlert();
     }
+
 }

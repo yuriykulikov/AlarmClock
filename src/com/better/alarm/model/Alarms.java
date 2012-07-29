@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2007 The Android Open Source Project
  * Copyright (C) 2012 Yuriy Kulikov yuriy.kulikov.87@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.better.alarm.model;
 
 import java.util.Collections;
@@ -40,15 +38,16 @@ import com.better.alarm.model.Alarm.DaysOfWeek;
 public class Alarms implements IAlarmsManager {
     private static final String TAG = "Alarms";
     private static final boolean DBG = true;
-
     private Context mContext;
+    private IAlarmsScheduler mAlarmsScheduler;
     private Set<IAlarmsManager.OnAlarmListChangedListener> mAlarmListChangedListeners;
 
     private ContentResolver mContentResolver;
     private Set<Alarm> set;
 
-    Alarms(Context context) {
+    Alarms(Context context, IAlarmsScheduler alarmsScheduler) {
         mContext = context;
+        this.mAlarmsScheduler = alarmsScheduler;
         mAlarmListChangedListeners = new HashSet<IAlarmsManager.OnAlarmListChangedListener>();
         mContentResolver = mContext.getContentResolver();
         set = new HashSet<Alarm>();
@@ -118,7 +117,8 @@ public class Alarms implements IAlarmsManager {
         return alarms;
     }
 
-    void onAlarmFired(Alarm alarm) {
+    void onAlarmFired(int id) {
+        Alarm alarm = getAlarm(id);
         broadcastAlarmState(alarm, Intents.ALARM_ALERT_ACTION);
 
         // Disable this alarm if it does not repeat.
@@ -129,11 +129,11 @@ public class Alarms implements IAlarmsManager {
         }
     }
 
-    void onAlarmSnoozedFired(Alarm alarm) {
+    void onAlarmSnoozedFired(int id) {
         // TODO
     }
 
-    void onAlarmSoundExpired(Alarm alarm) {
+    void onAlarmSoundExpired(int id) {
         // TODO
     }
 
@@ -237,10 +237,10 @@ public class Alarms implements IAlarmsManager {
     void setNextAlert() {
         final Alarm alarm = calculateNextAlert();
         if (alarm != null) {
-            AlarmReceiver.setUpRTCAlarm(mContext, alarm, alarm.getTimeInMillis());
+            mAlarmsScheduler.setUpRTCAlarm(alarm, alarm.getTimeInMillis());
             broadcastAlarmState(alarm, Intents.ACTION_ALARM_SCHEDULED);
         } else {
-            AlarmReceiver.removeRTCAlarm(mContext);
+            mAlarmsScheduler.removeRTCAlarm();
             broadcastAlarmState(alarm, Intents.ACTION_ALARMS_UNSCHEDULED);
         }
     }
