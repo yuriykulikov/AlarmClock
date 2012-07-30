@@ -15,6 +15,8 @@
  */
 package com.better.alarm.model;
 
+import com.better.wakelock.WakeLockManager;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -34,11 +36,12 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        //TODO wakelock
+
         final String action = intent.getAction();
         if (DBG) Log.d(TAG, "Forwarding to the service: " + action);
         Intent serviceIntent = new Intent(action);
         serviceIntent.putExtras(intent);
+        WakeLockManager.getWakeLockManager().acquirePartialWakeLock(serviceIntent, "ForAlarmService");
         context.startService(serviceIntent);
     }
 }

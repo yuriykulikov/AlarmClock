@@ -15,6 +15,8 @@
  */
 package com.better.alarm.model;
 
+import com.better.wakelock.WakeLockManager;
+
 import android.app.Application;
 
 public class AlarmApplication extends Application {
@@ -22,6 +24,7 @@ public class AlarmApplication extends Application {
     @Override
     public void onCreate() {
         AlarmsManager.init(getApplicationContext());
+        WakeLockManager.init(getApplicationContext(), true);
         super.onCreate();
     }
 

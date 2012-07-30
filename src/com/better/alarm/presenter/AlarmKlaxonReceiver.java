@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.better.alarm.model.Intents;
+import com.better.wakelock.WakeLockManager;
 
 /**
  * Dispatches intents to the KlaxonService
@@ -32,13 +33,10 @@ public class AlarmKlaxonReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, final Intent intent) {
         int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
 
-        // Maintain a cpu wake lock until the and AlarmKlaxonService can pick it
-        // up.
-        AlarmAlertWakeLock.acquireCpuWakeLock(context);
-
         // Dispatch intent to the service
         Intent playAlarm = new Intent(intent.getAction());
         playAlarm.putExtra(Intents.EXTRA_ID, id);
+        WakeLockManager.getWakeLockManager().acquirePartialWakeLock(playAlarm, "ForAlarmKlaxonService");
         context.startService(playAlarm);
     }
 }

@@ -37,6 +37,7 @@ import com.better.alarm.R;
 import com.better.alarm.model.Alarm;
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.Intents;
+import com.better.wakelock.WakeLockManager;
 
 /**
  * Manages alarms and vibe. Runs as a service so that it can continue to play if
@@ -51,6 +52,8 @@ public class AlarmKlaxonService extends Service {
     private Vibrator mVibrator;
     private MediaPlayer mMediaPlayer;
     private TelephonyManager mTelephonyManager;
+
+    private Intent mIntent;
 
     private PhoneStateListener mPhoneStateListener = new PhoneStateListener() {
         @Override
@@ -75,7 +78,7 @@ public class AlarmKlaxonService extends Service {
         stop();
         // Stop listening for incoming calls.
         mTelephonyManager.listen(mPhoneStateListener, 0);
-        AlarmAlertWakeLock.releaseCpuLock();
+        WakeLockManager.getWakeLockManager().releasePartialWakeLock(mIntent);
         if (DBG) Log.d(TAG, "Service destroyed");
     }
 
@@ -86,6 +89,7 @@ public class AlarmKlaxonService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        mIntent = intent;
         int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
         String action = intent.getAction();
 

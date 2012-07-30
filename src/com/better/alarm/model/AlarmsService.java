@@ -15,6 +15,8 @@
  */
 package com.better.alarm.model;
 
+import com.better.wakelock.WakeLockManager;
+
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
@@ -53,6 +55,9 @@ public class AlarmsService extends Service {
         } else if (action.equals(Intent.ACTION_LOCALE_CHANGED)) {
             // TODO
         }
+
+        WakeLockManager.getWakeLockManager().releasePartialWakeLock(intent);
+
         return START_NOT_STICKY;
     }
 
