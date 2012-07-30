@@ -20,6 +20,7 @@ public class NotificationReceiver extends BroadcastReceiver {
     private static final String ACTION_CANCEL_SNOOZE_NOTIFICATION = "NotificationReceiver.ACTION_CANCEL_SNOOZE_NOTIFICATION";
     private static final String DM12 = "E h:mm aa";
     private static final String DM24 = "E kk:mm";
+    private static final int NOTIFICATION_OFFSET = 1000;
     Context mContext;
     NotificationManager nm;
     IAlarmsManager alarmsManager;
@@ -34,7 +35,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
         alarm = alarmsManager.getAlarm(id);
         if (action.equals(Intents.ALARM_DISMISS_ACTION)) {
-            nm.cancel(id);
+            nm.cancel(id + NOTIFICATION_OFFSET);
 
         } else if (action.equals(Intents.ALARM_SNOOZE_ACTION)) {
             onSnoozed(id);
@@ -62,7 +63,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         n.setLatestEventInfo(mContext, label,
                 mContext.getString(R.string.alarm_notify_snooze_text, formatTimeString()), broadcast);
         n.flags |= Notification.FLAG_AUTO_CANCEL | Notification.FLAG_ONGOING_EVENT;
-        nm.notify(id, n);
+        nm.notify(id + NOTIFICATION_OFFSET, n);
     }
 
     private String formatTimeString() {
