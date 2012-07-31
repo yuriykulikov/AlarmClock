@@ -74,6 +74,11 @@ public class Alarms implements IAlarmsManager {
         }
     }
 
+    void init() {
+        disableExpiredAlarms();
+        setNextAlert();
+    }
+
     @Override
     public int createNewAlarm() {
         Alarm alarm = new Alarm();
@@ -123,14 +128,11 @@ public class Alarms implements IAlarmsManager {
         Alarm alarm = getAlarm(id);
         broadcastAlarmState(id, Intents.ALARM_ALERT_ACTION);
         alarm.setSnoozed(false);
-        // TODO this will lead to a setting of alarm, has to be changed
-        changeAlarm(alarm);
         // Disable this alarm if it does not repeat.
         if (!alarm.getDaysOfWeek().isRepeatSet()) {
-            enable(alarm.getId(), false);
-        } else {
-            setNextAlert();
+            alarm.setEnabled(false);
         }
+        changeAlarm(alarm);
     }
 
     void onAlarmSnoozedFired(int id) {
@@ -211,7 +213,6 @@ public class Alarms implements IAlarmsManager {
         broadcastAlarmState(alarm.getId(), Intents.ALARM_DISMISS_ACTION);
         alarm.setSnoozed(false);
         changeAlarm(alarm);
-        // setNextAlert();
     }
 
     private Alarm calculateNextAlert() {

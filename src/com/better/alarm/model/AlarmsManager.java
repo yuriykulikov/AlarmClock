@@ -45,9 +45,10 @@ public class AlarmsManager {
     static void init(Context context) {
         if (sModelInstance == null) {
             sModelInstance = new Alarms(context, new AlarmsScheduler(context));
+        } else {
+            throw new RuntimeException("Attept to reinitialize!");
         }
-        sModelInstance.disableExpiredAlarms();
-        sModelInstance.setNextAlert();
+        sModelInstance.init();
     }
 
 }

@@ -50,7 +50,7 @@ public class AlarmsService extends Service {
 
         } else if (action.equals(Intent.ACTION_TIMEZONE_CHANGED) || action.equals(Intent.ACTION_TIME_CHANGED)
                 || action.equals(Intent.ACTION_BOOT_COMPLETED)) {
-            AlarmsManager.init(getApplicationContext());
+            alarms.init();
 
         } else if (action.equals(Intent.ACTION_LOCALE_CHANGED)) {
             // TODO
