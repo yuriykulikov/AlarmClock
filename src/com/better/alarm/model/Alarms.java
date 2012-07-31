@@ -15,6 +15,7 @@
  */
 package com.better.alarm.model;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -28,6 +29,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.better.alarm.model.Alarm.DaysOfWeek;
@@ -120,7 +122,9 @@ public class Alarms implements IAlarmsManager {
     void onAlarmFired(int id) {
         Alarm alarm = getAlarm(id);
         broadcastAlarmState(alarm, Intents.ALARM_ALERT_ACTION);
-
+        alarm.setSnoozed(false);
+        // TODO this will lead to a setting of alarm, has to be changed
+        changeAlarm(alarm);
         // Disable this alarm if it does not repeat.
         if (!alarm.getDaysOfWeek().isRepeatSet()) {
             enable(alarm.getId(), false);
@@ -130,7 +134,8 @@ public class Alarms implements IAlarmsManager {
     }
 
     void onAlarmSnoozedFired(int id) {
-        // TODO
+        // TODO it is not used for now because, well, it will probably not be
+        // used
     }
 
     void onAlarmSoundExpired(int id) {
@@ -190,14 +195,21 @@ public class Alarms implements IAlarmsManager {
 
     @Override
     public void snooze(Alarm alarm) {
-        // TODO
+        int snoozeMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext).getString(
+                "snooze_duration", "10"));
+        alarm.setSnoozed(true);
+        alarm.setSnoozedHour(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
+        alarm.setSnoozedminutes(Calendar.getInstance().get(Calendar.MINUTE) + snoozeMinutes);
+        broadcastAlarmState(alarm, Intents.ALARM_SNOOZE_ACTION);
+        changeAlarm(alarm);
     }
 
     @Override
     public void dismiss(Alarm alarm) {
         broadcastAlarmState(alarm, Intents.ALARM_DISMISS_ACTION);
-        setNextAlert();
-        // TODO
+        alarm.setSnoozed(false);
+        changeAlarm(alarm);
+        // setNextAlert();
     }
 
     private Alarm calculateNextAlert() {
@@ -207,7 +219,7 @@ public class Alarms implements IAlarmsManager {
             if (DBG) Log.d(TAG, "no alarms");
         } else {
             alarm = Collections.min(getAlarmsList());
-            if (!alarm.isEnabled()) {
+            if (!alarm.isEnabled() && !alarm.isSnoozed()) {
                 alarm = null;
                 if (DBG) Log.d(TAG, "no alarms");
             } else {
@@ -237,7 +249,8 @@ public class Alarms implements IAlarmsManager {
     void setNextAlert() {
         final Alarm alarm = calculateNextAlert();
         if (alarm != null) {
-            mAlarmsScheduler.setUpRTCAlarm(alarm, alarm.getTimeInMillis());
+            long timeInMillis = alarm.isSnoozed() ? alarm.getSnoozedTimeInMillis() : alarm.getTimeInMillis();
+            mAlarmsScheduler.setUpRTCAlarm(alarm, timeInMillis);
             broadcastAlarmState(alarm, Intents.ACTION_ALARM_SCHEDULED);
         } else {
             mAlarmsScheduler.removeRTCAlarm();

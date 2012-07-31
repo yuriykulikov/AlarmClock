@@ -53,13 +53,16 @@ class AlarmDatabaseHelper extends SQLiteOpenHelper {
                 "vibrate INTEGER, " +
                 "message TEXT, " +
                 "alert TEXT, " +
-                "prealarm INTEGER);");
+                "prealarm INTEGER, " +
+                "snoozed INTEGER, " +
+                "snoozed_hour INTEGER, " +
+                "snoozed_minutes INTEGER);");
         // @formatter:on
         // insert default alarms
         String insertMe = "INSERT INTO alarms " + "(hour, minutes, daysofweek, alarmtime, enabled, vibrate, "
-                + "message, alert, prealarm) VALUES ";
-        db.execSQL(insertMe + "(8, 30, 31, 0, 0, 1, '', '', 0);");
-        db.execSQL(insertMe + "(9, 00, 96, 0, 0, 1, '', '', 0);");
+                + "message, alert, prealarm, snoozed, snoozed_hour, snoozed_minutes) VALUES ";
+        db.execSQL(insertMe + "(8, 30, 31, 0, 0, 1, '', '', 0, 0, 0, 0);");
+        db.execSQL(insertMe + "(9, 00, 96, 0, 0, 1, '', '', 0, 0, 0, 0);");
     }
 
     @Override

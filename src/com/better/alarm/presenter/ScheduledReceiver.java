@@ -14,6 +14,8 @@
  */
 package com.better.alarm.presenter;
 
+import java.util.Calendar;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -48,7 +50,8 @@ public class ScheduledReceiver extends BroadcastReceiver {
             // Update systems settings, so that interested Apps (like KeyGuard)
             // will react accordingly
             String format = android.text.format.DateFormat.is24HourFormat(context) ? DM24 : DM12;
-            String timeString = (String) DateFormat.format(format, alarm.calculateCalendar());
+            Calendar calendar = alarm.isSnoozed() ? alarm.calculateSnoozedCalendar() : alarm.calculateCalendar();
+            String timeString = (String) DateFormat.format(format, calendar);
             Settings.System.putString(context.getContentResolver(), Settings.System.NEXT_ALARM_FORMATTED, timeString);
 
         } else if (intent.getAction().equals(Intents.ACTION_ALARMS_UNSCHEDULED)) {

@@ -84,7 +84,7 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
             NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             nm.notify(id, n);
 
-        } else if (action.equals(Intents.ALARM_DISMISS_ACTION)) {
+        } else if (action.equals(Intents.ALARM_DISMISS_ACTION) || action.equals(Intents.ALARM_SNOOZE_ACTION)) {
             NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             nm.cancel(id);
         }
