@@ -107,7 +107,7 @@ public class Alarms implements IAlarmsManager {
         Uri uri = ContentUris.withAppendedId(Alarm.Columns.CONTENT_URI, alarmId);
         mContentResolver.delete(uri, "", null);
 
-        broadcastAlarmState(getAlarm(alarmId), Intents.ALARM_DISMISS_ACTION);
+        broadcastAlarmState(alarmId, Intents.ALARM_DISMISS_ACTION);
         notifyAlarmListChangedListeners();
 
         setNextAlert();
@@ -121,7 +121,7 @@ public class Alarms implements IAlarmsManager {
 
     void onAlarmFired(int id) {
         Alarm alarm = getAlarm(id);
-        broadcastAlarmState(alarm, Intents.ALARM_ALERT_ACTION);
+        broadcastAlarmState(id, Intents.ALARM_ALERT_ACTION);
         alarm.setSnoozed(false);
         // TODO this will lead to a setting of alarm, has to be changed
         changeAlarm(alarm);
@@ -200,13 +200,13 @@ public class Alarms implements IAlarmsManager {
         alarm.setSnoozed(true);
         alarm.setSnoozedHour(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
         alarm.setSnoozedminutes(Calendar.getInstance().get(Calendar.MINUTE) + snoozeMinutes);
-        broadcastAlarmState(alarm, Intents.ALARM_SNOOZE_ACTION);
+        broadcastAlarmState(alarm.getId(), Intents.ALARM_SNOOZE_ACTION);
         changeAlarm(alarm);
     }
 
     @Override
     public void dismiss(Alarm alarm) {
-        broadcastAlarmState(alarm, Intents.ALARM_DISMISS_ACTION);
+        broadcastAlarmState(alarm.getId(), Intents.ALARM_DISMISS_ACTION);
         alarm.setSnoozed(false);
         changeAlarm(alarm);
         // setNextAlert();
@@ -251,16 +251,21 @@ public class Alarms implements IAlarmsManager {
         if (alarm != null) {
             long timeInMillis = alarm.isSnoozed() ? alarm.getSnoozedTimeInMillis() : alarm.getTimeInMillis();
             mAlarmsScheduler.setUpRTCAlarm(alarm, timeInMillis);
-            broadcastAlarmState(alarm, Intents.ACTION_ALARM_SCHEDULED);
+            broadcastAlarmState(alarm.getId(), Intents.ACTION_ALARM_SCHEDULED);
         } else {
             mAlarmsScheduler.removeRTCAlarm();
-            broadcastAlarmState(alarm, Intents.ACTION_ALARMS_UNSCHEDULED);
+            broadcastState(Intents.ACTION_ALARMS_UNSCHEDULED);
         }
     }
 
-    private void broadcastAlarmState(Alarm alarm, String action) {
+    private void broadcastAlarmState(int id, String action) {
         Intent intent = new Intent(action);
-        intent.putExtra(Intents.EXTRA_ID, alarm == null ? -1 : alarm.getId());
+        intent.putExtra(Intents.EXTRA_ID, id);
+        mContext.sendBroadcast(intent);
+    }
+
+    private void broadcastState(String action) {
+        Intent intent = new Intent(action);
         mContext.sendBroadcast(intent);
     }
 
