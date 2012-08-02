@@ -12,7 +12,7 @@
      distributed under the License is distributed on an "AS IS" BASIS,
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
-     limitations under the License.
+     limitations under the License.
 -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
@@ -69,6 +69,9 @@
     <!-- Setting labels on Set alarm screen: Prealarm -->
     <string name="alarm_prealarm">Gentle pre-alarm</string>
 
+    <!-- Go to bed now -->
+    <string name="go_to_bed">Go to bed now</string>
+
     <!-- Setting labels on Set alarm screen: Select alarm ringtone -->
     <string name="alert">Ringtone</string>
 
@@ -81,7 +84,7 @@
     <!--
          Alarm Alert screen: this message is shown after an alarm rung
          unattended for a number of minutes.  It tells the user that
-         the alarm has been silenced.
+         the alarm has been silenced.
     -->
     <string name="alarm_alert_alert_silenced">Alarm silenced after <xliff:g id="minutes">%d</xliff:g> minutes.</string>
 
@@ -90,7 +93,7 @@
 
     <!--
          Toast that appears after Alarm is snoozed from the Alarm
-         dialog. Says the alarm will snooze for xxx minutes.
+         dialog. Says the alarm will snooze for xxx minutes.
     -->
     <string name="alarm_alert_snooze_set">Snoozing for <xliff:g id="minutes">%d</xliff:g> minutes.</string>
 
@@ -102,13 +105,13 @@
          4:            minutes
          5: days       minutes
          6:      hours minutes
-         7: days hours minutes
+         7: days hours minutes
     -->
     <skip />
 
     <!--
          Alarm confirmation toast: Describes how long from now until
-         alarm fires
+         alarm fires
     -->
     <string-array name="alarm_set">
         <item>Alarm set for less than 1 minute from now.</item>
@@ -142,27 +145,27 @@
     <!--
          Repeat options that appear under an alarm on main Alarm Clock
          screen to identify repetition schedule: special case for when
-         the alarm is set to repeat every day
+         the alarm is set to repeat every day
     -->
     <string name="every_day">Every day</string>
 
     <!--
          Repeat options that appear under an alarm on main Alarm Clock
          screen to identify repetition schedule: special case for when
-         the alarm is set to never repeat
+         the alarm is set to never repeat
     -->
     <string name="never">Never</string>
 
     <!--
          Repeat options that appear under an alarm on main Alarm Clock
          screen to identify repetition schedule: concatenate days with
-         this character, i.e. "Mon, Tue, Wed"
+         this character, i.e. "Mon, Tue, Wed"
     -->
     <string name="day_concat">", "</string>
 
     <!--
          Appears at the top of the Clock Picker screen: Tell user to
-         select a clock to display
+         select a clock to display
     -->
     <string name="clock_instructions">Choose a clock</string>
 
@@ -175,7 +178,7 @@
     <!--
          Setting title for whether the alarm should play in silent mode.
          Usually, silent mode only affects the ringer, but this setting
-         will make the alarms respect silent mode too.
+         will make the alarms respect silent mode too.
     -->
     <string name="alarm_in_silent_mode_title">Alarm in silent mode</string>
 
@@ -187,7 +190,7 @@
 
     <!--
          Entries listed in the ListPreference when invoking the snooze duration
-         preference.
+         preference.
     -->
     <string-array name="snooze_duration_entries">
         <item>5 minutes</item>
@@ -200,7 +203,7 @@
 
     <!--
          Values that are retrieved from the ListPreference. These must match
-         the snooze_duration_entries above.
+         the snooze_duration_entries above.
     -->
     <string-array name="snooze_duration_values">
         <item>5</item>
@@ -222,7 +225,7 @@
 
     <!--
          Entries listed in the ListPreference when invoking the auto silence
-         preference.
+         preference.
     -->
     <string-array name="auto_silence_entries">
         <item>Off</item>
@@ -236,11 +239,11 @@
 
     <!--
          Values that are retrieved from the ListPreference. These must match
-         the auto_silence_entries above.
+         the auto_silence_entries above.
     -->
     <string-array name="auto_silence_values" translatable="false">
         <item>-1</item>
- <!-- Off -->
+        <!-- Off -->
         <item>5</item>
         <item>10</item>
         <item>15</item>
@@ -271,7 +274,7 @@
     <string name="prealarm_duration_title">Pre-alarm duration</string>
     <!--
          Entries listed in the ListPreference when invoking the pre-alarm duration
-         preference.
+         preference.
     -->
     <string-array name="prealarm_duration_entries">
         <item>10 minutes</item>
@@ -283,7 +286,7 @@
 
     <!--
          Values that are retrieved from the ListPreference. These must match
-         the prealarm_duration_entries above.
+         the prealarm_duration_entries above.
     -->
     <string-array name="prealarm_duration_values">
         <item>10</item>
@@ -349,20 +352,20 @@
     <!--
          What to show the user if the weather widget exists but fails to
          respond. This is a sign of an error; if the weather widget is not
-         present on the device, we show nothing at all.
+         present on the device, we show nothing at all.
     -->
     <string name="weather_fetch_failure">Weather information isn\'t available right now.</string>
     <string name="menu_item_dock_settings" msgid="9161438664257429372">Dock settings</string>
 
     <!--
          A description for the DeskClock alarm sound playback service.
-         [CHAR LIMIT=NONE]
+         [CHAR LIMIT=NONE]
     -->
     <string name="alarm_klaxon_service_desc">Sound playback service for alarms set in Clock.</string>
 
     <!--
          String displayed as the alert summary while loading the alert name from
-         the media player. [CHAR LIMIT=NONE]
+         the media player. [CHAR LIMIT=NONE]
     -->
     <string name="loading_ringtone">Loading ringtone\u2026</string>
 
