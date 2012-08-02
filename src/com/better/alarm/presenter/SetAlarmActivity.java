@@ -135,6 +135,12 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        if (isNewAlarm) revert();
+        super.onDestroy();
+    }
+
     /*
      * @Override protected void onSaveInstanceState(Bundle outState) {
      * super.onSaveInstanceState(outState);
@@ -238,6 +244,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
     private long saveAlarm() {
         alarms.changeAlarm(mId, mEnabledPref.isChecked(), mHour, mMinute, mRepeatPref.getDaysOfWeek(), true, "",
                 mAlarmPref.getAlert(), mPreAlarmPref.isChecked());
+        isNewAlarm = false;
         return alarms.getAlarm(mId).getTimeInMillis();
     }
 
