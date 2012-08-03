@@ -158,7 +158,6 @@ public final class Alarm implements Comparable<Alarm> {
         public static final int ALARM_HOUR_INDEX = 1;
         public static final int ALARM_MINUTES_INDEX = 2;
         public static final int ALARM_DAYS_OF_WEEK_INDEX = 3;
-        @Deprecated
         public static final int ALARM_TIME_INDEX = 4;
         public static final int ALARM_ENABLED_INDEX = 5;
         public static final int ALARM_VIBRATE_INDEX = 6;
@@ -182,6 +181,12 @@ public final class Alarm implements Comparable<Alarm> {
     private boolean enabled;
     private int hour;
     private int minutes;
+    /**
+     * Time when Alarm would normally go next time. Used to disable expired
+     * alarms if devicee was off-line when they were supposed to fire
+     * 
+     */
+    private long nextTimeInMillis;
     private DaysOfWeek daysOfWeek;
     private boolean vibrate;
     private String label;
@@ -197,6 +202,7 @@ public final class Alarm implements Comparable<Alarm> {
         enabled = c.getInt(Columns.ALARM_ENABLED_INDEX) == 1;
         hour = c.getInt(Columns.ALARM_HOUR_INDEX);
         minutes = c.getInt(Columns.ALARM_MINUTES_INDEX);
+        nextTimeInMillis = (c.getLong(Columns.ALARM_TIME_INDEX));
         daysOfWeek = new DaysOfWeek(c.getInt(Columns.ALARM_DAYS_OF_WEEK_INDEX));
         vibrate = c.getInt(Columns.ALARM_VIBRATE_INDEX) == 1;
         label = c.getString(Columns.ALARM_MESSAGE_INDEX);
@@ -230,6 +236,7 @@ public final class Alarm implements Comparable<Alarm> {
         minutes = c.get(Calendar.MINUTE);
         vibrate = true;
         daysOfWeek = new DaysOfWeek(0);
+        nextTimeInMillis = c.getTimeInMillis();
         alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         prealarm = false;
         snoozed = false;
@@ -445,6 +452,14 @@ public final class Alarm implements Comparable<Alarm> {
         return vibrate;
     }
 
+    /**
+     * @see {@link #nextTimeInMillis}
+     * @return
+     */
+    long getNextTimeInMillis() {
+        return nextTimeInMillis;
+    }
+
     public DaysOfWeek getDaysOfWeek() {
         return daysOfWeek;
     }
@@ -471,12 +486,9 @@ public final class Alarm implements Comparable<Alarm> {
 
     ContentValues createContentValues() {
         ContentValues values = new ContentValues(8);
-        // Set the alarm_time value if this alarm does not repeat. This will be
-        // used later to disable expire alarms.
-        long time = 0;
-        if (!daysOfWeek.isRepeatSet()) {
-            time = getTimeInMillis();
-        }
+        // Set the alarm_time value. This will be
+        // used later to disable expired alarms.
+        long time = getTimeInMillis();
 
         values.put(Alarm.Columns.ENABLED, enabled ? 1 : 0);
         values.put(Alarm.Columns.HOUR, hour);
@@ -535,6 +547,10 @@ public final class Alarm implements Comparable<Alarm> {
 
     void setVibrate(boolean vibrate) {
         this.vibrate = vibrate;
+    }
+
+    void setNextTimeInMillis(int nextTimeInMillis) {
+        this.nextTimeInMillis = nextTimeInMillis;
     }
 
     void setDaysOfWeek(DaysOfWeek daysOfWeek) {

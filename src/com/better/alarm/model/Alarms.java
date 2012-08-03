@@ -75,7 +75,14 @@ public class Alarms implements IAlarmsManager {
     }
 
     void init() {
-        disableExpiredAlarms();
+        // disable expired alarms
+        long now = System.currentTimeMillis();
+        for (Alarm alarm : set) {
+            boolean isExpired = alarm.getNextTimeInMillis() < now;
+            if (isExpired && !alarm.isEnabled()) {
+                enable(alarm.getId(), false);
+            }
+        }
         setNextAlert();
     }
 
@@ -230,18 +237,6 @@ public class Alarms implements IAlarmsManager {
             }
         }
         return alarm;
-    }
-
-    /**
-     * Disables non-repeating alarms that have passed. Called at boot.
-     */
-    void disableExpiredAlarms() {
-        long now = System.currentTimeMillis();
-        for (Alarm alarm : set) {
-            if (!alarm.isEnabled() && alarm.getTimeInMillis() != 0 && alarm.getTimeInMillis() < now) {
-                enable(alarm.getId(), false);
-            }
-        }
     }
 
     /**
