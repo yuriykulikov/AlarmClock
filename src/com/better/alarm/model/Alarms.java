@@ -198,8 +198,10 @@ public class Alarms implements IAlarmsManager {
         int snoozeMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext).getString(
                 "snooze_duration", "10"));
         alarm.setSnoozed(true);
-        alarm.setSnoozedHour(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
-        alarm.setSnoozedminutes(Calendar.getInstance().get(Calendar.MINUTE) + snoozeMinutes);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MINUTE, snoozeMinutes);
+        alarm.setSnoozedHour(calendar.get(Calendar.HOUR_OF_DAY));
+        alarm.setSnoozedminutes(calendar.get(Calendar.MINUTE));
         broadcastAlarmState(alarm.getId(), Intents.ALARM_SNOOZE_ACTION);
         changeAlarm(alarm);
     }
