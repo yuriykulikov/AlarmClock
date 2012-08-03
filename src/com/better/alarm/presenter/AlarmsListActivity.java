@@ -196,6 +196,17 @@ public class AlarmsListActivity extends Activity implements OnAlarmListChangedLi
             }
         });
 
+        // for tablets
+        View addNewAlarmButton = findViewById(R.id.add_alarm);
+        if (addNewAlarmButton != null) {
+            addNewAlarmButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(AlarmsListActivity.this, SetAlarmActivity.class));
+                }
+            });
+        }
+
         View doneButton = findViewById(R.id.done);
         if (doneButton != null) {
             doneButton.setOnClickListener(new View.OnClickListener() {
