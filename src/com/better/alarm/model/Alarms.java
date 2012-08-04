@@ -80,10 +80,24 @@ public class Alarms implements IAlarmsManager {
         for (Alarm alarm : set) {
             boolean isExpired = alarm.getNextTimeInMillis() < now;
             if (isExpired && !alarm.isEnabled()) {
-                enable(alarm.getId(), false);
+                alarm.setEnabled(false);
+                writeToDb(alarm.getId());
             }
         }
         setNextAlert();
+    }
+
+    private void writeToDb(int id) {
+        ContentValues values = getAlarm(id).createContentValues();
+        Uri uriWithAppendedId = ContentUris.withAppendedId(Alarm.Columns.CONTENT_URI, id);
+        mContentResolver.update(uriWithAppendedId, values, null, null);
+    }
+
+    private void deleteAlarm(int alarmId) {
+        Alarm alarm = getAlarm(alarmId);
+        set.remove(alarm);
+        Uri uri = ContentUris.withAppendedId(Alarm.Columns.CONTENT_URI, alarmId);
+        mContentResolver.delete(uri, "", null);
     }
 
     @Override
@@ -109,19 +123,16 @@ public class Alarms implements IAlarmsManager {
         alarm.setLabel(label);
         alarm.setAlert(alert);
         alarm.setPrealarm(preAlarm);
-        changeAlarm(alarm);
+        writeToDb(alarm.getId());
+        setNextAlert();
+        notifyAlarmListChangedListeners();
     }
 
     @Override
     public void delete(int alarmId) {
-        Alarm alarm = getAlarm(alarmId);
-        set.remove(alarm);
-        Uri uri = ContentUris.withAppendedId(Alarm.Columns.CONTENT_URI, alarmId);
-        mContentResolver.delete(uri, "", null);
-
+        deleteAlarm(alarmId);
         broadcastAlarmState(alarmId, Intents.ALARM_DISMISS_ACTION);
         notifyAlarmListChangedListeners();
-
         setNextAlert();
     }
 
@@ -139,7 +150,9 @@ public class Alarms implements IAlarmsManager {
         if (!alarm.getDaysOfWeek().isRepeatSet()) {
             alarm.setEnabled(false);
         }
-        changeAlarm(alarm);
+        writeToDb(alarm.getId());
+        setNextAlert();
+        notifyAlarmListChangedListeners();
     }
 
     void onAlarmSnoozedFired(int id) {
@@ -161,32 +174,6 @@ public class Alarms implements IAlarmsManager {
         return null;
     }
 
-    private int changeAlarm(Alarm alarm) {
-        // first add to the DB
-        ContentValues values = alarm.createContentValues();
-
-        // this is an existing alarm
-        mContentResolver.update(ContentUris.withAppendedId(Alarm.Columns.CONTENT_URI, alarm.getId()), values, null,
-                null);
-        set.remove(alarm);
-        set.add(alarm);
-
-        if (alarm.isEnabled()) {
-            // Disable the snooze if we just changed the snoozed alarm. This
-            // only does work if the snoozed alarm is the same as the given
-            // alarm.
-            // TODO: disableSnoozeAlert should have a better name.
-
-            // Disable the snooze if this alarm fires before the snoozed alarm.
-            // This works on every alarm since the user most likely intends to
-            // have the modified alarm fire next.
-            // clearSnoozeIfNeeded(timeInMillis);
-        }
-        setNextAlert();
-        notifyAlarmListChangedListeners();
-        return alarm.getId();
-    }
-
     /**
      * A convenience method to enable or disable an alarm.
      * 
@@ -199,7 +186,9 @@ public class Alarms implements IAlarmsManager {
     public void enable(int id, boolean enable) {
         Alarm alarm = getAlarm(id);
         alarm.setEnabled(enable);
-        changeAlarm(alarm);
+        writeToDb(alarm.getId());
+        setNextAlert();
+        notifyAlarmListChangedListeners();
     }
 
     @Override
@@ -212,14 +201,18 @@ public class Alarms implements IAlarmsManager {
         alarm.setSnoozedHour(calendar.get(Calendar.HOUR_OF_DAY));
         alarm.setSnoozedminutes(calendar.get(Calendar.MINUTE));
         broadcastAlarmState(alarm.getId(), Intents.ALARM_SNOOZE_ACTION);
-        changeAlarm(alarm);
+        writeToDb(alarm.getId());
+        setNextAlert();
+        notifyAlarmListChangedListeners();
     }
 
     @Override
     public void dismiss(Alarm alarm) {
         broadcastAlarmState(alarm.getId(), Intents.ALARM_DISMISS_ACTION);
         alarm.setSnoozed(false);
-        changeAlarm(alarm);
+        writeToDb(alarm.getId());
+        setNextAlert();
+        notifyAlarmListChangedListeners();
     }
 
     private Alarm calculateNextAlert() {
@@ -244,7 +237,7 @@ public class Alarms implements IAlarmsManager {
      * changes alarm settings. Activates snooze if set, otherwise loads all
      * alarms, activates next alert.
      */
-    void setNextAlert() {
+    private void setNextAlert() {
         final Alarm alarm = calculateNextAlert();
         if (alarm != null) {
             long timeInMillis = alarm.isSnoozed() ? alarm.getSnoozedTimeInMillis() : alarm.getTimeInMillis();
