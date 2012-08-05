@@ -140,6 +140,7 @@
             android:name=".presenter.NotificationReceiver"
             android:exported="false" >
             <intent-filter>
+                <action android:name="com.better.alarm.ALARM_ALERT" />
                 <action android:name="com.better.alarm.ALARM_SNOOZE" />
                 <action android:name="com.better.alarm.ALARM_DISMISS" />
             </intent-filter>

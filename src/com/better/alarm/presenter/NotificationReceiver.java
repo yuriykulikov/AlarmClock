@@ -43,6 +43,11 @@ public class NotificationReceiver extends BroadcastReceiver {
         } else if (action.equals(ACTION_CANCEL_SNOOZE_NOTIFICATION)) {
             alarmsManager.dismiss(alarm);
 
+        } else if (action.equals(Intents.ALARM_ALERT_ACTION)) {
+            // our alarm fired again, remove snooze notification
+            if (alarm.getId() == id) {
+                nm.cancel(id + NOTIFICATION_OFFSET);
+            }
         }
 
     }
