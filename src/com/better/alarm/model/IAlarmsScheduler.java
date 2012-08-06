@@ -16,9 +16,17 @@
 package com.better.alarm.model;
 
 import java.util.Calendar;
+import java.util.Map;
 
 interface IAlarmsScheduler {
-    public void removeRTCAlarm();
+    /** remove all Calendars of the Alarm with given id */
+    public void removeAlarm(int id);
 
-    public void setUpRTCAlarm(final Alarm alarm, Calendar calendar);
+    /**
+     * Set all from a map.
+     * 
+     * @param id
+     * @param activeCalendars
+     */
+    public void setAlarm(int id, Map<CalendarType, Calendar> activeCalendars);
 }

@@ -48,7 +48,5 @@ public class AlarmsManager {
         } else {
             throw new RuntimeException("Attept to reinitialize!");
         }
-        sModelInstance.init();
     }
-
 }

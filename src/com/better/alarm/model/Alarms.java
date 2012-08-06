@@ -15,8 +15,6 @@
  */
 package com.better.alarm.model;
 
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -26,156 +24,96 @@ import java.util.Set;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.util.Log;
-
 
 /**
  * The Alarms implements application domain logic
  */
+@SuppressLint("UseSparseArrays")
 public class Alarms implements IAlarmsManager {
     private static final String TAG = "Alarms";
     private static final boolean DBG = true;
+
     private Context mContext;
     private IAlarmsScheduler mAlarmsScheduler;
+
     private Set<IAlarmsManager.OnAlarmListChangedListener> mAlarmListChangedListeners;
 
     private ContentResolver mContentResolver;
-    private Map<Integer, Alarm> set;
+    private Map<Integer, Alarm> alarms;
 
-    @SuppressLint("UseSparseArrays")
     Alarms(Context context, IAlarmsScheduler alarmsScheduler) {
         mContext = context;
-        this.mAlarmsScheduler = alarmsScheduler;
+        mAlarmsScheduler = alarmsScheduler;
+
         mAlarmListChangedListeners = new HashSet<IAlarmsManager.OnAlarmListChangedListener>();
         mContentResolver = mContext.getContentResolver();
-        set = new HashMap<Integer, Alarm>();
+        alarms = new HashMap<Integer, Alarm>();
 
-        final Cursor cursor = mContentResolver.query(Columns.CONTENT_URI, Columns.ALARM_QUERY_COLUMNS,
-                null, null, Columns.DEFAULT_SORT_ORDER);
+        final Cursor cursor = mContentResolver.query(Columns.CONTENT_URI, Columns.ALARM_QUERY_COLUMNS, null, null,
+                Columns.DEFAULT_SORT_ORDER);
         try {
             if (cursor.moveToFirst()) {
                 do {
-                    final Alarm a = new Alarm(cursor);
-                    set.put(a.getId(), a);
+                    final Alarm a = new Alarm(cursor, context, alarmsScheduler);
+                    alarms.put(a.getId(), a);
                 } while (cursor.moveToNext());
             }
         } finally {
             cursor.close();
         }
-    }
-
-    void init() {
-        Calendar now = Calendar.getInstance();
-        for (Alarm alarm : set.values()) {
-            boolean isExpired = alarm.getNextTime().before(now);
-            if (isExpired) {
-                if (DBG) Log.d(TAG, "Alarm expired: " + alarm.toString());
-                if (alarm.isEnabled() && alarm.getDaysOfWeek().isRepeatSet()) {
-                    alarm.calculateCalendars();
-                } else {
-                    alarm.setEnabled(false);
-                }
-                writeToDb(alarm.getId());
-            }
-        }
         if (DBG) {
             Log.d(TAG, "Alarms:");
-            for (Alarm alarm : set.values()) {
+            for (Alarm alarm : alarms.values()) {
                 Log.d(TAG, alarm.toString());
             }
         }
-        setNextAlert();
     }
 
-    private void writeToDb(int id) {
-        ContentValues values = getAlarm(id).createContentValues();
-        Uri uriWithAppendedId = ContentUris.withAppendedId(Columns.CONTENT_URI, id);
-        mContentResolver.update(uriWithAppendedId, values, null, null);
-    }
-
-    private void deleteAlarm(int alarmId) {
-        Alarm alarm = getAlarm(alarmId);
-        set.remove(alarm);
-        Uri uri = ContentUris.withAppendedId(Columns.CONTENT_URI, alarmId);
-        mContentResolver.delete(uri, "", null);
+    @Override
+    public Alarm getAlarm(int alarmId) {
+        return alarms.get(alarmId);
     }
 
     @Override
     public int createNewAlarm() {
-        Alarm alarm = new Alarm();
-        Uri uri = mContentResolver.insert(Columns.CONTENT_URI, alarm.createContentValues());
-        alarm.setId((int) ContentUris.parseId(uri));
-        set.put(alarm.getId(), alarm);
-        // new alarm is not enabled, no need to check if it can fire. It can't
+        Alarm alarm = new Alarm(mContext, mAlarmsScheduler);
+        alarms.put(alarm.getId(), alarm);
         notifyAlarmListChangedListeners();
         return alarm.getId();
     }
 
     @Override
-    public void changeAlarm(int id, boolean enabled, int hour, int minute, DaysOfWeek daysOfWeek, boolean vibrate,
-            String label, Uri alert, boolean preAlarm) {
-        Alarm alarm = getAlarm(id);
-        alarm.setEnabled(enabled);
-        alarm.setHour(hour);
-        alarm.setMinutes(minute);
-        alarm.setDaysOfWeek(daysOfWeek);
-        alarm.setVibrate(vibrate);
-        alarm.setLabel(label);
-        alarm.setAlert(alert);
-        alarm.setPrealarm(preAlarm);
-
-        alarm.calculateCalendars();
-        writeToDb(alarm.getId());
-        setNextAlert();
+    public void delete(int alarmId) {
+        Alarm alarm = getAlarm(alarmId);
+        alarm.delete();
+        alarms.remove(alarmId);
         notifyAlarmListChangedListeners();
     }
 
+    // Compatibility - passes calls to Alarms
+
     @Override
-    public void delete(int alarmId) {
-        deleteAlarm(alarmId);
-        broadcastAlarmState(alarmId, Intents.ALARM_DISMISS_ACTION);
+    public void changeAlarm(int id, boolean enabled, int hour, int minute, DaysOfWeek daysOfWeek, boolean vibrate,
+            String label, Uri alert, boolean preAlarm) {
+        Alarm alarm = getAlarm(id);
+        alarm.change(enabled, hour, minute, daysOfWeek, vibrate, label, alert, preAlarm);
         notifyAlarmListChangedListeners();
-        setNextAlert();
     }
 
     @Override
     public List<Alarm> getAlarmsList() {
-        List<Alarm> alarms = new LinkedList<Alarm>(set.values());
+        List<Alarm> alarms = new LinkedList<Alarm>(this.alarms.values());
         return alarms;
     }
 
-    void onAlarmFired(int id) {
+    void onAlarmFired(int id, CalendarType calendarType) {
         Alarm alarm = getAlarm(id);
-        broadcastAlarmState(id, Intents.ALARM_ALERT_ACTION);
-        alarm.setSnoozed(false);
-        // Disable this alarm if it does not repeat.
-        if (!alarm.getDaysOfWeek().isRepeatSet()) {
-            alarm.setEnabled(false);
-        }
-        writeToDb(alarm.getId());
-        setNextAlert();
+        alarm.onAlarmFired(calendarType);
         notifyAlarmListChangedListeners();
-    }
-
-    void onAlarmSnoozedFired(int id) {
-        // TODO it is not used for now because, well, it will probably not be
-        // used
-    }
-
-    void onAlarmSoundExpired(int id) {
-        // TODO
-    }
-
-    @Override
-    public Alarm getAlarm(int alarmId) {
-        return set.get(alarmId);
     }
 
     /**
@@ -189,71 +127,20 @@ public class Alarms implements IAlarmsManager {
     @Override
     public void enable(int id, boolean enable) {
         Alarm alarm = getAlarm(id);
-        alarm.setEnabled(enable);
-        alarm.calculateCalendars();
-        writeToDb(alarm.getId());
-        setNextAlert();
+        alarm.enable(enable);
         notifyAlarmListChangedListeners();
     }
 
     @Override
     public void snooze(Alarm alarm) {
-        int snoozeMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext).getString(
-                "snooze_duration", "10"));
-        alarm.setSnoozed(true);
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MINUTE, snoozeMinutes);
-        alarm.setSnoozedTime(calendar);
-        broadcastAlarmState(alarm.getId(), Intents.ALARM_SNOOZE_ACTION);
-        writeToDb(alarm.getId());
-        setNextAlert();
+        alarm.snooze();
         notifyAlarmListChangedListeners();
     }
 
     @Override
     public void dismiss(Alarm alarm) {
-        broadcastAlarmState(alarm.getId(), Intents.ALARM_DISMISS_ACTION);
-        alarm.setSnoozed(false);
-        writeToDb(alarm.getId());
-        setNextAlert();
+        alarm.dismiss();
         notifyAlarmListChangedListeners();
-    }
-
-    /**
-     * Called at system startup, on time/timezone change, and whenever the user
-     * changes alarm settings. Activates snooze if set, otherwise loads all
-     * alarms, activates next alert.
-     */
-    private void setNextAlert() {
-        Alarm alarm = null;
-
-        if (!getAlarmsList().isEmpty()) {
-            alarm = Collections.min(getAlarmsList());
-            if (!alarm.isEnabled() && !alarm.isSnoozed()) {
-                alarm = null;
-            }
-        }
-        if (DBG) Log.d(TAG, alarm == null ? "no alarms" : "next: " + alarm.toString());
-
-        if (alarm != null) {
-            Calendar calendar = alarm.chooseNextCalendar();
-            mAlarmsScheduler.setUpRTCAlarm(alarm, calendar);
-            broadcastAlarmState(alarm.getId(), Intents.ACTION_ALARM_SCHEDULED);
-        } else {
-            mAlarmsScheduler.removeRTCAlarm();
-            broadcastState(Intents.ACTION_ALARMS_UNSCHEDULED);
-        }
-    }
-
-    private void broadcastAlarmState(int id, String action) {
-        Intent intent = new Intent(action);
-        intent.putExtra(Intents.EXTRA_ID, id);
-        mContext.sendBroadcast(intent);
-    }
-
-    private void broadcastState(String action) {
-        Intent intent = new Intent(action);
-        mContext.sendBroadcast(intent);
     }
 
     @Override

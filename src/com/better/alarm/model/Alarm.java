@@ -17,26 +17,32 @@
 
 package com.better.alarm.model;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.better.alarm.R;
+import com.better.wakelock.WakeLockManager;
 
-public final class Alarm implements Comparable<Alarm> {
+public final class Alarm {
     private static final String TAG = "Alarm";
     private static final boolean DBG = true;
 
     // This string is used to indicate a silent alarm in the db.
     private static final String ALARM_ALERT_SILENT = "silent";
+
+    private IAlarmsScheduler mAlarmsScheduler;
+    private Context mContext;
 
     private int id;
     private boolean enabled;
@@ -58,7 +64,9 @@ public final class Alarm implements Comparable<Alarm> {
     private boolean snoozed;
     private Calendar snoozedTime;
 
-    Alarm(Cursor c) {
+    Alarm(Cursor c, Context context, IAlarmsScheduler alarmsScheduler) {
+        mContext = context;
+        mAlarmsScheduler = alarmsScheduler;
         id = c.getInt(Columns.ALARM_ID_INDEX);
         enabled = c.getInt(Columns.ALARM_ENABLED_INDEX) == 1;
         hour = c.getInt(Columns.ALARM_HOUR_INDEX);
@@ -89,10 +97,27 @@ public final class Alarm implements Comparable<Alarm> {
                 alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
             }
         }
+
+        Calendar now = Calendar.getInstance();
+
+        boolean isExpired = getNextTime().before(now);
+        if (isExpired) {
+            if (DBG) Log.d(TAG, "Alarm expired: " + toString());
+            enabled = (isEnabled() && getDaysOfWeek().isRepeatSet());
+        }
+
+        calculateCalendars();
+
+        writeToDb();
+
+        mAlarmsScheduler.setAlarm(id, getActiveCalendars());
+
     }
 
     // Creates a default alarm at the current time.
-    Alarm() {
+    Alarm(Context context, IAlarmsScheduler alarmsScheduler) {
+        mContext = context;
+        mAlarmsScheduler = alarmsScheduler;
         id = -1;
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis());
@@ -106,32 +131,95 @@ public final class Alarm implements Comparable<Alarm> {
         prealarmTime = c;
         snoozed = false;
         snoozedTime = c;
+
+        Uri uri = mContext.getContentResolver().insert(Columns.CONTENT_URI, createContentValues());
+        id = (int) ContentUris.parseId(uri);
     }
 
-    public String getLabelOrDefault(Context context) {
-        if (label == null || label.length() == 0) {
-            return context.getString(R.string.default_label);
-        }
-        return label;
+    void onAlarmFired(CalendarType calendarType) {
+        broadcastAlarmState(id, Intents.ALARM_ALERT_ACTION);
+
+        snoozed = false;
+
+        calculateCalendars();
+        mAlarmsScheduler.setAlarm(id, getActiveCalendars());
+        writeToDb();
+        // TODO notifyAlarmListChangedListeners();
     }
 
-    @Override
-    public int hashCode() {
-        return id;
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // ++++++ for GUI +++++++++++++++++++++++++++++++++
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    /**
+     * A convenience method to enable or disable an
+     * 
+     * @param id
+     *            corresponds to the _id column
+     * @param enabled
+     *            corresponds to the ENABLED column
+     */
+    public void enable(boolean enable) {
+        enabled = enable;
+        calculateCalendars();
+        mAlarmsScheduler.setAlarm(id, getActiveCalendars());
+        writeToDb();
+        // TODO notifyAlarmListChangedListeners();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Alarm)) return false;
-        final Alarm other = (Alarm) o;
-        return id == other.id;
+    public void snooze() {
+        int snoozeMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext).getString(
+                "snooze_duration", "10"));
+        snoozed = true;
+        snoozedTime = Calendar.getInstance();
+        snoozedTime.add(Calendar.MINUTE, snoozeMinutes);
+        calculateCalendars();
+        mAlarmsScheduler.setAlarm(id, getActiveCalendars());
+        broadcastAlarmState(id, Intents.ALARM_SNOOZE_ACTION);
+        writeToDb();
+        // TODO notifyAlarmListChangedListeners();
+    }
+
+    public void dismiss() {
+        broadcastAlarmState(id, Intents.ALARM_DISMISS_ACTION);
+        snoozed = false;
+        calculateCalendars();
+        mAlarmsScheduler.setAlarm(id, getActiveCalendars());
+        writeToDb();
+        // TODO notifyAlarmListChangedListeners();
+    }
+
+    public void delete() {
+        Uri uri = ContentUris.withAppendedId(Columns.CONTENT_URI, id);
+        mContext.getContentResolver().delete(uri, "", null);
+        mAlarmsScheduler.removeAlarm(id);
+        broadcastAlarmState(id, Intents.ALARM_DISMISS_ACTION);
+        // TODO notifyAlarmListChangedListeners();
+    }
+
+    public void change(boolean enabled, int hour, int minute, DaysOfWeek daysOfWeek, boolean vibrate, String label,
+            Uri alert, boolean preAlarm) {
+        this.prealarm = preAlarm;
+        this.alert = alert;
+        this.label = label;
+        this.vibrate = vibrate;
+        this.daysOfWeek = daysOfWeek;
+        this.hour = hour;
+        this.minutes = minute;
+        this.enabled = enabled;
+
+        calculateCalendars();
+
+        writeToDb();
+        mAlarmsScheduler.setAlarm(id, getActiveCalendars());
+        // TODO notifyAlarmListChangedListeners();
     }
 
     /**
      * Given an alarm in hours and minutes, return a time suitable for setting
      * in AlarmManager.
      */
-    void calculateCalendars() {
+    private void calculateCalendars() {
         // start with now
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis());
@@ -154,7 +242,17 @@ public final class Alarm implements Comparable<Alarm> {
         nextTime = c;
     }
 
-    ContentValues createContentValues() {
+    private Map<CalendarType, Calendar> getActiveCalendars() {
+        HashMap<CalendarType, Calendar> calendars = new HashMap<CalendarType, Calendar>();
+
+        Calendar now = Calendar.getInstance();
+        if (enabled && nextTime.after(now)) calendars.put(CalendarType.NORMAL, nextTime);
+        if (snoozed && snoozedTime.after(now)) calendars.put(CalendarType.SNOOZE, snoozedTime);
+
+        return calendars;
+    }
+
+    private ContentValues createContentValues() {
         ContentValues values = new ContentValues(12);
 
         values.put(Columns.ENABLED, enabled ? 1 : 0);
@@ -175,49 +273,24 @@ public final class Alarm implements Comparable<Alarm> {
         return values;
     }
 
-    @Override
-    public int compareTo(Alarm another) {
-        Calendar thisTime = chooseNextCalendar();
-        Calendar anotherTime = another.chooseNextCalendar();
-        return thisTime.compareTo(anotherTime);
+    private void writeToDb() {
+        ContentValues values = createContentValues();
+        Intent intent = new Intent(DataBaseService.SAVE_ALARM_ACTION);
+        intent.putExtra("extra_values", values);
+        intent.putExtra(Intents.EXTRA_ID, id);
+        WakeLockManager.getWakeLockManager().acquirePartialWakeLock(intent, "forDBService");
+        mContext.startService(intent);
     }
 
-    Calendar chooseNextCalendar() {
-        List<Calendar> list = new ArrayList<Calendar>();
-        Calendar now = Calendar.getInstance();
-        Calendar agesInFuture = Calendar.getInstance();
-        agesInFuture.setTimeInMillis(Long.MAX_VALUE);
-        list.add(agesInFuture);
-        if (enabled && nextTime.after(now)) list.add(nextTime);
-        if (snoozed && snoozedTime.after(now)) list.add(snoozedTime);
-        // if (prealarm && prealarmTime.after(now)) list.add(prealarmTime);
-        return Collections.min(list);
+    private void broadcastAlarmState(int id, String action) {
+        Intent intent = new Intent(action);
+        intent.putExtra(Intents.EXTRA_ID, id);
+        mContext.sendBroadcast(intent);
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Alarm ").append(id);
-        sb.append(", ");
-        if (enabled) {
-            sb.append("enabled at ").append(nextTime.getTime().toLocaleString());
-        } else {
-            sb.append("disabled");
-        }
-        sb.append(", ");
-        if (snoozed) {
-            sb.append("snoozed at ").append(snoozedTime.getTime().toLocaleString());
-        } else {
-            sb.append("no snooze");
-        }
-        sb.append(", ");
-        if (prealarm) {
-            sb.append("prealarm at ").append(prealarmTime.getTime().toLocaleString());
-        } else {
-            sb.append("no prealarm");
-        }
-        return sb.toString();
-    }
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // ++++++ getters for GUI +++++++++++++++++++++++++++++++
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     /**
      * TODO calendar should be immutable
@@ -280,51 +353,47 @@ public final class Alarm implements Comparable<Alarm> {
         return snoozed;
     }
 
-    void setSnoozedTime(Calendar snoozedTime) {
-        this.snoozedTime = snoozedTime;
+    public String getLabelOrDefault(Context context) {
+        if (label == null || label.length() == 0) {
+            return context.getString(R.string.default_label);
+        }
+        return label;
     }
 
-    void setPrealarm(boolean prealarm) {
-        this.prealarm = prealarm;
+    @Override
+    public int hashCode() {
+        return id;
     }
 
-    void setSilent(boolean silent) {
-        this.silent = silent;
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Alarm)) return false;
+        final Alarm other = (Alarm) o;
+        return id == other.id;
     }
 
-    void setAlert(Uri alert) {
-        this.alert = alert;
-    }
-
-    void setLabel(String label) {
-        this.label = label;
-    }
-
-    void setVibrate(boolean vibrate) {
-        this.vibrate = vibrate;
-    }
-
-    void setDaysOfWeek(DaysOfWeek daysOfWeek) {
-        this.daysOfWeek = daysOfWeek;
-    }
-
-    void setMinutes(int minutes) {
-        this.minutes = minutes;
-    }
-
-    void setHour(int hour) {
-        this.hour = hour;
-    }
-
-    void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    void setSnoozed(boolean snoozed) {
-        this.snoozed = snoozed;
-    }
-
-    void setId(int id) {
-        this.id = id;
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Alarm ").append(id);
+        sb.append(", ");
+        if (enabled) {
+            sb.append("enabled at ").append(nextTime.getTime().toLocaleString());
+        } else {
+            sb.append("disabled");
+        }
+        sb.append(", ");
+        if (snoozed) {
+            sb.append("snoozed at ").append(snoozedTime.getTime().toLocaleString());
+        } else {
+            sb.append("no snooze");
+        }
+        sb.append(", ");
+        if (prealarm) {
+            sb.append("prealarm at ").append(prealarmTime.getTime().toLocaleString());
+        } else {
+            sb.append("no prealarm");
+        }
+        return sb.toString();
     }
 }

@@ -23,8 +23,8 @@ public class AlarmApplication extends Application {
 
     @Override
     public void onCreate() {
-        AlarmsManager.init(getApplicationContext());
         WakeLockManager.init(getApplicationContext(), true);
+        AlarmsManager.init(getApplicationContext());
         super.onCreate();
     }
 
