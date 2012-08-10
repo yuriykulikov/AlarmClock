@@ -1,61 +1,72 @@
 @startuml
 
-    class Klaxon
+'receivers
     class KlaxonReceiver
     class AlertReciever
-    class NM
+    AlertReciever o-- NM
+    AlertReciever o-- AlertActivityFS
+    AlertReciever o-- AlertActivity
+
+'services and activites
+    class Klaxon
     class AlertActivity
     class AlertActivityFS
-
     class SetUpActivity
     class ListActivity
+    class SettingsActivity
+    SettingsActivity o-- Persistence
+    
+    KlaxonReceiver o-- Klaxon
+    Klaxon o-- IAlarms
+    Klaxon o-- Persistence
+    ListActivity o-right- SetUpActivity
+    ListActivity o-- IAlarms
+    SetUpActivity o-- IAlarms
+    AlertActivity o-- IAlarms
+    AlertActivityFS o-- IAlarms
 
-    ListActivity --* SetUpActivity
-    ListActivity --* model.AlarmsSetup
-    SetUpActivity --* model.AlarmsSetup
-
-    AlertReciever o.. model.Notifier
-    AlertReciever --* NM
-    NM --* AlertActivity
-    NM --* AlertActivityFS
-    AlertActivity --* model.AlarmsIntercation
-    AlertActivityFS --* model.AlarmsIntercation
-
-    KlaxonReceiver *.. model.Notifier
-    KlaxonReceiver --* Klaxon
-
-package model {
+'Mediators
+    class NM
     interface Notifier {
     PLAY, DISMISSED, SNOOZED
     }
-    interface AlarmsSetup {
-        public void delete(int id);
-        public long add(Alarm alarm);
-        public void enable(final int id, boolean enabled);
-        public Cursor getCursor();
-    }
-    interface AlarmsIntercation {
-        dismiss()
-        snooze()
-    }
+    interface Persistence
 
-    class Alarms {
-        getAlarmsManager()
-        getAlarmsSetup()
-        onIntentReceived()
-    }
-    class Alarms implements model.AlarmsSetup
-    class Alarms implements model.AlarmsIntercation
+'model
+    interface IAlarms
+    class Alarms
+    Alarms .down....|> IAlarms
+
     class AlarmsReceiver
+    class AlarmsService
+    AlarmsReceiver o-- AlarmsService
+    AlarmsService o-- Alarms
 
-    AlarmsReceiver *--* Alarms
-    Alarms--*model.Notifier
+    class Repository
+    Alarms o..right..o Repository : obs
+
+    class ListNotifier
+    Alarms o..left..o ListNotifier : obs
     
-    package os <<Database>> {
-        class AlarmManager
-        model.AlarmsReceiver --* AlarmManager
-        AlarmManager ..* model.AlarmsReceiver
+    class Alarm {
+        Calendar getCalendar(CalendarType)
     }
-}
+    Alarms o-- Alarm
+    class Comparator {
+        createComparator(List<CalendarType>, Calendar now)
+        int compare(Alarm, Alarm)
+        boolean hasActiveCalendar(Alarm)
+        Pair<CalendarType, Calendar> getActiveCalendar(Alarm)
+    }
+    Alarms o-- Comparator
+    
+    interface IScheduler
+    class Scheduler
+    Scheduler .down.|> IScheduler
+    Alarms o-- IScheduler
+    
+    interface AlarmManager
+    Scheduler o-up- AlarmManager
+    AlarmManager o-- AlarmsReceiver
 
 @enduml
