@@ -17,11 +17,14 @@ package com.better.alarm.model;
 
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -45,14 +48,15 @@ public class Alarms implements IAlarmsManager {
     private Set<IAlarmsManager.OnAlarmListChangedListener> mAlarmListChangedListeners;
 
     private ContentResolver mContentResolver;
-    private Set<Alarm> set;
+    private Map<Integer, Alarm> set;
 
+    @SuppressLint("UseSparseArrays")
     Alarms(Context context, IAlarmsScheduler alarmsScheduler) {
         mContext = context;
         this.mAlarmsScheduler = alarmsScheduler;
         mAlarmListChangedListeners = new HashSet<IAlarmsManager.OnAlarmListChangedListener>();
         mContentResolver = mContext.getContentResolver();
-        set = new HashSet<Alarm>();
+        set = new HashMap<Integer, Alarm>();
 
         final Cursor cursor = mContentResolver.query(Alarm.Columns.CONTENT_URI, Alarm.Columns.ALARM_QUERY_COLUMNS,
                 null, null, Alarm.Columns.DEFAULT_SORT_ORDER);
@@ -60,7 +64,7 @@ public class Alarms implements IAlarmsManager {
             if (cursor.moveToFirst()) {
                 do {
                     final Alarm a = new Alarm(cursor);
-                    set.add(a);
+                    set.put(a.getId(), a);
                 } while (cursor.moveToNext());
             }
         } finally {
@@ -70,7 +74,7 @@ public class Alarms implements IAlarmsManager {
 
     void init() {
         Calendar now = Calendar.getInstance();
-        for (Alarm alarm : set) {
+        for (Alarm alarm : set.values()) {
             boolean isExpired = alarm.getNextTime().before(now);
             if (isExpired) {
                 if (DBG) Log.d(TAG, "Alarm expired: " + alarm.toString());
@@ -84,7 +88,7 @@ public class Alarms implements IAlarmsManager {
         }
         if (DBG) {
             Log.d(TAG, "Alarms:");
-            for (Alarm alarm : set) {
+            for (Alarm alarm : set.values()) {
                 Log.d(TAG, alarm.toString());
             }
         }
@@ -109,7 +113,7 @@ public class Alarms implements IAlarmsManager {
         Alarm alarm = new Alarm();
         Uri uri = mContentResolver.insert(Alarm.Columns.CONTENT_URI, alarm.createContentValues());
         alarm.setId((int) ContentUris.parseId(uri));
-        set.add(alarm);
+        set.put(alarm.getId(), alarm);
         // new alarm is not enabled, no need to check if it can fire. It can't
         notifyAlarmListChangedListeners();
         return alarm.getId();
@@ -144,7 +148,7 @@ public class Alarms implements IAlarmsManager {
 
     @Override
     public List<Alarm> getAlarmsList() {
-        List<Alarm> alarms = new LinkedList<Alarm>(set);
+        List<Alarm> alarms = new LinkedList<Alarm>(set.values());
         return alarms;
     }
 
@@ -172,12 +176,7 @@ public class Alarms implements IAlarmsManager {
 
     @Override
     public Alarm getAlarm(int alarmId) {
-        for (Alarm alarm : set) {
-            if (alarm.getId() == alarmId) {
-                return alarm;
-            }
-        }
-        return null;
+        return set.get(alarmId);
     }
 
     /**
