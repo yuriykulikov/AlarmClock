@@ -73,7 +73,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     private String formatTimeString() {
         String format = android.text.format.DateFormat.is24HourFormat(mContext) ? DM24 : DM12;
-        Calendar calendar = alarm.calculateSnoozedCalendar();
+        Calendar calendar = alarm.getSnoozedTime();
         String timeString = (String) DateFormat.format(format, calendar);
         return timeString;
     }
@@ -87,7 +87,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         // Update the notification to indicate that the alert has been
         // silenced.
         String label = alarm.getLabelOrDefault(mContext);
-        Notification n = new Notification(R.drawable.stat_notify_alarm, label, alarm.getTimeInMillis());
+        Notification n = new Notification(R.drawable.stat_notify_alarm, label, alarm.getNextTime().getTimeInMillis());
         n.setLatestEventInfo(mContext, label,
                 mContext.getString(R.string.alarm_alert_alert_silenced, formatTimeString()), intent);
         n.flags |= Notification.FLAG_AUTO_CANCEL;

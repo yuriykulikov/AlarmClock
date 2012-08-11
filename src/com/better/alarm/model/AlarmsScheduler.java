@@ -15,6 +15,8 @@
  */
 package com.better.alarm.model;
 
+import java.util.Calendar;
+
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -41,14 +43,17 @@ class AlarmsScheduler implements IAlarmsScheduler {
         am.cancel(sender);
     }
 
-    public void setUpRTCAlarm(final Alarm alarm, final long atTimeInMillis) {
+    public void setUpRTCAlarm(final Alarm alarm, Calendar calendar) {
         AlarmManager am = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+        if (DBG) Log.d(TAG, "Set alarm " + alarm.getId() + " on " + calendar.getTime().toLocaleString());
 
-        if (DBG) Log.d(TAG, "** setAlert id " + alarm.getId() + " atTime " + atTimeInMillis);
+        if (DBG && calendar.before(Calendar.getInstance())) {
+            throw new RuntimeException("Attempt to schedule alarm in the past: " + calendar.getTime().toLocaleString());
+        }
 
         Intent intent = new Intent(ACTION_FIRED);
         intent.putExtra(EXTRA_ID, alarm.getId());
         PendingIntent sender = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        am.set(AlarmManager.RTC_WAKEUP, atTimeInMillis, sender);
+        am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
     }
 }

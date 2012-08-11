@@ -18,7 +18,10 @@
 package com.better.alarm.model;
 
 import java.text.DateFormatSymbols;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -116,6 +119,14 @@ public final class Alarm implements Comparable<Alarm> {
         public static final String PREALARM = "prealarm";
 
         /**
+         * Alarm time in UTC milliseconds from the epoch.
+         * <P>
+         * Type: INTEGER
+         * </P>
+         */
+        public static final String PREALARM_TIME = "prealarm_TIME";
+
+        /**
          * True if alarm is snoozed
          * <P>
          * Type: BOOLEAN
@@ -124,20 +135,12 @@ public final class Alarm implements Comparable<Alarm> {
         public static final String SNOOZED = "snoozed";
 
         /**
-         * Hour in 24-hour localtime 0 - 23.
+         * Alarm time in UTC milliseconds from the epoch.
          * <P>
          * Type: INTEGER
          * </P>
          */
-        public static final String SNOOZED_HOUR = "snoozed_hour";
-
-        /**
-         * Minutes in localtime 0 - 59
-         * <P>
-         * Type: INTEGER
-         * </P>
-         */
-        public static final String SNOOZED_MINUTES = "snoozed_minutes";
+        public static final String SNOOZE_TIME = "snooze_time";
 
         /**
          * The default sort order for this table
@@ -148,7 +151,7 @@ public final class Alarm implements Comparable<Alarm> {
         public static final String WHERE_ENABLED = ENABLED + "=1";
 
         static final String[] ALARM_QUERY_COLUMNS = { _ID, HOUR, MINUTES, DAYS_OF_WEEK, ALARM_TIME, ENABLED, VIBRATE,
-                MESSAGE, ALERT, PREALARM, SNOOZED, SNOOZED_HOUR, SNOOZED_MINUTES };
+                MESSAGE, ALERT, PREALARM, PREALARM_TIME, SNOOZED, SNOOZE_TIME };
 
         /**
          * These save calls to cursor.getColumnIndexOrThrow() THEY MUST BE KEPT
@@ -164,10 +167,9 @@ public final class Alarm implements Comparable<Alarm> {
         public static final int ALARM_MESSAGE_INDEX = 7;
         public static final int ALARM_ALERT_INDEX = 8;
         public static final int ALARM_PREALARM_INDEX = 9;
-
-        public static final int ALARM_SNOOZED_INDEX = 10;
-        public static final int ALARM_SNOOZED_HOUR_INDEX = 11;
-        public static final int ALARM_SNOOZED_MINUTE_INDEX = 12;
+        public static final int ALARM_PREALARM_TIME_INDEX = 10;
+        public static final int ALARM_SNOOZED_INDEX = 11;
+        public static final int ALARM_SNOOZE_TIME_INDEX = 12;
     }
 
     // ////////////////////////////
@@ -186,31 +188,34 @@ public final class Alarm implements Comparable<Alarm> {
      * alarms if devicee was off-line when they were supposed to fire
      * 
      */
-    private long nextTimeInMillis;
+    private Calendar nextTime;
     private DaysOfWeek daysOfWeek;
     private boolean vibrate;
     private String label;
     private Uri alert;
     private boolean silent;
     private boolean prealarm;
+    private Calendar prealarmTime;
     private boolean snoozed;
-    private int snoozedHour;
-    private int snoozedminutes;
+    private Calendar snoozedTime;
 
     Alarm(Cursor c) {
         id = c.getInt(Columns.ALARM_ID_INDEX);
         enabled = c.getInt(Columns.ALARM_ENABLED_INDEX) == 1;
         hour = c.getInt(Columns.ALARM_HOUR_INDEX);
         minutes = c.getInt(Columns.ALARM_MINUTES_INDEX);
-        nextTimeInMillis = (c.getLong(Columns.ALARM_TIME_INDEX));
+        nextTime = Calendar.getInstance();
+        nextTime.setTimeInMillis(c.getLong(Columns.ALARM_TIME_INDEX));
         daysOfWeek = new DaysOfWeek(c.getInt(Columns.ALARM_DAYS_OF_WEEK_INDEX));
         vibrate = c.getInt(Columns.ALARM_VIBRATE_INDEX) == 1;
         label = c.getString(Columns.ALARM_MESSAGE_INDEX);
         String alertString = c.getString(Columns.ALARM_ALERT_INDEX);
         prealarm = c.getInt(Columns.ALARM_PREALARM_INDEX) == 1;
+        prealarmTime = Calendar.getInstance();
+        prealarmTime.setTimeInMillis(c.getLong(Columns.ALARM_PREALARM_TIME_INDEX));
         snoozed = c.getInt(Columns.ALARM_SNOOZED_INDEX) == 1;
-        snoozedHour = c.getInt(Columns.ALARM_SNOOZED_HOUR_INDEX);
-        snoozedminutes = c.getInt(Columns.ALARM_SNOOZED_MINUTE_INDEX);
+        snoozedTime = Calendar.getInstance();
+        snoozedTime.setTimeInMillis(c.getLong(Columns.ALARM_SNOOZE_TIME_INDEX));
         if (ALARM_ALERT_SILENT.equals(alertString)) {
             if (DBG) Log.d(TAG, "Alarm is marked as silent");
             silent = true;
@@ -236,12 +241,12 @@ public final class Alarm implements Comparable<Alarm> {
         minutes = c.get(Calendar.MINUTE);
         vibrate = true;
         daysOfWeek = new DaysOfWeek(0);
-        nextTimeInMillis = c.getTimeInMillis();
+        nextTime = c;
         alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         prealarm = false;
+        prealarmTime = c;
         snoozed = false;
-        snoozedHour = hour;
-        snoozedminutes = minutes;
+        snoozedTime = c;
     }
 
     public String getLabelOrDefault(Context context) {
@@ -391,18 +396,7 @@ public final class Alarm implements Comparable<Alarm> {
      * Given an alarm in hours and minutes, return a time suitable for setting
      * in AlarmManager.
      */
-    public Calendar calculateCalendar() {
-        return calculateCalendar(hour, minutes);
-    }
-
-    /**
-     * return a time suitable for setting in AlarmManager.
-     */
-    public Calendar calculateSnoozedCalendar() {
-        return calculateCalendar(snoozedHour, snoozedminutes);
-    }
-
-    private Calendar calculateCalendar(int h, int m) {
+    void calculateCalendars() {
         // start with now
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis());
@@ -411,25 +405,100 @@ public final class Alarm implements Comparable<Alarm> {
         int nowMinute = c.get(Calendar.MINUTE);
 
         // if alarm is behind current time, advance one day
-        if (h < nowHour || h == nowHour && m <= nowMinute) {
+        if (hour < nowHour || hour == nowHour && minutes <= nowMinute) {
             c.add(Calendar.DAY_OF_YEAR, 1);
         }
-        c.set(Calendar.HOUR_OF_DAY, h);
-        c.set(Calendar.MINUTE, m);
+        c.set(Calendar.HOUR_OF_DAY, hour);
+        c.set(Calendar.MINUTE, minutes);
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
 
         int addDays = daysOfWeek.getNextAlarm(c);
         if (addDays > 0) c.add(Calendar.DAY_OF_WEEK, addDays);
-        return c;
+
+        nextTime = c;
     }
 
-    public long getTimeInMillis() {
-        return calculateCalendar().getTimeInMillis();
+    ContentValues createContentValues() {
+        ContentValues values = new ContentValues(12);
+
+        values.put(Alarm.Columns.ENABLED, enabled ? 1 : 0);
+        values.put(Alarm.Columns.HOUR, hour);
+        values.put(Alarm.Columns.MINUTES, minutes);
+        values.put(Alarm.Columns.ALARM_TIME, nextTime.getTimeInMillis());
+        values.put(Alarm.Columns.DAYS_OF_WEEK, daysOfWeek.getCoded());
+        values.put(Alarm.Columns.VIBRATE, vibrate);
+        values.put(Alarm.Columns.MESSAGE, label);
+        values.put(Alarm.Columns.PREALARM, prealarm);
+        values.put(Alarm.Columns.PREALARM_TIME, prealarmTime.getTimeInMillis());
+        values.put(Alarm.Columns.SNOOZED, snoozed);
+        values.put(Alarm.Columns.SNOOZE_TIME, snoozedTime.getTimeInMillis());
+
+        // A null alert Uri indicates a silent
+        values.put(Alarm.Columns.ALERT, alert == null ? ALARM_ALERT_SILENT : alert.toString());
+
+        return values;
     }
 
-    public long getSnoozedTimeInMillis() {
-        return calculateSnoozedCalendar().getTimeInMillis();
+    @Override
+    public int compareTo(Alarm another) {
+        Calendar thisTime = chooseNextCalendar();
+        Calendar anotherTime = another.chooseNextCalendar();
+        return thisTime.compareTo(anotherTime);
+    }
+
+    Calendar chooseNextCalendar() {
+        List<Calendar> list = new ArrayList<Calendar>();
+        Calendar now = Calendar.getInstance();
+        Calendar agesInFuture = Calendar.getInstance();
+        agesInFuture.setTimeInMillis(Long.MAX_VALUE);
+        list.add(agesInFuture);
+        if (enabled && nextTime.after(now)) list.add(nextTime);
+        if (snoozed && snoozedTime.after(now)) list.add(snoozedTime);
+        // if (prealarm && prealarmTime.after(now)) list.add(prealarmTime);
+        return Collections.min(list);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Alarm ").append(id);
+        sb.append(", ");
+        if (enabled) {
+            sb.append("enabled at ").append(nextTime.getTime().toLocaleString());
+        } else {
+            sb.append("disabled");
+        }
+        sb.append(", ");
+        if (snoozed) {
+            sb.append("snoozed at ").append(snoozedTime.getTime().toLocaleString());
+        } else {
+            sb.append("no snooze");
+        }
+        sb.append(", ");
+        if (prealarm) {
+            sb.append("prealarm at ").append(prealarmTime.getTime().toLocaleString());
+        } else {
+            sb.append("no prealarm");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * TODO calendar should be immutable
+     * 
+     * @return
+     */
+    public Calendar getNextTime() {
+        return nextTime;
+    }
+
+    public Calendar getSnoozedTime() {
+        return snoozedTime;
+    }
+
+    public Calendar getPrealarmTime() {
+        return prealarmTime;
     }
 
     public boolean isPrealarm() {
@@ -450,14 +519,6 @@ public final class Alarm implements Comparable<Alarm> {
 
     public boolean isVibrate() {
         return vibrate;
-    }
-
-    /**
-     * @see {@link #nextTimeInMillis}
-     * @return
-     */
-    long getNextTimeInMillis() {
-        return nextTimeInMillis;
     }
 
     public DaysOfWeek getDaysOfWeek() {
@@ -484,49 +545,8 @@ public final class Alarm implements Comparable<Alarm> {
         return snoozed;
     }
 
-    ContentValues createContentValues() {
-        ContentValues values = new ContentValues(8);
-        // Set the alarm_time value. This will be
-        // used later to disable expired alarms.
-        long time = getTimeInMillis();
-
-        values.put(Alarm.Columns.ENABLED, enabled ? 1 : 0);
-        values.put(Alarm.Columns.HOUR, hour);
-        values.put(Alarm.Columns.MINUTES, minutes);
-        values.put(Alarm.Columns.ALARM_TIME, time);
-        values.put(Alarm.Columns.DAYS_OF_WEEK, daysOfWeek.getCoded());
-        values.put(Alarm.Columns.VIBRATE, vibrate);
-        values.put(Alarm.Columns.MESSAGE, label);
-        values.put(Alarm.Columns.PREALARM, prealarm);
-        values.put(Alarm.Columns.SNOOZED, snoozed);
-        values.put(Alarm.Columns.SNOOZED_HOUR, snoozedHour);
-        values.put(Alarm.Columns.SNOOZED_MINUTES, snoozedminutes);
-
-        // A null alert Uri indicates a silent
-        values.put(Alarm.Columns.ALERT, alert == null ? ALARM_ALERT_SILENT : alert.toString());
-
-        return values;
-    }
-
-    @Override
-    public int compareTo(Alarm another) {
-        int ret = 0;
-        boolean thisCanGo = isEnabled() || isSnoozed();
-        boolean anotherCanGo = another.isEnabled() || another.isSnoozed();
-        if (!thisCanGo && !anotherCanGo) {
-            // disabled and non-snoozed alarms are equal
-            ret = 0;
-        } else if (!thisCanGo && anotherCanGo) {
-            ret = 1;
-        } else if (thisCanGo && !anotherCanGo) {
-            ret = -1;
-        } else if (thisCanGo && anotherCanGo) {
-            Long thisTime = isSnoozed() ? getSnoozedTimeInMillis() : getTimeInMillis();
-            Long anotherTime = another.isSnoozed() ? another.getSnoozedTimeInMillis() : another.getTimeInMillis();
-            ret = thisTime.compareTo(anotherTime);
-        }
-        // if (DBG) Log.d(TAG, "Compare = " + ret);
-        return ret;
+    void setSnoozedTime(Calendar snoozedTime) {
+        this.snoozedTime = snoozedTime;
     }
 
     void setPrealarm(boolean prealarm) {
@@ -549,10 +569,6 @@ public final class Alarm implements Comparable<Alarm> {
         this.vibrate = vibrate;
     }
 
-    void setNextTimeInMillis(int nextTimeInMillis) {
-        this.nextTimeInMillis = nextTimeInMillis;
-    }
-
     void setDaysOfWeek(DaysOfWeek daysOfWeek) {
         this.daysOfWeek = daysOfWeek;
     }
@@ -569,42 +585,11 @@ public final class Alarm implements Comparable<Alarm> {
         this.enabled = enabled;
     }
 
-    void setId(int id) {
-        this.id = id;
-    }
-
     void setSnoozed(boolean snoozed) {
         this.snoozed = snoozed;
     }
 
-    int getSnoozedHour() {
-        return snoozedHour;
-    }
-
-    void setSnoozedHour(int snoozedHour) {
-        this.snoozedHour = snoozedHour;
-    }
-
-    int getSnoozedminutes() {
-        return snoozedminutes;
-    }
-
-    void setSnoozedminutes(int snoozedminutes) {
-        this.snoozedminutes = snoozedminutes;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Alarm [");
-        sb.append(enabled ? " enabled" : "disabled").append(", ");
-        sb.append(hour).append(":").append(minutes).append(", ");
-        sb.append(snoozed ? " snoozed" : "   no  ").append(", ");
-        sb.append(snoozedHour).append(":").append(snoozedminutes).append(", ");
-        sb.append(prealarm ? "prealarm" : " regular ").append(", ");
-        sb.append(getTimeInMillis()).append(", ");
-        sb.append(daysOfWeek.toString());
-        sb.append("]");
-        return sb.toString();
+    void setId(int id) {
+        this.id = id;
     }
 }

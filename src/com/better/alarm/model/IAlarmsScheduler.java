@@ -15,8 +15,10 @@
  */
 package com.better.alarm.model;
 
+import java.util.Calendar;
+
 interface IAlarmsScheduler {
     public void removeRTCAlarm();
 
-    public void setUpRTCAlarm(final Alarm alarm, final long atTimeInMillis);
+    public void setUpRTCAlarm(final Alarm alarm, Calendar calendar);
 }

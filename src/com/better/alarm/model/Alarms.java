@@ -66,22 +66,26 @@ public class Alarms implements IAlarmsManager {
         } finally {
             cursor.close();
         }
+    }
+
+    void init() {
+        Calendar now = Calendar.getInstance();
+        for (Alarm alarm : set) {
+            boolean isExpired = alarm.getNextTime().before(now);
+            if (isExpired) {
+                if (DBG) Log.d(TAG, "Alarm expired: " + alarm.toString());
+                if (alarm.isEnabled() && alarm.getDaysOfWeek().isRepeatSet()) {
+                    alarm.calculateCalendars();
+                } else {
+                    alarm.setEnabled(false);
+                }
+                writeToDb(alarm.getId());
+            }
+        }
         if (DBG) {
             Log.d(TAG, "Alarms:");
             for (Alarm alarm : set) {
                 Log.d(TAG, alarm.toString());
-            }
-        }
-    }
-
-    void init() {
-        // disable expired alarms
-        long now = System.currentTimeMillis();
-        for (Alarm alarm : set) {
-            boolean isExpired = alarm.getNextTimeInMillis() < now;
-            if (isExpired && !alarm.isEnabled()) {
-                alarm.setEnabled(false);
-                writeToDb(alarm.getId());
             }
         }
         setNextAlert();
@@ -123,6 +127,8 @@ public class Alarms implements IAlarmsManager {
         alarm.setLabel(label);
         alarm.setAlert(alert);
         alarm.setPrealarm(preAlarm);
+
+        alarm.calculateCalendars();
         writeToDb(alarm.getId());
         setNextAlert();
         notifyAlarmListChangedListeners();
@@ -186,6 +192,7 @@ public class Alarms implements IAlarmsManager {
     public void enable(int id, boolean enable) {
         Alarm alarm = getAlarm(id);
         alarm.setEnabled(enable);
+        alarm.calculateCalendars();
         writeToDb(alarm.getId());
         setNextAlert();
         notifyAlarmListChangedListeners();
@@ -198,8 +205,7 @@ public class Alarms implements IAlarmsManager {
         alarm.setSnoozed(true);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MINUTE, snoozeMinutes);
-        alarm.setSnoozedHour(calendar.get(Calendar.HOUR_OF_DAY));
-        alarm.setSnoozedminutes(calendar.get(Calendar.MINUTE));
+        alarm.setSnoozedTime(calendar);
         broadcastAlarmState(alarm.getId(), Intents.ALARM_SNOOZE_ACTION);
         writeToDb(alarm.getId());
         setNextAlert();
@@ -215,33 +221,25 @@ public class Alarms implements IAlarmsManager {
         notifyAlarmListChangedListeners();
     }
 
-    private Alarm calculateNextAlert() {
-        Alarm alarm = null;
-
-        if (getAlarmsList().isEmpty()) {
-            if (DBG) Log.d(TAG, "no alarms");
-        } else {
-            alarm = Collections.min(getAlarmsList());
-            if (!alarm.isEnabled() && !alarm.isSnoozed()) {
-                alarm = null;
-                if (DBG) Log.d(TAG, "no alarms");
-            } else {
-                if (DBG) Log.d(TAG, "next: " + alarm.toString());
-            }
-        }
-        return alarm;
-    }
-
     /**
      * Called at system startup, on time/timezone change, and whenever the user
      * changes alarm settings. Activates snooze if set, otherwise loads all
      * alarms, activates next alert.
      */
     private void setNextAlert() {
-        final Alarm alarm = calculateNextAlert();
+        Alarm alarm = null;
+
+        if (!getAlarmsList().isEmpty()) {
+            alarm = Collections.min(getAlarmsList());
+            if (!alarm.isEnabled() && !alarm.isSnoozed()) {
+                alarm = null;
+            }
+        }
+        if (DBG) Log.d(TAG, alarm == null ? "no alarms" : "next: " + alarm.toString());
+
         if (alarm != null) {
-            long timeInMillis = alarm.isSnoozed() ? alarm.getSnoozedTimeInMillis() : alarm.getTimeInMillis();
-            mAlarmsScheduler.setUpRTCAlarm(alarm, timeInMillis);
+            Calendar calendar = alarm.chooseNextCalendar();
+            mAlarmsScheduler.setUpRTCAlarm(alarm, calendar);
             broadcastAlarmState(alarm.getId(), Intents.ACTION_ALARM_SCHEDULED);
         } else {
             mAlarmsScheduler.removeRTCAlarm();
