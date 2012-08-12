@@ -76,12 +76,12 @@ class AlarmDatabaseHelper extends SQLiteOpenHelper {
 
     Uri commonInsert(ContentValues values) {
         SQLiteDatabase db = getWritableDatabase();
-        long rowId = db.insert("alarms", Alarm.Columns.MESSAGE, values);
+        long rowId = db.insert("alarms", Columns.MESSAGE, values);
         if (rowId < 0) {
             throw new SQLException("Failed to insert row");
         }
         if (DBG) Log.d(TAG, "Added alarm rowId = " + rowId);
 
-        return ContentUris.withAppendedId(Alarm.Columns.CONTENT_URI, rowId);
+        return ContentUris.withAppendedId(Columns.CONTENT_URI, rowId);
     }
 }

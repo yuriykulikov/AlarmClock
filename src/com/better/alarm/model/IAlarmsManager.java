@@ -19,7 +19,6 @@ import java.util.List;
 
 import android.net.Uri;
 
-import com.better.alarm.model.Alarm.DaysOfWeek;
 
 /**
  * An interface for Presenter-Model interaction. Presenters can invoke

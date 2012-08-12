@@ -35,7 +35,6 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.better.alarm.model.Alarm.DaysOfWeek;
 
 /**
  * The Alarms implements application domain logic
@@ -58,8 +57,8 @@ public class Alarms implements IAlarmsManager {
         mContentResolver = mContext.getContentResolver();
         set = new HashMap<Integer, Alarm>();
 
-        final Cursor cursor = mContentResolver.query(Alarm.Columns.CONTENT_URI, Alarm.Columns.ALARM_QUERY_COLUMNS,
-                null, null, Alarm.Columns.DEFAULT_SORT_ORDER);
+        final Cursor cursor = mContentResolver.query(Columns.CONTENT_URI, Columns.ALARM_QUERY_COLUMNS,
+                null, null, Columns.DEFAULT_SORT_ORDER);
         try {
             if (cursor.moveToFirst()) {
                 do {
@@ -97,21 +96,21 @@ public class Alarms implements IAlarmsManager {
 
     private void writeToDb(int id) {
         ContentValues values = getAlarm(id).createContentValues();
-        Uri uriWithAppendedId = ContentUris.withAppendedId(Alarm.Columns.CONTENT_URI, id);
+        Uri uriWithAppendedId = ContentUris.withAppendedId(Columns.CONTENT_URI, id);
         mContentResolver.update(uriWithAppendedId, values, null, null);
     }
 
     private void deleteAlarm(int alarmId) {
         Alarm alarm = getAlarm(alarmId);
         set.remove(alarm);
-        Uri uri = ContentUris.withAppendedId(Alarm.Columns.CONTENT_URI, alarmId);
+        Uri uri = ContentUris.withAppendedId(Columns.CONTENT_URI, alarmId);
         mContentResolver.delete(uri, "", null);
     }
 
     @Override
     public int createNewAlarm() {
         Alarm alarm = new Alarm();
-        Uri uri = mContentResolver.insert(Alarm.Columns.CONTENT_URI, alarm.createContentValues());
+        Uri uri = mContentResolver.insert(Columns.CONTENT_URI, alarm.createContentValues());
         alarm.setId((int) ContentUris.parseId(uri));
         set.put(alarm.getId(), alarm);
         // new alarm is not enabled, no need to check if it can fire. It can't
