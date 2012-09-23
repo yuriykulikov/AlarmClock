@@ -87,7 +87,7 @@ public class Alarms implements IAlarmsManager {
 
     @Override
     public int createNewAlarm() {
-        AlarmCore alarm = new AlarmCore(mContext, mAlarmsScheduler);
+        AlarmCore alarm = new AlarmCore(mContext, log, mAlarmsScheduler);
         alarms.put(alarm.getId(), alarm);
         notifyAlarmListChangedListeners();
         return alarm.getId();

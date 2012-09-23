@@ -40,7 +40,7 @@ public final class AlarmCore implements Alarm {
     private static final String ALARM_ALERT_SILENT = "silent";
 
     private final IAlarmsScheduler mAlarmsScheduler;
-    private Logger log;
+    private final Logger log;
     private final Context mContext;
 
     private int id;
@@ -115,8 +115,9 @@ public final class AlarmCore implements Alarm {
     }
 
     // Creates a default alarm at the current time.
-    AlarmCore(Context context, IAlarmsScheduler alarmsScheduler) {
+    AlarmCore(Context context, Logger logger, IAlarmsScheduler alarmsScheduler) {
         mContext = context;
+        log = logger;
         mAlarmsScheduler = alarmsScheduler;
         id = -1;
         Calendar c = Calendar.getInstance();
