@@ -39,7 +39,7 @@ public class AlarmsService extends Service {
         String action = intent.getAction();
         if (action.equals(AlarmsScheduler.ACTION_FIRED)) {
             int id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1);
-            if (DBG) Log.d(TAG, "Alarm fired " + id);
+            if (DBG) Log.d(TAG, "AlarmCore fired " + id);
             alarms.onAlarmFired(id, CalendarType.valueOf(intent.getExtras().getString(AlarmsScheduler.EXTRA_TYPE)));
         }
 

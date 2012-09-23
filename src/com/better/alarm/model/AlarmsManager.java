@@ -20,7 +20,7 @@ package com.better.alarm.model;
 import android.content.Context;
 
 /**
- * The AlarmsManager provider supplies info about Alarm Clock settings
+ * The AlarmsManager provider supplies info about AlarmCore Clock settings
  */
 public class AlarmsManager {
     private static final String TAG = "AlarmsManager";

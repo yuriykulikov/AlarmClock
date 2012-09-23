@@ -42,7 +42,7 @@ public class Intents {
     public static final String ACTION_ALARMS_UNSCHEDULED = "com.better.alarm.model.Intents.ACTION_ALARMS_UNSCHEDULED";
 
     /**
-     * Key of the Alarm attached as a parceble extra
+     * Key of the AlarmCore attached as a parceble extra
      */
     public static final String EXTRA_ID = "intent.extra.alarm";
 }

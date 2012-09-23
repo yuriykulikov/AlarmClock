@@ -43,7 +43,7 @@ public class Alarms implements IAlarmsManager {
     private Set<IAlarmsManager.OnAlarmListChangedListener> mAlarmListChangedListeners;
 
     private ContentResolver mContentResolver;
-    private Map<Integer, Alarm> alarms;
+    private Map<Integer, AlarmCore> alarms;
 
     Alarms(Context context, IAlarmsScheduler alarmsScheduler) {
         mContext = context;
@@ -51,14 +51,14 @@ public class Alarms implements IAlarmsManager {
 
         mAlarmListChangedListeners = new HashSet<IAlarmsManager.OnAlarmListChangedListener>();
         mContentResolver = mContext.getContentResolver();
-        alarms = new HashMap<Integer, Alarm>();
+        alarms = new HashMap<Integer, AlarmCore>();
 
         final Cursor cursor = mContentResolver.query(Columns.CONTENT_URI, Columns.ALARM_QUERY_COLUMNS, null, null,
                 Columns.DEFAULT_SORT_ORDER);
         try {
             if (cursor.moveToFirst()) {
                 do {
-                    final Alarm a = new Alarm(cursor, context, alarmsScheduler);
+                    final AlarmCore a = new AlarmCore(cursor, context, alarmsScheduler);
                     alarms.put(a.getId(), a);
                 } while (cursor.moveToNext());
             }
@@ -74,13 +74,13 @@ public class Alarms implements IAlarmsManager {
     }
 
     @Override
-    public Alarm getAlarm(int alarmId) {
+    public AlarmCore getAlarm(int alarmId) {
         return alarms.get(alarmId);
     }
 
     @Override
     public int createNewAlarm() {
-        Alarm alarm = new Alarm(mContext, mAlarmsScheduler);
+        AlarmCore alarm = new AlarmCore(mContext, mAlarmsScheduler);
         alarms.put(alarm.getId(), alarm);
         notifyAlarmListChangedListeners();
         return alarm.getId();
@@ -111,7 +111,7 @@ public class Alarms implements IAlarmsManager {
     }
 
     void onAlarmFired(int id, CalendarType calendarType) {
-        Alarm alarm = getAlarm(id);
+        AlarmCore alarm = getAlarm(id);
         alarm.onAlarmFired(calendarType);
         notifyAlarmListChangedListeners();
     }

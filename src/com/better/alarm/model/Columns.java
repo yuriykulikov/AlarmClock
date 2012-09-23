@@ -37,7 +37,7 @@ class Columns implements BaseColumns {
     public static final String DAYS_OF_WEEK = "daysofweek";
 
     /**
-     * Alarm time in UTC milliseconds from the epoch.
+     * AlarmCore time in UTC milliseconds from the epoch.
      * <P>
      * Type: INTEGER
      * </P>
@@ -85,7 +85,7 @@ class Columns implements BaseColumns {
     public static final String PREALARM = "prealarm";
 
     /**
-     * Alarm time in UTC milliseconds from the epoch.
+     * AlarmCore time in UTC milliseconds from the epoch.
      * <P>
      * Type: INTEGER
      * </P>
@@ -101,7 +101,7 @@ class Columns implements BaseColumns {
     public static final String SNOOZED = "snoozed";
 
     /**
-     * Alarm time in UTC milliseconds from the epoch.
+     * AlarmCore time in UTC milliseconds from the epoch.
      * <P>
      * Type: INTEGER
      * </P>
