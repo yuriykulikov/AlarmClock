@@ -24,17 +24,17 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-import android.util.Log;
+
+import com.better.wakelock.Logger;
 
 /**
  * Helper class for opening the database from multiple providers. Also provides
  * some common functionality.
  */
 class AlarmDatabaseHelper extends SQLiteOpenHelper {
-    private static final String TAG = "AlarmDatabaseHelper";
-    private static final boolean DBG = true;
     private static final String DATABASE_NAME = "alarms.db";
     private static final int DATABASE_VERSION = 5;
+    private Logger log;
 
     public AlarmDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -42,6 +42,7 @@ class AlarmDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        log = Logger.getDefaultLogger();
         // @formatter:off
         db.execSQL("CREATE TABLE alarms (" +
                 "_id INTEGER PRIMARY KEY," +
@@ -67,9 +68,8 @@ class AlarmDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int currentVersion) {
-        if (DBG)
-            Log.d(TAG, "Upgrading alarms database from version " + oldVersion + " to " + currentVersion
-                    + ", which will destroy all old data");
+        log.d("Upgrading alarms database from version " + oldVersion + " to " + currentVersion
+                + ", which will destroy all old data");
         db.execSQL("DROP TABLE IF EXISTS alarms");
         onCreate(db);
     }
@@ -77,10 +77,8 @@ class AlarmDatabaseHelper extends SQLiteOpenHelper {
     Uri commonInsert(ContentValues values) {
         SQLiteDatabase db = getWritableDatabase();
         long rowId = db.insert("alarms", Columns.MESSAGE, values);
-        if (rowId < 0) {
-            throw new SQLException("Failed to insert row");
-        }
-        if (DBG) Log.d(TAG, "Added alarm rowId = " + rowId);
+        if (rowId < 0) throw new SQLException("Failed to insert row");
+        log.d("Added alarm rowId = " + rowId);
 
         return ContentUris.withAppendedId(Columns.CONTENT_URI, rowId);
     }

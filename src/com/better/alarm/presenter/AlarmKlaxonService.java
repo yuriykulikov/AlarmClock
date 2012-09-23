@@ -31,12 +31,12 @@ import android.os.IBinder;
 import android.os.Vibrator;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
 import com.better.alarm.R;
 import com.better.alarm.model.Alarm;
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.Intents;
+import com.better.wakelock.Logger;
 import com.better.wakelock.WakeLockManager;
 
 /**
@@ -44,8 +44,6 @@ import com.better.wakelock.WakeLockManager;
  * another activity overrides the AlarmAlert dialog.
  */
 public class AlarmKlaxonService extends Service {
-    private static final String TAG = "AlarmKlaxonService";
-    private static final boolean DBG = true;
     private static final long[] sVibratePattern = new long[] { 500, 500 };
 
     private boolean mPlaying = false;
@@ -55,7 +53,7 @@ public class AlarmKlaxonService extends Service {
 
     private Intent mIntent;
 
-    private PhoneStateListener mPhoneStateListener = new PhoneStateListener() {
+    private final PhoneStateListener mPhoneStateListener = new PhoneStateListener() {
         @Override
         public void onCallStateChanged(int state, String ignored) {
             // The user might already be in a call when the alarm fires. When
@@ -67,6 +65,7 @@ public class AlarmKlaxonService extends Service {
 
     @Override
     public void onCreate() {
+        log = Logger.getDefaultLogger();
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         // Listen for incoming calls to kill the alarm.
         mTelephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
@@ -79,7 +78,7 @@ public class AlarmKlaxonService extends Service {
         // Stop listening for incoming calls.
         mTelephonyManager.listen(mPhoneStateListener, 0);
         WakeLockManager.getWakeLockManager().releasePartialWakeLock(mIntent);
-        if (DBG) Log.d(TAG, "Service destroyed");
+        log.d("Service destroyed");
     }
 
     @Override
@@ -106,20 +105,20 @@ public class AlarmKlaxonService extends Service {
             stopSelf();
             return START_NOT_STICKY;
 
-        } else {
-            return START_NOT_STICKY;
-        }
+        } else return START_NOT_STICKY;
 
     }
 
     // Volume suggested by media team for in-call alarms.
     private static final float IN_CALL_VOLUME = 0.125f;
 
+    private Logger log;
+
     private void play(Alarm alarm) {
         // stop() checks to see if we are already playing.
         stop();
 
-        if (DBG) Log.d(TAG, "AlarmKlaxon.play() " + alarm.getId() + " alert " + alarm.getAlert());
+        log.d("AlarmKlaxon.play() " + alarm.getId() + " alert " + alarm.getAlert());
 
         if (!alarm.isSilent()) {
             Uri alert = alarm.getAlert();
@@ -127,15 +126,16 @@ public class AlarmKlaxonService extends Service {
             // alarm stored.
             if (alert == null) {
                 alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-                if (DBG) Log.d(TAG, "Using default alarm: " + alert.toString());
+                log.d("Using default alarm: " + alert.toString());
             }
 
             // TODO: Reuse mMediaPlayer instead of creating a new one and/or use
             // RingtoneManager.
             mMediaPlayer = new MediaPlayer();
             mMediaPlayer.setOnErrorListener(new OnErrorListener() {
+                @Override
                 public boolean onError(MediaPlayer mp, int what, int extra) {
-                    Log.e(TAG, "Error occurred while playing audio.");
+                    log.e("Error occurred while playing audio.");
                     mp.stop();
                     mp.release();
                     mMediaPlayer = null;
@@ -147,7 +147,7 @@ public class AlarmKlaxonService extends Service {
                 // Check if we are in a call. If we are, use the in-call alarm
                 // resource at a low volume to not disrupt the call.
                 if (mTelephonyManager.getCallState() != TelephonyManager.CALL_STATE_IDLE) {
-                    Log.d(TAG, "Using the in-call alarm");
+                    log.d("Using the in-call alarm");
                     mMediaPlayer.setVolume(IN_CALL_VOLUME, IN_CALL_VOLUME);
                     setDataSourceFromResource(getResources(), mMediaPlayer, R.raw.in_call_alarm);
                 } else {
@@ -155,7 +155,7 @@ public class AlarmKlaxonService extends Service {
                 }
                 startAlarm(mMediaPlayer);
             } catch (Exception ex) {
-                Log.d(TAG, "Using the fallback ringtone");
+                log.w("Using the fallback ringtone");
                 // The alert may be on the sd card which could be busy right
                 // now. Use the fallback ringtone.
                 try {
@@ -165,7 +165,7 @@ public class AlarmKlaxonService extends Service {
                     startAlarm(mMediaPlayer);
                 } catch (Exception ex2) {
                     // At this point we just don't play anything.
-                    Log.e(TAG, "Failed to play fallback ringtone", ex2);
+                    log.e("Failed to play fallback ringtone", ex2);
                 }
             }
         }
@@ -206,7 +206,7 @@ public class AlarmKlaxonService extends Service {
      * Stops alarm audio
      */
     public void stop() {
-        if (DBG) Log.d(TAG, "stop()");
+        log.d("stop()");
         if (mPlaying) {
             mPlaying = false;
 

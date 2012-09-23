@@ -27,17 +27,17 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.util.Log;
+
+import com.better.wakelock.Logger;
 
 /**
  * The Alarms implements application domain logic
  */
 @SuppressLint("UseSparseArrays")
 public class Alarms implements IAlarmsManager {
-    private static final String TAG = "Alarms";
-    private static final boolean DBG = true;
-
     private final Context mContext;
+    private final Logger log;
+
     private final IAlarmsScheduler mAlarmsScheduler;
 
     private final Set<IAlarmsManager.OnAlarmListChangedListener> mAlarmListChangedListeners;
@@ -45,8 +45,9 @@ public class Alarms implements IAlarmsManager {
     private final ContentResolver mContentResolver;
     private final Map<Integer, AlarmCore> alarms;
 
-    Alarms(Context context, IAlarmsScheduler alarmsScheduler) {
+    Alarms(Context context, Logger logger, IAlarmsScheduler alarmsScheduler) {
         mContext = context;
+        log = logger;
         mAlarmsScheduler = alarmsScheduler;
 
         mAlarmListChangedListeners = new HashSet<IAlarmsManager.OnAlarmListChangedListener>();
@@ -58,18 +59,17 @@ public class Alarms implements IAlarmsManager {
         try {
             if (cursor.moveToFirst()) {
                 do {
-                    final AlarmCore a = new AlarmCore(cursor, context, alarmsScheduler);
+                    final AlarmCore a = new AlarmCore(cursor, context, log, alarmsScheduler);
                     alarms.put(a.getId(), a);
                 } while (cursor.moveToNext());
             }
         } finally {
             cursor.close();
         }
-        if (DBG) {
-            Log.d(TAG, "Alarms:");
-            for (Alarm alarm : alarms.values()) {
-                Log.d(TAG, alarm.toString());
-            }
+
+        log.d("Alarms:");
+        for (Alarm alarm : alarms.values()) {
+            log.d(alarm.toString());
         }
     }
 

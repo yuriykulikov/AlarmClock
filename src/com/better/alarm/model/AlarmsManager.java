@@ -19,13 +19,12 @@ package com.better.alarm.model;
 
 import android.content.Context;
 
+import com.better.wakelock.Logger;
+
 /**
  * The AlarmsManager provider supplies info about AlarmCore Clock settings
  */
 public class AlarmsManager {
-    private static final String TAG = "AlarmsManager";
-    private static final boolean DBG = true;
-
     private static Alarms sModelInstance;
 
     public static IAlarmsManager getAlarmsManager() {
@@ -38,9 +37,10 @@ public class AlarmsManager {
         return sModelInstance;
     }
 
-    static void init(Context context) {
+    static void init(Context context, Logger logger) {
         if (sModelInstance == null) {
-            sModelInstance = new Alarms(context, new AlarmsScheduler(context));
+
+            sModelInstance = new Alarms(context, logger, new AlarmsScheduler(context, logger));
         } else throw new RuntimeException("Attept to reinitialize!");
     }
 

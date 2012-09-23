@@ -20,11 +20,10 @@ package com.better.alarm.model;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+
+import com.better.wakelock.Logger;
 
 public class AlarmInitReceiver extends BroadcastReceiver {
-    private static final String TAG = "AlarmInitReceiver";
-    private static final boolean DBG = true;
 
     /**
      * Sets alarm on ACTION_BOOT_COMPLETED. Resets alarm on TIME_SET,
@@ -33,9 +32,7 @@ public class AlarmInitReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
         final String action = intent.getAction();
-        if (DBG) {
-            Log.d(TAG, "AlarmInitReceiver" + action);
-        }
+        Logger.getDefaultLogger().d("AlarmInitReceiver" + action);
         AlarmsManager.reinit();
     }
 }

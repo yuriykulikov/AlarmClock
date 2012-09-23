@@ -15,12 +15,12 @@
  */
 package com.better.alarm.model;
 
-import com.better.wakelock.WakeLockManager;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+
+import com.better.wakelock.Logger;
+import com.better.wakelock.WakeLockManager;
 
 /**
  * This receiver is a part of the model, but it has to be a separate class.
@@ -31,14 +31,12 @@ import android.util.Log;
  * 
  */
 public class AlarmReceiver extends BroadcastReceiver {
-    private static final String TAG = "AlarmReceiver";
-    private static final boolean DBG = true;
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
         final String action = intent.getAction();
-        if (DBG) Log.d(TAG, "Forwarding to the service: " + action);
+        Logger.getDefaultLogger().d("Forwarding to the service: " + action);
         Intent serviceIntent = new Intent(action);
         serviceIntent.putExtras(intent);
         WakeLockManager.getWakeLockManager().acquirePartialWakeLock(serviceIntent, "ForAlarmService");

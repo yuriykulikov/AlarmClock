@@ -18,19 +18,18 @@ package com.better.alarm.model;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 
+import com.better.wakelock.Logger;
 import com.better.wakelock.WakeLockManager;
 
 public class AlarmsService extends Service {
-    private static final String TAG = "AlarmsService";
-    private static final boolean DBG = true;
-
     Alarms alarms;
+    private Logger log;
 
     @Override
     public void onCreate() {
         alarms = AlarmsManager.getInstance();
+        log = Logger.getDefaultLogger();
         super.onCreate();
     }
 
@@ -39,7 +38,7 @@ public class AlarmsService extends Service {
         String action = intent.getAction();
         if (action.equals(AlarmsScheduler.ACTION_FIRED)) {
             int id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1);
-            if (DBG) Log.d(TAG, "AlarmCore fired " + id);
+            log.d("AlarmCore fired " + id);
             alarms.onAlarmFired(id, CalendarType.valueOf(intent.getExtras().getString(AlarmsScheduler.EXTRA_TYPE)));
         }
 

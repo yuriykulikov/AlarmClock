@@ -26,12 +26,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
+
+import com.better.wakelock.Logger;
+import com.better.wakelock.Logger.LogLevel;
 
 public class AlarmProvider extends ContentProvider {
-    private static final String TAG = "AlarmProvider";
-    private static final boolean DBG = false;
     private AlarmDatabaseHelper mOpenHelper;
+
+    private Logger log;
 
     private static final int ALARMS = 1;
     private static final int ALARMS_ID = 2;
@@ -47,6 +49,9 @@ public class AlarmProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
+        log = Logger.getDefaultLogger();
+        log.setLogLevel(AlarmProvider.class, LogLevel.NONE);
+        log.setLogLevel(AlarmDatabaseHelper.class, LogLevel.DEBUG);
         mOpenHelper = new AlarmDatabaseHelper(getContext());
         return true;
     }
@@ -81,7 +86,7 @@ public class AlarmProvider extends ContentProvider {
             ret = qb.query(db, projectionIn, selection, selectionArgs, null, null, sort);
         }
         if (ret == null) {
-            if (DBG) Log.d(TAG, "AlarmsManager.query: failed");
+            log.d("AlarmsManager.query: failed");
         } else {
             ret.setNotificationUri(getContext().getContentResolver(), url);
         }
@@ -119,22 +124,21 @@ public class AlarmProvider extends ContentProvider {
             throw new UnsupportedOperationException("Cannot update URL: " + url);
         }
         }
-        if (DBG) Log.d(TAG, "*** notifyChange() rowId: " + rowId + " url " + url);
+        log.d("*** notifyChange() rowId: " + rowId + " url " + url);
         getContext().getContentResolver().notifyChange(url, null);
         return count;
     }
 
     @Override
     public Uri insert(Uri url, ContentValues initialValues) {
-        if (sURLMatcher.match(url) != ALARMS) {
-            throw new IllegalArgumentException("Cannot insert into URL: " + url);
-        }
+        if (sURLMatcher.match(url) != ALARMS) throw new IllegalArgumentException("Cannot insert into URL: " + url);
 
         Uri newUrl = mOpenHelper.commonInsert(initialValues);
         getContext().getContentResolver().notifyChange(newUrl, null);
         return newUrl;
     }
 
+    @Override
     public int delete(Uri url, String where, String[] whereArgs) {
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int count;

@@ -29,20 +29,19 @@ import android.database.Cursor;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.better.alarm.R;
+import com.better.wakelock.Logger;
 import com.better.wakelock.WakeLockManager;
 
 public final class AlarmCore implements Alarm {
-    private static final String TAG = "AlarmCore";
-    private static final boolean DBG = true;
 
     // This string is used to indicate a silent alarm in the db.
     private static final String ALARM_ALERT_SILENT = "silent";
 
-    private IAlarmsScheduler mAlarmsScheduler;
-    private Context mContext;
+    private final IAlarmsScheduler mAlarmsScheduler;
+    private Logger log;
+    private final Context mContext;
 
     private int id;
     private boolean enabled;
@@ -60,12 +59,13 @@ public final class AlarmCore implements Alarm {
     private Uri alert;
     private boolean silent;
     private boolean prealarm;
-    private Calendar prealarmTime;
+    private final Calendar prealarmTime;
     private boolean snoozed;
     private Calendar snoozedTime;
 
-    AlarmCore(Cursor c, Context context, IAlarmsScheduler alarmsScheduler) {
+    AlarmCore(Cursor c, Context context, Logger logger, IAlarmsScheduler alarmsScheduler) {
         mContext = context;
+        this.log = logger;
         mAlarmsScheduler = alarmsScheduler;
         id = c.getInt(Columns.ALARM_ID_INDEX);
         enabled = c.getInt(Columns.ALARM_ENABLED_INDEX) == 1;
@@ -84,7 +84,7 @@ public final class AlarmCore implements Alarm {
         snoozedTime = Calendar.getInstance();
         snoozedTime.setTimeInMillis(c.getLong(Columns.ALARM_SNOOZE_TIME_INDEX));
         if (ALARM_ALERT_SILENT.equals(alertString)) {
-            if (DBG) Log.d(TAG, "AlarmCore is marked as silent");
+            log.d("AlarmCore is marked as silent");
             silent = true;
         } else {
             if (alertString != null && alertString.length() != 0) {
@@ -102,7 +102,7 @@ public final class AlarmCore implements Alarm {
 
         boolean isExpired = getNextTime().before(now);
         if (isExpired) {
-            if (DBG) Log.d(TAG, "AlarmCore expired: " + toString());
+            log.d("AlarmCore expired: " + toString());
             enabled = (isEnabled() && getDaysOfWeek().isRepeatSet());
         }
 
@@ -242,7 +242,9 @@ public final class AlarmCore implements Alarm {
         c.set(Calendar.MILLISECOND, 0);
 
         int addDays = daysOfWeek.getNextAlarm(c);
-        if (addDays > 0) c.add(Calendar.DAY_OF_WEEK, addDays);
+        if (addDays > 0) {
+            c.add(Calendar.DAY_OF_WEEK, addDays);
+        }
 
         nextTime = c;
     }
@@ -251,8 +253,12 @@ public final class AlarmCore implements Alarm {
         HashMap<CalendarType, Calendar> calendars = new HashMap<CalendarType, Calendar>();
 
         Calendar now = Calendar.getInstance();
-        if (enabled && nextTime.after(now)) calendars.put(CalendarType.NORMAL, nextTime);
-        if (snoozed && snoozedTime.after(now)) calendars.put(CalendarType.SNOOZE, snoozedTime);
+        if (enabled && nextTime.after(now)) {
+            calendars.put(CalendarType.NORMAL, nextTime);
+        }
+        if (snoozed && snoozedTime.after(now)) {
+            calendars.put(CalendarType.SNOOZE, snoozedTime);
+        }
 
         return calendars;
     }
@@ -374,9 +380,7 @@ public final class AlarmCore implements Alarm {
 
     @Override
     public String getLabelOrDefault(Context context) {
-        if (label == null || label.length() == 0) {
-            return context.getString(R.string.default_label);
-        }
+        if (label == null || label.length() == 0) return context.getString(R.string.default_label);
         return label;
     }
 

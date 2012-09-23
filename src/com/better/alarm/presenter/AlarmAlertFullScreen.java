@@ -24,7 +24,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +36,7 @@ import com.better.alarm.model.Alarm;
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.IAlarmsManager;
 import com.better.alarm.model.Intents;
+import com.better.wakelock.Logger;
 
 /**
  * Alarm Clock alarm alert: pops visible indicator and plays alarm tone. This
@@ -44,8 +44,6 @@ import com.better.alarm.model.Intents;
  * wallpaper as the background.
  */
 public class AlarmAlertFullScreen extends Activity {
-    private static final String TAG = "AlarmAlertFullScreen";
-    private static final boolean DBG = true;
     private static final String DEFAULT_VOLUME_BEHAVIOR = "2";
     protected static final String SCREEN_OFF = "screen_off";
 
@@ -58,7 +56,7 @@ public class AlarmAlertFullScreen extends Activity {
     /**
      * Receives Intents from the model
      */
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -129,6 +127,7 @@ public class AlarmAlertFullScreen extends Activity {
         Button snooze = (Button) findViewById(R.id.snooze);
         snooze.requestFocus();
         snooze.setOnClickListener(new Button.OnClickListener() {
+            @Override
             public void onClick(View v) {
                 snooze();
             }
@@ -136,6 +135,7 @@ public class AlarmAlertFullScreen extends Activity {
 
         /* dismiss button: close notification */
         findViewById(R.id.dismiss).setOnClickListener(new Button.OnClickListener() {
+            @Override
             public void onClick(View v) {
                 dismiss();
             }
@@ -168,7 +168,7 @@ public class AlarmAlertFullScreen extends Activity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        if (DBG) Log.d(TAG, "AlarmAlert.OnNewIntent()");
+        Logger.getDefaultLogger().d("AlarmAlert.OnNewIntent()");
 
         int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
         mAlarm = alarmsManager.getAlarm(id);
@@ -181,7 +181,8 @@ public class AlarmAlertFullScreen extends Activity {
         super.onResume();
         // XXX this is some wierd logic and should not be here
         // If the alarm was deleted at some point, disable snooze.
-        // if (AlarmsManager.getAlarm(getContentResolver(), mAlarm.id) == null) {
+        // if (AlarmsManager.getAlarm(getContentResolver(), mAlarm.id) == null)
+        // {
         // Button snooze = (Button) findViewById(R.id.snooze);
         // snooze.setEnabled(false);
         // }
@@ -190,7 +191,7 @@ public class AlarmAlertFullScreen extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (DBG) Log.d(TAG, "AlarmAlert.onDestroy()");
+        Logger.getDefaultLogger().d("AlarmAlert.onDestroy()");
         // No longer care about the alarm being killed.
         unregisterReceiver(mReceiver);
     }

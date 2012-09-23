@@ -26,10 +26,10 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+
+import com.better.wakelock.Logger;
 
 class AlarmsScheduler implements IAlarmsScheduler {
-    private static final String TAG = "AlarmsScheduler";
     private static final boolean DBG = true;
     static final String ACTION_FIRED = "com.better.alarm.ACTION_FIRED";
     static final String EXTRA_ID = "intent.extra.alarm";
@@ -48,11 +48,8 @@ class AlarmsScheduler implements IAlarmsScheduler {
 
         @Override
         public boolean equals(Object o) {
-            if (((ScheduledAlarm) o).id == id && ((ScheduledAlarm) o).type == type) {
-                return true;
-            } else {
-                return false;
-            }
+            if (((ScheduledAlarm) o).id == id && ((ScheduledAlarm) o).type == type) return true;
+            else return false;
         }
 
         @Override
@@ -66,19 +63,22 @@ class AlarmsScheduler implements IAlarmsScheduler {
 
     private final PriorityQueue<ScheduledAlarm> queue;
 
-    AlarmsScheduler(Context context) {
+    private final Logger log;
+
+    AlarmsScheduler(Context context, Logger logger) {
         mContext = context;
         queue = new PriorityQueue<ScheduledAlarm>();
+        this.log = logger;
     }
 
     @Override
     public void removeAlarm(int id) {
         ScheduledAlarm previousHead = queue.peek();
         for (Iterator<ScheduledAlarm> iterator = queue.iterator(); iterator.hasNext();) {
-            ScheduledAlarm scheduledAlarm = (ScheduledAlarm) iterator.next();
+            ScheduledAlarm scheduledAlarm = iterator.next();
 
             if (scheduledAlarm.id == id) {
-                Log.d(TAG, "removing a ScheduledAlarm " + id + " type = " + scheduledAlarm.type.toString());
+                log.d("removing a ScheduledAlarm " + id + " type = " + scheduledAlarm.type.toString());
                 iterator.remove();
             }
         }
@@ -118,11 +118,10 @@ class AlarmsScheduler implements IAlarmsScheduler {
 
         DateFormat df = DateFormat.getDateTimeInstance();
 
-        if (DBG) Log.d(TAG, "Set alarm " + id + " on " + df.format(calendar.getTime()));
+        log.d("Set alarm " + id + " on " + df.format(calendar.getTime()));
 
-        if (DBG && calendar.before(Calendar.getInstance())) {
+        if (DBG && calendar.before(Calendar.getInstance()))
             throw new RuntimeException("Attempt to schedule alarm in the past: " + df.format(calendar.getTime()));
-        }
 
         Intent intent = new Intent(ACTION_FIRED);
         intent.putExtra(EXTRA_ID, id);

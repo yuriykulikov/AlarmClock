@@ -29,7 +29,6 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TimePicker;
@@ -39,14 +38,13 @@ import com.better.alarm.model.Alarm;
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.IAlarmsManager;
 import com.better.alarm.model.Intents;
+import com.better.wakelock.Logger;
 
 /**
  * Manages each alarm
  */
 public class SetAlarmActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener,
         TimePickerDialog.OnTimeSetListener, OnCancelListener {
-    private static final String TAG = "SetAlarmActivity";
-
     public final static String M12 = "h:mm aa";
     public final static String M24 = "kk:mm";
 
@@ -109,6 +107,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         // Attach actions to each button.
         Button b = (Button) findViewById(R.id.alarm_save);
         b.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
                 saveAlarm();
                 finish();
@@ -116,6 +115,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         });
         Button revert = (Button) findViewById(R.id.alarm_revert);
         revert.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
                 revert();
                 finish();
@@ -128,6 +128,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         } else {
             b.setVisibility(View.VISIBLE);
             b.setOnClickListener(new View.OnClickListener() {
+                @Override
                 public void onClick(View v) {
                     deleteAlarm();
                 }
@@ -137,7 +138,9 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
 
     @Override
     protected void onDestroy() {
-        if (isNewAlarm) revert();
+        if (isNewAlarm) {
+            revert();
+        }
         super.onDestroy();
     }
 
@@ -164,6 +167,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
      * showTimePicker(); mTimePickerDialog.onRestoreInstanceState(b); } }
      */
 
+    @Override
     public boolean onPreferenceChange(final Preference p, Object newValue) {
         // this method is called _before_
         // the value of the preference has changed.
@@ -204,10 +208,10 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
     private void showTimePicker() {
         if (mTimePickerDialog != null) {
             if (mTimePickerDialog.isShowing()) {
-                Log.e(TAG, "mTimePickerDialog is already showing.");
+                Logger.getDefaultLogger().e("mTimePickerDialog is already showing.");
                 mTimePickerDialog.dismiss();
             } else {
-                Log.e(TAG, "mTimePickerDialog is not null");
+                Logger.getDefaultLogger().e("mTimePickerDialog is not null");
             }
             mTimePickerDialog.dismiss();
         }
@@ -217,6 +221,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         mTimePickerDialog.show();
     }
 
+    @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         // onTimeSet is called when the user clicks "Set"
         mTimePickerDialog = null;
@@ -252,6 +257,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         new AlertDialog.Builder(this).setTitle(getString(R.string.delete_alarm))
                 .setMessage(getString(R.string.delete_alarm_confirm))
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface d, int w) {
                         alarms.delete(mId);
                         finish();

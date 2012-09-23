@@ -15,16 +15,24 @@
  */
 package com.better.alarm.model;
 
-import com.better.wakelock.WakeLockManager;
-
 import android.app.Application;
+
+import com.better.wakelock.Logger;
+import com.better.wakelock.Logger.LogLevel;
+import com.better.wakelock.WakeLockManager;
 
 public class AlarmApplication extends Application {
 
     @Override
     public void onCreate() {
-        WakeLockManager.init(getApplicationContext(), true);
-        AlarmsManager.init(getApplicationContext());
+        Logger logger = Logger.init();
+        logger.setLogLevel(WakeLockManager.class, LogLevel.NONE);
+        logger.setLogLevel(AlarmsScheduler.class, LogLevel.DEBUG);
+        logger.setLogLevel(AlarmCore.class, LogLevel.DEBUG);
+        logger.setLogLevel(Alarms.class, LogLevel.DEBUG);
+
+        WakeLockManager.init(getApplicationContext(), logger, true);
+        AlarmsManager.init(getApplicationContext(), logger);
         super.onCreate();
     }
 
