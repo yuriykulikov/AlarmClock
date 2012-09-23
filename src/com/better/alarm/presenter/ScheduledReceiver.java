@@ -50,7 +50,7 @@ public class ScheduledReceiver extends BroadcastReceiver {
             // Update systems settings, so that interested Apps (like KeyGuard)
             // will react accordingly
             String format = android.text.format.DateFormat.is24HourFormat(context) ? DM24 : DM12;
-            Calendar calendar = alarm.isSnoozed() ? alarm.calculateSnoozedCalendar() : alarm.calculateCalendar();
+            Calendar calendar = alarm.isSnoozed() ? alarm.getSnoozedTime() : alarm.getNextTime();
             String timeString = (String) DateFormat.format(format, calendar);
             Settings.System.putString(context.getContentResolver(), Settings.System.NEXT_ALARM_FORMATTED, timeString);
 

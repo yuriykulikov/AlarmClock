@@ -19,13 +19,12 @@ import java.util.List;
 
 import android.net.Uri;
 
-import com.better.alarm.model.Alarm.DaysOfWeek;
 
 /**
  * An interface for Presenter-Model interaction. Presenters can invoke
  * {@link #dismiss(Alarm)}, {@link #snooze(Alarm)} as a result of user
  * interaction. Model broadcasts intents representing lifecycle of the
- * {@link Alarm}. Each intent contains an {@link Alarm} as a parceable extra
+ * {@link AlarmCore}. Each intent contains an {@link Alarm} as a parceable extra
  * with the key {@link #EXTRA_ID}
  * 
  * @author Yuriy
@@ -53,7 +52,7 @@ public interface IAlarmsManager {
     public void dismiss(Alarm alarm);
 
     /**
-     * Delete an Alarm with the given id from the database
+     * Delete an AlarmCore with the given id from the database
      * 
      * @param id
      */
@@ -68,7 +67,7 @@ public interface IAlarmsManager {
     public void enable(int id, boolean enable);
 
     /**
-     * Return an Alarm object representing the alarm id in the database. Returns
+     * Return an AlarmCore object representing the alarm id in the database. Returns
      * null if no alarm exists.
      */
     public Alarm getAlarm(int alarmId);
@@ -96,9 +95,9 @@ public interface IAlarmsManager {
     public void unRegisterOnAlarmListChangedListener(OnAlarmListChangedListener listener);
 
     /**
-     * Create new Alarm with default settings
+     * Create new AlarmCore with default settings
      * 
-     * @return id of newly created Alarm
+     * @return id of newly created AlarmCore
      */
     int createNewAlarm();
 
@@ -106,7 +105,7 @@ public interface IAlarmsManager {
      * A convenience method to change an existing alarm
      * 
      * @param id
-     *            - Alarm which has to be changed
+     *            - AlarmCore which has to be changed
      * @param enabled
      * @param hour
      * @param minute

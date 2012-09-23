@@ -175,6 +175,13 @@
                 <action android:name="android.intent.action.LOCALE_CHANGED" />
             </intent-filter>
         </service>
+        <service
+            android:name=".model.DataBaseService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.better.alarm.ACTION_SAVE_ALARM" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

@@ -67,7 +67,7 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
             // Use the alarm's label or the default label as the ticker text and
             // main text of the notification.
             String label = alarm.getLabelOrDefault(context);
-            Notification n = new Notification(R.drawable.stat_notify_alarm, label, alarm.getTimeInMillis());
+            Notification n = new Notification(R.drawable.stat_notify_alarm, label, alarm.getNextTime().getTimeInMillis());
             n.setLatestEventInfo(context, label, context.getString(R.string.alarm_notify_text), pendingNotify);
             n.flags |= Notification.FLAG_SHOW_LIGHTS | Notification.FLAG_ONGOING_EVENT;
             n.defaults |= Notification.DEFAULT_LIGHTS;

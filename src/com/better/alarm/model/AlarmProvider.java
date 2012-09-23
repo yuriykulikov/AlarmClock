@@ -30,7 +30,7 @@ import android.util.Log;
 
 public class AlarmProvider extends ContentProvider {
     private static final String TAG = "AlarmProvider";
-    private static final boolean DBG = true;
+    private static final boolean DBG = false;
     private AlarmDatabaseHelper mOpenHelper;
 
     private static final int ALARMS = 1;

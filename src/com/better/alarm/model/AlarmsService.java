@@ -15,11 +15,12 @@
  */
 package com.better.alarm.model;
 
-import com.better.wakelock.WakeLockManager;
-
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
+
+import com.better.wakelock.WakeLockManager;
 
 public class AlarmsService extends Service {
     private static final String TAG = "AlarmsService";
@@ -38,22 +39,8 @@ public class AlarmsService extends Service {
         String action = intent.getAction();
         if (action.equals(AlarmsScheduler.ACTION_FIRED)) {
             int id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1);
-            alarms.onAlarmFired(id);
-
-        } else if (action.equals(AlarmsScheduler.ACTION_SNOOZED_FIRED)) {
-            int id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1);
-            alarms.onAlarmSnoozedFired(id);
-
-        } else if (action.equals(AlarmsScheduler.ACTION_SOUND_EXPIRED)) {
-            int id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1);
-            alarms.onAlarmSoundExpired(id);
-
-        } else if (action.equals(Intent.ACTION_TIMEZONE_CHANGED) || action.equals(Intent.ACTION_TIME_CHANGED)
-                || action.equals(Intent.ACTION_BOOT_COMPLETED)) {
-            alarms.init();
-
-        } else if (action.equals(Intent.ACTION_LOCALE_CHANGED)) {
-            // TODO
+            if (DBG) Log.d(TAG, "AlarmCore fired " + id);
+            alarms.onAlarmFired(id, CalendarType.valueOf(intent.getExtras().getString(AlarmsScheduler.EXTRA_TYPE)));
         }
 
         WakeLockManager.getWakeLockManager().releasePartialWakeLock(intent);

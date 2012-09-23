@@ -245,7 +245,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         alarms.changeAlarm(mId, mEnabledPref.isChecked(), mHour, mMinute, mRepeatPref.getDaysOfWeek(), true, "",
                 mAlarmPref.getAlert(), mPreAlarmPref.isChecked());
         isNewAlarm = false;
-        return alarms.getAlarm(mId).getTimeInMillis();
+        return alarms.getAlarm(mId).getNextTime().getTimeInMillis();
     }
 
     private void deleteAlarm() {
