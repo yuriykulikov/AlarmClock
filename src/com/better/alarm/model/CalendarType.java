@@ -1,5 +1,5 @@
 package com.better.alarm.model;
 
 public enum CalendarType {
-    NORMAL, SNOOZE
+    NORMAL, SNOOZE, PREALARM
 }

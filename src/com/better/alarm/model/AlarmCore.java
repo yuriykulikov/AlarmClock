@@ -35,7 +35,6 @@ import com.better.wakelock.Logger;
 import com.better.wakelock.WakeLockManager;
 
 public final class AlarmCore implements Alarm {
-
     // This string is used to indicate a silent alarm in the db.
     private static final String ALARM_ALERT_SILENT = "silent";
 
@@ -59,9 +58,15 @@ public final class AlarmCore implements Alarm {
     private Uri alert;
     private boolean silent;
     private boolean prealarm;
-    private final Calendar prealarmTime;
+    private Calendar prealarmTime;
     private boolean snoozed;
     private Calendar snoozedTime;
+
+    /**
+     * Used to calculate calendars. Is not synced with DB, because it is in the
+     * settings
+     */
+    private int prealarmMinutes;
 
     AlarmCore(Cursor c, Context context, Logger logger, IAlarmsScheduler alarmsScheduler) {
         mContext = context;
@@ -138,7 +143,16 @@ public final class AlarmCore implements Alarm {
     }
 
     void onAlarmFired(CalendarType calendarType) {
-        broadcastAlarmState(id, Intents.ALARM_ALERT_ACTION);
+
+        if (calendarType == CalendarType.PREALARM) {
+            broadcastAlarmState(id, Intents.ALARM_PREALARM_ACTION);
+        } else {
+            broadcastAlarmState(id, Intents.ALARM_ALERT_ACTION);
+            // Disable this alarm if it does not repeat.
+            if (!getDaysOfWeek().isRepeatSet()) {
+                enabled = false;
+            }
+        }
 
         snoozed = false;
 
@@ -214,6 +228,12 @@ public final class AlarmCore implements Alarm {
         this.minutes = minute;
         this.enabled = enabled;
 
+        // TODO add a listener for this duration
+        // there is no way to set one calendar according to another for some
+        // reason
+        String asString = PreferenceManager.getDefaultSharedPreferences(mContext).getString("prealarm_duration", "30");
+        this.prealarmMinutes = Integer.parseInt(asString);
+
         calculateCalendars();
 
         writeToDb();
@@ -248,6 +268,10 @@ public final class AlarmCore implements Alarm {
         }
 
         nextTime = c;
+
+        prealarmTime = Calendar.getInstance();
+        prealarmTime.setTimeInMillis(nextTime.getTimeInMillis());
+        prealarmTime.add(Calendar.MINUTE, -1 * prealarmMinutes);
     }
 
     private Map<CalendarType, Calendar> getActiveCalendars() {
@@ -259,6 +283,9 @@ public final class AlarmCore implements Alarm {
         }
         if (snoozed && snoozedTime.after(now)) {
             calendars.put(CalendarType.SNOOZE, snoozedTime);
+        }
+        if (enabled && prealarm && prealarmTime.after(now)) {
+            calendars.put(CalendarType.PREALARM, prealarmTime);
         }
 
         return calendars;
