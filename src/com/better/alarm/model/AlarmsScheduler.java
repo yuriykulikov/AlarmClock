@@ -15,6 +15,7 @@
  */
 package com.better.alarm.model;
 
+import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
@@ -114,10 +115,13 @@ class AlarmsScheduler implements IAlarmsScheduler {
 
     private void setUpRTCAlarm(int id, Calendar calendar, CalendarType type) {
         AlarmManager am = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-        if (DBG) Log.d(TAG, "Set alarm " + id + " on " + calendar.getTime().toLocaleString());
+
+        DateFormat df = DateFormat.getDateTimeInstance();
+
+        if (DBG) Log.d(TAG, "Set alarm " + id + " on " + df.format(calendar.getTime()));
 
         if (DBG && calendar.before(Calendar.getInstance())) {
-            throw new RuntimeException("Attempt to schedule alarm in the past: " + calendar.getTime().toLocaleString());
+            throw new RuntimeException("Attempt to schedule alarm in the past: " + df.format(calendar.getTime()));
         }
 
         Intent intent = new Intent(ACTION_FIRED);
