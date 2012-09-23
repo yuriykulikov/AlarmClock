@@ -37,13 +37,13 @@ public class Alarms implements IAlarmsManager {
     private static final String TAG = "Alarms";
     private static final boolean DBG = true;
 
-    private Context mContext;
-    private IAlarmsScheduler mAlarmsScheduler;
+    private final Context mContext;
+    private final IAlarmsScheduler mAlarmsScheduler;
 
-    private Set<IAlarmsManager.OnAlarmListChangedListener> mAlarmListChangedListeners;
+    private final Set<IAlarmsManager.OnAlarmListChangedListener> mAlarmListChangedListeners;
 
-    private ContentResolver mContentResolver;
-    private Map<Integer, AlarmCore> alarms;
+    private final ContentResolver mContentResolver;
+    private final Map<Integer, AlarmCore> alarms;
 
     Alarms(Context context, IAlarmsScheduler alarmsScheduler) {
         mContext = context;
@@ -71,6 +71,13 @@ public class Alarms implements IAlarmsManager {
                 Log.d(TAG, alarm.toString());
             }
         }
+    }
+
+    void reinit() {
+        for (AlarmCore alarmCore : alarms.values()) {
+            alarmCore.calculateCalendars();
+        }
+
     }
 
     @Override

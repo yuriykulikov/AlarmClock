@@ -29,24 +29,22 @@ public class AlarmsManager {
     private static Alarms sModelInstance;
 
     public static IAlarmsManager getAlarmsManager() {
-        if (sModelInstance == null) {
-            throw new NullPointerException("AlarmsManager not initialized yet");
-        }
+        if (sModelInstance == null) throw new NullPointerException("AlarmsManager not initialized yet");
         return sModelInstance;
     }
 
     static Alarms getInstance() {
-        if (sModelInstance == null) {
-            throw new NullPointerException("AlarmsManager not initialized yet");
-        }
+        if (sModelInstance == null) throw new NullPointerException("AlarmsManager not initialized yet");
         return sModelInstance;
     }
 
     static void init(Context context) {
         if (sModelInstance == null) {
             sModelInstance = new Alarms(context, new AlarmsScheduler(context));
-        } else {
-            throw new RuntimeException("Attept to reinitialize!");
-        }
+        } else throw new RuntimeException("Attept to reinitialize!");
+    }
+
+    public static void reinit() {
+        sModelInstance.reinit();
     }
 }

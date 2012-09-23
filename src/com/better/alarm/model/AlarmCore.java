@@ -224,7 +224,7 @@ public final class AlarmCore implements Alarm {
      * Given an alarm in hours and minutes, return a time suitable for setting
      * in AlarmManager.
      */
-    private void calculateCalendars() {
+    void calculateCalendars() {
         // start with now
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis());
