@@ -34,15 +34,15 @@ import com.better.wakelock.Logger;
 class AlarmDatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "alarms.db";
     private static final int DATABASE_VERSION = 5;
-    private Logger log;
+    private final Logger log;
 
     public AlarmDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        log = Logger.getDefaultLogger();
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        log = Logger.getDefaultLogger();
         // @formatter:off
         db.execSQL("CREATE TABLE alarms (" +
                 "_id INTEGER PRIMARY KEY," +
