@@ -20,11 +20,14 @@ package com.better.alarm.model;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -41,6 +44,24 @@ public final class AlarmCore implements Alarm {
     private final IAlarmsScheduler mAlarmsScheduler;
     private final Logger log;
     private final Context mContext;
+    /**
+     * Reference to a listener. We cannot use anonymous classes because
+     * {@link PreferenceManager} stores {@link OnSharedPreferenceChangeListener}
+     * in a {@link WeakHashMap}.
+     */
+    private final OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener = new OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (key.equals("prealarm_duration")) {
+                fetchPreAlarmMinutes();
+                if (prealarm) {
+                    calculateCalendars();
+                    mAlarmsScheduler.setAlarm(id, getActiveCalendars());
+                    writeToDb();
+                }
+            }
+        }
+    };
 
     private int id;
     private boolean enabled;
@@ -111,6 +132,10 @@ public final class AlarmCore implements Alarm {
             enabled = (isEnabled() && getDaysOfWeek().isRepeatSet());
         }
 
+        PreferenceManager.getDefaultSharedPreferences(mContext).registerOnSharedPreferenceChangeListener(
+                mOnSharedPreferenceChangeListener);
+        fetchPreAlarmMinutes();
+
         calculateCalendars();
 
         writeToDb();
@@ -140,6 +165,12 @@ public final class AlarmCore implements Alarm {
 
         Uri uri = mContext.getContentResolver().insert(Columns.CONTENT_URI, createContentValues());
         id = (int) ContentUris.parseId(uri);
+
+        PreferenceManager.getDefaultSharedPreferences(mContext).registerOnSharedPreferenceChangeListener(
+                mOnSharedPreferenceChangeListener);
+        fetchPreAlarmMinutes();
+
+        calculateCalendars();
     }
 
     void onAlarmFired(CalendarType calendarType) {
@@ -227,12 +258,6 @@ public final class AlarmCore implements Alarm {
         this.hour = hour;
         this.minutes = minute;
         this.enabled = enabled;
-
-        // TODO add a listener for this duration
-        // there is no way to set one calendar according to another for some
-        // reason
-        String asString = PreferenceManager.getDefaultSharedPreferences(mContext).getString("prealarm_duration", "30");
-        this.prealarmMinutes = Integer.parseInt(asString);
 
         calculateCalendars();
 
@@ -330,6 +355,11 @@ public final class AlarmCore implements Alarm {
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // ++++++ getters for GUI +++++++++++++++++++++++++++++++
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    private void fetchPreAlarmMinutes() {
+        String asString = PreferenceManager.getDefaultSharedPreferences(mContext).getString("prealarm_duration", "30");
+        prealarmMinutes = Integer.parseInt(asString);
+    }
 
     /**
      * TODO calendar should be immutable
