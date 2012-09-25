@@ -41,7 +41,7 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
 
-        if (action.equals(Intents.ALARM_ALERT_ACTION)) {
+        if (action.equals(Intents.ALARM_ALERT_ACTION) || action.equals(Intents.ALARM_PREALARM_ACTION)) {
             /* Close dialogs and window shade */
             Intent closeDialogs = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
             context.sendBroadcast(closeDialogs);

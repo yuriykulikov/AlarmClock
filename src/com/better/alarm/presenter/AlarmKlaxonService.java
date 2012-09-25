@@ -94,7 +94,12 @@ public class AlarmKlaxonService extends Service {
 
         if (action.equals(Intents.ALARM_ALERT_ACTION)) {
             Alarm alarm = AlarmsManager.getAlarmsManager().getAlarm(id);
-            play(alarm);
+            play(alarm, false);
+            return START_STICKY;
+
+        } else if (action.equals(Intents.ALARM_PREALARM_ACTION)) {
+            Alarm alarm = AlarmsManager.getAlarmsManager().getAlarm(id);
+            play(alarm, true);
             return START_STICKY;
 
         } else if (action.equals(Intents.ALARM_SNOOZE_ACTION)) {
@@ -114,7 +119,7 @@ public class AlarmKlaxonService extends Service {
 
     private Logger log;
 
-    private void play(Alarm alarm) {
+    private void play(Alarm alarm, boolean prealarm) {
         // stop() checks to see if we are already playing.
         stop();
 
@@ -150,6 +155,9 @@ public class AlarmKlaxonService extends Service {
                     log.d("Using the in-call alarm");
                     mMediaPlayer.setVolume(IN_CALL_VOLUME, IN_CALL_VOLUME);
                     setDataSourceFromResource(getResources(), mMediaPlayer, R.raw.in_call_alarm);
+                } else if (prealarm) {
+                    mMediaPlayer.setVolume(IN_CALL_VOLUME, IN_CALL_VOLUME);
+                    mMediaPlayer.setDataSource(this, alert);
                 } else {
                     mMediaPlayer.setDataSource(this, alert);
                 }
@@ -171,7 +179,7 @@ public class AlarmKlaxonService extends Service {
         }
 
         /* Start the vibrator after everything is ok with the media player */
-        if (alarm.isVibrate()) {
+        if (alarm.isVibrate() && !prealarm) {
             mVibrator.vibrate(sVibratePattern, 0);
         } else {
             mVibrator.cancel();

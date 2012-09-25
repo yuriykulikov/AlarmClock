@@ -20,11 +20,14 @@ package com.better.alarm.model;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -35,13 +38,30 @@ import com.better.wakelock.Logger;
 import com.better.wakelock.WakeLockManager;
 
 public final class AlarmCore implements Alarm {
-
     // This string is used to indicate a silent alarm in the db.
     private static final String ALARM_ALERT_SILENT = "silent";
 
     private final IAlarmsScheduler mAlarmsScheduler;
     private final Logger log;
     private final Context mContext;
+    /**
+     * Reference to a listener. We cannot use anonymous classes because
+     * {@link PreferenceManager} stores {@link OnSharedPreferenceChangeListener}
+     * in a {@link WeakHashMap}.
+     */
+    private final OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener = new OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (key.equals("prealarm_duration")) {
+                fetchPreAlarmMinutes();
+                if (prealarm) {
+                    calculateCalendars();
+                    mAlarmsScheduler.setAlarm(id, getActiveCalendars());
+                    writeToDb();
+                }
+            }
+        }
+    };
 
     private int id;
     private boolean enabled;
@@ -59,9 +79,15 @@ public final class AlarmCore implements Alarm {
     private Uri alert;
     private boolean silent;
     private boolean prealarm;
-    private final Calendar prealarmTime;
+    private Calendar prealarmTime;
     private boolean snoozed;
     private Calendar snoozedTime;
+
+    /**
+     * Used to calculate calendars. Is not synced with DB, because it is in the
+     * settings
+     */
+    private int prealarmMinutes;
 
     AlarmCore(Cursor c, Context context, Logger logger, IAlarmsScheduler alarmsScheduler) {
         mContext = context;
@@ -106,6 +132,10 @@ public final class AlarmCore implements Alarm {
             enabled = (isEnabled() && getDaysOfWeek().isRepeatSet());
         }
 
+        PreferenceManager.getDefaultSharedPreferences(mContext).registerOnSharedPreferenceChangeListener(
+                mOnSharedPreferenceChangeListener);
+        fetchPreAlarmMinutes();
+
         calculateCalendars();
 
         writeToDb();
@@ -135,10 +165,25 @@ public final class AlarmCore implements Alarm {
 
         Uri uri = mContext.getContentResolver().insert(Columns.CONTENT_URI, createContentValues());
         id = (int) ContentUris.parseId(uri);
+
+        PreferenceManager.getDefaultSharedPreferences(mContext).registerOnSharedPreferenceChangeListener(
+                mOnSharedPreferenceChangeListener);
+        fetchPreAlarmMinutes();
+
+        calculateCalendars();
     }
 
     void onAlarmFired(CalendarType calendarType) {
-        broadcastAlarmState(id, Intents.ALARM_ALERT_ACTION);
+
+        if (calendarType == CalendarType.PREALARM) {
+            broadcastAlarmState(id, Intents.ALARM_PREALARM_ACTION);
+        } else {
+            broadcastAlarmState(id, Intents.ALARM_ALERT_ACTION);
+            // Disable this alarm if it does not repeat.
+            if (!getDaysOfWeek().isRepeatSet()) {
+                enabled = false;
+            }
+        }
 
         snoozed = false;
 
@@ -248,6 +293,10 @@ public final class AlarmCore implements Alarm {
         }
 
         nextTime = c;
+
+        prealarmTime = Calendar.getInstance();
+        prealarmTime.setTimeInMillis(nextTime.getTimeInMillis());
+        prealarmTime.add(Calendar.MINUTE, -1 * prealarmMinutes);
     }
 
     private Map<CalendarType, Calendar> getActiveCalendars() {
@@ -259,6 +308,9 @@ public final class AlarmCore implements Alarm {
         }
         if (snoozed && snoozedTime.after(now)) {
             calendars.put(CalendarType.SNOOZE, snoozedTime);
+        }
+        if (enabled && prealarm && prealarmTime.after(now)) {
+            calendars.put(CalendarType.PREALARM, prealarmTime);
         }
 
         return calendars;
@@ -303,6 +355,11 @@ public final class AlarmCore implements Alarm {
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // ++++++ getters for GUI +++++++++++++++++++++++++++++++
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    private void fetchPreAlarmMinutes() {
+        String asString = PreferenceManager.getDefaultSharedPreferences(mContext).getString("prealarm_duration", "30");
+        prealarmMinutes = Integer.parseInt(asString);
+    }
 
     /**
      * TODO calendar should be immutable
