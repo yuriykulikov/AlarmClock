@@ -17,6 +17,8 @@ package com.better.alarm.model;
 
 import android.app.Application;
 
+import com.better.wakelock.FileLogWriter;
+import com.better.wakelock.LogcatLogWriter;
 import com.better.wakelock.Logger;
 import com.better.wakelock.Logger.LogLevel;
 import com.better.wakelock.WakeLockManager;
@@ -26,6 +28,8 @@ public class AlarmApplication extends Application {
     @Override
     public void onCreate() {
         Logger logger = Logger.init();
+        logger.addLogWriter(new LogcatLogWriter());
+        logger.addLogWriter(new FileLogWriter());
         logger.setLogLevel(WakeLockManager.class, LogLevel.NONE);
         logger.setLogLevel(AlarmsScheduler.class, LogLevel.DEBUG);
         logger.setLogLevel(AlarmCore.class, LogLevel.DEBUG);
