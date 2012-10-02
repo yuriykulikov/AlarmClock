@@ -50,7 +50,7 @@ public class AlarmProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         log = Logger.getDefaultLogger();
-        log.setLogLevel(AlarmProvider.class, LogLevel.NONE);
+        log.setLogLevel(AlarmProvider.class, LogLevel.ERR);
         log.setLogLevel(AlarmDatabaseHelper.class, LogLevel.DEBUG);
         mOpenHelper = new AlarmDatabaseHelper(getContext());
         return true;

@@ -17,6 +17,7 @@
 
 package com.better.alarm.model;
 
+import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -207,6 +208,7 @@ public final class AlarmCore implements Alarm {
      */
     @Override
     public void enable(boolean enable) {
+        log.d(id + " is " + (enable ? "enabled" : "disabled"));
         enabled = enable;
         calculateCalendars();
         mAlarmsScheduler.setAlarm(id, getActiveCalendars());
@@ -221,6 +223,7 @@ public final class AlarmCore implements Alarm {
         snoozed = true;
         snoozedTime = Calendar.getInstance();
         snoozedTime.add(Calendar.MINUTE, snoozeMinutes);
+        log.d("scheduling snooze " + id + " at " + DateFormat.getDateTimeInstance().format(snoozedTime.getTime()));
         calculateCalendars();
         mAlarmsScheduler.setAlarm(id, getActiveCalendars());
         broadcastAlarmState(id, Intents.ALARM_SNOOZE_ACTION);
@@ -242,6 +245,7 @@ public final class AlarmCore implements Alarm {
     public void delete() {
         Uri uri = ContentUris.withAppendedId(Columns.CONTENT_URI, id);
         mContext.getContentResolver().delete(uri, "", null);
+        log.d(id + " is deleted");
         mAlarmsScheduler.removeAlarm(id);
         broadcastAlarmState(id, Intents.ALARM_DISMISS_ACTION);
         // TODO notifyAlarmListChangedListeners();
@@ -260,6 +264,8 @@ public final class AlarmCore implements Alarm {
         this.enabled = enabled;
 
         calculateCalendars();
+
+        log.d(id + " is changed");
 
         writeToDb();
         mAlarmsScheduler.setAlarm(id, getActiveCalendars());
@@ -350,6 +356,7 @@ public final class AlarmCore implements Alarm {
         Intent intent = new Intent(action);
         intent.putExtra(Intents.EXTRA_ID, id);
         mContext.sendBroadcast(intent);
+        log.d(id + " - " + action);
     }
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
