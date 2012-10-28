@@ -75,7 +75,7 @@ public class AlarmsListActivity extends Activity implements OnAlarmListChangedLi
 
     public class AlarmListAdapter extends ArrayAdapter<Alarm> {
         private final Context context;
-        private List<Alarm> values;
+        private final List<Alarm> values;
 
         public AlarmListAdapter(Context context, int alarmTime, int label, List<Alarm> values) {
             super(context, alarmTime, label, values);
@@ -103,6 +103,7 @@ public class AlarmsListActivity extends Activity implements OnAlarmListChangedLi
 
             // Clicking outside the "checkbox" should also change the state.
             indicator.setOnClickListener(new OnClickListener() {
+                @Override
                 public void onClick(View v) {
                     clockOnOff.toggle();
                     alarms.enable(alarm.getId(), clockOnOff.isChecked());
@@ -141,13 +142,14 @@ public class AlarmsListActivity extends Activity implements OnAlarmListChangedLi
     @Override
     public boolean onContextItemSelected(final MenuItem item) {
         final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-        final Alarm alarm = (Alarm) mAdapter.getItem(info.position);
+        final Alarm alarm = mAdapter.getItem(info.position);
         switch (item.getItemId()) {
         case R.id.delete_alarm: {
             // Confirm that the alarm will be deleted.
             new AlertDialog.Builder(this).setTitle(getString(R.string.delete_alarm))
                     .setMessage(getString(R.string.delete_alarm_confirm))
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
                         public void onClick(DialogInterface d, int w) {
                             alarms.delete(alarm.getId());
                         }
@@ -189,32 +191,12 @@ public class AlarmsListActivity extends Activity implements OnAlarmListChangedLi
         mListView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Alarm alarm = (Alarm) mAdapter.getItem(position);
+                Alarm alarm = mAdapter.getItem(position);
                 Intent intent = new Intent(AlarmsListActivity.this, SetAlarmActivity.class);
                 intent.putExtra(Intents.EXTRA_ID, alarm.getId());
                 startActivity(intent);
             }
         });
-
-        // for tablets
-        View addNewAlarmButton = findViewById(R.id.add_alarm);
-        if (addNewAlarmButton != null) {
-            addNewAlarmButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(AlarmsListActivity.this, SetAlarmActivity.class));
-                }
-            });
-        }
-
-        View doneButton = findViewById(R.id.done);
-        if (doneButton != null) {
-            doneButton.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    finish();
-                }
-            });
-        }
     }
 
     @Override
@@ -236,7 +218,7 @@ public class AlarmsListActivity extends Activity implements OnAlarmListChangedLi
 
         // Use the current item to create a custom view for the header.
         final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-        final Alarm alarm = (Alarm) mAdapter.getItem(info.position);
+        final Alarm alarm = mAdapter.getItem(info.position);
 
         // Construct the Calendar to compute the time.
         final Calendar cal = Calendar.getInstance();
@@ -283,7 +265,7 @@ public class AlarmsListActivity extends Activity implements OnAlarmListChangedLi
 
     @Override
     public void onAlarmListChanged(List<Alarm> newList) {
-        AlarmListAdapter adapter = (AlarmListAdapter) mAdapter;
+        AlarmListAdapter adapter = mAdapter;
         adapter.clear();
         adapter.addAll(newList);
     }
