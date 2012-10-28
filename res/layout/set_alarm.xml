@@ -19,14 +19,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical" >
 
-    <ListView android:id="@android:id/list"
+    <ListView
+        android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dip"
         android:layout_marginRight="16dip"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
     <View
         android:layout_width="match_parent"
@@ -36,35 +37,37 @@
         android:background="?android:attr/dividerHorizontal" />
 
     <LinearLayout
+        style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        style="?android:attr/buttonBarStyle">
+        android:orientation="horizontal" >
 
-        <Button android:id="@+id/alarm_revert"
+        <Button
+            android:id="@+id/alarm_revert"
             style="?android:attr/buttonBarButtonStyle"
-            android:focusable="true"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@android:string/cancel"/>
-
-        <Button android:id="@+id/alarm_delete"
-            style="?android:attr/buttonBarButtonStyle"
             android:focusable="true"
+            android:text="@android:string/cancel" />
+
+        <Button
+            android:id="@+id/alarm_delete"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/delete"/>
-
-        <Button android:id="@+id/alarm_save"
-            style="?android:attr/buttonBarButtonStyle"
             android:focusable="true"
+            android:text="@string/delete" />
+
+        <Button
+            android:id="@+id/alarm_save"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@android:string/ok"/>
-
+            android:focusable="true"
+            android:text="@android:string/ok" />
     </LinearLayout>
 
 </LinearLayout>

@@ -90,7 +90,7 @@
 
         <!--
              This activity is basically the same as AlarmAlert 
-             but full-screen so that it can turn the display on.
+             but full-screen so that it can turn the display on.
         -->
         <activity
             android:name=".presenter.AlarmAlertFullScreen"
@@ -117,7 +117,7 @@
              AlarmKlaxonReceiver will receive the alert broadcast and will start
              this service with the same intent. The service plays the alarm alert
              and vibrates the device. This allows the alert to continue playing
-             even if another activity causes the AlarmAlert activity to pause.
+             even if another activity causes the AlarmAlert activity to pause.
         -->
         <service
             android:name=".presenter.AlarmKlaxonService"

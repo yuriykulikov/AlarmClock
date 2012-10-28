@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2007 The Android Open Source Project
+<!--
+     Copyright (C) 2007 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,46 +15,42 @@
      limitations under the License.
 -->
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent" >
 
     <com.better.alarm.view.DigitalClock
         android:id="@+id/digitalClock"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingTop="24dip"
-        android:paddingLeft="24dip"
-        android:paddingRight="20dip"
-        android:paddingBottom="80dp"
-        android:baselineAligned="true"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        >
+        android:baselineAligned="true"
+        android:gravity="center"
+        android:paddingBottom="80dp"
+        android:paddingLeft="24dip"
+        android:paddingRight="20dip"
+        android:paddingTop="24dip" >
 
         <com.better.alarm.view.AndroidClockTextView
             android:id="@+id/timeDisplay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="80dp"
             android:layout_alignParentRight="true"
+            android:layout_marginRight="44dip"
             android:textColor="?android:attr/textColorPrimary"
-            android:layout_marginRight="44dip"/>
+            android:textSize="80dp" />
 
         <com.better.alarm.view.AndroidClockTextView
-            useClockTypeface="false"
             android:id="@+id/am_pm"
             android:layout_width="40dip"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="20dp"
-            android:layout_alignParentRight="true"
             android:layout_alignBaseline="@id/timeDisplay"
-            android:textColor="?android:attr/textColorPrimary"/>
-
+            android:layout_alignParentRight="true"
+            useClockTypeface="false"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="20dp"
+            android:textStyle="bold" />
     </com.better.alarm.view.DigitalClock>
 
     <Button
@@ -61,19 +58,19 @@
         style="?android:attr/buttonBarButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
         android:layout_alignBottom="@id/digitalClock"
-        android:paddingBottom="16dp"
+        android:layout_alignParentTop="true"
         android:gravity="bottom|center_horizontal"
+        android:paddingBottom="16dp"
         android:text="@string/alarm_alert_snooze_text" />
 
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dip"
+        android:layout_below="@id/snooze"
         android:layout_marginLeft="16dip"
         android:layout_marginRight="16dip"
-        android:layout_below="@id/snooze"
         android:background="?android:attr/dividerHorizontal" />
 
     <Button
@@ -81,8 +78,8 @@
         style="?android:attr/buttonBarButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:gravity="center"
         android:layout_below="@id/divider"
+        android:gravity="center"
         android:text="@string/alarm_alert_dismiss_text" />
 
 </RelativeLayout>

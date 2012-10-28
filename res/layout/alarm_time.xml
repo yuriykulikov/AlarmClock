@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2008 The Android Open Source Project
+<!--
+     Copyright (C) 2008 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,93 +15,96 @@
      limitations under the License.
 -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal" >
 
     <com.better.alarm.view.DontPressWithParentLayout
         android:id="@+id/indicator"
         style="@style/alarm_list_left_column"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical" >
+
         <CheckBox
             android:id="@+id/clock_onoff"
-            android:focusable="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:clickable="false"
             android:duplicateParentState="true"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_gravity="center" />
+            android:focusable="false" />
     </com.better.alarm.view.DontPressWithParentLayout>
 
     <ImageView
-        android:src="?android:attr/dividerVertical"
         android:layout_width="1dip"
         android:layout_height="match_parent"
-        android:paddingTop="4dip"
+        android:gravity="fill_vertical"
         android:paddingBottom="4dip"
+        android:paddingTop="4dip"
         android:scaleType="fitXY"
-        android:gravity="fill_vertical" />
+        android:src="?android:attr/dividerVertical" />
 
-    <!-- A layout that displays the time.  Shows time, am/pm (if 12-hour),
-         and an optional line below, used for day/days of week -->
-    <com.better.alarm.view.DigitalClock android:id="@+id/digitalClock"
+    <!--
+         A layout that displays the time.  Shows time, am/pm (if 12-hour),
+         and an optional line below, used for day/days of week
+    -->
+
+    <com.better.alarm.view.DigitalClock
+        android:id="@+id/digitalClock"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:layout_weight="1"
         android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
         android:orientation="vertical"
         android:paddingLeft="16dip"
-        android:paddingRight="16dip">
+        android:paddingRight="16dip" >
 
         <LinearLayout
             android:id="@+id/time_wrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:baselineAligned="true">
+            android:baselineAligned="true" >
 
-            <com.better.alarm.view.AndroidClockTextView 
+            <com.better.alarm.view.AndroidClockTextView
                 android:id="@+id/timeDisplay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                useClockTypeface="false"
                 android:paddingRight="6dip"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                useClockTypeface="false"/>
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
-            <com.better.alarm.view.AndroidClockTextView 
+            <com.better.alarm.view.AndroidClockTextView
                 android:id="@+id/am_pm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                useClockTypeface="false"
                 android:paddingRight="10dip"
-                android:textStyle="bold"
-                useClockTypeface="false"/>
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textStyle="bold" />
 
-            <TextView android:id="@+id/label"
+            <TextView
+                android:id="@+id/label"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:gravity="right"
                 android:paddingLeft="8dip"
+                android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="?android:attr/textColorSecondary"
-                android:textStyle="bold"
-                android:gravity="right"
-                android:singleLine="true"/>
-
+                android:textStyle="bold" />
         </LinearLayout>
 
-        <TextView android:id="@+id/daysOfWeek"
+        <TextView
+            android:id="@+id/daysOfWeek"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/time_wrapper"
             android:paddingTop="2dip"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="?android:attr/textColorTertiary"
-            />
-
+            android:textColor="?android:attr/textColorTertiary" />
     </com.better.alarm.view.DigitalClock>
 
 </LinearLayout>

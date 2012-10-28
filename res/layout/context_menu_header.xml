@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2009 The Android Open Source Project
+<!--
+     Copyright (C) 2009 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,39 +15,39 @@
      limitations under the License.
 -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="6dip"
     android:paddingBottom="9dip"
     android:paddingLeft="10dip"
-    android:paddingRight="10dip">
+    android:paddingRight="10dip"
+    android:paddingTop="6dip" >
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:paddingTop="6dip"
         android:paddingRight="10dip"
-        android:src="@drawable/ic_dialog_time"/>
+        android:paddingTop="6dip"
+        android:src="@drawable/ic_dialog_time" />
 
-    <TextView android:id="@+id/header_time"
+    <TextView
+        android:id="@+id/header_time"
         style="?android:attr/textAppearanceLarge"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:singleLine="true"
+        android:ellipsize="none"
         android:gravity="center_vertical"
-        android:ellipsize="none"/>
+        android:singleLine="true" />
 
-    <TextView android:id="@+id/header_label"
+    <TextView
+        android:id="@+id/header_label"
         style="?android:attr/textAppearanceLarge"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="20dip"
-        android:singleLine="true"
+        android:ellipsize="end"
         android:gravity="right|center_vertical"
-        android:ellipsize="end"/>
+        android:singleLine="true" />
 
 </LinearLayout>
-
