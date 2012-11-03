@@ -251,6 +251,11 @@ public class AlarmsListActivity extends Activity implements OnAlarmListChangedLi
         case R.id.menu_item_add_alarm:
             startActivity(new Intent(this, SetAlarmActivity.class));
             return true;
+        case R.id.menu_item_go_to_bed:
+            Intent intent = new Intent(AlarmsListActivity.this, SetAlarmActivity.class);
+            intent.setAction(SetAlarmActivity.ACTION_GO_TO_BED);
+            startActivity(intent);
+            break;
         default:
             break;
         }
