@@ -67,17 +67,19 @@ public class Alarms implements IAlarmsManager {
             cursor.close();
         }
 
+        init();
+
         log.d("Alarms:");
         for (Alarm alarm : alarms.values()) {
             log.d(alarm.toString());
         }
     }
 
-    void reinit() {
+    void init() {
         for (AlarmCore alarmCore : alarms.values()) {
-            alarmCore.calculateCalendars();
+            alarmCore.refresh();
         }
-
+        notifyAlarmListChangedListeners();
     }
 
     @Override

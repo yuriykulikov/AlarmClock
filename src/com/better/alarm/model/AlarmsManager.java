@@ -39,12 +39,7 @@ public class AlarmsManager {
 
     static void init(Context context, Logger logger) {
         if (sModelInstance == null) {
-
             sModelInstance = new Alarms(context, logger, new AlarmsScheduler(context, logger));
         } else throw new RuntimeException("Attept to reinitialize!");
-    }
-
-    public static void reinit() {
-        sModelInstance.reinit();
     }
 }

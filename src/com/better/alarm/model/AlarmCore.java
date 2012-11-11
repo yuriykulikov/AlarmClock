@@ -56,9 +56,7 @@ public final class AlarmCore implements Alarm {
             if (key.equals("prealarm_duration")) {
                 fetchPreAlarmMinutes();
                 if (prealarm) {
-                    calculateCalendars();
-                    mAlarmsScheduler.setAlarm(id, getActiveCalendars());
-                    writeToDb();
+                    refresh();
                 }
             }
         }
@@ -135,14 +133,8 @@ public final class AlarmCore implements Alarm {
 
         PreferenceManager.getDefaultSharedPreferences(mContext).registerOnSharedPreferenceChangeListener(
                 mOnSharedPreferenceChangeListener);
+
         fetchPreAlarmMinutes();
-
-        calculateCalendars();
-
-        writeToDb();
-
-        mAlarmsScheduler.setAlarm(id, getActiveCalendars());
-
     }
 
     // Creates a default alarm at the current time.
@@ -169,9 +161,8 @@ public final class AlarmCore implements Alarm {
 
         PreferenceManager.getDefaultSharedPreferences(mContext).registerOnSharedPreferenceChangeListener(
                 mOnSharedPreferenceChangeListener);
-        fetchPreAlarmMinutes();
 
-        calculateCalendars();
+        fetchPreAlarmMinutes();
     }
 
     void onAlarmFired(CalendarType calendarType) {
@@ -188,10 +179,14 @@ public final class AlarmCore implements Alarm {
 
         snoozed = false;
 
+        refresh();
+        // TODO notifyAlarmListChangedListeners();
+    }
+
+    void refresh() {
         calculateCalendars();
         mAlarmsScheduler.setAlarm(id, getActiveCalendars());
         writeToDb();
-        // TODO notifyAlarmListChangedListeners();
     }
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -210,10 +205,7 @@ public final class AlarmCore implements Alarm {
     public void enable(boolean enable) {
         log.d(id + " is " + (enable ? "enabled" : "disabled"));
         enabled = enable;
-        calculateCalendars();
-        mAlarmsScheduler.setAlarm(id, getActiveCalendars());
-        writeToDb();
-        // TODO notifyAlarmListChangedListeners();
+        refresh();
     }
 
     @Override
@@ -224,10 +216,8 @@ public final class AlarmCore implements Alarm {
         snoozedTime = Calendar.getInstance();
         snoozedTime.add(Calendar.MINUTE, snoozeMinutes);
         log.d("scheduling snooze " + id + " at " + DateFormat.getDateTimeInstance().format(snoozedTime.getTime()));
-        calculateCalendars();
-        mAlarmsScheduler.setAlarm(id, getActiveCalendars());
+        refresh();
         broadcastAlarmState(id, Intents.ALARM_SNOOZE_ACTION);
-        writeToDb();
         // TODO notifyAlarmListChangedListeners();
     }
 
@@ -235,10 +225,7 @@ public final class AlarmCore implements Alarm {
     public void dismiss() {
         broadcastAlarmState(id, Intents.ALARM_DISMISS_ACTION);
         snoozed = false;
-        calculateCalendars();
-        mAlarmsScheduler.setAlarm(id, getActiveCalendars());
-        writeToDb();
-        // TODO notifyAlarmListChangedListeners();
+        refresh();
     }
 
     @Override
@@ -263,12 +250,8 @@ public final class AlarmCore implements Alarm {
         this.minutes = minute;
         this.enabled = enabled;
 
-        calculateCalendars();
-
         log.d(id + " is changed");
-
-        writeToDb();
-        mAlarmsScheduler.setAlarm(id, getActiveCalendars());
+        refresh();
         // TODO notifyAlarmListChangedListeners();
     }
 
@@ -276,7 +259,7 @@ public final class AlarmCore implements Alarm {
      * Given an alarm in hours and minutes, return a time suitable for setting
      * in AlarmManager.
      */
-    void calculateCalendars() {
+    private void calculateCalendars() {
         // start with now
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis());

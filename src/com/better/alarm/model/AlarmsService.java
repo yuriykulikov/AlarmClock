@@ -40,6 +40,11 @@ public class AlarmsService extends Service {
             int id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1);
             log.d("AlarmCore fired " + id);
             alarms.onAlarmFired(id, CalendarType.valueOf(intent.getExtras().getString(AlarmsScheduler.EXTRA_TYPE)));
+
+        } else if (action.equals(Intent.ACTION_BOOT_COMPLETED) || action.equals(Intent.ACTION_TIMEZONE_CHANGED)
+                || action.equals(Intent.ACTION_LOCALE_CHANGED) || action.equals(Intent.ACTION_TIME_CHANGED)) {
+            log.d("Initializing alarms because of " + action);
+            alarms.init();
         }
 
         WakeLockManager.getWakeLockManager().releasePartialWakeLock(intent);
