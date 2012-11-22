@@ -12,7 +12,7 @@
      distributed under the License is distributed on an "AS IS" BASIS,
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
-     limitations under the License.
+     limitations under the License.
 -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
@@ -22,11 +22,6 @@
         android:icon="@drawable/ic_menu_add"
         android:showAsAction="ifRoom|withText"
         android:title="@string/add_alarm"/>
-    <item
-        android:id="@+id/menu_item_go_to_bed"
-        android:icon="@android:drawable/arrow_down_float"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/go_to_bed"/>
     <item
         android:id="@+id/menu_item_settings"
         android:icon="@android:drawable/ic_menu_preferences"
