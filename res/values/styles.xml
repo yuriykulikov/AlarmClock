@@ -21,8 +21,9 @@
         <item name="android:layout_gravity">center_horizontal</item>
     </style>
 
-    <style name="AlarmClockTheme" parent="android:Theme.Dialog"/>
-    <style name="SetAlarmTheme" parent="android:Theme.Dialog"/>
+    <style name="AlarmClockTheme" parent="android:Theme.DeviceDefault.Light.DarkActionBar"/>
+    <style name="SetAlarmTheme" parent="android:Theme.DeviceDefault.Light.DarkActionBar"/>
+    <style name="SettingsTheme" parent="android:Theme.DeviceDefault.Light.DarkActionBar"/>
 
     <!-- This theme is similar to the Theme.Dialog.Alert but does not rely on a
          non-public resource. -->

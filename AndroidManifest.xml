@@ -61,6 +61,7 @@
         <activity
             android:name=".presenter.SettingsActivity"
             android:excludeFromRecents="true"
+            android:theme="@style/SettingsTheme"
             android:label="@string/settings"
             android:taskAffinity="" >
             <intent-filter>
