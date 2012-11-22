@@ -45,10 +45,9 @@ import com.better.wakelock.Logger;
  */
 public class SetAlarmActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener,
         TimePickerDialog.OnTimeSetListener, OnCancelListener {
-    public static final String ACTION_GO_TO_BED = "com.better.alarm.presenter.SetAlarmActivity.ACTION_GO_TO_BED";
-
     public final static String M12 = "h:mm aa";
     public final static String M24 = "kk:mm";
+
     private IAlarmsManager alarms;
 
     private CheckBoxPreference mEnabledPref;
@@ -59,7 +58,6 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
 
     private int mId;
     private boolean isNewAlarm;
-    private boolean isGoToBedAlarm;
     // these are to get data from TimerPicker
     private int mHour;
     private int mMinute;
@@ -89,9 +87,6 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         mRepeatPref.setOnPreferenceChangeListener(this);
         mPreAlarmPref = (CheckBoxPreference) findPreference("prealarm");
         mPreAlarmPref.setOnPreferenceChangeListener(this);
-
-        String action = getIntent().getAction();
-        isGoToBedAlarm = (action != null && action.equals(ACTION_GO_TO_BED));
 
         if (getIntent().hasExtra(Intents.EXTRA_ID)) {
             mId = getIntent().getIntExtra(Intents.EXTRA_ID, -1);
@@ -178,20 +173,12 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
     private void updatePrefs() {
         Alarm alarm = alarms.getAlarm(mId);
         mEnabledPref.setChecked(alarm.isEnabled());
-        Calendar calendar = alarm.getNextTime();
-        if (isGoToBedAlarm) {
-            // TODO we have to go to bed, so set time 8 hours from now. This is
-            // the first pass, make it nice
-            calendar.add(Calendar.HOUR_OF_DAY, 8);
-            // TODO this should be a one-shot
-            mEnabledPref.setChecked(true);
-        }
-        mHour = calendar.get(Calendar.HOUR_OF_DAY);
-        mMinute = calendar.get(Calendar.MINUTE);
+        mHour = alarm.getHour();
+        mMinute = alarm.getMinutes();
         mRepeatPref.setDaysOfWeek(alarm.getDaysOfWeek());
         // Give the alert uri to the preference.
         mAlarmPref.setAlert(alarm.getAlert());
-        mPreAlarmPref.setChecked(isGoToBedAlarm ? true : alarm.isPrealarm());
+        mPreAlarmPref.setChecked(alarm.isPrealarm());
         updateTime();
     }
 
