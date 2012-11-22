@@ -191,7 +191,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         mRepeatPref.setDaysOfWeek(alarm.getDaysOfWeek());
         // Give the alert uri to the preference.
         mAlarmPref.setAlert(alarm.getAlert());
-        mPreAlarmPref.setChecked(isGoToBedAlarm ? true : alarm.isPrealarm());
+        mPreAlarmPref.setChecked(alarm.isPrealarm());
         updateTime();
     }
 
