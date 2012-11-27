@@ -372,4 +372,27 @@
     <!-- Label on the main screen control used to set alarm when there is already an existing alarm [CHAR LIMIT=30] -->
     <string name="control_set_alarm_with_existing">Alarm set: <xliff:g id="time">%s</xliff:g></string>
 
+        <!-- Textual content of the button to discard the current dialog values and close the dialog -->
+    <string name="time_picker_cancel">Cancel</string>
+    <!-- Textual content of the button to update an alarm with the current dialog values -->
+    <string name="time_picker_set">OK</string>
+    <string name="time_picker_time_seperator">:</string>
+    <!--  place holder for am/pm label when it is not set -->
+    <string name="time_picker_ampm_label">--</string>
+    <!-- add 00 as minutes to the time when pressing this button -->
+    <string name="time_picker_00_label">:00</string>
+    <!-- add 30 as minutes to the time when pressing this button -->
+    <string name="time_picker_30_label">:30</string>
+    <!-- Describes the purpose of the button to delete a timer. -->
+    <string name="timer_delete">Delete</string>
+    <!-- Abbreviation for temporal hours -->
+    <string name="hours_label">h</string>
+    <!-- Abbreviation for temporal minutes -->
+    <string name="minutes_label">m</string>
+    <!-- Abbreviation for temporal seconds -->
+    <string name="seconds_label">s</string>
+    <!-- Accessibility strings -->
+    <string name="hours_label_description">hours</string>
+    <string name="minutes_label_description">minutes</string>
+    <string name="seconds_label_description">seconds</string>
 </resources>
