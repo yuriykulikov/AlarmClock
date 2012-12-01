@@ -1,72 +1,65 @@
 @startuml
+hide empty fields
+hide empty methods
 
-'receivers
-    class KlaxonReceiver
-    class AlertReciever
-    AlertReciever o-- NM
-    AlertReciever o-- AlertActivityFS
-    AlertReciever o-- AlertActivity
 
-'services and activites
-    class Klaxon
-    class AlertActivity
-    class AlertActivityFS
-    class SetUpActivity
-    class ListActivity
-    class SettingsActivity
-    SettingsActivity o-- Persistence
-    
-    KlaxonReceiver o-- Klaxon
-    Klaxon o-- IAlarms
-    Klaxon o-- Persistence
-    ListActivity o-right- SetUpActivity
-    ListActivity o-- IAlarms
-    SetUpActivity o-- IAlarms
-    AlertActivity o-- IAlarms
-    AlertActivityFS o-- IAlarms
-
-'Mediators
-    class NM
-    interface Notifier {
-    PLAY, DISMISSED, SNOOZED
+package Presenters {
+    note "All presenters get Intents with IAlarm attached" as N1
+'Alert Presentation
+    class Klaxon {
+        Receiver
+        Service
     }
-    interface Persistence
+    Klaxon o-down- Alarm
+    class Alert {
+        AlertReciever
+        NM
+        AlertActivityFS
+        AlertActivity
+    }
+    Alert o-down- Alarm
+    'Scheduled presentation
+    StatusPresenters o-down- Alarm
+
+    
+'Alarms presentation
+    class ListFragment
+    class DetailsFragment
+
+    ListFragment o-down- IAlarms
+    ListFragment -right-> DetailsFragment : Alarm
+    DetailsFragment o-down- Alarm
+
+}
 
 'model
     interface IAlarms
     class Alarms
-    Alarms .down....|> IAlarms
+    Alarms .down.|> IAlarms
 
-    class AlarmsReceiver
-    class AlarmsService
-    AlarmsReceiver o-- AlarmsService
-    AlarmsService o-- Alarms
+    class DataBaseService
+    AlarmCore -right-> DataBaseService : hibernate
 
-    class Repository
-    Alarms o..right..o Repository : obs
-
-    class ListNotifier
-    Alarms o..left..o ListNotifier : obs
-    
-    class Alarm {
+    interface Alarm {
         Calendar getCalendar(CalendarType)
     }
-    Alarms o-- Alarm
-    class Comparator {
-        createComparator(List<CalendarType>, Calendar now)
-        int compare(Alarm, Alarm)
-        boolean hasActiveCalendar(Alarm)
-        Pair<CalendarType, Calendar> getActiveCalendar(Alarm)
-    }
-    Alarms o-- Comparator
-    
-    interface IScheduler
+    class AlarmCore
+    AlarmCore .down.|> Alarm
+    AlarmCore -down-> BroadcastMediator : status changed
+    Alarms o-- AlarmCore
+
+'Timed events
     class Scheduler
-    Scheduler .down.|> IScheduler
-    Alarms o-- IScheduler
+    class AlarmsService
+
+    AlarmCore o-- Scheduler
+    Scheduler -left-> AndroidAlarmsManager : set alarm
+    Scheduler -right-> BroadcastMediator : scheduled
+    AndroidAlarmsManager -up-> AlarmsService : fire alarm
+    AlarmsService o-right-> AlarmCore : onAlarmFired
     
-    interface AlarmManager
-    Scheduler o-up- AlarmManager
-    AlarmManager o-- AlarmsReceiver
+    'OS
+    class AndroidAlarmsManager
+    class BroadcastMediator
 
 @enduml
