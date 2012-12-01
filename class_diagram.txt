@@ -1,61 +1,65 @@
 @startuml
+hide empty fields
+hide empty methods
 
-    class Klaxon
-    class KlaxonReceiver
-    class AlertReciever
-    class NM
-    class AlertActivity
-    class AlertActivityFS
 
-    class SetUpActivity
-    class ListActivity
-
-    ListActivity --* SetUpActivity
-    ListActivity --* model.AlarmsSetup
-    SetUpActivity --* model.AlarmsSetup
-
-    AlertReciever o.. model.Notifier
-    AlertReciever --* NM
-    NM --* AlertActivity
-    NM --* AlertActivityFS
-    AlertActivity --* model.AlarmsIntercation
-    AlertActivityFS --* model.AlarmsIntercation
-
-    KlaxonReceiver *.. model.Notifier
-    KlaxonReceiver --* Klaxon
-
-package model {
-    interface Notifier {
-    PLAY, DISMISSED, SNOOZED
+package Presenters {
+    note "All presenters get Intents with IAlarm attached" as N1
+'Alert Presentation
+    class Klaxon {
+        Receiver
+        Service
     }
-    interface AlarmsSetup {
-        public void delete(int id);
-        public long add(Alarm alarm);
-        public void enable(final int id, boolean enabled);
-        public Cursor getCursor();
+    Klaxon o-down- Alarm
+    class Alert {
+        AlertReciever
+        NM
+        AlertActivityFS
+        AlertActivity
     }
-    interface AlarmsIntercation {
-        dismiss()
-        snooze()
-    }
+    Alert o-down- Alarm
+    'Scheduled presentation
+    StatusPresenters o-down- Alarm
 
-    class Alarms {
-        getAlarmsManager()
-        getAlarmsSetup()
-        onIntentReceived()
-    }
-    class Alarms implements model.AlarmsSetup
-    class Alarms implements model.AlarmsIntercation
-    class AlarmsReceiver
-
-    AlarmsReceiver *--* Alarms
-    Alarms--*model.Notifier
     
-    package os <<Database>> {
-        class AlarmManager
-        model.AlarmsReceiver --* AlarmManager
-        AlarmManager ..* model.AlarmsReceiver
-    }
+'Alarms presentation
+    class ListFragment
+    class DetailsFragment
+
+    ListFragment o-down- IAlarms
+    ListFragment -right-> DetailsFragment : Alarm
+    DetailsFragment o-down- Alarm
+
 }
+
+'model
+    interface IAlarms
+    class Alarms
+    Alarms .down.|> IAlarms
+
+    class DataBaseService
+    AlarmCore -right-> DataBaseService : hibernate
+
+    interface Alarm {
+        Calendar getCalendar(CalendarType)
+    }
+    class AlarmCore
+    AlarmCore .down.|> Alarm
+    AlarmCore -down-> BroadcastMediator : status changed
+    Alarms o-- AlarmCore
+
+'Timed events
+    class Scheduler
+    class AlarmsService
+
+    AlarmCore o-- Scheduler
+    Scheduler -left-> AndroidAlarmsManager : set alarm
+    Scheduler -right-> BroadcastMediator : scheduled
+    AndroidAlarmsManager -up-> AlarmsService : fire alarm
+    AlarmsService o-right-> AlarmCore : onAlarmFired
+    
+    'OS
+    class AndroidAlarmsManager
+    class BroadcastMediator
 
 @enduml
