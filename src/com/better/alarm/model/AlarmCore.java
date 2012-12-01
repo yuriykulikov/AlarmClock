@@ -32,6 +32,68 @@ import android.preference.PreferenceManager;
 import com.better.alarm.R;
 import com.better.wakelock.Logger;
 
+/**
+ * Alarm is a class which models a real word alarm. It is a simple state
+ * machine. External events (e.g. user input {@link #snooze()} or
+ * {@link #dismiss()}) or timer events {@link #onAlarmFired(CalendarType)}
+ * trigger transitions. Alarm notifies listeners when transitions happen by
+ * broadcasting {@link Intent}s listed in {@link Intents}, e.g.
+ * {@link Intents#ALARM_PREALARM_ACTION} or {@link Intents#ALARM_DISMISS_ACTION}
+ * . State and properties of the alarm are stored in the database and are
+ * updated every time when changes to alarm happen.
+ * 
+ * <pre>
+ * @startuml
+ * State DISABLED
+ * [*] -down-> DISABLED
+ * ENABLED -up-> [*]
+ * DISABLED -up-> [*]
+ * DISABLED -down-> ENABLED
+ * ENABLED -up-> DISABLED
+ * State ENABLED {
+ * State PREALARM_PENDING
+ * State PREALARM_FIRED
+ * State MAIN_PENDING
+ * State MAIN_FIRED {
+ * M_ACTIVE -right-> M_KILLED
+ * }
+ * State SNOOZE_PENDING
+ * State SNOOZE_FIRED {
+ * S_ACTIVE -right-> S_KILLED
+ * }
+ * State SCHEDULE_REPEAT
+ * SCHEDULE_REPEAT : Temporary state, immediately transitions to disabled in case no repeating is set
+ * SCHEDULE_REPEAT : If repeating is set, transitions to one of the pending state
+ * SCHEDULE_REPEAT : If prealarm is enabled, schedules next prealarm
+ * SCHEDULE_REPEAT : If prealarm is enabled, but is in the past, schedules main alarm
+ * 
+ * [*] -down-> SCHEDULE_REPEAT
+ * SCHEDULE_REPEAT -up-> [*]
+ * 
+ * PREALARM_PENDING -right-> PREALARM_FIRED : time
+ * PREALARM_FIRED -down-> MAIN_PENDING : snooze
+ * MAIN_PENDING -right-> MAIN_FIRED : time
+ * PREALARM_FIRED -down->  MAIN_FIRED : time
+ * MAIN_FIRED -down->  SNOOZE_PENDING : snooze
+ * SNOOZE_PENDING -right-> SNOOZE_FIRED : time
+ * SNOOZE_FIRED -left-> SNOOZE_PENDING : snooze
+ * 
+ * PREALARM_PENDING -up-> SCHEDULE_REPEAT : cancel today
+ * PREALARM_FIRED -up-> SCHEDULE_REPEAT : dismiss
+ * MAIN_FIRED -up-> SCHEDULE_REPEAT : dismiss
+ * SNOOZE_FIRED -up-> SCHEDULE_REPEAT : dismiss
+ * SNOOZE_PENDING -up-> SCHEDULE_REPEAT : notification
+ * 
+ * SCHEDULE_REPEAT -down-> PREALARM_PENDING : prealarm enabled
+ * SCHEDULE_REPEAT -down-> MAIN_PENDING : prealarm disabled
+ * PREALARM_PENDING -down-> MAIN_PENDING
+ * } 
+ * @enduml
+ * </pre>
+ * 
+ * @author Yuriy
+ * 
+ */
 public final class AlarmCore implements Alarm {
     // This string is used to indicate a silent alarm in the db.
     private static final String ALARM_ALERT_SILENT = "silent";
