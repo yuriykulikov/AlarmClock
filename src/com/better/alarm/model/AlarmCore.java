@@ -45,21 +45,20 @@ import com.better.wakelock.Logger;
  * <pre>
  * @startuml
  * State DISABLED
- * [*] -down-> DISABLED
- * ENABLED -up-> [*]
- * DISABLED -up-> [*]
- * DISABLED -down-> ENABLED
- * ENABLED -up-> DISABLED
  * State ENABLED {
  * State PREALARM_PENDING
- * State PREALARM_FIRED
  * State MAIN_PENDING
+ * State SOMETHING_FIRED {
+ * State NORMAL_FIRED {
  * State MAIN_FIRED {
  * M_ACTIVE -right-> M_KILLED
  * }
- * State SNOOZE_PENDING
  * State SNOOZE_FIRED {
  * S_ACTIVE -right-> S_KILLED
+ * }
+ * }
+ * State PREALARM_FIRED
+ * State SNOOZE_PENDING
  * }
  * State SCHEDULE_REPEAT
  * SCHEDULE_REPEAT : Temporary state, immediately transitions to disabled in case no repeating is set
@@ -67,26 +66,22 @@ import com.better.wakelock.Logger;
  * SCHEDULE_REPEAT : If prealarm is enabled, schedules next prealarm
  * SCHEDULE_REPEAT : If prealarm is enabled, but is in the past, schedules main alarm
  * 
- * [*] -down-> SCHEDULE_REPEAT
- * SCHEDULE_REPEAT -up-> [*]
+ * DISABLED -down-> SCHEDULE_REPEAT :enable
+ * ENABLED -up-> DISABLED :disable
  * 
- * PREALARM_PENDING -right-> PREALARM_FIRED : time
- * PREALARM_FIRED -down-> MAIN_PENDING : snooze
- * MAIN_PENDING -right-> MAIN_FIRED : time
- * PREALARM_FIRED -down->  MAIN_FIRED : time
- * MAIN_FIRED -down->  SNOOZE_PENDING : snooze
- * SNOOZE_PENDING -right-> SNOOZE_FIRED : time
- * SNOOZE_FIRED -left-> SNOOZE_PENDING : snooze
+ * PREALARM_PENDING -down-> PREALARM_FIRED :time
+ * PREALARM_FIRED -up-> MAIN_PENDING :snooze
+ * MAIN_PENDING -down-> M_ACTIVE :time
+ * PREALARM_FIRED -down-> S_ACTIVE :time
+ * NORMAL_FIRED -up->  SNOOZE_PENDING :snooze
+ * SNOOZE_PENDING -down-> S_ACTIVE :time
  * 
- * PREALARM_PENDING -up-> SCHEDULE_REPEAT : cancel today
- * PREALARM_FIRED -up-> SCHEDULE_REPEAT : dismiss
- * MAIN_FIRED -up-> SCHEDULE_REPEAT : dismiss
- * SNOOZE_FIRED -up-> SCHEDULE_REPEAT : dismiss
- * SNOOZE_PENDING -up-> SCHEDULE_REPEAT : notification
+ * PREALARM_PENDING -up-> SCHEDULE_REPEAT :cancel
+ * SOMETHING_FIRED -up-> SCHEDULE_REPEAT :dismiss
  * 
- * SCHEDULE_REPEAT -down-> PREALARM_PENDING : prealarm enabled
- * SCHEDULE_REPEAT -down-> MAIN_PENDING : prealarm disabled
- * PREALARM_PENDING -down-> MAIN_PENDING
+ * SCHEDULE_REPEAT -down-> PREALARM_PENDING :prealarm enabled
+ * SCHEDULE_REPEAT -down-> MAIN_PENDING :prealarm disabled
+ * PREALARM_PENDING -left-> MAIN_PENDING
  * } 
  * @enduml
  * </pre>
