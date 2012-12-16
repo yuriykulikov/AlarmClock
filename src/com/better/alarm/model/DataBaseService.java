@@ -1,13 +1,13 @@
 package com.better.alarm.model;
 
-import com.better.wakelock.WakeLockManager;
-
 import android.app.IntentService;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
+
+import com.better.wakelock.WakeLockManager;
 
 public class DataBaseService extends IntentService {
 
@@ -30,7 +30,7 @@ public class DataBaseService extends IntentService {
         if (intent.getAction().equals(SAVE_ALARM_ACTION)) {
             int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
             ContentValues values = intent.getParcelableExtra("extra_values");
-            Uri uriWithAppendedId = ContentUris.withAppendedId(Columns.CONTENT_URI, id);
+            Uri uriWithAppendedId = ContentUris.withAppendedId(AlarmContainer.Columns.CONTENT_URI, id);
             mContentResolver.update(uriWithAppendedId, values, null, null);
             WakeLockManager.getWakeLockManager().releasePartialWakeLock(intent);
         }
