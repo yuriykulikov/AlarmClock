@@ -18,7 +18,7 @@ package com.better.alarm.model;
 import java.util.Calendar;
 import java.util.Map;
 
-interface IAlarmsScheduler {
+public interface IAlarmsScheduler {
     /** remove all Calendars of the AlarmCore with given id */
     public void removeAlarm(int id);
 
