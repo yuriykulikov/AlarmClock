@@ -29,7 +29,7 @@ import android.content.Intent;
 
 import com.better.wakelock.Logger;
 
-class AlarmsScheduler implements IAlarmsScheduler {
+public class AlarmsScheduler implements IAlarmsScheduler {
     private static final boolean DBG = true;
     static final String ACTION_FIRED = "com.better.alarm.ACTION_FIRED";
     static final String EXTRA_ID = "intent.extra.alarm";
@@ -65,7 +65,7 @@ class AlarmsScheduler implements IAlarmsScheduler {
 
     private final Logger log;
 
-    AlarmsScheduler(Context context, Logger logger) {
+    public AlarmsScheduler(Context context, Logger logger) {
         mContext = context;
         queue = new PriorityQueue<ScheduledAlarm>();
         this.log = logger;

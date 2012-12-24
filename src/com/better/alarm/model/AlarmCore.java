@@ -88,7 +88,7 @@ public final class AlarmCore implements Alarm {
      */
     private int prealarmMinutes;
 
-    AlarmCore(Cursor c, Context context, Logger logger, IAlarmsScheduler alarmsScheduler) {
+    public AlarmCore(Cursor c, Context context, Logger logger, IAlarmsScheduler alarmsScheduler) {
         mContext = context;
         this.log = logger;
         mAlarmsScheduler = alarmsScheduler;
@@ -165,8 +165,7 @@ public final class AlarmCore implements Alarm {
         fetchPreAlarmMinutes();
     }
 
-    void onAlarmFired(CalendarType calendarType) {
-
+    public void onAlarmFired(CalendarType calendarType) {
         if (calendarType == CalendarType.PREALARM) {
             broadcastAlarmState(id, Intents.ALARM_PREALARM_ACTION);
         } else {
