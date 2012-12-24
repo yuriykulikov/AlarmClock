@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
@@ -40,6 +39,15 @@ public final class AlarmCore implements Alarm {
     private final IAlarmsScheduler mAlarmsScheduler;
     private final Logger log;
     private final Context mContext;
+    private final IStateNotifier broadcaster;
+
+    /**
+     * Strategy used to notify other components about alarm state.
+     */
+    public interface IStateNotifier {
+        public void broadcastAlarmState(int id, String action);
+    }
+
     /**
      * Reference to a listener. We cannot use anonymous classes because
      * {@link PreferenceManager} stores {@link OnSharedPreferenceChangeListener}
@@ -65,11 +73,13 @@ public final class AlarmCore implements Alarm {
      */
     private int prealarmMinutes;
 
-    public AlarmCore(IAlarmContainer container, Context context, Logger logger, IAlarmsScheduler alarmsScheduler) {
+    public AlarmCore(IAlarmContainer container, Context context, Logger logger, IAlarmsScheduler alarmsScheduler,
+            IStateNotifier broadcaster) {
         mContext = context;
         this.log = logger;
         mAlarmsScheduler = alarmsScheduler;
         this.container = container;
+        this.broadcaster = broadcaster;
 
         Calendar now = Calendar.getInstance();
 
@@ -87,9 +97,9 @@ public final class AlarmCore implements Alarm {
 
     public void onAlarmFired(CalendarType calendarType) {
         if (calendarType == CalendarType.PREALARM) {
-            broadcastAlarmState(container.getId(), Intents.ALARM_PREALARM_ACTION);
+            broadcastAlarmState(Intents.ALARM_PREALARM_ACTION);
         } else {
-            broadcastAlarmState(container.getId(), Intents.ALARM_ALERT_ACTION);
+            broadcastAlarmState(Intents.ALARM_ALERT_ACTION);
             // Disable this alarm if it does not repeat.
             if (!getDaysOfWeek().isRepeatSet()) {
                 container.setEnabled(false);
@@ -137,13 +147,13 @@ public final class AlarmCore implements Alarm {
         log.d("scheduling snooze " + container.getId() + " at "
                 + DateFormat.getDateTimeInstance().format(container.getSnoozedTime().getTime()));
         refresh();
-        broadcastAlarmState(container.getId(), Intents.ALARM_SNOOZE_ACTION);
+        broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION);
         // TODO notifyAlarmListChangedListeners();
     }
 
     @Override
     public void dismiss() {
-        broadcastAlarmState(container.getId(), Intents.ALARM_DISMISS_ACTION);
+        broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
         container.setSnoozed(false);
         refresh();
     }
@@ -152,7 +162,7 @@ public final class AlarmCore implements Alarm {
     public void delete() {
         container.delete();
         mAlarmsScheduler.removeAlarm(container.getId());
-        broadcastAlarmState(container.getId(), Intents.ALARM_DISMISS_ACTION);
+        broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
         // TODO notifyAlarmListChangedListeners();
     }
 
@@ -223,11 +233,8 @@ public final class AlarmCore implements Alarm {
         return calendars;
     }
 
-    private void broadcastAlarmState(int id, String action) {
-        Intent intent = new Intent(action);
-        intent.putExtra(Intents.EXTRA_ID, id);
-        mContext.sendBroadcast(intent);
-        log.d(id + " - " + action);
+    private void broadcastAlarmState(String action) {
+        broadcaster.broadcastAlarmState(container.getId(), action);
     }
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++

@@ -44,6 +44,7 @@ public class Alarms implements IAlarmsManager {
 
     private final ContentResolver mContentResolver;
     private final Map<Integer, AlarmCore> alarms;
+    private final AlarmStateNotifier broadcaster;
 
     Alarms(Context context, Logger logger, IAlarmsScheduler alarmsScheduler) {
         mContext = context;
@@ -53,6 +54,7 @@ public class Alarms implements IAlarmsManager {
         mAlarmListChangedListeners = new HashSet<IAlarmsManager.OnAlarmListChangedListener>();
         mContentResolver = mContext.getContentResolver();
         alarms = new HashMap<Integer, AlarmCore>();
+        broadcaster = new AlarmStateNotifier(mContext);
 
         final Cursor cursor = mContentResolver.query(AlarmContainer.Columns.CONTENT_URI,
                 AlarmContainer.Columns.ALARM_QUERY_COLUMNS, null, null, AlarmContainer.Columns.DEFAULT_SORT_ORDER);
@@ -60,7 +62,7 @@ public class Alarms implements IAlarmsManager {
             if (cursor.moveToFirst()) {
                 do {
                     AlarmContainer container = new AlarmContainer(cursor, log, context);
-                    final AlarmCore a = new AlarmCore(container, context, log, alarmsScheduler);
+                    final AlarmCore a = new AlarmCore(container, context, log, alarmsScheduler, broadcaster);
                     alarms.put(a.getId(), a);
                 } while (cursor.moveToNext());
             }
@@ -91,7 +93,7 @@ public class Alarms implements IAlarmsManager {
     @Override
     public int createNewAlarm() {
         AlarmContainer container = new AlarmContainer(log, mContext);
-        AlarmCore alarm = new AlarmCore(container, mContext, log, mAlarmsScheduler);
+        AlarmCore alarm = new AlarmCore(container, mContext, log, mAlarmsScheduler, broadcaster);
         alarms.put(alarm.getId(), alarm);
         notifyAlarmListChangedListeners();
         return alarm.getId();
