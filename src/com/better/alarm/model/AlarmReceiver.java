@@ -19,8 +19,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.better.wakelock.Logger;
-import com.better.wakelock.WakeLockManager;
+import com.github.androidutils.logger.Logger;
+import com.github.androidutils.wakelock.WakeLockManager;
 
 /**
  * This receiver is a part of the model, but it has to be a separate class.

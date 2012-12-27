@@ -25,7 +25,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 
-import com.better.wakelock.Logger;
+import com.github.androidutils.logger.Logger;
 
 /**
  * Helper class for opening the database from multiple providers. Also provides

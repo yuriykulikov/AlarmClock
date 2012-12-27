@@ -27,7 +27,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
-import com.better.wakelock.Logger;
+import com.github.androidutils.logger.Logger;
 
 public class AlarmsScheduler implements IAlarmsScheduler {
     private static final boolean DBG = true;

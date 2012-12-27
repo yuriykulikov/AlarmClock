@@ -38,7 +38,7 @@ import com.better.alarm.model.Alarm;
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.IAlarmsManager;
 import com.better.alarm.model.Intents;
-import com.better.wakelock.Logger;
+import com.github.androidutils.logger.Logger;
 
 /**
  * Manages each alarm

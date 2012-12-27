@@ -27,8 +27,8 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import com.better.wakelock.Logger;
-import com.better.wakelock.Logger.LogLevel;
+import com.github.androidutils.logger.Logger;
+import com.github.androidutils.logger.Logger.LogLevel;
 
 public class AlarmProvider extends ContentProvider {
     private AlarmDatabaseHelper mOpenHelper;

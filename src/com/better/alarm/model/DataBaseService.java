@@ -7,7 +7,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 
-import com.better.wakelock.WakeLockManager;
+import com.github.androidutils.wakelock.WakeLockManager;
 
 public class DataBaseService extends IntentService {
 

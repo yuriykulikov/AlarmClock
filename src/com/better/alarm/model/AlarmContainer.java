@@ -11,8 +11,8 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import com.better.wakelock.Logger;
-import com.better.wakelock.WakeLockManager;
+import com.github.androidutils.logger.Logger;
+import com.github.androidutils.wakelock.WakeLockManager;
 
 /**
  * Active record container for all alarm data.

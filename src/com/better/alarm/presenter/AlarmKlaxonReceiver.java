@@ -22,7 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.better.alarm.model.Intents;
-import com.better.wakelock.WakeLockManager;
+import com.github.androidutils.wakelock.WakeLockManager;
 
 /**
  * Dispatches intents to the KlaxonService

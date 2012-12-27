@@ -28,7 +28,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
-import com.better.wakelock.Logger;
+import com.github.androidutils.logger.Logger;
 
 /**
  * The Alarms implements application domain logic

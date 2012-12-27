@@ -19,7 +19,7 @@ package com.better.alarm.model;
 
 import android.content.Context;
 
-import com.better.wakelock.Logger;
+import com.github.androidutils.logger.Logger;
 
 /**
  * The AlarmsManager provider supplies info about AlarmCore Clock settings

@@ -17,11 +17,11 @@ package com.better.alarm.model;
 
 import android.app.Application;
 
-import com.better.wakelock.FileLogWriter;
-import com.better.wakelock.LogcatLogWriter;
-import com.better.wakelock.Logger;
-import com.better.wakelock.Logger.LogLevel;
-import com.better.wakelock.WakeLockManager;
+import com.github.androidutils.logger.FileLogWriter;
+import com.github.androidutils.logger.LogcatLogWriter;
+import com.github.androidutils.logger.Logger;
+import com.github.androidutils.logger.Logger.LogLevel;
+import com.github.androidutils.wakelock.WakeLockManager;
 
 public class AlarmApplication extends Application {
 

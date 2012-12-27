@@ -19,8 +19,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import com.better.wakelock.Logger;
-import com.better.wakelock.WakeLockManager;
+import com.github.androidutils.logger.Logger;
+import com.github.androidutils.wakelock.WakeLockManager;
 
 public class AlarmsService extends Service {
     Alarms alarms;
