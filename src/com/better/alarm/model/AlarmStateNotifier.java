@@ -25,5 +25,4 @@ public class AlarmStateNotifier implements IStateNotifier {
         intent.putExtra(Intents.EXTRA_ID, id);
         mContext.sendBroadcast(intent);
     }
-
 }

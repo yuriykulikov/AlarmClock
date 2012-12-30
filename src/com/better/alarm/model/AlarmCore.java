@@ -20,7 +20,6 @@ package com.better.alarm.model;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.WeakHashMap;
 
 import android.content.Context;
@@ -28,9 +27,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
+import android.os.Looper;
+import android.os.Message;
 import android.preference.PreferenceManager;
 
 import com.better.alarm.R;
+import com.github.androidutils.logger.Logger;
+import com.github.androidutils.statemachine.ComplexTransition;
+import com.github.androidutils.statemachine.IMessageWhatToStringConverter;
+import com.github.androidutils.statemachine.IOnStateChangedListener;
+import com.github.androidutils.statemachine.IState;
+import com.github.androidutils.statemachine.State;
+import com.github.androidutils.statemachine.StateMachine;
 
 /**
  * Alarm is a class which models a real word alarm. It is a simple state
@@ -86,19 +94,45 @@ import com.better.alarm.R;
  * 
  */
 public final class AlarmCore implements Alarm {
-    // This string is used to indicate a silent alarm in the db.
-    private static final String ALARM_ALERT_SILENT = "silent";
-
-    private final IAlarmsScheduler mAlarmsScheduler;
-    private final Logger log;
-    private final Context mContext;
-    private final IStateNotifier broadcaster;
 
     /**
      * Strategy used to notify other components about alarm state.
      */
     public interface IStateNotifier {
         public void broadcastAlarmState(int id, String action);
+
+    }
+
+    private final IAlarmsScheduler mAlarmsScheduler;
+    private final Logger log;
+    private final Context mContext;
+
+    private final IStateNotifier broadcaster;
+
+    private final IAlarmContainer container;
+
+    /**
+     * Used to calculate calendars. Is not synced with DB, because it is in the
+     * settings
+     */
+    private int prealarmMinutes;
+
+    private final AlarmStateMachine stateMachine;
+
+    public AlarmCore(IAlarmContainer container, Context context, Logger logger, IAlarmsScheduler alarmsScheduler,
+            IStateNotifier broadcaster) {
+        mContext = context;
+        this.log = logger;
+        mAlarmsScheduler = alarmsScheduler;
+        this.container = container;
+        this.broadcaster = broadcaster;
+
+        PreferenceManager.getDefaultSharedPreferences(mContext).registerOnSharedPreferenceChangeListener(
+                mOnSharedPreferenceChangeListener);
+
+        stateMachine = new AlarmStateMachine(container.getState());
+        stateMachine.start();
+        fetchPreAlarmMinutes();
     }
 
     /**
@@ -111,193 +145,486 @@ public final class AlarmCore implements Alarm {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.equals("prealarm_duration")) {
                 fetchPreAlarmMinutes();
-                if (container.isPrealarm()) {
-                    refresh();
-                }
             }
         }
     };
 
-    private final IAlarmContainer container;
-
-    /**
-     * Used to calculate calendars. Is not synced with DB, because it is in the
-     * settings
-     */
-    private int prealarmMinutes;
-
-    public AlarmCore(IAlarmContainer container, Context context, Logger logger, IAlarmsScheduler alarmsScheduler,
-            IStateNotifier broadcaster) {
-        mContext = context;
-        this.log = logger;
-        mAlarmsScheduler = alarmsScheduler;
-        this.container = container;
-        this.broadcaster = broadcaster;
-
-        Calendar now = Calendar.getInstance();
-
-        boolean isExpired = getNextTime().before(now);
-        if (isExpired) {
-            log.d("AlarmCore expired: " + toString());
-            container.setEnabled((isEnabled() && getDaysOfWeek().isRepeatSet()));
-        }
-
-        PreferenceManager.getDefaultSharedPreferences(mContext).registerOnSharedPreferenceChangeListener(
-                mOnSharedPreferenceChangeListener);
-
-        fetchPreAlarmMinutes();
+    private void fetchPreAlarmMinutes() {
+        String asString = PreferenceManager.getDefaultSharedPreferences(mContext).getString("prealarm_duration", "30");
+        prealarmMinutes = Integer.parseInt(asString);
+        stateMachine.sendMessage(AlarmStateMachine.PREALARM_DURATION_CHANGED);
     }
 
-    public void onAlarmFired(CalendarType calendarType) {
-        if (calendarType == CalendarType.PREALARM) {
-            broadcastAlarmState(Intents.ALARM_PREALARM_ACTION);
-        } else {
-            broadcastAlarmState(Intents.ALARM_ALERT_ACTION);
-            // Disable this alarm if it does not repeat.
-            if (!getDaysOfWeek().isRepeatSet()) {
-                container.setEnabled(false);
+    /** SM to handle Alarm states */
+    private class AlarmStateMachine extends StateMachine {
+        public static final int ENABLE = 1;
+        public static final int DISABLE = 2;
+        public static final int SNOOZE = 3;
+        public static final int DISMISS = 4;
+        public static final int CHANGE = 5;
+        public static final int FIRED = 6;
+        public static final int PREALARM_DURATION_CHANGED = 7;
+        public static final int PREALARM_TIMED_OUT = 8;
+        public static final int REFRESH = 9;
+        public static final int DELETE = 10;
+
+        public final DisabledState disabledState;
+        public final EnabledState enabledState;
+        public final RescheduleTransition rescheduleTransition;
+        public final PreAlarmSetState preAlarmSet;
+        public final SetState set;
+        public final SnoozedState snoozed;
+        public final PreAlarmFiredState preAlarmFired;
+        public final PreAlarmSnoozedState preAlarmSnoozed;
+        public final FiredState fired;
+
+        public AlarmStateMachine(String initialState) {
+            super("AlarmSM", Looper.getMainLooper(), log);
+            disabledState = new DisabledState();
+            enabledState = new EnabledState();
+            rescheduleTransition = new RescheduleTransition();
+            preAlarmSet = new PreAlarmSetState();
+            set = new SetState();
+            snoozed = new SnoozedState();
+            preAlarmFired = new PreAlarmFiredState();
+            preAlarmSnoozed = new PreAlarmSnoozedState();
+            fired = new FiredState();
+
+            addState(disabledState);
+            addState(enabledState);
+            addState(rescheduleTransition);
+            addState(preAlarmSet, enabledState);
+            addState(set, enabledState);
+            addState(snoozed, enabledState);
+            addState(preAlarmFired, enabledState);
+            addState(fired, enabledState);
+            addState(preAlarmSnoozed, enabledState);
+
+            setDbg(true);
+            setMessageWhatToStringConverter(new IMessageWhatToStringConverter() {
+                @Override
+                public String messageWhatToString(int what) {
+                    switch (what) {
+                    case ENABLE:
+                        return "ENABLE";
+                    case DISABLE:
+                        return "DISABLE";
+                    case SNOOZE:
+                        return "SNOOZE";
+                    case DISMISS:
+                        return "DISMISS";
+                    case CHANGE:
+                        return "CHANGE";
+                    case FIRED:
+                        return "FIRED";
+                    case PREALARM_DURATION_CHANGED:
+                        return "PREALARM_DURATION_CHANGED";
+                    case PREALARM_TIMED_OUT:
+                        return "PREALARM_TIMED_OUT";
+                    case REFRESH:
+                        return "REFRESH";
+                    case DELETE:
+                        return "DELETE";
+                    default:
+                        return "UNKNOWN";
+                    }
+                }
+            });
+
+            addOnStateChangedListener(new IOnStateChangedListener() {
+                @Override
+                public void onStateChanged(IState state) {
+                    if (state != enabledState && state != rescheduleTransition) {
+                        log.d("saving state " + state.getName());
+                        container.setState(state.getName());
+                        container.writeToDb();
+                    }
+                }
+            });
+
+            setInitialState(stringToState(initialState));
+        }
+
+        private class DisabledState extends State {
+            @Override
+            public boolean processMessage(Message msg) {
+                switch (msg.what) {
+                case CHANGE:
+                    AlarmChangeData data = (AlarmChangeData) msg.obj;
+                    writeChangeData(data);
+                    transitionTo(rescheduleTransition);
+                    return HANDLED;
+                case ENABLE:
+                    container.setEnabled(true);
+                    transitionTo(rescheduleTransition);
+                    return HANDLED;
+                case DELETE:
+                    container.delete();
+                    return HANDLED;
+                }
+                return NOT_HANDLED;
             }
         }
 
-        container.setSnoozed(false);
+        /** Master state for all enabled states. Handles disable and delete */
+        private class EnabledState extends State {
+            @Override
+            public boolean processMessage(Message msg) {
+                switch (msg.what) {
+                case CHANGE:
+                    AlarmChangeData data = (AlarmChangeData) msg.obj;
+                    writeChangeData(data);
+                    transitionTo(rescheduleTransition);
+                    return HANDLED;
+                case DISMISS:
+                    broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
+                    rescheduleRepeatingAlarm();
+                    return HANDLED;
+                case DISABLE:
+                    container.setEnabled(false);
+                    broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
+                    transitionTo(disabledState);
+                    return HANDLED;
+                case REFRESH:
+                    Calendar now = Calendar.getInstance();
+                    boolean isExpired = getNextTime().before(now);
+                    if (isExpired) {
+                        log.d("AlarmCore expired: " + toString());
+                        rescheduleRepeatingAlarm();
+                    }
+                    return HANDLED;
+                case DELETE:
+                    container.delete();
+                    mAlarmsScheduler.removeAlarm(container.getId());
+                    broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
+                    return HANDLED;
+                }
+                return NOT_HANDLED;
+            }
 
-        refresh();
-        // TODO notifyAlarmListChangedListeners();
+            @Override
+            public void exit() {
+                // TODO maybe this is not necessary here?
+                broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
+            }
+
+            private void rescheduleRepeatingAlarm() {
+                if (container.getDaysOfWeek().isRepeatSet()) {
+                    transitionTo(rescheduleTransition);
+                } else {
+                    transitionTo(disabledState);
+                }
+            }
+        }
+
+        private class RescheduleTransition extends ComplexTransition {
+            @Override
+            public void performComplexTransition() {
+                if (container.isEnabled()) {
+                    if (container.isPrealarm()) {
+                        transitionTo(preAlarmSet);
+                    } else {
+                        transitionTo(set);
+                    }
+                } else {
+                    transitionTo(disabledState);
+                }
+            }
+        }
+
+        private class SetState extends State {
+            @Override
+            public void enter() {
+                Calendar nextTime = calculateNextTime();
+                setAlarm(nextTime);
+            }
+
+            @Override
+            public boolean processMessage(Message msg) {
+                switch (msg.what) {
+                case FIRED:
+                    transitionTo(fired);
+                    return HANDLED;
+                case PREALARM_DURATION_CHANGED:
+                    // TODO
+                    log.d("here we do somehting");
+                    return HANDLED;
+                }
+                return NOT_HANDLED;
+            }
+
+            @Override
+            public void exit() {
+                removeAlarm();
+            }
+        }
+
+        /** handles both snoozed and main for now */
+        private class FiredState extends State {
+            @Override
+            public void enter() {
+                broadcastAlarmState(Intents.ALARM_ALERT_ACTION);
+            }
+
+            @Override
+            public boolean processMessage(Message msg) {
+                switch (msg.what) {
+                case SNOOZE:
+                    transitionTo(snoozed);
+                    return HANDLED;
+                }
+                return NOT_HANDLED;
+            }
+
+            @Override
+            public void exit() {
+                broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
+            }
+        }
+
+        private class SnoozedState extends State {
+            @Override
+            public void enter() {
+                Calendar nextTime = Calendar.getInstance();
+                int snoozeMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext).getString(
+                        "snooze_duration", "10"));
+                nextTime.add(Calendar.MINUTE, snoozeMinutes);
+                setAlarm(nextTime);
+                broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION);
+            }
+
+            @Override
+            public boolean processMessage(Message msg) {
+                switch (msg.what) {
+                case FIRED:
+                    transitionTo(fired);
+                    return HANDLED;
+                }
+                return NOT_HANDLED;
+            }
+
+            @Override
+            public void exit() {
+                removeAlarm();
+                broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
+            }
+        }
+
+        // enabled states
+        private class PreAlarmSetState extends State {
+            @Override
+            public void enter() {
+                Calendar c = calculateNextTime();
+                c.add(Calendar.MINUTE, -1 * prealarmMinutes);
+                if (c.after(Calendar.getInstance())) {
+                    setAlarm(c);
+                } else {
+                    // if prealarm is already in the past
+                    transitionTo(set);
+                }
+            }
+
+            @Override
+            public boolean processMessage(Message msg) {
+                switch (msg.what) {
+                case FIRED:
+                    transitionTo(preAlarmFired);
+                    return HANDLED;
+                case PREALARM_DURATION_CHANGED:
+                    // TODO
+                    log.d("here we do somehting");
+                    return HANDLED;
+                }
+                return NOT_HANDLED;
+            }
+
+            @Override
+            public void exit() {
+                removeAlarm();
+            }
+        }
+
+        private class PreAlarmFiredState extends State {
+            @Override
+            public void enter() {
+                broadcastAlarmState(Intents.ALARM_PREALARM_ACTION);
+                setAlarm(calculateNextTime());
+            }
+
+            @Override
+            public boolean processMessage(Message msg) {
+                switch (msg.what) {
+                case FIRED:
+                    transitionTo(fired);
+                    return HANDLED;
+                case SNOOZE:
+                    transitionTo(preAlarmSnoozed);
+                    return HANDLED;
+                case PREALARM_TIMED_OUT:
+                    transitionTo(fired);
+                    return HANDLED;
+                }
+                return NOT_HANDLED;
+            }
+
+            @Override
+            public void exit() {
+                removeAlarm();
+                broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
+            }
+        }
+
+        private class PreAlarmSnoozedState extends State {
+            @Override
+            public void enter() {
+                setAlarm(calculateNextTime());
+                broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION);
+            }
+
+            @Override
+            public boolean processMessage(Message msg) {
+                switch (msg.what) {
+                case FIRED:
+                    transitionTo(fired);
+                    return HANDLED;
+                }
+                return NOT_HANDLED;
+            }
+
+            @Override
+            public void exit() {
+                removeAlarm();
+                broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
+            }
+        }
+
+        private void broadcastAlarmState(String action) {
+            log.d(container.getId() + " - " + action);
+            broadcaster.broadcastAlarmState(container.getId(), action);
+        }
+
+        private void setAlarm(Calendar calendar) {
+            HashMap<CalendarType, Calendar> calendars = new HashMap<CalendarType, Calendar>();
+            calendars.put(CalendarType.NORMAL, calendar);
+            mAlarmsScheduler.setAlarm(container.getId(), calendars);
+            container.setNextTime(calendar);
+            container.writeToDb();
+        }
+
+        private void removeAlarm() {
+            mAlarmsScheduler.removeAlarm(container.getId());
+        }
+
+        private void writeChangeData(AlarmChangeData data) {
+            container.setEnabled(data.enabled);
+            container.setHour(data.hour);
+            container.setAlert(data.alert);
+            container.setDaysOfWeek(data.daysOfWeek);
+            container.setLabel(data.label);
+            container.setMinutes(data.minutes);
+            container.setPrealarm(data.prealarm);
+            container.setVibrate(data.vibrate);
+            container.writeToDb();
+        }
+
+        private Calendar calculateNextTime() {
+            // start with now
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(System.currentTimeMillis());
+
+            int nowHour = c.get(Calendar.HOUR_OF_DAY);
+            int nowMinute = c.get(Calendar.MINUTE);
+
+            // if alarm is behind current time, advance one day
+            if (container.getHour() < nowHour || container.getHour() == nowHour && container.getMinutes() <= nowMinute) {
+                c.add(Calendar.DAY_OF_YEAR, 1);
+            }
+            c.set(Calendar.HOUR_OF_DAY, container.getHour());
+            c.set(Calendar.MINUTE, container.getMinutes());
+            c.set(Calendar.SECOND, 0);
+            c.set(Calendar.MILLISECOND, 0);
+
+            int addDays = container.getDaysOfWeek().getNextAlarm(c);
+            if (addDays > 0) {
+                c.add(Calendar.DAY_OF_WEEK, addDays);
+            }
+            return c;
+        }
+
+        private State stringToState(String initialState) {
+            if ("".equals(initialState)) {
+                log.d("new Alarm - DisabledState");
+                return disabledState;
+            }
+            for (State state : getStates()) {
+                if (state.getName().equals(initialState)) return state;
+            }
+            log.d("wtf? state not found");
+            return disabledState;
+        }
     }
 
-    void refresh() {
-        calculateCalendars();
-        mAlarmsScheduler.setAlarm(container.getId(), getActiveCalendars());
-        container.writeToDb();
+    private class AlarmChangeData {
+        public boolean prealarm;
+        public Uri alert;
+        public String label;
+        public boolean vibrate;
+        public DaysOfWeek daysOfWeek;
+        public int hour;
+        public int minutes;
+        public boolean enabled;
     }
 
-    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    // ++++++ for GUI +++++++++++++++++++++++++++++++++
-    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    public void onAlarmFired(CalendarType calendarType) {
+        stateMachine.sendMessage(AlarmStateMachine.FIRED);
+    }
 
-    /**
-     * A convenience method to enable or disable an
-     * 
-     * @param id
-     *            corresponds to the _id column
-     * @param enabled
-     *            corresponds to the ENABLED column
-     */
+    public void refresh() {
+        stateMachine.sendMessage(AlarmStateMachine.REFRESH);
+    }
+
     @Override
     public void enable(boolean enable) {
-        log.d(container.getId() + " is " + (enable ? "enabled" : "disabled"));
-        container.setEnabled(enable);
-        refresh();
+        stateMachine.sendMessage(enable ? AlarmStateMachine.ENABLE : AlarmStateMachine.DISABLE);
     }
 
     @Override
     public void snooze() {
-        int snoozeMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext).getString(
-                "snooze_duration", "10"));
-        container.setSnoozed(true);
-        container.setSnoozedTime(Calendar.getInstance());
-        container.getSnoozedTime().add(Calendar.MINUTE, snoozeMinutes);
-        log.d("scheduling snooze " + container.getId() + " at "
-                + DateFormat.getDateTimeInstance().format(container.getSnoozedTime().getTime()));
-        refresh();
-        broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION);
-        // TODO notifyAlarmListChangedListeners();
+        stateMachine.sendMessage(AlarmStateMachine.SNOOZE);
     }
 
     @Override
     public void dismiss() {
-        broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
-        container.setSnoozed(false);
-        refresh();
+        stateMachine.sendMessage(AlarmStateMachine.DISMISS);
     }
 
     @Override
     public void delete() {
-        container.delete();
-        mAlarmsScheduler.removeAlarm(container.getId());
-        broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
-        // TODO notifyAlarmListChangedListeners();
+        stateMachine.sendMessage(AlarmStateMachine.DELETE);
     }
 
     @Override
     public void change(boolean enabled, int hour, int minute, DaysOfWeek daysOfWeek, boolean vibrate, String label,
             Uri alert, boolean preAlarm) {
-        container.setPrealarm(preAlarm);
-        container.setAlert(alert);
-        container.setLabel(label);
-        container.setVibrate(vibrate);
-        container.setDaysOfWeek(daysOfWeek);
-        container.setHour(hour);
-        container.setMinutes(minute);
-        container.setEnabled(enabled);
+        AlarmChangeData data = new AlarmChangeData();
+        data.prealarm = preAlarm;
+        data.alert = alert;
+        data.label = label;
+        data.vibrate = vibrate;
+        data.daysOfWeek = daysOfWeek;
+        data.hour = hour;
+        data.minutes = minute;
+        data.enabled = enabled;
 
-        log.d(container.getId() + " is changed");
-        refresh();
-        // TODO notifyAlarmListChangedListeners();
-    }
-
-    /**
-     * Given an alarm in hours and minutes, return a time suitable for setting
-     * in AlarmManager.
-     */
-    private void calculateCalendars() {
-        // start with now
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(System.currentTimeMillis());
-
-        int nowHour = c.get(Calendar.HOUR_OF_DAY);
-        int nowMinute = c.get(Calendar.MINUTE);
-
-        // if alarm is behind current time, advance one day
-        if (container.getHour() < nowHour || container.getHour() == nowHour && container.getMinutes() <= nowMinute) {
-            c.add(Calendar.DAY_OF_YEAR, 1);
-        }
-        c.set(Calendar.HOUR_OF_DAY, container.getHour());
-        c.set(Calendar.MINUTE, container.getMinutes());
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
-
-        int addDays = container.getDaysOfWeek().getNextAlarm(c);
-        if (addDays > 0) {
-            c.add(Calendar.DAY_OF_WEEK, addDays);
-        }
-
-        container.setNextTime(c);
-
-        container.setPrealarmTime(Calendar.getInstance());
-        container.getPrealarmTime().setTimeInMillis(container.getNextTime().getTimeInMillis());
-        container.getPrealarmTime().add(Calendar.MINUTE, -1 * prealarmMinutes);
-    }
-
-    private Map<CalendarType, Calendar> getActiveCalendars() {
-        HashMap<CalendarType, Calendar> calendars = new HashMap<CalendarType, Calendar>();
-
-        Calendar now = Calendar.getInstance();
-        if (container.isEnabled() && container.getNextTime().after(now)) {
-            calendars.put(CalendarType.NORMAL, container.getNextTime());
-        }
-        if (container.isSnoozed() && container.getSnoozedTime().after(now)) {
-            calendars.put(CalendarType.SNOOZE, container.getSnoozedTime());
-        }
-        if (container.isEnabled() && container.isPrealarm() && container.getPrealarmTime().after(now)) {
-            calendars.put(CalendarType.PREALARM, container.getPrealarmTime());
-        }
-
-        return calendars;
-    }
-
-    private void broadcastAlarmState(String action) {
-        broadcaster.broadcastAlarmState(container.getId(), action);
+        Message msg = stateMachine.obtainMessage();
+        msg.what = AlarmStateMachine.CHANGE;
+        msg.obj = data;
+        msg.sendToTarget();
     }
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // ++++++ getters for GUI +++++++++++++++++++++++++++++++
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-    private void fetchPreAlarmMinutes() {
-        String asString = PreferenceManager.getDefaultSharedPreferences(mContext).getString("prealarm_duration", "30");
-        prealarmMinutes = Integer.parseInt(asString);
-    }
 
     /**
      * TODO calendar should be immutable
@@ -311,12 +638,16 @@ public final class AlarmCore implements Alarm {
 
     @Override
     public Calendar getSnoozedTime() {
-        return container.getSnoozedTime();
+        // TODO this might not work :-)
+        // actually these getters should be replaced with extras to intents
+        return container.getNextTime();
     }
 
     @Override
     public Calendar getPrealarmTime() {
-        return container.getPrealarmTime();
+        // TODO this might not work :-)
+        // actually these getters should be replaced with extras to intents
+        return container.getNextTime();
     }
 
     @Override
@@ -369,9 +700,12 @@ public final class AlarmCore implements Alarm {
         return container.getId();
     }
 
+    /**
+     * this is only valid from the main thread
+     */
     @Override
     public boolean isSnoozed() {
-        return container.isSnoozed();
+        return stateMachine.getCurrentState().equals(stateMachine.snoozed);
     }
 
     @Override
@@ -397,24 +731,9 @@ public final class AlarmCore implements Alarm {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("AlarmCore ").append(container.getId());
-        sb.append(", ");
-        if (container.isEnabled()) {
-            sb.append("enabled at ").append(container.getNextTime().getTime().toLocaleString());
-        } else {
-            sb.append("disabled");
-        }
-        sb.append(", ");
-        if (container.isSnoozed()) {
-            sb.append("snoozed at ").append(container.getSnoozedTime().getTime().toLocaleString());
-        } else {
-            sb.append("no snooze");
-        }
-        sb.append(", ");
-        if (container.isPrealarm()) {
-            sb.append("prealarm at ").append(container.getPrealarmTime().getTime().toLocaleString());
-        } else {
-            sb.append("no prealarm");
-        }
+        sb.append(" in ").append(stateMachine.getCurrentState().getName());
+        DateFormat df = DateFormat.getDateTimeInstance();
+        sb.append(" on ").append(df.format(container.getNextTime().getTime()));
         return sb.toString();
     }
 }

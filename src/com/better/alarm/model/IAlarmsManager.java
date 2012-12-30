@@ -19,7 +19,6 @@ import java.util.List;
 
 import android.net.Uri;
 
-
 /**
  * An interface for Presenter-Model interaction. Presenters can invoke
  * {@link #dismiss(Alarm)}, {@link #snooze(Alarm)} as a result of user
@@ -31,10 +30,6 @@ import android.net.Uri;
  * 
  */
 public interface IAlarmsManager {
-    public interface OnAlarmListChangedListener {
-        void onAlarmListChanged(List<Alarm> newList);
-    }
-
     /**
      * Tell the model that a certain alarm has to be snoozed because of the user
      * interaction
@@ -67,8 +62,8 @@ public interface IAlarmsManager {
     public void enable(int id, boolean enable);
 
     /**
-     * Return an AlarmCore object representing the alarm id in the database. Returns
-     * null if no alarm exists.
+     * Return an AlarmCore object representing the alarm id in the database.
+     * Returns null if no alarm exists.
      */
     public Alarm getAlarm(int alarmId);
 
@@ -78,21 +73,6 @@ public interface IAlarmsManager {
      * @return List of all alarms as a copy
      */
     public List<Alarm> getAlarmsList();
-
-    /**
-     * Register a listener. Newly registered listener will be notified within
-     * the call
-     * 
-     * @param listener
-     */
-    public void registerOnAlarmListChangedListener(OnAlarmListChangedListener listener);
-
-    /**
-     * Unregister the listener
-     * 
-     * @param listener
-     */
-    public void unRegisterOnAlarmListChangedListener(OnAlarmListChangedListener listener);
 
     /**
      * Create new AlarmCore with default settings

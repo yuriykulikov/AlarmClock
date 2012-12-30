@@ -47,6 +47,11 @@ public class Intents {
     public static final String ACTION_ALARMS_UNSCHEDULED = "com.better.alarm.model.Intents.ACTION_ALARMS_UNSCHEDULED";
 
     /**
+     * Broadcasted when alarm is scheduled
+     */
+    public static final String ACTION_ALARM_CHANGED = "com.better.alarm.model.Intents.ACTION_ALARM_CHANGED";
+
+    /**
      * Key of the AlarmCore attached as a parceble extra
      */
     public static final String EXTRA_ID = "intent.extra.alarm";

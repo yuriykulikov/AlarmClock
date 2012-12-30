@@ -57,16 +57,7 @@ public interface IAlarmContainer {
 
     public void setNextTime(Calendar nextTime);
 
-    public Calendar getPrealarmTime();
+    public String getState();
 
-    public void setPrealarmTime(Calendar prealarmTime);
-
-    public boolean isSnoozed();
-
-    public void setSnoozed(boolean snoozed);
-
-    public Calendar getSnoozedTime();
-
-    public void setSnoozedTime(Calendar snoozedTime);
-
+    void setState(String state);
 }
