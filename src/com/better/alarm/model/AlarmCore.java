@@ -24,13 +24,13 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 
 import com.better.alarm.R;
-import com.better.wakelock.Logger;
 
 /**
  * Alarm is a class which models a real word alarm. It is a simple state
@@ -45,43 +45,39 @@ import com.better.wakelock.Logger;
  * <pre>
  * @startuml
  * State DISABLED
+ * State RESCHEDULE
  * State ENABLED {
- * State PREALARM_PENDING
- * State MAIN_PENDING
- * State SOMETHING_FIRED {
- * State NORMAL_FIRED {
- * State MAIN_FIRED {
- * M_ACTIVE -right-> M_KILLED
- * }
- * State SNOOZE_FIRED {
- * S_ACTIVE -right-> S_KILLED
- * }
- * }
+ * State PREALARM_SET
+ * State SET
+ * State FIRED
  * State PREALARM_FIRED
- * State SNOOZE_PENDING
- * }
- * State SCHEDULE_REPEAT
- * SCHEDULE_REPEAT : Temporary state, immediately transitions to disabled in case no repeating is set
- * SCHEDULE_REPEAT : If repeating is set, transitions to one of the pending state
- * SCHEDULE_REPEAT : If prealarm is enabled, schedules next prealarm
- * SCHEDULE_REPEAT : If prealarm is enabled, but is in the past, schedules main alarm
+ * State SNOOZED
+ * State PREALARM_SNOOZED
+ * RESCHEDULE :Complex transitiontran
+ * PREALARM_FIRED :timer
+ * SNOOZED :timer
+ * PREALARM_SNOOZED :timer
+ * PREALARM_SET :timer
+ * SET :timer
  * 
- * DISABLED -down-> SCHEDULE_REPEAT :enable
+ * DISABLED -down-> RESCHEDULE :enable\nchange
  * ENABLED -up-> DISABLED :disable
+ * ENABLED -up-> RESCHEDULE :change\ndismiss
  * 
- * PREALARM_PENDING -down-> PREALARM_FIRED :time
- * PREALARM_FIRED -up-> MAIN_PENDING :snooze
- * MAIN_PENDING -down-> M_ACTIVE :time
- * PREALARM_FIRED -down-> S_ACTIVE :time
- * NORMAL_FIRED -up->  SNOOZE_PENDING :snooze
- * SNOOZE_PENDING -down-> S_ACTIVE :time
+ * PREALARM_SET -down-> PREALARM_FIRED :fired
+ * PREALARM_FIRED -down-> PREALARM_SNOOZED :snooze
+ * PREALARM_SNOOZED -up-> FIRED
+ * SET -down-> FIRED :fired
+ * PREALARM_FIRED --right--> FIRED :fired
+ * FIRED -down->  SNOOZED :snooze
+ * SNOOZED -up-> FIRED :fired
  * 
- * PREALARM_PENDING -up-> SCHEDULE_REPEAT :cancel
- * SOMETHING_FIRED -up-> SCHEDULE_REPEAT :dismiss
+ * RESCHEDULE -up-> DISABLED :disabled
  * 
- * SCHEDULE_REPEAT -down-> PREALARM_PENDING :prealarm enabled
- * SCHEDULE_REPEAT -down-> MAIN_PENDING :prealarm disabled
- * PREALARM_PENDING -left-> MAIN_PENDING
+ * RESCHEDULE --down-> PREALARM_SET :prealarm enabled
+ * RESCHEDULE -down-> SET :prealarm disabled
+ * 
+ * 
  * } 
  * @enduml
  * </pre>
