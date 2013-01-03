@@ -27,6 +27,8 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import com.github.androidutils.logger.FileLogWriter;
+import com.github.androidutils.logger.LogcatLogWriter;
 import com.github.androidutils.logger.Logger;
 import com.github.androidutils.logger.Logger.LogLevel;
 
@@ -49,10 +51,12 @@ public class AlarmProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        log = Logger.getDefaultLogger();
+        log = new Logger();
+        log.addLogWriter(new LogcatLogWriter());
+        log.addLogWriter(new FileLogWriter());
         log.setLogLevel(AlarmProvider.class, LogLevel.ERR);
-        log.setLogLevel(AlarmDatabaseHelper.class, LogLevel.DEBUG);
-        mOpenHelper = new AlarmDatabaseHelper(getContext());
+        log.setLogLevel(AlarmDatabaseHelper.class, LogLevel.ERR);
+        mOpenHelper = new AlarmDatabaseHelper(getContext(), log);
         return true;
     }
 
@@ -80,13 +84,14 @@ public class AlarmProvider extends ContentProvider {
         try {
             ret = qb.query(db, projectionIn, selection, selectionArgs, null, null, sort);
         } catch (SQLException e) {
+            log.e("query failed because of " + e.getMessage() + ", recreating DB");
             db.execSQL("DROP TABLE IF EXISTS alarms");
             // I know this is not nice to call onCreate() by ourselves :-)
             mOpenHelper.onCreate(db);
             ret = qb.query(db, projectionIn, selection, selectionArgs, null, null, sort);
         }
         if (ret == null) {
-            log.d("AlarmsManager.query: failed");
+            log.e("AlarmsManager.query: failed");
         } else {
             ret.setNotificationUri(getContext().getContentResolver(), url);
         }

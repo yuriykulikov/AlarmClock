@@ -36,9 +36,9 @@ class AlarmDatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 5;
     private final Logger log;
 
-    public AlarmDatabaseHelper(Context context) {
+    public AlarmDatabaseHelper(Context context, Logger log) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        log = Logger.getDefaultLogger();
+        this.log = log;
     }
 
     @Override
