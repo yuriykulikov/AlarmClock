@@ -16,15 +16,14 @@
 package com.better.alarm.model;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 
@@ -40,8 +39,6 @@ public class Alarms implements IAlarmsManager {
 
     private final IAlarmsScheduler mAlarmsScheduler;
 
-    private final Set<IAlarmsManager.OnAlarmListChangedListener> mAlarmListChangedListeners;
-
     private final ContentResolver mContentResolver;
     private final Map<Integer, AlarmCore> alarms;
     private final AlarmStateNotifier broadcaster;
@@ -51,7 +48,6 @@ public class Alarms implements IAlarmsManager {
         log = logger;
         mAlarmsScheduler = alarmsScheduler;
 
-        mAlarmListChangedListeners = new HashSet<IAlarmsManager.OnAlarmListChangedListener>();
         mContentResolver = mContext.getContentResolver();
         alarms = new HashMap<Integer, AlarmCore>();
         broadcaster = new AlarmStateNotifier(mContext);
@@ -70,15 +66,13 @@ public class Alarms implements IAlarmsManager {
             cursor.close();
         }
 
-        init();
-
         log.d("Alarms:");
         for (Alarm alarm : alarms.values()) {
             log.d(alarm.toString());
         }
     }
 
-    void init() {
+    void refresh() {
         for (AlarmCore alarmCore : alarms.values()) {
             alarmCore.refresh();
         }
@@ -156,20 +150,7 @@ public class Alarms implements IAlarmsManager {
         notifyAlarmListChangedListeners();
     }
 
-    @Override
-    public void registerOnAlarmListChangedListener(OnAlarmListChangedListener listener) {
-        mAlarmListChangedListeners.add(listener);
-        notifyAlarmListChangedListeners();
-    }
-
-    @Override
-    public void unRegisterOnAlarmListChangedListener(OnAlarmListChangedListener listener) {
-        mAlarmListChangedListeners.remove(listener);
-    }
-
     private void notifyAlarmListChangedListeners() {
-        for (OnAlarmListChangedListener listener : mAlarmListChangedListeners) {
-            listener.onAlarmListChanged(getAlarmsList());
-        }
+        mContext.sendBroadcast(new Intent(Intents.ACTION_ALARM_CHANGED));
     }
 }

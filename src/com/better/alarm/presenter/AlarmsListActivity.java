@@ -23,9 +23,11 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.ContextMenu;
@@ -48,14 +50,13 @@ import com.better.alarm.R;
 import com.better.alarm.model.Alarm;
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.IAlarmsManager;
-import com.better.alarm.model.IAlarmsManager.OnAlarmListChangedListener;
 import com.better.alarm.model.Intents;
 import com.better.alarm.view.DigitalClock;
 
 /**
  * AlarmClock application.
  */
-public class AlarmsListActivity extends Activity implements OnAlarmListChangedListener {
+public class AlarmsListActivity extends Activity {
 
     public static final String PREFERENCES = "AlarmClock";
 
@@ -72,6 +73,7 @@ public class AlarmsListActivity extends Activity implements OnAlarmListChangedLi
 
     private AlarmListAdapter mAdapter;
     private ListView mListView;
+    private BroadcastReceiver mAlarmsChangedReceiver;
 
     public class AlarmListAdapter extends ArrayAdapter<Alarm> {
         private final Context context;
@@ -197,17 +199,20 @@ public class AlarmsListActivity extends Activity implements OnAlarmListChangedLi
                 startActivity(intent);
             }
         });
+
+        mAlarmsChangedReceiver = new AlarmChangedReceiver();
     }
 
     @Override
     protected void onResume() {
-        alarms.registerOnAlarmListChangedListener(this);
+        registerReceiver(mAlarmsChangedReceiver, new IntentFilter(Intents.ACTION_ALARM_CHANGED));
+        updateAlarmsList();
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        alarms.unRegisterOnAlarmListChangedListener(this);
+        unregisterReceiver(mAlarmsChangedReceiver);
         super.onPause();
     }
 
@@ -263,10 +268,17 @@ public class AlarmsListActivity extends Activity implements OnAlarmListChangedLi
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    public void onAlarmListChanged(List<Alarm> newList) {
+    private void updateAlarmsList() {
         AlarmListAdapter adapter = mAdapter;
         adapter.clear();
-        adapter.addAll(newList);
+        // TODO fixme when we have Parcelable
+        adapter.addAll(alarms.getAlarmsList());
+    }
+
+    private class AlarmChangedReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateAlarmsList();
+        }
     }
 }

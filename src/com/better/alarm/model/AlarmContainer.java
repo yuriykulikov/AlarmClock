@@ -127,6 +127,14 @@ public class AlarmContainer implements IAlarmContainer {
         public static final String SNOOZE_TIME = "snooze_time";
 
         /**
+         * State machine state
+         * <P>
+         * Type: STRING
+         * </P>
+         */
+        public static final String STATE = "state";
+
+        /**
          * The default sort order for this table
          */
         public static final String DEFAULT_SORT_ORDER = HOUR + ", " + MINUTES + " ASC";
@@ -135,7 +143,7 @@ public class AlarmContainer implements IAlarmContainer {
         public static final String WHERE_ENABLED = ENABLED + "=1";
 
         static final String[] ALARM_QUERY_COLUMNS = { _ID, HOUR, MINUTES, DAYS_OF_WEEK, ALARM_TIME, ENABLED, VIBRATE,
-                MESSAGE, ALERT, PREALARM, PREALARM_TIME, SNOOZED, SNOOZE_TIME };
+                MESSAGE, ALERT, PREALARM, PREALARM_TIME, SNOOZED, SNOOZE_TIME, STATE };
 
         /**
          * These save calls to cursor.getColumnIndexOrThrow() THEY MUST BE KEPT
@@ -154,7 +162,6 @@ public class AlarmContainer implements IAlarmContainer {
         public static final int ALARM_PREALARM_TIME_INDEX = 10;
         public static final int ALARM_SNOOZED_INDEX = 11;
         public static final int ALARM_SNOOZE_TIME_INDEX = 12;
-
         public static final int ALARM_STATE_INDEX = 13;
     }
 
@@ -177,9 +184,7 @@ public class AlarmContainer implements IAlarmContainer {
      * 
      */
     private Calendar nextTime;
-    private Calendar prealarmTime;
-    private boolean snoozed;
-    private Calendar snoozedTime;
+    private String state;
 
     private final Logger log;
     private final Context mContext;
@@ -191,18 +196,10 @@ public class AlarmContainer implements IAlarmContainer {
         enabled = c.getInt(Columns.ALARM_ENABLED_INDEX) == 1;
         hour = c.getInt(Columns.ALARM_HOUR_INDEX);
         minutes = c.getInt(Columns.ALARM_MINUTES_INDEX);
-        nextTime = Calendar.getInstance();
-        nextTime.setTimeInMillis(c.getLong(Columns.ALARM_TIME_INDEX));
         daysOfWeek = new DaysOfWeek(c.getInt(Columns.ALARM_DAYS_OF_WEEK_INDEX));
         vibrate = c.getInt(Columns.ALARM_VIBRATE_INDEX) == 1;
         label = c.getString(Columns.ALARM_MESSAGE_INDEX);
         String alertString = c.getString(Columns.ALARM_ALERT_INDEX);
-        prealarm = c.getInt(Columns.ALARM_PREALARM_INDEX) == 1;
-        prealarmTime = Calendar.getInstance();
-        prealarmTime.setTimeInMillis(c.getLong(Columns.ALARM_PREALARM_TIME_INDEX));
-        snoozed = c.getInt(Columns.ALARM_SNOOZED_INDEX) == 1;
-        snoozedTime = Calendar.getInstance();
-        snoozedTime.setTimeInMillis(c.getLong(Columns.ALARM_SNOOZE_TIME_INDEX));
         if (ALARM_ALERT_SILENT.equals(alertString)) {
             log.d("AlarmCore is marked as silent");
             silent = true;
@@ -217,7 +214,10 @@ public class AlarmContainer implements IAlarmContainer {
                 alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
             }
         }
-        // TODO state
+        prealarm = c.getInt(Columns.ALARM_PREALARM_INDEX) == 1;
+        nextTime = Calendar.getInstance();
+        nextTime.setTimeInMillis(c.getLong(Columns.ALARM_TIME_INDEX));
+        state = c.getString(Columns.ALARM_STATE_INDEX);
     }
 
     public AlarmContainer(Logger logger, Context context) {
@@ -234,13 +234,10 @@ public class AlarmContainer implements IAlarmContainer {
         nextTime = c;
         alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         prealarm = false;
-        prealarmTime = c;
-        snoozed = false;
-        snoozedTime = c;
 
         Uri uri = mContext.getContentResolver().insert(Columns.CONTENT_URI, createContentValues());
         id = (int) ContentUris.parseId(uri);
-        // TODO state
+        state = "";
     }
 
     /**
@@ -258,21 +255,18 @@ public class AlarmContainer implements IAlarmContainer {
 
     private ContentValues createContentValues() {
         ContentValues values = new ContentValues(12);
-
-        values.put(Columns.ENABLED, enabled ? 1 : 0);
+        // id
+        values.put(Columns.ENABLED, enabled);
         values.put(Columns.HOUR, hour);
         values.put(Columns.MINUTES, minutes);
-        values.put(Columns.ALARM_TIME, nextTime.getTimeInMillis());
         values.put(Columns.DAYS_OF_WEEK, daysOfWeek.getCoded());
         values.put(Columns.VIBRATE, vibrate);
         values.put(Columns.MESSAGE, label);
-        values.put(Columns.PREALARM, prealarm);
-        values.put(Columns.PREALARM_TIME, prealarmTime.getTimeInMillis());
-        values.put(Columns.SNOOZED, snoozed);
-        values.put(Columns.SNOOZE_TIME, snoozedTime.getTimeInMillis());
-
         // A null alert Uri indicates a silent
         values.put(Columns.ALERT, alert == null ? ALARM_ALERT_SILENT : alert.toString());
+        values.put(Columns.PREALARM, prealarm);
+        values.put(Columns.ALARM_TIME, nextTime.getTimeInMillis());
+        values.put(Columns.STATE, state);
 
         return values;
     }
@@ -302,6 +296,7 @@ public class AlarmContainer implements IAlarmContainer {
     @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+        writeToDb();
     }
 
     @Override
@@ -392,35 +387,24 @@ public class AlarmContainer implements IAlarmContainer {
     @Override
     public void setNextTime(Calendar nextTime) {
         this.nextTime = nextTime;
+        writeToDb();
     }
 
     @Override
-    public Calendar getPrealarmTime() {
-        return prealarmTime;
+    public String getState() {
+        return state;
     }
 
     @Override
-    public void setPrealarmTime(Calendar prealarmTime) {
-        this.prealarmTime = prealarmTime;
+    public void setState(String state) {
+        this.state = state;
+        writeToDb();
     }
 
     @Override
-    public boolean isSnoozed() {
-        return snoozed;
-    }
-
-    @Override
-    public void setSnoozed(boolean snoozed) {
-        this.snoozed = snoozed;
-    }
-
-    @Override
-    public Calendar getSnoozedTime() {
-        return snoozedTime;
-    }
-
-    @Override
-    public void setSnoozedTime(Calendar snoozedTime) {
-        this.snoozedTime = snoozedTime;
+    public String toString() {
+        return "AlarmContainer [id=" + id + ", enabled=" + enabled + ", hour=" + hour + ", minutes=" + minutes
+                + ", daysOfWeek=" + daysOfWeek + ", vibrate=" + vibrate + ", label=" + label + ", alert=" + alert
+                + ", silent=" + silent + ", prealarm=" + prealarm + ", nextTime=" + nextTime + ", state=" + state + "]";
     }
 }
