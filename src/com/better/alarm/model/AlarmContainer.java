@@ -297,6 +297,7 @@ public class AlarmContainer implements IAlarmContainer {
     @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+        writeToDb();
     }
 
     @Override
@@ -387,6 +388,7 @@ public class AlarmContainer implements IAlarmContainer {
     @Override
     public void setNextTime(Calendar nextTime) {
         this.nextTime = nextTime;
+        writeToDb();
     }
 
     @Override
@@ -397,5 +399,6 @@ public class AlarmContainer implements IAlarmContainer {
     @Override
     public void setState(String state) {
         this.state = state;
+        writeToDb();
     }
 }

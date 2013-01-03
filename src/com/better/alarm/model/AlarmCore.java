@@ -243,7 +243,6 @@ public final class AlarmCore implements Alarm {
                     if (state != enabledState && state != rescheduleTransition) {
                         log.d("saving state " + state.getName());
                         container.setState(state.getName());
-                        container.writeToDb();
                     }
                 }
             });
@@ -535,7 +534,6 @@ public final class AlarmCore implements Alarm {
             calendars.put(CalendarType.NORMAL, calendar);
             mAlarmsScheduler.setAlarm(container.getId(), calendars);
             container.setNextTime(calendar);
-            container.writeToDb();
         }
 
         private void removeAlarm() {
@@ -543,7 +541,6 @@ public final class AlarmCore implements Alarm {
         }
 
         private void writeChangeData(AlarmChangeData data) {
-            container.setEnabled(data.enabled);
             container.setHour(data.hour);
             container.setAlert(data.alert);
             container.setDaysOfWeek(data.daysOfWeek);
@@ -551,7 +548,9 @@ public final class AlarmCore implements Alarm {
             container.setMinutes(data.minutes);
             container.setPrealarm(data.prealarm);
             container.setVibrate(data.vibrate);
-            container.writeToDb();
+            // this will cause a DB flush
+            // TODO better solution, e.g. edit/commit
+            container.setEnabled(data.enabled);
         }
 
         private Calendar calculateNextTime() {
