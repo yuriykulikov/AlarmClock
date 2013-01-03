@@ -54,6 +54,7 @@ import com.github.androidutils.statemachine.StateMachine;
  * @startuml
  * State DISABLED
  * State RESCHEDULE
+ * State ENABLE
  * State ENABLED {
  * State PREALARM_SET
  * State SET
@@ -68,9 +69,10 @@ import com.github.androidutils.statemachine.StateMachine;
  * PREALARM_SET :timer
  * SET :timer
  * 
- * DISABLED -down-> RESCHEDULE :enable\nchange
+ * DISABLED -down-> ENABLE :enable\nchange
  * ENABLED -up-> DISABLED :disable
- * ENABLED -up-> RESCHEDULE :change\ndismiss
+ * ENABLED -up-> RESCHEDULE :dismiss
+ * ENABLED -up-> ENABLE :change
  * 
  * PREALARM_SET -down-> PREALARM_FIRED :fired
  * PREALARM_FIRED -down-> PREALARM_SNOOZED :snooze
@@ -82,9 +84,10 @@ import com.github.androidutils.statemachine.StateMachine;
  * 
  * RESCHEDULE -up-> DISABLED :disabled
  * 
- * RESCHEDULE --down-> PREALARM_SET :prealarm enabled
- * RESCHEDULE -down-> SET :prealarm disabled
- * 
+ * RESCHEDULE -down-> PREALARM_SET :PA
+ * RESCHEDULE -down-> SET :nPA
+ * ENABLE -down-> PREALARM_SET :PA
+ * ENABLE -down-> SET :nPA
  * 
  * } 
  * @enduml
@@ -171,6 +174,7 @@ public final class AlarmCore implements Alarm {
         public final DisabledState disabledState;
         public final EnabledState enabledState;
         public final RescheduleTransition rescheduleTransition;
+        public final EnableTransition enableTransition;
         public final PreAlarmSetState preAlarmSet;
         public final SetState set;
         public final SnoozedState snoozed;
@@ -183,6 +187,7 @@ public final class AlarmCore implements Alarm {
             disabledState = new DisabledState();
             enabledState = new EnabledState();
             rescheduleTransition = new RescheduleTransition();
+            enableTransition = new EnableTransition();
             preAlarmSet = new PreAlarmSetState();
             set = new SetState();
             snoozed = new SnoozedState();
@@ -193,6 +198,7 @@ public final class AlarmCore implements Alarm {
             addState(disabledState);
             addState(enabledState);
             addState(rescheduleTransition);
+            addState(enableTransition);
             addState(preAlarmSet, enabledState);
             addState(set, enabledState);
             addState(snoozed, enabledState);
@@ -252,11 +258,11 @@ public final class AlarmCore implements Alarm {
                 case CHANGE:
                     AlarmChangeData data = (AlarmChangeData) msg.obj;
                     writeChangeData(data);
-                    transitionTo(rescheduleTransition);
+                    transitionTo(enableTransition);
                     return HANDLED;
                 case ENABLE:
                     container.setEnabled(true);
-                    transitionTo(rescheduleTransition);
+                    transitionTo(enableTransition);
                     return HANDLED;
                 case DELETE:
                     container.delete();
@@ -274,11 +280,13 @@ public final class AlarmCore implements Alarm {
                 case CHANGE:
                     AlarmChangeData data = (AlarmChangeData) msg.obj;
                     writeChangeData(data);
-                    transitionTo(rescheduleTransition);
+                    if (container.isEnabled()) {
+                        transitionTo(enableTransition);
+                    } // else nothing to do
                     return HANDLED;
                 case DISMISS:
                     broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
-                    rescheduleRepeatingAlarm();
+                    transitionTo(rescheduleTransition);
                     return HANDLED;
                 case DISABLE:
                     container.setEnabled(false);
@@ -290,7 +298,7 @@ public final class AlarmCore implements Alarm {
                     boolean isExpired = getNextTime().before(now);
                     if (isExpired) {
                         log.d("AlarmCore expired: " + toString());
-                        rescheduleRepeatingAlarm();
+                        transitionTo(rescheduleTransition);
                     }
                     return HANDLED;
                 case DELETE:
@@ -307,27 +315,40 @@ public final class AlarmCore implements Alarm {
                 // TODO maybe this is not necessary here?
                 broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
             }
-
-            private void rescheduleRepeatingAlarm() {
-                if (container.getDaysOfWeek().isRepeatSet()) {
-                    transitionTo(rescheduleTransition);
-                } else {
-                    transitionTo(disabledState);
-                }
-            }
         }
 
         private class RescheduleTransition extends ComplexTransition {
             @Override
             public void performComplexTransition() {
-                if (container.isEnabled()) {
+                if (container.getDaysOfWeek().isRepeatSet()) {
                     if (container.isPrealarm()) {
                         transitionTo(preAlarmSet);
                     } else {
                         transitionTo(set);
                     }
                 } else {
+                    log.d("Repeating is not set, disabling the alarm");
+                    container.setEnabled(false);
                     transitionTo(disabledState);
+                }
+            }
+        }
+
+        /**
+         * Transition checks if preAlarm for the next alarm is in the future.
+         * This is required to prevent the situation when user sets alarm in
+         * time which is less than preAlarm duration. In this case main alarm
+         * should be set.
+         */
+        private class EnableTransition extends ComplexTransition {
+            @Override
+            public void performComplexTransition() {
+                Calendar preAlarm = calculateNextTime();
+                preAlarm.add(Calendar.MINUTE, -1 * prealarmMinutes);
+                if (container.isPrealarm() && preAlarm.after(Calendar.getInstance())) {
+                    transitionTo(preAlarmSet);
+                } else {
+                    transitionTo(set);
                 }
             }
         }
@@ -416,11 +437,15 @@ public final class AlarmCore implements Alarm {
             public void enter() {
                 Calendar c = calculateNextTime();
                 c.add(Calendar.MINUTE, -1 * prealarmMinutes);
+                // since prealarm is before main alarm, it can be already in the
+                // past, so it has to be adjusted.
+                advanceCalendar(c);
                 if (c.after(Calendar.getInstance())) {
                     setAlarm(c);
                 } else {
-                    // if prealarm is already in the past
-                    transitionTo(set);
+                    // TODO this should never happen
+                    log.e("PreAlarm is still in the past!");
+                    transitionTo(container.isEnabled() ? enableTransition : disabledState);
                 }
             }
 
