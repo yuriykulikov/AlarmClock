@@ -72,7 +72,7 @@ import com.github.androidutils.statemachine.StateMachine;
  * DISABLED -down-> ENABLE :enable\nchange
  * ENABLED -up-> DISABLED :disable
  * ENABLED -up-> RESCHEDULE :dismiss
- * ENABLED -up-> ENABLE :change
+ * ENABLED -up-> ENABLE :change\nrefresh
  * 
  * PREALARM_SET -down-> PREALARM_FIRED :fired
  * PREALARM_FIRED -down-> PREALARM_SNOOZED :snooze
@@ -267,6 +267,9 @@ public final class AlarmCore implements Alarm {
                 case DELETE:
                     container.delete();
                     return HANDLED;
+                case REFRESH:
+                    // nothing to do
+                    return HANDLED;
                 }
                 return NOT_HANDLED;
             }
@@ -294,12 +297,7 @@ public final class AlarmCore implements Alarm {
                     transitionTo(disabledState);
                     return HANDLED;
                 case REFRESH:
-                    Calendar now = Calendar.getInstance();
-                    boolean isExpired = getNextTime().before(now);
-                    if (isExpired) {
-                        log.d("AlarmCore expired: " + toString());
-                        transitionTo(rescheduleTransition);
-                    }
+                    transitionTo(enableTransition);
                     return HANDLED;
                 case DELETE:
                     container.delete();

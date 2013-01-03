@@ -66,15 +66,13 @@ public class Alarms implements IAlarmsManager {
             cursor.close();
         }
 
-        init();
-
         log.d("Alarms:");
         for (Alarm alarm : alarms.values()) {
             log.d(alarm.toString());
         }
     }
 
-    void init() {
+    void refresh() {
         for (AlarmCore alarmCore : alarms.values()) {
             alarmCore.refresh();
         }

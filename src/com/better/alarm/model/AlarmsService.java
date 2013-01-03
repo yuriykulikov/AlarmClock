@@ -43,8 +43,8 @@ public class AlarmsService extends Service {
 
         } else if (action.equals(Intent.ACTION_BOOT_COMPLETED) || action.equals(Intent.ACTION_TIMEZONE_CHANGED)
                 || action.equals(Intent.ACTION_LOCALE_CHANGED) || action.equals(Intent.ACTION_TIME_CHANGED)) {
-            log.d("Initializing alarms because of " + action);
-            alarms.init();
+            log.d("Refreshing alarms because of " + action);
+            alarms.refresh();
         }
 
         WakeLockManager.getWakeLockManager().releasePartialWakeLock(intent);
