@@ -528,27 +528,25 @@ public final class AlarmCore implements Alarm {
         }
 
         private Calendar calculateNextTime() {
-            // start with now
             Calendar c = Calendar.getInstance();
-            c.setTimeInMillis(System.currentTimeMillis());
-
-            int nowHour = c.get(Calendar.HOUR_OF_DAY);
-            int nowMinute = c.get(Calendar.MINUTE);
-
-            // if alarm is behind current time, advance one day
-            if (container.getHour() < nowHour || container.getHour() == nowHour && container.getMinutes() <= nowMinute) {
-                c.add(Calendar.DAY_OF_YEAR, 1);
-            }
             c.set(Calendar.HOUR_OF_DAY, container.getHour());
             c.set(Calendar.MINUTE, container.getMinutes());
             c.set(Calendar.SECOND, 0);
             c.set(Calendar.MILLISECOND, 0);
-
-            int addDays = container.getDaysOfWeek().getNextAlarm(c);
-            if (addDays > 0) {
-                c.add(Calendar.DAY_OF_WEEK, addDays);
-            }
+            advanceCalendar(c);
             return c;
+        }
+
+        private void advanceCalendar(Calendar calendar) {
+            Calendar now = Calendar.getInstance();
+            // if alarm is behind current time, advance one day
+            if (calendar.before(now)) {
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+            }
+            int addDays = container.getDaysOfWeek().getNextAlarm(calendar);
+            if (addDays > 0) {
+                calendar.add(Calendar.DAY_OF_WEEK, addDays);
+            }
         }
 
         private State stringToState(String initialState) {
