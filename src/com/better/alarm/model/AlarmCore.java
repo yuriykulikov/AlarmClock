@@ -270,6 +270,9 @@ public final class AlarmCore implements Alarm {
                 case REFRESH:
                     // nothing to do
                     return HANDLED;
+                case PREALARM_DURATION_CHANGED:
+                    // nothing to do
+                    return HANDLED;
                 }
                 return NOT_HANDLED;
             }
@@ -303,6 +306,9 @@ public final class AlarmCore implements Alarm {
                     container.delete();
                     mAlarmsScheduler.removeAlarm(container.getId());
                     broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
+                    return HANDLED;
+                case PREALARM_DURATION_CHANGED:
+                    // nothing to do
                     return HANDLED;
                 }
                 return NOT_HANDLED;
@@ -365,8 +371,7 @@ public final class AlarmCore implements Alarm {
                     transitionTo(fired);
                     return HANDLED;
                 case PREALARM_DURATION_CHANGED:
-                    // TODO
-                    log.d("here we do somehting");
+                    transitionTo(enableTransition);
                     return HANDLED;
                 }
                 return NOT_HANDLED;
@@ -454,8 +459,7 @@ public final class AlarmCore implements Alarm {
                     transitionTo(preAlarmFired);
                     return HANDLED;
                 case PREALARM_DURATION_CHANGED:
-                    // TODO
-                    log.d("here we do somehting");
+                    transitionTo(enableTransition);
                     return HANDLED;
                 }
                 return NOT_HANDLED;
