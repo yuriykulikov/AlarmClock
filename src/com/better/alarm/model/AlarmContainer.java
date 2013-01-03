@@ -193,16 +193,13 @@ public class AlarmContainer implements IAlarmContainer {
         log = logger;
         mContext = context;
         id = c.getInt(Columns.ALARM_ID_INDEX);
-        // enabled = c.getInt(Columns.ALARM_ENABLED_INDEX) == 1;
+        enabled = c.getInt(Columns.ALARM_ENABLED_INDEX) == 1;
         hour = c.getInt(Columns.ALARM_HOUR_INDEX);
         minutes = c.getInt(Columns.ALARM_MINUTES_INDEX);
-        nextTime = Calendar.getInstance();
-        nextTime.setTimeInMillis(c.getLong(Columns.ALARM_TIME_INDEX));
         daysOfWeek = new DaysOfWeek(c.getInt(Columns.ALARM_DAYS_OF_WEEK_INDEX));
         vibrate = c.getInt(Columns.ALARM_VIBRATE_INDEX) == 1;
         label = c.getString(Columns.ALARM_MESSAGE_INDEX);
         String alertString = c.getString(Columns.ALARM_ALERT_INDEX);
-        prealarm = c.getInt(Columns.ALARM_PREALARM_INDEX) == 1;
         if (ALARM_ALERT_SILENT.equals(alertString)) {
             log.d("AlarmCore is marked as silent");
             silent = true;
@@ -217,6 +214,9 @@ public class AlarmContainer implements IAlarmContainer {
                 alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
             }
         }
+        prealarm = c.getInt(Columns.ALARM_PREALARM_INDEX) == 1;
+        nextTime = Calendar.getInstance();
+        nextTime.setTimeInMillis(c.getLong(Columns.ALARM_TIME_INDEX));
         state = c.getString(Columns.ALARM_STATE_INDEX);
     }
 
@@ -255,18 +255,17 @@ public class AlarmContainer implements IAlarmContainer {
 
     private ContentValues createContentValues() {
         ContentValues values = new ContentValues(12);
-
+        // id
+        values.put(Columns.ENABLED, enabled);
         values.put(Columns.HOUR, hour);
         values.put(Columns.MINUTES, minutes);
-        values.put(Columns.ALARM_TIME, nextTime.getTimeInMillis());
         values.put(Columns.DAYS_OF_WEEK, daysOfWeek.getCoded());
         values.put(Columns.VIBRATE, vibrate);
         values.put(Columns.MESSAGE, label);
-        values.put(Columns.PREALARM, prealarm);
-
         // A null alert Uri indicates a silent
         values.put(Columns.ALERT, alert == null ? ALARM_ALERT_SILENT : alert.toString());
-
+        values.put(Columns.PREALARM, prealarm);
+        values.put(Columns.ALARM_TIME, nextTime.getTimeInMillis());
         values.put(Columns.STATE, state);
 
         return values;
@@ -400,5 +399,12 @@ public class AlarmContainer implements IAlarmContainer {
     public void setState(String state) {
         this.state = state;
         writeToDb();
+    }
+
+    @Override
+    public String toString() {
+        return "AlarmContainer [id=" + id + ", enabled=" + enabled + ", hour=" + hour + ", minutes=" + minutes
+                + ", daysOfWeek=" + daysOfWeek + ", vibrate=" + vibrate + ", label=" + label + ", alert=" + alert
+                + ", silent=" + silent + ", prealarm=" + prealarm + ", nextTime=" + nextTime + ", state=" + state + "]";
     }
 }
