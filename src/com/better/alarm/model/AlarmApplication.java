@@ -27,13 +27,15 @@ public class AlarmApplication extends Application {
 
     @Override
     public void onCreate() {
-        Logger logger = Logger.init();
+        Logger logger = Logger.getDefaultLogger();
         logger.addLogWriter(new LogcatLogWriter());
         logger.addLogWriter(new FileLogWriter());
         logger.setLogLevel(WakeLockManager.class, LogLevel.ERR);
         logger.setLogLevel(AlarmsScheduler.class, LogLevel.DEBUG);
         logger.setLogLevel(AlarmCore.class, LogLevel.DEBUG);
         logger.setLogLevel(Alarms.class, LogLevel.DEBUG);
+        logger.setLogLevel(AlarmProvider.class, LogLevel.ERR);
+        logger.setLogLevel(AlarmDatabaseHelper.class, LogLevel.ERR);
 
         WakeLockManager.init(getApplicationContext(), logger, true);
         AlarmsManager.init(getApplicationContext(), logger);

@@ -103,30 +103,6 @@ public class AlarmContainer implements IAlarmContainer {
         public static final String PREALARM = "prealarm";
 
         /**
-         * AlarmCore time in UTC milliseconds from the epoch.
-         * <P>
-         * Type: INTEGER
-         * </P>
-         */
-        public static final String PREALARM_TIME = "prealarm_TIME";
-
-        /**
-         * True if alarm is snoozed
-         * <P>
-         * Type: BOOLEAN
-         * </P>
-         */
-        public static final String SNOOZED = "snoozed";
-
-        /**
-         * AlarmCore time in UTC milliseconds from the epoch.
-         * <P>
-         * Type: INTEGER
-         * </P>
-         */
-        public static final String SNOOZE_TIME = "snooze_time";
-
-        /**
          * State machine state
          * <P>
          * Type: STRING
@@ -143,7 +119,7 @@ public class AlarmContainer implements IAlarmContainer {
         public static final String WHERE_ENABLED = ENABLED + "=1";
 
         static final String[] ALARM_QUERY_COLUMNS = { _ID, HOUR, MINUTES, DAYS_OF_WEEK, ALARM_TIME, ENABLED, VIBRATE,
-                MESSAGE, ALERT, PREALARM, PREALARM_TIME, SNOOZED, SNOOZE_TIME, STATE };
+                MESSAGE, ALERT, PREALARM, STATE };
 
         /**
          * These save calls to cursor.getColumnIndexOrThrow() THEY MUST BE KEPT
@@ -159,10 +135,7 @@ public class AlarmContainer implements IAlarmContainer {
         public static final int ALARM_MESSAGE_INDEX = 7;
         public static final int ALARM_ALERT_INDEX = 8;
         public static final int ALARM_PREALARM_INDEX = 9;
-        public static final int ALARM_PREALARM_TIME_INDEX = 10;
-        public static final int ALARM_SNOOZED_INDEX = 11;
-        public static final int ALARM_SNOOZE_TIME_INDEX = 12;
-        public static final int ALARM_STATE_INDEX = 13;
+        public static final int ALARM_STATE_INDEX = 10;
     }
 
     // This string is used to indicate a silent alarm in the db.
