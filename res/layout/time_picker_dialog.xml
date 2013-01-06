@@ -13,45 +13,47 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License
-  -->
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical" >
 
     <com.better.alarm.view.TimePicker
         android:id="@+id/time_picker"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dip"
-        android:background="#28ffffff" />
+        android:layout_marginLeft="16dip"
+        android:layout_marginRight="16dip"
+        android:background="?android:attr/dividerHorizontal" />
+
     <LinearLayout
-        android:gravity="bottom"
+        style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:gravity="bottom" >
+
         <Button
             android:id="@+id/cancel_button"
-            android:text="@string/time_picker_cancel"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dip"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            style="@style/dialog_button"
-            android:background="@drawable/item_background"
-            android:layout_height="wrap_content" />
-        <View
-            android:layout_height="match_parent"
-            android:layout_marginTop="8dip"
-            android:layout_marginBottom="8dip"
-            android:layout_width="1dip"
-            android:background="#28ffffff" />
+            android:focusable="true"
+            android:text="@string/time_picker_cancel" />
+
         <Button
             android:id="@+id/set_button"
-            android:text="@string/time_picker_set"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dip"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            style="@style/dialog_button"
-            android:background="@drawable/item_background"
-            android:layout_height="wrap_content" />
+            android:focusable="true"
+            android:text="@string/time_picker_set" />
     </LinearLayout>
+
 </LinearLayout>
