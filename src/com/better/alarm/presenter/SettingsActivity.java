@@ -17,10 +17,12 @@
 
 package com.better.alarm.presenter;
 
+import android.content.Context;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -55,6 +57,11 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
             ringtone.setAlert(alert);
         }
         ringtone.setChangeDefault();
+
+        boolean hasVibrator = ((Vibrator) getSystemService(Context.VIBRATOR_SERVICE)).hasVibrator();
+        if (!hasVibrator) {
+            getPreferenceScreen().removePreference((CheckBoxPreference) findPreference("vibrate"));
+        }
     }
 
     @Override
@@ -85,6 +92,7 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
 
+    @Override
     public boolean onPreferenceChange(Preference pref, Object newValue) {
         if (KEY_ALARM_SNOOZE.equals(pref.getKey())) {
             final ListPreference listPref = (ListPreference) pref;

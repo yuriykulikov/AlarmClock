@@ -29,6 +29,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
@@ -179,7 +180,8 @@ public class AlarmKlaxonService extends Service {
         }
 
         /* Start the vibrator after everything is ok with the media player */
-        if (alarm.isVibrate() && !prealarm) {
+        boolean shouldVibrate = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("vibrate", true);
+        if (shouldVibrate && !prealarm) {
             mVibrator.vibrate(sVibratePattern, 0);
         } else {
             mVibrator.cancel();

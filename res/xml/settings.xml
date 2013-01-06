@@ -22,6 +22,10 @@
         android:key="alarm_in_silent_mode"
         android:title="@string/alarm_in_silent_mode_title"
         android:summary="@string/alarm_in_silent_mode_summary" />
+    
+    <CheckBoxPreference
+        android:key="vibrate"
+        android:title="@string/alarm_vibrate" />
 
     <VolumePreference
         android:title="@string/alarm_volume_title"
