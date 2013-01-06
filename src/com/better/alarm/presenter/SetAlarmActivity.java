@@ -20,6 +20,8 @@ package com.better.alarm.presenter;
 import java.util.Calendar;
 
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
@@ -31,20 +33,18 @@ import android.preference.PreferenceScreen;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TimePicker;
 
 import com.better.alarm.R;
 import com.better.alarm.model.Alarm;
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.IAlarmsManager;
 import com.better.alarm.model.Intents;
-import com.github.androidutils.logger.Logger;
 
 /**
  * Manages each alarm
  */
 public class SetAlarmActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener,
-        TimePickerDialog.OnTimeSetListener, OnCancelListener {
+        OnCancelListener, AlarmTimePickerDialogFragment.AlarmTimePickerDialogHandler {
     public final static String M12 = "h:mm aa";
     public final static String M24 = "kk:mm";
 
@@ -198,25 +198,20 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
     }
 
     private void showTimePicker() {
-        if (mTimePickerDialog != null) {
-            if (mTimePickerDialog.isShowing()) {
-                Logger.getDefaultLogger().e("mTimePickerDialog is already showing.");
-                mTimePickerDialog.dismiss();
-            } else {
-                Logger.getDefaultLogger().e("mTimePickerDialog is not null");
-            }
-            mTimePickerDialog.dismiss();
+        final FragmentTransaction ft = getFragmentManager().beginTransaction();
+        final Fragment prev = getFragmentManager().findFragmentByTag("time_dialog");
+        if (prev != null) {
+            ft.remove(prev);
         }
+        ft.addToBackStack(null);
 
-        mTimePickerDialog = new TimePickerDialog(this, this, mHour, mMinute, DateFormat.is24HourFormat(this));
-        mTimePickerDialog.setOnCancelListener(this);
-        mTimePickerDialog.show();
+        final AlarmTimePickerDialogFragment fragment = AlarmTimePickerDialogFragment.newInstance(mId, this);
+        fragment.show(ft, "time_dialog");
     }
 
     @Override
-    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+    public void onDialogTimeSet(Alarm alarm, int hourOfDay, int minute) {
         // onTimeSet is called when the user clicks "Set"
-        mTimePickerDialog = null;
         mHour = hourOfDay;
         mMinute = minute;
         updateTime();
