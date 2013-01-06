@@ -34,7 +34,6 @@ public class TimerView extends LinearLayout {
     private TextView mHoursOnes, mMinutesOnes;
     private TextView mHoursTens, mMinutesTens;
     private TextView mSeconds;
-    private final int mWhiteColor, mGrayColor;
 
     public TimerView(Context context) {
         this(context, null);
@@ -42,9 +41,6 @@ public class TimerView extends LinearLayout {
 
     public TimerView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-        mWhiteColor = context.getResources().getColor(R.color.clock_white);
-        mGrayColor = context.getResources().getColor(R.color.clock_gray);
     }
 
     @Override
@@ -63,39 +59,39 @@ public class TimerView extends LinearLayout {
                 mHoursTens.setVisibility(View.INVISIBLE);
             } else if (hoursTensDigit == -1) {
                 mHoursTens.setText("-");
-                mHoursTens.setTextColor(mGrayColor);
+                mHoursTens.setEnabled(false);
                 mHoursTens.setVisibility(View.VISIBLE);
             } else {
                 mHoursTens.setText(String.format("%d", hoursTensDigit));
-                mHoursTens.setTextColor(mWhiteColor);
+                mHoursTens.setEnabled(true);
                 mHoursTens.setVisibility(View.VISIBLE);
             }
         }
         if (mHoursOnes != null) {
             if (hoursOnesDigit == -1) {
                 mHoursOnes.setText("-");
-                mHoursOnes.setTextColor(mGrayColor);
+                mHoursOnes.setEnabled(false);
             } else {
                 mHoursOnes.setText(String.format("%d", hoursOnesDigit));
-                mHoursOnes.setTextColor(mWhiteColor);
+                mHoursOnes.setEnabled(true);
             }
         }
         if (mMinutesTens != null) {
             if (minutesTensDigit == -1) {
                 mMinutesTens.setText("-");
-                mMinutesTens.setTextColor(mGrayColor);
+                mMinutesTens.setEnabled(false);
             } else {
-                mMinutesTens.setTextColor(mWhiteColor);
+                mMinutesTens.setEnabled(true);
                 mMinutesTens.setText(String.format("%d", minutesTensDigit));
             }
         }
         if (mMinutesOnes != null) {
             if (minutesOnesDigit == -1) {
                 mMinutesOnes.setText("-");
-                mMinutesOnes.setTextColor(mGrayColor);
+                mMinutesOnes.setEnabled(false);
             } else {
                 mMinutesOnes.setText(String.format("%d", minutesOnesDigit));
-                mMinutesOnes.setTextColor(mWhiteColor);
+                mMinutesOnes.setEnabled(true);
             }
         }
 
