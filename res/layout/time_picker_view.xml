@@ -91,7 +91,8 @@
             android:src="@drawable/ic_backspace"
             android:background="@drawable/item_background"
             android:contentDescription="@string/timer_delete"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:tint="@color/blackish"/>
     </LinearLayout>
     <View
         android:layout_width="match_parent"
