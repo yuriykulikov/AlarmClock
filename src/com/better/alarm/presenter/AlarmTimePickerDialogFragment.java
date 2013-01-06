@@ -26,6 +26,7 @@ import android.widget.Button;
 
 import com.better.alarm.R;
 import com.better.alarm.model.Alarm;
+import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.view.TimePicker;
 import com.github.androidutils.logger.Logger;
 
@@ -40,10 +41,18 @@ public class AlarmTimePickerDialogFragment extends DialogFragment {
     private TimePicker mPicker;
     private final Logger log = Logger.getDefaultLogger();
 
-    public static AlarmTimePickerDialogFragment newInstance(Alarm alarm) {
+    /**
+     * TODO we should not use getActivity. Instead we should pass a listener or
+     * come up with something else
+     * 
+     * @param id
+     * @param handler
+     * @return
+     */
+    public static AlarmTimePickerDialogFragment newInstance(int id, AlarmTimePickerDialogHandler handler) {
         final AlarmTimePickerDialogFragment frag = new AlarmTimePickerDialogFragment();
         Bundle args = new Bundle();
-        args.putParcelable(KEY_ALARM, alarm);
+        args.putInt(KEY_ALARM, id);
         frag.setArguments(args);
         return frag;
     }
@@ -61,7 +70,9 @@ public class AlarmTimePickerDialogFragment extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final Alarm alarm = getArguments().getParcelable(KEY_ALARM);
+
+        int id = getArguments().getInt(KEY_ALARM);
+        final Alarm alarm = AlarmsManager.getAlarmsManager().getAlarm(id);
 
         View v = inflater.inflate(R.layout.time_picker_dialog, null);
         mSet = (Button) v.findViewById(R.id.set_button);

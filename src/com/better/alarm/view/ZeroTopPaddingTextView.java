@@ -33,16 +33,20 @@ public class ZeroTopPaddingTextView extends TextView {
     // the bold fontface has less empty space on the top
     private static final float BOLD_FONT_BOTTOM_PADDING_RATIO = 0.208f;
 
-    private static final Typeface SAN_SERIF_BOLD = Typeface.create("san-serif", Typeface.BOLD);
+    private static final Typeface SAN_SERIF_BOLD = Typeface.SANS_SERIF;
 
     private int mPaddingRight = 0;
 
     public ZeroTopPaddingTextView(Context context) {
         this(context, null);
+        setIncludeFontPadding(false);
+        updatePadding();
     }
 
     public ZeroTopPaddingTextView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
+        setIncludeFontPadding(false);
+        updatePadding();
     }
 
     public ZeroTopPaddingTextView(Context context, AttributeSet attrs, int defStyle) {
@@ -52,6 +56,8 @@ public class ZeroTopPaddingTextView extends TextView {
     }
 
     public void updatePadding() {
+        // a little hack :-) FIXME
+        setTypeface(SAN_SERIF_BOLD);
         float paddingRatio = NORMAL_FONT_PADDING_RATIO;
         float bottomPaddingRatio = NORMAL_FONT_BOTTOM_PADDING_RATIO;
         if (getTypeface().equals(SAN_SERIF_BOLD)) {
