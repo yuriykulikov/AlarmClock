@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:focusable="true"
-            android:text="@string/time_picker_cancel" />
+            android:text="@android:string/cancel" />
 
         <Button
             android:id="@+id/set_button"
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:focusable="true"
-            android:text="@string/time_picker_set" />
+            android:text="@android:string/ok" />
     </LinearLayout>
 
 </LinearLayout>
