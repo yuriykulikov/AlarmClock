@@ -27,7 +27,7 @@ import android.widget.LinearLayout;
 
 import com.better.alarm.R;
 
-public class TimerSetupView extends LinearLayout implements Button.OnClickListener, Button.OnLongClickListener {
+public abstract class TimerSetupView extends LinearLayout implements Button.OnClickListener, Button.OnLongClickListener {
 
     protected int mInputSize = 5;
 
@@ -51,9 +51,7 @@ public class TimerSetupView extends LinearLayout implements Button.OnClickListen
         layoutInflater.inflate(getLayoutId(), this);
     }
 
-    protected int getLayoutId() {
-        return R.layout.time_setup_view;
-    }
+    abstract int getLayoutId();
 
     @Override
     protected void onFinishInflate() {

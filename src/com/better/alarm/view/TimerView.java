@@ -17,7 +17,6 @@
 package com.better.alarm.view;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -25,12 +24,16 @@ import android.widget.TextView;
 
 import com.better.alarm.R;
 
+/**
+ * 
+ * @author Yuriy
+ * 
+ */
 public class TimerView extends LinearLayout {
 
-    private ZeroTopPaddingTextView mHoursOnes, mMinutesOnes;
-    private ZeroTopPaddingTextView mHoursTens, mMinutesTens;
+    private TextView mHoursOnes, mMinutesOnes;
+    private TextView mHoursTens, mMinutesTens;
     private TextView mSeconds;
-    private final Typeface mAndroidClockMonoThin;
     private final int mWhiteColor, mGrayColor;
 
     public TimerView(Context context) {
@@ -40,7 +43,6 @@ public class TimerView extends LinearLayout {
     public TimerView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        mAndroidClockMonoThin = Typeface.createFromAsset(context.getAssets(), "fonts/AndroidClockMono-Thin.ttf");
         mWhiteColor = context.getResources().getColor(R.color.clock_white);
         mGrayColor = context.getResources().getColor(R.color.clock_gray);
     }
@@ -48,36 +50,10 @@ public class TimerView extends LinearLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-
-        mHoursTens = (ZeroTopPaddingTextView) findViewById(R.id.hours_tens);
-        mMinutesTens = (ZeroTopPaddingTextView) findViewById(R.id.minutes_tens);
-        mHoursOnes = (ZeroTopPaddingTextView) findViewById(R.id.hours_ones);
-        mMinutesOnes = (ZeroTopPaddingTextView) findViewById(R.id.minutes_ones);
-        mSeconds = (TextView) findViewById(R.id.seconds);
-        // If we have hours tens, we are in the alarm time picker, set the hours
-        // font to thin
-        // to prevent the need to set the top paddings (see b/7407383).
-        if (mHoursTens != null) {
-            mHoursTens.setTypeface(mAndroidClockMonoThin);
-            mHoursTens.updatePadding();
-            if (mHoursOnes != null) {
-                mHoursOnes.setTypeface(mAndroidClockMonoThin);
-                mHoursOnes.updatePadding();
-            }
-        }
-        // Set the lowest time unit with thin font (excluding hundredths)
-        if (mSeconds != null) {
-            mSeconds.setTypeface(mAndroidClockMonoThin);
-        } else {
-            if (mMinutesTens != null) {
-                mMinutesTens.setTypeface(mAndroidClockMonoThin);
-                mMinutesTens.updatePadding();
-            }
-            if (mMinutesOnes != null) {
-                mMinutesOnes.setTypeface(mAndroidClockMonoThin);
-                mMinutesOnes.updatePadding();
-            }
-        }
+        mHoursTens = (TextView) findViewById(R.id.hours_tens);
+        mMinutesTens = (TextView) findViewById(R.id.minutes_tens);
+        mHoursOnes = (TextView) findViewById(R.id.hours_ones);
+        mMinutesOnes = (TextView) findViewById(R.id.minutes_ones);
     }
 
     public void setTime(int hoursTensDigit, int hoursOnesDigit, int minutesTensDigit, int minutesOnesDigit, int seconds) {

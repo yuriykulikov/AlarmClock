@@ -32,51 +32,46 @@
             android:layout_gravity="center"
             android:baselineAligned="false"
             android:gravity="top">
-            <com.better.alarm.view.ZeroTopPaddingTextView
+            <TextView
                 android:id="@+id/hours_tens"
                 android:singleLine="true"
                 android:ellipsize="none"
-                style="@style/medium_bold"
+                android:textSize="@dimen/medium_font_size"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:textColor="@color/clock_white"/>
-            <com.better.alarm.view.ZeroTopPaddingTextView
+                android:layout_width="wrap_content"/>
+            <TextView
                 android:id="@+id/hours_ones"
                 android:singleLine="true"
                 android:ellipsize="none"
-                style="@style/medium_bold"
+                android:textSize="@dimen/medium_font_size"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:textColor="@color/clock_white"/>
+                android:layout_width="wrap_content"/>
 
-            <com.better.alarm.view.ZeroTopPaddingTextView
+            <TextView
                 android:id="@+id/hours_seperator"
                 android:singleLine="true"
                 android:ellipsize="none"
-                style="@style/medium_light"
+                android:textSize="@dimen/medium_font_size"
                 android:text="@string/time_picker_time_seperator"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:textColor="@color/clock_white"/>
+                android:layout_width="wrap_content"/>
 
-            <com.better.alarm.view.ZeroTopPaddingTextView
+            <TextView
                 android:id="@+id/minutes_tens"
                 android:singleLine="true"
                 android:ellipsize="none"
-                style="@style/medium_bold"
+                android:textSize="@dimen/medium_font_size"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:textColor="@color/clock_white"/>
-            <com.better.alarm.view.ZeroTopPaddingTextView
+                android:layout_width="wrap_content"/>
+            <TextView
                 android:id="@+id/minutes_ones"
                 android:singleLine="true"
                 android:ellipsize="none"
-                style="@style/medium_bold"
+                android:textSize="@dimen/medium_font_size"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:textColor="@color/clock_white"/>
+                android:layout_width="wrap_content"/>
 
-            <com.better.alarm.view.ZeroTopPaddingTextView
+            <TextView
                 android:id="@+id/ampm_label"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
@@ -84,8 +79,7 @@
                 android:ellipsize="none"
                 style="@style/label"
                 android:gravity="top"
-                android:text="@string/time_picker_ampm_label"
-                android:textColor="@color/clock_white"/>
+                android:text="@string/time_picker_ampm_label"/>
 
         </com.better.alarm.view.TimerView>
         <ImageButton
@@ -97,7 +91,7 @@
             android:src="@drawable/ic_backspace"
             android:background="@drawable/item_background"
             android:contentDescription="@string/timer_delete"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"/>
     </LinearLayout>
     <View
         android:layout_width="match_parent"
