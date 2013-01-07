@@ -148,6 +148,7 @@ public final class AlarmCore implements Alarm {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.equals("prealarm_duration")) {
                 fetchPreAlarmMinutes();
+                stateMachine.sendMessage(AlarmStateMachine.PREALARM_DURATION_CHANGED);
             }
         }
     };
@@ -155,7 +156,6 @@ public final class AlarmCore implements Alarm {
     private void fetchPreAlarmMinutes() {
         String asString = PreferenceManager.getDefaultSharedPreferences(mContext).getString("prealarm_duration", "30");
         prealarmMinutes = Integer.parseInt(asString);
-        stateMachine.sendMessage(AlarmStateMachine.PREALARM_DURATION_CHANGED);
     }
 
     /** SM to handle Alarm states */
