@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="com/better/alarm/model/Temp.java|com/better/alarm/presenter/NotificationManager.java|com/better/alarm/presenter/NotificationPresenter.java|com/better/alarm/model/sss.java|com/better/alarm/presenter/ToastMaster.java|com/better/alarm/presenter/status/ToastMaster.java" kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="src" path="utils_src"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry kind="output" path="bin/classes"/>
+</classpath>
