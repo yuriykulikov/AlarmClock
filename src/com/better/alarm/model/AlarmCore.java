@@ -250,69 +250,75 @@ public final class AlarmCore implements Alarm {
             setInitialState(stringToState(initialState));
         }
 
-        private class DisabledState extends State {
+        private class DisabledState extends AlarmState {
             @Override
-            public boolean processMessage(Message msg) {
-                switch (msg.what) {
-                case CHANGE:
-                    AlarmChangeData data = (AlarmChangeData) msg.obj;
-                    writeChangeData(data);
-                    if (container.isEnabled()) {
-                        transitionTo(enableTransition);
-                    }
-                    return HANDLED;
-                case ENABLE:
-                    container.setEnabled(true);
+            protected void onChange(AlarmChangeData changeData) {
+                writeChangeData(changeData);
+                if (container.isEnabled()) {
                     transitionTo(enableTransition);
-                    return HANDLED;
-                case DELETE:
-                    container.delete();
-                    return HANDLED;
-                case REFRESH:
-                    // nothing to do
-                    return HANDLED;
-                case PREALARM_DURATION_CHANGED:
-                    // nothing to do
-                    return HANDLED;
                 }
-                return NOT_HANDLED;
+            }
+
+            @Override
+            protected void onEnable() {
+                container.setEnabled(true);
+                transitionTo(enableTransition);
+            }
+
+            @Override
+            protected void onDelete() {
+                container.delete();
+            }
+
+            @Override
+            protected void onRefresh() {
+                // nothing to do
+            }
+
+            @Override
+            protected void onPreAlarmDurationChanged() {
+                // nothing to do
             }
         }
 
         /** Master state for all enabled states. Handles disable and delete */
-        private class EnabledState extends State {
+        private class EnabledState extends AlarmState {
             @Override
-            public boolean processMessage(Message msg) {
-                switch (msg.what) {
-                case CHANGE:
-                    AlarmChangeData data = (AlarmChangeData) msg.obj;
-                    writeChangeData(data);
-                    if (container.isEnabled()) {
-                        transitionTo(enableTransition);
-                    } // else nothing to do
-                    return HANDLED;
-                case DISMISS:
-                    broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
-                    transitionTo(rescheduleTransition);
-                    return HANDLED;
-                case DISABLE:
-                    container.setEnabled(false);
-                    broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
-                    transitionTo(disabledState);
-                    return HANDLED;
-                case REFRESH:
+            protected void onChange(AlarmChangeData changeData) {
+                writeChangeData(changeData);
+                if (container.isEnabled()) {
                     transitionTo(enableTransition);
-                    return HANDLED;
-                case DELETE:
-                    container.delete();
-                    mAlarmsScheduler.removeAlarm(container.getId());
-                    broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
-                    return HANDLED;
-                case PREALARM_DURATION_CHANGED:
-                    // nothing to do
-                    return HANDLED;
-                }
-                return NOT_HANDLED;
+                } // else nothing to do
+            }
+
+            @Override
+            protected void onDismiss() {
+                broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
+                transitionTo(rescheduleTransition);
+            }
+
+            @Override
+            protected void onDisable() {
+                container.setEnabled(false);
+                broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
+                transitionTo(disabledState);
+            }
+
+            @Override
+            protected void onRefresh() {
+                transitionTo(enableTransition);
+            }
+
+            @Override
+            protected void onDelete() {
+                container.delete();
+                mAlarmsScheduler.removeAlarm(container.getId());
+                broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
+            }
+
+            @Override
+            protected void onPreAlarmDurationChanged() {
+                // nothing to do
             }
 
             @Override
@@ -358,7 +364,7 @@ public final class AlarmCore implements Alarm {
             }
         }
 
-        private class SetState extends State {
+        private class SetState extends AlarmState {
             @Override
             public void enter() {
                 Calendar nextTime = calculateNextTime();
@@ -366,16 +372,13 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
-            public boolean processMessage(Message msg) {
-                switch (msg.what) {
-                case FIRED:
-                    transitionTo(fired);
-                    return HANDLED;
-                case PREALARM_DURATION_CHANGED:
-                    transitionTo(enableTransition);
-                    return HANDLED;
-                }
-                return NOT_HANDLED;
+            protected void onFired() {
+                transitionTo(fired);
+            }
+
+            @Override
+            protected void onPreAlarmDurationChanged() {
+                transitionTo(enableTransition);
             }
 
             @Override
@@ -385,20 +388,15 @@ public final class AlarmCore implements Alarm {
         }
 
         /** handles both snoozed and main for now */
-        private class FiredState extends State {
+        private class FiredState extends AlarmState {
             @Override
             public void enter() {
                 broadcastAlarmState(Intents.ALARM_ALERT_ACTION);
             }
 
             @Override
-            public boolean processMessage(Message msg) {
-                switch (msg.what) {
-                case SNOOZE:
-                    transitionTo(snoozed);
-                    return HANDLED;
-                }
-                return NOT_HANDLED;
+            protected void onSnooze() {
+                transitionTo(snoozed);
             }
 
             @Override
@@ -407,7 +405,7 @@ public final class AlarmCore implements Alarm {
             }
         }
 
-        private class SnoozedState extends State {
+        private class SnoozedState extends AlarmState {
             @Override
             public void enter() {
                 Calendar nextTime = Calendar.getInstance();
@@ -419,13 +417,8 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
-            public boolean processMessage(Message msg) {
-                switch (msg.what) {
-                case FIRED:
-                    transitionTo(fired);
-                    return HANDLED;
-                }
-                return NOT_HANDLED;
+            protected void onFired() {
+                transitionTo(fired);
             }
 
             @Override
@@ -436,7 +429,7 @@ public final class AlarmCore implements Alarm {
         }
 
         // enabled states
-        private class PreAlarmSetState extends State {
+        private class PreAlarmSetState extends AlarmState {
             @Override
             public void enter() {
                 Calendar c = calculateNextTime();
@@ -454,16 +447,13 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
-            public boolean processMessage(Message msg) {
-                switch (msg.what) {
-                case FIRED:
-                    transitionTo(preAlarmFired);
-                    return HANDLED;
-                case PREALARM_DURATION_CHANGED:
-                    transitionTo(enableTransition);
-                    return HANDLED;
-                }
-                return NOT_HANDLED;
+            protected void onFired() {
+                transitionTo(preAlarmFired);
+            }
+
+            @Override
+            protected void onPreAlarmDurationChanged() {
+                transitionTo(enableTransition);
             }
 
             @Override
@@ -472,7 +462,7 @@ public final class AlarmCore implements Alarm {
             }
         }
 
-        private class PreAlarmFiredState extends State {
+        private class PreAlarmFiredState extends AlarmState {
             @Override
             public void enter() {
                 broadcastAlarmState(Intents.ALARM_PREALARM_ACTION);
@@ -480,19 +470,18 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
-            public boolean processMessage(Message msg) {
-                switch (msg.what) {
-                case FIRED:
-                    transitionTo(fired);
-                    return HANDLED;
-                case SNOOZE:
-                    transitionTo(preAlarmSnoozed);
-                    return HANDLED;
-                case PREALARM_TIMED_OUT:
-                    transitionTo(fired);
-                    return HANDLED;
-                }
-                return NOT_HANDLED;
+            protected void onFired() {
+                transitionTo(fired);
+            }
+
+            @Override
+            protected void onSnooze() {
+                transitionTo(preAlarmSnoozed);
+            }
+
+            @Override
+            protected void onPreAlarmTimedOut() {
+                transitionTo(fired);
             }
 
             @Override
@@ -502,7 +491,7 @@ public final class AlarmCore implements Alarm {
             }
         }
 
-        private class PreAlarmSnoozedState extends State {
+        private class PreAlarmSnoozedState extends AlarmState {
             @Override
             public void enter() {
                 setAlarm(calculateNextTime());
@@ -510,13 +499,8 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
-            public boolean processMessage(Message msg) {
-                switch (msg.what) {
-                case FIRED:
-                    transitionTo(fired);
-                    return HANDLED;
-                }
-                return NOT_HANDLED;
+            protected void onFired() {
+                transitionTo(fired);
             }
 
             @Override
@@ -587,6 +571,94 @@ public final class AlarmCore implements Alarm {
             }
             log.d("wtf? state not found");
             return disabledState;
+        }
+
+        private class AlarmState extends State {
+            private boolean handled;
+
+            @Override
+            public final boolean processMessage(Message msg) {
+                handled = true;
+                switch (msg.what) {
+                case ENABLE:
+                    onEnable();
+                    break;
+                case DISABLE:
+                    onDisable();
+                    break;
+                case SNOOZE:
+                    onSnooze();
+                    break;
+                case DISMISS:
+                    onDismiss();
+                    break;
+                case CHANGE:
+                    onChange((AlarmChangeData) msg.obj);
+                    break;
+                case FIRED:
+                    onFired();
+                    break;
+                case PREALARM_DURATION_CHANGED:
+                    onPreAlarmDurationChanged();
+                    break;
+                case PREALARM_TIMED_OUT:
+                    onPreAlarmTimedOut();
+                    break;
+                case REFRESH:
+                    onRefresh();
+                    break;
+                case DELETE:
+                    onDelete();
+                    break;
+                default:
+                    throw new RuntimeException("Handling of message code " + msg.what + " is not implemented");
+                }
+                return handled;
+            }
+
+            protected final void markNotHandled() {
+                handled = false;
+            }
+
+            protected void onEnable() {
+                markNotHandled();
+            }
+
+            protected void onDisable() {
+                markNotHandled();
+            }
+
+            protected void onSnooze() {
+                markNotHandled();
+            }
+
+            protected void onDismiss() {
+                markNotHandled();
+            }
+
+            protected void onChange(AlarmChangeData changeData) {
+                markNotHandled();
+            }
+
+            protected void onFired() {
+                markNotHandled();
+            }
+
+            protected void onPreAlarmDurationChanged() {
+                markNotHandled();
+            }
+
+            protected void onPreAlarmTimedOut() {
+                markNotHandled();
+            }
+
+            protected void onRefresh() {
+                markNotHandled();
+            }
+
+            protected void onDelete() {
+                markNotHandled();
+            }
         }
     }
 
