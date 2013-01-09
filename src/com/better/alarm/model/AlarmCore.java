@@ -257,7 +257,9 @@ public final class AlarmCore implements Alarm {
                 case CHANGE:
                     AlarmChangeData data = (AlarmChangeData) msg.obj;
                     writeChangeData(data);
-                    transitionTo(enableTransition);
+                    if (container.isEnabled()) {
+                        transitionTo(enableTransition);
+                    }
                     return HANDLED;
                 case ENABLE:
                     container.setEnabled(true);
