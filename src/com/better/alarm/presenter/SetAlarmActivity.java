@@ -25,6 +25,7 @@ import android.app.FragmentTransaction;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -66,6 +67,10 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+
+        if (!getResources().getBoolean(R.bool.isTablet)) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
 
         // Override the default content view.
         setContentView(R.layout.set_alarm);
