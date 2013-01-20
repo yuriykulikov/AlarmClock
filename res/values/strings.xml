@@ -15,7 +15,7 @@
      limitations under the License.
 -->
 
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2" xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation">
 
     <!--  -->
     <!-- Label shown on launcher icon -->
@@ -268,7 +268,7 @@
     <string name="silent_alarm_summary">Silent</string>
 
     <!-- Pre-alarm duration title -->
-    <string name="prealarm_duration_title">Pre-alarm duration</string>
+    <string name="prealarm_duration_title" tools:ignore="MissingTranslation">Pre-alarm duration</string>
     <!--
          Entries listed in the ListPreference when invoking the pre-alarm duration
          preference.
@@ -285,7 +285,7 @@
          Values that are retrieved from the ListPreference. These must match
          the prealarm_duration_entries above.
     -->
-    <string-array name="prealarm_duration_values">
+    <string-array name="prealarm_duration_values" tools:ignore="MissingTranslation">
         <item>10</item>
         <item>20</item>
         <item>30</item>
@@ -370,21 +370,21 @@
     <string name="control_set_alarm">Set alarm</string>
 
     <!-- Label on the main screen control used to set alarm when there is already an existing alarm [CHAR LIMIT=30] -->
-    <string name="control_set_alarm_with_existing">Alarm set: <xliff:g id="time">%s</xliff:g></string>
+    <string name="control_set_alarm_with_existing" tools:ignore="MissingTranslation">Alarm set: <xliff:g id="time">%s</xliff:g></string>
 
         <!-- Textual content of the button to discard the current dialog values and close the dialog -->
     <string name="time_picker_cancel">Cancel</string>
     <!-- Textual content of the button to update an alarm with the current dialog values -->
-    <string name="time_picker_set">OK</string>
+    <string name="time_picker_set" tools:ignore="MissingTranslation">OK</string>
     <string name="time_picker_time_seperator">:</string>
     <!--  place holder for am/pm label when it is not set -->
     <string name="time_picker_ampm_label">--</string>
     <!-- add 00 as minutes to the time when pressing this button -->
-    <string name="time_picker_00_label">:00</string>
+    <string name="time_picker_00_label" tools:ignore="MissingTranslation">:00</string>
     <!-- add 30 as minutes to the time when pressing this button -->
-    <string name="time_picker_30_label">:30</string>
+    <string name="time_picker_30_label" tools:ignore="MissingTranslation">:30</string>
     <!-- Describes the purpose of the button to delete a timer. -->
-    <string name="timer_delete">Delete</string>
+    <string name="timer_delete" tools:ignore="MissingTranslation">Delete</string>
     <!-- Abbreviation for temporal hours -->
     <string name="hours_label">h</string>
     <!-- Abbreviation for temporal minutes -->
