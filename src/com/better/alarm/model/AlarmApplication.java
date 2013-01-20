@@ -29,7 +29,7 @@ public class AlarmApplication extends Application {
     public void onCreate() {
         Logger logger = Logger.getDefaultLogger();
         logger.addLogWriter(new LogcatLogWriter());
-        logger.addLogWriter(new FileLogWriter());
+        logger.addLogWriter(new FileLogWriter("BetterAlarm"));
         logger.setLogLevel(WakeLockManager.class, LogLevel.ERR);
         logger.setLogLevel(AlarmsScheduler.class, LogLevel.DEBUG);
         logger.setLogLevel(AlarmCore.class, LogLevel.DEBUG);
