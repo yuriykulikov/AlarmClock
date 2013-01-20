@@ -52,15 +52,6 @@
             android:text="@android:string/cancel" />
 
         <Button
-            android:id="@+id/alarm_delete"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:focusable="true"
-            android:text="@string/delete" />
-
-        <Button
             android:id="@+id/alarm_save"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dip"

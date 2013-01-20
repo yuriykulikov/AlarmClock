@@ -32,6 +32,8 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.text.format.DateFormat;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -126,19 +128,30 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
                 finish();
             }
         });
-        b = (Button) findViewById(R.id.alarm_delete);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // we inflate anyway even though currently we have only one entry. There
+        // may be more in future
+        getMenuInflater().inflate(R.menu.set_alarm_menu, menu);
         if (isNewAlarm) {
-            b.setEnabled(false);
-            b.setVisibility(View.GONE);
-        } else {
-            b.setVisibility(View.VISIBLE);
-            b.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    deleteAlarm();
-                }
-            });
+            menu.removeItem(R.id.set_alarm_menu_delete_alarm);
         }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case R.id.set_alarm_menu_delete_alarm:
+            deleteAlarm();
+            break;
+
+        default:
+            break;
+        }
+        return true;
     }
 
     /*
