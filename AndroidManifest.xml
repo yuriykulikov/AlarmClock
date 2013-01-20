@@ -152,6 +152,15 @@
             </intent-filter>
         </receiver>
 
+        <!-- Reacts on Alarms set and displays a toast -->
+        <receiver
+            android:name=".presenter.ToastPresenter"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.better.alarm.model.Intents.ACTION_ALARM_SET" />
+            </intent-filter>
+        </receiver>
+
         <!-- Model -->
         <!-- Receiver which receives intents and forwards them to the AlarmsService -->
         <receiver

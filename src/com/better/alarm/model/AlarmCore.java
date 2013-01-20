@@ -369,6 +369,7 @@ public final class AlarmCore implements Alarm {
             public void enter() {
                 Calendar nextTime = calculateNextTime();
                 setAlarm(nextTime);
+                broadcastAlarmState(Intents.ACTION_ALARM_SET);
             }
 
             @Override
@@ -439,6 +440,7 @@ public final class AlarmCore implements Alarm {
                 advanceCalendar(c);
                 if (c.after(Calendar.getInstance())) {
                     setAlarm(c);
+                    broadcastAlarmState(Intents.ACTION_ALARM_SET);
                 } else {
                     // TODO this should never happen
                     log.e("PreAlarm is still in the past!");
