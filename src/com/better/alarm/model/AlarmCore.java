@@ -134,7 +134,9 @@ public final class AlarmCore implements Alarm {
                 mOnSharedPreferenceChangeListener);
 
         stateMachine = new AlarmStateMachine(container.getState());
-        stateMachine.start();
+        // we always resume SM. This means that initial state will not receive
+        // enter(), only resume()
+        stateMachine.resume();
         fetchPreAlarmMinutes();
     }
 
@@ -367,9 +369,13 @@ public final class AlarmCore implements Alarm {
         private class SetState extends AlarmState {
             @Override
             public void enter() {
+                broadcastAlarmState(Intents.ACTION_ALARM_SET);
+            }
+
+            @Override
+            public void resume() {
                 Calendar nextTime = calculateNextTime();
                 setAlarm(nextTime);
-                broadcastAlarmState(Intents.ACTION_ALARM_SET);
             }
 
             @Override
@@ -431,8 +437,14 @@ public final class AlarmCore implements Alarm {
 
         // enabled states
         private class PreAlarmSetState extends AlarmState {
+
             @Override
             public void enter() {
+                broadcastAlarmState(Intents.ACTION_ALARM_SET);
+            }
+
+            @Override
+            public void resume() {
                 Calendar c = calculateNextTime();
                 c.add(Calendar.MINUTE, -1 * prealarmMinutes);
                 // since prealarm is before main alarm, it can be already in the
@@ -440,7 +452,6 @@ public final class AlarmCore implements Alarm {
                 advanceCalendar(c);
                 if (c.after(Calendar.getInstance())) {
                     setAlarm(c);
-                    broadcastAlarmState(Intents.ACTION_ALARM_SET);
                 } else {
                     // TODO this should never happen
                     log.e("PreAlarm is still in the past!");
