@@ -25,7 +25,8 @@
     
     <CheckBoxPreference
         android:key="vibrate"
-        android:title="@string/alarm_vibrate" />
+        android:title="@string/alarm_vibrate"
+        android:defaultValue="true" />
 
     <VolumePreference
         android:title="@string/alarm_volume_title"

@@ -41,5 +41,4 @@ public class AlarmApplication extends Application {
         AlarmsManager.init(getApplicationContext(), logger);
         super.onCreate();
     }
-
 }

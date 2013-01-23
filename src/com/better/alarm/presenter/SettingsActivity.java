@@ -59,8 +59,10 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         ringtone.setChangeDefault();
 
         boolean hasVibrator = ((Vibrator) getSystemService(Context.VIBRATOR_SERVICE)).hasVibrator();
-        if (!hasVibrator) {
-            getPreferenceScreen().removePreference((CheckBoxPreference) findPreference("vibrate"));
+        // #65 we have to check if preference is present before we try to remove
+        // it TODO this is very strange!
+        if (!hasVibrator && findPreference("vibrate") != null) {
+            getPreferenceScreen().removePreference(findPreference("vibrate"));
         }
     }
 
