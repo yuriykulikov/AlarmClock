@@ -27,14 +27,14 @@
 
     <!-- This theme is similar to the Theme.Dialog.Alert but does not rely on a
          non-public resource. -->
-    <style name="AlarmAlertTheme" parent="android:Theme.Dialog">
+    <style name="AlarmAlertTheme" parent="android:Theme.DeviceDefault.Light.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
     <!-- NOTE: This must be a fullscreen theme, or else the fullscreen alarm will 
          be unable to turn the screen on. -->
-    <style name="AlarmAlertFullScreenTheme" parent="android:Theme.Holo.Wallpaper.NoTitleBar"/>
-
+    <style name="AlarmAlertFullScreenTheme" parent="android:Theme.Holo.Wallpaper.NoTitleBar">
+    </style>
     <style name="RoundTouchButton">
         <item name="android:gravity">center</item>
         <item name="android:layout_width">wrap_content</item>
