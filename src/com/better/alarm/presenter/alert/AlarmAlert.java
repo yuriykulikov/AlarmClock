@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.better.alarm.presenter;
+package com.better.alarm.presenter.alert;
 
 import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
@@ -27,7 +27,7 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.better.alarm.R;
-import com.better.alarm.model.Intents;
+import com.better.alarm.model.interfaces.Intents;
 import com.github.androidutils.logger.Logger;
 
 /**

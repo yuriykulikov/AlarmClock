@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.better.alarm.presenter;
+package com.better.alarm.view;
 
 import android.content.Context;
 import android.media.Ringtone;

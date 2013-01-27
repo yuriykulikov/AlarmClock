@@ -15,14 +15,8 @@
 -->
 
 <resources>
-    <style name="clock">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_gravity">center_horizontal</item>
-    </style>
-
-    <style name="AlarmClockTheme" parent="android:Theme.DeviceDefault.Light.DarkActionBar"/>
-    <style name="SetAlarmTheme" parent="android:Theme.DeviceDefault.Light.DarkActionBar"/>
+    <style name="AlarmsListTheme" parent="android:Theme.DeviceDefault.Light.DarkActionBar"/>
+    <style name="AlarmDetailsTheme" parent="android:Theme.DeviceDefault.Light.DarkActionBar"/>
     <style name="SettingsTheme" parent="android:Theme.DeviceDefault.Light.DialogWhenLarge"/>
 
     <!-- This theme is similar to the Theme.Dialog.Alert but does not rely on a
@@ -227,7 +221,7 @@
     <!--    <item name="android:fontFamily">sans-serif-condensed</item> -->
     </style>
 
-    <style name="TimePickerDialog" parent="android:style/Theme.Holo.Dialog">
+    <style name="TimePickerDialogFragment" parent="android:style/Theme.Holo.Dialog">
         <item name="android:windowNoTitle">true</item>
     </style>
 

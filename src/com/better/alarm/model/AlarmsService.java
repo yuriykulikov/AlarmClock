@@ -16,6 +16,8 @@
 package com.better.alarm.model;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
@@ -25,6 +27,18 @@ import com.github.androidutils.wakelock.WakeLockManager;
 public class AlarmsService extends Service {
     Alarms alarms;
     private Logger log;
+
+    /**
+     * Dispatches intents to the KlaxonService
+     */
+    public static class Receiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            intent.setClass(context, AlarmsService.class);
+            WakeLockManager.getWakeLockManager().acquirePartialWakeLock(intent, "AlarmsService");
+            context.startService(intent);
+        }
+    }
 
     @Override
     public void onCreate() {

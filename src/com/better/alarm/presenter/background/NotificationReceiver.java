@@ -1,4 +1,4 @@
-package com.better.alarm.presenter;
+package com.better.alarm.presenter.background;
 
 import java.util.Calendar;
 
@@ -11,10 +11,11 @@ import android.content.Intent;
 import android.text.format.DateFormat;
 
 import com.better.alarm.R;
-import com.better.alarm.model.Alarm;
 import com.better.alarm.model.AlarmsManager;
-import com.better.alarm.model.IAlarmsManager;
-import com.better.alarm.model.Intents;
+import com.better.alarm.model.interfaces.Alarm;
+import com.better.alarm.model.interfaces.IAlarmsManager;
+import com.better.alarm.model.interfaces.Intents;
+import com.better.alarm.presenter.AlarmDetailsActivity;
 
 public class NotificationReceiver extends BroadcastReceiver {
     private static final String ACTION_CANCEL_SNOOZE_NOTIFICATION = "NotificationReceiver.ACTION_CANCEL_SNOOZE_NOTIFICATION";
@@ -80,7 +81,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     private void onSoundExpired(int id) {
         // Launch SetAlarm when clicked.
-        Intent viewAlarm = new Intent(mContext, SetAlarmActivity.class);
+        Intent viewAlarm = new Intent(mContext, AlarmDetailsActivity.class);
         viewAlarm.putExtra(Intents.EXTRA_ID, id);
         PendingIntent intent = PendingIntent.getActivity(mContext, id, viewAlarm, 0);
 

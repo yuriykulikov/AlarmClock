@@ -31,6 +31,7 @@ import android.preference.PreferenceScreen;
 import android.provider.Settings;
 
 import com.better.alarm.R;
+import com.better.alarm.view.AlarmPreference;
 
 /**
  * Settings for the Alarm Clock.
@@ -41,7 +42,7 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
 
     private static final String KEY_ALARM_IN_SILENT_MODE = "alarm_in_silent_mode";
     public static final String KEY_ALARM_SNOOZE = "snooze_duration";
-    static final String KEY_VOLUME_BEHAVIOR = "volume_button_setting";
+    public static final String KEY_VOLUME_BEHAVIOR = "volume_button_setting";
     static final String KEY_DEFAULT_RINGTONE = "default_ringtone";
     static final String KEY_AUTO_SILENCE = "auto_silence";
     static final String KEY_PREALARM_DURATION = "prealarm_duration";

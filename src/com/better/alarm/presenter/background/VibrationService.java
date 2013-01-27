@@ -1,4 +1,4 @@
-package com.better.alarm.presenter;
+package com.better.alarm.presenter.background;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -8,7 +8,7 @@ import android.os.IBinder;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 
-import com.better.alarm.model.Intents;
+import com.better.alarm.model.interfaces.Intents;
 import com.github.androidutils.logger.Logger;
 import com.github.androidutils.wakelock.WakeLockManager;
 

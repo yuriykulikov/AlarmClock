@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.better.alarm.model;
+package com.better.alarm.model.persistance;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;

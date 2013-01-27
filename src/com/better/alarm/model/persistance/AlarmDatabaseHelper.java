@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.better.alarm.model;
+package com.better.alarm.model.persistance;
 
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -31,7 +31,7 @@ import com.github.androidutils.logger.Logger;
  * Helper class for opening the database from multiple providers. Also provides
  * some common functionality.
  */
-class AlarmDatabaseHelper extends SQLiteOpenHelper {
+public class AlarmDatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "alarms.db";
     private static final int DATABASE_VERSION = 5;
     private final Logger log;

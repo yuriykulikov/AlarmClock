@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.better.alarm.model;
+package com.better.alarm.model.interfaces;
 
 import java.util.List;
+
+import com.better.alarm.model.AlarmCore;
+import com.better.alarm.model.DaysOfWeek;
 
 import android.net.Uri;
 

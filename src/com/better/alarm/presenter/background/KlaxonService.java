@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.better.alarm.presenter;
+package com.better.alarm.presenter.background;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -33,9 +33,9 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
 import com.better.alarm.R;
-import com.better.alarm.model.Alarm;
 import com.better.alarm.model.AlarmsManager;
-import com.better.alarm.model.Intents;
+import com.better.alarm.model.interfaces.Alarm;
+import com.better.alarm.model.interfaces.Intents;
 import com.github.androidutils.logger.Logger;
 import com.github.androidutils.wakelock.WakeLockManager;
 

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.better.alarm.presenter;
+package com.better.alarm.presenter.alert;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -34,10 +34,11 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import com.better.alarm.R;
-import com.better.alarm.model.Alarm;
 import com.better.alarm.model.AlarmsManager;
-import com.better.alarm.model.IAlarmsManager;
-import com.better.alarm.model.Intents;
+import com.better.alarm.model.interfaces.Alarm;
+import com.better.alarm.model.interfaces.IAlarmsManager;
+import com.better.alarm.model.interfaces.Intents;
+import com.better.alarm.presenter.SettingsActivity;
 import com.github.androidutils.logger.Logger;
 
 /**

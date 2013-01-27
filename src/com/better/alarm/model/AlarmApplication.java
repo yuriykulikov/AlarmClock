@@ -17,6 +17,8 @@ package com.better.alarm.model;
 
 import android.app.Application;
 
+import com.better.alarm.model.persistance.AlarmDatabaseHelper;
+import com.better.alarm.model.persistance.AlarmProvider;
 import com.github.androidutils.logger.FileLogWriter;
 import com.github.androidutils.logger.LogcatLogWriterWithLines;
 import com.github.androidutils.logger.Logger;
