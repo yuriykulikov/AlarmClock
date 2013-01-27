@@ -18,6 +18,7 @@
 package com.better.alarm.presenter;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
@@ -28,8 +29,6 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.IBinder;
-import android.os.Vibrator;
-import android.preference.PreferenceManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
@@ -44,15 +43,24 @@ import com.github.androidutils.wakelock.WakeLockManager;
  * Manages alarms and vibe. Runs as a service so that it can continue to play if
  * another activity overrides the AlarmAlert dialog.
  */
-public class AlarmKlaxonService extends Service {
-    private static final long[] sVibratePattern = new long[] { 500, 500 };
-
+public class KlaxonService extends Service {
     private boolean mPlaying = false;
-    private Vibrator mVibrator;
     private MediaPlayer mMediaPlayer;
     private TelephonyManager mTelephonyManager;
 
     private Intent mIntent;
+
+    /**
+     * Dispatches intents to the KlaxonService
+     */
+    public static class Receiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            intent.setClass(context, KlaxonService.class);
+            WakeLockManager.getWakeLockManager().acquirePartialWakeLock(intent, "KlaxonService");
+            context.startService(intent);
+        }
+    }
 
     private final PhoneStateListener mPhoneStateListener = new PhoneStateListener() {
         @Override
@@ -67,7 +75,6 @@ public class AlarmKlaxonService extends Service {
     @Override
     public void onCreate() {
         log = Logger.getDefaultLogger();
-        mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         // Listen for incoming calls to kill the alarm.
         mTelephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
@@ -178,15 +185,6 @@ public class AlarmKlaxonService extends Service {
                 }
             }
         }
-
-        /* Start the vibrator after everything is ok with the media player */
-        boolean shouldVibrate = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("vibrate", true);
-        if (shouldVibrate && !prealarm) {
-            mVibrator.vibrate(sVibratePattern, 0);
-        } else {
-            mVibrator.cancel();
-        }
-
         mPlaying = true;
     }
 
@@ -226,9 +224,6 @@ public class AlarmKlaxonService extends Service {
                 mMediaPlayer.release();
                 mMediaPlayer = null;
             }
-
-            // Stop vibrator
-            mVibrator.cancel();
         }
     }
 

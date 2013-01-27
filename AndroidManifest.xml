@@ -102,35 +102,38 @@
             android:taskAffinity=""
             android:theme="@style/AlarmAlertFullScreenTheme" />
 
-        <!-- Forwards intents to the AlarmKlaxonService -->
+        <!-- KlaxonPresenter plays sound -->
         <receiver
-            android:name=".presenter.AlarmKlaxonReceiver"
+            android:name=".presenter.KlaxonPresenter$Receiver"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.better.alarm.ALARM_ALERT" />
                 <action android:name="com.better.alarm.ALARM_PREALARM_ACTION" />
+                <action android:name="com.better.alarm.ALARM_SNOOZE" />
+                <action android:name="com.better.alarm.ALARM_DISMISS" />
+                <action android:name="com.better.alarm.START_TEST_ALARM" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name=".presenter.KlaxonPresenter"
+            android:description="@string/alarm_klaxon_service_desc"
+            android:exported="false" >
+        </service>
+
+        <!-- VibrationPresenter vibrates -->
+        <receiver
+            android:name=".presenter.VibrationPresenter$Receiver"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.better.alarm.ALARM_ALERT" />
                 <action android:name="com.better.alarm.ALARM_SNOOZE" />
                 <action android:name="com.better.alarm.ALARM_DISMISS" />
             </intent-filter>
         </receiver>
-
-        <!--
-             This service receives intent from AlarmKlaxonReceiver. The
-             AlarmKlaxonReceiver will receive the alert broadcast and will start
-             this service with the same intent. The service plays the alarm alert
-             and vibrates the device. This allows the alert to continue playing
-             even if another activity causes the AlarmAlert activity to pause.
-        -->
         <service
-            android:name=".presenter.AlarmKlaxonService"
+            android:name=".presenter.VibrationService"
             android:description="@string/alarm_klaxon_service_desc"
             android:exported="false" >
-            <intent-filter>
-                <action android:name="com.better.alarm.ALARM_ALERT" />
-                <action android:name="com.better.alarm.ALARM_PREALARM_ACTION" />
-                <action android:name="com.better.alarm.ALARM_SNOOZE" />
-                <action android:name="com.better.alarm.ALARM_DISMISS" />
-            </intent-filter>
         </service>
 
         <!-- Reacts on Alarms being set/unset and changes notification bar and lockscreen -->
