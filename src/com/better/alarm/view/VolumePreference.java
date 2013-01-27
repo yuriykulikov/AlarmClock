@@ -18,6 +18,7 @@ package com.better.alarm.view;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.database.ContentObserver;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
@@ -45,6 +46,7 @@ import com.better.alarm.R;
 public class VolumePreference extends DialogPreference implements View.OnKeyListener {
     private final Drawable mMyIcon;
     private int mStreamType;
+    private final boolean mCancelButtonUsed;
 
     /** May be null if the dialog isn't visible. */
     private SeekBarVolumizer mSeekBarVolumizer;
@@ -61,12 +63,20 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
 
         // TODO obtain from XML
         mStreamType = AudioManager.STREAM_ALARM;
+
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.com_better_alarm_view_VolumePreference, 0, 0);
+        mCancelButtonUsed = a.getBoolean(R.styleable.com_better_alarm_view_VolumePreference_cancelButton, true);
+        a.recycle();
     }
 
     // Allow subclasses to override the action buttons
     public void createActionButtons() {
         setPositiveButtonText(android.R.string.ok);
-        setNegativeButtonText(android.R.string.cancel);
+        if (mCancelButtonUsed) {
+            setNegativeButtonText(android.R.string.cancel);
+        } else {
+            setNegativeButtonText("");
+        }
     }
 
     protected static SeekBar getSeekBar(View dialogView) {
