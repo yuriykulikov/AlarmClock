@@ -18,7 +18,6 @@ package com.better.alarm.view;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.database.ContentObserver;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
@@ -38,16 +37,13 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
+import com.better.alarm.R;
+
 /**
  * @hide
  */
-public class VolumePreference extends DialogPreference implements PreferenceManager.OnActivityStopListener,
-        View.OnKeyListener {
-
+public class VolumePreference extends DialogPreference implements View.OnKeyListener {
     private final Drawable mMyIcon;
-
-    private static final String TAG = "VolumePreference";
-
     private int mStreamType;
 
     /** May be null if the dialog isn't visible. */
@@ -56,16 +52,15 @@ public class VolumePreference extends DialogPreference implements PreferenceMana
     public VolumePreference(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        setDialogLayoutResource(com.android.internal.R.layout.seekbar_dialog);
+        setDialogLayoutResource(R.layout.seekbar_dialog);
         createActionButtons();
 
         // Steal the XML dialogIcon attribute's value
         mMyIcon = getDialogIcon();
         setDialogIcon(null);
 
-        TypedArray a = context.obtainStyledAttributes(attrs, com.android.internal.R.styleable.VolumePreference, 0, 0);
-        mStreamType = a.getInt(android.R.styleable.VolumePreference_streamType, 0);
-        a.recycle();
+        // TODO obtain from XML
+        mStreamType = AudioManager.STREAM_ALARM;
     }
 
     // Allow subclasses to override the action buttons
@@ -75,7 +70,7 @@ public class VolumePreference extends DialogPreference implements PreferenceMana
     }
 
     protected static SeekBar getSeekBar(View dialogView) {
-        return (SeekBar) dialogView.findViewById(com.android.internal.R.id.seekbar);
+        return (SeekBar) dialogView.findViewById(R.id.seekbar);
     }
 
     public void setStreamType(int streamType) {
@@ -86,17 +81,17 @@ public class VolumePreference extends DialogPreference implements PreferenceMana
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
 
-        final ImageView iconView = (ImageView) view.findViewById(android.R.id.icon);
+        final ImageView iconView = (ImageView) view.findViewById(R.id.icon);
         if (mMyIcon != null) {
             iconView.setImageDrawable(mMyIcon);
         } else {
             iconView.setVisibility(View.GONE);
         }
 
-        final SeekBar seekBar = (SeekBar) view.findViewById(com.android.internal.R.id.seekbar);
+        final SeekBar seekBar = (SeekBar) view.findViewById(R.id.seekbar);
         mSeekBarVolumizer = new SeekBarVolumizer(getContext(), seekBar, mStreamType);
 
-        getPreferenceManager().registerOnActivityStopListener(this);
+        // getPreferenceManager().registerOnActivityStopListener(this);
 
         // grab focus and key events so that pressing the volume buttons in the
         // dialog doesn't also show the normal volume adjust toast.
@@ -143,6 +138,7 @@ public class VolumePreference extends DialogPreference implements PreferenceMana
     }
 
     public void onActivityStop() {
+        // TODO make sure we stop playing!
         if (mSeekBarVolumizer != null) {
             mSeekBarVolumizer.stopSample();
         }
@@ -152,12 +148,12 @@ public class VolumePreference extends DialogPreference implements PreferenceMana
      * Do clean up. This can be called multiple times!
      */
     private void cleanup() {
-        getPreferenceManager().unregisterOnActivityStopListener(this);
+        // getPreferenceManager().unregisterOnActivityStopListener(this);
 
         if (mSeekBarVolumizer != null) {
             Dialog dialog = getDialog();
             if (dialog != null && dialog.isShowing()) {
-                View view = dialog.getWindow().getDecorView().findViewById(com.android.internal.R.id.seekbar);
+                View view = dialog.getWindow().getDecorView().findViewById(R.id.seekbar);
                 if (view != null) {
                     view.setOnKeyListener(null);
                 }

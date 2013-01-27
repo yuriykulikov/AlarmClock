@@ -28,7 +28,7 @@
         android:title="@string/alarm_vibrate"
         android:defaultValue="true" />
 
-    <VolumePreference
+    <com.better.alarm.view.VolumePreference
         android:title="@string/alarm_volume_title"
         android:summary="@string/alarm_volume_summary"
         android:dialogTitle="@string/alarm_volume_title"
