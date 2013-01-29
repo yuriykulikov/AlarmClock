@@ -1,6 +1,8 @@
-package com.better.alarm.model;
+package com.better.alarm.model.interfaces;
 
 import java.util.Calendar;
+
+import com.better.alarm.model.DaysOfWeek;
 
 import android.content.Context;
 import android.net.Uri;

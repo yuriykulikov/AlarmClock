@@ -38,16 +38,18 @@ import android.view.View;
 import android.widget.Button;
 
 import com.better.alarm.R;
-import com.better.alarm.model.Alarm;
 import com.better.alarm.model.AlarmsManager;
-import com.better.alarm.model.IAlarmsManager;
-import com.better.alarm.model.Intents;
+import com.better.alarm.model.interfaces.Alarm;
+import com.better.alarm.model.interfaces.IAlarmsManager;
+import com.better.alarm.model.interfaces.Intents;
+import com.better.alarm.view.AlarmPreference;
+import com.better.alarm.view.RepeatPreference;
 
 /**
  * Manages each alarm
  */
-public class SetAlarmActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener,
-        OnCancelListener, AlarmTimePickerDialogFragment.AlarmTimePickerDialogHandler {
+public class AlarmDetailsActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener,
+        OnCancelListener, TimePickerDialogFragment.AlarmTimePickerDialogHandler {
     public final static String M12 = "h:mm aa";
     public final static String M24 = "kk:mm";
 
@@ -75,11 +77,11 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         }
 
         // Override the default content view.
-        setContentView(R.layout.set_alarm);
+        setContentView(R.layout.details_activity);
 
         // TODO Stop using preferences for this view. Save on done, not after
         // each change.
-        addPreferencesFromResource(R.xml.alarm_prefs);
+        addPreferencesFromResource(R.xml.details_preferences);
 
         alarms = AlarmsManager.getAlarmsManager();
 
@@ -134,7 +136,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
     public boolean onCreateOptionsMenu(Menu menu) {
         // we inflate anyway even though currently we have only one entry. There
         // may be more in future
-        getMenuInflater().inflate(R.menu.set_alarm_menu, menu);
+        getMenuInflater().inflate(R.menu.details_menu, menu);
         if (isNewAlarm) {
             menu.removeItem(R.id.set_alarm_menu_delete_alarm);
         }
@@ -223,7 +225,7 @@ public class SetAlarmActivity extends PreferenceActivity implements Preference.O
         }
         ft.addToBackStack(null);
 
-        final AlarmTimePickerDialogFragment fragment = AlarmTimePickerDialogFragment.newInstance(mId, this);
+        final TimePickerDialogFragment fragment = TimePickerDialogFragment.newInstance(mId, this);
         fragment.show(ft, "time_dialog");
     }
 

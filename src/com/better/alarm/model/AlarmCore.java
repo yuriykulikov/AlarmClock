@@ -32,6 +32,8 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 
 import com.better.alarm.R;
+import com.better.alarm.model.interfaces.Alarm;
+import com.better.alarm.model.interfaces.Intents;
 import com.github.androidutils.logger.Logger;
 import com.github.androidutils.statemachine.ComplexTransition;
 import com.github.androidutils.statemachine.IMessageWhatToStringConverter;

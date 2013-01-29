@@ -27,6 +27,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
+import com.better.alarm.model.interfaces.Intents;
 import com.github.androidutils.logger.Logger;
 
 public class AlarmsScheduler implements IAlarmsScheduler {

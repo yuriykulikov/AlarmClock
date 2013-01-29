@@ -19,6 +19,7 @@ package com.better.alarm.model;
 
 import android.content.Context;
 
+import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.github.androidutils.logger.Logger;
 
 /**

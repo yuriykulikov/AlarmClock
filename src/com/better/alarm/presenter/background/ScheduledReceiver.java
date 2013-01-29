@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.better.alarm.presenter;
+package com.better.alarm.presenter.background;
 
 import java.util.Calendar;
 
@@ -22,9 +22,9 @@ import android.content.Intent;
 import android.provider.Settings;
 import android.text.format.DateFormat;
 
-import com.better.alarm.model.Alarm;
 import com.better.alarm.model.AlarmsManager;
-import com.better.alarm.model.Intents;
+import com.better.alarm.model.interfaces.Alarm;
+import com.better.alarm.model.interfaces.Intents;
 
 /**
  * This class reacts on {@link } and {@link } and

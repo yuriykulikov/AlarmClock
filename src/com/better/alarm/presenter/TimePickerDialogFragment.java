@@ -33,7 +33,7 @@ import com.github.androidutils.logger.Logger;
 /**
  * Dialog to set alarm time.
  */
-public class AlarmTimePickerDialogFragment extends DialogFragment {
+public class TimePickerDialogFragment extends DialogFragment {
 
     private static final String KEY_ALARM = "alarm";
 
@@ -49,8 +49,8 @@ public class AlarmTimePickerDialogFragment extends DialogFragment {
      * @param handler
      * @return
      */
-    public static AlarmTimePickerDialogFragment newInstance(int id, AlarmTimePickerDialogHandler handler) {
-        final AlarmTimePickerDialogFragment frag = new AlarmTimePickerDialogFragment();
+    public static TimePickerDialogFragment newInstance(int id, AlarmTimePickerDialogHandler handler) {
+        final TimePickerDialogFragment frag = new TimePickerDialogFragment();
         Bundle args = new Bundle();
         args.putInt(KEY_ALARM, id);
         frag.setArguments(args);
@@ -93,7 +93,7 @@ public class AlarmTimePickerDialogFragment extends DialogFragment {
                     final AlarmTimePickerDialogHandler act = (AlarmTimePickerDialogHandler) activity;
                     act.onDialogTimeSet(alarm, mPicker.getHours(), mPicker.getMinutes());
                 } else {
-                    log.e("Error! Activities that use AlarmTimePickerDialogFragment must implement "
+                    log.e("Error! Activities that use TimePickerDialogFragment must implement "
                             + "AlarmTimePickerDialogHandler");
                 }
                 dismiss();

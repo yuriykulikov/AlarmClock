@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.better.alarm.presenter;
+package com.better.alarm.presenter.alert;
 
 import android.app.KeyguardManager;
 import android.app.Notification;
@@ -26,9 +26,9 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.better.alarm.R;
-import com.better.alarm.model.Alarm;
 import com.better.alarm.model.AlarmsManager;
-import com.better.alarm.model.Intents;
+import com.better.alarm.model.interfaces.Alarm;
+import com.better.alarm.model.interfaces.Intents;
 
 /**
  * Glue class: connects AlarmAlert IntentReceiver to AlarmAlert activity. Passes

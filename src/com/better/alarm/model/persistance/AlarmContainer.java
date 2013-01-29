@@ -1,4 +1,4 @@
-package com.better.alarm.model;
+package com.better.alarm.model.persistance;
 
 import java.util.Calendar;
 
@@ -11,6 +11,9 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import com.better.alarm.model.DaysOfWeek;
+import com.better.alarm.model.IAlarmContainer;
+import com.better.alarm.model.interfaces.Intents;
 import com.github.androidutils.logger.Logger;
 import com.github.androidutils.wakelock.WakeLockManager;
 
@@ -24,7 +27,7 @@ public class AlarmContainer implements IAlarmContainer {
     // ////////////////////////////
     // Column definitions
     // ////////////////////////////
-    static class Columns implements BaseColumns {
+    public static class Columns implements BaseColumns {
         /**
          * The content:// style URL for this table
          */
@@ -118,8 +121,8 @@ public class AlarmContainer implements IAlarmContainer {
         // Used when filtering enabled alarms.
         public static final String WHERE_ENABLED = ENABLED + "=1";
 
-        static final String[] ALARM_QUERY_COLUMNS = { _ID, HOUR, MINUTES, DAYS_OF_WEEK, ALARM_TIME, ENABLED, VIBRATE,
-                MESSAGE, ALERT, PREALARM, STATE };
+        public static final String[] ALARM_QUERY_COLUMNS = { _ID, HOUR, MINUTES, DAYS_OF_WEEK, ALARM_TIME, ENABLED,
+                VIBRATE, MESSAGE, ALERT, PREALARM, STATE };
 
         /**
          * These save calls to cursor.getColumnIndexOrThrow() THEY MUST BE KEPT

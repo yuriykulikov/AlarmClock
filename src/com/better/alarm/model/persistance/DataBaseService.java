@@ -1,4 +1,4 @@
-package com.better.alarm.model;
+package com.better.alarm.model.persistance;
 
 import android.app.IntentService;
 import android.content.ContentResolver;
@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 
+import com.better.alarm.model.interfaces.Intents;
 import com.github.androidutils.wakelock.WakeLockManager;
 
 public class DataBaseService extends IntentService {

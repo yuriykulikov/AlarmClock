@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.better.alarm.model.AlarmCore.IStateNotifier;
+import com.better.alarm.model.interfaces.Intents;
 
 /**
  * Broadcasts alarm state with an intent

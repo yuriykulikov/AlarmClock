@@ -27,6 +27,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 
+import com.better.alarm.model.interfaces.Alarm;
+import com.better.alarm.model.interfaces.IAlarmsManager;
+import com.better.alarm.model.interfaces.Intents;
+import com.better.alarm.model.persistance.AlarmContainer;
 import com.github.androidutils.logger.Logger;
 
 /**

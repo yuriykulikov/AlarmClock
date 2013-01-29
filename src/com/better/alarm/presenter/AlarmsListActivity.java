@@ -48,10 +48,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.better.alarm.R;
-import com.better.alarm.model.Alarm;
 import com.better.alarm.model.AlarmsManager;
-import com.better.alarm.model.IAlarmsManager;
-import com.better.alarm.model.Intents;
+import com.better.alarm.model.interfaces.Alarm;
+import com.better.alarm.model.interfaces.IAlarmsManager;
+import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.view.DigitalClock;
 
 /**
@@ -166,7 +166,7 @@ public class AlarmsListActivity extends Activity {
         }
 
         case R.id.edit_alarm: {
-            Intent intent = new Intent(this, SetAlarmActivity.class);
+            Intent intent = new Intent(this, AlarmDetailsActivity.class);
             intent.putExtra(Intents.EXTRA_ID, alarm.getId());
             startActivity(intent);
             return true;
@@ -199,7 +199,7 @@ public class AlarmsListActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Alarm alarm = mAdapter.getItem(position);
-                Intent intent = new Intent(AlarmsListActivity.this, SetAlarmActivity.class);
+                Intent intent = new Intent(AlarmsListActivity.this, AlarmDetailsActivity.class);
                 intent.putExtra(Intents.EXTRA_ID, alarm.getId());
                 startActivity(intent);
             }
@@ -224,7 +224,7 @@ public class AlarmsListActivity extends Activity {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
         // Inflate the menu from xml.
-        getMenuInflater().inflate(R.menu.context_menu, menu);
+        getMenuInflater().inflate(R.menu.list_context_menu, menu);
 
         // Use the current item to create a custom view for the header.
         final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
@@ -259,7 +259,7 @@ public class AlarmsListActivity extends Activity {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
         case R.id.menu_item_add_alarm:
-            startActivity(new Intent(this, SetAlarmActivity.class));
+            startActivity(new Intent(this, AlarmDetailsActivity.class));
             return true;
         default:
             break;
@@ -269,7 +269,7 @@ public class AlarmsListActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.alarm_list_menu, menu);
+        getMenuInflater().inflate(R.menu.list_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
