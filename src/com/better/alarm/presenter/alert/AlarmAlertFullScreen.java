@@ -72,6 +72,12 @@ public class AlarmAlertFullScreen extends Activity {
                 if (mAlarm.getId() == id) {
                     finish();
                 }
+            } else if (action.equals(Intents.ACTION_SOUND_EXPIRED)) {
+                if (mAlarm.getId() == id) {
+                    // if sound has expired there is no need to keep the screen
+                    // on
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                }
             }
         }
     };
@@ -117,6 +123,7 @@ public class AlarmAlertFullScreen extends Activity {
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intents.ALARM_SNOOZE_ACTION);
         filter.addAction(Intents.ALARM_DISMISS_ACTION);
+        filter.addAction(Intents.ACTION_SOUND_EXPIRED);
         registerReceiver(mReceiver, filter);
     }
 
