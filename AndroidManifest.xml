@@ -134,17 +134,6 @@
             </intent-filter>
         </receiver>
 
-        <!-- Reacts on Alarms being snoozed and displays a notification -->
-        <receiver
-            android:name=".presenter.background.NotificationReceiver"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="com.better.alarm.ALARM_ALERT" />
-                <action android:name="com.better.alarm.ALARM_SNOOZE" />
-                <action android:name="com.better.alarm.ALARM_DISMISS" />
-            </intent-filter>
-        </receiver>
-
         <!-- Reacts on Alarms set and displays a toast -->
         <receiver
             android:name=".presenter.background.ToastPresenter"
