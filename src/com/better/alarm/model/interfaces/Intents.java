@@ -39,6 +39,11 @@ public class Intents {
     /**
      * Broadcasted when alarm is scheduled
      */
+    public static final String ACTION_SOUND_EXPIRED = "com.better.alarm.ACTION_SOUND_EXPIRED";
+
+    /**
+     * Broadcasted when alarm is scheduled
+     */
     public static final String ACTION_ALARM_SCHEDULED = "com.better.alarm.model.Intents.ACTION_ALARM_SCHEDULED";
 
     /**

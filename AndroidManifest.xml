@@ -65,6 +65,7 @@
                 <action android:name="com.better.alarm.ALARM_PREALARM_ACTION" />
                 <action android:name="com.better.alarm.ALARM_SNOOZE" />
                 <action android:name="com.better.alarm.ALARM_DISMISS" />
+                <action android:name="com.better.alarm.ACTION_SOUND_EXPIRED" />
             </intent-filter>
         </receiver>
 
@@ -96,6 +97,7 @@
                 <action android:name="com.better.alarm.ALARM_PREALARM_ACTION" />
                 <action android:name="com.better.alarm.ALARM_SNOOZE" />
                 <action android:name="com.better.alarm.ALARM_DISMISS" />
+                <action android:name="com.better.alarm.ACTION_SOUND_EXPIRED" />
                 <action android:name="com.better.alarm.START_TEST_ALARM" />
             </intent-filter>
         </receiver>
@@ -113,6 +115,7 @@
                 <action android:name="com.better.alarm.ALARM_ALERT" />
                 <action android:name="com.better.alarm.ALARM_SNOOZE" />
                 <action android:name="com.better.alarm.ALARM_DISMISS" />
+                <action android:name="com.better.alarm.ACTION_SOUND_EXPIRED" />
             </intent-filter>
         </receiver>
         <service
@@ -128,17 +131,6 @@
             <intent-filter>
                 <action android:name="com.better.alarm.model.Intents.ACTION_ALARMS_UNSCHEDULED" />
                 <action android:name="com.better.alarm.model.Intents.ACTION_ALARM_SCHEDULED" />
-            </intent-filter>
-        </receiver>
-
-        <!-- Reacts on Alarms being snoozed and displays a notification -->
-        <receiver
-            android:name=".presenter.background.NotificationReceiver"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="com.better.alarm.ALARM_ALERT" />
-                <action android:name="com.better.alarm.ALARM_SNOOZE" />
-                <action android:name="com.better.alarm.ALARM_DISMISS" />
             </intent-filter>
         </receiver>
 

@@ -401,6 +401,18 @@ public final class AlarmCore implements Alarm {
             @Override
             public void enter() {
                 broadcastAlarmState(Intents.ALARM_ALERT_ACTION);
+                Calendar nextTime = Calendar.getInstance();
+                int autoSilenceMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext)
+                        .getString("auto_silence", "10"));
+                nextTime.add(Calendar.MINUTE, autoSilenceMinutes);
+                setAlarm(nextTime);
+            }
+
+            @Override
+            protected void onFired() {
+                // TODO actually we have to create a new state for this
+                // or maybe not :-)
+                broadcastAlarmState(Intents.ACTION_SOUND_EXPIRED);
             }
 
             @Override

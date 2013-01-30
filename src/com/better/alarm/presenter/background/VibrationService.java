@@ -60,6 +60,10 @@ public class VibrationService extends Service {
                 stopSelf();
                 return START_NOT_STICKY;
 
+            } else if (action.equals(Intents.ACTION_SOUND_EXPIRED)) {
+                stopSelf();
+                return START_NOT_STICKY;
+
             } else {
                 log.e("unexpected intent " + intent.getAction());
                 stopSelf();
