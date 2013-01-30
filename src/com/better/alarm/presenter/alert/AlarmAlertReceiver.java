@@ -34,7 +34,6 @@ import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
-import com.better.alarm.presenter.AlarmDetailsActivity;
 
 /**
  * Glue class: connects AlarmAlert IntentReceiver to AlarmAlert activity. Passes
@@ -42,7 +41,7 @@ import com.better.alarm.presenter.AlarmDetailsActivity;
  */
 public class AlarmAlertReceiver extends BroadcastReceiver {
 
-    private static final String ACTION_CANCEL_SNOOZE_NOTIFICATION = "NotificationReceiver.ACTION_CANCEL_SNOOZE_NOTIFICATION";
+    private static final String ACTION_CANCEL_NOTIFICATION = "AlarmAlertReceiver.ACTION_CANCEL_NOTIFICATION";
     private static final String DM12 = "E h:mm aa";
     private static final String DM24 = "E kk:mm";
     private static final int NOTIFICATION_OFFSET = 1000;
@@ -78,7 +77,7 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
         } else if (action.equals(Intents.ACTION_SOUND_EXPIRED)) {
             onSoundExpired(id);
 
-        } else if (action.equals(ACTION_CANCEL_SNOOZE_NOTIFICATION)) {
+        } else if (action.equals(ACTION_CANCEL_NOTIFICATION)) {
             alarmsManager.dismiss(alarm);
         }
     }
@@ -134,7 +133,7 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
 
         // Notify the user that the alarm has been snoozed.
         Intent cancelSnooze = new Intent(mContext, AlarmAlertReceiver.class);
-        cancelSnooze.setAction(ACTION_CANCEL_SNOOZE_NOTIFICATION);
+        cancelSnooze.setAction(ACTION_CANCEL_NOTIFICATION);
         cancelSnooze.putExtra(Intents.EXTRA_ID, id);
         PendingIntent broadcast = PendingIntent.getBroadcast(mContext, id, cancelSnooze, 0);
         Notification n = new Notification(R.drawable.stat_notify_alarm, label, 0);
@@ -153,11 +152,10 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
     }
 
     private void onSoundExpired(int id) {
-        // Launch SetAlarm when clicked.
-        Intent viewAlarm = new Intent(mContext, AlarmDetailsActivity.class);
-        viewAlarm.putExtra(Intents.EXTRA_ID, id);
-        PendingIntent intent = PendingIntent.getActivity(mContext, id, viewAlarm, 0);
-
+        Intent dismissAlarm = new Intent(mContext, AlarmAlertReceiver.class);
+        dismissAlarm.setAction(ACTION_CANCEL_NOTIFICATION);
+        dismissAlarm.putExtra(Intents.EXTRA_ID, id);
+        PendingIntent intent = PendingIntent.getBroadcast(mContext, id, dismissAlarm, 0);
         // Update the notification to indicate that the alert has been
         // silenced.
         String label = alarm.getLabelOrDefault(mContext);
