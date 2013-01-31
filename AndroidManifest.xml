@@ -29,8 +29,7 @@
             android:exported="true"
             android:label="@string/alarm_list_title"
             android:taskAffinity=""
-            android:theme="@style/AlarmsListTheme"
-            android:uiOptions="splitActionBarWhenNarrow" >
+            android:theme="@style/AlarmsListTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
