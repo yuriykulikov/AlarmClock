@@ -423,6 +423,7 @@ public final class AlarmCore implements Alarm {
             @Override
             public void exit() {
                 broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
+                removeAlarm();
             }
         }
 
