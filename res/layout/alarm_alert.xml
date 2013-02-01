@@ -38,7 +38,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginRight="44dip"
-            android:textColor="?android:attr/textColorPrimary"
             android:textSize="80dp" />
 
         <com.better.alarm.view.AndroidClockTextView
@@ -48,7 +47,6 @@
             android:layout_alignBaseline="@id/timeDisplay"
             android:layout_alignParentRight="true"
             useClockTypeface="false"
-            android:textColor="?android:attr/textColorPrimary"
             android:textSize="20dp"
             android:textStyle="bold" />
     </com.better.alarm.view.DigitalClock>

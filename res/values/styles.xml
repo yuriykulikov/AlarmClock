@@ -14,7 +14,7 @@
      limitations under the License.
 -->
 
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     <style name="AlarmsListTheme" parent="android:Theme.DeviceDefault.Light.DarkActionBar"/>
     <style name="AlarmDetailsTheme" parent="android:Theme.DeviceDefault.Light.DarkActionBar"/>
     <style name="SettingsTheme" parent="android:Theme.DeviceDefault.Light.DialogWhenLarge"/>
@@ -26,7 +26,11 @@
 
     <!-- NOTE: This must be a fullscreen theme, or else the fullscreen alarm will 
          be unable to turn the screen on. -->
-    <style name="AlarmAlertFullScreenTheme" parent="android:Theme.Holo.Wallpaper.NoTitleBar">
+    <style name="AlarmAlertFullScreenTheme" parent="android:Theme.Holo.Light.NoActionBar">
+         <item name="android:windowShowWallpaper">true</item>
+         <item name="android:windowBackground">@android:color/transparent</item>
+         <item name="android:colorBackgroundCacheHint">@null</item>
+         <item name="android:windowNoTitle">true</item>
     </style>
     <style name="RoundTouchButton">
         <item name="android:gravity">center</item>

@@ -25,7 +25,7 @@
         android:layout_width="400dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@drawable/alarm_alert_fullscreen_bg"
+        android:background="@android:drawable/alert_light_frame"
         >
         <include layout="@layout/alarm_alert"
         	android:layout_width="match_parent"
