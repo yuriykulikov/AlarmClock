@@ -21,8 +21,7 @@
 
     <!-- This theme is similar to the Theme.Dialog.Alert but does not rely on a
          non-public resource. -->
-    <style name="AlarmAlertTheme" parent="android:Theme.DeviceDefault.Light.Dialog">
-        <item name="android:windowBackground">@android:color/transparent</item>
+    <style name="AlarmAlertTheme" parent="android:Theme.Holo.Light.Dialog">
     </style>
 
     <!-- NOTE: This must be a fullscreen theme, or else the fullscreen alarm will 
