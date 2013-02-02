@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.better.alarm"
-    android:versionCode="207"
-    android:versionName="2.0.7" >
+    android:versionCode="208"
+    android:versionName="2.0.8" >
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -75,7 +75,7 @@
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
             android:taskAffinity=""
-            android:theme="@android:style/Theme.Holo.Dialog" />
+            android:theme="@style/AlarmAlertTheme" />
 
         <!-- This activity is basically the same as AlarmAlert 
              but full-screen so that it can turn the display on. -->

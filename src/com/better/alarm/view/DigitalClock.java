@@ -58,6 +58,7 @@ public class DigitalClock extends RelativeLayout {
             }
             // Post a runnable to avoid blocking the broadcast.
             mHandler.post(new Runnable() {
+                @Override
                 public void run() {
                     updateTime();
                 }
@@ -66,8 +67,8 @@ public class DigitalClock extends RelativeLayout {
     };
 
     static class AmPm {
-        private AndroidClockTextView mAmPm;
-        private String mAmString, mPmString;
+        private final AndroidClockTextView mAmPm;
+        private final String mAmString, mPmString;
 
         AmPm(View parent) {
             mAmPm = (AndroidClockTextView) parent.findViewById(R.id.am_pm);
@@ -78,7 +79,10 @@ public class DigitalClock extends RelativeLayout {
         }
 
         void setShowAmPm(boolean show) {
-            mAmPm.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+            if (mAmPm != null) {
+                // check for null to be able to use ADT preview
+                mAmPm.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+            }
         }
 
         void setIsMorning(boolean isMorning) {
@@ -165,8 +169,12 @@ public class DigitalClock extends RelativeLayout {
         }
 
         CharSequence newTime = DateFormat.format(mFormat, mCalendar);
-        mTimeDisplay.setText(newTime);
-        mAmPm.setIsMorning(mCalendar.get(Calendar.AM_PM) == 0);
+        if (mTimeDisplay != null) {
+            mTimeDisplay.setText(newTime);
+        }
+        if (mAmPm != null) {
+            mAmPm.setIsMorning(mCalendar.get(Calendar.AM_PM) == 0);
+        }
     }
 
     private void setDateFormat() {
