@@ -24,30 +24,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
         android:baselineAligned="true"
-        android:gravity="center"
+        android:gravity="center_horizontal"
         android:paddingBottom="80dp"
-        android:paddingLeft="24dip"
-        android:paddingRight="20dip"
         android:paddingTop="24dip" >
 
         <com.better.alarm.view.AndroidClockTextView
             android:id="@+id/timeDisplay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="44dip"
-            android:textSize="80dp" />
+            android:singleLine="true"
+            android:textSize="80sp" />
 
         <com.better.alarm.view.AndroidClockTextView
             android:id="@+id/am_pm"
             android:layout_width="40dip"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/timeDisplay"
-            android:layout_alignParentRight="true"
+            android:layout_alignBottom="@+id/timeDisplay"
             useClockTypeface="false"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold" />
     </com.better.alarm.view.DigitalClock>
 

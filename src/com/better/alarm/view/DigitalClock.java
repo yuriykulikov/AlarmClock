@@ -29,14 +29,14 @@ import android.provider.Settings;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 
 import com.better.alarm.R;
 
 /**
  * Displays the time
  */
-public class DigitalClock extends RelativeLayout {
+public class DigitalClock extends LinearLayout {
     public final static String M12 = "h:mm";
     public final static String M24 = "kk:mm";
 
@@ -81,7 +81,7 @@ public class DigitalClock extends RelativeLayout {
         void setShowAmPm(boolean show) {
             if (mAmPm != null) {
                 // check for null to be able to use ADT preview
-                mAmPm.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+                mAmPm.setVisibility(show ? View.VISIBLE : View.GONE);
             }
         }
 
