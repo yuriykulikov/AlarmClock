@@ -137,20 +137,20 @@ public class AlarmsScheduler implements IAlarmsScheduler {
         // this means we have to find the next normal, snooze or prealarm
         // since iterator does not have a specific order, and we cannot
         // peek(i), remove elements one by one
+        ScheduledAlarm nextNormalAlarm = null;
         ArrayList<ScheduledAlarm> temporaryCollection = new ArrayList<AlarmsScheduler.ScheduledAlarm>(queue.size());
         while (!queue.isEmpty()) {
             ScheduledAlarm scheduledAlarm = queue.poll();
             temporaryCollection.add(scheduledAlarm);
-            if (queue.peek().type != CalendarType.AUTOSILENCE) {
+            if (scheduledAlarm.type != CalendarType.AUTOSILENCE) {
                 // that is our client
-                // Put back everything what we have removed
-                queue.addAll(temporaryCollection);
-                return scheduledAlarm;
+                nextNormalAlarm = scheduledAlarm;
+                break;
             }
         }
         // Put back everything what we have removed
         queue.addAll(temporaryCollection);
-        return null;
+        return nextNormalAlarm;
     }
 
     private void removeRTCAlarm() {
