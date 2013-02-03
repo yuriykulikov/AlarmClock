@@ -16,21 +16,24 @@
 
 package com.better.alarm.view;
 
+import java.util.ArrayList;
+
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.TypedArray;
-import android.database.ContentObserver;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Handler;
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.os.Message;
 import android.preference.DialogPreference;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.provider.Settings.System;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
@@ -39,52 +42,46 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.better.alarm.R;
+import com.better.alarm.model.interfaces.Intents;
+import com.better.alarm.view.VolumePreference.SeekBarVolumizer;
+import com.github.androidutils.logger.Logger;
+
+interface IVolumizerMaster {
+    void onSampleStarting(SeekBarVolumizer volumizer);
+}
+
+interface IVolumizerStrategy {
+
+    int getMaxVolume();
+
+    int getVolume();
+
+    void setVolume(int progress);
+
+    void stopSample();
+
+    void startSample();
+}
 
 /**
- * @hide
+ * This class represents the dialog
  */
-public class VolumePreference extends DialogPreference implements View.OnKeyListener {
+public class VolumePreference extends DialogPreference implements View.OnKeyListener, IVolumizerMaster {
     private final Drawable mMyIcon;
-    private int mStreamType;
-    private final boolean mCancelButtonUsed;
 
-    /** May be null if the dialog isn't visible. */
-    private SeekBarVolumizer mSeekBarVolumizer;
+    private final ArrayList<SeekBarVolumizer> volumizers;
+    private SeekBarVolumizer activeVolumizer;
 
     public VolumePreference(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         setDialogLayoutResource(R.layout.seekbar_dialog);
-        createActionButtons();
 
         // Steal the XML dialogIcon attribute's value
         mMyIcon = getDialogIcon();
         setDialogIcon(null);
-
-        // TODO obtain from XML
-        mStreamType = AudioManager.STREAM_ALARM;
-
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.com_better_alarm_view_VolumePreference, 0, 0);
-        mCancelButtonUsed = a.getBoolean(R.styleable.com_better_alarm_view_VolumePreference_cancelButton, true);
-        a.recycle();
-    }
-
-    // Allow subclasses to override the action buttons
-    public void createActionButtons() {
-        setPositiveButtonText(android.R.string.ok);
-        if (mCancelButtonUsed) {
-            setNegativeButtonText(android.R.string.cancel);
-        } else {
-            setNegativeButtonText("");
-        }
-    }
-
-    protected static SeekBar getSeekBar(View dialogView) {
-        return (SeekBar) dialogView.findViewById(R.id.seekbar);
-    }
-
-    public void setStreamType(int streamType) {
-        mStreamType = streamType;
+        volumizers = new ArrayList<VolumePreference.SeekBarVolumizer>();
+        createActionButtons(context, attrs);
     }
 
     @Override
@@ -99,7 +96,13 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
         }
 
         final SeekBar seekBar = (SeekBar) view.findViewById(R.id.seekbar);
-        mSeekBarVolumizer = new SeekBarVolumizer(getContext(), seekBar, mStreamType);
+        volumizers.add(new SeekBarVolumizer(seekBar, new AudioManagerVolumizerStrategy(getContext(),
+                AudioManager.STREAM_ALARM, null), this));
+
+        final SeekBar preAlarmSeekBar = (SeekBar) view.findViewById(R.id.seekbar_prealarm);
+        volumizers.add(new SeekBarVolumizer(preAlarmSeekBar, new PreAlarmVolumizerStrategy(getContext()), this));
+
+        activeVolumizer = volumizers.get(0);
 
         // getPreferenceManager().registerOnActivityStopListener(this);
 
@@ -111,24 +114,30 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
     }
 
     @Override
+    protected void onDialogClosed(boolean positiveResult) {
+        super.onDialogClosed(positiveResult);
+        cleanup();
+    }
+
+    @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
         // If key arrives immediately after the activity has been cleaned up.
-        if (mSeekBarVolumizer == null) return true;
+        if (volumizers.isEmpty()) return true;
         boolean isdown = (event.getAction() == KeyEvent.ACTION_DOWN);
         switch (keyCode) {
         case KeyEvent.KEYCODE_VOLUME_DOWN:
             if (isdown) {
-                mSeekBarVolumizer.changeVolumeBy(-1);
+                activeVolumizer.changeVolumeBy(-1);
             }
             return true;
         case KeyEvent.KEYCODE_VOLUME_UP:
             if (isdown) {
-                mSeekBarVolumizer.changeVolumeBy(1);
+                activeVolumizer.changeVolumeBy(1);
             }
             return true;
         case KeyEvent.KEYCODE_VOLUME_MUTE:
             if (isdown) {
-                mSeekBarVolumizer.muteVolume();
+                activeVolumizer.muteVolume();
             }
             return true;
         default:
@@ -137,21 +146,15 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
     }
 
     @Override
-    protected void onDialogClosed(boolean positiveResult) {
-        super.onDialogClosed(positiveResult);
-
-        if (!positiveResult && mSeekBarVolumizer != null) {
-            mSeekBarVolumizer.revertVolume();
+    public void onSampleStarting(SeekBarVolumizer requestedVolumizer) {
+        // We stop all volumizers other than the given one
+        for (SeekBarVolumizer volumizer : volumizers) {
+            if (!volumizer.equals(requestedVolumizer)) {
+                volumizer.stopSample();
+            }
         }
-
-        cleanup();
-    }
-
-    public void onActivityStop() {
-        // TODO make sure we stop playing!
-        if (mSeekBarVolumizer != null) {
-            mSeekBarVolumizer.stopSample();
-        }
+        // key events will be handled by the volumizer that is currently active
+        activeVolumizer = requestedVolumizer;
     }
 
     /**
@@ -160,148 +163,54 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
     private void cleanup() {
         // getPreferenceManager().unregisterOnActivityStopListener(this);
 
-        if (mSeekBarVolumizer != null) {
-            Dialog dialog = getDialog();
-            if (dialog != null && dialog.isShowing()) {
-                View view = dialog.getWindow().getDecorView().findViewById(R.id.seekbar);
-                if (view != null) {
-                    view.setOnKeyListener(null);
-                }
-                // Stopped while dialog was showing, revert changes
-                mSeekBarVolumizer.revertVolume();
+        Dialog dialog = getDialog();
+        if (dialog != null && dialog.isShowing()) {
+            View view = dialog.getWindow().getDecorView().findViewById(R.id.seekbar);
+            if (view != null) {
+                view.setOnKeyListener(null);
             }
-            mSeekBarVolumizer.stop();
-            mSeekBarVolumizer = null;
+            // TODO ? Stopped while dialog was showing, revert changes
         }
-
+        for (SeekBarVolumizer volumizer : volumizers) {
+            volumizer.stopSample();
+            volumizer.mSeekBar.setOnSeekBarChangeListener(null);
+        }
+        volumizers.clear();
+        activeVolumizer = null;
     }
 
-    protected void onSampleStarting(SeekBarVolumizer volumizer) {
-        if (mSeekBarVolumizer != null && volumizer != mSeekBarVolumizer) {
-            mSeekBarVolumizer.stopSample();
+    // Allow subclasses to override the action buttons
+    private void createActionButtons(Context context, AttributeSet attrs) {
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.com_better_alarm_view_VolumePreference, 0, 0);
+        boolean cancelButtonUsed = a.getBoolean(R.styleable.com_better_alarm_view_VolumePreference_cancelButton, true);
+        setPositiveButtonText(android.R.string.ok);
+        if (cancelButtonUsed) {
+            setNegativeButtonText(android.R.string.cancel);
+        } else {
+            setNegativeButtonText("");
         }
-    }
-
-    @Override
-    protected Parcelable onSaveInstanceState() {
-        final Parcelable superState = super.onSaveInstanceState();
-        if (isPersistent()) // No need to save instance state since it's
-                            // persistent
-            return superState;
-
-        final SavedState myState = new SavedState(superState);
-        if (mSeekBarVolumizer != null) {
-            mSeekBarVolumizer.onSaveInstanceState(myState.getVolumeStore());
-        }
-        return myState;
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Parcelable state) {
-        if (state == null || !state.getClass().equals(SavedState.class)) {
-            // Didn't save state for us in onSaveInstanceState
-            super.onRestoreInstanceState(state);
-            return;
-        }
-
-        SavedState myState = (SavedState) state;
-        super.onRestoreInstanceState(myState.getSuperState());
-        if (mSeekBarVolumizer != null) {
-            mSeekBarVolumizer.onRestoreInstanceState(myState.getVolumeStore());
-        }
-    }
-
-    public static class VolumeStore {
-        public int volume = -1;
-        public int originalVolume = -1;
-    }
-
-    private static class SavedState extends BaseSavedState {
-        VolumeStore mVolumeStore = new VolumeStore();
-
-        public SavedState(Parcel source) {
-            super(source);
-            mVolumeStore.volume = source.readInt();
-            mVolumeStore.originalVolume = source.readInt();
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            super.writeToParcel(dest, flags);
-            dest.writeInt(mVolumeStore.volume);
-            dest.writeInt(mVolumeStore.originalVolume);
-        }
-
-        VolumeStore getVolumeStore() {
-            return mVolumeStore;
-        }
-
-        public SavedState(Parcelable superState) {
-            super(superState);
-        }
-
-        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
-            @Override
-            public SavedState createFromParcel(Parcel in) {
-                return new SavedState(in);
-            }
-
-            @Override
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        };
+        a.recycle();
     }
 
     /**
-     * Turns a {@link SeekBar} into a volume control.
+     * This class is controls playback using AudioManager
      */
-    public class SeekBarVolumizer implements OnSeekBarChangeListener, Runnable {
-
-        private final Context mContext;
-        private final Handler mHandler = new Handler();
-
+    private static class AudioManagerVolumizerStrategy implements IVolumizerStrategy, Handler.Callback {
+        private static final int MSG_SET_VOLUME = 1;
         private final AudioManager mAudioManager;
         private final int mStreamType;
-        private int mOriginalStreamVolume;
-        private Ringtone mRingtone;
+        private final Context mContext;
+        /**
+         * Can be <code>null</code>, e.g. when SD is busy. We should use
+         * fallback in this case
+         */
+        private final Ringtone mRingtone;
+        private final Handler mHandler = new Handler(this);
 
-        private int mLastProgress = -1;
-        private final SeekBar mSeekBar;
-        private int mVolumeBeforeMute = -1;
-
-        private final ContentObserver mVolumeObserver = new ContentObserver(mHandler) {
-            @Override
-            public void onChange(boolean selfChange) {
-                super.onChange(selfChange);
-                if (mSeekBar != null && mAudioManager != null) {
-                    int volume = mAudioManager.getStreamVolume(mStreamType);
-                    mSeekBar.setProgress(volume);
-                }
-            }
-        };
-
-        public SeekBarVolumizer(Context context, SeekBar seekBar, int streamType) {
-            this(context, seekBar, streamType, null);
-        }
-
-        public SeekBarVolumizer(Context context, SeekBar seekBar, int streamType, Uri defaultUri) {
+        public AudioManagerVolumizerStrategy(Context context, int streamType, Uri defaultUri) {
             mContext = context;
-            mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
             mStreamType = streamType;
-            mSeekBar = seekBar;
-
-            initSeekBar(seekBar, defaultUri);
-        }
-
-        private void initSeekBar(SeekBar seekBar, Uri defaultUri) {
-            seekBar.setMax(mAudioManager.getStreamMaxVolume(mStreamType));
-            mOriginalStreamVolume = mAudioManager.getStreamVolume(mStreamType);
-            seekBar.setProgress(mOriginalStreamVolume);
-            seekBar.setOnSeekBarChangeListener(this);
-
-            mContext.getContentResolver().registerContentObserver(
-                    System.getUriFor(System.VOLUME_SETTINGS[mStreamType]), false, mVolumeObserver);
+            mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
             if (defaultUri == null) {
                 if (mStreamType == AudioManager.STREAM_RING) {
@@ -320,28 +229,129 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
             }
         }
 
-        public void stop() {
-            stopSample();
-            mContext.getContentResolver().unregisterContentObserver(mVolumeObserver);
-            mSeekBar.setOnSeekBarChangeListener(null);
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+            case MSG_SET_VOLUME:
+                mAudioManager.setStreamVolume(mStreamType, msg.arg1, 0);
+                return true;
+
+            default:
+                return false;
+            }
+
         }
 
-        public void revertVolume() {
-            mAudioManager.setStreamVolume(mStreamType, mOriginalStreamVolume, 0);
+        @Override
+        public int getVolume() {
+            return mAudioManager.getStreamVolume(mStreamType);
+        }
+
+        @Override
+        public int getMaxVolume() {
+            return mAudioManager.getStreamMaxVolume(mStreamType);
+        }
+
+        @Override
+        public void startSample() {
+            if (!isSamplePlaying()) {
+                mRingtone.play();
+            }
+        }
+
+        @Override
+        public void stopSample() {
+            if (mRingtone != null) {
+                mRingtone.stop();
+            }
+        }
+
+        @Override
+        public void setVolume(int progress) {
+            mHandler.removeMessages(MSG_SET_VOLUME);
+            Message message = mHandler.obtainMessage(MSG_SET_VOLUME, progress, -1);
+            message.sendToTarget();
+        }
+
+        private boolean isSamplePlaying() {
+            return mRingtone.isPlaying();
+        }
+    }
+
+    /**
+     * This volumizer strategy uses a dedicated service to play sound and change
+     * volume. Service is started/stopped using intents. Service observes volume
+     * preference, which is changed by the volumizer strategy.
+     */
+    public static class PreAlarmVolumizerStrategy implements IVolumizerStrategy {
+        private static final int DEFAULT_PREALARM_VOLUME = 4;
+        private static final String KEY_PREALARM_VOLUME = "key_prealarm_volume";
+        private final Context mContext;
+        Logger log = Logger.getDefaultLogger();
+        private final SharedPreferences sp;
+        private boolean isPlaying = false;
+
+        public PreAlarmVolumizerStrategy(Context context) {
+            mContext = context;
+            sp = PreferenceManager.getDefaultSharedPreferences(mContext);
+        }
+
+        @Override
+        public int getMaxVolume() {
+            return 10;
+        }
+
+        @Override
+        public int getVolume() {
+            return sp.getInt(KEY_PREALARM_VOLUME, DEFAULT_PREALARM_VOLUME);
+        }
+
+        @Override
+        public void setVolume(int progress) {
+            Editor editor = sp.edit();
+            editor.putInt(KEY_PREALARM_VOLUME, progress);
+            editor.commit();
+        };
+
+        @Override
+        public void stopSample() {
+            isPlaying = false;
+            mContext.sendBroadcast(new Intent(Intents.ACTION_STOP_PREALARM_SAMPLE));
+        }
+
+        @Override
+        public void startSample() {
+            if (!isPlaying) {
+                isPlaying = true;
+                mContext.sendBroadcast(new Intent(Intents.ACTION_START_PREALARM_SAMPLE));
+            }
+        }
+    }
+
+    /**
+     * Turns a {@link SeekBar} into a volume control.
+     */
+    public static class SeekBarVolumizer implements OnSeekBarChangeListener {
+        private final SeekBar mSeekBar;
+        private int mVolumeBeforeMute = -1;
+
+        private final IVolumizerStrategy volumizerStrategy;
+        private final IVolumizerMaster volumizerMaster;
+
+        public SeekBarVolumizer(SeekBar seekBar, IVolumizerStrategy volumizerStrategy, IVolumizerMaster volumizerMaster) {
+            mSeekBar = seekBar;
+            this.volumizerStrategy = volumizerStrategy;
+            this.volumizerMaster = volumizerMaster;
+            seekBar.setMax(volumizerStrategy.getMaxVolume());
+            seekBar.setProgress(volumizerStrategy.getVolume());
+            seekBar.setOnSeekBarChangeListener(this);
         }
 
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
             if (!fromTouch) return;
 
-            postSetVolume(progress);
-        }
-
-        void postSetVolume(int progress) {
-            // Do the volume changing separately to give responsive UI
-            mLastProgress = progress;
-            mHandler.removeCallbacks(this);
-            mHandler.post(this);
+            volumizerStrategy.setVolume(progress);
         }
 
         @Override
@@ -350,43 +360,13 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
-            if (!isSamplePlaying()) {
-                startSample();
-            }
-        }
-
-        @Override
-        public void run() {
-            mAudioManager.setStreamVolume(mStreamType, mLastProgress, 0);
-        }
-
-        public boolean isSamplePlaying() {
-            return mRingtone != null && mRingtone.isPlaying();
-        }
-
-        public void startSample() {
-            onSampleStarting(this);
-            if (mRingtone != null) {
-                mRingtone.play();
-            }
-        }
-
-        public void stopSample() {
-            if (mRingtone != null) {
-                mRingtone.stop();
-            }
-        }
-
-        public SeekBar getSeekBar() {
-            return mSeekBar;
+            startSample();
         }
 
         public void changeVolumeBy(int amount) {
             mSeekBar.incrementProgressBy(amount);
-            if (!isSamplePlaying()) {
-                startSample();
-            }
-            postSetVolume(mSeekBar.getProgress());
+            startSample();
+            volumizerStrategy.setVolume(mSeekBar.getProgress());
             mVolumeBeforeMute = -1;
         }
 
@@ -394,29 +374,38 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
             if (mVolumeBeforeMute != -1) {
                 mSeekBar.setProgress(mVolumeBeforeMute);
                 startSample();
-                postSetVolume(mVolumeBeforeMute);
+                volumizerStrategy.setVolume(mVolumeBeforeMute);
                 mVolumeBeforeMute = -1;
             } else {
                 mVolumeBeforeMute = mSeekBar.getProgress();
                 mSeekBar.setProgress(0);
-                stopSample();
-                postSetVolume(0);
+                volumizerStrategy.stopSample();
+                volumizerStrategy.setVolume(0);
             }
         }
 
-        public void onSaveInstanceState(VolumeStore volumeStore) {
-            if (mLastProgress >= 0) {
-                volumeStore.volume = mLastProgress;
-                volumeStore.originalVolume = mOriginalStreamVolume;
-            }
+        // public void onSaveInstanceState(VolumeStore volumeStore) {
+        // if (mLastProgress >= 0) {
+        // volumeStore.volume = mLastProgress;
+        // volumeStore.originalVolume = mOriginalStreamVolume;
+        // }
+        // }
+        //
+        // public void onRestoreInstanceState(VolumeStore volumeStore) {
+        // if (volumeStore.volume != -1) {
+        // mOriginalStreamVolume = volumeStore.originalVolume;
+        // mLastProgress = volumeStore.volume;
+        // postSetVolume(mLastProgress);
+        // }
+        // }
+
+        public void stopSample() {
+            volumizerStrategy.stopSample();
         }
 
-        public void onRestoreInstanceState(VolumeStore volumeStore) {
-            if (volumeStore.volume != -1) {
-                mOriginalStreamVolume = volumeStore.originalVolume;
-                mLastProgress = volumeStore.volume;
-                postSetVolume(mLastProgress);
-            }
+        private void startSample() {
+            volumizerMaster.onSampleStarting(this);
+            volumizerStrategy.startSample();
         }
     }
 }
