@@ -16,6 +16,7 @@
 package com.better.alarm.model;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
@@ -87,6 +88,7 @@ public class AlarmsScheduler implements IAlarmsScheduler {
         if (previousHead != currentHead) {
             setNextRTCAlert();
         }
+        notifyListeners();
     }
 
     private void setNextRTCAlert() {
@@ -96,15 +98,59 @@ public class AlarmsScheduler implements IAlarmsScheduler {
             // or removed by someone
             ScheduledAlarm scheduledAlarm = queue.peek();
             setUpRTCAlarm(scheduledAlarm.id, scheduledAlarm.calendar, scheduledAlarm.type);
-            Intent intent = new Intent(Intents.ACTION_ALARM_SCHEDULED);
+        } else {
+            removeRTCAlarm();
+        }
+    }
+
+    /**
+     * TODO the whole mechanism has to be revised. Currently we can only know
+     * when next alarm is scheduled and we do not know what is the reason for
+     * that. Maybe create a separate component for that or notify from the alarm
+     * SM. Actually notify this component from SM :-) and he can notify the
+     * rest.
+     */
+    private void notifyListeners() {
+        Intent intent = new Intent();
+        if (queue.isEmpty()) {
+            intent.setAction(Intents.ACTION_ALARMS_UNSCHEDULED);
+        } else if (queue.peek().type != CalendarType.AUTOSILENCE) {
+            ScheduledAlarm scheduledAlarm = queue.peek();
+            intent.setAction(Intents.ACTION_ALARM_SCHEDULED);
             intent.putExtra(Intents.EXTRA_ID, scheduledAlarm.id);
             // TODO add type to the intent
             mContext.sendBroadcast(intent);
         } else {
-            removeRTCAlarm();
-            Intent intent = new Intent(Intents.ACTION_ALARMS_UNSCHEDULED);
-            mContext.sendBroadcast(intent);
+            // now this means that alarm in the closest future is AUTOSILENCE
+            ScheduledAlarm scheduledAlarm = findNextNormalAlarm();
+            if (scheduledAlarm != null) {
+                intent.setAction(Intents.ACTION_ALARM_SCHEDULED);
+                intent.putExtra(Intents.EXTRA_ID, scheduledAlarm.id);
+            } else {
+                intent.setAction(Intents.ACTION_ALARMS_UNSCHEDULED);
+            }
         }
+        mContext.sendBroadcast(intent);
+    }
+
+    private ScheduledAlarm findNextNormalAlarm() {
+        // this means we have to find the next normal, snooze or prealarm
+        // since iterator does not have a specific order, and we cannot
+        // peek(i), remove elements one by one
+        ScheduledAlarm nextNormalAlarm = null;
+        ArrayList<ScheduledAlarm> temporaryCollection = new ArrayList<AlarmsScheduler.ScheduledAlarm>(queue.size());
+        while (!queue.isEmpty()) {
+            ScheduledAlarm scheduledAlarm = queue.poll();
+            temporaryCollection.add(scheduledAlarm);
+            if (scheduledAlarm.type != CalendarType.AUTOSILENCE) {
+                // that is our client
+                nextNormalAlarm = scheduledAlarm;
+                break;
+            }
+        }
+        // Put back everything what we have removed
+        queue.addAll(temporaryCollection);
+        return nextNormalAlarm;
     }
 
     private void removeRTCAlarm() {
@@ -152,5 +198,6 @@ public class AlarmsScheduler implements IAlarmsScheduler {
         if (previousHead != currentHead) {
             setNextRTCAlert();
         }
+        notifyListeners();
     }
 }

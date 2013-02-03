@@ -401,11 +401,14 @@ public final class AlarmCore implements Alarm {
             @Override
             public void enter() {
                 broadcastAlarmState(Intents.ALARM_ALERT_ACTION);
-                Calendar nextTime = Calendar.getInstance();
                 int autoSilenceMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext)
                         .getString("auto_silence", "10"));
-                nextTime.add(Calendar.MINUTE, autoSilenceMinutes);
-                setAlarm(nextTime);
+                if (autoSilenceMinutes > 0) {
+                    // -1 means OFF
+                    Calendar nextTime = Calendar.getInstance();
+                    nextTime.add(Calendar.MINUTE, autoSilenceMinutes);
+                    setAlarm(nextTime, CalendarType.AUTOSILENCE);
+                }
             }
 
             @Override
@@ -423,6 +426,7 @@ public final class AlarmCore implements Alarm {
             @Override
             public void exit() {
                 broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
+                removeAlarm();
             }
         }
 
@@ -543,8 +547,12 @@ public final class AlarmCore implements Alarm {
         }
 
         private void setAlarm(Calendar calendar) {
+            setAlarm(calendar, CalendarType.NORMAL);
+        }
+
+        private void setAlarm(Calendar calendar, CalendarType calendarType) {
             HashMap<CalendarType, Calendar> calendars = new HashMap<CalendarType, Calendar>();
-            calendars.put(CalendarType.NORMAL, calendar);
+            calendars.put(calendarType, calendar);
             mAlarmsScheduler.setAlarm(container.getId(), calendars);
             container.setNextTime(calendar);
         }
