@@ -401,11 +401,14 @@ public final class AlarmCore implements Alarm {
             @Override
             public void enter() {
                 broadcastAlarmState(Intents.ALARM_ALERT_ACTION);
-                Calendar nextTime = Calendar.getInstance();
                 int autoSilenceMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext)
                         .getString("auto_silence", "10"));
-                nextTime.add(Calendar.MINUTE, autoSilenceMinutes);
-                setAlarm(nextTime, CalendarType.AUTOSILENCE);
+                if (autoSilenceMinutes > 0) {
+                    // -1 means OFF
+                    Calendar nextTime = Calendar.getInstance();
+                    nextTime.add(Calendar.MINUTE, autoSilenceMinutes);
+                    setAlarm(nextTime, CalendarType.AUTOSILENCE);
+                }
             }
 
             @Override
