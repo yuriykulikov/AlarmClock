@@ -88,6 +88,7 @@ public class AlarmsScheduler implements IAlarmsScheduler {
         if (previousHead != currentHead) {
             setNextRTCAlert();
         }
+        notifyListeners();
     }
 
     private void setNextRTCAlert() {
@@ -100,7 +101,6 @@ public class AlarmsScheduler implements IAlarmsScheduler {
         } else {
             removeRTCAlarm();
         }
-        notifyListeners();
     }
 
     /**
@@ -198,5 +198,6 @@ public class AlarmsScheduler implements IAlarmsScheduler {
         if (previousHead != currentHead) {
             setNextRTCAlert();
         }
+        notifyListeners();
     }
 }
