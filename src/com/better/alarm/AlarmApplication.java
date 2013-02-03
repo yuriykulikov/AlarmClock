@@ -13,16 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.better.alarm.model;
+package com.better.alarm;
 
 import android.app.Application;
 
+import com.better.alarm.model.AlarmCore;
+import com.better.alarm.model.Alarms;
+import com.better.alarm.model.AlarmsManager;
+import com.better.alarm.model.AlarmsScheduler;
 import com.better.alarm.model.persistance.AlarmDatabaseHelper;
 import com.better.alarm.model.persistance.AlarmProvider;
 import com.github.androidutils.logger.FileLogWriter;
 import com.github.androidutils.logger.LogcatLogWriterWithLines;
 import com.github.androidutils.logger.Logger;
 import com.github.androidutils.logger.Logger.LogLevel;
+import com.github.androidutils.logger.LoggingExceptionHandler;
 import com.github.androidutils.wakelock.WakeLockManager;
 
 public class AlarmApplication extends Application {
@@ -32,6 +37,7 @@ public class AlarmApplication extends Application {
         Logger logger = Logger.getDefaultLogger();
         logger.addLogWriter(new LogcatLogWriterWithLines());
         logger.addLogWriter(new FileLogWriter("BetterAlarm"));
+        LoggingExceptionHandler.addLoggingExceptionHandlerToAllThreads(logger);
         logger.setLogLevel(WakeLockManager.class, LogLevel.ERR);
         logger.setLogLevel(AlarmsScheduler.class, LogLevel.DEBUG);
         logger.setLogLevel(AlarmCore.class, LogLevel.DEBUG);
