@@ -127,4 +127,17 @@
     <string name="loading_ringtone" msgid="6523322777415268044">"Загрузка мелодии звонка..."</string>
     <string name="control_set_alarm" msgid="2194676418924016327">"Установить будильник"</string>
     <string name="control_set_alarm_with_existing" msgid="1128169496817859490">"Будильник установлен на <xliff:g id="TIME">%s</xliff:g>"</string>
+
+    <!-- Here come strings which are not contained in the AOSP -->
+    <string name="alarm_prealarm">Предбудильник</string>
+    <string name="prealarm_duration_title">Длительность предбудильника</string>
+    <string-array name="prealarm_duration_entries">
+        <item>10 минут</item>
+        <item>20 минут</item>
+        <item>30 минут</item>
+        <item>45 минут</item>
+        <item>60 минут</item>
+    </string-array>
+    <string name="prealarm_summary">Предбудильник зазвонит через <xliff:g id="minutes">%d</xliff:g> минут перед основным</string>
+
 </resources>
