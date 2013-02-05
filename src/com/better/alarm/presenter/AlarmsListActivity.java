@@ -28,11 +28,12 @@ import com.better.alarm.R;
 import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.presenter.AlarmsListFragment.ShowDetailsStrategy;
+import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialogHandler;
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */
-public class AlarmsListActivity extends Activity {
+public class AlarmsListActivity extends Activity implements AlarmTimePickerDialogHandler {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,4 +115,13 @@ public class AlarmsListActivity extends Activity {
             startActivity(intent);
         }
     };
+
+    public void showTimePicker(Alarm alarm) {
+        TimePickerDialogFragment.showTimePicker(alarm, getFragmentManager());
+    }
+
+    @Override
+    public void onDialogTimeSet(Alarm alarm, int hourOfDay, int minute) {
+        alarm.edit().setHour(hourOfDay).setMinutes(minute).commit();
+    }
 }
