@@ -21,6 +21,8 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.media.AudioManager;
@@ -29,6 +31,7 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
@@ -44,13 +47,10 @@ import com.github.androidutils.wakelock.WakeLockManager;
  * another activity overrides the AlarmAlert dialog.
  */
 public class KlaxonService extends Service {
-    // Volume suggested by media team for in-call alarms.
-    private static final float IN_CALL_VOLUME = 0.125f;
     private boolean mPlaying = false;
     private MediaPlayer mMediaPlayer;
     private TelephonyManager mTelephonyManager;
     private Logger log;
-
     private Intent mIntent;
     private Volume volume;
 
@@ -66,7 +66,11 @@ public class KlaxonService extends Service {
         }
     }
 
-    private static class Volume extends PhoneStateListener {
+    private static class Volume extends PhoneStateListener implements OnSharedPreferenceChangeListener {
+        private static final String KEY_PREALARM_VOLUME = "key_prealarm_volume";
+        // Volume suggested by media team for in-call alarms.
+        private static final float IN_CALL_VOLUME = 0.125f;
+
         public enum Type {
             NORMAL, PREALARM
         };
@@ -75,6 +79,7 @@ public class KlaxonService extends Service {
         private MediaPlayer player;
         private final Logger log;
         private final TelephonyManager mTelephonyManager;
+        private float preAlarmVolume = IN_CALL_VOLUME;
 
         public Volume(Logger log, TelephonyManager telephonyManager) {
             this.log = log;
@@ -96,7 +101,7 @@ public class KlaxonService extends Service {
                 log.d("Using the in-call alarm");
                 player.setVolume(IN_CALL_VOLUME, IN_CALL_VOLUME);
             } else if (type == Type.PREALARM) {
-                player.setVolume(IN_CALL_VOLUME, IN_CALL_VOLUME);
+                player.setVolume(preAlarmVolume, preAlarmVolume);
             } else {
                 player.setVolume(1.0f, 1.0f);
             }
@@ -109,6 +114,18 @@ public class KlaxonService extends Service {
             // which kills the alarm. Check against the initial call state so
             // we don't kill the alarm during a call.
         }
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (key.equals(KEY_PREALARM_VOLUME)) {
+                int volume = sharedPreferences.getInt(key, 0);
+                // TODO logarithmic
+                preAlarmVolume = 1.0f * volume / 10;
+                if (player != null && player.isPlaying() && type == Type.PREALARM) {
+                    player.setVolume(preAlarmVolume, preAlarmVolume);
+                }
+            }
+        }
     }
 
     @Override
@@ -118,6 +135,9 @@ public class KlaxonService extends Service {
         mTelephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         mTelephonyManager.listen(volume, PhoneStateListener.LISTEN_CALL_STATE);
         volume = new Volume(log, mTelephonyManager);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        sp.registerOnSharedPreferenceChangeListener(volume);
+        volume.onSharedPreferenceChanged(sp, "key_prealarm_volume");
     }
 
     @Override
@@ -126,6 +146,8 @@ public class KlaxonService extends Service {
         // Stop listening for incoming calls.
         mTelephonyManager.listen(volume, 0);
         WakeLockManager.getWakeLockManager().releasePartialWakeLock(mIntent);
+        PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                .unregisterOnSharedPreferenceChangeListener(volume);
         log.d("Service destroyed");
     }
 
@@ -158,6 +180,14 @@ public class KlaxonService extends Service {
                 stopSelf();
                 return START_NOT_STICKY;
 
+            } else if (action.equals(Intents.ACTION_START_PREALARM_SAMPLE)) {
+                onStartPrealarmSample();
+                return START_STICKY;
+
+            } else if (action.equals(Intents.ACTION_STOP_PREALARM_SAMPLE)) {
+                stopSelf();
+                return START_NOT_STICKY;
+
             } else {
                 log.e("unexpected intent " + intent.getAction());
                 stopSelf();
@@ -182,6 +212,17 @@ public class KlaxonService extends Service {
         volume.setMode(Volume.Type.PREALARM);
         if (!alarm.isSilent()) {
             play(getAlertOrDefault(alarm));
+        }
+        mPlaying = true;
+    }
+
+    private void onStartPrealarmSample() {
+        volume.setMode(Volume.Type.PREALARM);
+        // if already playing do nothing. In this case signal continues.
+        if (!mPlaying) {
+            play(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
+        } else {
+            volume.apply();
         }
         mPlaying = true;
     }
