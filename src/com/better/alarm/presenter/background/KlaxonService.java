@@ -44,9 +44,12 @@ import com.github.androidutils.wakelock.WakeLockManager;
  * another activity overrides the AlarmAlert dialog.
  */
 public class KlaxonService extends Service {
+    // Volume suggested by media team for in-call alarms.
+    private static final float IN_CALL_VOLUME = 0.125f;
     private boolean mPlaying = false;
     private MediaPlayer mMediaPlayer;
     private TelephonyManager mTelephonyManager;
+    private Logger log;
 
     private Intent mIntent;
 
@@ -99,37 +102,44 @@ public class KlaxonService extends Service {
         mIntent = intent;
         int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
         String action = intent.getAction();
+        try {
+            if (action.equals(Intents.ALARM_ALERT_ACTION)) {
+                Alarm alarm = AlarmsManager.getAlarmsManager().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
+                onAlarm(alarm);
+                return START_STICKY;
 
-        if (action.equals(Intents.ALARM_ALERT_ACTION)) {
-            Alarm alarm = AlarmsManager.getAlarmsManager().getAlarm(id);
-            play(alarm, false);
-            return START_STICKY;
+            } else if (action.equals(Intents.ALARM_PREALARM_ACTION)) {
+                Alarm alarm = AlarmsManager.getAlarmsManager().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
+                onPreAlarm(alarm);
+                return START_STICKY;
 
-        } else if (action.equals(Intents.ALARM_PREALARM_ACTION)) {
-            Alarm alarm = AlarmsManager.getAlarmsManager().getAlarm(id);
-            play(alarm, true);
-            return START_STICKY;
+            } else if (action.equals(Intents.ALARM_SNOOZE_ACTION)) {
+                stopSelf();
+                return START_NOT_STICKY;
 
-        } else if (action.equals(Intents.ALARM_SNOOZE_ACTION)) {
+            } else if (action.equals(Intents.ACTION_SOUND_EXPIRED)) {
+                stopSelf();
+                return START_NOT_STICKY;
+
+            } else {
+                log.e("unexpected intent " + intent.getAction());
+                stopSelf();
+                return START_NOT_STICKY;
+            }
+        } catch (Exception e) {
+            log.e("Something went wrong" + e.getMessage());
             stopSelf();
             return START_NOT_STICKY;
-
-        } else if (action.equals(Intents.ALARM_DISMISS_ACTION)) {
-            stopSelf();
-            return START_NOT_STICKY;
-
-        } else if (action.equals(Intents.ACTION_SOUND_EXPIRED)) {
-            stopSelf();
-            return START_NOT_STICKY;
-
-        } else return START_NOT_STICKY;
-
+        }
     }
 
-    // Volume suggested by media team for in-call alarms.
-    private static final float IN_CALL_VOLUME = 0.125f;
+    private void onAlarm(Alarm alarm) throws Exception {
+        play(alarm, false);
+    }
 
-    private Logger log;
+    private void onPreAlarm(Alarm alarm) throws Exception {
+        play(alarm, true);
+    }
 
     private void play(Alarm alarm, boolean prealarm) {
         // stop() checks to see if we are already playing.
@@ -217,7 +227,7 @@ public class KlaxonService extends Service {
     /**
      * Stops alarm audio
      */
-    public void stop() {
+    private void stop() {
         log.d("stop()");
         if (mPlaying) {
             mPlaying = false;
@@ -230,5 +240,4 @@ public class KlaxonService extends Service {
             }
         }
     }
-
 }
