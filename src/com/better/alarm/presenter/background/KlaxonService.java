@@ -67,9 +67,11 @@ public class KlaxonService extends Service {
     }
 
     private static class Volume extends PhoneStateListener implements OnSharedPreferenceChangeListener {
-        private static final String KEY_PREALARM_VOLUME = "key_prealarm_volume";
         // Volume suggested by media team for in-call alarms.
         private static final float IN_CALL_VOLUME = 0.125f;
+
+        // i^2/100
+        private static final float[] VOLUMES = { 0f, 0.01f, 0.04f, 0.09f, 0.16f, 0.25f, 0.36f, 0.49f, 0.64f, 0.81f };
 
         public enum Type {
             NORMAL, PREALARM
@@ -117,10 +119,13 @@ public class KlaxonService extends Service {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (key.equals(KEY_PREALARM_VOLUME)) {
-                int volume = sharedPreferences.getInt(key, 0);
-                // TODO logarithmic
-                preAlarmVolume = 1.0f * volume / 10;
+            if (key.equals(Intents.KEY_PREALARM_VOLUME)) {
+                int volume = sharedPreferences.getInt(key, Intents.DEFAULT_PREALARM_VOLUME);
+                if (volume > VOLUMES.length) {
+                    volume = VOLUMES.length;
+                    log.w("Truncated volume!");
+                }
+                preAlarmVolume = VOLUMES[volume];
                 if (player != null && player.isPlaying() && type == Type.PREALARM) {
                     player.setVolume(preAlarmVolume, preAlarmVolume);
                 }

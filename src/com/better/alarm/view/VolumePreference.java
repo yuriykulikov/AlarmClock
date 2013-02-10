@@ -284,8 +284,6 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
      * preference, which is changed by the volumizer strategy.
      */
     public static class PreAlarmVolumizerStrategy implements IVolumizerStrategy {
-        private static final int DEFAULT_PREALARM_VOLUME = 4;
-        private static final String KEY_PREALARM_VOLUME = "key_prealarm_volume";
         private final Context mContext;
         Logger log = Logger.getDefaultLogger();
         private final SharedPreferences sp;
@@ -298,18 +296,18 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
 
         @Override
         public int getMaxVolume() {
-            return 10;
+            return Intents.MAX_PREALARM_VOLUME;
         }
 
         @Override
         public int getVolume() {
-            return sp.getInt(KEY_PREALARM_VOLUME, DEFAULT_PREALARM_VOLUME);
+            return sp.getInt(Intents.KEY_PREALARM_VOLUME, Intents.DEFAULT_PREALARM_VOLUME);
         }
 
         @Override
         public void setVolume(int progress) {
             Editor editor = sp.edit();
-            editor.putInt(KEY_PREALARM_VOLUME, progress);
+            editor.putInt(Intents.KEY_PREALARM_VOLUME, progress);
             editor.commit();
         };
 
