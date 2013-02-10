@@ -97,7 +97,8 @@
                 <action android:name="com.better.alarm.ALARM_SNOOZE" />
                 <action android:name="com.better.alarm.ALARM_DISMISS" />
                 <action android:name="com.better.alarm.ACTION_SOUND_EXPIRED" />
-                <action android:name="com.better.alarm.START_TEST_ALARM" />
+                <action android:name="com.better.alarm.ACTION_START_PREALARM_SAMPLE" />
+                <action android:name="com.better.alarm.ACTION_STOP_PREALARM_SAMPLE" />
             </intent-filter>
         </receiver>
         <service
