@@ -52,6 +52,7 @@ public class KlaxonService extends Service {
     private Logger log;
 
     private Intent mIntent;
+    private Volume volume;
 
     /**
      * Dispatches intents to the KlaxonService
@@ -65,7 +66,42 @@ public class KlaxonService extends Service {
         }
     }
 
-    private final PhoneStateListener mPhoneStateListener = new PhoneStateListener() {
+    private static class Volume extends PhoneStateListener {
+        public enum Type {
+            NORMAL, PREALARM
+        };
+
+        private Type type = Type.NORMAL;
+        private MediaPlayer player;
+        private final Logger log;
+        private final TelephonyManager mTelephonyManager;
+
+        public Volume(Logger log, TelephonyManager telephonyManager) {
+            this.log = log;
+            mTelephonyManager = telephonyManager;
+        }
+
+        public void setMode(Type type) {
+            this.type = type;
+        }
+
+        public void setPlayer(MediaPlayer player) {
+            this.player = player;
+        }
+
+        public void apply() {
+            // Check if we are in a call. If we are, use the in-call alarm
+            // resource at a low volume to not disrupt the call.
+            if (mTelephonyManager.getCallState() != TelephonyManager.CALL_STATE_IDLE) {
+                log.d("Using the in-call alarm");
+                player.setVolume(IN_CALL_VOLUME, IN_CALL_VOLUME);
+            } else if (type == Type.PREALARM) {
+                player.setVolume(IN_CALL_VOLUME, IN_CALL_VOLUME);
+            } else {
+                player.setVolume(1.0f, 1.0f);
+            }
+        }
+
         @Override
         public void onCallStateChanged(int state, String ignored) {
             // The user might already be in a call when the alarm fires. When
@@ -73,21 +109,22 @@ public class KlaxonService extends Service {
             // which kills the alarm. Check against the initial call state so
             // we don't kill the alarm during a call.
         }
-    };
+    }
 
     @Override
     public void onCreate() {
         log = Logger.getDefaultLogger();
         // Listen for incoming calls to kill the alarm.
         mTelephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+        mTelephonyManager.listen(volume, PhoneStateListener.LISTEN_CALL_STATE);
+        volume = new Volume(log, mTelephonyManager);
     }
 
     @Override
     public void onDestroy() {
         stop();
         // Stop listening for incoming calls.
-        mTelephonyManager.listen(mPhoneStateListener, 0);
+        mTelephonyManager.listen(volume, 0);
         WakeLockManager.getWakeLockManager().releasePartialWakeLock(mIntent);
         log.d("Service destroyed");
     }
@@ -134,72 +171,76 @@ public class KlaxonService extends Service {
     }
 
     private void onAlarm(Alarm alarm) throws Exception {
-        play(alarm, false);
+        volume.setMode(Volume.Type.NORMAL);
+        if (!alarm.isSilent()) {
+            play(getAlertOrDefault(alarm));
+        }
+        mPlaying = true;
     }
 
     private void onPreAlarm(Alarm alarm) throws Exception {
-        play(alarm, true);
+        volume.setMode(Volume.Type.PREALARM);
+        if (!alarm.isSilent()) {
+            play(getAlertOrDefault(alarm));
+        }
+        mPlaying = true;
     }
 
-    private void play(Alarm alarm, boolean prealarm) {
+    private void play(Uri alert) {
         // stop() checks to see if we are already playing.
         stop();
 
-        log.d("AlarmKlaxon.play() " + alarm.getId() + " alert " + alarm.getAlert());
-
-        if (!alarm.isSilent()) {
-            Uri alert = alarm.getAlert();
-            // Fall back on the default alarm if the database does not have an
-            // alarm stored.
-            if (alert == null) {
-                alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-                log.d("Using default alarm: " + alert.toString());
+        // TODO: Reuse mMediaPlayer instead of creating a new one and/or use
+        // RingtoneManager.
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setOnErrorListener(new OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+                log.e("Error occurred while playing audio.");
+                mp.stop();
+                mp.release();
+                mMediaPlayer = null;
+                return true;
             }
+        });
 
-            // TODO: Reuse mMediaPlayer instead of creating a new one and/or use
-            // RingtoneManager.
-            mMediaPlayer = new MediaPlayer();
-            mMediaPlayer.setOnErrorListener(new OnErrorListener() {
-                @Override
-                public boolean onError(MediaPlayer mp, int what, int extra) {
-                    log.e("Error occurred while playing audio.");
-                    mp.stop();
-                    mp.release();
-                    mMediaPlayer = null;
-                    return true;
-                }
-            });
-
+        volume.setPlayer(mMediaPlayer);
+        volume.apply();
+        try {
+            // Check if we are in a call. If we are, use the in-call alarm
+            // resource at a low volume to not disrupt the call.
+            if (mTelephonyManager.getCallState() != TelephonyManager.CALL_STATE_IDLE) {
+                log.d("Using the in-call alarm");
+                setDataSourceFromResource(getResources(), mMediaPlayer, R.raw.in_call_alarm);
+            } else {
+                mMediaPlayer.setDataSource(this, alert);
+            }
+            startAlarm(mMediaPlayer);
+        } catch (Exception ex) {
+            log.w("Using the fallback ringtone");
+            // The alert may be on the sd card which could be busy right
+            // now. Use the fallback ringtone.
             try {
-                // Check if we are in a call. If we are, use the in-call alarm
-                // resource at a low volume to not disrupt the call.
-                if (mTelephonyManager.getCallState() != TelephonyManager.CALL_STATE_IDLE) {
-                    log.d("Using the in-call alarm");
-                    mMediaPlayer.setVolume(IN_CALL_VOLUME, IN_CALL_VOLUME);
-                    setDataSourceFromResource(getResources(), mMediaPlayer, R.raw.in_call_alarm);
-                } else if (prealarm) {
-                    mMediaPlayer.setVolume(IN_CALL_VOLUME, IN_CALL_VOLUME);
-                    mMediaPlayer.setDataSource(this, alert);
-                } else {
-                    mMediaPlayer.setDataSource(this, alert);
-                }
+                // Must reset the media player to clear the error state.
+                mMediaPlayer.reset();
+                setDataSourceFromResource(getResources(), mMediaPlayer, R.raw.fallbackring);
                 startAlarm(mMediaPlayer);
-            } catch (Exception ex) {
-                log.w("Using the fallback ringtone");
-                // The alert may be on the sd card which could be busy right
-                // now. Use the fallback ringtone.
-                try {
-                    // Must reset the media player to clear the error state.
-                    mMediaPlayer.reset();
-                    setDataSourceFromResource(getResources(), mMediaPlayer, R.raw.fallbackring);
-                    startAlarm(mMediaPlayer);
-                } catch (Exception ex2) {
-                    // At this point we just don't play anything.
-                    log.e("Failed to play fallback ringtone", ex2);
-                }
+            } catch (Exception ex2) {
+                // At this point we just don't play anything.
+                log.e("Failed to play fallback ringtone", ex2);
             }
         }
-        mPlaying = true;
+    }
+
+    private Uri getAlertOrDefault(Alarm alarm) {
+        Uri alert = alarm.getAlert();
+        // Fall back on the default alarm if the database does not have an
+        // alarm stored.
+        if (alert == null) {
+            alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+            log.d("Using default alarm: " + alert.toString());
+        }
+        return alert;
     }
 
     // Do the common stuff when starting the alarm.
