@@ -99,6 +99,9 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
         volumizers.add(new SeekBarVolumizer(seekBar, new AudioManagerVolumizerStrategy(getContext(),
                 AudioManager.STREAM_ALARM, null), this));
 
+        final SeekBar alarmSeekBar = (SeekBar) view.findViewById(R.id.seekbar_alarm);
+        volumizers.add(new SeekBarVolumizer(alarmSeekBar, new AlarmVolumizerStrategy(getContext()), this));
+
         final SeekBar preAlarmSeekBar = (SeekBar) view.findViewById(R.id.seekbar_prealarm);
         volumizers.add(new SeekBarVolumizer(preAlarmSeekBar, new PreAlarmVolumizerStrategy(getContext()), this));
 
@@ -313,8 +316,10 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
 
         @Override
         public void stopSample() {
-            isPlaying = false;
-            mContext.sendBroadcast(new Intent(Intents.ACTION_STOP_PREALARM_SAMPLE));
+            if (isPlaying) {
+                isPlaying = false;
+                mContext.sendBroadcast(new Intent(Intents.ACTION_STOP_PREALARM_SAMPLE));
+            }
         }
 
         @Override
@@ -322,6 +327,56 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
             if (!isPlaying) {
                 isPlaying = true;
                 mContext.sendBroadcast(new Intent(Intents.ACTION_START_PREALARM_SAMPLE));
+            }
+        }
+    }
+
+    /**
+     * This volumizer strategy uses a dedicated service to play sound and change
+     * volume. Service is started/stopped using intents. Service observes volume
+     * preference, which is changed by the volumizer strategy.
+     */
+    public static class AlarmVolumizerStrategy implements IVolumizerStrategy {
+        private final Context mContext;
+        Logger log = Logger.getDefaultLogger();
+        private final SharedPreferences sp;
+        private boolean isPlaying = false;
+
+        public AlarmVolumizerStrategy(Context context) {
+            mContext = context;
+            sp = PreferenceManager.getDefaultSharedPreferences(mContext);
+        }
+
+        @Override
+        public int getMaxVolume() {
+            return Intents.MAX_ALARM_VOLUME;
+        }
+
+        @Override
+        public int getVolume() {
+            return sp.getInt(Intents.KEY_ALARM_VOLUME, Intents.DEFAULT_ALARM_VOLUME);
+        }
+
+        @Override
+        public void setVolume(int progress) {
+            Editor editor = sp.edit();
+            editor.putInt(Intents.KEY_ALARM_VOLUME, progress);
+            editor.commit();
+        };
+
+        @Override
+        public void stopSample() {
+            if (isPlaying) {
+                isPlaying = false;
+                mContext.sendBroadcast(new Intent(Intents.ACTION_STOP_ALARM_SAMPLE));
+            }
+        }
+
+        @Override
+        public void startSample() {
+            if (!isPlaying) {
+                isPlaying = true;
+                mContext.sendBroadcast(new Intent(Intents.ACTION_START_ALARM_SAMPLE));
             }
         }
     }

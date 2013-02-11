@@ -70,9 +70,19 @@ public class Intents {
 
     public static final String ACTION_START_PREALARM_SAMPLE = "com.better.alarm.ACTION_START_PREALARM_SAMPLE";
 
-    public static final int MAX_PREALARM_VOLUME = 9;
+    public static final String ACTION_STOP_ALARM_SAMPLE = "com.better.alarm.ACTION_STOP_ALARM_SAMPLE";
 
-    public static final int DEFAULT_PREALARM_VOLUME = 4;
+    public static final String ACTION_START_ALARM_SAMPLE = "com.better.alarm.ACTION_START_ALARM_SAMPLE";
+
+    public static final int MAX_ALARM_VOLUME = 10;
+
+    public static final int MAX_PREALARM_VOLUME = 10;
+
+    public static final int DEFAULT_PREALARM_VOLUME = 5;
+
+    public static final int DEFAULT_ALARM_VOLUME = 10;
 
     public static final String KEY_PREALARM_VOLUME = "key_prealarm_volume";
+
+    public static final String KEY_ALARM_VOLUME = "key_alarm_volume";
 }

@@ -26,13 +26,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="20dip" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/alarm_volume_title" />
+        android:text="@string/master_volume" />
 
     <SeekBar
         android:id="@+id/seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dip" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/main_alarm" />
+
+    <SeekBar
+        android:id="@+id/seekbar_alarm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="20dip" />

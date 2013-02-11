@@ -70,8 +70,14 @@ public class KlaxonService extends Service {
         // Volume suggested by media team for in-call alarms.
         private static final float IN_CALL_VOLUME = 0.125f;
 
+        // TODO XML
         // i^2/100
-        private static final float[] VOLUMES = { 0f, 0.01f, 0.04f, 0.09f, 0.16f, 0.25f, 0.36f, 0.49f, 0.64f, 0.81f };
+        private static final float[] PREALARM_VOLUMES = { 0f, 0.01f, 0.04f, 0.09f, 0.16f, 0.25f, 0.36f, 0.49f, 0.64f,
+                0.81f, 1.0f };
+
+        // i^2/100
+        private static final float[] ALARM_VOLUMES = { 0f, 0.01f, 0.04f, 0.09f, 0.16f, 0.25f, 0.36f, 0.49f, 0.64f,
+                0.81f, 1.0f };
 
         public enum Type {
             NORMAL, PREALARM
@@ -82,6 +88,7 @@ public class KlaxonService extends Service {
         private final Logger log;
         private final TelephonyManager mTelephonyManager;
         private float preAlarmVolume = IN_CALL_VOLUME;
+        private float alarmVolume = 1.0f;
 
         public Volume(Logger log, TelephonyManager telephonyManager) {
             this.log = log;
@@ -105,7 +112,7 @@ public class KlaxonService extends Service {
             } else if (type == Type.PREALARM) {
                 player.setVolume(preAlarmVolume, preAlarmVolume);
             } else {
-                player.setVolume(1.0f, 1.0f);
+                player.setVolume(alarmVolume, alarmVolume);
             }
         }
 
@@ -121,13 +128,24 @@ public class KlaxonService extends Service {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.equals(Intents.KEY_PREALARM_VOLUME)) {
                 int volume = sharedPreferences.getInt(key, Intents.DEFAULT_PREALARM_VOLUME);
-                if (volume > VOLUMES.length) {
-                    volume = VOLUMES.length;
+                if (volume > PREALARM_VOLUMES.length) {
+                    volume = PREALARM_VOLUMES.length;
                     log.w("Truncated volume!");
                 }
-                preAlarmVolume = VOLUMES[volume];
+                preAlarmVolume = PREALARM_VOLUMES[volume];
                 if (player != null && player.isPlaying() && type == Type.PREALARM) {
                     player.setVolume(preAlarmVolume, preAlarmVolume);
+                }
+
+            } else if (key.equals(Intents.KEY_ALARM_VOLUME)) {
+                int volume = sharedPreferences.getInt(key, Intents.DEFAULT_ALARM_VOLUME);
+                if (volume > ALARM_VOLUMES.length) {
+                    volume = ALARM_VOLUMES.length;
+                    log.w("Truncated volume!");
+                }
+                alarmVolume = ALARM_VOLUMES[volume];
+                if (player != null && player.isPlaying() && type == Type.NORMAL) {
+                    player.setVolume(alarmVolume, alarmVolume);
                 }
             }
         }
@@ -142,7 +160,8 @@ public class KlaxonService extends Service {
         volume = new Volume(log, mTelephonyManager);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         sp.registerOnSharedPreferenceChangeListener(volume);
-        volume.onSharedPreferenceChanged(sp, "key_prealarm_volume");
+        volume.onSharedPreferenceChanged(sp, Intents.KEY_PREALARM_VOLUME);
+        volume.onSharedPreferenceChanged(sp, Intents.KEY_ALARM_VOLUME);
     }
 
     @Override
@@ -186,10 +205,18 @@ public class KlaxonService extends Service {
                 return START_NOT_STICKY;
 
             } else if (action.equals(Intents.ACTION_START_PREALARM_SAMPLE)) {
-                onStartPrealarmSample();
+                onStartAlarmSample(Volume.Type.PREALARM);
                 return START_STICKY;
 
             } else if (action.equals(Intents.ACTION_STOP_PREALARM_SAMPLE)) {
+                stopSelf();
+                return START_NOT_STICKY;
+
+            } else if (action.equals(Intents.ACTION_START_ALARM_SAMPLE)) {
+                onStartAlarmSample(Volume.Type.NORMAL);
+                return START_STICKY;
+
+            } else if (action.equals(Intents.ACTION_STOP_ALARM_SAMPLE)) {
                 stopSelf();
                 return START_NOT_STICKY;
 
@@ -221,14 +248,13 @@ public class KlaxonService extends Service {
         mPlaying = true;
     }
 
-    private void onStartPrealarmSample() {
-        volume.setMode(Volume.Type.PREALARM);
+    private void onStartAlarmSample(Volume.Type type) {
+        volume.setMode(type);
         // if already playing do nothing. In this case signal continues.
         if (!mPlaying) {
             play(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
-        } else {
-            volume.apply();
         }
+        volume.apply();
         mPlaying = true;
     }
 

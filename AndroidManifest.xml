@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.better.alarm"
-    android:versionCode="2011"
-    android:versionName="2.0.11" >
+    android:versionCode="2012"
+    android:versionName="2.0.12" >
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -99,6 +99,8 @@
                 <action android:name="com.better.alarm.ACTION_SOUND_EXPIRED" />
                 <action android:name="com.better.alarm.ACTION_START_PREALARM_SAMPLE" />
                 <action android:name="com.better.alarm.ACTION_STOP_PREALARM_SAMPLE" />
+                <action android:name="com.better.alarm.ACTION_START_ALARM_SAMPLE" />
+                <action android:name="com.better.alarm.ACTION_STOP_ALARM_SAMPLE" />
             </intent-filter>
         </receiver>
         <service
