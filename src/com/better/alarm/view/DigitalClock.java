@@ -173,13 +173,13 @@ public class DigitalClock extends LinearLayout {
             mTimeDisplay.setText(newTime);
         }
         if (mAmPm != null) {
-            mAmPm.setIsMorning(mCalendar.get(Calendar.AM_PM) == 0);
+            mAmPm.setIsMorning(mCalendar.get(Calendar.AM_PM) == 0 || isInEditMode());
         }
     }
 
     private void setDateFormat() {
         mFormat = android.text.format.DateFormat.is24HourFormat(getContext()) ? M24 : M12;
-        mAmPm.setShowAmPm(mFormat == M12);
+        mAmPm.setShowAmPm(mFormat == M12 || isInEditMode());
     }
 
     public void setLive(boolean live) {
