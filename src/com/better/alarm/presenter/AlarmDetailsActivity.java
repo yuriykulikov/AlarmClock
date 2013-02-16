@@ -20,8 +20,6 @@ package com.better.alarm.presenter;
 import java.util.Calendar;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
@@ -205,7 +203,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
         if (preference == mTimePref) {
-            showTimePicker();
+            TimePickerDialogFragment.showTimePicker(alarms.getAlarm(mId), getFragmentManager());
         }
 
         return super.onPreferenceTreeClick(preferenceScreen, preference);
@@ -215,18 +213,6 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     public void onBackPressed() {
         revert();
         finish();
-    }
-
-    private void showTimePicker() {
-        final FragmentTransaction ft = getFragmentManager().beginTransaction();
-        final Fragment prev = getFragmentManager().findFragmentByTag("time_dialog");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        ft.addToBackStack(null);
-
-        final TimePickerDialogFragment fragment = TimePickerDialogFragment.newInstance(mId, this);
-        fragment.show(ft, "time_dialog");
     }
 
     @Override

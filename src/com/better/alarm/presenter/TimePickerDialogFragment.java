@@ -18,6 +18,9 @@ package com.better.alarm.presenter;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,14 +45,12 @@ public class TimePickerDialogFragment extends DialogFragment {
     private final Logger log = Logger.getDefaultLogger();
 
     /**
-     * TODO we should not use getActivity. Instead we should pass a listener or
-     * come up with something else
      * 
      * @param id
      * @param handler
      * @return
      */
-    public static TimePickerDialogFragment newInstance(int id, AlarmTimePickerDialogHandler handler) {
+    public static TimePickerDialogFragment newInstance(int id) {
         final TimePickerDialogFragment frag = new TimePickerDialogFragment();
         Bundle args = new Bundle();
         args.putInt(KEY_ALARM, id);
@@ -105,5 +106,17 @@ public class TimePickerDialogFragment extends DialogFragment {
 
     interface AlarmTimePickerDialogHandler {
         void onDialogTimeSet(Alarm alarm, int hourOfDay, int minute);
+    }
+
+    public static void showTimePicker(Alarm alarm, FragmentManager fragmentManager) {
+        final FragmentTransaction ft = fragmentManager.beginTransaction();
+        final Fragment prev = fragmentManager.findFragmentByTag("time_dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        final TimePickerDialogFragment fragment = TimePickerDialogFragment.newInstance(alarm.getId());
+        fragment.show(ft, "time_dialog");
     }
 }
