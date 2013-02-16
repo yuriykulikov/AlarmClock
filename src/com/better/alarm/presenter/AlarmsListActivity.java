@@ -45,8 +45,7 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
         }
 
         setContentView(R.layout.list_activity);
-        AlarmsListFragment alarmsListFragment = (AlarmsListFragment) getFragmentManager().findFragmentById(
-                R.id.alarmsListFragment);
+        alarmsListFragment = (AlarmsListFragment) getFragmentManager().findFragmentById(R.id.alarmsListFragment);
 
         if (isTablet) {
             // TODO
@@ -115,6 +114,7 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
             startActivity(intent);
         }
     };
+    private AlarmsListFragment alarmsListFragment;
 
     public void showTimePicker(Alarm alarm) {
         TimePickerDialogFragment.showTimePicker(alarm, getFragmentManager());
@@ -123,5 +123,8 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
     @Override
     public void onDialogTimeSet(Alarm alarm, int hourOfDay, int minute) {
         alarm.edit().setHour(hourOfDay).setMinutes(minute).commit();
+        // this must be invoked synchronously on the Pickers's OK button onClick
+        // otherwise fragment is closed too soon and the time is not updated
+        alarmsListFragment.updateAlarmsList();
     }
 }
