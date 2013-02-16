@@ -33,6 +33,8 @@ import android.preference.PreferenceManager;
 
 import com.better.alarm.R;
 import com.better.alarm.model.interfaces.Alarm;
+import com.better.alarm.model.interfaces.AlarmEditor;
+import com.better.alarm.model.interfaces.AlarmEditor.AlarmChangeData;
 import com.better.alarm.model.interfaces.Intents;
 import com.github.androidutils.logger.Logger;
 import com.github.androidutils.statemachine.ComplexTransition;
@@ -258,6 +260,7 @@ public final class AlarmCore implements Alarm {
             @Override
             protected void onChange(AlarmChangeData changeData) {
                 writeChangeData(changeData);
+                broadcastAlarmState(Intents.ACTION_ALARM_CHANGED);
                 if (container.isEnabled()) {
                     transitionTo(enableTransition);
                 }
@@ -290,6 +293,7 @@ public final class AlarmCore implements Alarm {
             @Override
             protected void onChange(AlarmChangeData changeData) {
                 writeChangeData(changeData);
+                broadcastAlarmState(Intents.ACTION_ALARM_CHANGED);
                 if (container.isEnabled()) {
                     transitionTo(enableTransition);
                 } // else nothing to do
@@ -697,23 +701,19 @@ public final class AlarmCore implements Alarm {
         }
     }
 
-    private class AlarmChangeData {
-        public boolean prealarm;
-        public Uri alert;
-        public String label;
-        public boolean vibrate;
-        public DaysOfWeek daysOfWeek;
-        public int hour;
-        public int minutes;
-        public boolean enabled;
-    }
-
     public void onAlarmFired(CalendarType calendarType) {
         stateMachine.sendMessage(AlarmStateMachine.FIRED);
     }
 
     public void refresh() {
         stateMachine.sendMessage(AlarmStateMachine.REFRESH);
+    }
+
+    public void change(AlarmChangeData data) {
+        Message msg = stateMachine.obtainMessage();
+        msg.what = AlarmStateMachine.CHANGE;
+        msg.obj = data;
+        msg.sendToTarget();
     }
 
     @Override
@@ -734,25 +734,6 @@ public final class AlarmCore implements Alarm {
     @Override
     public void delete() {
         stateMachine.sendMessage(AlarmStateMachine.DELETE);
-    }
-
-    @Override
-    public void change(boolean enabled, int hour, int minute, DaysOfWeek daysOfWeek, boolean vibrate, String label,
-            Uri alert, boolean preAlarm) {
-        AlarmChangeData data = new AlarmChangeData();
-        data.prealarm = preAlarm;
-        data.alert = alert;
-        data.label = label;
-        data.vibrate = vibrate;
-        data.daysOfWeek = daysOfWeek;
-        data.hour = hour;
-        data.minutes = minute;
-        data.enabled = enabled;
-
-        Message msg = stateMachine.obtainMessage();
-        msg.what = AlarmStateMachine.CHANGE;
-        msg.obj = data;
-        msg.sendToTarget();
     }
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -868,5 +849,10 @@ public final class AlarmCore implements Alarm {
         DateFormat df = DateFormat.getDateTimeInstance();
         sb.append(" on ").append(df.format(container.getNextTime().getTime()));
         return sb.toString();
+    }
+
+    @Override
+    public AlarmEditor edit() {
+        return new AlarmEditor(this);
     }
 }

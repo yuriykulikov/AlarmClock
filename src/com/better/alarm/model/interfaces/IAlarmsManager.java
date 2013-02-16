@@ -18,9 +18,6 @@ package com.better.alarm.model.interfaces;
 import java.util.List;
 
 import com.better.alarm.model.AlarmCore;
-import com.better.alarm.model.DaysOfWeek;
-
-import android.net.Uri;
 
 /**
  * An interface for Presenter-Model interaction. Presenters can invoke
@@ -83,21 +80,4 @@ public interface IAlarmsManager {
      * @return id of newly created AlarmCore
      */
     int createNewAlarm();
-
-    /**
-     * A convenience method to change an existing alarm
-     * 
-     * @param id
-     *            - AlarmCore which has to be changed
-     * @param enabled
-     * @param hour
-     * @param minute
-     * @param daysOfWeek
-     * @param vibrate
-     * @param label
-     * @param alert
-     * @param preAlarm
-     */
-    void changeAlarm(int id, boolean enabled, int hour, int minute, DaysOfWeek daysOfWeek, boolean vibrate,
-            String label, Uri alert, boolean preAlarm);
 }

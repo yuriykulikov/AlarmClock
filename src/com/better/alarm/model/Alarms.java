@@ -25,7 +25,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 
 import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.IAlarmsManager;
@@ -106,14 +105,6 @@ public class Alarms implements IAlarmsManager {
     }
 
     // Compatibility - passes calls to Alarms
-
-    @Override
-    public void changeAlarm(int id, boolean enabled, int hour, int minute, DaysOfWeek daysOfWeek, boolean vibrate,
-            String label, Uri alert, boolean preAlarm) {
-        Alarm alarm = getAlarm(id);
-        alarm.change(enabled, hour, minute, daysOfWeek, vibrate, label, alert, preAlarm);
-        notifyAlarmListChangedListeners();
-    }
 
     @Override
     public List<Alarm> getAlarmsList() {

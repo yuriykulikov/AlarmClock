@@ -2,10 +2,10 @@ package com.better.alarm.model.interfaces;
 
 import java.util.Calendar;
 
-import com.better.alarm.model.DaysOfWeek;
-
 import android.content.Context;
 import android.net.Uri;
+
+import com.better.alarm.model.DaysOfWeek;
 
 public interface Alarm {
 
@@ -25,8 +25,7 @@ public interface Alarm {
 
     public void delete();
 
-    public void change(boolean enabled, int hour, int minute, DaysOfWeek daysOfWeek, boolean vibrate, String label,
-            Uri alert, boolean preAlarm);
+    public AlarmEditor edit();
 
     /**
      * TODO calendar should be immutable

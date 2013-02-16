@@ -38,6 +38,7 @@ import android.widget.Button;
 import com.better.alarm.R;
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.interfaces.Alarm;
+import com.better.alarm.model.interfaces.AlarmEditor;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.view.AlarmPreference;
@@ -240,8 +241,19 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     }
 
     private long saveAlarm() {
-        alarms.changeAlarm(mId, mEnabledPref.isChecked(), mHour, mMinute, mRepeatPref.getDaysOfWeek(), true, "",
-                mAlarmPref.getAlert(), mPreAlarmPref.isChecked());
+        Alarm alarm = alarms.getAlarm(mId);
+        AlarmEditor editor = alarm.edit();
+        //@formatter:off
+        editor.setEnabled(mEnabledPref.isChecked())
+              .setHour(mHour)
+              .setMinutes(mMinute)
+              .setDaysOfWeek(mRepeatPref.getDaysOfWeek())
+              .setVibrate(true)
+              .setLabel("")
+              .setAlert(mAlarmPref.getAlert())
+              .setPrealarm(mPreAlarmPref.isChecked());
+        //@formatter:on
+        editor.commit();
         isNewAlarm = false;
         return alarms.getAlarm(mId).getNextTime().getTimeInMillis();
     }
