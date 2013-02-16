@@ -32,6 +32,7 @@ import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.view.DigitalClock;
+import com.github.androidutils.logger.Logger;
 
 /**
  * Shows a list of alarms. To react on user interaction, requires a strategy. An
@@ -50,6 +51,8 @@ public class AlarmsListFragment extends ListFragment {
 
     private final int mCurCheckPosition = 0;
 
+    private final Logger log = Logger.getDefaultLogger();
+
     public class AlarmListAdapter extends ArrayAdapter<Alarm> {
         private final Context context;
         private final List<Alarm> values;
@@ -61,10 +64,14 @@ public class AlarmsListFragment extends ListFragment {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View rowView = inflater.inflate(R.layout.list_row, parent, false);
-
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            View rowView;
+            if (convertView == null) {
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                rowView = inflater.inflate(R.layout.list_row, parent, false);
+            } else {
+                rowView = convertView;
+            }
             DigitalClock digitalClock = (DigitalClock) rowView.findViewById(R.id.digitalClock);
             digitalClock.setLive(false);
 
@@ -131,6 +138,7 @@ public class AlarmsListFragment extends ListFragment {
     private class AlarmChangedReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+            log.d(intent.toString());
             updateAlarmsList();
         }
     }
@@ -255,7 +263,7 @@ public class AlarmsListFragment extends ListFragment {
         }
     }
 
-    private void updateAlarmsList() {
+    public void updateAlarmsList() {
         AlarmListAdapter adapter = mAdapter;
         adapter.clear();
         // TODO fixme when we have Parcelable
