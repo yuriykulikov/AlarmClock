@@ -300,14 +300,12 @@ public final class AlarmCore implements Alarm {
 
             @Override
             protected void onDismiss() {
-                broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
                 transitionTo(rescheduleTransition);
             }
 
             @Override
             protected void onDisable() {
                 container.setEnabled(false);
-                broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
                 transitionTo(disabledState);
             }
 
@@ -320,18 +318,13 @@ public final class AlarmCore implements Alarm {
             protected void onDelete() {
                 container.delete();
                 removeAlarm();
-                broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
+                // TODO deleted state
+                transitionTo(disabledState);
             }
 
             @Override
             protected void onPreAlarmDurationChanged() {
                 // nothing to do
-            }
-
-            @Override
-            public void exit(Message reason) {
-                // TODO maybe this is not necessary here?
-                broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
             }
         }
 
@@ -454,7 +447,7 @@ public final class AlarmCore implements Alarm {
             @Override
             public void exit(Message reason) {
                 removeAlarm();
-                broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
+                broadcastAlarmState(Intents.ACTION_CANCEL_SNOOZE);
             }
         }
 
@@ -544,7 +537,7 @@ public final class AlarmCore implements Alarm {
             @Override
             public void exit(Message reason) {
                 removeAlarm();
-                broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
+                broadcastAlarmState(Intents.ACTION_CANCEL_SNOOZE);
             }
         }
 

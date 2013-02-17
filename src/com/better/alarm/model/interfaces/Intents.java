@@ -32,6 +32,11 @@ public class Intents {
     public static final String ALARM_SNOOZE_ACTION = "com.better.alarm.ALARM_SNOOZE";
 
     /**
+     * Broadcasted when alarm is snoozed.
+     */
+    public static final String ACTION_CANCEL_SNOOZE = "com.better.alarm.ACTION_CANCEL_SNOOZE";
+
+    /**
      * Broadcasted when alarm is dismissed.
      */
     public static final String ALARM_DISMISS_ACTION = "com.better.alarm.ALARM_DISMISS";

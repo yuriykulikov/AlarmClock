@@ -70,6 +70,10 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
             nm.cancel(id);
             nm.cancel(id + NOTIFICATION_OFFSET);
 
+        } else if (action.equals(Intents.ACTION_CANCEL_SNOOZE)) {
+            nm.cancel(id);
+            nm.cancel(id + NOTIFICATION_OFFSET);
+
         } else if (action.equals(Intents.ALARM_SNOOZE_ACTION)) {
             nm.cancel(id);
             onSnoozed(id);

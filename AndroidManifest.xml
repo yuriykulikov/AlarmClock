@@ -65,6 +65,7 @@
                 <action android:name="com.better.alarm.ALARM_ALERT" />
                 <action android:name="com.better.alarm.ALARM_PREALARM_ACTION" />
                 <action android:name="com.better.alarm.ALARM_SNOOZE" />
+                <action android:name="com.better.alarm.ACTION_CANCEL_SNOOZE" />
                 <action android:name="com.better.alarm.ALARM_DISMISS" />
                 <action android:name="com.better.alarm.ACTION_SOUND_EXPIRED" />
             </intent-filter>

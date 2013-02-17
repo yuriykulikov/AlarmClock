@@ -123,6 +123,7 @@ public class AlarmAlertFullScreen extends Activity {
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intents.ALARM_SNOOZE_ACTION);
         filter.addAction(Intents.ALARM_DISMISS_ACTION);
+        filter.addAction(Intents.ACTION_CANCEL_SNOOZE);
         filter.addAction(Intents.ACTION_SOUND_EXPIRED);
         registerReceiver(mReceiver, filter);
     }
