@@ -196,6 +196,10 @@ public class KlaxonService extends Service {
                 onPreAlarm(alarm);
                 return START_STICKY;
 
+            } else if (action.equals(Intents.ALARM_DISMISS_ACTION)) {
+                stopSelf();
+                return START_NOT_STICKY;
+
             } else if (action.equals(Intents.ALARM_SNOOZE_ACTION)) {
                 stopSelf();
                 return START_NOT_STICKY;
