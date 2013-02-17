@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -94,6 +95,19 @@ public class AlarmsListFragment extends ListFragment {
                 }
             });
 
+            View detailsWrapper = rowView.findViewById(R.id.details_wrapper);
+            // Set the initial state of the clock "checkbox"
+            final ImageButton detailsButton = (ImageButton) detailsWrapper.findViewById(R.id.details);
+            detailsButton.setFocusable(false);
+            detailsWrapper.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (showDetailsStrategy != null) {
+                        showDetailsStrategy.showDetails(mAdapter.getItem(position));
+                    }
+                }
+            });
+
             // set the alarm text
             final Calendar c = Calendar.getInstance();
             c.set(Calendar.HOUR_OF_DAY, alarm.getHour());
@@ -101,22 +115,13 @@ public class AlarmsListFragment extends ListFragment {
             digitalClock.updateTime(c);
 
             // Set the repeat text or leave it blank if it does not repeat.
-            TextView daysOfWeekView = (TextView) digitalClock.findViewById(R.id.daysOfWeek);
+            TextView daysOfWeekView = (TextView) rowView.findViewById(R.id.daysOfWeek);
             final String daysOfWeekStr = alarm.getDaysOfWeek().toString(getContext(), false);
             if (daysOfWeekStr != null && daysOfWeekStr.length() != 0) {
                 daysOfWeekView.setText(daysOfWeekStr);
                 daysOfWeekView.setVisibility(View.VISIBLE);
             } else {
                 daysOfWeekView.setVisibility(View.GONE);
-            }
-
-            // Display the label
-            TextView labelView = (TextView) rowView.findViewById(R.id.label);
-            if (alarm.getLabel() != null && alarm.getLabel().length() != 0) {
-                labelView.setText(alarm.getLabel());
-                labelView.setVisibility(View.VISIBLE);
-            } else {
-                labelView.setVisibility(View.GONE);
             }
 
             return rowView;
@@ -190,7 +195,8 @@ public class AlarmsListFragment extends ListFragment {
 
         alarms = AlarmsManager.getAlarmsManager();
 
-        setListAdapter(new AlarmListAdapter(getActivity(), R.layout.list_row, R.id.label, new ArrayList<Alarm>()));
+        setListAdapter(new AlarmListAdapter(getActivity(), R.layout.list_row, R.string.alarm_list_title,
+                new ArrayList<Alarm>()));
 
         mAdapter = (AlarmListAdapter) getListAdapter();
 
@@ -214,9 +220,7 @@ public class AlarmsListFragment extends ListFragment {
         // We can display everything in-place with fragments, so update
         // the list to highlight the selected item and show the data.
         getListView().setSelection(position);
-        if (showDetailsStrategy != null) {
-            showDetailsStrategy.showDetails(mAdapter.getItem(position));
-        }
+        ((AlarmsListActivity) getActivity()).showTimePicker(mAdapter.getItem(position));
     }
 
     @Override
