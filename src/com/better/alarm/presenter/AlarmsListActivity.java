@@ -122,7 +122,7 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
 
     @Override
     public void onDialogTimeSet(Alarm alarm, int hourOfDay, int minute) {
-        alarm.edit().setHour(hourOfDay).setMinutes(minute).commit();
+        alarm.edit().setEnabled(true).setHour(hourOfDay).setMinutes(minute).commit();
         // this must be invoked synchronously on the Pickers's OK button onClick
         // otherwise fragment is closed too soon and the time is not updated
         alarmsListFragment.updateAlarmsList();
