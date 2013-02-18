@@ -15,6 +15,9 @@
  */
 package com.better.alarm;
 
+import org.acra.ACRA;
+import org.acra.annotation.ReportsCrashes;
+
 import android.app.Application;
 
 import com.better.alarm.model.AlarmCore;
@@ -30,10 +33,14 @@ import com.github.androidutils.logger.Logger.LogLevel;
 import com.github.androidutils.logger.LoggingExceptionHandler;
 import com.github.androidutils.wakelock.WakeLockManager;
 
+@ReportsCrashes(formKey = "dEZBaFYxLVVRbDl0ZHAyMElab0d3NWc6MQ")
 public class AlarmApplication extends Application {
 
     @Override
     public void onCreate() {
+        // The following line triggers the initialization of ACRA
+        ACRA.init(this);
+
         Logger logger = Logger.getDefaultLogger();
         logger.addLogWriter(new LogcatLogWriterWithLines());
         logger.addLogWriter(new FileLogWriter("BetterAlarm"));

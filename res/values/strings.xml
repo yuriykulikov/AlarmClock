@@ -397,4 +397,5 @@
     <string name="prealarm_summary">Pre-alarm will start<xliff:g id="minutes">%d</xliff:g> minutes before the main alarm</string>
     <string name="main_alarm">Main alarm</string>
     <string name="master_volume">Master volume</string>
+    <string name="bug_report_toast">Sorry, the app has crashed and a report has been sent to developer to prevent this in future</string>
 </resources>
