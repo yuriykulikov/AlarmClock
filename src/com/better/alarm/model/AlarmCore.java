@@ -22,6 +22,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.WeakHashMap;
 
+import org.acra.ACRA;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,7 +39,6 @@ import com.better.alarm.model.interfaces.AlarmEditor;
 import com.better.alarm.model.interfaces.AlarmEditor.AlarmChangeData;
 import com.better.alarm.model.interfaces.Intents;
 import com.github.androidutils.logger.Logger;
-import com.github.androidutils.statemachine.ComplexTransition;
 import com.github.androidutils.statemachine.IMessageWhatToStringConverter;
 import com.github.androidutils.statemachine.IOnStateChangedListener;
 import com.github.androidutils.statemachine.IState;
@@ -246,7 +247,8 @@ public final class AlarmCore implements Alarm {
             addOnStateChangedListener(new IOnStateChangedListener() {
                 @Override
                 public void onStateChanged(IState state) {
-                    if (state != enabledState && !(state instanceof ComplexTransition)) {
+                    // skip abstract and temporary states
+                    if (state != enabledState && state != enableTransition && state != rescheduleTransition) {
                         log.d("saving state " + state.getName());
                         container.setState(state.getName());
                     }
@@ -336,13 +338,10 @@ public final class AlarmCore implements Alarm {
             }
         }
 
-        private class RescheduleTransition extends ComplexTransition {
-            public RescheduleTransition() {
-                super(stateMachine, log);
-            }
-
+        private class RescheduleTransition extends State {
+            // DO this on resume to avoid staying in this state #87
             @Override
-            public void performComplexTransition() {
+            public void resume() {
                 if (container.getDaysOfWeek().isRepeatSet()) {
                     if (container.isPrealarm()) {
                         transitionTo(preAlarmSet);
@@ -355,6 +354,19 @@ public final class AlarmCore implements Alarm {
                     transitionTo(disabledState);
                 }
             }
+
+            @Override
+            public boolean processMessage(Message msg) {
+                // what I have seen from the logs, refresh can come here. This
+                // we don't want. XXX Why the hell it even happens? Do not defer
+                // anything which can cause another transition
+                if (msg.what != REFRESH && msg.what != CHANGE && msg.what != PREALARM_DURATION_CHANGED) {
+                    deferMessage(msg);
+                }
+                ACRA.getErrorReporter().handleSilentException(
+                        new Exception("performComplexTransition() must transit immediately"));
+                return true;
+            };
         }
 
         /**
@@ -363,13 +375,10 @@ public final class AlarmCore implements Alarm {
          * time which is less than preAlarm duration. In this case main alarm
          * should be set.
          */
-        private class EnableTransition extends ComplexTransition {
-            public EnableTransition() {
-                super(stateMachine, log);
-            }
-
+        private class EnableTransition extends State {
+            // DO this on resume to avoid staying in this state #87
             @Override
-            public void performComplexTransition() {
+            public void resume() {
                 Calendar preAlarm = calculateNextTime();
                 preAlarm.add(Calendar.MINUTE, -1 * prealarmMinutes);
                 if (container.isPrealarm() && preAlarm.after(Calendar.getInstance())) {
@@ -378,6 +387,18 @@ public final class AlarmCore implements Alarm {
                     transitionTo(set);
                 }
             }
+
+            @Override
+            public boolean processMessage(Message msg) {
+                // what I have seen from the logs, refresh can come here. This
+                // we don't want
+                if (msg.what != REFRESH) {
+                    deferMessage(msg);
+                }
+                ACRA.getErrorReporter().handleSilentException(
+                        new Exception("performComplexTransition() must transit immediately"));
+                return true;
+            };
         }
 
         private class SetState extends AlarmState {
@@ -616,7 +637,7 @@ public final class AlarmCore implements Alarm {
             for (State state : getStates()) {
                 if (state.getName().equals(initialState)) return state;
             }
-            log.d("wtf? state not found");
+            log.e("wtf? state not found");
             return disabledState;
         }
 
