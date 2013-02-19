@@ -141,4 +141,5 @@
     <string name="prealarm_summary">Der Vorwecker klingelt in <xliff:g id="minutes">%d</xliff:g> Minuten vor dem Wecker</string>
     <string name="main_alarm">Wecker</string>
     <string name="master_volume">Gesamtlautstärke</string>
+    <string name="share">Teilen</string>
 </resources>

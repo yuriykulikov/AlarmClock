@@ -18,6 +18,7 @@
 package com.better.alarm.presenter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -29,6 +30,9 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.provider.Settings;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.ShareActionProvider;
 
 import com.better.alarm.R;
 import com.better.alarm.view.AlarmPreference;
@@ -65,6 +69,25 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         if (!hasVibrator && findPreference("vibrate") != null) {
             getPreferenceScreen().removePreference(findPreference("vibrate"));
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.settings_menu, menu);
+        MenuItem menuItem = menu.findItem(R.id.menu_share);
+        ShareActionProvider sp = (ShareActionProvider) menuItem.getActionProvider();
+
+        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+
+        // Add data to the intent, the receiving app will decide what to do with
+        // it.
+        intent.putExtra(Intent.EXTRA_SUBJECT, "https://play.google.com/store/apps/details?id=com.better.alarm");
+        intent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.better.alarm");
+
+        sp.setShareIntent(intent);
+        return true;
     }
 
     @Override
