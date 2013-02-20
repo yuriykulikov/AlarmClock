@@ -113,6 +113,7 @@ public class Alarms implements IAlarmsManager {
     }
 
     void onAlarmFired(int id, CalendarType calendarType) {
+        mAlarmsScheduler.onAlarmFired(id);
         AlarmCore alarm = getAlarm(id);
         alarm.onAlarmFired(calendarType);
         notifyAlarmListChangedListeners();

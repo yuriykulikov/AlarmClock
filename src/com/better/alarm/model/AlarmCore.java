@@ -19,7 +19,6 @@ package com.better.alarm.model;
 
 import java.text.DateFormat;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.WeakHashMap;
 
 import org.acra.ACRA;
@@ -322,7 +321,7 @@ public final class AlarmCore implements Alarm {
             @Override
             protected void onDelete() {
                 container.delete();
-                mAlarmsScheduler.removeAlarm(container.getId());
+                removeAlarm();
                 broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
             }
 
@@ -584,9 +583,7 @@ public final class AlarmCore implements Alarm {
         }
 
         private void setAlarm(Calendar calendar, CalendarType calendarType) {
-            HashMap<CalendarType, Calendar> calendars = new HashMap<CalendarType, Calendar>();
-            calendars.put(calendarType, calendar);
-            mAlarmsScheduler.setAlarm(container.getId(), calendars);
+            mAlarmsScheduler.setAlarm(container.getId(), calendarType, calendar);
             container.setNextTime(calendar);
         }
 

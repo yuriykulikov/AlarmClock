@@ -19,8 +19,6 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.PriorityQueue;
 
 import android.app.AlarmManager;
@@ -32,7 +30,6 @@ import com.better.alarm.model.interfaces.Intents;
 import com.github.androidutils.logger.Logger;
 
 public class AlarmsScheduler implements IAlarmsScheduler {
-    private static final boolean DBG = true;
     static final String ACTION_FIRED = "com.better.alarm.ACTION_FIRED";
     static final String EXTRA_ID = "intent.extra.alarm";
     static final String EXTRA_TYPE = "intent.extra.type";
@@ -48,9 +45,15 @@ public class AlarmsScheduler implements IAlarmsScheduler {
             this.type = type;
         }
 
+        public ScheduledAlarm(int id) {
+            this.id = id;
+            this.calendar = null;
+            this.type = null;
+        }
+
         @Override
         public boolean equals(Object o) {
-            if (((ScheduledAlarm) o).id == id && ((ScheduledAlarm) o).type == type) return true;
+            if (((ScheduledAlarm) o).id == id) return true;
             else return false;
         }
 
@@ -59,6 +62,15 @@ public class AlarmsScheduler implements IAlarmsScheduler {
             return this.calendar.compareTo(another.calendar);
         }
 
+        @Override
+        public String toString() {
+            DateFormat df = DateFormat.getDateTimeInstance();
+            StringBuilder sb = new StringBuilder();
+            sb.append(id).append(" ");
+            sb.append(type != null ? type.toString() : "null").append(" ");
+            sb.append("on ").append(calendar != null ? df.format(calendar.getTime()) : "null");
+            return sb.toString();
+        }
     }
 
     private final Context mContext;
@@ -74,32 +86,68 @@ public class AlarmsScheduler implements IAlarmsScheduler {
     }
 
     @Override
-    public void removeAlarm(int id) {
-        ScheduledAlarm previousHead = queue.peek();
-        for (Iterator<ScheduledAlarm> iterator = queue.iterator(); iterator.hasNext();) {
-            ScheduledAlarm scheduledAlarm = iterator.next();
-
-            if (scheduledAlarm.id == id) {
-                log.d("removing a ScheduledAlarm " + id + " type = " + scheduledAlarm.type.toString());
-                iterator.remove();
-            }
-        }
-        ScheduledAlarm currentHead = queue.peek();
-        if (previousHead != currentHead) {
-            setNextRTCAlert();
-        }
-        notifyListeners();
+    public void setAlarm(int id, CalendarType type, Calendar calendar) {
+        ScheduledAlarm scheduledAlarm = new ScheduledAlarm(id, calendar, type);
+        replaceAlarm(scheduledAlarm, true);
     }
 
-    private void setNextRTCAlert() {
-        if (!queue.isEmpty()) {
-            // TODO problems happen because we remove, we have to keep. Remove
-            // only when it is in the past
-            // or removed by someone
-            ScheduledAlarm scheduledAlarm = queue.peek();
-            setUpRTCAlarm(scheduledAlarm.id, scheduledAlarm.calendar, scheduledAlarm.type);
-        } else {
-            removeRTCAlarm();
+    @Override
+    public void removeAlarm(int id) {
+        replaceAlarm(new ScheduledAlarm(id), false);
+    }
+
+    @Override
+    public void onAlarmFired(int id) {
+        replaceAlarm(new ScheduledAlarm(id), false);
+    }
+
+    private void replaceAlarm(ScheduledAlarm newAlarm, boolean add) {
+        ScheduledAlarm previousHead = queue.peek();
+
+        // remove if we have already an alarm
+        for (Iterator<ScheduledAlarm> iterator = queue.iterator(); iterator.hasNext();) {
+            ScheduledAlarm presentAlarm = iterator.next();
+            if (presentAlarm.id == newAlarm.id) {
+                iterator.remove();
+                log.d(presentAlarm.id + " was removed");
+            }
+        }
+
+        if (add) {
+            queue.add(newAlarm);
+        }
+
+        fireAlarmsInThePast();
+
+        ScheduledAlarm currentHead = queue.peek();
+        // compare by reference!
+        if (previousHead != currentHead) {
+            if (!queue.isEmpty()) {
+                setUpRTCAlarm(currentHead);
+            } else {
+                log.d("no more alarms to schedule, remove pending intent");
+                removeRTCAlarm();
+            }
+            notifyListeners();
+        }
+    }
+
+    /**
+     * If two alarms were set for the same time, then the second alarm will be
+     * processed in the past. In this case we remove it from the queue and fire
+     * it.
+     */
+
+    private void fireAlarmsInThePast() {
+        Calendar now = Calendar.getInstance();
+        while (!queue.isEmpty() && queue.peek().calendar.before(now)) {
+            // remove happens in fire
+            ScheduledAlarm firedInThePastAlarm = queue.poll();
+            log.d("In the past - " + firedInThePastAlarm.toString());
+            Intent intent = new Intent(ACTION_FIRED);
+            intent.putExtra(EXTRA_ID, firedInThePastAlarm.id);
+            intent.putExtra(EXTRA_TYPE, firedInThePastAlarm.type.name());
+            mContext.sendBroadcast(intent);
         }
     }
 
@@ -160,44 +208,13 @@ public class AlarmsScheduler implements IAlarmsScheduler {
         am.cancel(sender);
     }
 
-    private void setUpRTCAlarm(int id, Calendar calendar, CalendarType type) {
+    private void setUpRTCAlarm(ScheduledAlarm alarm) {
         AlarmManager am = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-
-        DateFormat df = DateFormat.getDateTimeInstance();
-
-        log.d("Set alarm " + id + " on " + df.format(calendar.getTime()));
-
-        if (DBG && calendar.before(Calendar.getInstance()))
-            throw new RuntimeException("Attempt to schedule alarm in the past: " + df.format(calendar.getTime()));
-
+        log.d("Set " + alarm.toString());
         Intent intent = new Intent(ACTION_FIRED);
-        intent.putExtra(EXTRA_ID, id);
-        intent.putExtra(EXTRA_TYPE, type.name());
+        intent.putExtra(EXTRA_ID, alarm.id);
+        intent.putExtra(EXTRA_TYPE, alarm.type.name());
         PendingIntent sender = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
-    }
-
-    @Override
-    public void setAlarm(int id, Map<CalendarType, Calendar> activeCalendars) {
-        ScheduledAlarm previousHead = queue.peek();
-        for (Iterator<ScheduledAlarm> iterator = queue.iterator(); iterator.hasNext();) {
-            if (iterator.next().id == id) {
-                iterator.remove();
-            }
-        }
-
-        for (Entry<CalendarType, Calendar> entry : activeCalendars.entrySet()) {
-            ScheduledAlarm scheduledAlarm = new ScheduledAlarm(id, entry.getValue(), entry.getKey());
-
-            if (queue.contains(scheduledAlarm)) {
-                queue.remove(scheduledAlarm);
-            }
-            queue.add(scheduledAlarm);
-        }
-        ScheduledAlarm currentHead = queue.peek();
-        if (previousHead != currentHead) {
-            setNextRTCAlert();
-        }
-        notifyListeners();
+        am.set(AlarmManager.RTC_WAKEUP, alarm.calendar.getTimeInMillis(), sender);
     }
 }
