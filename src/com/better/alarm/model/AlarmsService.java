@@ -19,14 +19,22 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 
 import com.github.androidutils.logger.Logger;
 import com.github.androidutils.wakelock.WakeLockManager;
 
-public class AlarmsService extends Service {
+public class AlarmsService extends Service implements Handler.Callback {
+    /**
+     * TODO SM should report when it is done
+     */
+    private static final int WAKELOCK_HOLD_TIME = 5000;
+    private static final int EVENT_RELEASE_WAKELOCK = 1;
     Alarms alarms;
     private Logger log;
+    private Handler handler;
 
     /**
      * Dispatches intents to the KlaxonService
@@ -44,6 +52,7 @@ public class AlarmsService extends Service {
     public void onCreate() {
         alarms = AlarmsManager.getInstance();
         log = Logger.getDefaultLogger();
+        handler = new Handler(this);
         super.onCreate();
     }
 
@@ -61,14 +70,21 @@ public class AlarmsService extends Service {
             alarms.refresh();
         }
 
-        WakeLockManager.getWakeLockManager().releasePartialWakeLock(intent);
+        Message msg = handler.obtainMessage(EVENT_RELEASE_WAKELOCK);
+        msg.obj = intent;
+        handler.sendMessageDelayed(msg, WAKELOCK_HOLD_TIME);
 
         return START_NOT_STICKY;
+    }
+
+    @Override
+    public boolean handleMessage(Message msg) {
+        WakeLockManager.getWakeLockManager().releasePartialWakeLock((Intent) msg.obj);
+        return true;
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
-
 }
