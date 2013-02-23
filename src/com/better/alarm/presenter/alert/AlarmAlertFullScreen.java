@@ -156,10 +156,19 @@ public class AlarmAlertFullScreen extends Activity {
         });
 
         /* dismiss button: close notification */
-        findViewById(R.id.dismiss).setOnClickListener(new Button.OnClickListener() {
+        final Button dismissButton = (Button) findViewById(R.id.dismiss);
+        dismissButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dismissButton.setText("Hold to dismiss");
+            }
+        });
+
+        dismissButton.setOnLongClickListener(new Button.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
                 dismiss();
+                return true;
             }
         });
 
