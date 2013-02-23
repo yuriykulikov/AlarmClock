@@ -36,6 +36,7 @@ import android.preference.PreferenceScreen;
 import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.ShareActionProvider;
 
 import com.better.alarm.R;
@@ -146,21 +147,23 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
     }
 
     private void showBugreport() {
+        final EditText report = new EditText(this);
+        report.setHint("Write your complaint here");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                ACRA.getErrorReporter().handleSilentException(new Exception("Bugreport"));
+                ACRA.getErrorReporter().handleSilentException(new Exception(report.getText().toString()));
             }
         });
         builder.setTitle("Send bugreport");
-        builder.setMessage("Send a bugreport");
         builder.setCancelable(true);
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
             }
         });
+        builder.setView(report);
         builder.create().show();
     }
 
