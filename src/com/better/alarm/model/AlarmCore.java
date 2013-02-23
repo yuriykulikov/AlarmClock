@@ -336,10 +336,6 @@ public final class AlarmCore implements Alarm {
         }
 
         private class RescheduleTransition extends ComplexTransition {
-            public RescheduleTransition() {
-                super(stateMachine, log);
-            }
-
             @Override
             public void performComplexTransition() {
                 if (container.getDaysOfWeek().isRepeatSet()) {
@@ -363,10 +359,6 @@ public final class AlarmCore implements Alarm {
          * should be set.
          */
         private class EnableTransition extends ComplexTransition {
-            public EnableTransition() {
-                super(stateMachine, log);
-            }
-
             @Override
             public void performComplexTransition() {
                 Calendar preAlarm = calculateNextTime();
