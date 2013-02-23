@@ -15,10 +15,13 @@
  */
 package com.better.alarm;
 
+import java.lang.reflect.Field;
+
 import org.acra.ACRA;
 import org.acra.annotation.ReportsCrashes;
 
 import android.app.Application;
+import android.view.ViewConfiguration;
 
 import com.better.alarm.model.AlarmCore;
 import com.better.alarm.model.Alarms;
@@ -46,6 +49,17 @@ public class AlarmApplication extends Application {
     public void onCreate() {
         // The following line triggers the initialization of ACRA
         ACRA.init(this);
+
+        try {
+            ViewConfiguration config = ViewConfiguration.get(this);
+            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+            if (menuKeyField != null) {
+                menuKeyField.setAccessible(true);
+                menuKeyField.setBoolean(config, false);
+            }
+        } catch (Exception ex) {
+            // Ignore
+        }
 
         Logger logger = Logger.getDefaultLogger();
         logger.addLogWriter(new LogcatLogWriterWithLines());
