@@ -131,12 +131,13 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.better.alarm"));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="
+                        + getApplicationContext().getPackageName()));
                 startActivity(intent);
             }
         });
-        builder.setTitle("Review the appliaction");
-        builder.setMessage("Would you like to review the application?");
+        builder.setTitle(R.string.review);
+        builder.setMessage(R.string.review_message);
         builder.setCancelable(true);
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
@@ -148,7 +149,7 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
 
     private void showBugreport() {
         final EditText report = new EditText(this);
-        report.setHint("Write your complaint here");
+        report.setHint(R.string.bugreport_hint);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
@@ -156,7 +157,7 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
                 ACRA.getErrorReporter().handleSilentException(new Exception(report.getText().toString()));
             }
         });
-        builder.setTitle("Send bugreport");
+        builder.setTitle(R.string.bugreport);
         builder.setCancelable(true);
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override

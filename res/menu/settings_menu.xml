@@ -20,12 +20,12 @@
         android:id="@+id/menu_bugreport"
         android:icon="@android:drawable/ic_menu_send"
         android:showAsAction="never"
-        android:title="Bugreport"/>
+        android:title="@string/bugreport"/>
     <item
         android:id="@+id/menu_review"
         android:icon="@android:drawable/ic_menu_edit"
         android:showAsAction="never"
-        android:title="Review"/>
+        android:title="@string/review"/>
     <item android:id="@+id/menu_share"
           android:title="@string/share"
           android:showAsAction="never"
