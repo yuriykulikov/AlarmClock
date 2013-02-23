@@ -74,6 +74,9 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.settings_menu, menu);
+
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
         MenuItem menuItem = menu.findItem(R.id.menu_share);
         ShareActionProvider sp = (ShareActionProvider) menuItem.getActionProvider();
 
@@ -88,6 +91,26 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
 
         sp.setShareIntent(intent);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case android.R.id.home:
+            goBack();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+
+    }
+
+    private void goBack() {
+        // This is called when the Home (Up) button is pressed
+        // in the Action Bar.
+        Intent parentActivityIntent = new Intent(this, AlarmsListActivity.class);
+        parentActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(parentActivityIntent);
+        finish();
     }
 
     @Override
