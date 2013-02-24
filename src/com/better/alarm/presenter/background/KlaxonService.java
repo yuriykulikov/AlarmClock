@@ -30,7 +30,9 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -66,15 +68,15 @@ public class KlaxonService extends Service {
         }
     }
 
-    private static class Volume extends PhoneStateListener implements OnSharedPreferenceChangeListener {
+    private static class Volume extends PhoneStateListener implements OnSharedPreferenceChangeListener,
+            Handler.Callback {
+        private static final int MESSAGE_CHANGE_VOLUME = 0;
+        private static final int FADE_IN_TIME = 5000;
+
         // Volume suggested by media team for in-call alarms.
         private static final float IN_CALL_VOLUME = 0.125f;
 
         // TODO XML
-        // i^2/100
-        private static final float[] PREALARM_VOLUMES = { 0f, 0.01f, 0.04f, 0.09f, 0.16f, 0.25f, 0.36f, 0.49f, 0.64f,
-                0.81f, 1.0f };
-
         // i^2/100
         private static final float[] ALARM_VOLUMES = { 0f, 0.01f, 0.04f, 0.09f, 0.16f, 0.25f, 0.36f, 0.49f, 0.64f,
                 0.81f, 1.0f };
@@ -87,12 +89,14 @@ public class KlaxonService extends Service {
         private MediaPlayer player;
         private final Logger log;
         private final TelephonyManager mTelephonyManager;
-        private float preAlarmVolume = IN_CALL_VOLUME;
-        private float alarmVolume = 1.0f;
+        private int preAlarmVolume = 0;
+        private int alarmVolume = 4;
+        private final Handler handler;
 
         public Volume(Logger log, TelephonyManager telephonyManager) {
             this.log = log;
             mTelephonyManager = telephonyManager;
+            handler = new Handler(this);
         }
 
         public void setMode(Type type) {
@@ -103,17 +107,26 @@ public class KlaxonService extends Service {
             this.player = player;
         }
 
+        /**
+         * Instantly apply the volume. To fade in use {@link #fadeIn()}
+         */
         public void apply() {
-            // Check if we are in a call. If we are, use the in-call alarm
-            // resource at a low volume to not disrupt the call.
-            if (mTelephonyManager.getCallState() != TelephonyManager.CALL_STATE_IDLE) {
-                log.d("Using the in-call alarm");
-                player.setVolume(IN_CALL_VOLUME, IN_CALL_VOLUME);
-            } else if (type == Type.PREALARM) {
-                player.setVolume(preAlarmVolume, preAlarmVolume);
-            } else {
-                player.setVolume(alarmVolume, alarmVolume);
+            float fvolume;
+            try {
+                // Check if we are in a call. If we are, use the in-call alarm
+                // resource at a low volume to not disrupt the call.
+                if (mTelephonyManager.getCallState() != TelephonyManager.CALL_STATE_IDLE) {
+                    log.d("Using the in-call alarm");
+                    fvolume = IN_CALL_VOLUME;
+                } else if (type == Type.PREALARM) {
+                    fvolume = ALARM_VOLUMES[preAlarmVolume];
+                } else {
+                    fvolume = ALARM_VOLUMES[alarmVolume];
+                }
+            } catch (IndexOutOfBoundsException e) {
+                fvolume = 1f;
             }
+            player.setVolume(fvolume, fvolume);
         }
 
         @Override
@@ -127,27 +140,57 @@ public class KlaxonService extends Service {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.equals(Intents.KEY_PREALARM_VOLUME)) {
-                int volume = sharedPreferences.getInt(key, Intents.DEFAULT_PREALARM_VOLUME);
-                if (volume > PREALARM_VOLUMES.length) {
-                    volume = PREALARM_VOLUMES.length;
+                preAlarmVolume = sharedPreferences.getInt(key, Intents.DEFAULT_PREALARM_VOLUME);
+                if (preAlarmVolume > ALARM_VOLUMES.length) {
+                    preAlarmVolume = ALARM_VOLUMES.length;
                     log.w("Truncated volume!");
                 }
-                preAlarmVolume = PREALARM_VOLUMES[volume];
                 if (player != null && player.isPlaying() && type == Type.PREALARM) {
-                    player.setVolume(preAlarmVolume, preAlarmVolume);
+                    player.setVolume(ALARM_VOLUMES[preAlarmVolume], ALARM_VOLUMES[preAlarmVolume]);
                 }
 
             } else if (key.equals(Intents.KEY_ALARM_VOLUME)) {
-                int volume = sharedPreferences.getInt(key, Intents.DEFAULT_ALARM_VOLUME);
-                if (volume > ALARM_VOLUMES.length) {
-                    volume = ALARM_VOLUMES.length;
+                alarmVolume = sharedPreferences.getInt(key, Intents.DEFAULT_ALARM_VOLUME);
+                if (alarmVolume > ALARM_VOLUMES.length) {
+                    alarmVolume = ALARM_VOLUMES.length;
                     log.w("Truncated volume!");
                 }
-                alarmVolume = ALARM_VOLUMES[volume];
                 if (player != null && player.isPlaying() && type == Type.NORMAL) {
-                    player.setVolume(alarmVolume, alarmVolume);
+                    player.setVolume(ALARM_VOLUMES[alarmVolume], ALARM_VOLUMES[alarmVolume]);
                 }
             }
+        }
+
+        /**
+         * Fade in to set volume
+         */
+        public void fadeIn() {
+            // set initial
+            player.setVolume(ALARM_VOLUMES[0], ALARM_VOLUMES[0]);
+
+            // in the end we have to reach target volume
+            int targetVolumeIndex = type == Type.NORMAL ? alarmVolume : preAlarmVolume;
+            // calculate fade steps, starting from 1
+            int delayStep = FADE_IN_TIME / targetVolumeIndex;
+            for (int i = 1; i <= targetVolumeIndex; i++) {
+                Message msg = handler.obtainMessage(MESSAGE_CHANGE_VOLUME);
+                msg.arg1 = i;
+                handler.sendMessageDelayed(msg, delayStep * i);
+            }
+        }
+
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+            case MESSAGE_CHANGE_VOLUME:
+                int step = msg.arg1;
+                player.setVolume(ALARM_VOLUMES[step], ALARM_VOLUMES[step]);
+                break;
+
+            default:
+                break;
+            }
+            return false;
         }
     }
 
@@ -281,7 +324,7 @@ public class KlaxonService extends Service {
         });
 
         volume.setPlayer(mMediaPlayer);
-        volume.apply();
+        volume.fadeIn();
         try {
             // Check if we are in a call. If we are, use the in-call alarm
             // resource at a low volume to not disrupt the call.
