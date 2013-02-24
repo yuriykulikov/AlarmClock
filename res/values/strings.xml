@@ -399,4 +399,8 @@
     <string name="master_volume">Master volume</string>
     <string name="bug_report_toast">Sorry, the app has crashed and a report has been sent to developer to prevent this in future</string>
     <string name="share">Share</string>
+    <string name="bugreport">Send a bugreport</string>
+    <string name="review">Rate the app</string>
+    <string name="bugreport_hint">Describe your complaint here</string>
+    <string name="review_message">Thanks a lot for taking your time to review the application! Positive reviews help to attract more users, which helps to improve the application by collecting feedback. Would you like to proceed?</string>
 </resources>

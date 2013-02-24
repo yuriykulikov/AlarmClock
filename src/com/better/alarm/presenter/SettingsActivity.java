@@ -17,7 +17,11 @@
 
 package com.better.alarm.presenter;
 
+import org.acra.ACRA;
+
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
@@ -32,6 +36,7 @@ import android.preference.PreferenceScreen;
 import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.ShareActionProvider;
 
 import com.better.alarm.R;
@@ -99,6 +104,14 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         case android.R.id.home:
             goBack();
             return true;
+
+        case R.id.menu_review:
+            showReview();
+            return true;
+
+        case R.id.menu_bugreport:
+            showBugreport();
+            return true;
         }
         return super.onOptionsItemSelected(item);
 
@@ -111,6 +124,48 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         parentActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(parentActivityIntent);
         finish();
+    }
+
+    private void showReview() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="
+                        + getApplicationContext().getPackageName()));
+                startActivity(intent);
+            }
+        });
+        builder.setTitle(R.string.review);
+        builder.setMessage(R.string.review_message);
+        builder.setCancelable(true);
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        builder.create().show();
+    }
+
+    private void showBugreport() {
+        final EditText report = new EditText(this);
+        report.setHint(R.string.bugreport_hint);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ACRA.getErrorReporter().handleSilentException(new Exception(report.getText().toString()));
+            }
+        });
+        builder.setTitle(R.string.bugreport);
+        builder.setCancelable(true);
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        builder.setView(report);
+        builder.create().show();
     }
 
     @Override

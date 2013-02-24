@@ -16,8 +16,18 @@
 -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_bugreport"
+        android:icon="@android:drawable/ic_menu_send"
+        android:showAsAction="never"
+        android:title="@string/bugreport"/>
+    <item
+        android:id="@+id/menu_review"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:showAsAction="never"
+        android:title="@string/review"/>
     <item android:id="@+id/menu_share"
           android:title="@string/share"
-          android:showAsAction="ifRoom|withText"
+          android:showAsAction="never"
           android:actionProviderClass="android.widget.ShareActionProvider" />
 </menu>

@@ -142,4 +142,8 @@
     <string name="main_alarm">Wecker</string>
     <string name="master_volume">Gesamtlautstärke</string>
     <string name="share">Teilen</string>
+    <string name="bugreport">Bugreport schicken</string>
+    <string name="review">Bewerten</string>
+    <string name="bugreport_hint">Bitte beschreiben Sie das Problem</string>
+    <string name="review_message">Vielen Dank! Positive Bewertungen bringen mehr Benutzer. Es ist für uns wichtig um Qualität zu verbessern. Möchten Sie fortfahren?</string>
 </resources>
