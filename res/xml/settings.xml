@@ -78,4 +78,10 @@
         android:persistent="false"
         android:showSilent="true" />
 
+        <CheckBoxPreference
+        android:key="longclick_dismiss_key"
+        android:defaultValue="false"
+        android:title="@string/longclick_dismiss_title"
+        android:summary="@string/longclick_dismiss_summary" />
+
 </PreferenceScreen>

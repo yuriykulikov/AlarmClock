@@ -146,4 +146,6 @@
     <string name="review">Bewerten</string>
     <string name="bugreport_hint">Bitte beschreiben Sie das Problem</string>
     <string name="review_message">Vielen Dank! Positive Bewertungen bringen mehr Benutzer. Es ist für uns wichtig um Qualität zu verbessern. Möchten Sie fortfahren?</string>
+    <string name="longclick_dismiss_title">Longclick "Ausschalten"</string>
+    <string name="longclick_dismiss_summary">Longclick "Ausschalten" der Wecker zu ausschalten</string>
 </resources>
