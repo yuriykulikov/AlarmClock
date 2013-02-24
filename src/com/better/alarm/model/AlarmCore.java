@@ -329,7 +329,7 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
-            public void exit() {
+            public void exit(Message reason) {
                 // TODO maybe this is not necessary here?
                 broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
             }
@@ -373,8 +373,10 @@ public final class AlarmCore implements Alarm {
 
         private class SetState extends AlarmState {
             @Override
-            public void enter() {
-                broadcastAlarmState(Intents.ACTION_ALARM_SET);
+            public void enter(Message reason) {
+                if (reason.what != REFRESH) {
+                    broadcastAlarmState(Intents.ACTION_ALARM_SET);
+                }
             }
 
             @Override
@@ -394,7 +396,7 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
-            public void exit() {
+            public void exit(Message reason) {
                 removeAlarm();
             }
         }
@@ -402,7 +404,7 @@ public final class AlarmCore implements Alarm {
         /** handles both snoozed and main for now */
         private class FiredState extends AlarmState {
             @Override
-            public void enter() {
+            public void enter(Message reason) {
                 broadcastAlarmState(Intents.ALARM_ALERT_ACTION);
                 int autoSilenceMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext)
                         .getString("auto_silence", "10"));
@@ -427,7 +429,7 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
-            public void exit() {
+            public void exit(Message reason) {
                 broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
                 removeAlarm();
             }
@@ -435,7 +437,7 @@ public final class AlarmCore implements Alarm {
 
         private class SnoozedState extends AlarmState {
             @Override
-            public void enter() {
+            public void enter(Message reason) {
                 Calendar nextTime = Calendar.getInstance();
                 int snoozeMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext).getString(
                         "snooze_duration", "10"));
@@ -450,7 +452,7 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
-            public void exit() {
+            public void exit(Message reason) {
                 removeAlarm();
                 broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
             }
@@ -460,8 +462,10 @@ public final class AlarmCore implements Alarm {
         private class PreAlarmSetState extends AlarmState {
 
             @Override
-            public void enter() {
-                broadcastAlarmState(Intents.ACTION_ALARM_SET);
+            public void enter(Message reason) {
+                if (reason.what != REFRESH) {
+                    broadcastAlarmState(Intents.ACTION_ALARM_SET);
+                }
             }
 
             @Override
@@ -491,14 +495,14 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
-            public void exit() {
+            public void exit(Message reason) {
                 removeAlarm();
             }
         }
 
         private class PreAlarmFiredState extends AlarmState {
             @Override
-            public void enter() {
+            public void enter(Message reason) {
                 broadcastAlarmState(Intents.ALARM_PREALARM_ACTION);
                 setAlarm(calculateNextTime());
             }
@@ -519,7 +523,7 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
-            public void exit() {
+            public void exit(Message reason) {
                 removeAlarm();
                 broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
             }
@@ -527,7 +531,7 @@ public final class AlarmCore implements Alarm {
 
         private class PreAlarmSnoozedState extends AlarmState {
             @Override
-            public void enter() {
+            public void enter(Message reason) {
                 setAlarm(calculateNextTime());
                 broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION);
             }
@@ -538,7 +542,7 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
-            public void exit() {
+            public void exit(Message reason) {
                 removeAlarm();
                 broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
             }
