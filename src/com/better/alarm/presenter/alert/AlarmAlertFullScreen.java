@@ -47,6 +47,8 @@ import com.github.androidutils.logger.Logger;
  * wallpaper as the background.
  */
 public class AlarmAlertFullScreen extends Activity {
+    private static final boolean LONGCLICK_DISMISS_DEFAULT = false;
+    private static final String LONGCLICK_DISMISS_KEY = "longclick_dismiss_key";
     private static final String DEFAULT_VOLUME_BEHAVIOR = "2";
     protected static final String SCREEN_OFF = "screen_off";
 
@@ -56,6 +58,7 @@ public class AlarmAlertFullScreen extends Activity {
 
     private IAlarmsManager alarmsManager;
 
+    private boolean longClickToDismiss;
     /**
      * Receives Intents from the model
      */
@@ -160,7 +163,11 @@ public class AlarmAlertFullScreen extends Activity {
         dismissButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dismissButton.setText("Hold to dismiss");
+                if (longClickToDismiss) {
+                    dismissButton.setText("Hold to dismiss");
+                } else {
+                    dismiss();
+                }
             }
         });
 
@@ -210,6 +217,8 @@ public class AlarmAlertFullScreen extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        longClickToDismiss = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(LONGCLICK_DISMISS_KEY,
+                LONGCLICK_DISMISS_DEFAULT);
         // XXX this is some wierd logic and should not be here
         // If the alarm was deleted at some point, disable snooze.
         // if (AlarmsManager.getAlarm(getContentResolver(), mAlarm.id) == null)

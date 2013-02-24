@@ -403,4 +403,6 @@
     <string name="review">Rate the app</string>
     <string name="bugreport_hint">Describe your complaint here</string>
     <string name="review_message">Thanks a lot for taking your time to review the application! Positive reviews help to attract more users, which helps to improve the application by collecting feedback. Would you like to proceed?</string>
+    <string name="longclick_dismiss_title">Longclick dismiss</string>
+    <string name="longclick_dismiss_summary">Hold the dismiss button to dismiss the alarm</string>
 </resources>
