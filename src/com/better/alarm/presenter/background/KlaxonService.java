@@ -179,6 +179,10 @@ public class KlaxonService extends Service {
             }
         }
 
+        public void cancelFadeIn() {
+            handler.removeMessages(MESSAGE_CHANGE_VOLUME);
+        }
+
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
@@ -240,15 +244,15 @@ public class KlaxonService extends Service {
                 return START_STICKY;
 
             } else if (action.equals(Intents.ALARM_DISMISS_ACTION)) {
-                stopSelf();
+                stopAndCleanup();
                 return START_NOT_STICKY;
 
             } else if (action.equals(Intents.ALARM_SNOOZE_ACTION)) {
-                stopSelf();
+                stopAndCleanup();
                 return START_NOT_STICKY;
 
             } else if (action.equals(Intents.ACTION_SOUND_EXPIRED)) {
-                stopSelf();
+                stopAndCleanup();
                 return START_NOT_STICKY;
 
             } else if (action.equals(Intents.ACTION_START_PREALARM_SAMPLE)) {
@@ -256,7 +260,7 @@ public class KlaxonService extends Service {
                 return START_STICKY;
 
             } else if (action.equals(Intents.ACTION_STOP_PREALARM_SAMPLE)) {
-                stopSelf();
+                stopAndCleanup();
                 return START_NOT_STICKY;
 
             } else if (action.equals(Intents.ACTION_START_ALARM_SAMPLE)) {
@@ -264,22 +268,23 @@ public class KlaxonService extends Service {
                 return START_STICKY;
 
             } else if (action.equals(Intents.ACTION_STOP_ALARM_SAMPLE)) {
-                stopSelf();
+                stopAndCleanup();
                 return START_NOT_STICKY;
 
             } else {
                 log.e("unexpected intent " + intent.getAction());
-                stopSelf();
+                stopAndCleanup();
                 return START_NOT_STICKY;
             }
         } catch (Exception e) {
             log.e("Something went wrong" + e.getMessage());
-            stopSelf();
+            stopAndCleanup();
             return START_NOT_STICKY;
         }
     }
 
     private void onAlarm(Alarm alarm) throws Exception {
+        volume.cancelFadeIn();
         volume.setMode(Volume.Type.NORMAL);
         if (!alarm.isSilent()) {
             play(getAlertOrDefault(alarm));
@@ -288,6 +293,7 @@ public class KlaxonService extends Service {
     }
 
     private void onPreAlarm(Alarm alarm) throws Exception {
+        volume.cancelFadeIn();
         volume.setMode(Volume.Type.PREALARM);
         if (!alarm.isSilent()) {
             play(getAlertOrDefault(alarm));
@@ -296,6 +302,7 @@ public class KlaxonService extends Service {
     }
 
     private void onStartAlarmSample(Volume.Type type) {
+        volume.cancelFadeIn();
         volume.setMode(type);
         // if already playing do nothing. In this case signal continues.
         if (!mPlaying) {
@@ -399,5 +406,10 @@ public class KlaxonService extends Service {
                 mMediaPlayer = null;
             }
         }
+    }
+
+    private void stopAndCleanup() {
+        volume.cancelFadeIn();
+        stopSelf();
     }
 }
