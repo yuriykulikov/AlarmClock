@@ -413,14 +413,18 @@ public class KlaxonService extends Service {
      * Stops alarm audio
      */
     private void stop() {
-        log.d("stop()");
-        if (mPlaying) {
-            mPlaying = false;
-
-            // Stop audio playing
-            if (mMediaPlayer != null) {
-                mMediaPlayer.stop();
+        log.d("stopping media player");
+        mPlaying = false;
+        // Stop audio playing
+        if (mMediaPlayer != null) {
+            try {
+                if (mMediaPlayer.isPlaying()) {
+                    mMediaPlayer.stop();
+                }
                 mMediaPlayer.release();
+            } catch (IllegalStateException e) {
+                log.e("stop failed with ", e);
+            } finally {
                 mMediaPlayer = null;
             }
         }
