@@ -390,7 +390,9 @@ public final class AlarmCore implements Alarm {
 
             @Override
             public void exit(Message reason) {
-                removeAlarm();
+                if (!alarmWillBeRescheduled(reason)) {
+                    removeAlarm();
+                }
             }
         }
 
@@ -508,7 +510,9 @@ public final class AlarmCore implements Alarm {
 
             @Override
             public void exit(Message reason) {
-                removeAlarm();
+                if (!alarmWillBeRescheduled(reason)) {
+                    removeAlarm();
+                }
             }
         }
 
@@ -623,6 +627,11 @@ public final class AlarmCore implements Alarm {
             }
             log.d("wtf? state not found");
             return disabledState;
+        }
+
+        private boolean alarmWillBeRescheduled(Message reason) {
+            boolean alarmWillBeRescheduled = reason.what == CHANGE && ((AlarmChangeData) reason.obj).enabled;
+            return alarmWillBeRescheduled;
         }
 
         private class AlarmState extends State {
