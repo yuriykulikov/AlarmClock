@@ -29,6 +29,7 @@ import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -39,6 +40,9 @@ import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.presenter.SettingsActivity;
+import com.better.alarm.presenter.TimePickerDialogFragment;
+import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialogHandler;
+import com.better.alarm.presenter.TimePickerDialogFragment.OnAlarmTimePickerCanceledListener;
 import com.github.androidutils.logger.Logger;
 
 /**
@@ -46,7 +50,8 @@ import com.github.androidutils.logger.Logger;
  * activity is the full screen version which shows over the lock screen with the
  * wallpaper as the background.
  */
-public class AlarmAlertFullScreen extends Activity {
+public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDialogHandler,
+        OnAlarmTimePickerCanceledListener {
     private static final boolean LONGCLICK_DISMISS_DEFAULT = false;
     private static final String LONGCLICK_DISMISS_KEY = "longclick_dismiss_key";
     private static final String DEFAULT_VOLUME_BEHAVIOR = "2";
@@ -155,6 +160,15 @@ public class AlarmAlertFullScreen extends Activity {
             @Override
             public void onClick(View v) {
                 snooze();
+            }
+        });
+
+        snooze.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                TimePickerDialogFragment.showTimePicker(mAlarm, getFragmentManager());
+                AlarmAlertFullScreen.this.sendBroadcast(new Intent(Intents.ACTION_MUTE));
+                return true;
             }
         });
 
@@ -273,5 +287,16 @@ public class AlarmAlertFullScreen extends Activity {
         // Don't allow back to dismiss. This method is overriden by AlarmAlert
         // so that the dialog is dismissed.
         return;
+    }
+
+    @Override
+    public void onDialogTimeSet(Alarm alarm, int hourOfDay, int minute) {
+        alarm.snooze(hourOfDay, minute);
+
+    }
+
+    @Override
+    public void onTimePickerCanceled(Alarm alarm) {
+        AlarmAlertFullScreen.this.sendBroadcast(new Intent(Intents.ACTION_DEMUTE));
     }
 }

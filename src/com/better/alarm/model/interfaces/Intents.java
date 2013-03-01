@@ -79,6 +79,10 @@ public class Intents {
 
     public static final String ACTION_START_ALARM_SAMPLE = "com.better.alarm.ACTION_START_ALARM_SAMPLE";
 
+    public static final String ACTION_MUTE = "com.better.alarm.ACTION_MUTE";
+
+    public static final String ACTION_DEMUTE = "com.better.alarm.ACTION_DEMUTE";
+
     public static final int MAX_ALARM_VOLUME = 10;
 
     public static final int MAX_PREALARM_VOLUME = 10;

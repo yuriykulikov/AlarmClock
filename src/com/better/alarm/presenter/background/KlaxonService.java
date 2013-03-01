@@ -165,6 +165,7 @@ public class KlaxonService extends Service {
          * Fade in to set volume
          */
         public void fadeIn() {
+            cancelFadeIn();
             // set initial
             player.setVolume(ALARM_VOLUMES[0], ALARM_VOLUMES[0]);
 
@@ -177,6 +178,11 @@ public class KlaxonService extends Service {
                 msg.arg1 = i;
                 handler.sendMessageDelayed(msg, delayStep * i);
             }
+        }
+
+        public void mute() {
+            cancelFadeIn();
+            player.setVolume(ALARM_VOLUMES[0], ALARM_VOLUMES[0]);
         }
 
         public void cancelFadeIn() {
@@ -265,6 +271,18 @@ public class KlaxonService extends Service {
 
             } else if (action.equals(Intents.ACTION_START_ALARM_SAMPLE)) {
                 onStartAlarmSample(Volume.Type.NORMAL);
+                return START_STICKY;
+
+            } else if (action.equals(Intents.ACTION_STOP_ALARM_SAMPLE)) {
+                stopAndCleanup();
+                return START_NOT_STICKY;
+
+            } else if (action.equals(Intents.ACTION_MUTE)) {
+                volume.mute();
+                return START_STICKY;
+
+            } else if (action.equals(Intents.ACTION_DEMUTE)) {
+                volume.fadeIn();
                 return START_STICKY;
 
             } else if (action.equals(Intents.ACTION_STOP_ALARM_SAMPLE)) {

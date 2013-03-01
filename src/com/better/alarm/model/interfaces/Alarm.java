@@ -21,6 +21,8 @@ public interface Alarm {
 
     public void snooze();
 
+    public void snooze(int hourOfDay, int minute);
+
     public void dismiss();
 
     public void delete();

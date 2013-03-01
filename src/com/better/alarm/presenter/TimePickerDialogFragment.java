@@ -21,6 +21,7 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -81,6 +82,7 @@ public class TimePickerDialogFragment extends DialogFragment {
         mCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                notifyOnCancelListener();
                 dismiss();
             }
         });
@@ -104,8 +106,27 @@ public class TimePickerDialogFragment extends DialogFragment {
         return v;
     }
 
-    interface AlarmTimePickerDialogHandler {
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        notifyOnCancelListener();
+        super.onCancel(dialog);
+    }
+
+    private void notifyOnCancelListener() {
+        final Alarm alarm = AlarmsManager.getAlarmsManager().getAlarm(getArguments().getInt(KEY_ALARM));
+        Activity activity = getActivity();
+        if (activity instanceof OnAlarmTimePickerCanceledListener) {
+            final OnAlarmTimePickerCanceledListener act = (OnAlarmTimePickerCanceledListener) getActivity();
+            act.onTimePickerCanceled(alarm);
+        }
+    }
+
+    public interface AlarmTimePickerDialogHandler {
         void onDialogTimeSet(Alarm alarm, int hourOfDay, int minute);
+    }
+
+    public interface OnAlarmTimePickerCanceledListener {
+        void onTimePickerCanceled(Alarm alarm);
     }
 
     public static void showTimePicker(Alarm alarm, FragmentManager fragmentManager) {

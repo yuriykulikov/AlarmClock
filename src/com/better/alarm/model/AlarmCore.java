@@ -431,12 +431,31 @@ public final class AlarmCore implements Alarm {
         private class SnoozedState extends AlarmState {
             @Override
             public void enter(Message reason) {
+                Calendar nextTime;
+                Calendar now = Calendar.getInstance();
+                if (reason.obj != null) {
+                    Calendar customTime = Calendar.getInstance();
+                    customTime.set(Calendar.HOUR_OF_DAY, reason.arg1);
+                    customTime.set(Calendar.MINUTE, reason.arg2);
+                    if (customTime.after(now)) {
+                        nextTime = customTime;
+                    } else {
+                        nextTime = getNextRegualarSnoozeCalendar();
+                    }
+                } else {
+                    nextTime = getNextRegualarSnoozeCalendar();
+                }
+
+                setAlarm(nextTime);
+                broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION);
+            }
+
+            private Calendar getNextRegualarSnoozeCalendar() {
                 Calendar nextTime = Calendar.getInstance();
                 int snoozeMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext).getString(
                         "snooze_duration", "10"));
                 nextTime.add(Calendar.MINUTE, snoozeMinutes);
-                setAlarm(nextTime);
-                broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION);
+                return nextTime;
             }
 
             @Override
@@ -718,6 +737,15 @@ public final class AlarmCore implements Alarm {
     @Override
     public void snooze() {
         stateMachine.sendMessage(AlarmStateMachine.SNOOZE);
+    }
+
+    @Override
+    public void snooze(int hourOfDay, int minute) {
+        Message msg = stateMachine.obtainMessage(AlarmStateMachine.SNOOZE);
+        msg.arg1 = hourOfDay;
+        msg.arg2 = minute;
+        msg.obj = new Object();
+        msg.sendToTarget();
     }
 
     @Override

@@ -64,6 +64,14 @@ public class VibrationService extends Service {
                 stopSelf();
                 return START_NOT_STICKY;
 
+            } else if (action.equals(Intents.ACTION_MUTE)) {
+                stopVibration();
+                return START_STICKY;
+
+            } else if (action.equals(Intents.ACTION_DEMUTE)) {
+                startVibrationIfShould();
+                return START_STICKY;
+
             } else {
                 log.e("unexpected intent " + intent.getAction());
                 stopSelf();
