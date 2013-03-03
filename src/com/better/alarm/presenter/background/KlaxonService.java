@@ -49,7 +49,6 @@ import com.github.androidutils.wakelock.WakeLockManager;
  * another activity overrides the AlarmAlert dialog.
  */
 public class KlaxonService extends Service {
-    private boolean mPlaying = false;
     private MediaPlayer mMediaPlayer;
     private TelephonyManager mTelephonyManager;
     private Logger log;
@@ -307,7 +306,6 @@ public class KlaxonService extends Service {
         if (!alarm.isSilent()) {
             play(getAlertOrDefault(alarm));
         }
-        mPlaying = true;
     }
 
     private void onPreAlarm(Alarm alarm) throws Exception {
@@ -316,18 +314,20 @@ public class KlaxonService extends Service {
         if (!alarm.isSilent()) {
             play(getAlertOrDefault(alarm));
         }
-        mPlaying = true;
     }
 
     private void onStartAlarmSample(Volume.Type type) {
         volume.cancelFadeIn();
         volume.setMode(type);
         // if already playing do nothing. In this case signal continues.
-        if (!mPlaying) {
+        if (!isPlaying()) {
             play(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
         }
         volume.apply();
-        mPlaying = true;
+    }
+
+    private boolean isPlaying() {
+        return mMediaPlayer != null && mMediaPlayer.isPlaying();
     }
 
     private void play(Uri alert) {
@@ -413,14 +413,17 @@ public class KlaxonService extends Service {
      * Stops alarm audio
      */
     private void stop() {
-        log.d("stop()");
-        if (mPlaying) {
-            mPlaying = false;
-
-            // Stop audio playing
-            if (mMediaPlayer != null) {
-                mMediaPlayer.stop();
+        log.d("stopping media player");
+        // Stop audio playing
+        if (mMediaPlayer != null) {
+            try {
+                if (mMediaPlayer.isPlaying()) {
+                    mMediaPlayer.stop();
+                }
                 mMediaPlayer.release();
+            } catch (IllegalStateException e) {
+                log.e("stop failed with ", e);
+            } finally {
                 mMediaPlayer = null;
             }
         }
