@@ -12,24 +12,29 @@
      distributed under the License is distributed on an "AS IS" BASIS,
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
-     limitations under the License.
--->
-
-<!--
+     limitations under the License.
      Top-level content view for the layout fragment sample.  This version is
-     for display when in landscape: we can fit both titles and dialog.
+     for display when in landscape: we can fit both titles and dialog.
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal" >
+    android:orientation="vertical" >
 
     <fragment
         android:id="@+id/alarmsListFragment"
         android:name="com.better.alarm.presenter.AlarmsListFragment"
-        android:layout_width="0px"
-        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1" />
+
+    <fragment
+        android:id="@+id/infoFragment"
+        android:name="com.better.alarm.presenter.InfoFragment"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        tools:layout="@layout/info_fragment" />
 
 </LinearLayout>

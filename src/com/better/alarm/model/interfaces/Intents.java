@@ -94,4 +94,17 @@ public class Intents {
     public static final String KEY_PREALARM_VOLUME = "key_prealarm_volume";
 
     public static final String KEY_ALARM_VOLUME = "key_alarm_volume";
+
+    /**
+     * Broadcasted when someone wants to get a list of alarms.
+     * 
+     * @deprecated added as a draft
+     */
+    @Deprecated
+    public static final String REQUEST_ALARMS_LIST = "com.better.alarm.model.interfaces.Intents.REQUEST_ALARMS_LIST";
+
+    /**
+     * Broadcasted when someone wants to get last scheduled alarm.
+     */
+    public static final String REQUEST_LAST_SCHEDULED_ALARM = "com.better.alarm.model.interfaces.Intents.REQUEST_LAST_SCHEDULED_ALARM";
 }
