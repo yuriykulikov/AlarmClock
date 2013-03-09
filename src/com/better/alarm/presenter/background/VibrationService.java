@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 
@@ -16,7 +18,8 @@ public class VibrationService extends Service {
     private static final long[] sVibratePattern = new long[] { 500, 500 };
     private Vibrator mVibrator;
     private Logger log;
-    private Intent mIntent;
+    private PowerManager pm;
+    private WakeLock wakeLock;
 
     /**
      * Dispatches intents to the KlaxonService
@@ -25,7 +28,7 @@ public class VibrationService extends Service {
         @Override
         public void onReceive(final Context context, final Intent intent) {
             intent.setClass(context, VibrationService.class);
-            WakeLockManager.getWakeLockManager().acquirePartialWakeLock(intent, "VibrationService");
+            WakeLockManager.getWakeLockManager().acquirePartialWakeLock(intent, "ForVibrationService");
             context.startService(intent);
         }
     }
@@ -33,19 +36,23 @@ public class VibrationService extends Service {
     @Override
     public void onCreate() {
         log = Logger.getDefaultLogger();
+        pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "VibrationService");
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     @Override
     public void onDestroy() {
         stopVibration();
-        WakeLockManager.getWakeLockManager().releasePartialWakeLock(mIntent);
         log.d("Service destroyed");
+        wakeLock.release();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        mIntent = intent;
+        if (intent != null) {
+            WakeLockManager.getWakeLockManager().releasePartialWakeLock(intent);
+        }
         try {
             String action = intent.getAction();
             if (action.equals(Intents.ALARM_ALERT_ACTION)) {

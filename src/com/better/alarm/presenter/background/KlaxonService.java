@@ -33,6 +33,8 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -52,8 +54,9 @@ public class KlaxonService extends Service {
     private MediaPlayer mMediaPlayer;
     private TelephonyManager mTelephonyManager;
     private Logger log;
-    private Intent mIntent;
     private Volume volume;
+    private PowerManager pm;
+    private WakeLock wakeLock;
 
     /**
      * Dispatches intents to the KlaxonService
@@ -62,7 +65,7 @@ public class KlaxonService extends Service {
         @Override
         public void onReceive(final Context context, final Intent intent) {
             intent.setClass(context, KlaxonService.class);
-            WakeLockManager.getWakeLockManager().acquirePartialWakeLock(intent, "KlaxonService");
+            WakeLockManager.getWakeLockManager().acquirePartialWakeLock(intent, "ForKlaxonService");
             context.startService(intent);
         }
     }
@@ -206,6 +209,9 @@ public class KlaxonService extends Service {
     @Override
     public void onCreate() {
         log = Logger.getDefaultLogger();
+        pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "KlaxonService");
+        wakeLock.acquire();
         // Listen for incoming calls to kill the alarm.
         mTelephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         mTelephonyManager.listen(volume, PhoneStateListener.LISTEN_CALL_STATE);
@@ -221,10 +227,10 @@ public class KlaxonService extends Service {
         stop();
         // Stop listening for incoming calls.
         mTelephonyManager.listen(volume, 0);
-        WakeLockManager.getWakeLockManager().releasePartialWakeLock(mIntent);
         PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
                 .unregisterOnSharedPreferenceChangeListener(volume);
         log.d("Service destroyed");
+        wakeLock.release();
     }
 
     @Override
@@ -234,7 +240,9 @@ public class KlaxonService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        mIntent = intent;
+        if (intent != null) {
+            WakeLockManager.getWakeLockManager().releasePartialWakeLock(intent);
+        }
         try {
             String action = intent.getAction();
             if (action.equals(Intents.ALARM_ALERT_ACTION)) {
