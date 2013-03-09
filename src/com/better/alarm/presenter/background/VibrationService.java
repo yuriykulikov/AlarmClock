@@ -38,6 +38,7 @@ public class VibrationService extends Service {
         log = Logger.getDefaultLogger();
         pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "VibrationService");
+        wakeLock.acquire();
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
     }
 
