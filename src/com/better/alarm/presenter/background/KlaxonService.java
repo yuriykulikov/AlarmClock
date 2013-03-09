@@ -235,9 +235,8 @@ public class KlaxonService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         mIntent = intent;
-        int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
-        String action = intent.getAction();
         try {
+            String action = intent.getAction();
             if (action.equals(Intents.ALARM_ALERT_ACTION)) {
                 Alarm alarm = AlarmsManager.getAlarmsManager().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
                 onAlarm(alarm);

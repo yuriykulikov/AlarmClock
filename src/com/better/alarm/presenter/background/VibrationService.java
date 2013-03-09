@@ -46,8 +46,8 @@ public class VibrationService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         mIntent = intent;
-        String action = intent.getAction();
         try {
+            String action = intent.getAction();
             if (action.equals(Intents.ALARM_ALERT_ACTION)) {
                 startVibrationIfShould();
                 return START_STICKY;
