@@ -53,7 +53,7 @@ public class AlarmProvider extends ContentProvider {
     public boolean onCreate() {
         log = new Logger();
         log.addLogWriter(new LogcatLogWriter());
-        log.addLogWriter(new FileLogWriter());
+        log.addLogWriter(new FileLogWriter(getContext(), false));
         log.setLogLevel(AlarmProvider.class, LogLevel.ERR);
         log.setLogLevel(AlarmDatabaseHelper.class, LogLevel.ERR);
         mOpenHelper = new AlarmDatabaseHelper(getContext(), log);
