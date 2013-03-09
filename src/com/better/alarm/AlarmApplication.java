@@ -18,6 +18,7 @@ package com.better.alarm;
 import java.lang.reflect.Field;
 
 import org.acra.ACRA;
+import org.acra.ReportField;
 import org.acra.annotation.ReportsCrashes;
 
 import android.app.Application;
@@ -42,7 +43,23 @@ import com.github.androidutils.logger.LoggingExceptionHandler;
 import com.github.androidutils.statemachine.StateMachine;
 import com.github.androidutils.wakelock.WakeLockManager;
 
-@ReportsCrashes(formKey = "dEZBaFYxLVVRbDl0ZHAyMElab0d3NWc6MQ")
+// @formatter:off
+@ReportsCrashes(
+        formKey = "dFFwNk1yQ1lXeFNpVG1YVE1OZ05YNVE6MQ",
+        applicationLogFile = "applog.log",
+        applicationLogFileLines = 150,
+        customReportContent = {
+                ReportField.IS_SILENT,
+                ReportField.APP_VERSION_CODE,
+                ReportField.PHONE_MODEL,
+                ReportField.DEVICE_ID,
+                ReportField.ANDROID_VERSION,
+                ReportField.STACK_TRACE,
+                ReportField.APPLICATION_LOG,
+                ReportField.LOGCAT,
+                ReportField.SHARED_PREFERENCES,
+                })
+// @formatter:on
 public class AlarmApplication extends Application {
 
     @Override
@@ -63,10 +80,8 @@ public class AlarmApplication extends Application {
 
         Logger logger = Logger.getDefaultLogger();
         logger.addLogWriter(new LogcatLogWriterWithLines());
-        if (BuildConfig.DEBUG) {
-            logger.addLogWriter(new FileLogWriter("BetterAlarm"));
-            LoggingExceptionHandler.addLoggingExceptionHandlerToAllThreads(logger);
-        }
+        logger.addLogWriter(new FileLogWriter(this, false));
+        LoggingExceptionHandler.addLoggingExceptionHandlerToAllThreads(logger);
 
         logger.setLogLevel(WakeLockManager.class, LogLevel.ERR);
         logger.setLogLevel(AlarmDatabaseHelper.class, LogLevel.ERR);
