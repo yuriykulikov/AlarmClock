@@ -75,13 +75,13 @@ public class ToastPresenter extends BroadcastReceiver {
         long days = hours / 24;
         hours = hours % 24;
 
-        String daySeq = (days == 0) ? "" : (days == 1) ? context.getString(R.string.day) : context.getString(
-                R.string.days, Long.toString(days));
+        String daySeq = days == 0 ? "" : days == 1 ? context.getString(R.string.day) : context.getString(R.string.days,
+                Long.toString(days));
 
-        String minSeq = (minutes == 0) ? "" : (minutes == 1) ? context.getString(R.string.minute) : context.getString(
+        String minSeq = minutes == 0 ? "" : minutes == 1 ? context.getString(R.string.minute) : context.getString(
                 R.string.minutes, Long.toString(minutes));
 
-        String hourSeq = (hours == 0) ? "" : (hours == 1) ? context.getString(R.string.hour) : context.getString(
+        String hourSeq = hours == 0 ? "" : hours == 1 ? context.getString(R.string.hour) : context.getString(
                 R.string.hours, Long.toString(hours));
 
         boolean dispDays = days > 0;

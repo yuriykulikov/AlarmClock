@@ -126,7 +126,7 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
     public boolean onKey(View v, int keyCode, KeyEvent event) {
         // If key arrives immediately after the activity has been cleaned up.
         if (volumizers.isEmpty()) return true;
-        boolean isdown = (event.getAction() == KeyEvent.ACTION_DOWN);
+        boolean isdown = event.getAction() == KeyEvent.ACTION_DOWN;
         switch (keyCode) {
         case KeyEvent.KEYCODE_VOLUME_DOWN:
             if (isdown) {

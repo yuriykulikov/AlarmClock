@@ -35,9 +35,7 @@ public class DontPressWithParentLayout extends LinearLayout {
     @Override
     public void setPressed(boolean pressed) {
         // If the parent is pressed, do not set to pressed.
-        if (pressed && ((View) getParent()).isPressed()) {
-            return;
-        }
+        if (pressed && ((View) getParent()).isPressed()) return;
         super.setPressed(pressed);
     }
 }

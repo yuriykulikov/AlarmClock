@@ -161,7 +161,7 @@ public class TimePicker extends TimerSetupView implements Button.OnClickListener
             // for 24 hours mode
             if (mInputPointer >= 0) {
                 int digit = mInput[mInputPointer];
-                if ((mIs24HoursMode && digit >= 3 && digit <= 9) || (!mIs24HoursMode && digit >= 2 && digit <= 9)) {
+                if (mIs24HoursMode && digit >= 3 && digit <= 9 || !mIs24HoursMode && digit >= 2 && digit <= 9) {
                     hours1 = -2;
                 }
             }
@@ -170,8 +170,7 @@ public class TimePicker extends TimerSetupView implements Button.OnClickListener
             // mode
             if (mInputPointer > 0 && mInputPointer < 3 && hours1 != -2) {
                 int digits = mInput[mInputPointer] * 10 + mInput[mInputPointer - 1];
-                if ((mIs24HoursMode && digits >= 24 && digits <= 25)
-                        || (!mIs24HoursMode && digits >= 13 && digits <= 15)) {
+                if (mIs24HoursMode && digits >= 24 && digits <= 25 || !mIs24HoursMode && digits >= 13 && digits <= 15) {
                     hours1 = -2;
                 }
             }
@@ -182,9 +181,9 @@ public class TimePicker extends TimerSetupView implements Button.OnClickListener
         } else {
             hours1 = -1;
         }
-        int hours2 = (mInputPointer < 2) ? -1 : mInput[2];
-        int minutes1 = (mInputPointer < 1) ? -1 : mInput[1];
-        int minutes2 = (mInputPointer < 0) ? -1 : mInput[0];
+        int hours2 = mInputPointer < 2 ? -1 : mInput[2];
+        int minutes1 = mInputPointer < 1 ? -1 : mInput[1];
+        int minutes2 = mInputPointer < 0 ? -1 : mInput[0];
         mEnteredTime.setTime(hours1, hours2, minutes1, minutes2, -1);
     }
 
@@ -259,10 +258,10 @@ public class TimePicker extends TimerSetupView implements Button.OnClickListener
     private boolean canAddDigits() {
         int time = getEnteredTime();
         // For AM/PM mode , can add "00" if an hour between 1 and 12 was entered
-        if (!mIs24HoursMode) return (time >= 1 && time <= 12);
+        if (!mIs24HoursMode) return time >= 1 && time <= 12;
         // For 24 hours mode , can add "00"/"30" if an hour between 0 and 23 was
         // entered
-        return (time >= 0 && time <= 23 && mInputPointer > -1 && mInputPointer < 2);
+        return time >= 0 && time <= 23 && mInputPointer > -1 && mInputPointer < 2;
     }
 
     // Enable/disable keys in the numeric key pad according to the data entered
@@ -439,7 +438,7 @@ public class TimePicker extends TimerSetupView implements Button.OnClickListener
         } else {
             // You can use the AM/PM if time entered is 0 to 12 or it is 3
             // digits or more
-            if ((time > 12 && time < 100) || time == 0 || mAmPmState != AMPM_NOT_SELECTED) {
+            if (time > 12 && time < 100 || time == 0 || mAmPmState != AMPM_NOT_SELECTED) {
                 mLeft.setEnabled(false);
                 mRight.setEnabled(false);
             } else {

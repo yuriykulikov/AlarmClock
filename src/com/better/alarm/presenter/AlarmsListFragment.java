@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -205,7 +206,7 @@ public class AlarmsListFragment extends ListFragment {
 
         setHasOptionsMenu(true);
 
-        getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        getListView().setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
         mAlarmsChangedReceiver = new AlarmChangedReceiver();
     }
@@ -250,7 +251,7 @@ public class AlarmsListFragment extends ListFragment {
         cal.set(Calendar.HOUR_OF_DAY, alarm.getHour());
         cal.set(Calendar.MINUTE, alarm.getMinutes());
         String format = android.text.format.DateFormat.is24HourFormat(getActivity()) ? M24 : M12;
-        final String time = (cal == null) ? "" : (String) DateFormat.format(format, cal);
+        final String time = cal == null ? "" : (String) DateFormat.format(format, cal);
 
         // Inflate the custom view and set each TextView's text.
         final View v = getActivity().getLayoutInflater().inflate(R.layout.list_context_menu, null);
