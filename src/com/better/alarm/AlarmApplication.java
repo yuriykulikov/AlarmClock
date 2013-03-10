@@ -86,15 +86,15 @@ public class AlarmApplication extends Application {
         logger.setLogLevel(WakeLockManager.class, LogLevel.ERR);
         logger.setLogLevel(AlarmDatabaseHelper.class, LogLevel.ERR);
         logger.setLogLevel(AlarmProvider.class, LogLevel.ERR);
-        logger.setLogLevel(AlarmsScheduler.class, LogLevel.DEBUG);
-        logger.setLogLevel(AlarmCore.class, LogLevel.DEBUG);
-        logger.setLogLevel(Alarms.class, LogLevel.DEBUG);
-        logger.setLogLevel(StateMachine.class, LogLevel.DEBUG);
-        logger.setLogLevel(AlarmsService.class, LogLevel.DEBUG);
-        logger.setLogLevel(KlaxonService.class, LogLevel.DEBUG);
-        logger.setLogLevel(VibrationService.class, LogLevel.DEBUG);
-        logger.setLogLevel(AlarmsListFragment.class, LogLevel.DEBUG);
-        logger.setLogLevel(AlarmAlertFullScreen.class, LogLevel.DEBUG);
+        logger.setLogLevel(AlarmsScheduler.class, LogLevel.DBG);
+        logger.setLogLevel(AlarmCore.class, LogLevel.DBG);
+        logger.setLogLevel(Alarms.class, LogLevel.DBG);
+        logger.setLogLevel(StateMachine.class, LogLevel.DBG);
+        logger.setLogLevel(AlarmsService.class, LogLevel.DBG);
+        logger.setLogLevel(KlaxonService.class, LogLevel.DBG);
+        logger.setLogLevel(VibrationService.class, LogLevel.DBG);
+        logger.setLogLevel(AlarmsListFragment.class, LogLevel.DBG);
+        logger.setLogLevel(AlarmAlertFullScreen.class, LogLevel.DBG);
 
         WakeLockManager.init(getApplicationContext(), logger, true);
         AlarmsManager.init(getApplicationContext(), logger);
