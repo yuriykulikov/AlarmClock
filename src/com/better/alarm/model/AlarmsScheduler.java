@@ -16,9 +16,11 @@
 package com.better.alarm.model;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.PriorityQueue;
 
 import android.app.AlarmManager;
@@ -38,17 +40,20 @@ public class AlarmsScheduler implements IAlarmsScheduler {
         public final int id;
         public final Calendar calendar;
         public final CalendarType type;
+        private final DateFormat df;
 
         public ScheduledAlarm(int id, Calendar calendar, CalendarType type) {
             this.id = id;
             this.calendar = calendar;
             this.type = type;
+            this.df = new SimpleDateFormat("dd-MM-yy HH:mm:ss", Locale.GERMANY);
         }
 
         public ScheduledAlarm(int id) {
             this.id = id;
             this.calendar = null;
             this.type = null;
+            this.df = new SimpleDateFormat("dd-MM-yy HH:mm:ss", Locale.GERMANY);
         }
 
         @Override
@@ -64,7 +69,6 @@ public class AlarmsScheduler implements IAlarmsScheduler {
 
         @Override
         public String toString() {
-            DateFormat df = DateFormat.getDateTimeInstance();
             StringBuilder sb = new StringBuilder();
             sb.append(id).append(" ");
             sb.append(type != null ? type.toString() : "null").append(" ");

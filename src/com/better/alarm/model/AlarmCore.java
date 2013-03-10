@@ -18,7 +18,9 @@
 package com.better.alarm.model;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.WeakHashMap;
 
 import android.content.Context;
@@ -125,6 +127,8 @@ public final class AlarmCore implements Alarm {
 
     private final AlarmStateMachine stateMachine;
 
+    private final DateFormat df;
+
     public AlarmCore(IAlarmContainer container, Context context, Logger logger, IAlarmsScheduler alarmsScheduler,
             IStateNotifier broadcaster) {
         mContext = context;
@@ -132,6 +136,7 @@ public final class AlarmCore implements Alarm {
         mAlarmsScheduler = alarmsScheduler;
         this.container = container;
         this.broadcaster = broadcaster;
+        this.df = new SimpleDateFormat("dd-MM-yy HH:mm:ss", Locale.GERMANY);
 
         PreferenceManager.getDefaultSharedPreferences(mContext).registerOnSharedPreferenceChangeListener(
                 mOnSharedPreferenceChangeListener);
@@ -157,7 +162,6 @@ public final class AlarmCore implements Alarm {
             }
         }
     };
-
     private void fetchPreAlarmMinutes() {
         String asString = PreferenceManager.getDefaultSharedPreferences(mContext).getString("prealarm_duration", "30");
         prealarmMinutes = Integer.parseInt(asString);
@@ -877,7 +881,6 @@ public final class AlarmCore implements Alarm {
         StringBuilder sb = new StringBuilder();
         sb.append("AlarmCore ").append(container.getId());
         sb.append(" in ").append(stateMachine.getCurrentState().getName());
-        DateFormat df = DateFormat.getDateTimeInstance();
         sb.append(" on ").append(df.format(container.getNextTime().getTime()));
         return sb.toString();
     }
