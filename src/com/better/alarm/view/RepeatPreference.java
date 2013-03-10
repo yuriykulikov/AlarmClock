@@ -30,10 +30,10 @@ import com.better.alarm.model.DaysOfWeek;
 public class RepeatPreference extends ListPreference {
 
     // Initial value that can be set with the values saved in the database.
-    private DaysOfWeek mDaysOfWeek = new DaysOfWeek(0);
+    private final DaysOfWeek mDaysOfWeek = new DaysOfWeek(0);
     // New value that will be set if a positive result comes back from the
     // dialog.
-    private DaysOfWeek mNewDaysOfWeek = new DaysOfWeek(0);
+    private final DaysOfWeek mNewDaysOfWeek = new DaysOfWeek(0);
 
     public RepeatPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -62,6 +62,7 @@ public class RepeatPreference extends ListPreference {
         CharSequence[] entries = getEntries();
         builder.setMultiChoiceItems(entries, mDaysOfWeek.getBooleanArray(),
                 new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                         mNewDaysOfWeek.set(which, isChecked);
                     }

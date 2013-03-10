@@ -236,7 +236,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         c.set(Calendar.HOUR_OF_DAY, mHour);
         c.set(Calendar.MINUTE, mMinute);
         String format = android.text.format.DateFormat.is24HourFormat(this) ? M24 : M12;
-        CharSequence summary = (c == null) ? "" : (String) DateFormat.format(format, c);
+        CharSequence summary = c == null ? "" : (String) DateFormat.format(format, c);
         mTimePref.setSummary(summary);
     }
 

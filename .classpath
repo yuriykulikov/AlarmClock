@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/acra"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/AndroidUtils"/>
 	<classpathentry excluding="com/better/alarm/model/Temp.java|com/better/alarm/presenter/NotificationManager.java|com/better/alarm/presenter/NotificationPresenter.java|com/better/alarm/model/sss.java|com/better/alarm/presenter/status/ToastMaster.java" kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry kind="src" path="utils_src"/>
-	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="lib" path="C:/Users/Yuriy/Documents/Android/android-sdk/tools/support/annotations.jar"/>
-	<classpathentry kind="lib" path="libs/acra-4.4.0.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
