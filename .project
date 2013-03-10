@@ -30,11 +30,4 @@
 		<nature>com.android.ide.eclipse.adt.AndroidNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>utils_src</name>
-			<type>2</type>
-			<location>C:/Users/Yuriy/Documents/workspace-avr/AndroidUtils/src</location>
-		</link>
-	</linkedResources>
 </projectDescription>
