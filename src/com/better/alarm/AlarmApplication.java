@@ -56,7 +56,6 @@ import com.github.androidutils.wakelock.WakeLockManager;
                 ReportField.ANDROID_VERSION,
                 ReportField.STACK_TRACE,
                 ReportField.APPLICATION_LOG,
-                ReportField.LOGCAT,
                 ReportField.SHARED_PREFERENCES,
                 })
 // @formatter:on
