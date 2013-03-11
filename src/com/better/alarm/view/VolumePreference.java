@@ -257,7 +257,7 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
 
         @Override
         public void startSample() {
-            if (!isSamplePlaying()) {
+            if (mRingtone != null && !isSamplePlaying()) {
                 mRingtone.play();
             }
         }
@@ -277,7 +277,7 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
         }
 
         private boolean isSamplePlaying() {
-            return mRingtone.isPlaying();
+            return mRingtone != null && mRingtone.isPlaying();
         }
     }
 
