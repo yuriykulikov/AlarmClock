@@ -18,6 +18,8 @@ package com.better.alarm.view;
 
 import java.text.DateFormatSymbols;
 
+import org.acra.ACRA;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Parcel;
@@ -535,15 +537,23 @@ public class TimePicker extends TimerSetupView implements Button.OnClickListener
 
         private SavedState(Parcel in) {
             super(in);
-            mInputPointer = in.readInt();
-            in.readIntArray(mInput);
-            mAmPmState = in.readInt();
+            try {
+                mInputPointer = in.readInt();
+                mInput = new int[in.readInt()];
+                in.readIntArray(mInput);
+                mAmPmState = in.readInt();
+            } catch (Exception e) {
+                mInputPointer = -1;
+                mInput = null;
+                ACRA.getErrorReporter().handleSilentException(e);
+            }
         }
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
             super.writeToParcel(dest, flags);
             dest.writeInt(mInputPointer);
+            dest.writeInt(mInput.length);
             dest.writeIntArray(mInput);
             dest.writeInt(mAmPmState);
         }
