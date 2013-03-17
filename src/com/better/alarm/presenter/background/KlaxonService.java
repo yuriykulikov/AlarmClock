@@ -214,8 +214,8 @@ public class KlaxonService extends Service {
         wakeLock.acquire();
         // Listen for incoming calls to kill the alarm.
         mTelephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        mTelephonyManager.listen(volume, PhoneStateListener.LISTEN_CALL_STATE);
         volume = new Volume(log, mTelephonyManager);
+        mTelephonyManager.listen(volume, PhoneStateListener.LISTEN_CALL_STATE);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         sp.registerOnSharedPreferenceChangeListener(volume);
         volume.onSharedPreferenceChanged(sp, Intents.KEY_PREALARM_VOLUME);
