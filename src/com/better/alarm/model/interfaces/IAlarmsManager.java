@@ -47,25 +47,25 @@ public interface IAlarmsManager {
     public void dismiss(Alarm alarm);
 
     /**
-     * Delete an AlarmCore with the given id from the database
+     * Delete an AlarmCore from the database
      * 
-     * @param id
+     * @param alarm
      */
-    public void delete(int id);
+    public void delete(Alarm alarm);
 
     /**
-     * Enable of disable an alarm with a given id
+     * Enable of disable an alarm
      * 
-     * @param id
+     * @param alarm
      * @param enable
      */
-    public void enable(int id, boolean enable);
+    public void enable(Alarm alarm, boolean enable);
 
     /**
      * Return an AlarmCore object representing the alarm id in the database.
      * Returns null if no alarm exists.
      */
-    public Alarm getAlarm(int alarmId);
+    public Alarm getAlarm(int alarmId) throws AlarmNotFoundException;
 
     /**
      * Queries all alarms
@@ -77,7 +77,7 @@ public interface IAlarmsManager {
     /**
      * Create new AlarmCore with default settings
      * 
-     * @return id of newly created AlarmCore
+     * @return Alarm
      */
-    int createNewAlarm();
+    public Alarm createNewAlarm();
 }

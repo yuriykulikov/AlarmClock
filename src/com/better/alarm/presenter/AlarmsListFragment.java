@@ -92,7 +92,7 @@ public class AlarmsListFragment extends ListFragment {
                 @Override
                 public void onClick(View v) {
                     clockOnOff.toggle();
-                    alarms.enable(alarm.getId(), clockOnOff.isChecked());
+                    alarms.enable(alarm, clockOnOff.isChecked());
                 }
             });
 
@@ -161,14 +161,14 @@ public class AlarmsListFragment extends ListFragment {
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface d, int w) {
-                            alarms.delete(alarm.getId());
+                            alarms.delete(alarm);
                         }
                     }).setNegativeButton(android.R.string.cancel, null).show();
             return true;
         }
 
         case R.id.enable_alarm: {
-            alarms.enable(alarm.getId(), !alarm.isEnabled());
+            alarms.enable(alarm, !alarm.isEnabled());
             return true;
         }
 

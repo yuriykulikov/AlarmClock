@@ -16,6 +16,8 @@ package com.better.alarm.presenter.background;
 
 import java.util.Calendar;
 
+import org.acra.ACRA;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -24,7 +26,9 @@ import android.text.format.DateFormat;
 
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.interfaces.Alarm;
+import com.better.alarm.model.interfaces.AlarmNotFoundException;
 import com.better.alarm.model.interfaces.Intents;
+import com.github.androidutils.logger.Logger;
 
 /**
  * This class reacts on {@link } and {@link } and
@@ -41,18 +45,26 @@ public class ScheduledReceiver extends BroadcastReceiver {
 
         if (intent.getAction().equals(Intents.ACTION_ALARM_SCHEDULED)) {
             int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
-            Alarm alarm = AlarmsManager.getAlarmsManager().getAlarm(id);
-            // Broadcast intent for the notification bar
-            Intent alarmChanged = new Intent("android.intent.action.ALARM_CHANGED");
-            alarmChanged.putExtra("alarmSet", true);
-            context.sendBroadcast(alarmChanged);
+            Alarm alarm;
+            try {
+                alarm = AlarmsManager.getAlarmsManager().getAlarm(id);
+                // Broadcast intent for the notification bar
+                Intent alarmChanged = new Intent("android.intent.action.ALARM_CHANGED");
+                alarmChanged.putExtra("alarmSet", true);
+                context.sendBroadcast(alarmChanged);
 
-            // Update systems settings, so that interested Apps (like KeyGuard)
-            // will react accordingly
-            String format = android.text.format.DateFormat.is24HourFormat(context) ? DM24 : DM12;
-            Calendar calendar = alarm.isSnoozed() ? alarm.getSnoozedTime() : alarm.getNextTime();
-            String timeString = (String) DateFormat.format(format, calendar);
-            Settings.System.putString(context.getContentResolver(), Settings.System.NEXT_ALARM_FORMATTED, timeString);
+                // Update systems settings, so that interested Apps (like
+                // KeyGuard)
+                // will react accordingly
+                String format = android.text.format.DateFormat.is24HourFormat(context) ? DM24 : DM12;
+                Calendar calendar = alarm.isSnoozed() ? alarm.getSnoozedTime() : alarm.getNextTime();
+                String timeString = (String) DateFormat.format(format, calendar);
+                Settings.System.putString(context.getContentResolver(), Settings.System.NEXT_ALARM_FORMATTED,
+                        timeString);
+            } catch (AlarmNotFoundException e) {
+                Logger.getDefaultLogger().e("oops", e);
+                ACRA.getErrorReporter().handleSilentException(e);
+            }
 
         } else if (intent.getAction().equals(Intents.ACTION_ALARMS_UNSCHEDULED)) {
             // Broadcast intent for the notification bar

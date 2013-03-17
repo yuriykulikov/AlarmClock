@@ -17,6 +17,8 @@
 
 package com.better.alarm.presenter.background;
 
+import org.acra.ACRA;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -25,7 +27,9 @@ import android.widget.Toast;
 import com.better.alarm.R;
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.interfaces.Alarm;
+import com.better.alarm.model.interfaces.AlarmNotFoundException;
 import com.better.alarm.model.interfaces.Intents;
+import com.github.androidutils.logger.Logger;
 
 public class ToastPresenter extends BroadcastReceiver {
 
@@ -35,8 +39,14 @@ public class ToastPresenter extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         if (Intents.ACTION_ALARM_SET.equals(action)) {
-            Alarm alarm = AlarmsManager.getAlarmsManager().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
-            popAlarmSetToast(context, alarm);
+            Alarm alarm;
+            try {
+                alarm = AlarmsManager.getAlarmsManager().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
+                popAlarmSetToast(context, alarm);
+            } catch (AlarmNotFoundException e) {
+                Logger.getDefaultLogger().e("oops", e);
+                ACRA.getErrorReporter().handleSilentException(e);
+            }
         }
     }
 

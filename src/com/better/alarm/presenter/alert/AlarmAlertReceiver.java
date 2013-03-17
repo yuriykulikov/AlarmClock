@@ -19,6 +19,8 @@ package com.better.alarm.presenter.alert;
 
 import java.util.Calendar;
 
+import org.acra.ACRA;
+
 import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -32,8 +34,10 @@ import android.text.format.DateFormat;
 import com.better.alarm.R;
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.interfaces.Alarm;
+import com.better.alarm.model.interfaces.AlarmNotFoundException;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
+import com.github.androidutils.logger.Logger;
 
 /**
  * Glue class: connects AlarmAlert IntentReceiver to AlarmAlert activity. Passes
@@ -57,36 +61,43 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
         nm = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         String action = intent.getAction();
         int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
-        alarm = alarmsManager.getAlarm(id);
+        try {
+            alarm = alarmsManager.getAlarm(id);
 
-        if (action.equals(Intents.ALARM_ALERT_ACTION) || action.equals(Intents.ALARM_PREALARM_ACTION)) {
-            // our alarm fired again, remove snooze notification
-            if (alarm.getId() == id) {
+            if (action.equals(Intents.ALARM_ALERT_ACTION) || action.equals(Intents.ALARM_PREALARM_ACTION)) {
+                // our alarm fired again, remove snooze notification
                 nm.cancel(id + NOTIFICATION_OFFSET);
+                onAlert(alarm);
+
+            } else if (action.equals(Intents.ALARM_DISMISS_ACTION)) {
+                nm.cancel(id);
+                nm.cancel(id + NOTIFICATION_OFFSET);
+
+            } else if (action.equals(Intents.ACTION_CANCEL_SNOOZE)) {
+                nm.cancel(id);
+                nm.cancel(id + NOTIFICATION_OFFSET);
+
+            } else if (action.equals(Intents.ALARM_SNOOZE_ACTION)) {
+                nm.cancel(id);
+                onSnoozed(id);
+
+            } else if (action.equals(Intents.ACTION_SOUND_EXPIRED)) {
+                onSoundExpired(id);
+
+            } else if (action.equals(ACTION_CANCEL_NOTIFICATION)) {
+                alarmsManager.dismiss(alarm);
             }
-            onAlert(id);
-
-        } else if (action.equals(Intents.ALARM_DISMISS_ACTION)) {
+        } catch (AlarmNotFoundException e) {
+            Logger.getDefaultLogger().e("oops", e);
+            ACRA.getErrorReporter().handleSilentException(e);
             nm.cancel(id);
             nm.cancel(id + NOTIFICATION_OFFSET);
-
-        } else if (action.equals(Intents.ACTION_CANCEL_SNOOZE)) {
-            nm.cancel(id);
-            nm.cancel(id + NOTIFICATION_OFFSET);
-
-        } else if (action.equals(Intents.ALARM_SNOOZE_ACTION)) {
-            nm.cancel(id);
-            onSnoozed(id);
-
-        } else if (action.equals(Intents.ACTION_SOUND_EXPIRED)) {
-            onSoundExpired(id);
-
-        } else if (action.equals(ACTION_CANCEL_NOTIFICATION)) {
-            alarmsManager.dismiss(alarm);
         }
     }
 
-    private void onAlert(int id) {
+    private void onAlert(Alarm alarm) {
+        int id = alarm.getId();
+
         /* Close dialogs and window shade */
         Intent closeDialogs = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         mContext.sendBroadcast(closeDialogs);
@@ -108,7 +119,6 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
         notify.putExtra(Intents.EXTRA_ID, id);
         PendingIntent pendingNotify = PendingIntent.getActivity(mContext, id, notify, 0);
 
-        Alarm alarm = AlarmsManager.getAlarmsManager().getAlarm(id);
         // Use the alarm's label or the default label as the ticker text and
         // main text of the notification.
         String label = alarm.getLabelOrDefault(mContext);

@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.database.Cursor;
 
 import com.better.alarm.model.interfaces.Alarm;
+import com.better.alarm.model.interfaces.AlarmNotFoundException;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.model.persistance.AlarmContainer;
@@ -83,24 +84,25 @@ public class Alarms implements IAlarmsManager {
     }
 
     @Override
-    public AlarmCore getAlarm(int alarmId) {
-        return alarms.get(alarmId);
+    public AlarmCore getAlarm(int alarmId) throws AlarmNotFoundException {
+        AlarmCore alarm = alarms.get(alarmId);
+        if (alarm != null) return alarm;
+        else throw new AlarmNotFoundException("AlarmID " + alarmId + " could not be resolved");
     }
 
     @Override
-    public int createNewAlarm() {
+    public Alarm createNewAlarm() {
         AlarmContainer container = new AlarmContainer(log, mContext);
         AlarmCore alarm = new AlarmCore(container, mContext, log, mAlarmsScheduler, broadcaster);
         alarms.put(alarm.getId(), alarm);
         notifyAlarmListChangedListeners();
-        return alarm.getId();
+        return alarm;
     }
 
     @Override
-    public void delete(int alarmId) {
-        Alarm alarm = getAlarm(alarmId);
+    public void delete(Alarm alarm) {
         alarm.delete();
-        alarms.remove(alarmId);
+        alarms.remove(alarm.getId());
         notifyAlarmListChangedListeners();
     }
 
@@ -112,24 +114,21 @@ public class Alarms implements IAlarmsManager {
         return alarms;
     }
 
-    void onAlarmFired(int id, CalendarType calendarType) {
-        mAlarmsScheduler.onAlarmFired(id);
-        AlarmCore alarm = getAlarm(id);
+    void onAlarmFired(AlarmCore alarm, CalendarType calendarType) {
+        mAlarmsScheduler.onAlarmFired(alarm.getId());
         alarm.onAlarmFired(calendarType);
         notifyAlarmListChangedListeners();
     }
 
     /**
-     * A convenience method to enable or disable an alarm.
+     * A convenience method to enable or disable an alarm
      * 
-     * @param id
-     *            corresponds to the _id column
      * @param enabled
      *            corresponds to the ENABLED column
+     * @throws AlarmNotFoundException
      */
     @Override
-    public void enable(int id, boolean enable) {
-        Alarm alarm = getAlarm(id);
+    public void enable(Alarm alarm, boolean enable) {
         alarm.enable(enable);
         notifyAlarmListChangedListeners();
     }

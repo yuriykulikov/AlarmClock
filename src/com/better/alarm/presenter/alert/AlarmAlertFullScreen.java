@@ -17,6 +17,8 @@
 
 package com.better.alarm.presenter.alert;
 
+import org.acra.ACRA;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -37,6 +39,7 @@ import android.widget.Button;
 import com.better.alarm.R;
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.interfaces.Alarm;
+import com.better.alarm.model.interfaces.AlarmNotFoundException;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.presenter.SettingsActivity;
@@ -107,33 +110,40 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
         alarmsManager = AlarmsManager.getAlarmsManager();
 
         int id = getIntent().getIntExtra(Intents.EXTRA_ID, -1);
-        mAlarm = alarmsManager.getAlarm(id);
+        try {
+            mAlarm = alarmsManager.getAlarm(id);
 
-        // Get the volume/camera button behavior setting
-        final String vol = PreferenceManager.getDefaultSharedPreferences(this).getString(
-                SettingsActivity.KEY_VOLUME_BEHAVIOR, DEFAULT_VOLUME_BEHAVIOR);
-        mVolumeBehavior = Integer.parseInt(vol);
+            // Get the volume/camera button behavior setting
+            final String vol = PreferenceManager.getDefaultSharedPreferences(this).getString(
+                    SettingsActivity.KEY_VOLUME_BEHAVIOR, DEFAULT_VOLUME_BEHAVIOR);
+            mVolumeBehavior = Integer.parseInt(vol);
 
-        final Window win = getWindow();
-        win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-        // Turn on the screen unless we are being launched from the AlarmAlert
-        // subclass as a result of the screen turning off.
-        if (!getIntent().getBooleanExtra(SCREEN_OFF, false)) {
-            win.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                    | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-                    | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON);
+            final Window win = getWindow();
+            win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                    | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+            // Turn on the screen unless we are being launched from the
+            // AlarmAlert
+            // subclass as a result of the screen turning off.
+            if (!getIntent().getBooleanExtra(SCREEN_OFF, false)) {
+                win.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                        | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                        | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON);
+            }
+
+            updateLayout();
+
+            // Register to get the alarm killed/snooze/dismiss intent.
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(Intents.ALARM_SNOOZE_ACTION);
+            filter.addAction(Intents.ALARM_DISMISS_ACTION);
+            filter.addAction(Intents.ACTION_CANCEL_SNOOZE);
+            filter.addAction(Intents.ACTION_SOUND_EXPIRED);
+            registerReceiver(mReceiver, filter);
+        } catch (AlarmNotFoundException e) {
+            dismiss();
+            Logger.getDefaultLogger().e("oops", e);
+            ACRA.getErrorReporter().handleSilentException(e);
         }
-
-        updateLayout();
-
-        // Register to get the alarm killed/snooze/dismiss intent.
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Intents.ALARM_SNOOZE_ACTION);
-        filter.addAction(Intents.ALARM_DISMISS_ACTION);
-        filter.addAction(Intents.ACTION_CANCEL_SNOOZE);
-        filter.addAction(Intents.ACTION_SOUND_EXPIRED);
-        registerReceiver(mReceiver, filter);
     }
 
     private void setTitle() {
@@ -223,9 +233,14 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
         Logger.getDefaultLogger().d("AlarmAlert.OnNewIntent()");
 
         int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
-        mAlarm = alarmsManager.getAlarm(id);
+        try {
+            mAlarm = alarmsManager.getAlarm(id);
+            setTitle();
+        } catch (AlarmNotFoundException e) {
+            Logger.getDefaultLogger().e("oops", e);
+            ACRA.getErrorReporter().handleSilentException(e);
+        }
 
-        setTitle();
     }
 
     @Override

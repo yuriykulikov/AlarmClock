@@ -19,6 +19,8 @@ package com.better.alarm.presenter;
 
 import java.util.Calendar;
 
+import org.acra.ACRA;
+
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
@@ -39,10 +41,12 @@ import com.better.alarm.R;
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.AlarmEditor;
+import com.better.alarm.model.interfaces.AlarmNotFoundException;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.view.AlarmPreference;
 import com.better.alarm.view.RepeatPreference;
+import com.github.androidutils.logger.Logger;
 
 /**
  * Manages each alarm
@@ -60,7 +64,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     private RepeatPreference mRepeatPref;
     private CheckBoxPreference mPreAlarmPref;
 
-    private int mId;
+    private Alarm alarm;
     private boolean isNewAlarm;
     // these are to get data from TimerPicker
     private int mHour;
@@ -97,10 +101,17 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         mPreAlarmPref.setOnPreferenceChangeListener(this);
 
         if (getIntent().hasExtra(Intents.EXTRA_ID)) {
-            mId = getIntent().getIntExtra(Intents.EXTRA_ID, -1);
+            int mId = getIntent().getIntExtra(Intents.EXTRA_ID, -1);
+            try {
+                alarm = alarms.getAlarm(mId);
+            } catch (AlarmNotFoundException e) {
+                Logger.getDefaultLogger().e("oops", e);
+                ACRA.getErrorReporter().handleSilentException(e);
+                finish();
+            }
         } else {
             // No alarm means create a new alarm.
-            mId = alarms.createNewAlarm();
+            alarm = alarms.createNewAlarm();
             isNewAlarm = true;
         }
 
@@ -190,7 +201,6 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     }
 
     private void updatePrefs() {
-        Alarm alarm = alarms.getAlarm(mId);
         mEnabledPref.setChecked(alarm.isEnabled());
         mHour = alarm.getHour();
         mMinute = alarm.getMinutes();
@@ -204,7 +214,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
         if (preference == mTimePref) {
-            TimePickerDialogFragment.showTimePicker(alarms.getAlarm(mId), getFragmentManager());
+            TimePickerDialogFragment.showTimePicker(alarm, getFragmentManager());
         }
 
         return super.onPreferenceTreeClick(preferenceScreen, preference);
@@ -241,7 +251,6 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     }
 
     private long saveAlarm() {
-        Alarm alarm = alarms.getAlarm(mId);
         AlarmEditor editor = alarm.edit();
         //@formatter:off
         editor.setEnabled(mEnabledPref.isChecked())
@@ -255,7 +264,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         //@formatter:on
         editor.commit();
         isNewAlarm = false;
-        return alarms.getAlarm(mId).getNextTime().getTimeInMillis();
+        return alarm.getNextTime().getTimeInMillis();
     }
 
     private void deleteAlarm() {
@@ -264,7 +273,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface d, int w) {
-                        alarms.delete(mId);
+                        alarms.delete(alarm);
                         finish();
                     }
                 }).setNegativeButton(android.R.string.cancel, null).show();
@@ -273,7 +282,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     private void revert() {
         // "Revert" on a newly created alarm should delete it.
         if (isNewAlarm) {
-            alarms.delete(mId);
+            alarms.delete(alarm);
         } else {
             // do not save changes
         }

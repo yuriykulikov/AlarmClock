@@ -16,6 +16,8 @@
 
 package com.better.alarm.presenter;
 
+import org.acra.ACRA;
+
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
@@ -31,6 +33,7 @@ import android.widget.Button;
 import com.better.alarm.R;
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.interfaces.Alarm;
+import com.better.alarm.model.interfaces.AlarmNotFoundException;
 import com.better.alarm.view.TimePicker;
 import com.github.androidutils.logger.Logger;
 
@@ -44,6 +47,8 @@ public class TimePickerDialogFragment extends DialogFragment {
     private Button mSet, mCancel;
     private TimePicker mPicker;
     private final Logger log = Logger.getDefaultLogger();
+
+    private Alarm alarm;
 
     /**
      * 
@@ -73,36 +78,42 @@ public class TimePickerDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        int id = getArguments().getInt(KEY_ALARM);
-        final Alarm alarm = AlarmsManager.getAlarmsManager().getAlarm(id);
-
         View v = inflater.inflate(R.layout.time_picker_dialog, null);
-        mSet = (Button) v.findViewById(R.id.set_button);
-        mCancel = (Button) v.findViewById(R.id.cancel_button);
-        mCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                notifyOnCancelListener();
-                dismiss();
-            }
-        });
-        mPicker = (TimePicker) v.findViewById(R.id.time_picker);
-        mPicker.setSetButton(mSet);
-        mSet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final Activity activity = getActivity();
-                if (activity instanceof AlarmTimePickerDialogHandler) {
-                    final AlarmTimePickerDialogHandler act = (AlarmTimePickerDialogHandler) activity;
-                    act.onDialogTimeSet(alarm, mPicker.getHours(), mPicker.getMinutes());
-                } else {
-                    log.e("Error! Activities that use TimePickerDialogFragment must implement "
-                            + "AlarmTimePickerDialogHandler");
-                }
-                dismiss();
-            }
-        });
 
+        try {
+            int id = getArguments().getInt(KEY_ALARM);
+            alarm = AlarmsManager.getAlarmsManager().getAlarm(id);
+
+            mSet = (Button) v.findViewById(R.id.set_button);
+            mCancel = (Button) v.findViewById(R.id.cancel_button);
+            mCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    notifyOnCancelListener();
+                    dismiss();
+                }
+            });
+            mPicker = (TimePicker) v.findViewById(R.id.time_picker);
+            mPicker.setSetButton(mSet);
+            mSet.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final Activity activity = getActivity();
+                    if (activity instanceof AlarmTimePickerDialogHandler) {
+                        final AlarmTimePickerDialogHandler act = (AlarmTimePickerDialogHandler) activity;
+                        act.onDialogTimeSet(alarm, mPicker.getHours(), mPicker.getMinutes());
+                    } else {
+                        log.e("Error! Activities that use TimePickerDialogFragment must implement "
+                                + "AlarmTimePickerDialogHandler");
+                    }
+                    dismiss();
+                }
+            });
+        } catch (AlarmNotFoundException e) {
+            Logger.getDefaultLogger().e("oops", e);
+            ACRA.getErrorReporter().handleSilentException(e);
+            dismiss();
+        }
         return v;
     }
 
@@ -113,7 +124,6 @@ public class TimePickerDialogFragment extends DialogFragment {
     }
 
     private void notifyOnCancelListener() {
-        final Alarm alarm = AlarmsManager.getAlarmsManager().getAlarm(getArguments().getInt(KEY_ALARM));
         Activity activity = getActivity();
         if (activity instanceof OnAlarmTimePickerCanceledListener) {
             final OnAlarmTimePickerCanceledListener act = (OnAlarmTimePickerCanceledListener) getActivity();

@@ -15,6 +15,8 @@
  */
 package com.better.alarm.model;
 
+import org.acra.ACRA;
+
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -23,6 +25,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 
+import com.better.alarm.model.interfaces.AlarmNotFoundException;
 import com.github.androidutils.logger.Logger;
 import com.github.androidutils.wakelock.WakeLockManager;
 
@@ -61,8 +64,15 @@ public class AlarmsService extends Service implements Handler.Callback {
         String action = intent.getAction();
         if (action.equals(AlarmsScheduler.ACTION_FIRED)) {
             int id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1);
-            log.d("AlarmCore fired " + id);
-            alarms.onAlarmFired(id, CalendarType.valueOf(intent.getExtras().getString(AlarmsScheduler.EXTRA_TYPE)));
+            try {
+                AlarmCore alarm = alarms.getAlarm(id);
+                alarms.onAlarmFired(alarm,
+                        CalendarType.valueOf(intent.getExtras().getString(AlarmsScheduler.EXTRA_TYPE)));
+                log.d("AlarmCore fired " + id);
+            } catch (AlarmNotFoundException e) {
+                log.e("oops", e);
+                ACRA.getErrorReporter().handleSilentException(e);
+            }
 
         } else if (action.equals(Intent.ACTION_BOOT_COMPLETED) || action.equals(Intent.ACTION_TIMEZONE_CHANGED)
                 || action.equals(Intent.ACTION_LOCALE_CHANGED) || action.equals(Intent.ACTION_TIME_CHANGED)) {
