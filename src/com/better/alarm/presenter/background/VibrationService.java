@@ -4,6 +4,8 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -20,6 +22,8 @@ public class VibrationService extends Service {
     private Logger log;
     private PowerManager pm;
     private WakeLock wakeLock;
+    private CountDownTimer timer;
+    private SharedPreferences sp;
 
     /**
      * Dispatches intents to the KlaxonService
@@ -40,6 +44,7 @@ public class VibrationService extends Service {
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "VibrationService");
         wakeLock.acquire();
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     @Override
@@ -57,7 +62,19 @@ public class VibrationService extends Service {
         try {
             String action = intent.getAction();
             if (action.equals(Intents.ALARM_ALERT_ACTION)) {
-                startVibrationIfShould();
+                String asString = sp.getString("fade_in_time_sec", "30");
+                int time = Integer.parseInt(asString) * 1000;
+                timer = new CountDownTimer(time, time) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        startVibrationIfShould();
+                    }
+                }.start();
+
                 return START_STICKY;
 
             } else if (action.equals(Intents.ALARM_SNOOZE_ACTION)) {
@@ -93,7 +110,7 @@ public class VibrationService extends Service {
     }
 
     private void startVibrationIfShould() {
-        boolean shouldVibrate = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("vibrate", true);
+        boolean shouldVibrate = sp.getBoolean("vibrate", true);
         if (shouldVibrate) {
             mVibrator.vibrate(sVibratePattern, 0);
         }
@@ -101,6 +118,9 @@ public class VibrationService extends Service {
 
     private void stopVibration() {
         mVibrator.cancel();
+        if (timer != null) {
+            timer.cancel();
+        }
     }
 
     @Override
