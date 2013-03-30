@@ -365,6 +365,14 @@
     <string name="minutes_label_description">minutes</string>
     <string name="seconds_label_description">seconds</string>
 
+    
+    <string-array name="fade_in_time_sec_values" tools:ignore="MissingTranslation">
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+    </string-array>
 <!--      Here come strings which are not contained in the AOSP -->
     <!-- Setting labels on Set alarm screen: Prealarm -->
     <string name="alarm_prealarm">Gentle pre-alarm</string>
@@ -381,7 +389,6 @@
         <item>45 minutes</item>
         <item>60 minutes</item>
     </string-array>
-
     <!--
          Values that are retrieved from the ListPreference. These must match
          the prealarm_duration_entries above.
@@ -405,4 +412,12 @@
     <string name="review_message">Thanks a lot for taking your time to review the application! Positive reviews help to attract more users, which helps to improve the application by collecting feedback. Would you like to proceed?</string>
     <string name="longclick_dismiss_title">Longclick dismiss</string>
     <string name="longclick_dismiss_summary">Hold the dismiss button to dismiss the alarm</string>
+    <string name="fade_in_time_sec_title" tools:ignore="MissingTranslation">Fade-in duration</string>
+    <string-array name="fade_in_time_sec_entries">
+        <item>10 seconds</item>
+        <item>20 seconds</item>
+        <item>30 seconds</item>
+        <item>60 seconds</item>
+        <item>120 seconds</item>
+    </string-array>
 </resources>
