@@ -30,9 +30,8 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Handler;
+import android.os.CountDownTimer;
 import android.os.IBinder;
-import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
@@ -57,6 +56,7 @@ public class KlaxonService extends Service {
     private Volume volume;
     private PowerManager pm;
     private WakeLock wakeLock;
+    private SharedPreferences sp;
 
     /**
      * Dispatches intents to the KlaxonService
@@ -70,18 +70,46 @@ public class KlaxonService extends Service {
         }
     }
 
-    private static class Volume extends PhoneStateListener implements OnSharedPreferenceChangeListener,
-            Handler.Callback {
-        private static final int MESSAGE_CHANGE_VOLUME = 0;
-        private static final int FADE_IN_TIME = 5000;
+    private static class Volume extends PhoneStateListener implements OnSharedPreferenceChangeListener {
+        private static final int FADE_IN_STEPS = 100;
 
         // Volume suggested by media team for in-call alarms.
         private static final float IN_CALL_VOLUME = 0.125f;
 
         // TODO XML
-        // i^2/100
+        // i^2/maxi^2
         private static final float[] ALARM_VOLUMES = { 0f, 0.01f, 0.04f, 0.09f, 0.16f, 0.25f, 0.36f, 0.49f, 0.64f,
                 0.81f, 1.0f };
+
+        private final SharedPreferences sp;
+
+        private final class FadeInTimer extends CountDownTimer {
+            private final long fadeInTime;
+            private final long fadeInStep;
+            private final float targetVolume;
+            private final double multiplier;
+
+            private FadeInTimer(long millisInFuture, long countDownInterval) {
+                super(millisInFuture, countDownInterval);
+                fadeInTime = millisInFuture;
+                fadeInStep = countDownInterval;
+                targetVolume = ALARM_VOLUMES[type == Type.NORMAL ? alarmVolume : preAlarmVolume];
+                multiplier = targetVolume / Math.pow(fadeInTime / fadeInStep, 2);
+            }
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+                long elapsed = fadeInTime - millisUntilFinished;
+                float i = elapsed / fadeInStep;
+                float adjustedVolume = (float) (multiplier * (Math.pow(i, 2)));
+                player.setVolume(adjustedVolume, adjustedVolume);
+            }
+
+            @Override
+            public void onFinish() {
+                // nothing to do
+            }
+        }
 
         public enum Type {
             NORMAL, PREALARM
@@ -93,12 +121,13 @@ public class KlaxonService extends Service {
         private final TelephonyManager mTelephonyManager;
         private int preAlarmVolume = 0;
         private int alarmVolume = 4;
-        private final Handler handler;
 
-        public Volume(Logger log, TelephonyManager telephonyManager) {
+        private CountDownTimer timer;
+
+        public Volume(final Logger log, TelephonyManager telephonyManager, SharedPreferences sp) {
             this.log = log;
+            this.sp = sp;
             mTelephonyManager = telephonyManager;
-            handler = new Handler(this);
         }
 
         public void setMode(Type type) {
@@ -110,13 +139,13 @@ public class KlaxonService extends Service {
         }
 
         /**
-         * Instantly apply the volume. To fade in use {@link #fadeIn()}
+         * Instantly apply the targetVolume. To fade in use {@link #fadeIn()}
          */
         public void apply() {
             float fvolume;
             try {
                 // Check if we are in a call. If we are, use the in-call alarm
-                // resource at a low volume to not disrupt the call.
+                // resource at a low targetVolume to not disrupt the call.
                 if (mTelephonyManager.getCallState() != TelephonyManager.CALL_STATE_IDLE) {
                     log.d("Using the in-call alarm");
                     fvolume = IN_CALL_VOLUME;
@@ -145,7 +174,7 @@ public class KlaxonService extends Service {
                 preAlarmVolume = sharedPreferences.getInt(key, Intents.DEFAULT_PREALARM_VOLUME);
                 if (preAlarmVolume > ALARM_VOLUMES.length) {
                     preAlarmVolume = ALARM_VOLUMES.length;
-                    log.w("Truncated volume!");
+                    log.w("Truncated targetVolume!");
                 }
                 if (player != null && player.isPlaying() && type == Type.PREALARM) {
                     player.setVolume(ALARM_VOLUMES[preAlarmVolume], ALARM_VOLUMES[preAlarmVolume]);
@@ -155,7 +184,7 @@ public class KlaxonService extends Service {
                 alarmVolume = sharedPreferences.getInt(key, Intents.DEFAULT_ALARM_VOLUME);
                 if (alarmVolume > ALARM_VOLUMES.length) {
                     alarmVolume = ALARM_VOLUMES.length;
-                    log.w("Truncated volume!");
+                    log.w("Truncated targetVolume!");
                 }
                 if (player != null && player.isPlaying() && type == Type.NORMAL) {
                     player.setVolume(ALARM_VOLUMES[alarmVolume], ALARM_VOLUMES[alarmVolume]);
@@ -164,22 +193,15 @@ public class KlaxonService extends Service {
         }
 
         /**
-         * Fade in to set volume
+         * Fade in to set targetVolume
          */
         public void fadeIn() {
             cancelFadeIn();
-            // set initial
-            player.setVolume(ALARM_VOLUMES[0], ALARM_VOLUMES[0]);
-
-            // in the end we have to reach target volume
-            int targetVolumeIndex = type == Type.NORMAL ? alarmVolume : preAlarmVolume;
-            // calculate fade steps, starting from 1
-            int delayStep = FADE_IN_TIME / targetVolumeIndex;
-            for (int i = 1; i <= targetVolumeIndex; i++) {
-                Message msg = handler.obtainMessage(MESSAGE_CHANGE_VOLUME);
-                msg.arg1 = i;
-                handler.sendMessageDelayed(msg, delayStep * i);
-            }
+            player.setVolume(0, 0);
+            String asString = sp.getString("fade_in_time_sec", "30");
+            int time = Integer.parseInt(asString) * 1000;
+            timer = new FadeInTimer(time, time / FADE_IN_STEPS);
+            timer.start();
         }
 
         public void mute() {
@@ -188,21 +210,9 @@ public class KlaxonService extends Service {
         }
 
         public void cancelFadeIn() {
-            handler.removeMessages(MESSAGE_CHANGE_VOLUME);
-        }
-
-        @Override
-        public boolean handleMessage(Message msg) {
-            switch (msg.what) {
-            case MESSAGE_CHANGE_VOLUME:
-                int step = msg.arg1;
-                player.setVolume(ALARM_VOLUMES[step], ALARM_VOLUMES[step]);
-                break;
-
-            default:
-                break;
+            if (timer != null) {
+                timer.cancel();
             }
-            return false;
         }
     }
 
@@ -214,9 +224,9 @@ public class KlaxonService extends Service {
         wakeLock.acquire();
         // Listen for incoming calls to kill the alarm.
         mTelephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        volume = new Volume(log, mTelephonyManager);
+        sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        volume = new Volume(log, mTelephonyManager, sp);
         mTelephonyManager.listen(volume, PhoneStateListener.LISTEN_CALL_STATE);
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         sp.registerOnSharedPreferenceChangeListener(volume);
         volume.onSharedPreferenceChanged(sp, Intents.KEY_PREALARM_VOLUME);
         volume.onSharedPreferenceChanged(sp, Intents.KEY_ALARM_VOLUME);
@@ -360,7 +370,7 @@ public class KlaxonService extends Service {
         volume.fadeIn();
         try {
             // Check if we are in a call. If we are, use the in-call alarm
-            // resource at a low volume to not disrupt the call.
+            // resource at a low targetVolume to not disrupt the call.
             if (mTelephonyManager.getCallState() != TelephonyManager.CALL_STATE_IDLE) {
                 log.d("Using the in-call alarm");
                 setDataSourceFromResource(getResources(), mMediaPlayer, R.raw.in_call_alarm);
@@ -399,7 +409,7 @@ public class KlaxonService extends Service {
     private void startAlarm(MediaPlayer player) throws java.io.IOException, IllegalArgumentException,
             IllegalStateException {
         final AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        // do not play alarms if stream volume is 0
+        // do not play alarms if stream targetVolume is 0
         // (typically because ringer mode is silent).
         if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0) {
             player.setAudioStreamType(AudioManager.STREAM_ALARM);
