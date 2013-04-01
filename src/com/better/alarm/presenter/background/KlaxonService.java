@@ -108,7 +108,7 @@ public class KlaxonService extends Service {
 
             @Override
             public void onFinish() {
-                // nothing to do
+                log.d("Fade in completed");
             }
         }
 

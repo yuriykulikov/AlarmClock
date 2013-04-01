@@ -114,6 +114,7 @@ public class VibrationService extends Service {
         boolean shouldVibrate = sp.getBoolean("vibrate", true);
         if (shouldVibrate) {
             mVibrator.vibrate(sVibratePattern, 0);
+            log.d("Starting vibration");
         }
     }
 
