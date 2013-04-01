@@ -242,6 +242,8 @@ public final class AlarmCore implements Alarm {
                         return "REFRESH";
                     case DELETE:
                         return "DELETE";
+                    case TIME_SET:
+                        return "TIME_SET";
                     default:
                         return "UNKNOWN";
                     }
