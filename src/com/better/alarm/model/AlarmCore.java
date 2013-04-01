@@ -141,7 +141,7 @@ public final class AlarmCore implements Alarm {
         PreferenceManager.getDefaultSharedPreferences(mContext).registerOnSharedPreferenceChangeListener(
                 mOnSharedPreferenceChangeListener);
 
-        stateMachine = new AlarmStateMachine(container.getState());
+        stateMachine = new AlarmStateMachine(container.getState(), "Alarm " + container.getId());
         // we always resume SM. This means that initial state will not receive
         // enter(), only resume()
         stateMachine.resume();
@@ -193,8 +193,8 @@ public final class AlarmCore implements Alarm {
         public final PreAlarmSnoozedState preAlarmSnoozed;
         public final FiredState fired;
 
-        public AlarmStateMachine(String initialState) {
-            super("AlarmSM", Looper.getMainLooper(), log);
+        public AlarmStateMachine(String initialState, String name) {
+            super(name, Looper.getMainLooper(), log);
             disabledState = new DisabledState();
             enabledState = new EnabledState();
             rescheduleTransition = new RescheduleTransition();
