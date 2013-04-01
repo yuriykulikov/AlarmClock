@@ -348,6 +348,7 @@ public class KlaxonService extends Service {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
                 log.e("Error occurred while playing audio.");
+                volume.cancelFadeIn();
                 mp.stop();
                 mp.release();
                 mMediaPlayer = null;
