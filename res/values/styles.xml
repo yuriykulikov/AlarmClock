@@ -17,7 +17,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <style name="AlarmsListTheme" parent="android:Theme.DeviceDefault.Light.DarkActionBar"/>
     <style name="AlarmDetailsTheme" parent="android:Theme.DeviceDefault.Light.DarkActionBar"/>
-    <style name="SettingsTheme" parent="android:Theme.DeviceDefault.Light.DialogWhenLarge"/>
+    <style name="SettingsTheme" parent="android:Theme.DeviceDefault.Light.DarkActionBar"/>
 
     <!-- This theme is similar to the Theme.Dialog.Alert but does not rely on a
          non-public resource. -->
