@@ -16,11 +16,15 @@
 
 package com.better.alarm.view;
 
+import org.acra.ACRA;
+
 import android.content.Context;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.TextView;
+
+import com.github.androidutils.logger.Logger;
 
 /**
  * Displays text using the special AndroidClock font.
@@ -47,11 +51,16 @@ public class AndroidClockTextView extends TextView {
         mUseClockTypeface = attrs.getAttributeBooleanValue(null, ATTR_USE_CLOCK_TYPEFACE, true) && !isInEditMode();
 
         sStandardTypeface = Typeface.DEFAULT;
-        if (sClockTypeface == null && mUseClockTypeface) {
-            sClockTypeface = Typeface.createFromFile(SYSTEM_FONT_TIME_BACKGROUND);
-        }
-
         Paint paint = getPaint();
-        paint.setTypeface(mUseClockTypeface ? sClockTypeface : sStandardTypeface);
+        try {
+            if (sClockTypeface == null && mUseClockTypeface) {
+                sClockTypeface = Typeface.createFromFile(SYSTEM_FONT_TIME_BACKGROUND);
+            }
+            paint.setTypeface(mUseClockTypeface ? sClockTypeface : sStandardTypeface);
+        } catch (RuntimeException e) {
+            Logger.getDefaultLogger().e(e.getMessage());
+            ACRA.getErrorReporter().handleSilentException(e);
+            paint.setTypeface(sStandardTypeface);
+        }
     }
 }
