@@ -20,6 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.acra.ACRA;
+
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -67,7 +69,12 @@ public class Alarms implements IAlarmsManager {
                 } while (cursor.moveToNext());
             }
         } finally {
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            } else {
+                log.e("Cursor was null!");
+                ACRA.getErrorReporter().handleSilentException(new Exception("Cursor was null!"));
+            }
         }
 
         log.d("Alarms:");
