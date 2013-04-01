@@ -13,6 +13,7 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 
 import com.better.alarm.model.interfaces.Intents;
+import com.better.alarm.presenter.SettingsActivity;
 import com.github.androidutils.logger.Logger;
 import com.github.androidutils.wakelock.WakeLockManager;
 
@@ -62,7 +63,7 @@ public class VibrationService extends Service {
         try {
             String action = intent.getAction();
             if (action.equals(Intents.ALARM_ALERT_ACTION)) {
-                String asString = sp.getString("fade_in_time_sec", "30");
+                String asString = sp.getString(SettingsActivity.KEY_FADE_IN_TIME_SEC, "30");
                 int time = Integer.parseInt(asString) * 1000;
                 timer = new CountDownTimer(time, time) {
                     @Override

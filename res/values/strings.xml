@@ -420,4 +420,5 @@
         <item>60 seconds</item>
         <item>120 seconds</item>
     </string-array>
+    <string name="fade_in_summary">Fade-in duration is <xliff:g id="seconds">%d</xliff:g> seconds</string>
 </resources>

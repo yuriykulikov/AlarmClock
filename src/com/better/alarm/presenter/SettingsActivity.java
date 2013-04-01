@@ -55,6 +55,7 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
     static final String KEY_DEFAULT_RINGTONE = "default_ringtone";
     static final String KEY_AUTO_SILENCE = "auto_silence";
     static final String KEY_PREALARM_DURATION = "prealarm_duration";
+    public static final String KEY_FADE_IN_TIME_SEC = "fade_in_time_sec";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,8 +209,15 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
             updateAutoSnoozeSummary(listPref, delay);
         } else if (KEY_PREALARM_DURATION.equals(pref.getKey())) {
             updatePreAlarmDurationSummary((ListPreference) pref, (String) newValue);
+        } else if (KEY_FADE_IN_TIME_SEC.equals(pref.getKey())) {
+            updateFadeInTimeSummary((ListPreference) pref, (String) newValue);
         }
         return true;
+    }
+
+    private void updateFadeInTimeSummary(ListPreference listPref, String duration) {
+        int i = Integer.parseInt(duration);
+        listPref.setSummary(getString(R.string.fade_in_summary, i));
     }
 
     private void updateAutoSnoozeSummary(ListPreference listPref, String delay) {
@@ -243,6 +251,10 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
 
         listPref = (ListPreference) findPreference(KEY_PREALARM_DURATION);
         updatePreAlarmDurationSummary(listPref, listPref.getValue());
+        listPref.setOnPreferenceChangeListener(this);
+
+        listPref = (ListPreference) findPreference(KEY_FADE_IN_TIME_SEC);
+        updateFadeInTimeSummary(listPref, listPref.getValue());
         listPref.setOnPreferenceChangeListener(this);
     }
 }

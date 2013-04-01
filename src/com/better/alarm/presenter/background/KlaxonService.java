@@ -42,6 +42,7 @@ import com.better.alarm.R;
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.Intents;
+import com.better.alarm.presenter.SettingsActivity;
 import com.github.androidutils.logger.Logger;
 import com.github.androidutils.wakelock.WakeLockManager;
 
@@ -198,7 +199,7 @@ public class KlaxonService extends Service {
         public void fadeIn() {
             cancelFadeIn();
             player.setVolume(0, 0);
-            String asString = sp.getString("fade_in_time_sec", "30");
+            String asString = sp.getString(SettingsActivity.KEY_FADE_IN_TIME_SEC, "30");
             int time = Integer.parseInt(asString) * 1000;
             timer = new FadeInTimer(time, time / FADE_IN_STEPS);
             timer.start();
