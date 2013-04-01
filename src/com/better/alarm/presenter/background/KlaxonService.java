@@ -72,6 +72,8 @@ public class KlaxonService extends Service {
     }
 
     private static class Volume extends PhoneStateListener implements OnSharedPreferenceChangeListener {
+        private static final int FAST_FADE_IN_TIME = 5000;
+
         private static final int FADE_IN_STEPS = 100;
 
         // Volume suggested by media team for in-call alarms.
@@ -140,7 +142,8 @@ public class KlaxonService extends Service {
         }
 
         /**
-         * Instantly apply the targetVolume. To fade in use {@link #fadeIn()}
+         * Instantly apply the targetVolume. To fade in use
+         * {@link #fadeInAsSetInSettings()}
          */
         public void apply() {
             float fvolume;
@@ -196,13 +199,20 @@ public class KlaxonService extends Service {
         /**
          * Fade in to set targetVolume
          */
-        public void fadeIn() {
-            cancelFadeIn();
-            player.setVolume(0, 0);
+        public void fadeInAsSetInSettings() {
             String asString = sp.getString(SettingsActivity.KEY_FADE_IN_TIME_SEC, "30");
             int time = Integer.parseInt(asString) * 1000;
-            timer = new FadeInTimer(time, time / FADE_IN_STEPS);
-            timer.start();
+            fadeIn(time);
+        }
+
+        public void fadeInFast() {
+            fadeIn(FAST_FADE_IN_TIME);
+        }
+
+        public void cancelFadeIn() {
+            if (timer != null) {
+                timer.cancel();
+            }
         }
 
         public void mute() {
@@ -210,10 +220,11 @@ public class KlaxonService extends Service {
             player.setVolume(ALARM_VOLUMES[0], ALARM_VOLUMES[0]);
         }
 
-        public void cancelFadeIn() {
-            if (timer != null) {
-                timer.cancel();
-            }
+        private void fadeIn(int time) {
+            cancelFadeIn();
+            player.setVolume(0, 0);
+            timer = new FadeInTimer(time, time / FADE_IN_STEPS);
+            timer.start();
         }
     }
 
@@ -299,7 +310,7 @@ public class KlaxonService extends Service {
                 return START_STICKY;
 
             } else if (action.equals(Intents.ACTION_DEMUTE)) {
-                volume.fadeIn();
+                volume.fadeInFast();
                 return START_STICKY;
 
             } else if (action.equals(Intents.ACTION_STOP_ALARM_SAMPLE)) {
@@ -368,7 +379,7 @@ public class KlaxonService extends Service {
         });
 
         volume.setPlayer(mMediaPlayer);
-        volume.fadeIn();
+        volume.fadeInAsSetInSettings();
         try {
             // Check if we are in a call. If we are, use the in-call alarm
             // resource at a low targetVolume to not disrupt the call.
