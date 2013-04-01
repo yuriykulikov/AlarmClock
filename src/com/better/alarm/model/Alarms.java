@@ -90,6 +90,13 @@ public class Alarms implements IAlarmsManager {
         notifyAlarmListChangedListeners();
     }
 
+    void onTimeSet() {
+        for (AlarmCore alarmCore : alarms.values()) {
+            alarmCore.onTimeSet();
+        }
+        notifyAlarmListChangedListeners();
+    }
+
     @Override
     public AlarmCore getAlarm(int alarmId) throws AlarmNotFoundException {
         AlarmCore alarm = alarms.get(alarmId);

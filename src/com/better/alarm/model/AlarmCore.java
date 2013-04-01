@@ -162,6 +162,7 @@ public final class AlarmCore implements Alarm {
             }
         }
     };
+
     private void fetchPreAlarmMinutes() {
         String asString = PreferenceManager.getDefaultSharedPreferences(mContext).getString("prealarm_duration", "30");
         prealarmMinutes = Integer.parseInt(asString);
@@ -179,6 +180,7 @@ public final class AlarmCore implements Alarm {
         public static final int PREALARM_TIMED_OUT = 8;
         public static final int REFRESH = 9;
         public static final int DELETE = 10;
+        public static final int TIME_SET = 11;
 
         public final DisabledState disabledState;
         public final EnabledState enabledState;
@@ -286,6 +288,11 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
+            protected void onTimeSet() {
+                // nothing to do
+            }
+
+            @Override
             protected void onPreAlarmDurationChanged() {
                 // nothing to do
             }
@@ -315,6 +322,11 @@ public final class AlarmCore implements Alarm {
 
             @Override
             protected void onRefresh() {
+                transitionTo(enableTransition);
+            }
+
+            @Override
+            protected void onTimeSet() {
                 transitionTo(enableTransition);
             }
 
@@ -428,6 +440,11 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
+            protected void onTimeSet() {
+                // nothing to do
+            }
+
+            @Override
             public void exit(Message reason) {
                 broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
                 removeAlarm();
@@ -467,6 +484,11 @@ public final class AlarmCore implements Alarm {
             @Override
             protected void onFired() {
                 transitionTo(fired);
+            }
+
+            @Override
+            protected void onTimeSet() {
+                // Do nothing
             }
 
             @Override
@@ -543,6 +565,11 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
+            protected void onTimeSet() {
+                // nothing to do
+            }
+
+            @Override
             public void exit(Message reason) {
                 removeAlarm();
                 broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
@@ -559,6 +586,11 @@ public final class AlarmCore implements Alarm {
             @Override
             protected void onFired() {
                 transitionTo(fired);
+            }
+
+            @Override
+            protected void onTimeSet() {
+                // nothing to do
             }
 
             @Override
@@ -672,6 +704,9 @@ public final class AlarmCore implements Alarm {
                 case REFRESH:
                     onRefresh();
                     break;
+                case TIME_SET:
+                    onTimeSet();
+                    break;
                 case DELETE:
                     onDelete();
                     break;
@@ -721,6 +756,10 @@ public final class AlarmCore implements Alarm {
                 markNotHandled();
             }
 
+            protected void onTimeSet() {
+                markNotHandled();
+            }
+
             protected void onDelete() {
                 markNotHandled();
             }
@@ -733,6 +772,10 @@ public final class AlarmCore implements Alarm {
 
     public void refresh() {
         stateMachine.sendMessage(AlarmStateMachine.REFRESH);
+    }
+
+    public void onTimeSet() {
+        stateMachine.sendMessage(AlarmStateMachine.TIME_SET);
     }
 
     public void change(AlarmChangeData data) {

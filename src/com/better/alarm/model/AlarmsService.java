@@ -75,9 +75,12 @@ public class AlarmsService extends Service implements Handler.Callback {
             }
 
         } else if (action.equals(Intent.ACTION_BOOT_COMPLETED) || action.equals(Intent.ACTION_TIMEZONE_CHANGED)
-                || action.equals(Intent.ACTION_LOCALE_CHANGED) || action.equals(Intent.ACTION_TIME_CHANGED)) {
+                || action.equals(Intent.ACTION_LOCALE_CHANGED)) {
             log.d("Refreshing alarms because of " + action);
             alarms.refresh();
+
+        } else if (action.equals(Intent.ACTION_TIME_CHANGED)) {
+            alarms.onTimeSet();
         }
 
         Message msg = handler.obtainMessage(EVENT_RELEASE_WAKELOCK);
