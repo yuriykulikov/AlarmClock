@@ -47,7 +47,15 @@ public class AndroidClockTextView extends TextView {
 
     public AndroidClockTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init(attrs);
+    }
 
+    public AndroidClockTextView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init(attrs);
+    }
+
+    private void init(AttributeSet attrs) {
         mUseClockTypeface = attrs.getAttributeBooleanValue(null, ATTR_USE_CLOCK_TYPEFACE, true) && !isInEditMode();
 
         sStandardTypeface = Typeface.DEFAULT;
