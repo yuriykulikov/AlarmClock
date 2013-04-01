@@ -45,6 +45,15 @@
         android:defaultValue="30"
         android:dialogTitle="@string/prealarm_duration_title" />
 
+        
+    <ListPreference
+        android:key="fade_in_time_sec"
+        android:title="@string/fade_in_time_sec_title"
+        android:entries="@array/fade_in_time_sec_entries"
+        android:entryValues="@array/fade_in_time_sec_values"
+        android:defaultValue="30"
+        android:dialogTitle="@string/fade_in_time_sec_title" />
+
     <ListPreference
         android:key="snooze_duration"
         android:title="@string/snooze_duration_title"
