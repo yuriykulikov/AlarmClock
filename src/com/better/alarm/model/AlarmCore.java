@@ -581,7 +581,22 @@ public final class AlarmCore implements Alarm {
         private class PreAlarmSnoozedState extends AlarmState {
             @Override
             public void enter(Message reason) {
-                setAlarm(calculateNextTime());
+                Calendar nextTime;
+                Calendar now = Calendar.getInstance();
+                if (reason.obj != null) {
+                    Calendar customTime = Calendar.getInstance();
+                    customTime.set(Calendar.HOUR_OF_DAY, reason.arg1);
+                    customTime.set(Calendar.MINUTE, reason.arg2);
+                    if (customTime.after(now)) {
+                        nextTime = customTime;
+                    } else {
+                        nextTime = calculateNextTime();
+                    }
+                } else {
+                    nextTime = calculateNextTime();
+                }
+
+                setAlarm(nextTime);
                 broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION);
             }
 
