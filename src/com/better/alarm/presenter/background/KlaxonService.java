@@ -51,7 +51,7 @@ import com.github.androidutils.wakelock.WakeLockManager;
  * another activity overrides the AlarmAlert dialog.
  */
 public class KlaxonService extends Service {
-    private MediaPlayer mMediaPlayer;
+    private volatile IMediaPlayer mMediaPlayer;
     private TelephonyManager mTelephonyManager;
     private Logger log;
     private Volume volume;
@@ -119,7 +119,7 @@ public class KlaxonService extends Service {
         };
 
         private Type type = Type.NORMAL;
-        private MediaPlayer player;
+        private IMediaPlayer player;
         private final Logger log;
         private final TelephonyManager mTelephonyManager;
         private int preAlarmVolume = 0;
@@ -137,7 +137,7 @@ public class KlaxonService extends Service {
             this.type = type;
         }
 
-        public void setPlayer(MediaPlayer player) {
+        public void setPlayer(IMediaPlayer player) {
             this.player = player;
         }
 
@@ -180,7 +180,7 @@ public class KlaxonService extends Service {
                     preAlarmVolume = ALARM_VOLUMES.length;
                     log.w("Truncated targetVolume!");
                 }
-                if (player != null && player.isPlaying() && type == Type.PREALARM) {
+                if (player.isPlaying() && type == Type.PREALARM) {
                     player.setVolume(ALARM_VOLUMES[preAlarmVolume], ALARM_VOLUMES[preAlarmVolume]);
                 }
 
@@ -190,7 +190,7 @@ public class KlaxonService extends Service {
                     alarmVolume = ALARM_VOLUMES.length;
                     log.w("Truncated targetVolume!");
                 }
-                if (player != null && player.isPlaying() && type == Type.NORMAL) {
+                if (player.isPlaying() && type == Type.NORMAL) {
                     player.setVolume(ALARM_VOLUMES[alarmVolume], ALARM_VOLUMES[alarmVolume]);
                 }
             }
@@ -230,6 +230,7 @@ public class KlaxonService extends Service {
 
     @Override
     public void onCreate() {
+        mMediaPlayer = new NullMediaPlayer();
         log = Logger.getDefaultLogger();
         pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "KlaxonService");
@@ -238,6 +239,7 @@ public class KlaxonService extends Service {
         mTelephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         volume = new Volume(log, mTelephonyManager, sp);
+        volume.setPlayer(mMediaPlayer);
         mTelephonyManager.listen(volume, PhoneStateListener.LISTEN_CALL_STATE);
         sp.registerOnSharedPreferenceChangeListener(volume);
         volume.onSharedPreferenceChanged(sp, Intents.KEY_PREALARM_VOLUME);
@@ -351,14 +353,10 @@ public class KlaxonService extends Service {
         volume.cancelFadeIn();
         volume.setMode(type);
         // if already playing do nothing. In this case signal continues.
-        if (!isPlaying()) {
+        if (!mMediaPlayer.isPlaying()) {
             initializePlayer(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
         }
         volume.apply();
-    }
-
-    private boolean isPlaying() {
-        return mMediaPlayer != null && mMediaPlayer.isPlaying();
     }
 
     /**
@@ -372,15 +370,15 @@ public class KlaxonService extends Service {
 
         // TODO: Reuse mMediaPlayer instead of creating a new one and/or use
         // RingtoneManager.
-        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer = new MediaPlayerWrapper(new MediaPlayer());
         mMediaPlayer.setOnErrorListener(new OnErrorListener() {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
                 log.e("Error occurred while playing audio.");
                 volume.cancelFadeIn();
-                mp.stop();
-                mp.release();
-                mMediaPlayer = null;
+                mMediaPlayer.stop();
+                mMediaPlayer.release();
+                nullifyMediaPlayer();
                 return true;
             }
         });
@@ -425,7 +423,7 @@ public class KlaxonService extends Service {
     }
 
     // Do the common stuff when starting the alarm.
-    private void startAlarm(MediaPlayer player) throws java.io.IOException, IllegalArgumentException,
+    private void startAlarm(IMediaPlayer player) throws java.io.IOException, IllegalArgumentException,
             IllegalStateException {
         final AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         // do not play alarms if stream targetVolume is 0
@@ -438,7 +436,8 @@ public class KlaxonService extends Service {
         }
     }
 
-    private void setDataSourceFromResource(Resources resources, MediaPlayer player, int res) throws java.io.IOException {
+    private void setDataSourceFromResource(Resources resources, IMediaPlayer player, int res)
+            throws java.io.IOException {
         AssetFileDescriptor afd = resources.openRawResourceFd(res);
         if (afd != null) {
             player.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
@@ -452,22 +451,25 @@ public class KlaxonService extends Service {
     private void stop() {
         log.d("stopping media player");
         // Stop audio playing
-        if (mMediaPlayer != null) {
-            try {
-                if (mMediaPlayer.isPlaying()) {
-                    mMediaPlayer.stop();
-                }
-                mMediaPlayer.release();
-            } catch (IllegalStateException e) {
-                log.e("stop failed with ", e);
-            } finally {
-                mMediaPlayer = null;
+        try {
+            if (mMediaPlayer.isPlaying()) {
+                mMediaPlayer.stop();
             }
+            mMediaPlayer.release();
+        } catch (IllegalStateException e) {
+            log.e("stop failed with ", e);
+        } finally {
+            nullifyMediaPlayer();
         }
     }
 
     private void stopAndCleanup() {
         volume.cancelFadeIn();
         stopSelf();
+    }
+
+    private void nullifyMediaPlayer() {
+        mMediaPlayer = new NullMediaPlayer();
+        volume.setPlayer(mMediaPlayer);
     }
 }
