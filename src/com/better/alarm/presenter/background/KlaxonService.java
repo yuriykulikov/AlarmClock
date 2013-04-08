@@ -333,7 +333,8 @@ public class KlaxonService extends Service {
         volume.cancelFadeIn();
         volume.setMode(Volume.Type.NORMAL);
         if (!alarm.isSilent()) {
-            play(getAlertOrDefault(alarm));
+            initializePlayer(getAlertOrDefault(alarm));
+            volume.fadeInAsSetInSettings();
         }
     }
 
@@ -341,7 +342,8 @@ public class KlaxonService extends Service {
         volume.cancelFadeIn();
         volume.setMode(Volume.Type.PREALARM);
         if (!alarm.isSilent()) {
-            play(getAlertOrDefault(alarm));
+            initializePlayer(getAlertOrDefault(alarm));
+            volume.fadeInAsSetInSettings();
         }
     }
 
@@ -350,7 +352,7 @@ public class KlaxonService extends Service {
         volume.setMode(type);
         // if already playing do nothing. In this case signal continues.
         if (!isPlaying()) {
-            play(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
+            initializePlayer(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
         }
         volume.apply();
     }
@@ -359,7 +361,12 @@ public class KlaxonService extends Service {
         return mMediaPlayer != null && mMediaPlayer.isPlaying();
     }
 
-    private void play(Uri alert) {
+    /**
+     * Inits player and sets volume to 0
+     * 
+     * @param alert
+     */
+    private void initializePlayer(Uri alert) {
         // stop() checks to see if we are already playing.
         stop();
 
@@ -379,7 +386,7 @@ public class KlaxonService extends Service {
         });
 
         volume.setPlayer(mMediaPlayer);
-        volume.fadeInAsSetInSettings();
+        volume.mute();
         try {
             // Check if we are in a call. If we are, use the in-call alarm
             // resource at a low targetVolume to not disrupt the call.
