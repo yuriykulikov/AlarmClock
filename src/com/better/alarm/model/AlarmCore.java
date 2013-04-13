@@ -385,7 +385,7 @@ public final class AlarmCore implements Alarm {
         private class SetState extends AlarmState {
             @Override
             public void enter(Message reason) {
-                if (reason.what != REFRESH) {
+                if (reason.what != REFRESH && reason.what != TIME_SET) {
                     broadcastAlarmState(Intents.ACTION_ALARM_SET);
                 }
             }
