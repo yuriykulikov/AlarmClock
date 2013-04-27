@@ -384,8 +384,8 @@ public final class AlarmCore implements Alarm {
 
         private class SetState extends AlarmState {
             @Override
-            public void enter(Message reason) {
-                if (reason.what != REFRESH && reason.what != TIME_SET) {
+            public void enter() {
+                if (getCurrentMessage().what != REFRESH && getCurrentMessage().what != TIME_SET) {
                     broadcastAlarmState(Intents.ACTION_ALARM_SET);
                 }
             }
@@ -407,8 +407,8 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
-            public void exit(Message reason) {
-                if (!alarmWillBeRescheduled(reason)) {
+            public void exit() {
+                if (!alarmWillBeRescheduled(getCurrentMessage())) {
                     removeAlarm();
                 }
             }
@@ -417,7 +417,7 @@ public final class AlarmCore implements Alarm {
         /** handles both snoozed and main for now */
         private class FiredState extends AlarmState {
             @Override
-            public void enter(Message reason) {
+            public void enter() {
                 broadcastAlarmState(Intents.ALARM_ALERT_ACTION);
                 int autoSilenceMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext)
                         .getString("auto_silence", "10"));
@@ -447,7 +447,7 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
-            public void exit(Message reason) {
+            public void exit() {
                 broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
                 removeAlarm();
             }
@@ -455,9 +455,10 @@ public final class AlarmCore implements Alarm {
 
         private class SnoozedState extends AlarmState {
             @Override
-            public void enter(Message reason) {
+            public void enter() {
                 Calendar nextTime;
                 Calendar now = Calendar.getInstance();
+                Message reason = getCurrentMessage();
                 if (reason.obj != null) {
                     Calendar customTime = Calendar.getInstance();
                     customTime.set(Calendar.HOUR_OF_DAY, reason.arg1);
@@ -494,7 +495,7 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
-            public void exit(Message reason) {
+            public void exit() {
                 removeAlarm();
                 broadcastAlarmState(Intents.ACTION_CANCEL_SNOOZE);
             }
@@ -504,8 +505,8 @@ public final class AlarmCore implements Alarm {
         private class PreAlarmSetState extends AlarmState {
 
             @Override
-            public void enter(Message reason) {
-                if (reason.what != REFRESH) {
+            public void enter() {
+                if (getCurrentMessage().what != REFRESH) {
                     broadcastAlarmState(Intents.ACTION_ALARM_SET);
                 }
             }
@@ -537,8 +538,8 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
-            public void exit(Message reason) {
-                if (!alarmWillBeRescheduled(reason)) {
+            public void exit() {
+                if (!alarmWillBeRescheduled(getCurrentMessage())) {
                     removeAlarm();
                 }
             }
@@ -546,7 +547,7 @@ public final class AlarmCore implements Alarm {
 
         private class PreAlarmFiredState extends AlarmState {
             @Override
-            public void enter(Message reason) {
+            public void enter() {
                 broadcastAlarmState(Intents.ALARM_PREALARM_ACTION);
                 setAlarm(calculateNextTime());
             }
@@ -572,7 +573,7 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
-            public void exit(Message reason) {
+            public void exit() {
                 removeAlarm();
                 broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
             }
@@ -580,9 +581,10 @@ public final class AlarmCore implements Alarm {
 
         private class PreAlarmSnoozedState extends AlarmState {
             @Override
-            public void enter(Message reason) {
+            public void enter() {
                 Calendar nextTime;
                 Calendar now = Calendar.getInstance();
+                Message reason = getCurrentMessage();
                 if (reason.obj != null) {
                     Calendar customTime = Calendar.getInstance();
                     customTime.set(Calendar.HOUR_OF_DAY, reason.arg1);
@@ -611,7 +613,7 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
-            public void exit(Message reason) {
+            public void exit() {
                 removeAlarm();
                 broadcastAlarmState(Intents.ACTION_CANCEL_SNOOZE);
             }
