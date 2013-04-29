@@ -385,7 +385,8 @@ public final class AlarmCore implements Alarm {
         private class SetState extends AlarmState {
             @Override
             public void enter() {
-                if (getCurrentMessage().what != REFRESH && getCurrentMessage().what != TIME_SET) {
+                int what = getCurrentMessage().what;
+                if (what == DISMISS || what == SNOOZE || what == CHANGE) {
                     broadcastAlarmState(Intents.ACTION_ALARM_SET);
                 }
             }
@@ -506,7 +507,8 @@ public final class AlarmCore implements Alarm {
 
             @Override
             public void enter() {
-                if (getCurrentMessage().what != REFRESH) {
+                int what = getCurrentMessage().what;
+                if (what == DISMISS || what == SNOOZE || what == CHANGE) {
                     broadcastAlarmState(Intents.ACTION_ALARM_SET);
                 }
             }
