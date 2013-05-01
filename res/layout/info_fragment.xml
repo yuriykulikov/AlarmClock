@@ -25,13 +25,16 @@
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:text="Next alarm"
-        android:textAppearance="?android:attr/textAppearanceMedium"/>
+        android:textColor="?android:attr/textColorTertiary"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
 
         <TextView
         android:id="@+id/textViewRemainingTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Remaining Time"
-        android:textAppearance="?android:attr/textAppearanceMedium"/>
+        android:textColor="?android:attr/textColorTertiary"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
 </LinearLayout>
