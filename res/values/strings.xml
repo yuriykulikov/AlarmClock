@@ -420,4 +420,6 @@
     </string-array>
     <string name="show_info_fragment_title">Time until next alarm</string>
     <string name="show_info_fragment_summary">Show a fragment which shows how many time until the next alarm is left in the bottom of the list</string>
+    <string name="dashclock">Get DashClock</string>
+    <string name="dashclock_message">You will be transferred to Google Play to install DashClock. Dashclock is a widget which perfectly integrates with Simple Alarm!</string>
 </resources>

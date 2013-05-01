@@ -114,6 +114,11 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         case R.id.menu_bugreport:
             showBugreport();
             return true;
+
+        case R.id.menu_dashclock:
+            showDashClock();
+            return true;
+
         }
         return super.onOptionsItemSelected(item);
 
@@ -140,6 +145,27 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         });
         builder.setTitle(R.string.review);
         builder.setMessage(R.string.review_message);
+        builder.setCancelable(true);
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        builder.create().show();
+    }
+
+    private void showDashClock() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="
+                        + "net.nurik.roman.dashclock"));
+                startActivity(intent);
+            }
+        });
+        builder.setTitle(R.string.dashclock);
+        builder.setMessage(R.string.dashclock_message);
         builder.setCancelable(true);
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
