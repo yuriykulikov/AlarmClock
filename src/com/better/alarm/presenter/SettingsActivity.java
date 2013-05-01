@@ -119,6 +119,10 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
             showDashClock();
             return true;
 
+        case R.id.menu_mp3cutter:
+            showMp3();
+            return true;
+
         }
         return super.onOptionsItemSelected(item);
 
@@ -166,6 +170,26 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         });
         builder.setTitle(R.string.dashclock);
         builder.setMessage(R.string.dashclock_message);
+        builder.setCancelable(true);
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        builder.create().show();
+    }
+
+    private void showMp3() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=mp3+cutter&c=app"));
+                startActivity(intent);
+            }
+        });
+        builder.setTitle(R.string.mp3cutter);
+        builder.setMessage(R.string.mp3cutter_message);
         builder.setCancelable(true);
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
