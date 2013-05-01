@@ -21,8 +21,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.better.alarm.R;
 import com.better.alarm.model.interfaces.Alarm;
@@ -53,6 +55,17 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
             alarmsListFragment.setShowDetailsStrategy(showDetailsInActivityFragment);
         } else {
             alarmsListFragment.setShowDetailsStrategy(showDetailsInActivityFragment);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        View nextAlarmFragment = findViewById(R.id.infoFragment);
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("show_info_fragment", false)) {
+            nextAlarmFragment.setVisibility(View.VISIBLE);
+        } else {
+            nextAlarmFragment.setVisibility(View.GONE);
         }
     }
 
