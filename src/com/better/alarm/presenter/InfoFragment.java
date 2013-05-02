@@ -12,7 +12,11 @@ import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
+import android.widget.ViewSwitcher.ViewFactory;
 
 import com.better.alarm.R;
 import com.better.alarm.model.AlarmsManager;
@@ -27,7 +31,7 @@ import com.github.androidutils.logger.Logger;
  * @author Yuriy
  * 
  */
-public class InfoFragment extends Fragment {
+public class InfoFragment extends Fragment implements ViewFactory {
 
     private final Logger log = Logger.getDefaultLogger();
 
@@ -37,8 +41,8 @@ public class InfoFragment extends Fragment {
     private static final String DM12 = "E h:mm aa";
     private static final String DM24 = "E kk:mm";
 
-    private TextView textView;
-    private TextView remainingTime;
+    private TextSwitcher textView;
+    private TextSwitcher remainingTime;
 
     private Alarm alarm;
 
@@ -92,8 +96,18 @@ public class InfoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.info_fragment, container, false);
-        textView = (TextView) view.findViewById(R.id.textView1);
-        remainingTime = (TextView) view.findViewById(R.id.textViewRemainingTime);
+        textView = (TextSwitcher) view.findViewById(R.id.textView1);
+        remainingTime = (TextSwitcher) view.findViewById(R.id.textViewRemainingTime);
+
+        textView.setFactory(this);
+        remainingTime.setFactory(this);
+
+        Animation in = AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_in);
+        Animation out = AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_out);
+        textView.setInAnimation(in);
+        textView.setOutAnimation(out);
+        remainingTime.setInAnimation(in);
+        remainingTime.setOutAnimation(out);
         return view;
     }
 
@@ -103,6 +117,13 @@ public class InfoFragment extends Fragment {
         log.d("onResume");
         IntentFilter intentFilter = new IntentFilter(Intents.ACTION_ALARM_SCHEDULED);
         intentFilter.addAction(Intents.ACTION_ALARMS_UNSCHEDULED);
+
+        try {
+            getActivity().unregisterReceiver(mAlarmsScheduledReceiver);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
         getActivity().registerReceiver(mAlarmsScheduledReceiver, intentFilter);
         getActivity().sendBroadcast(new Intent(Intents.REQUEST_LAST_SCHEDULED_ALARM));
         getActivity().registerReceiver(mTickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
@@ -143,5 +164,11 @@ public class InfoFragment extends Fragment {
 
         String[] formats = getActivity().getResources().getStringArray(R.array.alarm_set_short);
         return String.format(formats[index], daySeq, hourSeq, minSeq);
+    }
+
+    @Override
+    public View makeView() {
+        TextView t = (TextView) getActivity().getLayoutInflater().inflate(R.layout.info_fragment_text, null);
+        return t;
     }
 }

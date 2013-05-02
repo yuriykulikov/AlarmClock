@@ -21,20 +21,13 @@
     android:gravity="center"
     android:orientation="vertical" >
 
-    <TextView
+    <TextSwitcher
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:text="Next alarm"
-        android:textColor="?android:attr/textColorTertiary"
-        android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-        <TextView
+        android:visibility="gone"/>
+        <TextSwitcher
         android:id="@+id/textViewRemainingTime"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Remaining Time"
-        android:textColor="?android:attr/textColorTertiary"
-        android:textAppearance="?android:attr/textAppearanceSmall"/>
+        android:layout_height="wrap_content"/>
 </LinearLayout>

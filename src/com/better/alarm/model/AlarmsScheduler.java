@@ -178,7 +178,6 @@ public class AlarmsScheduler implements IAlarmsScheduler {
             ScheduledAlarm scheduledAlarm = queue.peek();
             intent.setAction(Intents.ACTION_ALARM_SCHEDULED);
             intent.putExtra(Intents.EXTRA_ID, scheduledAlarm.id);
-            mContext.sendBroadcast(intent);
         } else {
             // now this means that alarm in the closest future is AUTOSILENCE
             ScheduledAlarm scheduledAlarm = findNextNormalAlarm();
