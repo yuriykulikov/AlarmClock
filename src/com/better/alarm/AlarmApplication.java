@@ -40,6 +40,7 @@ import com.github.androidutils.logger.LogcatLogWriterWithLines;
 import com.github.androidutils.logger.Logger;
 import com.github.androidutils.logger.Logger.LogLevel;
 import com.github.androidutils.logger.LoggingExceptionHandler;
+import com.github.androidutils.logger.StartupLogWriter;
 import com.github.androidutils.statemachine.StateMachine;
 import com.github.androidutils.wakelock.WakeLockManager;
 
@@ -54,6 +55,8 @@ import com.github.androidutils.wakelock.WakeLockManager;
                 ReportField.PHONE_MODEL,
                 ReportField.DEVICE_ID,
                 ReportField.ANDROID_VERSION,
+                ReportField.CUSTOM_DATA,
+                ReportField.LOGCAT,
                 ReportField.STACK_TRACE,
                 ReportField.APPLICATION_LOG,
                 ReportField.SHARED_PREFERENCES,
@@ -78,8 +81,9 @@ public class AlarmApplication extends Application {
         }
 
         Logger logger = Logger.getDefaultLogger();
-        logger.addLogWriter(new LogcatLogWriterWithLines());
-        logger.addLogWriter(new FileLogWriter(this, false));
+        logger.addLogWriter(LogcatLogWriterWithLines.getInstance());
+        logger.addLogWriter(FileLogWriter.getInstance(this, false));
+        logger.addLogWriter(StartupLogWriter.getInstance());
         LoggingExceptionHandler.addLoggingExceptionHandlerToAllThreads(logger);
 
         logger.setLogLevel(WakeLockManager.class, LogLevel.ERR);
@@ -97,6 +101,8 @@ public class AlarmApplication extends Application {
 
         WakeLockManager.init(getApplicationContext(), logger, true);
         AlarmsManager.init(getApplicationContext(), logger);
+
+        logger.d("onCreate");
         super.onCreate();
     }
 }

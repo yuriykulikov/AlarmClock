@@ -38,6 +38,7 @@ import com.better.alarm.model.interfaces.AlarmNotFoundException;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
 import com.github.androidutils.logger.Logger;
+import com.github.androidutils.logger.StartupLogWriter;
 
 /**
  * Glue class: connects AlarmAlert IntentReceiver to AlarmAlert activity. Passes
@@ -89,6 +90,7 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
             }
         } catch (AlarmNotFoundException e) {
             Logger.getDefaultLogger().e("oops", e);
+            ACRA.getErrorReporter().putCustomData("STARTUP_LOG", StartupLogWriter.getInstance().getMessagesAsString());
             ACRA.getErrorReporter().handleSilentException(e);
             nm.cancel(id);
             nm.cancel(id + NOTIFICATION_OFFSET);

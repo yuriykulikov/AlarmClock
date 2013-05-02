@@ -41,6 +41,7 @@ import android.widget.ShareActionProvider;
 
 import com.better.alarm.R;
 import com.better.alarm.view.AlarmPreference;
+import com.github.androidutils.logger.StartupLogWriter;
 
 /**
  * Settings for the Alarm Clock.
@@ -155,6 +156,8 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                ACRA.getErrorReporter().putCustomData("STARTUP_LOG",
+                        StartupLogWriter.getInstance().getMessagesAsString());
                 ACRA.getErrorReporter().handleSilentException(new Exception(report.getText().toString()));
             }
         });

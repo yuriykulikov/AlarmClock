@@ -42,7 +42,7 @@ public class ScheduledReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
+        Logger.getDefaultLogger().d(intent.toString());
         if (intent.getAction().equals(Intents.ACTION_ALARM_SCHEDULED)) {
             int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
             Alarm alarm;

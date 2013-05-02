@@ -28,9 +28,10 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.github.androidutils.logger.FileLogWriter;
-import com.github.androidutils.logger.LogcatLogWriter;
+import com.github.androidutils.logger.LogcatLogWriterWithLines;
 import com.github.androidutils.logger.Logger;
 import com.github.androidutils.logger.Logger.LogLevel;
+import com.github.androidutils.logger.StartupLogWriter;
 
 public class AlarmProvider extends ContentProvider {
     private AlarmDatabaseHelper mOpenHelper;
@@ -51,9 +52,10 @@ public class AlarmProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        log = new Logger();
-        log.addLogWriter(new LogcatLogWriter());
-        log.addLogWriter(new FileLogWriter(getContext(), false));
+        log = Logger.getDefaultLogger();
+        log.addLogWriter(LogcatLogWriterWithLines.getInstance());
+        log.addLogWriter(FileLogWriter.getInstance(getContext(), false));
+        log.addLogWriter(StartupLogWriter.getInstance());
         log.setLogLevel(AlarmProvider.class, LogLevel.ERR);
         log.setLogLevel(AlarmDatabaseHelper.class, LogLevel.ERR);
         mOpenHelper = new AlarmDatabaseHelper(getContext(), log);
