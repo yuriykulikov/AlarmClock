@@ -92,5 +92,11 @@
         android:defaultValue="false"
         android:title="@string/longclick_dismiss_title"
         android:summary="@string/longclick_dismiss_summary" />
+        
+    <CheckBoxPreference
+        android:key="show_info_fragment"
+        android:defaultValue="false"
+        android:title="@string/show_info_fragment_title"
+        android:summary="@string/show_info_fragment_summary" />
 
 </PreferenceScreen>

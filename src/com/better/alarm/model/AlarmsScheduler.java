@@ -25,8 +25,10 @@ import java.util.PriorityQueue;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 
 import com.better.alarm.model.interfaces.Intents;
 import com.github.androidutils.logger.Logger;
@@ -87,6 +89,12 @@ public class AlarmsScheduler implements IAlarmsScheduler {
         mContext = context;
         queue = new PriorityQueue<ScheduledAlarm>();
         this.log = logger;
+        context.registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                notifyListeners();
+            }
+        }, new IntentFilter(Intents.REQUEST_LAST_SCHEDULED_ALARM));
     }
 
     @Override
@@ -170,8 +178,6 @@ public class AlarmsScheduler implements IAlarmsScheduler {
             ScheduledAlarm scheduledAlarm = queue.peek();
             intent.setAction(Intents.ACTION_ALARM_SCHEDULED);
             intent.putExtra(Intents.EXTRA_ID, scheduledAlarm.id);
-            // TODO add type to the intent
-            mContext.sendBroadcast(intent);
         } else {
             // now this means that alarm in the closest future is AUTOSILENCE
             ScheduledAlarm scheduledAlarm = findNextNormalAlarm();
