@@ -422,7 +422,7 @@
     </string-array>
     <string name="fade_in_summary">Fade-in duration is <xliff:g id="seconds">%d</xliff:g> seconds</string>
     <string-array name="alarm_set_short">
-        <item>Less than 1 minute from now</item>
+        <item>Less than a minute from now</item>
         <item><xliff:g id="DAYS" example="2 days">%1$s</xliff:g></item>
         <item><xliff:g id="HOURS" example="2 hours">%2$s</xliff:g></item>
         <item><xliff:g id="DAYS" example="2 days">%1$s</xliff:g> and <xliff:g id="HOURS" example="2 hours">%2$s</xliff:g></item>

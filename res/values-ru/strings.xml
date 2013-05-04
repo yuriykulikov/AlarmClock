@@ -157,4 +157,16 @@
         <item>120 секунд</item>
     </string-array>
     <string name="fade_in_summary">Нарастание громкости за <xliff:g id="seconds">%d</xliff:g> секунд</string>
+    <string-array name="alarm_set_short">
+        <item>"менее чем через минуту"</item>
+        <item>"<xliff:g id="DAYS">%1$s</xliff:g>"</item>
+        <item>"<xliff:g id="HOURS">%2$s</xliff:g>"</item>
+        <item>"<xliff:g id="DAYS">%1$s</xliff:g> и <xliff:g id="HOURS">%2$s</xliff:g>"</item>
+        <item>"<xliff:g id="MINUTES">%3$s</xliff:g>"</item>
+        <item>"<xliff:g id="DAYS">%1$s</xliff:g> и <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
+        <item>"<xliff:g id="HOURS">%2$s</xliff:g> и <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
+        <item>"<xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> и <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
+    </string-array>
+    <string name="show_info_fragment_title">Показывать время до след. сигнала</string>
+    <string name="show_info_fragment_summary">Показывать время до следующего сигнала в нижней части списка будильников</string>
 </resources>
