@@ -117,13 +117,6 @@ public class InfoFragment extends Fragment implements ViewFactory {
         log.d("onResume");
         IntentFilter intentFilter = new IntentFilter(Intents.ACTION_ALARM_SCHEDULED);
         intentFilter.addAction(Intents.ACTION_ALARMS_UNSCHEDULED);
-
-        try {
-            getActivity().unregisterReceiver(mAlarmsScheduledReceiver);
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
-
         getActivity().registerReceiver(mAlarmsScheduledReceiver, intentFilter);
         getActivity().sendBroadcast(new Intent(Intents.REQUEST_LAST_SCHEDULED_ALARM));
         getActivity().registerReceiver(mTickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
