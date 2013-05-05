@@ -169,4 +169,8 @@
     </string-array>
     <string name="show_info_fragment_title">Zeit bis nächsten Signal</string>
     <string name="show_info_fragment_summary">Zeigen Zeit bis nächsten Signal in der Liste unten</string>
+    <string name="dashclock">DashClock herunterladen</string>
+    <string name="dashclock_message">Herunterladen DashClock von Google Play. Dashclock ist ein Widget, der funktioniert sehr gut zusammen mit dem Einfacher Wecker!</string>
+    <string name="mp3cutter">MP3 cutter herunterladen</string>
+    <string name="mp3cutter_message">Einen MP3 Cutter suchen und herunterladen von Google Play. Mit MP3 cutter kann man MP3 File zum Wecker Signal konvertieren.</string>
 </resources>

@@ -169,4 +169,8 @@
     </string-array>
     <string name="show_info_fragment_title">Время след. сигнала</string>
     <string name="show_info_fragment_summary">Показывать время до следующего сигнала в нижней части списка будильников</string>
+    <string name="dashclock">Установить DashClock</string>
+    <string name="dashclock_message">Перейти на Google Play чтобы установить Dashclock. Это виджет для экрана блокировки и рабочего стола, который прекрасно интегрируется с Простым будильником!</string>
+    <string name="mp3cutter">Установить MP3 cutter</string>
+    <string name="mp3cutter_message">Найти и установить MP3 Cutter на Google Play. MP3 cutter позволяет вырезать участки MP3 мелодий и конвертировать их в мелодии будильника.</string>
 </resources>
