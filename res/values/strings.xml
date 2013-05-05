@@ -418,6 +418,6 @@
         <item><xliff:g id="HOURS" example="2 hours">%2$s</xliff:g> and <xliff:g id="MINUTES" example="2 minutes">%3$s</xliff:g></item>
         <item><xliff:g id="DAYS" example="2 days">%1$s</xliff:g>, <xliff:g id="HOURS" example="2 hours">%2$s</xliff:g>, and <xliff:g id="MINUTES" example="2 minutes">%3$s</xliff:g></item>
     </string-array>
-    <string name="show_info_fragment_title">Show next alarm fragment</string>
+    <string name="show_info_fragment_title">Time until next alarm</string>
     <string name="show_info_fragment_summary">Show a fragment which shows how many time until the next alarm is left in the bottom of the list</string>
 </resources>

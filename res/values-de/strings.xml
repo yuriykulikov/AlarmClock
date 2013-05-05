@@ -158,7 +158,7 @@
     </string-array>
     <string name="fade_in_summary">Fade-in Dauer ist <xliff:g id="seconds">%d</xliff:g> Sekunden</string>
         <string-array name="alarm_set_short">
-    <item msgid="6450913786084215050">"weniger als 1 Minute"</item>
+    <item msgid="6450913786084215050">"weniger als eine Minute"</item>
     <item msgid="6002066367368421848">"<xliff:g id="DAYS">%1$s</xliff:g>"</item>
     <item msgid="8824719306247973774">"<xliff:g id="HOURS">%2$s</xliff:g>"</item>
     <item msgid="8182406852935468862">"<xliff:g id="DAYS">%1$s</xliff:g> und <xliff:g id="HOURS">%2$s</xliff:g>"</item>
@@ -167,6 +167,6 @@
     <item msgid="9115697840826129603">"<xliff:g id="HOURS">%2$s</xliff:g> und <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
     <item msgid="2332583385137381060">"<xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> und <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
     </string-array>
-    <string name="show_info_fragment_title">Zeigen Zeit bis nächste Signal</string>
-    <string name="show_info_fragment_summary">Zeigen Zeit bis nächste Alarm in der Liste unten</string>
+    <string name="show_info_fragment_title">Zeit bis nächsten Signal</string>
+    <string name="show_info_fragment_summary">Zeigen Zeit bis nächsten Signal in der Liste unten</string>
 </resources>
