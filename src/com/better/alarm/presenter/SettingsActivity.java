@@ -26,6 +26,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.CheckBoxPreference;
@@ -47,6 +48,8 @@ import com.github.androidutils.logger.StartupLogWriter;
  * Settings for the Alarm Clock.
  */
 public class SettingsActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener {
+
+    private static final int JELLY_BEAN_MR1 = 17;
 
     private static final int ALARM_STREAM_TYPE_BIT = 1 << AudioManager.STREAM_ALARM;
 
@@ -97,6 +100,12 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         intent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.better.alarm");
 
         sp.setShareIntent(intent);
+
+        if (Build.VERSION.SDK_INT < JELLY_BEAN_MR1) {
+            MenuItem menuItemDashclock = menu.findItem(R.id.menu_dashclock);
+            menuItemDashclock.setVisible(false);
+        }
+
         return true;
     }
 
