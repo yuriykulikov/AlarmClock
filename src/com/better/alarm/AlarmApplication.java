@@ -47,17 +47,16 @@ import com.github.androidutils.wakelock.WakeLockManager;
 
 // @formatter:off
 @ReportsCrashes(
-        formKey = "dFFwNk1yQ1lXeFNpVG1YVE1OZ05YNVE6MQ",
+        formKey = "",
+        mailTo = "yuriy.kulikov.87@gmail.com",
         applicationLogFile = "applog.log",
         applicationLogFileLines = 150,
         customReportContent = {
                 ReportField.IS_SILENT,
                 ReportField.APP_VERSION_CODE,
                 ReportField.PHONE_MODEL,
-                ReportField.DEVICE_ID,
                 ReportField.ANDROID_VERSION,
                 ReportField.CUSTOM_DATA,
-                ReportField.LOGCAT,
                 ReportField.STACK_TRACE,
                 ReportField.APPLICATION_LOG,
                 ReportField.SHARED_PREFERENCES,
