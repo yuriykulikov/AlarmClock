@@ -47,7 +47,6 @@ import com.better.alarm.presenter.TimePickerDialogFragment;
 import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialogHandler;
 import com.better.alarm.presenter.TimePickerDialogFragment.OnAlarmTimePickerCanceledListener;
 import com.github.androidutils.logger.Logger;
-import com.github.androidutils.logger.StartupLogWriter;
 
 /**
  * Alarm Clock alarm alert: pops visible indicator and plays alarm tone. This
@@ -143,7 +142,6 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
         } catch (AlarmNotFoundException e) {
             dismiss();
             Logger.getDefaultLogger().e("oops", e);
-            ACRA.getErrorReporter().putCustomData("STARTUP_LOG", StartupLogWriter.getInstance().getMessagesAsString());
             ACRA.getErrorReporter().handleSilentException(e);
         }
     }
