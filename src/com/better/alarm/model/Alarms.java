@@ -15,6 +15,8 @@
  */
 package com.better.alarm.model;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -125,7 +127,51 @@ public class Alarms implements IAlarmsManager {
     @Override
     public List<Alarm> getAlarmsList() {
         List<Alarm> alarms = new LinkedList<Alarm>(this.alarms.values());
+        Collections.sort(alarms, new MinuteComparator());
+        Collections.sort(alarms, new HourComparator());
+        Collections.sort(alarms, new RepeatComparator());
+
         return alarms;
+    }
+
+    private final class RepeatComparator implements Comparator<Alarm> {
+        @Override
+        public int compare(Alarm lhs, Alarm rhs) {
+            return Integer.valueOf(getPrio(lhs)).compareTo(Integer.valueOf(getPrio(rhs)));
+        }
+
+        /**
+         * First comes on Weekdays, than on weekends and then the rest
+         * 
+         * @param alarm
+         * @return
+         */
+        private int getPrio(Alarm alarm) {
+            switch (alarm.getDaysOfWeek().getCoded()) {
+            case 0x7F:
+                return 1;
+            case 0x1F:
+                return 2;
+            case 0x60:
+                return 3;
+            default:
+                return 0;
+            }
+        }
+    }
+
+    private final class HourComparator implements Comparator<Alarm> {
+        @Override
+        public int compare(Alarm lhs, Alarm rhs) {
+            return Integer.valueOf(lhs.getHour()).compareTo(Integer.valueOf(rhs.getHour()));
+        }
+    }
+
+    private final class MinuteComparator implements Comparator<Alarm> {
+        @Override
+        public int compare(Alarm lhs, Alarm rhs) {
+            return Integer.valueOf(lhs.getMinutes()).compareTo(Integer.valueOf(rhs.getMinutes()));
+        }
     }
 
     void onAlarmFired(AlarmCore alarm, CalendarType calendarType) {
