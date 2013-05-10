@@ -149,13 +149,13 @@ public class Alarms implements IAlarmsManager {
         private int getPrio(Alarm alarm) {
             switch (alarm.getDaysOfWeek().getCoded()) {
             case 0x7F:
-                return 0;
-            case 0x1F:
                 return 1;
-            case 0x60:
+            case 0x1F:
                 return 2;
-            default:
+            case 0x60:
                 return 3;
+            default:
+                return 0;
             }
         }
     }
