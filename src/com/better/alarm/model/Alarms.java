@@ -127,6 +127,8 @@ public class Alarms implements IAlarmsManager {
     @Override
     public List<Alarm> getAlarmsList() {
         List<Alarm> alarms = new LinkedList<Alarm>(this.alarms.values());
+        Collections.sort(alarms, new MinuteComparator());
+        Collections.sort(alarms, new HourComparator());
         Collections.sort(alarms, new RepeatComparator());
 
         return alarms;
@@ -155,6 +157,20 @@ public class Alarms implements IAlarmsManager {
             default:
                 return 3;
             }
+        }
+    }
+
+    private final class HourComparator implements Comparator<Alarm> {
+        @Override
+        public int compare(Alarm lhs, Alarm rhs) {
+            return Integer.valueOf(lhs.getHour()).compareTo(Integer.valueOf(rhs.getHour()));
+        }
+    }
+
+    private final class MinuteComparator implements Comparator<Alarm> {
+        @Override
+        public int compare(Alarm lhs, Alarm rhs) {
+            return Integer.valueOf(lhs.getMinutes()).compareTo(Integer.valueOf(rhs.getMinutes()));
         }
     }
 
