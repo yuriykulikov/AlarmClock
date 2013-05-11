@@ -140,6 +140,7 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
             filter.addAction(Intents.ACTION_SOUND_EXPIRED);
             registerReceiver(mReceiver, filter);
         } catch (AlarmNotFoundException e) {
+            dismiss();
             Logger.getDefaultLogger().e("oops", e);
             ACRA.getErrorReporter().handleSilentException(e);
         }

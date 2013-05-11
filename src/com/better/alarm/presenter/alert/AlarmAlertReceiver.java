@@ -62,11 +62,12 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
         try {
+            alarm = alarmsManager.getAlarm(id);
 
             if (action.equals(Intents.ALARM_ALERT_ACTION) || action.equals(Intents.ALARM_PREALARM_ACTION)) {
                 // our alarm fired again, remove snooze notification
                 nm.cancel(id + NOTIFICATION_OFFSET);
-                onAlert(alarmsManager.getAlarm(id));
+                onAlert(alarm);
 
             } else if (action.equals(Intents.ALARM_DISMISS_ACTION)) {
                 nm.cancel(id);
@@ -84,7 +85,7 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
                 onSoundExpired(id);
 
             } else if (action.equals(ACTION_CANCEL_NOTIFICATION)) {
-                alarmsManager.dismiss(alarmsManager.getAlarm(id));
+                alarmsManager.dismiss(alarm);
             }
         } catch (AlarmNotFoundException e) {
             Logger.getDefaultLogger().e("oops", e);
