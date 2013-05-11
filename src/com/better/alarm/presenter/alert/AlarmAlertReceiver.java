@@ -62,7 +62,9 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
         try {
-            alarm = alarmsManager.getAlarm(id);
+            if (id != -1) {
+                alarm = alarmsManager.getAlarm(id);
+            }
 
             if (action.equals(Intents.ALARM_ALERT_ACTION) || action.equals(Intents.ALARM_PREALARM_ACTION)) {
                 // our alarm fired again, remove snooze notification
