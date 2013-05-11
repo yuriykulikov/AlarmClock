@@ -22,6 +22,7 @@
     <CheckBoxPreference
         android:key="alarm_in_silent_mode"
         android:title="@string/alarm_in_silent_mode_title"
+        android:defaultValue="true"
         android:summary="@string/alarm_in_silent_mode_summary" />
     
     <CheckBoxPreference
@@ -89,13 +90,13 @@
 
         <CheckBoxPreference
         android:key="longclick_dismiss_key"
-        android:defaultValue="false"
+        android:defaultValue="true"
         android:title="@string/longclick_dismiss_title"
         android:summary="@string/longclick_dismiss_summary" />
         
     <CheckBoxPreference
         android:key="show_info_fragment"
-        android:defaultValue="false"
+        android:defaultValue="true"
         android:title="@string/show_info_fragment_title"
         android:summary="@string/show_info_fragment_summary" />
 

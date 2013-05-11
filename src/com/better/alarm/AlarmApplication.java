@@ -22,6 +22,7 @@ import org.acra.ReportField;
 import org.acra.annotation.ReportsCrashes;
 
 import android.app.Application;
+import android.preference.PreferenceManager;
 import android.view.ViewConfiguration;
 
 import com.better.alarm.model.AlarmCore;
@@ -109,6 +110,8 @@ public class AlarmApplication extends Application {
                         StartupLogWriter.getInstance().getMessagesAsString());
             }
         });
+
+        PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 
         logger.d("onCreate");
         super.onCreate();
