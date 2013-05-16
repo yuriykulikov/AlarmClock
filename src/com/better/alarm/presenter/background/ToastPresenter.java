@@ -17,8 +17,6 @@
 
 package com.better.alarm.presenter.background;
 
-import org.acra.ACRA;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -40,12 +38,16 @@ public class ToastPresenter extends BroadcastReceiver {
         String action = intent.getAction();
         if (Intents.ACTION_ALARM_SET.equals(action)) {
             Alarm alarm;
+            int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
             try {
-                alarm = AlarmsManager.getAlarmsManager().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
-                popAlarmSetToast(context, alarm);
+                alarm = AlarmsManager.getAlarmsManager().getAlarm(id);
+                if (alarm.isEnabled()) {
+                    popAlarmSetToast(context, alarm);
+                } else {
+                    Logger.getDefaultLogger().w("Alarm " + id + " is already disabled");
+                }
             } catch (AlarmNotFoundException e) {
-                Logger.getDefaultLogger().e("oops", e);
-                ACRA.getErrorReporter().handleSilentException(e);
+                Logger.getDefaultLogger().w("Alarm " + id + " could not be found. Must be deleted");
             }
         }
     }
