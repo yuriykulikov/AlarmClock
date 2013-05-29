@@ -127,4 +127,75 @@
     <string name="loading_ringtone" msgid="6523322777415268044">"Caricamento suoneria..."</string>
     <string name="control_set_alarm" msgid="2194676418924016327">"Imposta allarme"</string>
     <string name="control_set_alarm_with_existing" msgid="1128169496817859490">"Allarme impostato: <xliff:g id="TIME">%s</xliff:g>"</string>
+    <string-array name="fade_in_time_sec_values">
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+    </string-array>
+    <!-- Setting labels on Set alarm screen: Prealarm -->
+    <string name="alarm_prealarm">Pre-sveglia soft</string>
+    <!-- Pre-alarm duration title -->
+    <string name="prealarm_duration_title" >durata della pre-sveglia</string>
+    <!--
+         Entries listed in the ListPreference when invoking the pre-alarm duration
+         preference.
+    -->
+    <string-array name="prealarm_duration_entries">
+        <item>10 minuti</item>
+        <item>20 minuti</item>
+        <item>30 minuti</item>
+        <item>45 minuti</item>
+        <item>60 minuti</item>
+    </string-array>
+    <!--
+         Values that are retrieved from the ListPreference. These must match
+         the prealarm_duration_entries above.
+    -->
+    <string-array name="prealarm_duration_values" >
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>45</item>
+        <item>60</item>
+    </string-array>
+    <!-- Pre-alarm duration summary string set based on the preference value. -->
+    <string name="prealarm_summary">Il Pre-allarme inizierà
+<xliff:g id="minutes">%d</xliff:g>minuti prima della sveglia principale</string>
+    <string name="main_alarm">Sveglia principale</string>
+    <string name="master_volume">Volume principale</string>
+    <string name="bug_report_toast">Ci scusiamo, l’app si è bloccata ed un report è stato inviato allo sviluppatore affinchè sia prevenuto in futuro</string>
+    <string name="share">Condividi</string>
+    <string name="bugreport">Invia un bugreport</string>
+    <string name="review">Valuta l’app</string>
+    <string name="bugreport_hint">Descrivi le tue lamentele qui</string>
+    <string name="review_message">Grazie per esserti preso del tempo per valutare l’app. Le valutazioni positive aiutano ad attrarre più utenti, e ciò contribuisce a migliorare l’app attraverso la raccolta di feedbacks. Vuoi procedere?</string>
+    <string name="longclick_dismiss_title">Click prolungato per disattivare l’allarme</string>
+    <string name="longclick_dismiss_summary">Tener premuto il tasto dismiss per far terminare la sveglia</string>
+    <string name="fade_in_time_sec_title">Dissolvenza con una maggior durata</string>
+    <string-array name="fade_in_time_sec_entries">
+        <item>10 secondi</item>
+        <item>20 secondi</item>
+        <item>30 secondi</item>
+        <item>60 secondi</item>
+        <item>120 secondi</item>
+    </string-array>
+    <string name="fade_in_summary">La dissolvenza con maggior durata è <xliff:g id="seconds">%d</xliff:g> secondi</string>
+    <string-array name="alarm_set_short">
+        <item>Meno di un minuto da questo istante</item>
+        <item><xliff:g id="DAYS" example="2 giorni">%1$s</xliff:g></item>
+        <item><xliff:g id="HOURS" example="2 ore">%2$s</xliff:g></item>
+        <item><xliff:g id="DAYS" example="2 giorni">%1$s</xliff:g> e <xliff:g id="HOURS" example="2 ore">%2$s</xliff:g></item>
+        <item><xliff:g id="MINUTES" example="2 minuti">%3$s</xliff:g></item>
+        <item><xliff:g id="DAYS" example="2 giorni">%1$s</xliff:g> e <xliff:g id="MINUTES" example="2 minuti">%3$s</xliff:g></item>
+        <item><xliff:g id="HOURS" example="2 ore">%2$s</xliff:g> e <xliff:g id="MINUTES" example="2 minuti">%3$s</xliff:g></item>
+        <item><xliff:g id="DAYS" example="2 days">%1$s</xliff:g>, <xliff:g id="HOURS" example="2 ore">%2$s</xliff:g>, e <xliff:g id="MINUTES" example="2 minuti">%3$s</xliff:g></item>
+    </string-array>
+    <string name="show_info_fragment_title">Intervallo di tempo fino alla prossima sveglia</string>
+    <string name="show_info_fragment_summary">Mostra in fondo alla lista uno spazio indicante il tempo rimasto fino alla prossima sveglia</string>
+    <string name="dashclock">Ottieni DashClock</string>
+    <string name="dashclock_message">Verrai trasferito a Google Play per installare DashClock. Dashclock è un widget che si integra perfettamente con Simple Alarm!</string>
+    <string name="mp3cutter">Ottieni MP3 cutter</string>
+    <string name="mp3cutter_message">Verrai trasferito a Google Play per cercare un’app che ti consentirà di utilizzare file MP3 come suoneria per la sveglia.</string>
 </resources>
