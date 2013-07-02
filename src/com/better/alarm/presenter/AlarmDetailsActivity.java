@@ -36,6 +36,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 
 import com.better.alarm.R;
 import com.better.alarm.model.AlarmsManager;
@@ -58,6 +60,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
 
     private IAlarmsManager alarms;
 
+    private EditText mLabel;
     private CheckBoxPreference mEnabledPref;
     private Preference mTimePref;
     private AlarmPreference mAlarmPref;
@@ -88,7 +91,12 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
 
         alarms = AlarmsManager.getAlarmsManager();
 
+        EditText label = (EditText) getLayoutInflater().inflate(R.layout.alarm_label, null);
+        ListView list = (ListView) findViewById(android.R.id.list);
+        list.addFooterView(label);
+
         // Get each preference so we can retrieve the value later.
+        mLabel = label;
         mEnabledPref = (CheckBoxPreference) findPreference("enabled");
         // remove enable preference from screen
         getPreferenceScreen().removePreference(mEnabledPref);
@@ -201,6 +209,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     }
 
     private void updatePrefs() {
+        mLabel.setText(alarm.getLabel());
         mEnabledPref.setChecked(alarm.isEnabled());
         mHour = alarm.getHour();
         mMinute = alarm.getMinutes();
@@ -258,7 +267,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
               .setMinutes(mMinute)
               .setDaysOfWeek(mRepeatPref.getDaysOfWeek())
               .setVibrate(true)
-              .setLabel("")
+              .setLabel(mLabel.getText().toString())
               .setAlert(mAlarmPref.getAlert())
               .setPrealarm(mPreAlarmPref.isChecked());
         //@formatter:on
