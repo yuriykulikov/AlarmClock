@@ -76,6 +76,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
 
     @Override
     protected void onCreate(Bundle icicle) {
+        setTheme(DynamicThemeHandler.getInstance().getIdForName(AlarmDetailsActivity.class.getName()));
         super.onCreate(icicle);
 
         if (!getResources().getBoolean(R.bool.isTablet)) {

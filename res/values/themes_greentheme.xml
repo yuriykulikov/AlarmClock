@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <style name="GreenTheme" parent="android:Theme.Holo.Light">
+
+    <item name="android:editTextBackground">@drawable/edit_text_holo_light</item>
+
+    <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewGreenTheme</item>
+
+    <item name="android:listChoiceIndicatorMultiple">@drawable/btn_check_holo_light</item>
+
+    <item name="android:listChoiceIndicatorSingle">@drawable/btn_radio_holo_light</item>
+
+    <item name="android:buttonStyle">@style/ButtonGreenTheme</item>
+
+    <item name="android:imageButtonStyle">@style/ImageButtonGreenTheme</item>
+
+    <item name="android:dropDownSpinnerStyle">@style/SpinnerGreenTheme</item>
+
+    <item name="android:tabWidgetStyle">@style/TabWidgetGreenTheme</item>
+
+    <item name="android:progressBarStyleHorizontal">@style/ProgressBarGreenTheme</item>
+
+    <item name="android:seekBarStyle">@style/SeekBarGreenTheme</item>
+
+    <item name="android:buttonStyleToggle">@style/ToggleGreenTheme</item>
+
+    <item name="android:listChoiceBackgroundIndicator">@drawable/list_selector_holo_light</item>
+
+    <item name="android:activatedBackgroundIndicator">@drawable/activated_background_holo_light</item>
+
+    <item name="android:fastScrollThumbDrawable">@drawable/fastscroll_thumb_holo</item>
+
+    <item name="android:actionBarStyle">@style/ActionBarGreenTheme</item>
+
+    <item name="android:buttonBarButtonStyle">@style/ButtonBarButtonStyleGreenTheme</item>
+
+  </style>
+
+      <style name="TimePickerDialogFragmentGreen" parent="@android:style/Theme.Holo.Light.Dialog">
+         <item name="android:editTextBackground">@drawable/edit_text_holo_light</item>
+
+    <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewGreenTheme</item>
+
+    <item name="android:listChoiceIndicatorMultiple">@drawable/btn_check_holo_light</item>
+
+    <item name="android:listChoiceIndicatorSingle">@drawable/btn_radio_holo_light</item>
+
+    <item name="android:buttonStyle">@style/ButtonGreenTheme</item>
+
+    <item name="android:imageButtonStyle">@style/ImageButtonGreenTheme</item>
+
+    <item name="android:dropDownSpinnerStyle">@style/SpinnerGreenTheme</item>
+
+    <item name="android:tabWidgetStyle">@style/TabWidgetGreenTheme</item>
+
+    <item name="android:progressBarStyleHorizontal">@style/ProgressBarGreenTheme</item>
+
+    <item name="android:seekBarStyle">@style/SeekBarGreenTheme</item>
+
+    <item name="android:buttonStyleToggle">@style/ToggleGreenTheme</item>
+
+    <item name="android:listChoiceBackgroundIndicator">@drawable/list_selector_holo_light</item>
+
+    <item name="android:activatedBackgroundIndicator">@drawable/activated_background_holo_light</item>
+
+    <item name="android:fastScrollThumbDrawable">@drawable/fastscroll_thumb_holo</item>
+
+    <item name="android:actionBarStyle">@style/ActionBarGreenTheme</item>
+
+    <item name="android:buttonBarButtonStyle">@style/ButtonBarButtonStyleGreenTheme</item>
+    </style>
+</resources>

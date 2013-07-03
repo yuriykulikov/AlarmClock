@@ -72,7 +72,9 @@ public class TimePickerDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NO_TITLE, 0);
+
+        setStyle(DialogFragment.STYLE_NO_TITLE,
+                DynamicThemeHandler.getInstance().getIdForName(TimePickerDialogFragment.class.getName()));
     }
 
     @Override
