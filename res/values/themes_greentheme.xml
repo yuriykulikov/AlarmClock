@@ -33,7 +33,7 @@
 
     <item name="android:fastScrollThumbDrawable">@drawable/fastscroll_thumb_holo</item>
 
-    <item name="android:actionBarStyle">@style/ActionBarGreenTheme</item>
+    <item name="android:actionBarStyle">@style/ActionBar.Solid.Greenactionbar</item>
 
     <item name="android:buttonBarButtonStyle">@style/ButtonBarButtonStyleGreenTheme</item>
 
@@ -68,7 +68,7 @@
 
     <item name="android:fastScrollThumbDrawable">@drawable/fastscroll_thumb_holo</item>
 
-    <item name="android:actionBarStyle">@style/ActionBarGreenTheme</item>
+    <item name="android:actionBarStyle">@style/ActionBar.Solid.Greenactionbar</item>
 
     <item name="android:buttonBarButtonStyle">@style/ButtonBarButtonStyleGreenTheme</item>
     </style>
