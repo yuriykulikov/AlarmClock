@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Dark Themes -->
+    <style name="DefaultDarkTheme" parent="android:Theme.Holo"/>
+    <style name="AlarmAlertDarkTheme" parent="android:Theme.Holo.Dialog"/>
+    <style name="AlarmAlertFullScreenDarkTheme" parent="android:Theme.Holo.NoActionBar">
+         <item name="android:windowShowWallpaper">true</item>
+         <item name="android:windowBackground">@android:color/transparent</item>
+         <item name="android:colorBackgroundCacheHint">@null</item>
+         <item name="android:windowNoTitle">true</item>
+    </style>
+    <style name="TimePickerDialogFragmentDark" parent="android:style/Theme.Holo.Dialog">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+</resources>

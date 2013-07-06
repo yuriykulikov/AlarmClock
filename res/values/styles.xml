@@ -15,31 +15,6 @@
 -->
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Light Themes -->
-    <style name="DefaultLightTheme" parent="android:Theme.Holo.Light.DarkActionBar"/>
-    <style name="AlarmAlertLightTheme" parent="android:Theme.Holo.Light.Dialog"/>
-    <style name="AlarmAlertFullScreenLightTheme" parent="android:Theme.Holo.Light.NoActionBar">
-         <item name="android:windowShowWallpaper">true</item>
-         <item name="android:windowBackground">@android:color/transparent</item>
-         <item name="android:colorBackgroundCacheHint">@null</item>
-         <item name="android:windowNoTitle">true</item>
-    </style>
-    <style name="TimePickerDialogFragmentLight" parent="android:style/Theme.Holo.Light.Dialog">
-        <item name="android:windowNoTitle">true</item>
-    </style>
-    <!-- Dark Themes -->
-    <style name="DefaultDarkTheme" parent="android:Theme.Holo"/>
-    <style name="AlarmAlertDarkTheme" parent="android:Theme.Holo.Dialog"/>
-    <style name="AlarmAlertFullScreenDarkTheme" parent="android:Theme.Holo.NoActionBar">
-         <item name="android:windowShowWallpaper">true</item>
-         <item name="android:windowBackground">@android:color/transparent</item>
-         <item name="android:colorBackgroundCacheHint">@null</item>
-         <item name="android:windowNoTitle">true</item>
-    </style>
-    <style name="TimePickerDialogFragmentDark" parent="android:style/Theme.Holo.Dialog">
-        <item name="android:windowNoTitle">true</item>
-    </style>
-
     <style name="RoundTouchButton">
         <item name="android:gravity">center</item>
         <item name="android:layout_width">wrap_content</item>
