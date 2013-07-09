@@ -198,4 +198,9 @@
     <string name="dashclock_message">Verrai trasferito a Google Play per installare DashClock. Dashclock è un widget che si integra perfettamente con Simple Alarm!</string>
     <string name="mp3cutter">Ottieni MP3 cutter</string>
     <string name="mp3cutter_message">Verrai trasferito a Google Play per cercare un’app che ti consentirà di utilizzare file MP3 come suoneria per la sveglia.</string>
+    <string name="theme_title">Interfaccia</string>
+    <string-array name="themes_entries">
+        <item>Buio</item>
+        <item>Chiaro</item>
+    </string-array>
 </resources>
