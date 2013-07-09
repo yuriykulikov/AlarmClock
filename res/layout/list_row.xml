@@ -83,12 +83,10 @@
 
         <ImageButton
             android:id="@+id/details"
-            android:src="@android:drawable/ic_menu_more" 
+            style="?attr/alarmDetailsButtonStyle"
             android:contentDescription="@string/set_alarm"
-            android:background="@drawable/item_background"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:tint="@color/blackish"
             android:duplicateParentState="true"
             android:clickable="false"
             android:focusable="false"/>

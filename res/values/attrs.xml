@@ -6,4 +6,5 @@
         <attr name="cancelButton" format="boolean" />
     </declare-styleable>
     <attr name="alertFullScreenBackground" format="reference"/>
+    <attr name="alarmDetailsButtonStyle" format="reference"/>
 </resources>

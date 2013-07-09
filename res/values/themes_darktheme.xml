@@ -3,7 +3,9 @@
 <!-- Generated with http://android-holo-colors.com -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Dark Themes -->
-    <style name="DefaultDarkTheme" parent="android:Theme.Holo"/>
+    <style name="DefaultDarkTheme" parent="android:Theme.Holo">
+        <item name="alarmDetailsButtonStyle">@style/DarkAlarmDetailsButtonStyle</item>
+    </style>
     <style name="AlarmAlertDarkTheme" parent="android:Theme.Holo.Dialog"/>
     <style name="AlarmAlertFullScreenDarkTheme" parent="android:Theme.Holo.NoActionBar">
          <item name="android:windowShowWallpaper">true</item>
@@ -17,5 +19,10 @@
     </style>
     <style name="DarkAlertFullScreenBackground" >
         <item name="android:background">@android:drawable/alert_dark_frame</item>
+    </style>
+    <style name="DarkAlarmDetailsButtonStyle" >
+        <item name="android:src">@android:drawable/ic_menu_more</item>
+        <item name="android:background">@drawable/item_background</item>
+        <item name="android:tint">@color/grey</item>
     </style>
 </resources>
