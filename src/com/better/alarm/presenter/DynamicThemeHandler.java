@@ -71,10 +71,12 @@ public class DynamicThemeHandler {
         themes = new HashMap<String, Map<String, Integer>>(3);
         themes.put("light", lightThemes);
         themes.put("dark", darkThemes);
-        themes.put("green", greenThemes);
+        // TODO
+        themes.put("green", lightThemes);
         // fallback
         themes.put("Light", lightThemes);
         themes.put("Dark", darkThemes);
-        themes.put("Green", greenThemes);
+        // TODO
+        themes.put("Green", lightThemes);
     }
 }
