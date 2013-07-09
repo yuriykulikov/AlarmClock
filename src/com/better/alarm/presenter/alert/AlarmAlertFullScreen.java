@@ -35,7 +35,6 @@ import android.view.View.OnLongClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.FrameLayout;
 
 import com.better.alarm.R;
 import com.better.alarm.model.AlarmsManager;
@@ -167,11 +166,6 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
         LayoutInflater inflater = LayoutInflater.from(this);
 
         setContentView(inflater.inflate(getLayoutResId(), null));
-
-        if (getLayoutResId() == R.layout.alarm_alert_fullscreen) {
-            FrameLayout frame = (FrameLayout) findViewById(R.id.frame);
-            frame.setBackgroundResource(DynamicThemeHandler.getInstance().getBackgroundDrawableId());
-        }
 
         /*
          * snooze behavior: pop a snooze confirmation view, kick alarm manager.

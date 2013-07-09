@@ -37,10 +37,11 @@
 
     <item name="android:buttonBarButtonStyle">@style/ButtonBarButtonStyleGreenTheme</item>
 
+    <item name="alertFullScreenBackground">@style/LightAlertFullScreenBackground</item>
   </style>
 
-      <style name="TimePickerDialogFragmentGreen" parent="@android:style/Theme.Holo.Light.Dialog">
-         <item name="android:editTextBackground">@drawable/edit_text_holo_light</item>
+  <style name="TimePickerDialogFragmentGreen" parent="@android:style/Theme.Holo.Light.Dialog">
+    <item name="android:editTextBackground">@drawable/edit_text_holo_light</item>
 
     <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewGreenTheme</item>
 
@@ -71,5 +72,13 @@
     <item name="android:actionBarStyle">@style/ActionBar.Solid.Greenactionbar</item>
 
     <item name="android:buttonBarButtonStyle">@style/ButtonBarButtonStyleGreenTheme</item>
+  </style>
+      <style name="AlarmAlertFullScreenGreenTheme" parent="GreenTheme">
+         <item name="android:windowShowWallpaper">true</item>
+         <item name="android:windowBackground">@android:color/transparent</item>
+         <item name="android:colorBackgroundCacheHint">@null</item>
+         <item name="android:windowNoTitle">true</item>
+         <item name="alertFullScreenBackground">@style/LightAlertFullScreenBackground</item>
     </style>
+    <style name="AlarmAlertGreenTheme" parent="android:Theme.Holo.Light.Dialog"/>
 </resources>

@@ -64,8 +64,8 @@ public class DynamicThemeHandler {
         lightThemes.put(TimePickerDialogFragment.class.getName(), R.style.TimePickerDialogFragmentLight);
 
         Map<String, Integer> greenThemes = new HashMapWithDefault(R.style.GreenTheme);
-        greenThemes.put(AlarmAlert.class.getName(), R.style.AlarmAlertLightTheme);
-        greenThemes.put(AlarmAlertFullScreen.class.getName(), R.style.AlarmAlertFullScreenLightTheme);
+        greenThemes.put(AlarmAlert.class.getName(), R.style.AlarmAlertGreenTheme);
+        greenThemes.put(AlarmAlertFullScreen.class.getName(), R.style.AlarmAlertFullScreenGreenTheme);
         greenThemes.put(TimePickerDialogFragment.class.getName(), R.style.TimePickerDialogFragmentGreen);
 
         themes = new HashMap<String, Map<String, Integer>>(3);
@@ -76,10 +76,5 @@ public class DynamicThemeHandler {
         themes.put("Light", lightThemes);
         themes.put("Dark", darkThemes);
         themes.put("Green", greenThemes);
-    }
-
-    public int getBackgroundDrawableId() {
-        if (sp.getString(KEY_THEME, "dark").equals("dark")) return android.R.drawable.alert_dark_frame;
-        else return android.R.drawable.alert_light_frame;
     }
 }

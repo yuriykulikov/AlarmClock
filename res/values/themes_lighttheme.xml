@@ -9,8 +9,12 @@
          <item name="android:windowBackground">@android:color/transparent</item>
          <item name="android:colorBackgroundCacheHint">@null</item>
          <item name="android:windowNoTitle">true</item>
+         <item name="alertFullScreenBackground">@style/LightAlertFullScreenBackground</item>
     </style>
     <style name="TimePickerDialogFragmentLight" parent="android:style/Theme.Holo.Light.Dialog">
         <item name="android:windowNoTitle">true</item>
+    </style>
+    <style name="LightAlertFullScreenBackground" >
+        <item name="android:background">@android:drawable/alert_light_frame</item>
     </style>
 </resources>
