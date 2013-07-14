@@ -39,6 +39,7 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(DynamicThemeHandler.getInstance().getIdForName(AlarmsListActivity.class.getName()));
         super.onCreate(savedInstanceState);
 
         boolean isTablet = !getResources().getBoolean(R.bool.isTablet);
@@ -61,6 +62,7 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
     @Override
     protected void onResume() {
         super.onResume();
+
         View nextAlarmFragment = findViewById(R.id.infoFragment);
         if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("show_info_fragment", false)) {
             nextAlarmFragment.setVisibility(View.VISIBLE);

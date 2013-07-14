@@ -86,7 +86,9 @@ public class DigitalClock extends LinearLayout {
         }
 
         void setIsMorning(boolean isMorning) {
-            mAmPm.setText(isMorning ? mAmString : mPmString);
+            if (mAmPm != null) {
+                mAmPm.setText(isMorning ? mAmString : mPmString);
+            }
         }
     }
 

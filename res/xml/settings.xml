@@ -100,4 +100,12 @@
         android:title="@string/show_info_fragment_title"
         android:summary="@string/show_info_fragment_summary" />
 
+    <ListPreference
+        android:key="theme"
+        android:title="@string/theme_title"
+        android:entries="@array/themes_entries"
+        android:entryValues="@array/themes_values"
+        android:defaultValue="light"
+        android:dialogTitle="@string/theme_title" />
+
 </PreferenceScreen>

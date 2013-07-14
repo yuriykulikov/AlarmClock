@@ -424,4 +424,14 @@
     <string name="dashclock_message">You will be transferred to Google Play to install DashClock. Dashclock is a widget which perfectly integrates with Simple Alarm!</string>
     <string name="mp3cutter">Get MP3 cutter</string>
     <string name="mp3cutter_message">You will be transferred to Google Play to search for an appliaction which will allow you to use MP3 files as alarm sound.</string>
+ 
+    <string name="theme_title">Interface theme</string>
+    <string-array name="themes_entries">
+        <item>Holo dark</item>
+        <item>Classic light</item>
+    </string-array>
+    <string-array name="themes_values">
+        <item>dark</item>
+        <item>light</item>
+    </string-array>
 </resources>

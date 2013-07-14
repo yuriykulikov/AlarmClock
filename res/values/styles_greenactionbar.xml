@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- File created by the Android Action Bar Style Generator
+
+     Copyright (C) 2011 The Android Open Source Project
+     Copyright (C) 2012 readyState Software Ltd
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<resources>
+
+    <style name="Theme.Greenactionbar" parent="@android:style/Theme.Holo.Light">
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_greenactionbar</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu.Greenactionbar</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Greenactionbar</item>
+        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Greenactionbar</item>
+        <item name="android:actionDropDownStyle">@style/DropDownNav.Greenactionbar</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Greenactionbar</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_greenactionbar</item>
+        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_greenactionbar</item>
+        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Greenactionbar</item>
+        
+        
+    </style>
+
+    <style name="ActionBar.Solid.Greenactionbar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid">
+        <item name="android:background">@drawable/ab_background_textured_greenactionbar</item>
+        <item name="android:backgroundStacked">@drawable/ab_stacked_solid_greenactionbar</item>
+        <item name="android:backgroundSplit">@drawable/ab_background_textured_greenactionbar</item>
+        <item name="android:progressBarStyle">@style/ProgressBar.Greenactionbar</item>
+    </style>
+
+    <style name="ActionBar.Transparent.Greenactionbar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@drawable/ab_transparent_greenactionbar</item>
+        <item name="android:progressBarStyle">@style/ProgressBar.Greenactionbar</item>
+    </style>
+
+    <style name="PopupMenu.Greenactionbar" parent="@android:style/Widget.Holo.Light.ListPopupWindow">
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_greenactionbar</item>	
+    </style>
+
+    <style name="DropDownListView.Greenactionbar" parent="@android:style/Widget.Holo.Light.ListView.DropDown">
+        <item name="android:listSelector">@drawable/selectable_background_greenactionbar</item>
+    </style>
+
+    <style name="ActionBarTabStyle.Greenactionbar" parent="@android:style/Widget.Holo.Light.ActionBar.TabView">
+        <item name="android:background">@drawable/tab_indicator_ab_greenactionbar</item>
+    </style>
+
+    <style name="DropDownNav.Greenactionbar" parent="@android:style/Widget.Holo.Light.Spinner">
+        <item name="android:background">@drawable/spinner_background_ab_greenactionbar</item>
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_greenactionbar</item>
+        <item name="android:dropDownSelector">@drawable/selectable_background_greenactionbar</item>
+    </style>
+    
+    <style name="ProgressBar.Greenactionbar" parent="@android:style/Widget.Holo.Light.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progress_horizontal_greenactionbar</item>
+    </style>
+    
+    <style name="ActionButton.CloseMode.Greenactionbar" parent="@android:style/Widget.Holo.Light.ActionButton.CloseMode">
+        <item name="android:background">@drawable/btn_cab_done_greenactionbar</item>
+    </style>
+
+    <!-- this style is only referenced in a Light.DarkActionBar based theme -->
+    <style name="Theme.Greenactionbar.Widget" parent="@android:style/Theme.Holo">
+        <item name="android:popupMenuStyle">@style/PopupMenu.Greenactionbar</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Greenactionbar</item>
+    </style>
+
+</resources>

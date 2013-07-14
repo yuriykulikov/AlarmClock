@@ -33,6 +33,7 @@ import com.better.alarm.model.AlarmsService;
 import com.better.alarm.model.persistance.AlarmDatabaseHelper;
 import com.better.alarm.model.persistance.AlarmProvider;
 import com.better.alarm.presenter.AlarmsListFragment;
+import com.better.alarm.presenter.DynamicThemeHandler;
 import com.better.alarm.presenter.alert.AlarmAlertFullScreen;
 import com.better.alarm.presenter.background.KlaxonService;
 import com.better.alarm.presenter.background.VibrationService;
@@ -69,6 +70,8 @@ public class AlarmApplication extends Application {
     public void onCreate() {
         // The following line triggers the initialization of ACRA
         ACRA.init(this);
+        DynamicThemeHandler.init(this);
+        setTheme(DynamicThemeHandler.getInstance().getIdForName(DynamicThemeHandler.DEFAULT));
 
         try {
             ViewConfiguration config = ViewConfiguration.get(this);

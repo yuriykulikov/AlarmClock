@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="DefaultLightTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="alarmDetailsButtonStyle">@style/LightAlarmDetailsButtonStyle</item>
+    </style> 
+    <style name="AlarmAlertLightTheme" parent="android:Theme.Holo.Light.Dialog"/>
+    <style name="AlarmAlertFullScreenLightTheme" parent="android:Theme.Holo.Light.NoActionBar">
+         <item name="android:windowShowWallpaper">true</item>
+         <item name="android:windowBackground">@android:color/transparent</item>
+         <item name="android:colorBackgroundCacheHint">@null</item>
+         <item name="android:windowNoTitle">true</item>
+         <item name="alertFullScreenBackground">@style/LightAlertFullScreenBackground</item>
+    </style>
+    <style name="TimePickerDialogFragmentLight" parent="android:style/Theme.Holo.Light.Dialog">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+    <style name="LightAlertFullScreenBackground" >
+        <item name="android:background">@android:drawable/alert_light_frame</item>
+    </style>
+    <style name="LightAlarmDetailsButtonStyle" >
+        <item name="android:src">@android:drawable/ic_menu_more</item>
+        <item name="android:background">@drawable/item_background</item>
+        <item name="android:tint">@color/blackish</item>
+    </style>
+</resources>

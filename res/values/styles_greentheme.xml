@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <style name="AutoCompleteTextViewGreenTheme" parent="android:Widget.Holo.Light.AutoCompleteTextView">
+      <item name="android:dropDownSelector">@drawable/list_selector_holo_light</item>
+	    <item name="android:background">@drawable/edit_text_holo_light</item>
+  </style>
+
+  <style name="ButtonGreenTheme" parent="android:Widget.Holo.Light.Button">
+	  <item name="android:background">@drawable/btn_default_holo_light</item>
+  </style>
+
+  <style name="ImageButtonGreenTheme" parent="android:Widget.Holo.Light.ImageButton">
+	  <item name="android:background">@drawable/btn_default_holo_light</item>
+  </style>
+
+  <style name="SpinnerGreenTheme" parent="android:Widget.Holo.Light.Spinner">
+      <item name="android:background">@drawable/spinner_background_holo_light</item>
+      <item name="android:dropDownSelector">@drawable/list_selector_holo_light</item>
+  </style>
+
+  <style name="TabWidgetGreenTheme" parent="@android:style/Widget.TabWidget">
+      <item name="android:tabStripLeft">@null</item>
+      <item name="android:tabStripRight">@null</item>
+      <item name="android:tabStripEnabled">false</item>
+      <item name="android:divider">?android:attr/dividerVertical</item>
+      <item name="android:showDividers">middle</item>
+      <item name="android:dividerPadding">8dip</item>
+      <item name="android:measureWithLargestChild">true</item>
+  </style>
+
+  <style name="TabGreenTheme" parent="@android:style/Widget.ActionBar.TabView">
+      <item name="android:paddingLeft">16dip</item>
+      <item name="android:paddingRight">16dip</item>
+      <item name="android:background">@drawable/tab_indicator_holo</item>
+      <item name="android:layout_width">0dip</item>
+      <item name="android:layout_weight">1</item>
+      <item name="android:minWidth">80dip</item>
+  </style>
+
+  <style name="TabTextGreenTheme">
+	  <item name="android:textColor">#000000</item>
+      <item name="android:textSize">12sp</item>
+      <item name="android:textStyle">bold</item>
+      <item name="android:textAllCaps">true</item>
+      <item name="android:ellipsize">marquee</item>
+      <item name="android:maxLines">2</item>
+      <item name="android:maxWidth">180dip</item>
+  </style>
+
+  <style name="ProgressBarGreenTheme" parent="android:Widget.Holo.Light.ProgressBar.Horizontal">
+      <item name="android:progressDrawable">@drawable/progress_horizontal_holo_light</item>
+      <item name="android:indeterminateDrawable">@drawable/progress_indeterminate_horizontal_holo_light</item>
+  </style>
+
+  <style name="SeekBarGreenTheme" parent="android:Widget.Holo.Light.SeekBar">
+      <item name="android:progressDrawable">@drawable/scrubber_progress_horizontal_holo_light</item>
+      <item name="android:indeterminateDrawable">@drawable/scrubber_progress_horizontal_holo_light</item>
+      <item name="android:thumb">@drawable/scrubber_control_selector_holo_light</item>
+  </style>
+
+  <style name="ToggleGreenTheme" parent="android:Widget.Holo.Light.Button.Toggle">
+      <item name="android:background">@drawable/btn_toggle_holo_light</item>
+  </style>
+
+    <style name="ButtonBarButtonStyleGreenTheme" parent="@android:style/Widget.Holo.Light.Button">
+        <item name="android:background">@drawable/list_selector_holo_light</item>
+    </style>
+
+</resources>

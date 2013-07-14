@@ -28,10 +28,12 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.provider.Settings;
@@ -62,7 +64,9 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(DynamicThemeHandler.getInstance().getIdForName(SettingsActivity.class.getName()));
         super.onCreate(savedInstanceState);
+
         addPreferencesFromResource(R.xml.settings);
 
         final AlarmPreference ringtone = (AlarmPreference) findPreference(KEY_DEFAULT_RINGTONE);
@@ -78,6 +82,23 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         if (!hasVibrator && findPreference("vibrate") != null) {
             getPreferenceScreen().removePreference(findPreference("vibrate"));
         }
+
+        final Preference theme = findPreference("theme");
+        theme.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent i = getBaseContext().getPackageManager().getLaunchIntentForPackage(
+                                getBaseContext().getPackageName());
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(i);
+                    }
+                });
+                return true;
+            }
+        });
     }
 
     @Override
@@ -315,5 +336,8 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         listPref = (ListPreference) findPreference(KEY_FADE_IN_TIME_SEC);
         updateFadeInTimeSummary(listPref, listPref.getValue());
         listPref.setOnPreferenceChangeListener(this);
+
+        ListPreference theme = (ListPreference) findPreference("theme");
+        theme.setSummary(theme.getEntry());
     }
 }
