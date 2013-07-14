@@ -147,7 +147,6 @@ public class TimePickerDialogFragment extends DialogFragment {
         if (prev != null) {
             ft.remove(prev);
         }
-        ft.addToBackStack(null);
 
         final TimePickerDialogFragment fragment = TimePickerDialogFragment.newInstance(alarm.getId());
         fragment.show(ft, "time_dialog");
