@@ -96,8 +96,8 @@ public class InfoFragment extends Fragment implements ViewFactory {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.info_fragment, container, false);
-        textView = (TextSwitcher) view.findViewById(R.id.textView1);
-        remainingTime = (TextSwitcher) view.findViewById(R.id.textViewRemainingTime);
+        textView = (TextSwitcher) view.findViewById(R.id.info_fragment_text_view);
+        remainingTime = (TextSwitcher) view.findViewById(R.id.info_fragment_text_view_remaining_time);
 
         textView.setFactory(this);
         remainingTime.setFactory(this);

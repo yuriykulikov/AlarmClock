@@ -88,21 +88,21 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
 
-        final ImageView iconView = (ImageView) view.findViewById(R.id.icon);
+        final ImageView iconView = (ImageView) view.findViewById(R.id.seekbar_dialog_icon);
         if (mMyIcon != null) {
             iconView.setImageDrawable(mMyIcon);
         } else {
             iconView.setVisibility(View.GONE);
         }
 
-        final SeekBar seekBar = (SeekBar) view.findViewById(R.id.seekbar);
+        final SeekBar seekBar = (SeekBar) view.findViewById(R.id.seekbar_dialog_seekbar_master_volume);
         volumizers.add(new SeekBarVolumizer(seekBar, new AudioManagerVolumizerStrategy(getContext(),
                 AudioManager.STREAM_ALARM, null), this));
 
-        final SeekBar alarmSeekBar = (SeekBar) view.findViewById(R.id.seekbar_alarm);
+        final SeekBar alarmSeekBar = (SeekBar) view.findViewById(R.id.seekbar_dialog_seekbar_alarm_volume);
         volumizers.add(new SeekBarVolumizer(alarmSeekBar, new AlarmVolumizerStrategy(getContext()), this));
 
-        final SeekBar preAlarmSeekBar = (SeekBar) view.findViewById(R.id.seekbar_prealarm);
+        final SeekBar preAlarmSeekBar = (SeekBar) view.findViewById(R.id.seekbar_dialog_seekbar_prealarm_volume);
         volumizers.add(new SeekBarVolumizer(preAlarmSeekBar, new PreAlarmVolumizerStrategy(getContext()), this));
 
         activeVolumizer = volumizers.get(0);
@@ -168,7 +168,7 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
 
         Dialog dialog = getDialog();
         if (dialog != null && dialog.isShowing()) {
-            View view = dialog.getWindow().getDecorView().findViewById(R.id.seekbar);
+            View view = dialog.getWindow().getDecorView().findViewById(R.id.seekbar_dialog_seekbar_master_volume);
             if (view != null) {
                 view.setOnKeyListener(null);
             }

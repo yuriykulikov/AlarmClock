@@ -20,7 +20,7 @@
     android:layout_height="match_parent" >
 
     <com.better.alarm.view.DigitalClock
-        android:id="@+id/digitalClock"
+        android:id="@+id/alert_digital_clock_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -30,48 +30,48 @@
         android:paddingTop="24dip" >
 
         <com.better.alarm.view.AndroidClockTextView
-            android:id="@+id/timeDisplay"
+            android:id="@+id/alert_digital_clock_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:textSize="80sp" />
 
         <com.better.alarm.view.AndroidClockTextView
-            android:id="@+id/am_pm"
+            android:id="@+id/alert_digital_clock_am_pm"
             android:layout_width="40dip"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/timeDisplay"
+            android:layout_alignBottom="@+id/alert_digital_clock_time"
             useClockTypeface="false"
             android:textSize="20sp"
             android:textStyle="bold" />
     </com.better.alarm.view.DigitalClock>
 
     <Button
-        android:id="@+id/snooze"
+        android:id="@+id/alert_button_snooze"
         style="?android:attr/buttonBarButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignBottom="@id/digitalClock"
+        android:layout_alignBottom="@id/alert_digital_clock_container"
         android:layout_alignParentTop="true"
         android:gravity="bottom|center_horizontal"
         android:paddingBottom="16dp"
         android:text="@string/alarm_alert_snooze_text" />
 
     <View
-        android:id="@+id/divider"
+        android:id="@+id/alert_button_divider"
         android:layout_width="match_parent"
         android:layout_height="1dip"
-        android:layout_below="@id/snooze"
+        android:layout_below="@id/alert_button_snooze"
         android:layout_marginLeft="16dip"
         android:layout_marginRight="16dip"
         android:background="?android:attr/dividerHorizontal" />
 
     <Button
-        android:id="@+id/dismiss"
+        android:id="@+id/alert_button_dismiss"
         style="?android:attr/buttonBarButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_below="@id/divider"
+        android:layout_below="@id/alert_button_divider"
         android:gravity="center"
         android:text="@string/alarm_alert_dismiss_text" />
 

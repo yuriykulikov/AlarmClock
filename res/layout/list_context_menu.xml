@@ -32,7 +32,7 @@
         android:src="@drawable/ic_dialog_time" />
 
     <TextView
-        android:id="@+id/header_time"
+        android:id="@+id/list_context_menu_header_time"
         style="?android:attr/textAppearanceLarge"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -41,7 +41,7 @@
         android:singleLine="true" />
 
     <TextView
-        android:id="@+id/header_label"
+        android:id="@+id/list_context_menu_header_label"
         style="?android:attr/textAppearanceLarge"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

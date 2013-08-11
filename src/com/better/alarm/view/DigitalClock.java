@@ -71,7 +71,7 @@ public class DigitalClock extends LinearLayout {
         private final String mAmString, mPmString;
 
         AmPm(View parent) {
-            mAmPm = (AndroidClockTextView) parent.findViewById(R.id.am_pm);
+            mAmPm = (AndroidClockTextView) parent.findViewById(R.id.alert_digital_clock_am_pm);
 
             String[] ampm = new DateFormatSymbols().getAmPmStrings();
             mAmString = ampm[0];
@@ -116,7 +116,7 @@ public class DigitalClock extends LinearLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        mTimeDisplay = (AndroidClockTextView) findViewById(R.id.timeDisplay);
+        mTimeDisplay = (AndroidClockTextView) findViewById(R.id.alert_digital_clock_time);
         mAmPm = new AmPm(this);
         mCalendar = Calendar.getInstance();
 
