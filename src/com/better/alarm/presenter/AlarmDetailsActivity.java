@@ -88,7 +88,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
 
         // TODO Stop using preferences for this view. Save on done, not after
         // each change.
-        addPreferencesFromResource(R.xml.details_preferences);
+        addPreferencesFromResource(R.xml.alarm_details);
 
         alarms = AlarmsManager.getAlarmsManager();
 
