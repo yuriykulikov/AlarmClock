@@ -155,7 +155,7 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
     }
 
     protected int getLayoutResId() {
-        return R.layout.alarm_alert_fullscreen;
+        return R.layout.alert_fullscreen;
     }
 
     protected String getClassName() {
@@ -170,7 +170,7 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
         /*
          * snooze behavior: pop a snooze confirmation view, kick alarm manager.
          */
-        Button snooze = (Button) findViewById(R.id.snooze);
+        Button snooze = (Button) findViewById(R.id.alert_button_snooze);
         snooze.requestFocus();
         snooze.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -189,7 +189,7 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
         });
 
         /* dismiss button: close notification */
-        final Button dismissButton = (Button) findViewById(R.id.dismiss);
+        final Button dismissButton = (Button) findViewById(R.id.alert_button_dismiss);
         dismissButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -217,7 +217,7 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
     private void snooze() {
         alarmsManager.snooze(mAlarm);
         // Do not snooze if the snooze button is disabled.
-        if (!findViewById(R.id.snooze).isEnabled()) {
+        if (!findViewById(R.id.alert_button_snooze).isEnabled()) {
             dismiss();
             return;
         }

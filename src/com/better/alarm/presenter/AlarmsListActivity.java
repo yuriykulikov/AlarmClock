@@ -48,7 +48,7 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
         }
 
         setContentView(R.layout.list_activity);
-        alarmsListFragment = (AlarmsListFragment) getFragmentManager().findFragmentById(R.id.alarmsListFragment);
+        alarmsListFragment = (AlarmsListFragment) getFragmentManager().findFragmentById(R.id.list_activity_list_fragment);
 
         if (isTablet) {
             // TODO
@@ -63,7 +63,7 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
     protected void onResume() {
         super.onResume();
 
-        View nextAlarmFragment = findViewById(R.id.infoFragment);
+        View nextAlarmFragment = findViewById(R.id.list_activity_info_fragment);
         if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("show_info_fragment", false)) {
             nextAlarmFragment.setVisibility(View.VISIBLE);
         } else {

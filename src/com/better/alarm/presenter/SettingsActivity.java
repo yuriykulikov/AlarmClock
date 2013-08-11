@@ -67,7 +67,7 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         setTheme(DynamicThemeHandler.getInstance().getIdForName(SettingsActivity.class.getName()));
         super.onCreate(savedInstanceState);
 
-        addPreferencesFromResource(R.xml.settings);
+        addPreferencesFromResource(R.xml.preferences);
 
         final AlarmPreference ringtone = (AlarmPreference) findPreference(KEY_DEFAULT_RINGTONE);
         Uri alert = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_ALARM);

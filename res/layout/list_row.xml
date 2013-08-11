@@ -21,12 +21,12 @@
     android:orientation="horizontal" >
 
     <com.better.alarm.view.DontPressWithParentLayout
-        android:id="@+id/indicator"
+        android:id="@+id/list_row_on_off_checkbox_container"
         style="@style/alarm_list_left_column"
         android:gravity="center" >
 
         <CheckBox
-            android:id="@+id/clock_onoff"
+            android:id="@+id/list_row_on_off_checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -43,7 +43,7 @@
         android:orientation="vertical" >
 
         <com.better.alarm.view.DigitalClock
-            android:id="@+id/digitalClock"
+            android:id="@+id/list_row_digital_clock_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -51,7 +51,7 @@
             android:orientation="horizontal" >
 
             <com.better.alarm.view.AndroidClockTextView
-                android:id="@+id/timeDisplay"
+                android:id="@+id/list_row_digital_clock_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 useClockTypeface="false"
@@ -59,7 +59,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <com.better.alarm.view.AndroidClockTextView
-                android:id="@+id/am_pm"
+                android:id="@+id/list_row_digital_clock_am_pm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 useClockTypeface="false"
@@ -68,7 +68,7 @@
         </com.better.alarm.view.DigitalClock>
 
         <TextView
-            android:id="@+id/daysOfWeek"
+            android:id="@+id/list_row_daysOfWeek"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="2dip"
@@ -77,12 +77,12 @@
     </LinearLayout>
 
     <com.better.alarm.view.DontPressWithParentLayout
-        android:id="@+id/details_wrapper"
+        android:id="@+id/details_button_container"
         style="@style/alarm_list_left_column"
         android:gravity="center" >
 
         <ImageButton
-            android:id="@+id/details"
+            android:id="@+id/list_row_details_button"
             style="?attr/alarmDetailsButtonStyle"
             android:contentDescription="@string/set_alarm"
             android:layout_width="wrap_content"

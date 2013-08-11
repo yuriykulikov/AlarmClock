@@ -17,7 +17,7 @@
 */
 -->
 <EditText xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/label"
+    android:id="@+id/details_label"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="48dip"

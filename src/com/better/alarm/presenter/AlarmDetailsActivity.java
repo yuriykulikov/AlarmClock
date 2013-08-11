@@ -88,11 +88,11 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
 
         // TODO Stop using preferences for this view. Save on done, not after
         // each change.
-        addPreferencesFromResource(R.xml.details_preferences);
+        addPreferencesFromResource(R.xml.alarm_details);
 
         alarms = AlarmsManager.getAlarmsManager();
 
-        EditText label = (EditText) getLayoutInflater().inflate(R.layout.alarm_label, null);
+        EditText label = (EditText) getLayoutInflater().inflate(R.layout.details_label, null);
         ListView list = (ListView) findViewById(android.R.id.list);
         list.addFooterView(label);
 
@@ -133,7 +133,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         getListView().setItemsCanFocus(true);
 
         // Attach actions to each button.
-        Button b = (Button) findViewById(R.id.alarm_save);
+        Button b = (Button) findViewById(R.id.details_activity_button_save);
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,7 +141,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
                 finish();
             }
         });
-        Button revert = (Button) findViewById(R.id.alarm_revert);
+        Button revert = (Button) findViewById(R.id.details_activity_button_revert);
         revert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -24,14 +24,14 @@
     android:orientation="vertical" >
 
     <fragment
-        android:id="@+id/alarmsListFragment"
+        android:id="@+id/list_activity_list_fragment"
         android:name="com.better.alarm.presenter.AlarmsListFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
     <fragment
-        android:id="@+id/infoFragment"
+        android:id="@+id/list_activity_info_fragment"
         android:name="com.better.alarm.presenter.InfoFragment"
         android:layout_width="match_parent"
         android:layout_height="48dp"

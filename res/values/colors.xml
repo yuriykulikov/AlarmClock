@@ -43,4 +43,6 @@
 
     <drawable name="notification_template_icon_bg">#3333B5E5</drawable>
     <drawable name="notification_template_icon_low_bg">#0cffffff</drawable>
+
+    <color name="pressed_greenactionbar">#CC99CC00</color>
 </resources>

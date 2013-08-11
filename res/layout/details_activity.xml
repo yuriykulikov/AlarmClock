@@ -43,7 +43,7 @@
         android:orientation="horizontal" >
 
         <Button
-            android:id="@+id/alarm_revert"
+            android:id="@+id/details_activity_button_revert"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
             android:text="@android:string/cancel" />
 
         <Button
-            android:id="@+id/alarm_save"
+            android:id="@+id/details_activity_button_save"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dip"
             android:layout_height="wrap_content"

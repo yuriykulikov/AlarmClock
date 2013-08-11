@@ -15,19 +15,19 @@
      limitations under the License.-->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/base_layout"
+    android:id="@+id/info_fragment_base_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical" >
 
     <TextSwitcher
-        android:id="@+id/textView1"
+        android:id="@+id/info_fragment_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"/>
-        <TextSwitcher
-        android:id="@+id/textViewRemainingTime"
+    <TextSwitcher
+        android:id="@+id/info_fragment_text_view_remaining_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 </LinearLayout>

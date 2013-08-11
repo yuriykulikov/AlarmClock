@@ -8,4 +8,5 @@
     <attr name="alertFullScreenBackground" format="reference"/>
     <attr name="alarmDetailsButtonStyle" format="reference"/>
     <attr name="timePickerDeleteButtonStyle" format="reference"/>
+    <item type="id" name="numbers_key" />
 </resources>

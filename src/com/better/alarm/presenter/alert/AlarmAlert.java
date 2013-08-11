@@ -79,7 +79,7 @@ public class AlarmAlert extends AlarmAlertFullScreen {
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.alarm_alert;
+        return R.layout.alert;
     }
 
     @Override
