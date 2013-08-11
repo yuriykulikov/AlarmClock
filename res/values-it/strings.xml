@@ -91,5 +91,6 @@
     <string-array name="themes_entries">
         <item>Buio</item>
         <item>Chiaro</item>
+        <item>Verde</item>
     </string-array>
 </resources>

@@ -65,5 +65,6 @@
     <string-array name="themes_entries">
         <item>Темный Holo</item>
         <item>Классический светлый</item>
+        <item>Смелый зеленый</item>
     </string-array>
 </resources>

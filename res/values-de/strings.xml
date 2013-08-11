@@ -65,5 +65,6 @@
     <string-array name="themes_entries">
         <item>Dunkel</item>
         <item>Hell</item>
+        <item>Grün</item>
     </string-array>
 </resources>
