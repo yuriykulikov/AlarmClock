@@ -88,11 +88,9 @@
             android:layout_weight="1"
             android:gravity="center"
             android:layout_gravity="center"
-            android:src="@drawable/ic_backspace"
-            android:background="@drawable/item_background"
+            style="?attr/timePickerDeleteButtonStyle"
             android:contentDescription="@string/timer_delete"
-            android:layout_height="match_parent"
-            android:tint="@color/blackish"/>
+            android:layout_height="match_parent"/>
     </LinearLayout>
     <View
         android:layout_width="match_parent"

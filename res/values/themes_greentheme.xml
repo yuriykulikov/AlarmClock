@@ -74,6 +74,8 @@
     <item name="android:actionBarStyle">@style/ActionBar.Solid.Greenactionbar</item>
 
     <item name="android:buttonBarButtonStyle">@style/ButtonBarButtonStyleGreenTheme</item>
+
+    <item name="timePickerDeleteButtonStyle">@style/GreenTimePickerDeleteButtonStyle</item>
   </style>
       <style name="AlarmAlertFullScreenGreenTheme" parent="GreenTheme">
          <item name="android:windowShowWallpaper">true</item>

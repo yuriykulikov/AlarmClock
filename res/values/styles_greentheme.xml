@@ -68,5 +68,9 @@
     <style name="ButtonBarButtonStyleGreenTheme" parent="@android:style/Widget.Holo.Light.Button">
         <item name="android:background">@drawable/list_selector_holo_light</item>
     </style>
-
+    <style name="GreenTimePickerDeleteButtonStyle">
+        <item name="android:src">@drawable/ic_backspace</item>
+        <item name="android:background">@drawable/item_background</item>
+        <item name="android:tint">@color/blackish</item>
+    </style>
 </resources>

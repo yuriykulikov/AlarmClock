@@ -7,4 +7,5 @@
     </declare-styleable>
     <attr name="alertFullScreenBackground" format="reference"/>
     <attr name="alarmDetailsButtonStyle" format="reference"/>
+    <attr name="timePickerDeleteButtonStyle" format="reference"/>
 </resources>
