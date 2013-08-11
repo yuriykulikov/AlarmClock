@@ -43,7 +43,7 @@
         android:orientation="vertical" >
 
         <com.better.alarm.view.DigitalClock
-            android:id="@+id/list_row_digital_clock_container"
+            android:id="@+id/list_row_digital_clock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -51,7 +51,7 @@
             android:orientation="horizontal" >
 
             <com.better.alarm.view.AndroidClockTextView
-                android:id="@+id/list_row_digital_clock_time"
+                android:id="@+id/digital_clock_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 useClockTypeface="false"
@@ -59,7 +59,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <com.better.alarm.view.AndroidClockTextView
-                android:id="@+id/list_row_digital_clock_am_pm"
+                android:id="@+id/digital_clock_am_pm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 useClockTypeface="false"

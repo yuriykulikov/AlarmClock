@@ -20,7 +20,7 @@
     android:layout_height="match_parent" >
 
     <com.better.alarm.view.DigitalClock
-        android:id="@+id/alert_digital_clock_container"
+        android:id="@+id/alert_digital_clock"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -30,17 +30,17 @@
         android:paddingTop="24dip" >
 
         <com.better.alarm.view.AndroidClockTextView
-            android:id="@+id/alert_digital_clock_time"
+            android:id="@+id/digital_clock_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:textSize="80sp" />
 
         <com.better.alarm.view.AndroidClockTextView
-            android:id="@+id/alert_digital_clock_am_pm"
+            android:id="@+id/digital_clock_am_pm"
             android:layout_width="40dip"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/alert_digital_clock_time"
+            android:layout_alignBottom="@+id/digital_clock_time"
             useClockTypeface="false"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -51,7 +51,7 @@
         style="?android:attr/buttonBarButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignBottom="@id/alert_digital_clock_container"
+        android:layout_alignBottom="@id/alert_digital_clock"
         android:layout_alignParentTop="true"
         android:gravity="bottom|center_horizontal"
         android:paddingBottom="16dp"

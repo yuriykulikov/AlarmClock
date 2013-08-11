@@ -74,7 +74,7 @@ public class AlarmsListFragment extends ListFragment {
             } else {
                 rowView = convertView;
             }
-            DigitalClock digitalClock = (DigitalClock) rowView.findViewById(R.id.list_row_digital_clock_container);
+            DigitalClock digitalClock = (DigitalClock) rowView.findViewById(R.id.list_row_digital_clock);
             digitalClock.setLive(false);
 
             // get the alarm which we have to display
