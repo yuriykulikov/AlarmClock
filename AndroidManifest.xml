@@ -19,6 +19,7 @@
 
     <application
         android:name=".AlarmApplication"
+        android:theme="@android:style/Theme.Holo.Dialog"
         android:icon="@mipmap/ic_launcher_alarmclock"
         android:label="@string/app_label" >
 
