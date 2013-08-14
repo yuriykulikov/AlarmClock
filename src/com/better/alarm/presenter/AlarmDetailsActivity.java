@@ -149,6 +149,9 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
                 finish();
             }
         });
+        if (isNewAlarm) {
+            TimePickerDialogFragment.showTimePicker(alarm, getFragmentManager());
+        }
     }
 
     @Override
