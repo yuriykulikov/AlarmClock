@@ -92,6 +92,10 @@ public final class DaysOfWeek {
         return mDays != 0;
     }
 
+    public boolean isEveryDay() {
+        return mDays == 0x7f;
+    }
+
     /**
      * returns number of days from today until next alarm
      * 

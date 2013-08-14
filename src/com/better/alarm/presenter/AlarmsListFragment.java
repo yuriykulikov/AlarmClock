@@ -30,6 +30,7 @@ import android.widget.TextView;
 
 import com.better.alarm.R;
 import com.better.alarm.model.AlarmsManager;
+import com.better.alarm.model.DaysOfWeek;
 import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
@@ -116,13 +117,17 @@ public class AlarmsListFragment extends ListFragment {
             digitalClock.updateTime(c);
 
             // Set the repeat text or leave it blank if it does not repeat.
-            TextView daysOfWeekView = (TextView) rowView.findViewById(R.id.list_row_daysOfWeek);
-            final String daysOfWeekStr = alarm.getDaysOfWeek().toString(getContext(), false);
-            if (daysOfWeekStr != null && daysOfWeekStr.length() != 0) {
-                daysOfWeekView.setText(daysOfWeekStr);
-                daysOfWeekView.setVisibility(View.VISIBLE);
+            TextView subtitle = (TextView) rowView.findViewById(R.id.list_row_daysOfWeek);
+            DaysOfWeek days = alarm.getDaysOfWeek();
+            final String daysOfWeekStr = days.toString(getContext(), false);
+            if ((!days.isRepeatSet() || days.isEveryDay()) && !alarm.getLabel().isEmpty()) {
+                subtitle.setText(alarm.getLabel());
+                subtitle.setVisibility(View.VISIBLE);
+            } else if (daysOfWeekStr != null && daysOfWeekStr.length() != 0) {
+                subtitle.setText(daysOfWeekStr);
+                subtitle.setVisibility(View.VISIBLE);
             } else {
-                daysOfWeekView.setVisibility(View.GONE);
+                subtitle.setVisibility(View.GONE);
             }
 
             return rowView;
