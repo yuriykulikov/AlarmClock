@@ -120,7 +120,9 @@ public class AlarmsListFragment extends ListFragment {
             TextView subtitle = (TextView) rowView.findViewById(R.id.list_row_daysOfWeek);
             DaysOfWeek days = alarm.getDaysOfWeek();
             final String daysOfWeekStr = days.toString(getContext(), false);
-            if ((!days.isRepeatSet() || days.isEveryDay()) && !alarm.getLabel().isEmpty()) {
+            boolean hasLabel = alarm.getLabel() != null && !alarm.getLabel().isEmpty();
+            boolean everydayOrNever = days != null && (!days.isRepeatSet() || days.isEveryDay());
+            if (everydayOrNever && hasLabel) {
                 subtitle.setText(alarm.getLabel());
                 subtitle.setVisibility(View.VISIBLE);
             } else if (daysOfWeekStr != null && daysOfWeekStr.length() != 0) {
