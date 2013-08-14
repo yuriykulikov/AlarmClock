@@ -40,6 +40,7 @@ public class TimePicker extends TimerSetupView implements Button.OnClickListener
     private int mAmPmState;
     private Button mSetButton;
     private final boolean mIs24HoursMode = DateFormat.is24HourFormat(mContext);
+    private OnInputFinishedListener mOnInputFinishedListener;
 
     private static final int AMPM_NOT_SELECTED = 0;
     private static final int PM_SELECTED = 1;
@@ -140,7 +141,6 @@ public class TimePicker extends TimerSetupView implements Button.OnClickListener
         enableSetButton();
         // Update the backspace button
         updateDeleteButton();
-
     }
 
     // Update the time displayed in the picker:
@@ -429,6 +429,9 @@ public class TimePicker extends TimerSetupView implements Button.OnClickListener
         for (int i = 0; i < mNumbers.length; i++) {
             mNumbers[i].setEnabled(i <= maxKey);
         }
+        if (maxKey == -1 && mOnInputFinishedListener != null) {
+            mOnInputFinishedListener.onInputFinished();
+        }
     }
 
     private void updateLeftRightButtons() {
@@ -473,6 +476,10 @@ public class TimePicker extends TimerSetupView implements Button.OnClickListener
     public void setSetButton(Button b) {
         mSetButton = b;
         enableSetButton();
+    }
+
+    public void setOnInputFinishedListener(OnInputFinishedListener onInputFinishedListener) {
+        mOnInputFinishedListener = onInputFinishedListener;
     }
 
     public int getHours() {
@@ -524,6 +531,10 @@ public class TimePicker extends TimerSetupView implements Button.OnClickListener
         }
         mAmPmState = savedState.mAmPmState;
         updateKeypad();
+    }
+
+    public interface OnInputFinishedListener {
+        public void onInputFinished();
     }
 
     private static class SavedState extends BaseSavedState {
