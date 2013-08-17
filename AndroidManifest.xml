@@ -26,7 +26,6 @@
         <activity
             android:name=".presenter.AlarmsListActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
-            android:excludeFromRecents="true"
             android:exported="true"
             android:label="@string/alarm_list_title"
             android:taskAffinity="">
