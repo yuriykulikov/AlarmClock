@@ -19,7 +19,6 @@
 
     <application
         android:name=".AlarmApplication"
-        android:theme="@android:style/Theme.Holo.Dialog"
         android:icon="@mipmap/ic_launcher_alarmclock"
         android:label="@string/app_label" >
 
@@ -74,6 +73,7 @@
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
+            android:theme="@android:style/Theme.Holo.Dialog"
             android:taskAffinity="" />
 
         <!-- This activity is basically the same as AlarmAlert 
