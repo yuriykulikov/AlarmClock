@@ -67,4 +67,5 @@
         <item>Классический светлый</item>
         <item>Смелый зеленый</item>
     </string-array>
+    <string name="simple_alarm_clock">Простой будильник</string>
 </resources>

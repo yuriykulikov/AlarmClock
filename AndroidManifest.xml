@@ -20,7 +20,7 @@
     <application
         android:name=".AlarmApplication"
         android:icon="@mipmap/ic_launcher_alarmclock"
-        android:label="@string/app_label" >
+        android:label="@string/simple_alarm_clock" >
 
         <!-- Activity to set a new or modify existing alarm -->
         <activity

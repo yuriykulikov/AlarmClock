@@ -93,4 +93,5 @@
         <item>Chiaro</item>
         <item>Verde</item>
     </string-array>
+    <string name="simple_alarm_clock">La Sveglia Semplice</string>
 </resources>

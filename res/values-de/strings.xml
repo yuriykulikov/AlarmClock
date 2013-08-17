@@ -67,4 +67,5 @@
         <item>Hell</item>
         <item>Grün</item>
     </string-array>
+    <string name="simple_alarm_clock">Einfacher Wecker</string>
 </resources>

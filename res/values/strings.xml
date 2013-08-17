@@ -98,4 +98,5 @@
         <item>light</item>
         <item>green</item>
     </string-array>
+    <string name="simple_alarm_clock">Simple Alarm Clock</string>
 </resources>
