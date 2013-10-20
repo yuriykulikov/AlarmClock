@@ -29,6 +29,8 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.CountDownTimer;
+import android.os.Handler;
 
 import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.AlarmNotFoundException;
@@ -42,6 +44,11 @@ import com.github.androidutils.logger.Logger;
  */
 @SuppressLint("UseSparseArrays")
 public class Alarms implements IAlarmsManager {
+    /** in millis */
+    private static final long RETRY_TOTAL_TIME = 61 * 1000;
+    /** in millis */
+    private static final long RETRY_INTERVAL = 500;
+
     private final Context mContext;
     private final Logger log;
 
@@ -50,6 +57,8 @@ public class Alarms implements IAlarmsManager {
     private final ContentResolver mContentResolver;
     private final Map<Integer, AlarmCore> alarms;
     private final AlarmStateNotifier broadcaster;
+
+    private final DatabaseRetryCountDownTimer databaseRetryCountDownTimer;
 
     Alarms(Context context, Logger logger, IAlarmsScheduler alarmsScheduler) {
         mContext = context;
@@ -60,28 +69,41 @@ public class Alarms implements IAlarmsManager {
         alarms = new HashMap<Integer, AlarmCore>();
         broadcaster = new AlarmStateNotifier(mContext);
 
+        databaseRetryCountDownTimer = new DatabaseRetryCountDownTimer(RETRY_TOTAL_TIME, RETRY_INTERVAL);
+
+        boolean hasInitlized = tryReadDb();
+        if (!hasInitlized) {
+            log.w("Scheduling retry");
+            databaseRetryCountDownTimer.start();
+        }
+    }
+
+    private boolean tryReadDb() {
         final Cursor cursor = mContentResolver.query(AlarmContainer.Columns.CONTENT_URI,
                 AlarmContainer.Columns.ALARM_QUERY_COLUMNS, null, null, AlarmContainer.Columns.DEFAULT_SORT_ORDER);
-        try {
-            if (cursor.moveToFirst()) {
-                do {
-                    AlarmContainer container = new AlarmContainer(cursor, log, context);
-                    final AlarmCore a = new AlarmCore(container, context, log, alarmsScheduler, broadcaster);
-                    alarms.put(a.getId(), a);
-                } while (cursor.moveToNext());
-            }
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            } else {
-                log.e("Cursor was null!");
-                ACRA.getErrorReporter().handleSilentException(new Exception("Cursor was null!"));
-            }
-        }
 
-        log.d("Alarms:");
-        for (Alarm alarm : alarms.values()) {
-            log.d(alarm.toString());
+        if (cursor == null) {
+            log.e("Cursor was null!");
+            return false;
+        } else {
+            try {
+                if (cursor.moveToFirst()) {
+                    do {
+                        AlarmContainer container = new AlarmContainer(cursor, log, mContext);
+                        final AlarmCore a = new AlarmCore(container, mContext, log, mAlarmsScheduler, broadcaster);
+                        alarms.put(a.getId(), a);
+                    } while (cursor.moveToNext());
+                }
+            } finally {
+                cursor.close();
+            }
+
+            log.d("Alarms:");
+            for (Alarm alarm : alarms.values()) {
+                log.d(alarm.toString());
+            }
+
+            return true;
         }
     }
 
@@ -207,5 +229,39 @@ public class Alarms implements IAlarmsManager {
 
     private void notifyAlarmListChangedListeners() {
         mContext.sendBroadcast(new Intent(Intents.ACTION_ALARM_CHANGED));
+    }
+
+    private final class DatabaseRetryCountDownTimer extends CountDownTimer {
+        private final Handler handler = new Handler();
+
+        public DatabaseRetryCountDownTimer(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+        }
+
+        @Override
+        public void onFinish() {
+            String message = "After " + RETRY_TOTAL_TIME + " still was not able to query";
+            log.e(message);
+            ACRA.getErrorReporter().handleSilentException(new Exception(message));
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+            log.w("Retrying after " + (RETRY_TOTAL_TIME - millisUntilFinished));
+            boolean hasInitlized = tryReadDb();
+            if (hasInitlized) {
+                log.w("Finished");
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        cancel();
+                    }
+                });
+                for (AlarmCore alarmCore : alarms.values()) {
+                    alarmCore.refresh();
+                }
+                notifyAlarmListChangedListeners();
+            }
+        }
     }
 }
