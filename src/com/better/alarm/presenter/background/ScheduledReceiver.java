@@ -16,8 +16,6 @@ package com.better.alarm.presenter.background;
 
 import java.util.Calendar;
 
-import org.acra.ACRA;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -62,8 +60,7 @@ public class ScheduledReceiver extends BroadcastReceiver {
                 Settings.System.putString(context.getContentResolver(), Settings.System.NEXT_ALARM_FORMATTED,
                         timeString);
             } catch (AlarmNotFoundException e) {
-                Logger.getDefaultLogger().e("oops", e);
-                ACRA.getErrorReporter().handleSilentException(e);
+                Logger.getDefaultLogger().d("Alarm not found");
             }
 
         } else if (intent.getAction().equals(Intents.ACTION_ALARMS_UNSCHEDULED)) {

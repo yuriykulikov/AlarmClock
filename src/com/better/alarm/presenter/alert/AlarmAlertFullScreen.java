@@ -17,8 +17,6 @@
 
 package com.better.alarm.presenter.alert;
 
-import org.acra.ACRA;
-
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -143,8 +141,7 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
             filter.addAction(Intents.ACTION_SOUND_EXPIRED);
             registerReceiver(mReceiver, filter);
         } catch (AlarmNotFoundException e) {
-            Logger.getDefaultLogger().e("oops", e);
-            ACRA.getErrorReporter().handleSilentException(e);
+            Logger.getDefaultLogger().d("Alarm not found");
         }
     }
 
@@ -243,8 +240,7 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
             mAlarm = alarmsManager.getAlarm(id);
             setTitle();
         } catch (AlarmNotFoundException e) {
-            Logger.getDefaultLogger().e("oops", e);
-            ACRA.getErrorReporter().handleSilentException(e);
+            Logger.getDefaultLogger().d("Alarm not found");
         }
 
     }

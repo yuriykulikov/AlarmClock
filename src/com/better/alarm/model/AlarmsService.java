@@ -15,8 +15,6 @@
  */
 package com.better.alarm.model;
 
-import org.acra.ACRA;
-
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -70,8 +68,7 @@ public class AlarmsService extends Service implements Handler.Callback {
                         CalendarType.valueOf(intent.getExtras().getString(AlarmsScheduler.EXTRA_TYPE)));
                 log.d("AlarmCore fired " + id);
             } catch (AlarmNotFoundException e) {
-                log.e("oops", e);
-                ACRA.getErrorReporter().handleSilentException(e);
+                Logger.getDefaultLogger().d("Alarm not found");
             }
 
         } else if (action.equals(Intent.ACTION_BOOT_COMPLETED) || action.equals(Intent.ACTION_TIMEZONE_CHANGED)

@@ -16,8 +16,6 @@
 
 package com.better.alarm.presenter;
 
-import org.acra.ACRA;
-
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
@@ -112,8 +110,7 @@ public class TimePickerDialogFragment extends DialogFragment {
                 }
             });
         } catch (AlarmNotFoundException e) {
-            Logger.getDefaultLogger().e("oops", e);
-            ACRA.getErrorReporter().handleSilentException(e);
+            Logger.getDefaultLogger().d("Alarm not found");
             dismiss();
         }
         return v;

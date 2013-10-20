@@ -19,8 +19,6 @@ package com.better.alarm.presenter.alert;
 
 import java.util.Calendar;
 
-import org.acra.ACRA;
-
 import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -90,8 +88,7 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
                 alarmsManager.dismiss(alarm);
             }
         } catch (AlarmNotFoundException e) {
-            Logger.getDefaultLogger().e("oops", e);
-            ACRA.getErrorReporter().handleSilentException(e);
+            Logger.getDefaultLogger().d("Alarm not found");
             nm.cancel(id);
             nm.cancel(id + NOTIFICATION_OFFSET);
         }

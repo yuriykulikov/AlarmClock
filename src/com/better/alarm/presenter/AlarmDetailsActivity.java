@@ -19,8 +19,6 @@ package com.better.alarm.presenter;
 
 import java.util.Calendar;
 
-import org.acra.ACRA;
-
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
@@ -114,8 +112,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
             try {
                 alarm = alarms.getAlarm(mId);
             } catch (AlarmNotFoundException e) {
-                Logger.getDefaultLogger().e("oops", e);
-                ACRA.getErrorReporter().handleSilentException(e);
+                Logger.getDefaultLogger().d("Alarm not found");
                 finish();
             }
         } else {

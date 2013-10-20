@@ -79,7 +79,7 @@ public class InfoFragment extends Fragment implements ViewFactory {
                     alarm = null;
                 }
             } catch (AlarmNotFoundException e) {
-                // TODO Auto-generated catch block
+                Logger.getDefaultLogger().d("Alarm not found");
             }
         }
     }
