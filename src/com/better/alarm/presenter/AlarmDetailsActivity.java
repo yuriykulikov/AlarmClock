@@ -25,12 +25,14 @@ import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
+import android.provider.AlarmClock;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,6 +59,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         OnCancelListener, TimePickerDialogFragment.AlarmTimePickerDialogHandler {
     public final static String M12 = "h:mm aa";
     public final static String M24 = "kk:mm";
+    private static final String ACTION_SET_ALARM = "android.intent.action.SET_ALARM";
 
     private IAlarmsManager alarms;
 
@@ -109,19 +112,14 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         mPreAlarmPref = (CheckBoxPreference) findPreference("prealarm");
         mPreAlarmPref.setOnPreferenceChangeListener(this);
 
-        if (getIntent().hasExtra(Intents.EXTRA_ID)) {
-            int mId = getIntent().getIntExtra(Intents.EXTRA_ID, -1);
-            try {
-                alarm = alarms.getAlarm(mId);
-            } catch (AlarmNotFoundException e) {
-                Logger.getDefaultLogger().e("oops", e);
-                ACRA.getErrorReporter().handleSilentException(e);
-                finish();
-            }
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        if (ACTION_SET_ALARM.equals(action)) {
+            createNewAlarmFromIntent(intent);
+        } else if (intent.hasExtra(Intents.EXTRA_ID)) {
+            editExistingAlarm(intent);
         } else {
-            // No alarm means create a new alarm.
-            alarm = alarms.createNewAlarm();
-            isNewAlarm = true;
+            createNewDefaultAlarm(intent);
         }
 
         // Populate the prefs with the original alarm data. updatePrefs also
@@ -151,6 +149,56 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         });
         if (isNewAlarm) {
             TimePickerDialogFragment.showTimePicker(alarm, getFragmentManager());
+        }
+    }
+
+    /**
+     * Edit an existing alarm. Id of the alarm is specified in
+     * {@link Intents#EXTRA_ID} as int. To get it use
+     * {@link Intent#getIntExtra(String, int)}.
+     */
+    private void editExistingAlarm(Intent intent) {
+        int mId = intent.getIntExtra(Intents.EXTRA_ID, -1);
+        try {
+            alarm = alarms.getAlarm(mId);
+        } catch (AlarmNotFoundException e) {
+            Logger.getDefaultLogger().e("oops", e);
+            ACRA.getErrorReporter().handleSilentException(e);
+            finish();
+        }
+    }
+
+    /**
+     * A new alarm has to be created.
+     */
+    private void createNewDefaultAlarm(Intent intent) {
+        // No alarm means create a new alarm.
+        alarm = alarms.createNewAlarm();
+        isNewAlarm = true;
+    }
+
+    /**
+     * A new alarm has to be created or an existing one edited based on the
+     * intent extras.
+     * 
+     * TODO make this work with both skipUi and not skipUi.
+     */
+    private void createNewAlarmFromIntent(Intent intent) {
+        int hours = intent.getIntExtra(AlarmClock.EXTRA_HOUR, 0);
+        String msg = intent.getStringExtra(AlarmClock.EXTRA_MESSAGE);
+        int minutes = intent.getIntExtra(AlarmClock.EXTRA_MINUTES, 0);
+        boolean skipUi = intent.getBooleanExtra(AlarmClock.EXTRA_SKIP_UI, true);
+        if (skipUi) {
+            Alarm alarm = AlarmsManager.getAlarmsManager().createNewAlarm();
+            //@formatter:off
+            alarm.edit()
+                .setHour(hours)
+                .setMinutes(minutes)
+                .setLabel(msg)
+                .commit();
+            //@formatter:on
+        } else {
+
         }
     }
 
