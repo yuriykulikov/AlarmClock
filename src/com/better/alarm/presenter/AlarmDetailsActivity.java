@@ -184,21 +184,24 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
      * TODO make this work with both skipUi and not skipUi.
      */
     private void createNewAlarmFromIntent(Intent intent) {
+        isNewAlarm = true;
         int hours = intent.getIntExtra(AlarmClock.EXTRA_HOUR, 0);
         String msg = intent.getStringExtra(AlarmClock.EXTRA_MESSAGE);
         int minutes = intent.getIntExtra(AlarmClock.EXTRA_MINUTES, 0);
         boolean skipUi = intent.getBooleanExtra(AlarmClock.EXTRA_SKIP_UI, true);
-        if (skipUi) {
-            Alarm alarm = AlarmsManager.getAlarmsManager().createNewAlarm();
-            //@formatter:off
-            alarm.edit()
-                .setHour(hours)
-                .setMinutes(minutes)
-                .setLabel(msg)
-                .commit();
-            //@formatter:on
-        } else {
 
+        alarm = AlarmsManager.getAlarmsManager().createNewAlarm();
+        //@formatter:off
+        alarm.edit()
+            .setHour(hours)
+            .setMinutes(minutes)
+            .setLabel(msg)
+            .setEnabled(true)
+            .commit();
+        //@formatter:on
+
+        if (skipUi) {
+            finish();
         }
     }
 
