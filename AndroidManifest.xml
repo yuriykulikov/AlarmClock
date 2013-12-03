@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.better.alarm"
-    android:versionCode="2510"
-    android:versionName="2.5.10" >
+    android:versionCode="2511"
+    android:versionName="2.5.11" >
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -16,6 +16,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
 
     <application
         android:name=".AlarmApplication"
@@ -39,7 +40,13 @@
         <activity
             android:name=".presenter.AlarmDetailsActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
-            android:label="@string/set_alarm"/>
+            android:label="@string/set_alarm"
+            android:permission="com.android.alarm.permission.SET_ALARM">
+            <intent-filter>
+                <action android:name="android.intent.action.SET_ALARM" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <!-- Application Settings -->
         <activity

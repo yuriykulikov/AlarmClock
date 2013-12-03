@@ -18,17 +18,20 @@
 package com.better.alarm.presenter;
 
 import java.util.Calendar;
+import java.util.Collection;
 
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
+import android.provider.AlarmClock;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,9 +47,13 @@ import com.better.alarm.model.interfaces.AlarmEditor;
 import com.better.alarm.model.interfaces.AlarmNotFoundException;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
+import com.better.alarm.presenter.DynamicThemeHandler;
+import com.better.alarm.presenter.TimePickerDialogFragment;
 import com.better.alarm.view.AlarmPreference;
 import com.better.alarm.view.RepeatPreference;
 import com.github.androidutils.logger.Logger;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 
 /**
  * Manages each alarm
@@ -55,6 +62,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         OnCancelListener, TimePickerDialogFragment.AlarmTimePickerDialogHandler {
     public final static String M12 = "h:mm aa";
     public final static String M24 = "kk:mm";
+    private static final String ACTION_SET_ALARM = "android.intent.action.SET_ALARM";
 
     private IAlarmsManager alarms;
 
@@ -107,18 +115,14 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         mPreAlarmPref = (CheckBoxPreference) findPreference("prealarm");
         mPreAlarmPref.setOnPreferenceChangeListener(this);
 
-        if (getIntent().hasExtra(Intents.EXTRA_ID)) {
-            int mId = getIntent().getIntExtra(Intents.EXTRA_ID, -1);
-            try {
-                alarm = alarms.getAlarm(mId);
-            } catch (AlarmNotFoundException e) {
-                Logger.getDefaultLogger().d("Alarm not found");
-                finish();
-            }
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        if (ACTION_SET_ALARM.equals(action)) {
+            createNewAlarmFromIntent(intent);
+        } else if (intent.hasExtra(Intents.EXTRA_ID)) {
+            editExistingAlarm(intent);
         } else {
-            // No alarm means create a new alarm.
-            alarm = alarms.createNewAlarm();
-            isNewAlarm = true;
+            createNewDefaultAlarm(intent);
         }
 
         // Populate the prefs with the original alarm data. updatePrefs also
@@ -148,6 +152,72 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         });
         if (isNewAlarm) {
             TimePickerDialogFragment.showTimePicker(alarm, getFragmentManager());
+        }
+    }
+
+    /**
+     * Edit an existing alarm. Id of the alarm is specified in
+     * {@link Intents#EXTRA_ID} as int. To get it use
+     * {@link Intent#getIntExtra(String, int)}.
+     */
+    private void editExistingAlarm(Intent intent) {
+        int mId = intent.getIntExtra(Intents.EXTRA_ID, -1);
+        try {
+            alarm = alarms.getAlarm(mId);
+        } catch (AlarmNotFoundException e) {
+            Logger.getDefaultLogger().d("Alarm not found");
+            finish();
+        }
+    }
+
+    /**
+     * A new alarm has to be created.
+     */
+    private void createNewDefaultAlarm(Intent intent) {
+        // No alarm means create a new alarm.
+        alarm = alarms.createNewAlarm();
+        isNewAlarm = true;
+    }
+
+    /**
+     * A new alarm has to be created or an existing one edited based on the
+     * intent extras.
+     * 
+     * TODO make this work with both skipUi and not skipUi.
+     */
+    private void createNewAlarmFromIntent(Intent intent) {
+        final int hours = intent.getIntExtra(AlarmClock.EXTRA_HOUR, 0);
+        String msg = intent.getStringExtra(AlarmClock.EXTRA_MESSAGE);
+        final int minutes = intent.getIntExtra(AlarmClock.EXTRA_MINUTES, 0);
+        boolean skipUi = intent.getBooleanExtra(AlarmClock.EXTRA_SKIP_UI, true);
+
+        // AlarmsManager.getAlarmsManager().
+        Collection<Alarm> sameAlarms = Collections2.filter(alarms.getAlarmsList(), new Predicate<Alarm>() {
+            @Override
+            public boolean apply(Alarm candidate) {
+                return candidate.getHour() == hours && candidate.getMinutes() == minutes;
+            }
+        });
+
+        if (sameAlarms.isEmpty()) {
+            Logger.getDefaultLogger().d("Found same alarm");
+            alarm = AlarmsManager.getAlarmsManager().createNewAlarm();
+            isNewAlarm = true;
+            //@formatter:off
+            alarm.edit()
+                .setHour(hours)
+                .setMinutes(minutes)
+                .setLabel(msg)
+                .setEnabled(true)
+                .commit();
+        //@formatter:on
+        } else {
+            alarm = sameAlarms.iterator().next();
+            alarm.enable(true);
+            Logger.getDefaultLogger().d("Enabled same alarm");
+        }
+        if (skipUi) {
+            finish();
         }
     }
 
