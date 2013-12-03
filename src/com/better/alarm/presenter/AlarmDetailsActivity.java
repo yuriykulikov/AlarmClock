@@ -18,6 +18,7 @@
 package com.better.alarm.presenter;
 
 import java.util.Calendar;
+import java.util.Collection;
 
 import org.acra.ACRA;
 
@@ -51,6 +52,8 @@ import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.view.AlarmPreference;
 import com.better.alarm.view.RepeatPreference;
 import com.github.androidutils.logger.Logger;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 
 /**
  * Manages each alarm
@@ -184,22 +187,36 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
      * TODO make this work with both skipUi and not skipUi.
      */
     private void createNewAlarmFromIntent(Intent intent) {
-        isNewAlarm = true;
-        int hours = intent.getIntExtra(AlarmClock.EXTRA_HOUR, 0);
+        final int hours = intent.getIntExtra(AlarmClock.EXTRA_HOUR, 0);
         String msg = intent.getStringExtra(AlarmClock.EXTRA_MESSAGE);
-        int minutes = intent.getIntExtra(AlarmClock.EXTRA_MINUTES, 0);
+        final int minutes = intent.getIntExtra(AlarmClock.EXTRA_MINUTES, 0);
         boolean skipUi = intent.getBooleanExtra(AlarmClock.EXTRA_SKIP_UI, true);
 
-        alarm = AlarmsManager.getAlarmsManager().createNewAlarm();
-        //@formatter:off
-        alarm.edit()
-            .setHour(hours)
-            .setMinutes(minutes)
-            .setLabel(msg)
-            .setEnabled(true)
-            .commit();
-        //@formatter:on
+        // AlarmsManager.getAlarmsManager().
+        Collection<Alarm> sameAlarms = Collections2.filter(alarms.getAlarmsList(), new Predicate<Alarm>() {
+            @Override
+            public boolean apply(Alarm candidate) {
+                return candidate.getHour() == hours && candidate.getMinutes() == minutes;
+            }
+        });
 
+        if (sameAlarms.isEmpty()) {
+            Logger.getDefaultLogger().d("Found same alarm");
+            alarm = AlarmsManager.getAlarmsManager().createNewAlarm();
+            isNewAlarm = true;
+            //@formatter:off
+            alarm.edit()
+                .setHour(hours)
+                .setMinutes(minutes)
+                .setLabel(msg)
+                .setEnabled(true)
+                .commit();
+        //@formatter:on
+        } else {
+            alarm = sameAlarms.iterator().next();
+            alarm.enable(true);
+            Logger.getDefaultLogger().d("Enabled same alarm");
+        }
         if (skipUi) {
             finish();
         }
