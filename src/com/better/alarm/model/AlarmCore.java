@@ -344,6 +344,11 @@ public final class AlarmCore implements Alarm {
             protected void onPreAlarmDurationChanged() {
                 // nothing to do
             }
+
+            @Override
+            protected void onEnable() {
+                deferMessage(getCurrentMessage());
+            }
         }
 
         private class RescheduleTransition extends ComplexTransition {
