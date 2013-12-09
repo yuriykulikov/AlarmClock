@@ -83,7 +83,7 @@ public class HandleSetAlarm extends Activity {
                 boolean hoursMatch = candidate.getHour() == hours;
                 boolean minutesMatch = candidate.getMinutes() == minutes;
                 boolean labelsMatch = candidate.getLabel().equals(label);
-                boolean noRepeating = candidate.getDaysOfWeek().isRepeatSet();
+                boolean noRepeating = !candidate.getDaysOfWeek().isRepeatSet();
                 return hoursMatch && minutesMatch && labelsMatch && noRepeating;
             }
         });
