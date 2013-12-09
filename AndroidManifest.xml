@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.better.alarm"
-    android:versionCode="2512"
-    android:versionName="2.5.12" >
+    android:versionCode="2513"
+    android:versionName="2.5.13" >
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -40,12 +40,7 @@
         <activity
             android:name=".presenter.AlarmDetailsActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
-            android:label="@string/set_alarm"
-            android:permission="com.android.alarm.permission.SET_ALARM">
-            <intent-filter>
-                <action android:name="android.intent.action.SET_ALARM" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+            android:label="@string/set_alarm">
         </activity>
 
         <!-- Application Settings -->
@@ -59,7 +54,17 @@
             </intent-filter>
         </activity>
 
-        <!-- Forwards intents to the AlarmAlert or AlarmAlertFullScreen -->
+        <activity
+            android:name=".HandleSetAlarm"
+            android:excludeFromRecents="true"
+            android:permission="com.android.alarm.permission.SET_ALARM"
+            android:theme="@android:style/Theme.NoDisplay" >
+            <intent-filter>
+                <action android:name="android.intent.action.SET_ALARM" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+<!-- Forwards intents to the AlarmAlert or AlarmAlertFullScreen -->
         <receiver
             android:name=".presenter.alert.AlarmAlertReceiver"
             android:exported="false" >
