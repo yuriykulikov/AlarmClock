@@ -70,4 +70,13 @@
         <item>Смелый зеленый</item>
     </string-array>
     <string name="simple_alarm_clock">Простой будильник</string>
+    <string-array name="snooze_duration_with_off_entries">
+        <item>"Выкл."</item>
+        <item>"5 минут"</item>
+        <item>"10 минут"</item>
+        <item>"15 минут"</item>
+        <item>"20 минут"</item>
+        <item>"25 минут"</item>
+        <item>"30 минут"</item>
+    </string-array>
 </resources>

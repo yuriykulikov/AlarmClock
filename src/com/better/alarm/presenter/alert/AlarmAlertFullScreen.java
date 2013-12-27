@@ -22,6 +22,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -91,11 +92,14 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
             }
         }
     };
+    private SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle icicle) {
         setTheme(DynamicThemeHandler.getInstance().getIdForName(getClassName()));
         super.onCreate(icicle);
+
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (getResources().getBoolean(R.bool.isTablet)) {
             // preserve initial rotation and disable rotation change
@@ -114,9 +118,7 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
         try {
             mAlarm = alarmsManager.getAlarm(id);
 
-            // Get the volume/camera button behavior setting
-            final String vol = PreferenceManager.getDefaultSharedPreferences(this).getString(
-                    SettingsActivity.KEY_VOLUME_BEHAVIOR, DEFAULT_VOLUME_BEHAVIOR);
+            final String vol = sp.getString(SettingsActivity.KEY_VOLUME_BEHAVIOR, DEFAULT_VOLUME_BEHAVIOR);
             mVolumeBehavior = Integer.parseInt(vol);
 
             final Window win = getWindow();
@@ -179,8 +181,10 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
         snooze.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                TimePickerDialogFragment.showTimePicker(mAlarm, getFragmentManager());
-                AlarmAlertFullScreen.this.sendBroadcast(new Intent(Intents.ACTION_MUTE));
+                if (isSnoozeEnabled()) {
+                    TimePickerDialogFragment.showTimePicker(mAlarm, getFragmentManager());
+                    AlarmAlertFullScreen.this.sendBroadcast(new Intent(Intents.ACTION_MUTE));
+                }
                 return true;
             }
         });
@@ -212,17 +216,18 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
 
     // Attempt to snooze this alert.
     private void snooze() {
-        alarmsManager.snooze(mAlarm);
-        // Do not snooze if the snooze button is disabled.
-        if (!findViewById(R.id.alert_button_snooze).isEnabled()) {
-            dismiss();
-            return;
+        if (isSnoozeEnabled()) {
+            alarmsManager.snooze(mAlarm);
         }
     }
 
     // Dismiss the alarm.
     private void dismiss() {
         alarmsManager.dismiss(mAlarm);
+    }
+
+    private boolean isSnoozeEnabled() {
+        return Integer.parseInt(sp.getString("snooze_duration", "-1")) != -1;
     }
 
     /**
@@ -250,13 +255,9 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
         super.onResume();
         longClickToDismiss = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(LONGCLICK_DISMISS_KEY,
                 LONGCLICK_DISMISS_DEFAULT);
-        // XXX this is some wierd logic and should not be here
-        // If the alarm was deleted at some point, disable snooze.
-        // if (AlarmsManager.getAlarm(getContentResolver(), mAlarm.id) == null)
-        // {
-        // Button snooze = (Button) findViewById(R.id.snooze);
-        // snooze.setEnabled(false);
-        // }
+
+        Button snooze = (Button) findViewById(R.id.alert_button_snooze);
+        snooze.setEnabled(isSnoozeEnabled());
     }
 
     @Override

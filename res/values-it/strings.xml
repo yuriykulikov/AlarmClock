@@ -85,4 +85,13 @@
         <item>Verde</item>
     </string-array>
     <string name="simple_alarm_clock">La Sveglia Semplice</string>
+    <string-array name="snooze_duration_with_off_entries">
+        <item>Off</item>
+        <item>"5 minuti"</item>
+        <item>"10 minuti"</item>
+        <item>"15 minuti"</item>
+        <item>"20 minuti"</item>
+        <item>"25 minuti"</item>
+        <item>"30 minuti"</item>
+    </string-array>
 </resources>

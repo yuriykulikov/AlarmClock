@@ -70,4 +70,13 @@
         <item>Grün</item>
     </string-array>
     <string name="simple_alarm_clock">Einfacher Wecker</string>
+    <string-array name="snooze_duration_with_off_entries">
+        <item>"Aus"</item>
+        <item>"5 Minuten"</item>
+        <item>"10 Minuten"</item>
+        <item>"15 Minuten"</item>
+        <item>"20 Minuten"</item>
+        <item>"25 Minuten"</item>
+        <item>"30 Minuten"</item>
+    </string-array>
 </resources>
