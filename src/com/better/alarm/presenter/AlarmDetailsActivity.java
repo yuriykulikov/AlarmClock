@@ -45,8 +45,6 @@ import com.better.alarm.model.interfaces.AlarmEditor;
 import com.better.alarm.model.interfaces.AlarmNotFoundException;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
-import com.better.alarm.presenter.DynamicThemeHandler;
-import com.better.alarm.presenter.TimePickerDialogFragment;
 import com.better.alarm.view.AlarmPreference;
 import com.better.alarm.view.RepeatPreference;
 import com.github.androidutils.logger.Logger;
@@ -180,6 +178,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         if (isNewAlarm) {
             menu.removeItem(R.id.set_alarm_menu_delete_alarm);
         }
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         return true;
     }
 
@@ -189,6 +188,13 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         case R.id.set_alarm_menu_delete_alarm:
             deleteAlarm();
             break;
+
+        case android.R.id.home:
+            Intent parentActivityIntent = new Intent(this, AlarmsListActivity.class);
+            parentActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(parentActivityIntent);
+            finish();
+            return true;
 
         default:
             break;
