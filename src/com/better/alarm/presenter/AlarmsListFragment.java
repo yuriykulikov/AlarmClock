@@ -120,16 +120,21 @@ public class AlarmsListFragment extends ListFragment {
             TextView subtitle = (TextView) rowView.findViewById(R.id.list_row_daysOfWeek);
             DaysOfWeek days = alarm.getDaysOfWeek();
             final String daysOfWeekStr = days.toString(getContext(), false);
-            boolean hasLabel = alarm.getLabel() != null && !alarm.getLabel().isEmpty();
-            boolean everydayOrNever = days != null && (!days.isRepeatSet() || days.isEveryDay());
-            if (everydayOrNever && hasLabel) {
-                subtitle.setText(alarm.getLabel());
-                subtitle.setVisibility(View.VISIBLE);
-            } else if (daysOfWeekStr != null && daysOfWeekStr.length() != 0) {
+            if (daysOfWeekStr != null && daysOfWeekStr.length() != 0) {
                 subtitle.setText(daysOfWeekStr);
                 subtitle.setVisibility(View.VISIBLE);
             } else {
                 subtitle.setVisibility(View.GONE);
+            }
+
+            // Set the repeat text or leave it blank if it does not repeat.
+            TextView label = (TextView) rowView.findViewById(R.id.list_row_label);
+            boolean hasLabel = alarm.getLabel() != null && !alarm.getLabel().isEmpty();
+            if (hasLabel) {
+                label.setText(alarm.getLabel());
+                label.setVisibility(View.VISIBLE);
+            } else {
+                label.setVisibility(View.GONE);
             }
 
             return rowView;

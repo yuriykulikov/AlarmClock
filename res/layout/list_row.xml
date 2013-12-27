@@ -74,6 +74,13 @@
             android:paddingTop="2dip"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="?android:attr/textColorTertiary" />
+         <TextView
+            android:id="@+id/list_row_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="2dip"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="?android:attr/textColorTertiary" />
     </LinearLayout>
 
     <com.better.alarm.view.DontPressWithParentLayout
