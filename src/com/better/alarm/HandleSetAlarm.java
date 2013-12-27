@@ -32,6 +32,7 @@ import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.presenter.AlarmDetailsActivity;
+import com.better.alarm.presenter.AlarmsListActivity;
 import com.github.androidutils.logger.Logger;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -50,8 +51,8 @@ public class HandleSetAlarm extends Activity {
             finish();
             return;
         } else if (!intent.hasExtra(EXTRA_HOUR)) {
-            // start details activity to create a new alarm
-            startActivity(startDetailsIntent);
+            // no extras - start list activity
+            startActivity(new Intent(this, AlarmsListActivity.class));
             finish();
             return;
         }
