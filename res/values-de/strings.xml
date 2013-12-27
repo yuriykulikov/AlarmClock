@@ -20,6 +20,7 @@
     <string name="alarm_prealarm">Vorwecker</string>
     <string name="prealarm_duration_title">Vorwecker-Dauer</string>
     <string-array name="prealarm_duration_entries">
+        <item>Aus</item>
         <item>10 Minuten</item>
         <item>20 Minuten</item>
         <item>30 Minuten</item>
@@ -27,6 +28,7 @@
         <item>60 Minuten</item>
     </string-array>
     <string name="prealarm_summary">Der Vorwecker klingelt in <xliff:g id="minutes">%d</xliff:g> Minuten vor dem Wecker</string>
+    <string name="prealarm_off_summary">Der Vorwecker ist ausgeschaltet</string>
     <string name="main_alarm">Wecker</string>
     <string name="master_volume">Gesamtlautstärke</string>
     <string name="share">Teilen</string>

@@ -33,6 +33,7 @@
          Entries listed in the ListPreference when invoking the pre-alarm duration
          preference.    -->
     <string-array name="prealarm_duration_entries">
+        <item>Off</item>
         <item>10 minutes</item>
         <item>20 minutes</item>
         <item>30 minutes</item>
@@ -43,6 +44,7 @@
          Values that are retrieved from the ListPreference. These must match
          the prealarm_duration_entries above.    -->
     <string-array name="prealarm_duration_values" tools:ignore="MissingTranslation">
+        <item>-1</item>
         <item>10</item>
         <item>20</item>
         <item>30</item>
@@ -51,6 +53,7 @@
     </string-array>
     <!-- Pre-alarm duration summary string set based on the preference value. -->
     <string name="prealarm_summary">Pre-alarm will start<xliff:g id="minutes">%d</xliff:g> minutes before the main alarm</string>
+    <string name="prealarm_off_summary">Pre-alarm is switched off</string>
     <string name="main_alarm">Main alarm</string>
     <string name="master_volume">Master volume</string>
     <string name="bug_report_toast">Sorry, the app has crashed and a report has been sent to developer to prevent this in future</string>

@@ -24,11 +24,14 @@ import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.text.format.DateFormat;
 import android.view.Menu;
@@ -73,6 +76,8 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     private int mMinute;
     private TimePickerDialog mTimePickerDialog;
 
+    private SharedPreferences sp;
+
     @Override
     protected void onCreate(Bundle icicle) {
         setTheme(DynamicThemeHandler.getInstance().getIdForName(AlarmDetailsActivity.class.getName()));
@@ -84,6 +89,8 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
 
         // Override the default content view.
         setContentView(R.layout.details_activity);
+
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
 
         // TODO Stop using preferences for this view. Save on done, not after
         // each change.
@@ -144,6 +151,36 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         if (isNewAlarm) {
             TimePickerDialogFragment.showTimePicker(alarm, getFragmentManager());
         }
+    }
+
+    private final OnSharedPreferenceChangeListener onSharedPreferenceChangeListener = new OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            refreshPrealarmVisibility();
+        }
+    };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        sp.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
+        refreshPrealarmVisibility();
+    }
+
+    private void refreshPrealarmVisibility() {
+        int duration = Integer.parseInt(sp.getString("prealarm_duration", "-1"));
+        if (duration == -1) {
+            getPreferenceScreen().removePreference(mPreAlarmPref);
+        } else {
+            getPreferenceScreen().addPreference(mPreAlarmPref);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(
+                onSharedPreferenceChangeListener);
     }
 
     /**

@@ -311,7 +311,11 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
 
     private void updatePreAlarmDurationSummary(ListPreference listPref, String duration) {
         int i = Integer.parseInt(duration);
-        listPref.setSummary(getString(R.string.prealarm_summary, i));
+        if (i == -1) {
+            listPref.setSummary(getString(R.string.prealarm_off_summary));
+        } else {
+            listPref.setSummary(getString(R.string.prealarm_summary, i));
+        }
     }
 
     private void refresh() {
