@@ -4,8 +4,8 @@
     android:versionName="2.5.14" >
 
     <uses-sdk
-        android:minSdkVersion="15"
-        android:targetSdkVersion="15" >
+        android:minSdkVersion="16"
+        android:targetSdkVersion="16" >
     </uses-sdk>
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
