@@ -501,6 +501,11 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
+            protected void onSnooze() {
+                enter();
+            }
+
+            @Override
             public void exit() {
                 removeAlarm();
                 broadcastAlarmState(Intents.ACTION_CANCEL_SNOOZE);

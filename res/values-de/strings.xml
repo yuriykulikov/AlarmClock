@@ -79,4 +79,5 @@
         <item>"25 Minuten"</item>
         <item>"30 Minuten"</item>
     </string-array>
+    <string name="alarm_alert_reschedule_text">Neu planen</string>
 </resources>

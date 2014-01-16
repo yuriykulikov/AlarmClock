@@ -128,4 +128,5 @@
         <item>25</item>
         <item>30</item>
     </string-array>
+    <string name="alarm_alert_reschedule_text">Reschedule</string>
 </resources>

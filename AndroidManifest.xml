@@ -96,6 +96,15 @@
             android:launchMode="singleInstance"
             android:taskAffinity="" />
 
+        <!-- Transparent activity with TimPickerFragment -->
+       <activity
+            android:name=".presenter.TransparentActivity"
+            android:configChanges="orientation|keyboardHidden|keyboard|navigation"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar"
+            android:taskAffinity="" />
+
         <!-- KlaxonPresenter plays sound -->
         <receiver
             android:name=".presenter.background.KlaxonService$Receiver"
