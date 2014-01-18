@@ -53,14 +53,10 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
     static final String KEY_PREALARM_DURATION = "prealarm_duration";
     public static final String KEY_FADE_IN_TIME_SEC = "fade_in_time_sec";
 
-    private ActionBarHandler mActionBarHandler;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(DynamicThemeHandler.getInstance().getIdForName(SettingsActivity.class.getName()));
         super.onCreate(savedInstanceState);
-
-        mActionBarHandler = new ActionBarHandler(this);
 
         addPreferencesFromResource(R.xml.preferences);
 
@@ -98,7 +94,8 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        return mActionBarHandler.onCreateOptionsMenu(menu, getMenuInflater(), getActionBar());
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        return true;
     }
 
     @Override
@@ -106,7 +103,7 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         if (item.getItemId() == android.R.id.home) {
             goBack();
             return true;
-        } else return mActionBarHandler.onOptionsItemSelected(item);
+        } else return false;
     }
 
     private void goBack() {

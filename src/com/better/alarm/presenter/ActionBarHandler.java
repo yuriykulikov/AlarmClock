@@ -48,8 +48,6 @@ public class ActionBarHandler {
     public boolean onCreateOptionsMenu(Menu menu, MenuInflater inflater, ActionBar actionBar) {
         inflater.inflate(R.menu.settings_menu, menu);
 
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
         MenuItem menuItem = menu.findItem(R.id.menu_share);
         ShareActionProvider sp = (ShareActionProvider) menuItem.getActionProvider();
 
@@ -80,6 +78,11 @@ public class ActionBarHandler {
      */
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+
+        case R.id.menu_item_settings:
+            // TODO show details
+            mContext.startActivity(new Intent(mContext, SettingsActivity.class));
+            return true;
 
         case R.id.menu_review:
             showReview();
