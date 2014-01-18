@@ -222,7 +222,8 @@ public class AlarmContainer implements IAlarmContainer {
     @Override
     public void writeToDb() {
         ContentValues values = createContentValues();
-        Intent intent = new Intent(DataBaseService.SAVE_ALARM_ACTION);
+        Intent intent = new Intent(mContext, DataBaseService.class);
+        intent.setAction(DataBaseService.SAVE_ALARM_ACTION);
         intent.putExtra("extra_values", values);
         intent.putExtra(Intents.EXTRA_ID, id);
         WakeLockManager.getWakeLockManager().acquirePartialWakeLock(intent, "forDBService");

@@ -37,6 +37,7 @@ import com.better.alarm.model.interfaces.AlarmNotFoundException;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.model.interfaces.PresentationToModelIntents;
+import com.better.alarm.presenter.TransparentActivity;
 import com.github.androidutils.logger.Logger;
 
 /**
@@ -132,7 +133,7 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
                 // when the Notification Bar was created.
                 .setFullScreenIntent(pendingNotify, true)
                 // setContentIntent to show the user AlarmAlert dialog  
-                // when he will clicks on the Notification Bar.
+                // when he will click on the Notification Bar.
                 .setContentIntent(pendingNotify)
                 .setOngoing(true)
                 .addAction(R.drawable.ic_action_snooze, mContext.getString(R.string.alarm_alert_snooze_text), pendingSnooze)
@@ -147,22 +148,41 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
     }
 
     private void onSnoozed(int id) {
-        // Get the display time for the snooze and update the notification.
-        // Append (snoozed) to the label.
-        String label = alarm.getLabelOrDefault(mContext);
-        label = mContext.getString(R.string.alarm_notify_snooze_label, label);
 
-        // Notify the user that the alarm has been snoozed.
+        // What to do, when a user clicks on the notification bar
         Intent cancelSnooze = new Intent(mContext, AlarmAlertReceiver.class);
         cancelSnooze.setAction(ACTION_CANCEL_NOTIFICATION);
         cancelSnooze.putExtra(Intents.EXTRA_ID, id);
-        PendingIntent broadcast = PendingIntent.getBroadcast(mContext, id, cancelSnooze, 0);
-        Notification n = new Notification(R.drawable.stat_notify_alarm, label, 0);
+        PendingIntent pCancelSnooze = PendingIntent.getBroadcast(mContext, id, cancelSnooze, 0);
 
-        n.setLatestEventInfo(mContext, label,
-                mContext.getString(R.string.alarm_notify_snooze_text, formatTimeString()), broadcast);
-        n.flags |= Notification.FLAG_AUTO_CANCEL | Notification.FLAG_ONGOING_EVENT;
-        nm.notify(id + NOTIFICATION_OFFSET, n);
+        // When button Reschedule is clicked, the TransparentActivity with
+        // TimePickerFragment to set new alarm time is launched
+        Intent reschedule = new Intent(mContext, TransparentActivity.class);
+        reschedule.putExtra(Intents.EXTRA_ID, id);
+        PendingIntent pendingReschedule = PendingIntent.getActivity(mContext, id, reschedule, 0);
+
+        PendingIntent pendingDismiss = PresentationToModelIntents.createPendingIntent(mContext,
+                PresentationToModelIntents.ACTION_REQUEST_DISMISS, id);
+
+        String label = alarm.getLabelOrDefault(mContext);
+
+        //@formatter:off
+        Notification status = new NotificationCompat.Builder(mContext)
+                // Get the display time for the snooze and update the notification.
+                .setContentTitle(mContext.getString(R.string.alarm_notify_snooze_label, label))
+                .setContentText(mContext.getString(R.string.alarm_notify_snooze_text, formatTimeString()))
+                .setSmallIcon(R.drawable.stat_notify_alarm)
+                .setContentIntent(pCancelSnooze)
+                .setOngoing(true)
+                .addAction(R.drawable.ic_action_reschedule_snooze, mContext.getString(R.string.alarm_alert_reschedule_text), pendingReschedule)
+                .addAction(R.drawable.ic_action_dismiss, mContext.getString(R.string.alarm_alert_dismiss_text), pendingDismiss)
+                .setDefaults(Notification.DEFAULT_LIGHTS)
+                .build();
+        //@formatter:on
+
+        // Send the notification using the alarm id to easily identify the
+        // correct notification.
+        nm.notify(id + NOTIFICATION_OFFSET, status);
     }
 
     private String formatTimeString() {

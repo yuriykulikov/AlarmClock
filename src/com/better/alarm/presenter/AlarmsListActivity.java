@@ -37,10 +37,14 @@ import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialog
  */
 public class AlarmsListActivity extends Activity implements AlarmTimePickerDialogHandler {
 
+    private ActionBarHandler mActionBarHandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(DynamicThemeHandler.getInstance().getIdForName(AlarmsListActivity.class.getName()));
         super.onCreate(savedInstanceState);
+
+        mActionBarHandler = new ActionBarHandler(this);
 
         boolean isTablet = !getResources().getBoolean(R.bool.isTablet);
         if (isTablet) {
@@ -48,7 +52,8 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
         }
 
         setContentView(R.layout.list_activity);
-        alarmsListFragment = (AlarmsListFragment) getFragmentManager().findFragmentById(R.id.list_activity_list_fragment);
+        alarmsListFragment = (AlarmsListFragment) getFragmentManager().findFragmentById(
+                R.id.list_activity_list_fragment);
 
         if (isTablet) {
             // TODO
@@ -73,24 +78,15 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.list_menu, menu);
-        return true;
+        return mActionBarHandler.onCreateOptionsMenu(menu, getMenuInflater(), getActionBar());
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case R.id.menu_item_settings:
-            // TODO show details
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
-        case R.id.menu_item_add_alarm:
+        if (item.getItemId() == R.id.menu_item_add_alarm) {
             showDetailsInActivityFragment.showDetails(null);
             return true;
-        default:
-            break;
-        }
-        return super.onOptionsItemSelected(item);
+        } else return mActionBarHandler.onOptionsItemSelected(item);
     }
 
     // private final ShowDetailsStrategy showDetailsInFragmentStrategy = new
