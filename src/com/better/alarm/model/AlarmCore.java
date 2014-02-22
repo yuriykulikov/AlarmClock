@@ -620,6 +620,11 @@ public final class AlarmCore implements Alarm {
             }
 
             @Override
+            protected void onSnooze() {
+                enter();
+            }
+
+            @Override
             protected void onTimeSet() {
                 // nothing to do
             }
