@@ -11,9 +11,12 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.presenter.SettingsActivity;
+import com.better.alarm.presenter.background.VibrationService.AlertConditionHelper.AlertStrategy;
 import com.github.androidutils.logger.Logger;
 import com.github.androidutils.wakelock.WakeLockManager;
 
@@ -23,8 +26,8 @@ public class VibrationService extends Service {
     private Logger log;
     private PowerManager pm;
     private WakeLock wakeLock;
-    private CountDownTimer timer;
     private SharedPreferences sp;
+    private AlertConditionHelper alertConditionHelper;
 
     /**
      * Dispatches intents to the KlaxonService
@@ -46,11 +49,31 @@ public class VibrationService extends Service {
         wakeLock.acquire();
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         sp = PreferenceManager.getDefaultSharedPreferences(this);
+        ((TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE)).listen(new PhoneStateListener() {
+            @Override
+            public void onCallStateChanged(int state, String incomingNumber) {
+                alertConditionHelper.setInCall(state != TelephonyManager.CALL_STATE_IDLE);
+            }
+        }, PhoneStateListener.LISTEN_CALL_STATE);
+        alertConditionHelper = new AlertConditionHelper(new AlertStrategy() {
+            @Override
+            public void start() {
+                log.d("Starting vibration");
+                mVibrator.vibrate(sVibratePattern, 0);
+            }
+
+            @Override
+            public void stop() {
+                log.d("Canceling vibration");
+                mVibrator.cancel();
+            }
+        });
+        alertConditionHelper.setEnabled(sp.getBoolean("vibrate", true));
     }
 
     @Override
     public void onDestroy() {
-        stopVibration();
+        alertConditionHelper.setStarted(false);
         log.d("Service destroyed");
         wakeLock.release();
     }
@@ -63,16 +86,17 @@ public class VibrationService extends Service {
         try {
             String action = intent.getAction();
             if (action.equals(Intents.ALARM_ALERT_ACTION)) {
+                alertConditionHelper.setMuted(false);
                 String asString = sp.getString(SettingsActivity.KEY_FADE_IN_TIME_SEC, "30");
                 int time = Integer.parseInt(asString) * 1000;
-                timer = new CountDownTimer(time, time) {
+                new CountDownTimer(time, time) {
                     @Override
                     public void onTick(long millisUntilFinished) {
                     }
 
                     @Override
                     public void onFinish() {
-                        startVibrationIfShould();
+                        alertConditionHelper.setStarted(true);
                     }
                 }.start();
 
@@ -91,11 +115,11 @@ public class VibrationService extends Service {
                 return START_NOT_STICKY;
 
             } else if (action.equals(Intents.ACTION_MUTE)) {
-                stopVibration();
+                alertConditionHelper.setMuted(true);
                 return START_STICKY;
 
             } else if (action.equals(Intents.ACTION_DEMUTE)) {
-                startVibrationIfShould();
+                alertConditionHelper.setMuted(false);
                 return START_STICKY;
 
             } else {
@@ -110,18 +134,50 @@ public class VibrationService extends Service {
         }
     }
 
-    private void startVibrationIfShould() {
-        boolean shouldVibrate = sp.getBoolean("vibrate", true);
-        if (shouldVibrate) {
-            mVibrator.vibrate(sVibratePattern, 0);
-            log.d("Starting vibration");
-        }
-    }
+    public static final class AlertConditionHelper {
+        public interface AlertStrategy {
+            public void start();
 
-    private void stopVibration() {
-        mVibrator.cancel();
-        if (timer != null) {
-            timer.cancel();
+            public void stop();
+        }
+
+        private final AlertStrategy alertConditionHelperListener;
+
+        private boolean inCall;
+        private boolean isStarted;
+        private boolean isMuted;
+        private boolean isEnabled;
+
+        private void update() {
+            if (isEnabled && !inCall && !isMuted && isStarted) {
+                alertConditionHelperListener.start();
+            } else {
+                alertConditionHelperListener.stop();
+            }
+        }
+
+        public AlertConditionHelper(AlertStrategy alertConditionHelperListener) {
+            this.alertConditionHelperListener = alertConditionHelperListener;
+        }
+
+        public void setStarted(boolean isStarted) {
+            this.isStarted = isStarted;
+            update();
+        }
+
+        public void setMuted(boolean isMuted) {
+            this.isMuted = isMuted;
+            update();
+        }
+
+        public void setInCall(boolean inCall) {
+            this.inCall = inCall;
+            update();
+        }
+
+        public void setEnabled(boolean isEnabled) {
+            this.isEnabled = isEnabled;
+            update();
         }
     }
 
