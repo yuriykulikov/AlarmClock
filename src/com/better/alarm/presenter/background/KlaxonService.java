@@ -59,6 +59,8 @@ public class KlaxonService extends Service {
     private WakeLock wakeLock;
     private SharedPreferences sp;
 
+    private Alarm alarm;
+
     /**
      * Dispatches intents to the KlaxonService
      */
@@ -71,7 +73,22 @@ public class KlaxonService extends Service {
         }
     }
 
-    private static class Volume extends PhoneStateListener implements OnSharedPreferenceChangeListener {
+    private final PhoneStateListener phoneStateListenerImpl = new PhoneStateListener() {
+        @Override
+        public void onCallStateChanged(int state, String ignored) {
+            if (state != TelephonyManager.CALL_STATE_IDLE) {
+                volume.mute();
+            } else {
+                if (!alarm.isSilent()) {
+                    initializePlayer(getAlertOrDefault(alarm));
+                    volume.fadeInAsSetInSettings();
+                }
+                volume.fadeInFast();
+            }
+        }
+    };
+
+    private static class Volume implements OnSharedPreferenceChangeListener {
         private static final int FAST_FADE_IN_TIME = 5000;
 
         private static final int FADE_IN_STEPS = 100;
@@ -121,16 +138,14 @@ public class KlaxonService extends Service {
         private Type type = Type.NORMAL;
         private IMediaPlayer player;
         private final Logger log;
-        private final TelephonyManager mTelephonyManager;
         private int preAlarmVolume = 0;
         private int alarmVolume = 4;
 
         private CountDownTimer timer;
 
-        public Volume(final Logger log, TelephonyManager telephonyManager, SharedPreferences sp) {
+        public Volume(final Logger log, SharedPreferences sp) {
             this.log = log;
             this.sp = sp;
-            mTelephonyManager = telephonyManager;
         }
 
         public void setMode(Type type) {
@@ -148,12 +163,7 @@ public class KlaxonService extends Service {
         public void apply() {
             float fvolume;
             try {
-                // Check if we are in a call. If we are, use the in-call alarm
-                // resource at a low targetVolume to not disrupt the call.
-                if (mTelephonyManager.getCallState() != TelephonyManager.CALL_STATE_IDLE) {
-                    log.d("Using the in-call alarm");
-                    fvolume = IN_CALL_VOLUME;
-                } else if (type == Type.PREALARM) {
+                if (type == Type.PREALARM) {
                     fvolume = ALARM_VOLUMES[preAlarmVolume];
                 } else {
                     fvolume = ALARM_VOLUMES[alarmVolume];
@@ -162,14 +172,6 @@ public class KlaxonService extends Service {
                 fvolume = 1f;
             }
             player.setVolume(fvolume, fvolume);
-        }
-
-        @Override
-        public void onCallStateChanged(int state, String ignored) {
-            // The user might already be in a call when the alarm fires. When
-            // we register onCallStateChanged, we get the initial in-call state
-            // which kills the alarm. Check against the initial call state so
-            // we don't kill the alarm during a call.
         }
 
         @Override
@@ -238,9 +240,9 @@ public class KlaxonService extends Service {
         // Listen for incoming calls to kill the alarm.
         mTelephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        volume = new Volume(log, mTelephonyManager, sp);
+        volume = new Volume(log, sp);
         volume.setPlayer(mMediaPlayer);
-        mTelephonyManager.listen(volume, PhoneStateListener.LISTEN_CALL_STATE);
+        mTelephonyManager.listen(phoneStateListenerImpl, PhoneStateListener.LISTEN_CALL_STATE);
         sp.registerOnSharedPreferenceChangeListener(volume);
         volume.onSharedPreferenceChanged(sp, Intents.KEY_PREALARM_VOLUME);
         volume.onSharedPreferenceChanged(sp, Intents.KEY_ALARM_VOLUME);
@@ -250,7 +252,7 @@ public class KlaxonService extends Service {
     public void onDestroy() {
         stop();
         // Stop listening for incoming calls.
-        mTelephonyManager.listen(volume, 0);
+        mTelephonyManager.listen(phoneStateListenerImpl, PhoneStateListener.LISTEN_NONE);
         PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
                 .unregisterOnSharedPreferenceChangeListener(volume);
         log.d("Service destroyed");
@@ -270,12 +272,12 @@ public class KlaxonService extends Service {
         try {
             String action = intent.getAction();
             if (action.equals(Intents.ALARM_ALERT_ACTION)) {
-                Alarm alarm = AlarmsManager.getAlarmsManager().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
+                alarm = AlarmsManager.getAlarmsManager().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
                 onAlarm(alarm);
                 return START_STICKY;
 
             } else if (action.equals(Intents.ALARM_PREALARM_ACTION)) {
-                Alarm alarm = AlarmsManager.getAlarmsManager().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
+                alarm = AlarmsManager.getAlarmsManager().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
                 onPreAlarm(alarm);
                 return START_STICKY;
 
