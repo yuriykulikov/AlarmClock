@@ -76,14 +76,15 @@ public class KlaxonService extends Service {
     private final PhoneStateListener phoneStateListenerImpl = new PhoneStateListener() {
         @Override
         public void onCallStateChanged(int state, String ignored) {
-            if (state != TelephonyManager.CALL_STATE_IDLE) {
-                volume.mute();
-            } else {
-                if (!alarm.isSilent()) {
-                    initializePlayer(getAlertOrDefault(alarm));
-                    volume.fadeInAsSetInSettings();
+            if (alarm != null) {
+                if (state != TelephonyManager.CALL_STATE_IDLE) {
+                    volume.mute();
+                } else {
+                    if (!alarm.isSilent()) {
+                        initializePlayer(getAlertOrDefault(alarm));
+                        volume.fadeInFast();
+                    }
                 }
-                volume.fadeInFast();
             }
         }
     };
