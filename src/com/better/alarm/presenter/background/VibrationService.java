@@ -28,6 +28,7 @@ public class VibrationService extends Service {
     private WakeLock wakeLock;
     private SharedPreferences sp;
     private AlertConditionHelper alertConditionHelper;
+    private CountDownTimer countDownTimer;
 
     /**
      * Dispatches intents to the KlaxonService
@@ -89,7 +90,7 @@ public class VibrationService extends Service {
                 alertConditionHelper.setMuted(false);
                 String asString = sp.getString(SettingsActivity.KEY_FADE_IN_TIME_SEC, "30");
                 int time = Integer.parseInt(asString) * 1000;
-                new CountDownTimer(time, time) {
+                countDownTimer = new CountDownTimer(time, time) {
                     @Override
                     public void onTick(long millisUntilFinished) {
                     }
@@ -103,15 +104,15 @@ public class VibrationService extends Service {
                 return START_STICKY;
 
             } else if (action.equals(Intents.ALARM_SNOOZE_ACTION)) {
-                stopSelf();
+                stopAndCleanup();
                 return START_NOT_STICKY;
 
             } else if (action.equals(Intents.ALARM_DISMISS_ACTION)) {
-                stopSelf();
+                stopAndCleanup();
                 return START_NOT_STICKY;
 
             } else if (action.equals(Intents.ACTION_SOUND_EXPIRED)) {
-                stopSelf();
+                stopAndCleanup();
                 return START_NOT_STICKY;
 
             } else if (action.equals(Intents.ACTION_MUTE)) {
@@ -124,14 +125,22 @@ public class VibrationService extends Service {
 
             } else {
                 log.e("unexpected intent " + intent.getAction());
-                stopSelf();
+                stopAndCleanup();
                 return START_NOT_STICKY;
             }
         } catch (Exception e) {
             log.e("Something went wrong" + e.getMessage());
-            stopSelf();
+            stopAndCleanup();
             return START_NOT_STICKY;
         }
+    }
+
+    private void stopAndCleanup() {
+        alertConditionHelper.setEnabled(false);
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+        stopSelf();
     }
 
     public static final class AlertConditionHelper {
