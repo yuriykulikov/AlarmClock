@@ -60,6 +60,7 @@ public class KlaxonService extends Service {
     private SharedPreferences sp;
 
     private Alarm alarm;
+    private boolean lastInCallState;
 
     /**
      * Dispatches intents to the KlaxonService
@@ -76,11 +77,15 @@ public class KlaxonService extends Service {
     private final PhoneStateListener phoneStateListenerImpl = new PhoneStateListener() {
         @Override
         public void onCallStateChanged(int state, String ignored) {
-            if (alarm != null) {
-                if (state != TelephonyManager.CALL_STATE_IDLE) {
+            boolean newState = state != TelephonyManager.CALL_STATE_IDLE;
+            if (lastInCallState != newState) {
+                lastInCallState = newState;
+                if (lastInCallState) {
+                    log.d("Call has started. Mute.");
                     volume.mute();
                 } else {
-                    if (!alarm.isSilent()) {
+                    log.d("Call has ended. fadeInFast.");
+                    if (alarm != null && !alarm.isSilent()) {
                         initializePlayer(getAlertOrDefault(alarm));
                         volume.fadeInFast();
                     }
@@ -243,6 +248,7 @@ public class KlaxonService extends Service {
         sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         volume = new Volume(log, sp);
         volume.setPlayer(mMediaPlayer);
+        lastInCallState = mTelephonyManager.getCallState() != TelephonyManager.CALL_STATE_IDLE;
         mTelephonyManager.listen(phoneStateListenerImpl, PhoneStateListener.LISTEN_CALL_STATE);
         sp.registerOnSharedPreferenceChangeListener(volume);
         volume.onSharedPreferenceChanged(sp, Intents.KEY_PREALARM_VOLUME);
