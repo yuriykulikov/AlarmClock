@@ -27,7 +27,7 @@
         <item>45 минут</item>
         <item>60 минут</item>
     </string-array>
-    <string name="prealarm_summary">Предварительный сигнал зазвонит через <xliff:g id="minutes">%d</xliff:g> минут перед основным</string>
+    <string name="prealarm_summary">Предварительный сигнал зазвонит за <xliff:g id="minutes">%d</xliff:g> минут перед основным</string>
     <string name="prealarm_off_summary">Предварительный сигнал выключен</string>
     <string name="main_alarm">Основной сигнал</string>
     <string name="master_volume">Общая громкость</string>
