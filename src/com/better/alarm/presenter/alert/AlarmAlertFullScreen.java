@@ -34,6 +34,7 @@ import android.view.View.OnLongClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.better.alarm.R;
 import com.better.alarm.model.AlarmsManager;
@@ -97,6 +98,7 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
     @Override
     protected void onCreate(Bundle icicle) {
         setTheme(DynamicThemeHandler.getInstance().getIdForName(getClassName()));
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(icicle);
 
         sp = PreferenceManager.getDefaultSharedPreferences(this);
@@ -148,9 +150,8 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
     }
 
     private void setTitle() {
-        final String titleText = mAlarm.getLabelOrDefault(this);
-
-        setTitle(titleText);
+        TextView label = (TextView) findViewById(R.id.alarm_alert_label);
+        label.setText(mAlarm.getLabelOrDefault(this));
     }
 
     protected int getLayoutResId() {
