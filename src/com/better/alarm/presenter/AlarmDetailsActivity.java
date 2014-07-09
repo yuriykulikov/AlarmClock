@@ -149,7 +149,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
             }
         });
         if (isNewAlarm) {
-            TimePickerDialogFragment.showTimePicker(alarm, getFragmentManager());
+            TimePickerDialogFragment.showTimePicker(getFragmentManager());
         }
     }
 
@@ -288,7 +288,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
         if (preference == mTimePref) {
-            TimePickerDialogFragment.showTimePicker(alarm, getFragmentManager());
+            TimePickerDialogFragment.showTimePicker(getFragmentManager());
         }
 
         return super.onPreferenceTreeClick(preferenceScreen, preference);
@@ -301,7 +301,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     }
 
     @Override
-    public void onDialogTimeSet(Alarm alarm, int hourOfDay, int minute) {
+    public void onDialogTimeSet(int hourOfDay, int minute) {
         // onTimeSet is called when the user clicks "Set"
         mHour = hourOfDay;
         mMinute = minute;

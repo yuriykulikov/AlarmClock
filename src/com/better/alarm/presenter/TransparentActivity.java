@@ -35,7 +35,7 @@ public class TransparentActivity extends Activity implements AlarmTimePickerDial
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        TimePickerDialogFragment.showTimePicker(alarm, getFragmentManager());
+        TimePickerDialogFragment.showTimePicker(getFragmentManager());
         log.d("Do you see time picker?");
     }
 
@@ -48,13 +48,13 @@ public class TransparentActivity extends Activity implements AlarmTimePickerDial
     }
 
     @Override
-    public void onTimePickerCanceled(Alarm alarm) {
+    public void onTimePickerCanceled() {
         finish();
 
     }
 
     @Override
-    public void onDialogTimeSet(Alarm alarm, int hourOfDay, int minute) {
+    public void onDialogTimeSet(int hourOfDay, int minute) {
         alarm.snooze(hourOfDay, minute);
         finish();
     }

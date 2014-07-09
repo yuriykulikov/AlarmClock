@@ -182,7 +182,7 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
             @Override
             public boolean onLongClick(View v) {
                 if (isSnoozeEnabled()) {
-                    TimePickerDialogFragment.showTimePicker(mAlarm, getFragmentManager());
+                    TimePickerDialogFragment.showTimePicker(getFragmentManager());
                     AlarmAlertFullScreen.this.sendBroadcast(new Intent(Intents.ACTION_MUTE));
                 }
                 return true;
@@ -308,13 +308,13 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
     }
 
     @Override
-    public void onDialogTimeSet(Alarm alarm, int hourOfDay, int minute) {
-        alarm.snooze(hourOfDay, minute);
+    public void onDialogTimeSet(int hourOfDay, int minute) {
+        mAlarm.snooze(hourOfDay, minute);
 
     }
 
     @Override
-    public void onTimePickerCanceled(Alarm alarm) {
+    public void onTimePickerCanceled() {
         AlarmAlertFullScreen.this.sendBroadcast(new Intent(Intents.ACTION_DEMUTE));
     }
 }
