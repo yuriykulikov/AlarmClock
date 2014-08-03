@@ -26,15 +26,16 @@
         android:layout_alignParentTop="true"
         android:baselineAligned="true"
         android:gravity="center_horizontal"
-        android:paddingBottom="80dp"
-        android:paddingTop="24dip" >
+        android:paddingBottom="60dp"
+        android:paddingTop="56dip" >
 
         <com.better.alarm.view.AndroidClockTextView
             android:id="@+id/digital_clock_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:singleLine="true"
-            android:textSize="80sp" />
+            android:textSize="90sp"
+            android:textStyle="bold" />
 
         <com.better.alarm.view.AndroidClockTextView
             android:id="@+id/digital_clock_am_pm"
@@ -55,7 +56,8 @@
         android:layout_alignParentTop="true"
         android:gravity="bottom|center_horizontal"
         android:paddingBottom="16dp"
-        android:text="@string/alarm_alert_snooze_text" />
+        android:text="@string/alarm_alert_snooze_text"
+        android:textSize="20sp" />
 
     <View
         android:id="@+id/alert_button_divider"
@@ -73,6 +75,25 @@
         android:layout_height="48dp"
         android:layout_below="@id/alert_button_divider"
         android:gravity="center"
-        android:text="@string/alarm_alert_dismiss_text" />
+        android:text="@string/alarm_alert_dismiss_text"
+        android:textSize="20sp" />
+
+     <TextView
+            android:id="@+id/alarm_alert_label"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="top|center_horizontal"
+            android:paddingTop="8dip"
+            android:paddingBottom="8dip"
+            android:textSize="18sp"/>
+
+        <View
+            android:id="@+id/alert_label_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_marginLeft="16dip"
+            android:layout_marginRight="16dip"
+            android:layout_below="@id/alarm_alert_label"
+            android:background="?android:attr/dividerHorizontal" />
 
 </RelativeLayout>
