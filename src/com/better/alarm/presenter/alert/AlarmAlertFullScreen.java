@@ -98,7 +98,6 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
     @Override
     protected void onCreate(Bundle icicle) {
         setTheme(DynamicThemeHandler.getInstance().getIdForName(getClassName()));
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(icicle);
 
         sp = PreferenceManager.getDefaultSharedPreferences(this);
@@ -150,8 +149,18 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
     }
 
     private void setTitle() {
-        TextView label = (TextView) findViewById(R.id.alarm_alert_label);
-        label.setText(mAlarm.getLabelOrDefault(this));
+        final String titleText = mAlarm.getLabelOrDefault(this);
+        setTitle(titleText);
+        TextView textView = (TextView) findViewById(R.id.alarm_alert_label);
+        textView.setText(titleText);
+
+        if (getLayoutResId() == R.layout.alert || getString(R.string.default_label).equals(titleText)) {
+            // in non-full screen mode we already see the label in the title.
+            // Therefore we hade the views with an additional label
+            // also, if the label is default, do not show it
+            textView.setVisibility(View.GONE);
+            findViewById(R.id.alert_label_divider).setVisibility(View.GONE);
+        }
     }
 
     protected int getLayoutResId() {
