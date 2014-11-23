@@ -1,11 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.better.alarm"
-    android:versionCode="2707"
-    android:versionName="2.7.07" >
+    android:versionCode="2708"
+    android:versionName="2.7.08" >
 
     <uses-sdk
         android:minSdkVersion="15"
-        android:targetSdkVersion="21" >
+        android:targetSdkVersion="15" >
     </uses-sdk>
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
