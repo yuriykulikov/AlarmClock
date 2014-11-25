@@ -15,6 +15,7 @@
  */
 package com.better.alarm.model;
 
+import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,6 +38,12 @@ public class AlarmsScheduler implements IAlarmsScheduler {
     static final String ACTION_FIRED = "com.better.alarm.ACTION_FIRED";
     static final String EXTRA_ID = "intent.extra.alarm";
     static final String EXTRA_TYPE = "intent.extra.type";
+
+    private interface ISetAlarmStrategy {
+
+        void setRTCAlarm(ScheduledAlarm alarm, PendingIntent sender);
+
+    }
 
     private class ScheduledAlarm implements Comparable<ScheduledAlarm> {
         public final int id;
@@ -84,9 +91,12 @@ public class AlarmsScheduler implements IAlarmsScheduler {
     private final PriorityQueue<ScheduledAlarm> queue;
 
     private final Logger log;
+    private final ISetAlarmStrategy setAlarmStrategy;
+    private final AlarmManager am;
 
     public AlarmsScheduler(Context context, Logger logger) {
         mContext = context;
+        am = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
         queue = new PriorityQueue<ScheduledAlarm>();
         this.log = logger;
         context.registerReceiver(new BroadcastReceiver() {
@@ -95,6 +105,23 @@ public class AlarmsScheduler implements IAlarmsScheduler {
                 notifyListeners();
             }
         }, new IntentFilter(Intents.REQUEST_LAST_SCHEDULED_ALARM));
+        setAlarmStrategy = initSetStrategyForVersion();
+        log.d("Using " + setAlarmStrategy);
+    }
+
+    private ISetAlarmStrategy initSetStrategyForVersion() {
+        log.d("SDK is " + android.os.Build.VERSION.SDK_INT);
+        boolean kitkat = android.os.Build.VERSION.SDK_INT >= 19;
+        if (kitkat) {
+            try {
+                final Method setExactMethod = AlarmManager.class.getMethod("setExact", new Class[] { Integer.TYPE,
+                        Long.TYPE, PendingIntent.class });
+                return new KitKatSetter(setExactMethod);
+            } catch (NoSuchMethodException e) {
+                log.e("Could not find setExact even though was supposed to!");
+                return new IceCreamSetter();
+            }
+        } else return new IceCreamSetter();
     }
 
     @Override
@@ -219,12 +246,37 @@ public class AlarmsScheduler implements IAlarmsScheduler {
     }
 
     private void setUpRTCAlarm(ScheduledAlarm alarm) {
-        AlarmManager am = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
         log.d("Set " + alarm.toString());
         Intent intent = new Intent(ACTION_FIRED);
         intent.putExtra(EXTRA_ID, alarm.id);
         intent.putExtra(EXTRA_TYPE, alarm.type.name());
         PendingIntent sender = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        am.set(AlarmManager.RTC_WAKEUP, alarm.calendar.getTimeInMillis(), sender);
+        setAlarmStrategy.setRTCAlarm(alarm, sender);
+    }
+
+    private final class IceCreamSetter implements ISetAlarmStrategy {
+        @Override
+        public void setRTCAlarm(ScheduledAlarm alarm, PendingIntent sender) {
+            am.set(AlarmManager.RTC_WAKEUP, alarm.calendar.getTimeInMillis(), sender);
+        }
+    }
+
+    private final class KitKatSetter implements ISetAlarmStrategy {
+        private final Method setExactMethod;
+
+        private KitKatSetter(Method setExactMethod) {
+            this.setExactMethod = setExactMethod;
+        }
+
+        @Override
+        public void setRTCAlarm(ScheduledAlarm alarm, PendingIntent sender) {
+            try {
+                setExactMethod.invoke(am, new Object[] { AlarmManager.RTC_WAKEUP, alarm.calendar.getTimeInMillis(),
+                        sender });
+            } catch (Exception ex) {
+                log.e("Failed to call setExact, falling back to set!");
+                am.set(AlarmManager.RTC_WAKEUP, alarm.calendar.getTimeInMillis(), sender);
+            }
+        }
     }
 }
