@@ -49,7 +49,7 @@ public class AlarmProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        log = Logger.getDefaultLogger();
+        log = new Logger();
         log.addLogWriter(LogcatLogWriter.getInstance());
         mOpenHelper = new AlarmDatabaseHelper(getContext(), log);
         return true;
