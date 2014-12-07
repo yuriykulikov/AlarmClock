@@ -7,7 +7,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,11 +52,15 @@ public class InfoFragment extends Fragment implements ViewFactory {
 
     private long milliseconds;
 
+    private boolean isPrealarm;
+
+    private SharedPreferences sp;
+
     private final class TickReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (alarm != null) {
-                remainingTime.setText(formatRemainingTimeString(milliseconds));
+                formatString();
             }
         }
     }
@@ -75,8 +81,8 @@ public class InfoFragment extends Fragment implements ViewFactory {
 
                     String timeString = (String) DateFormat.format(format, calendar);
                     textView.setText(timeString);
-                    remainingTime.setText(formatRemainingTimeString(milliseconds));
-
+                    isPrealarm = intent.getBooleanExtra(Intents.EXTRA_IS_PREALARM, false);
+                    formatString();
                 } else if (intent.getAction().equals(Intents.ACTION_ALARMS_UNSCHEDULED)) {
                     log.d(intent.toString());
                     textView.setText("");
@@ -95,6 +101,7 @@ public class InfoFragment extends Fragment implements ViewFactory {
         alarms = AlarmsManager.getAlarmsManager();
         mAlarmsScheduledReceiver = new AlarmChangedReceiver();
         mTickReceiver = new TickReceiver();
+        sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
 
     @Override
@@ -162,6 +169,16 @@ public class InfoFragment extends Fragment implements ViewFactory {
 
         String[] formats = getActivity().getResources().getStringArray(R.array.alarm_set_short);
         return String.format(formats[index], daySeq, hourSeq, minSeq);
+    }
+
+    private void formatString() {
+        if (isPrealarm) {
+            int duration = Integer.parseInt(sp.getString("prealarm_duration", "-1"));
+            remainingTime.setText(formatRemainingTimeString(milliseconds) + "\n"
+                    + getResources().getString(R.string.prealarm_summary, duration));
+        } else {
+            remainingTime.setText(formatRemainingTimeString(milliseconds));
+        }
     }
 
     @Override

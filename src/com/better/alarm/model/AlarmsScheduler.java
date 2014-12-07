@@ -220,6 +220,7 @@ public class AlarmsScheduler implements IAlarmsScheduler {
 
                 intent.putExtra(Intents.EXTRA_NEXT_NORMAL_TIME_IN_MILLIS, scheduledAlarm.calendar.getTimeInMillis()
                         + prealarmOffsetInMillis);
+                intent.putExtra(Intents.EXTRA_IS_PREALARM, true);
             } else {
                 intent.putExtra(Intents.EXTRA_NEXT_NORMAL_TIME_IN_MILLIS, scheduledAlarm.calendar.getTimeInMillis());
             }
