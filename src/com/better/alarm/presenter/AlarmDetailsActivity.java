@@ -156,7 +156,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     private final OnSharedPreferenceChangeListener onSharedPreferenceChangeListener = new OnSharedPreferenceChangeListener() {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            refreshPrealarmVisibility();
+            refreshPrealarmVisibilityAndSummary();
         }
     };
 
@@ -164,15 +164,17 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     public void onResume() {
         super.onResume();
         sp.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
-        refreshPrealarmVisibility();
+        refreshPrealarmVisibilityAndSummary();
     }
 
-    private void refreshPrealarmVisibility() {
+    private void refreshPrealarmVisibilityAndSummary() {
         int duration = Integer.parseInt(sp.getString("prealarm_duration", "-1"));
         if (duration == -1) {
             getPreferenceScreen().removePreference(mPreAlarmPref);
         } else {
             getPreferenceScreen().addPreference(mPreAlarmPref);
+            mPreAlarmPref.setSummaryOff(R.string.prealarm_off_summary);
+            mPreAlarmPref.setSummaryOn(getResources().getString(R.string.prealarm_summary, duration));
         }
     }
 
