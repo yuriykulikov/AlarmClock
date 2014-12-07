@@ -29,17 +29,6 @@ public interface Alarm {
 
     public AlarmEditor edit();
 
-    /**
-     * TODO calendar should be immutable
-     * 
-     * @return
-     */
-    public Calendar getNextTime();
-
-    public Calendar getSnoozedTime();
-
-    public Calendar getPrealarmTime();
-
     public boolean isPrealarm();
 
     public boolean isSilent();
@@ -63,5 +52,12 @@ public interface Alarm {
     public boolean isSnoozed();
 
     public String getLabelOrDefault(Context context);
+
+    /**
+     * @deprecated
+     * @return
+     */
+    @Deprecated
+    public Calendar getSnoozedTime();
 
 }

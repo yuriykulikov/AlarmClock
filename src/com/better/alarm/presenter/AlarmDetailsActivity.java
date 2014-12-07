@@ -326,7 +326,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         mTimePref.setSummary(summary);
     }
 
-    private long saveAlarm() {
+    private void saveAlarm() {
         AlarmEditor editor = alarm.edit();
         //@formatter:off
         editor.setEnabled(mEnabledPref.isChecked())
@@ -340,7 +340,6 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         //@formatter:on
         editor.commit();
         isNewAlarm = false;
-        return alarm.getNextTime().getTimeInMillis();
     }
 
     private void deleteAlarm() {

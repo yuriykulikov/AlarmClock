@@ -858,30 +858,6 @@ public final class AlarmCore implements Alarm {
     // ++++++ getters for GUI +++++++++++++++++++++++++++++++
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    /**
-     * TODO calendar should be immutable
-     * 
-     * @return
-     */
-    @Override
-    public Calendar getNextTime() {
-        return container.getNextTime();
-    }
-
-    @Override
-    public Calendar getSnoozedTime() {
-        // TODO this might not work :-)
-        // actually these getters should be replaced with extras to intents
-        return container.getNextTime();
-    }
-
-    @Override
-    public Calendar getPrealarmTime() {
-        // TODO this might not work :-)
-        // actually these getters should be replaced with extras to intents
-        return container.getNextTime();
-    }
-
     @Override
     public boolean isPrealarm() {
         return container.isPrealarm();
@@ -971,5 +947,11 @@ public final class AlarmCore implements Alarm {
     @Override
     public AlarmEditor edit() {
         return new AlarmEditor(this);
+    }
+
+    @Override
+    @Deprecated
+    public Calendar getSnoozedTime() {
+        return container.getNextTime();
     }
 }
