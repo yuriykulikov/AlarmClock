@@ -48,11 +48,13 @@ public class InfoFragment extends Fragment implements ViewFactory {
 
     private TickReceiver mTickReceiver;
 
+    private long milliseconds;
+
     private final class TickReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (alarm != null) {
-                remainingTime.setText(formatRemainingTimeString(alarm.getNextTime().getTimeInMillis()));
+                remainingTime.setText(formatRemainingTimeString(milliseconds));
             }
         }
     }
@@ -64,13 +66,16 @@ public class InfoFragment extends Fragment implements ViewFactory {
                 if (intent.getAction().equals(Intents.ACTION_ALARM_SCHEDULED)) {
                     int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
                     alarm = alarms.getAlarm(id);
-
                     log.d(intent.toString() + " " + alarm.toString());
                     String format = android.text.format.DateFormat.is24HourFormat(context) ? DM24 : DM12;
-                    Calendar calendar = alarm.isSnoozed() ? alarm.getSnoozedTime() : alarm.getNextTime();
+
+                    milliseconds = intent.getLongExtra(Intents.EXTRA_NEXT_NORMAL_TIME_IN_MILLIS, -1);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(milliseconds);
+
                     String timeString = (String) DateFormat.format(format, calendar);
                     textView.setText(timeString);
-                    remainingTime.setText(formatRemainingTimeString(alarm.getNextTime().getTimeInMillis()));
+                    remainingTime.setText(formatRemainingTimeString(milliseconds));
 
                 } else if (intent.getAction().equals(Intents.ACTION_ALARMS_UNSCHEDULED)) {
                     log.d(intent.toString());
