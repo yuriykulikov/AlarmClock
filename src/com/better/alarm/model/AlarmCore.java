@@ -109,6 +109,8 @@ public final class AlarmCore implements Alarm {
     public interface IStateNotifier {
         public void broadcastAlarmState(int id, String action);
 
+        public void broadcastAlarmState(int id, String action, long millis);
+
     }
 
     private final IAlarmsScheduler mAlarmsScheduler;
@@ -392,14 +394,14 @@ public final class AlarmCore implements Alarm {
             public void enter() {
                 int what = getCurrentMessage().what;
                 if (what == DISMISS || what == SNOOZE || what == CHANGE) {
-                    broadcastAlarmState(Intents.ACTION_ALARM_SET);
+                    broadcastAlarmSetWithNormalTime(calculateNextTime().getTimeInMillis());
                 }
             }
 
             @Override
             public void resume() {
                 Calendar nextTime = calculateNextTime();
-                setAlarm(nextTime);
+                setAlarm(nextTime, CalendarType.NORMAL);
             }
 
             @Override
@@ -478,7 +480,7 @@ public final class AlarmCore implements Alarm {
                     nextTime = getNextRegualarSnoozeCalendar();
                 }
 
-                setAlarm(nextTime);
+                setAlarm(nextTime, CalendarType.NORMAL);
                 broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION);
             }
 
@@ -519,7 +521,7 @@ public final class AlarmCore implements Alarm {
             public void enter() {
                 int what = getCurrentMessage().what;
                 if (what == DISMISS || what == SNOOZE || what == CHANGE) {
-                    broadcastAlarmState(Intents.ACTION_ALARM_SET);
+                    broadcastAlarmSetWithNormalTime(calculateNextTime().getTimeInMillis());
                 }
             }
 
@@ -531,7 +533,7 @@ public final class AlarmCore implements Alarm {
                 // past, so it has to be adjusted.
                 advanceCalendar(c);
                 if (c.after(Calendar.getInstance())) {
-                    setAlarm(c);
+                    setAlarm(c, CalendarType.PREALARM);
                 } else {
                     // TODO this should never happen
                     log.e("PreAlarm is still in the past!");
@@ -561,7 +563,7 @@ public final class AlarmCore implements Alarm {
             @Override
             public void enter() {
                 broadcastAlarmState(Intents.ALARM_PREALARM_ACTION);
-                setAlarm(calculateNextTime());
+                setAlarm(calculateNextTime(), CalendarType.NORMAL);
             }
 
             @Override
@@ -610,7 +612,7 @@ public final class AlarmCore implements Alarm {
                     nextTime = calculateNextTime();
                 }
 
-                setAlarm(nextTime);
+                setAlarm(nextTime, CalendarType.NORMAL);
                 broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION);
             }
 
@@ -641,8 +643,10 @@ public final class AlarmCore implements Alarm {
             broadcaster.broadcastAlarmState(container.getId(), action);
         }
 
-        private void setAlarm(Calendar calendar) {
-            setAlarm(calendar, CalendarType.NORMAL);
+        private void broadcastAlarmSetWithNormalTime(long millis) {
+            String action = Intents.ACTION_ALARM_SET;
+            log.d(container.getId() + " - " + action + " - " + millis);
+            broadcaster.broadcastAlarmState(container.getId(), action, millis);
         }
 
         private void setAlarm(Calendar calendar, CalendarType calendarType) {

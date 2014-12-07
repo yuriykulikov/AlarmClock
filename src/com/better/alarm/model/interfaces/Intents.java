@@ -71,6 +71,8 @@ public class Intents {
      */
     public static final String EXTRA_ID = "intent.extra.alarm";
 
+    public static final String EXTRA_NEXT_NORMAL_TIME_IN_MILLIS = "EXTRA_NEXT_NORMAL_TIME_IN_MILLIS";
+
     public static final String ACTION_STOP_PREALARM_SAMPLE = "com.better.alarm.ACTION_STOP_PREALARM_SAMPLE";
 
     public static final String ACTION_START_PREALARM_SAMPLE = "com.better.alarm.ACTION_START_PREALARM_SAMPLE";
