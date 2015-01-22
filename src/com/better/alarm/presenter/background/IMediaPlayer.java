@@ -72,7 +72,10 @@ public interface IMediaPlayer {
 
     public boolean isLooping();
 
+    @Deprecated
     public void setVolume(float leftVolume, float rightVolume);
+
+    public void setVolume(float leftVolume);
 
     public void setAudioSessionId(int sessionId) throws IllegalArgumentException, IllegalStateException;
 

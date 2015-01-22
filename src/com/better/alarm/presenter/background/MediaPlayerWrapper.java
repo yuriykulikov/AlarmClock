@@ -159,6 +159,11 @@ public class MediaPlayerWrapper implements IMediaPlayer {
     }
 
     @Override
+    public void setVolume(float volume) {
+        player.setVolume(volume, volume);
+    }
+
+    @Override
     public void setAudioSessionId(int sessionId) throws IllegalArgumentException, IllegalStateException {
         player.setAudioSessionId(sessionId);
     }

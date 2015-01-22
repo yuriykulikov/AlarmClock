@@ -102,10 +102,9 @@ public class KlaxonService extends Service {
         // Volume suggested by media team for in-call alarms.
         private static final float IN_CALL_VOLUME = 0.125f;
 
-        // TODO XML
-        // i^2/maxi^2
-        private static final float[] ALARM_VOLUMES = { 0f, 0.01f, 0.04f, 0.09f, 0.16f, 0.25f, 0.36f, 0.49f, 0.64f,
-                0.81f, 1.0f };
+        private static final float SILENT = 0f;
+
+        private static final int MAX_VOLUME = 10;
 
         private final SharedPreferences sp;
 
@@ -119,7 +118,7 @@ public class KlaxonService extends Service {
                 super(millisInFuture, countDownInterval);
                 fadeInTime = millisInFuture;
                 fadeInStep = countDownInterval;
-                targetVolume = ALARM_VOLUMES[type == Type.NORMAL ? alarmVolume : preAlarmVolume];
+                targetVolume = getVolumeFor(type);
                 multiplier = targetVolume / Math.pow(fadeInTime / fadeInStep, 2);
             }
 
@@ -128,7 +127,7 @@ public class KlaxonService extends Service {
                 long elapsed = fadeInTime - millisUntilFinished;
                 float i = elapsed / fadeInStep;
                 float adjustedVolume = (float) (multiplier * (Math.pow(i, 2)));
-                player.setVolume(adjustedVolume, adjustedVolume);
+                player.setVolume(adjustedVolume);
             }
 
             @Override
@@ -167,39 +166,21 @@ public class KlaxonService extends Service {
          * {@link #fadeInAsSetInSettings()}
          */
         public void apply() {
-            float fvolume;
-            try {
-                if (type == Type.PREALARM) {
-                    fvolume = ALARM_VOLUMES[preAlarmVolume];
-                } else {
-                    fvolume = ALARM_VOLUMES[alarmVolume];
-                }
-            } catch (IndexOutOfBoundsException e) {
-                fvolume = 1f;
-            }
-            player.setVolume(fvolume, fvolume);
+            player.setVolume(getVolumeFor(type));
         }
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.equals(Intents.KEY_PREALARM_VOLUME)) {
                 preAlarmVolume = sharedPreferences.getInt(key, Intents.DEFAULT_PREALARM_VOLUME);
-                if (preAlarmVolume > ALARM_VOLUMES.length) {
-                    preAlarmVolume = ALARM_VOLUMES.length;
-                    log.w("Truncated targetVolume!");
-                }
                 if (player.isPlaying() && type == Type.PREALARM) {
-                    player.setVolume(ALARM_VOLUMES[preAlarmVolume], ALARM_VOLUMES[preAlarmVolume]);
+                    player.setVolume(getVolumeFor(Type.PREALARM));
                 }
 
             } else if (key.equals(Intents.KEY_ALARM_VOLUME)) {
                 alarmVolume = sharedPreferences.getInt(key, Intents.DEFAULT_ALARM_VOLUME);
-                if (alarmVolume > ALARM_VOLUMES.length) {
-                    alarmVolume = ALARM_VOLUMES.length;
-                    log.w("Truncated targetVolume!");
-                }
                 if (player.isPlaying() && type == Type.NORMAL) {
-                    player.setVolume(ALARM_VOLUMES[alarmVolume], ALARM_VOLUMES[alarmVolume]);
+                    player.setVolume(getVolumeFor(Type.NORMAL));
                 }
             }
         }
@@ -225,14 +206,21 @@ public class KlaxonService extends Service {
 
         public void mute() {
             cancelFadeIn();
-            player.setVolume(ALARM_VOLUMES[0], ALARM_VOLUMES[0]);
+            player.setVolume(SILENT);
         }
 
         private void fadeIn(int time) {
             cancelFadeIn();
-            player.setVolume(0, 0);
+            player.setVolume(SILENT);
             timer = new FadeInTimer(time, time / FADE_IN_STEPS);
             timer.start();
+        }
+
+        private float getVolumeFor(Type type) {
+            int volume = Math.min(type.equals(Type.PREALARM) ? preAlarmVolume : alarmVolume, MAX_VOLUME);
+            float fVolume = (float) (Math.pow(volume + 1, 2) / Math.pow(MAX_VOLUME + 1, 2));
+            if (type.equals(Type.PREALARM)) return fVolume / 4;
+            else return fVolume;
         }
     }
 

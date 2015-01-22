@@ -176,4 +176,8 @@ public class NullMediaPlayer implements IMediaPlayer {
     @Override
     public void setOnInfoListener(OnInfoListener listener) {
     }
+
+    @Override
+    public void setVolume(float leftVolume) {
+    }
 }
