@@ -53,6 +53,7 @@
     </string-array>
     <!-- Pre-alarm duration summary string set based on the preference value. -->
     <string name="prealarm_summary">Pre-alarm will start<xliff:g id="minutes">%d</xliff:g> minutes before the main alarm</string>
+    <string name="info_fragment_prealarm_summary"><xliff:g id="minutes">%d</xliff:g> minutes pre-alarm</string>
     <string name="prealarm_off_summary">Pre-alarm is switched off</string>
     <string name="main_alarm">Main alarm</string>
     <string name="master_volume">Master volume</string>

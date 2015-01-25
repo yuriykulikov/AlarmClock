@@ -42,6 +42,7 @@
     <!-- Pre-alarm duration summary string set based on the preference value. -->
     <string name="prealarm_summary">Il Pre-allarme inizierà
 <xliff:g id="minutes">%d</xliff:g>minuti prima della sveglia principale</string>
+    <string name="info_fragment_prealarm_summary"><xliff:g id="minutes">%d</xliff:g> minuti Pre-allarme</string>
     <string name="prealarm_off_summary">Il Pre-allarme è off</string>
     <string name="main_alarm">Sveglia principale</string>
     <string name="master_volume">Volume principale</string>

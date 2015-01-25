@@ -175,7 +175,7 @@ public class InfoFragment extends Fragment implements ViewFactory {
         if (isPrealarm) {
             int duration = Integer.parseInt(sp.getString("prealarm_duration", "-1"));
             remainingTime.setText(formatRemainingTimeString(milliseconds) + "\n"
-                    + getResources().getString(R.string.prealarm_summary, duration));
+                    + getResources().getString(R.string.info_fragment_prealarm_summary, duration));
         } else {
             remainingTime.setText(formatRemainingTimeString(milliseconds));
         }
