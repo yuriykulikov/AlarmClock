@@ -81,4 +81,5 @@
         <item>"30 Minuten"</item>
     </string-array>
     <string name="alarm_alert_reschedule_text">Neu planen</string>
+    <string name="alarm_alert_hold_the_button_text">Halten Sie die Taste!</string>
 </resources>

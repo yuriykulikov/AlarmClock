@@ -130,4 +130,5 @@
         <item>30</item>
     </string-array>
     <string name="alarm_alert_reschedule_text">Reprogramar</string>
+    <string name="alarm_alert_hold_the_button_text">Mantenga pulsado el botón!</string>
 </resources>

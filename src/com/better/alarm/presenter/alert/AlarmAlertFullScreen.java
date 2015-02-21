@@ -44,7 +44,6 @@ import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.presenter.DynamicThemeHandler;
 import com.better.alarm.presenter.SettingsActivity;
-import com.better.alarm.presenter.TimePickerDialogFragment;
 import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialogHandler;
 import com.better.alarm.presenter.TimePickerDialogFragment.OnAlarmTimePickerCanceledListener;
 import com.github.androidutils.logger.Logger;
@@ -178,22 +177,25 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
         /*
          * snooze behavior: pop a snooze confirmation view, kick alarm manager.
          */
-        Button snooze = (Button) findViewById(R.id.alert_button_snooze);
+        final Button snooze = (Button) findViewById(R.id.alert_button_snooze);
         snooze.requestFocus();
         snooze.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                snooze();
+                if (isSnoozeEnabled()) {
+                    if (longClickToDismiss) {
+                        snooze.setText(getString(R.string.alarm_alert_hold_the_button_text));
+                    } else {
+                        snooze();
+                    }
+                }
             }
         });
 
         snooze.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (isSnoozeEnabled()) {
-                    TimePickerDialogFragment.showTimePicker(getFragmentManager());
-                    AlarmAlertFullScreen.this.sendBroadcast(new Intent(Intents.ACTION_MUTE));
-                }
+                snooze();
                 return true;
             }
         });
@@ -204,7 +206,7 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
             @Override
             public void onClick(View v) {
                 if (longClickToDismiss) {
-                    dismissButton.setText("Hold to dismiss");
+                    dismissButton.setText(getString(R.string.alarm_alert_hold_the_button_text));
                 } else {
                     dismiss();
                 }

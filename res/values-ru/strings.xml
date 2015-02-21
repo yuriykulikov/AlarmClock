@@ -81,4 +81,5 @@
         <item>"30 минут"</item>
     </string-array>
     <string name="alarm_alert_reschedule_text">Перенести</string>
+    <string name = "alarm_alert_hold_the_button_text">Удерживайте кнопку!</string>
 </resources>
