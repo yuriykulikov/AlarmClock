@@ -76,7 +76,7 @@ public class ScheduledReceiver extends BroadcastReceiver {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.L)
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void doForLollipop(Context context, Intent intent) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);

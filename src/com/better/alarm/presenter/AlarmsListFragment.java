@@ -11,7 +11,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -23,7 +25,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -59,11 +61,14 @@ public class AlarmsListFragment extends ListFragment {
     public class AlarmListAdapter extends ArrayAdapter<Alarm> {
         private final Context context;
         private final List<Alarm> values;
+        private final boolean isMaterial;
 
         public AlarmListAdapter(Context context, int alarmTime, int label, List<Alarm> values) {
             super(context, alarmTime, label, values);
             this.context = context;
             this.values = values;
+            this.isMaterial = !PreferenceManager.getDefaultSharedPreferences(context).getString("theme", "dark")
+                    .equals("green");
         }
 
         @Override
@@ -85,7 +90,16 @@ public class AlarmsListFragment extends ListFragment {
             View indicator = rowView.findViewById(R.id.list_row_on_off_checkbox_container);
 
             // Set the initial state of the clock "checkbox"
-            final CheckBox clockOnOff = (CheckBox) indicator.findViewById(R.id.list_row_on_off_checkbox);
+            final CompoundButton clockOnOff;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && isMaterial) {
+                clockOnOff = (CompoundButton) indicator.findViewById(R.id.list_row_on_off_switch);
+                indicator.findViewById(R.id.list_row_on_off_checkbox).setVisibility(View.GONE);
+            } else {
+                clockOnOff = (CompoundButton) indicator.findViewById(R.id.list_row_on_off_checkbox);
+                indicator.findViewById(R.id.list_row_on_off_switch).setVisibility(View.GONE);
+            }
+
             clockOnOff.setChecked(alarm.isEnabled());
 
             // Clicking outside the "checkbox" should also change the state.
