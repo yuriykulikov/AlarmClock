@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!-- Generated with http://android-holo-colors.com -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Light Themes -->
     <style name="DefaultLightTheme" parent="android:Theme.Material.Light.DarkActionBar">
         <item name="alarmDetailsButtonStyle">@style/LightAlarmDetailsButtonStyle</item>
     </style> 
