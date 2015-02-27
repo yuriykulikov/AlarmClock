@@ -30,7 +30,6 @@ import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnLongClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -182,21 +181,7 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
         snooze.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isSnoozeEnabled()) {
-                    if (longClickToDismiss) {
-                        snooze.setText(getString(R.string.alarm_alert_hold_the_button_text));
-                    } else {
-                        snooze();
-                    }
-                }
-            }
-        });
-
-        snooze.setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                snooze();
-                return true;
+                snoozeIfEnabledInSettings();
             }
         });
 
@@ -226,7 +211,7 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
     }
 
     // Attempt to snooze this alert.
-    private void snooze() {
+    private void snoozeIfEnabledInSettings() {
         if (isSnoozeEnabled()) {
             alarmsManager.snooze(mAlarm);
         }
@@ -294,7 +279,7 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
             if (up) {
                 switch (mVolumeBehavior) {
                 case 1:
-                    snooze();
+                    snoozeIfEnabledInSettings();
                     break;
 
                 case 2:
