@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+ -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Here come strings which are not contained in the AOSP -->
+    <string name="alarm_prealarm">Предварительный сигнал</string>
+    <string name="prealarm_duration_title">Длительность предв. сигнала</string>
+    <string-array name="prealarm_duration_entries">
+        <item>Выкл.</item>
+        <item>10 минут</item>
+        <item>20 минут</item>
+        <item>30 минут</item>
+        <item>45 минут</item>
+        <item>60 минут</item>
+    </string-array>
+    <string name="prealarm_summary">Предварительный сигнал зазвонит за <xliff:g id="minutes">%d</xliff:g> минут перед основным</string>
+    <string name="info_fragment_prealarm_summary">Предварительный сигнал <xliff:g id="minutes">%d</xliff:g> минут</string>
+    <string name="prealarm_off_summary">Предварительный сигнал выключен</string>
+    <string name="main_alarm">Основной сигнал</string>
+    <string name="master_volume">Общая громкость</string>
+    <string name="share">Поделиться</string>
+    <string name="bugreport">Отчет об ошибке</string>
+    <string name="review">Оставить отзыв</string>
+    <string name="bugreport_hint">Опишите проблему здесь</string>
+    <string name="review_message">Большое спасибо! Положительные отзывы привлекают больше пользователей, что позволяет нам получать больше предложоний по улучшениям и отчетов об ошибках.Вы хотите продолжить?</string>
+    <string name="longclick_dismiss_title">Longclick Отключить</string>
+    <string name="longclick_dismiss_summary">Держать кнопку "Отключить" чтобы выключить будильник</string>
+    <string name="fade_in_time_sec_title">Нарастание громкости</string>
+    <string-array name="fade_in_time_sec_entries">
+        <item>10 секунд</item>
+        <item>20 секунд</item>
+        <item>30 секунд</item>
+        <item>60 секунд</item>
+        <item>120 секунд</item>
+    </string-array>
+    <string name="fade_in_summary">Нарастание громкости за <xliff:g id="seconds">%d</xliff:g> секунд</string>
+    <string-array name="alarm_set_short">
+        <item>"менее чем через минуту"</item>
+        <item>"<xliff:g id="DAYS">%1$s</xliff:g>"</item>
+        <item>"<xliff:g id="HOURS">%2$s</xliff:g>"</item>
+        <item>"<xliff:g id="DAYS">%1$s</xliff:g> и <xliff:g id="HOURS">%2$s</xliff:g>"</item>
+        <item>"<xliff:g id="MINUTES">%3$s</xliff:g>"</item>
+        <item>"<xliff:g id="DAYS">%1$s</xliff:g> и <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
+        <item>"<xliff:g id="HOURS">%2$s</xliff:g> и <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
+        <item>"<xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> и <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
+    </string-array>
+    <string name="show_info_fragment_title">Время след. сигнала</string>
+    <string name="show_info_fragment_summary">Показывать время до следующего сигнала в нижней части списка будильников</string>
+    <string name="dashclock">Установить DashClock</string>
+    <string name="dashclock_message">Перейти на Google Play чтобы установить Dashclock. Это виджет для экрана блокировки и рабочего стола, который прекрасно интегрируется с Простым будильником!</string>
+    <string name="mp3cutter">Установить MP3 cutter</string>
+    <string name="mp3cutter_message">Найти и установить MP3 Cutter на Google Play. MP3 cutter позволяет вырезать участки MP3 мелодий и конвертировать их в мелодии будильника.</string>
+    <string name="theme_title">Интерфейс</string>
+    <string-array name="themes_entries">
+        <item>Темный Holo</item>
+        <item>Классический светлый</item>
+        <item>Смелый зеленый</item>
+    </string-array>
+    <string name="simple_alarm_clock">Простой будильник</string>
+    <string-array name="snooze_duration_with_off_entries">
+        <item>"Выкл."</item>
+        <item>"5 минут"</item>
+        <item>"10 минут"</item>
+        <item>"15 минут"</item>
+        <item>"20 минут"</item>
+        <item>"25 минут"</item>
+        <item>"30 минут"</item>
+    </string-array>
+    <string name="alarm_alert_reschedule_text">Перенести</string>
+    <string name = "alarm_alert_hold_the_button_text">Удерживайте кнопку!</string>
+</resources>
