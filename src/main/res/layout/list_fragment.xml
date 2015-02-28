@@ -15,15 +15,18 @@
      limitations under the License.-->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/info_fragment_base_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    tools:context=".presenter.AlarmsListActivity">
 
     <ListView
         android:id="@+id/list_fragment_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        tools:listitem="@layout/list_row"/>
 
 </LinearLayout>

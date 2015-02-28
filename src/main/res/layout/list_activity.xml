@@ -21,14 +21,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    tools:context=".presenter.AlarmsListActivity">
 
     <fragment
         android:id="@+id/list_activity_list_fragment"
         android:name="com.better.alarm.presenter.AlarmsListFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        tools:layout="@layout/list_fragment" />
 
     <fragment
         android:id="@+id/list_activity_info_fragment"
