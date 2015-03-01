@@ -26,6 +26,7 @@ dependencies {
     compile 'com.android.support:support-v4:21.0.3'
     compile 'com.google.guava:guava:15.0'
     compile 'ch.acra:acra:4.6.1'
+    compile 'com.melnykov:floatingactionbutton:1.2.0'
     androidTestCompile 'com.android.support:support-v4:21.0.3'
     androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.2.1'
 }

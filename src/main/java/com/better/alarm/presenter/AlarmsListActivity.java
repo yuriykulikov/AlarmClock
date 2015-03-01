@@ -20,6 +20,7 @@ package com.better.alarm.presenter;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
@@ -34,6 +35,7 @@ import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.presenter.AlarmsListFragment.ShowDetailsStrategy;
 import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialogHandler;
 import com.github.androidutils.logger.Logger;
+import com.melnykov.fab.*;
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.
@@ -65,6 +67,17 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
         } else {
             alarmsListFragment.setShowDetailsStrategy(showDetailsInActivityFragment);
         }
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            fab.attachToListView(alarmsListFragment.getListView());
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showDetailsInActivityFragment.showDetails(null);
+                }
+            });
+        }
     }
 
     @Override
@@ -81,7 +94,11 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        return mActionBarHandler.onCreateOptionsMenu(menu, getMenuInflater(), getActionBar());
+        boolean ret = mActionBarHandler.onCreateOptionsMenu(menu, getMenuInflater(), getActionBar());
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            menu.findItem(R.id.menu_item_add_alarm).setVisible(false);
+        }
+        return ret;
     }
 
     @Override
