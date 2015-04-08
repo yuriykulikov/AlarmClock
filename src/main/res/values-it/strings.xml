@@ -97,4 +97,5 @@
     </string-array>
     <string name="alarm_alert_reschedule_text">Ripianificare</string>
     <string name = "alarm_alert_hold_the_button_text">Tenere premuto il tasto!</string>
+    <string name="menu_extensions">"Estensioni"</string>
 </resources>

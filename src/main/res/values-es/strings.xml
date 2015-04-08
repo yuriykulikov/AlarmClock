@@ -31,7 +31,8 @@
     <string name="prealarm_duration_title">Duración de Pre-Alarma</string>
     <!--
          Entries listed in the ListPreference when invoking the pre-alarm duration
-         preference.    -->
+         preference.
+    -->
     <string-array name="prealarm_duration_entries">
         <item>está apagada</item>
         <item>10 minutos</item>
@@ -42,7 +43,8 @@
     </string-array>
     <!--
          Values that are retrieved from the ListPreference. These must match
-         the prealarm_duration_entries above.    -->
+         the prealarm_duration_entries above.
+    -->
     <string-array name="prealarm_duration_values">
         <item>-1</item>
         <item>10</item>
@@ -52,7 +54,8 @@
         <item>60</item>
     </string-array>
     <!-- Pre-alarm duration summary string set based on the preference value. -->
-    <string name="prealarm_summary">La Pre-alarma comenzará<xliff:g id="minutes">%d</xliff:g> minutos antes de la alarma principal</string>
+    <string name="prealarm_summary">La Pre-alarma comenzará
+<xliff:g id="minutes">%d</xliff:g> minutos antes de la alarma principal</string>
     <string name="info_fragment_prealarm_summary"><xliff:g id="minutes">%d</xliff:g> minutos Pre-alarma</string>
     <string name="prealarm_off_summary">La Pre-Alarma está apagada</string>
     <string name="main_alarm">Alarma principal</string>
@@ -131,4 +134,5 @@
     </string-array>
     <string name="alarm_alert_reschedule_text">Reprogramar</string>
     <string name="alarm_alert_hold_the_button_text">Mantenga pulsado el botón!</string>
+    <string name="menu_extensions">"Extensiones"</string>
 </resources>

@@ -12,7 +12,8 @@
      distributed under the License is distributed on an "AS IS" BASIS,
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
-     limitations under the License.
+     limitations under the License.
+
 -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
@@ -42,12 +43,16 @@
         android:title="@string/share"
         android:showAsAction="never"
         android:actionProviderClass="android.widget.ShareActionProvider" />
-    <item
-        android:id="@+id/menu_dashclock"
-        android:showAsAction="never"
-        android:title="@string/dashclock"/>
-    <item
-        android:id="@+id/menu_mp3cutter"
-        android:showAsAction="never"
-        android:title="@string/mp3cutter"/>
+    <item android:title="@string/menu_extensions">
+    <menu>
+        <item
+            android:id="@+id/menu_dashclock"
+            android:showAsAction="never"
+            android:title="@string/dashclock"/>
+        <item
+            android:id="@+id/menu_mp3cutter"
+            android:showAsAction="never"
+            android:title="@string/mp3cutter"/>
+    </menu>
+    </item>
 </menu>

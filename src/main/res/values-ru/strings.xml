@@ -82,4 +82,5 @@
     </string-array>
     <string name="alarm_alert_reschedule_text">Перенести</string>
     <string name = "alarm_alert_hold_the_button_text">Удерживайте кнопку!</string>
+    <string name="menu_extensions">"Дополнения"</string>
 </resources>
