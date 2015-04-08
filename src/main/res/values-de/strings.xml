@@ -33,12 +33,12 @@
     <string name="main_alarm">Wecker</string>
     <string name="master_volume">Gesamtlautstärke</string>
     <string name="share">Teilen</string>
-    <string name="bugreport">Bugreport schicken</string>
+    <string name="bugreport">Fehlerbericht senden</string>
     <string name="review">Bewerten</string>
     <string name="bugreport_hint">Bitte beschreiben Sie das Problem</string>
     <string name="review_message">Vielen Dank! Positive Bewertungen bringen mehr Benutzer. Es ist für uns wichtig um Qualität zu verbessern. Möchten Sie fortfahren?</string>
-    <string name="longclick_dismiss_title">Longclick "Ausschalten"</string>
-    <string name="longclick_dismiss_summary">Longclick "Ausschalten" der Wecker zu ausschalten</string>
+    <string name="longclick_dismiss_title">Lange drücken zum Ausschalten</string>
+    <string name="longclick_dismiss_summary">Lange drücken, um den Wecker auszuschalten</string>
     <string name="fade_in_time_sec_title">Fade-in Dauer</string>
     <string-array name="fade_in_time_sec_entries">
         <item>10 Sekunden</item>
@@ -58,8 +58,8 @@
     <item msgid="9115697840826129603">"<xliff:g id="HOURS">%2$s</xliff:g> und <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
     <item msgid="2332583385137381060">"<xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> und <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
     </string-array>
-    <string name="show_info_fragment_title">Zeit bis nächsten Signal</string>
-    <string name="show_info_fragment_summary">Zeigen Zeit bis nächsten Signal in der Liste unten</string>
+    <string name="show_info_fragment_title">Zeit bis zum nächsten Alarm</string>
+    <string name="show_info_fragment_summary">Zeit bis zum nächsten Alarm unter der Liste der Wecker anzeigen</string>
     <string name="dashclock">DashClock herunterladen</string>
     <string name="dashclock_message">Herunterladen DashClock von Google Play. Dashclock ist ein Widget, der funktioniert sehr gut zusammen mit dem Einfacher Wecker!</string>
     <string name="mp3cutter">MP3 cutter herunterladen</string>
