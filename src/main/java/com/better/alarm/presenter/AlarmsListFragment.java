@@ -199,10 +199,9 @@ public class AlarmsListFragment extends ListFragment {
         }
 
         case R.id.edit_alarm: {
-            // Intent intent = new Intent(getActivity(),
-            // AlarmDetailsActivity.class);
-            // intent.putExtra(Intents.EXTRA_ID, alarm.getId());
-            // startActivity(intent);
+            if (showDetailsStrategy != null) {
+                showDetailsStrategy.showDetails(alarm);
+            }
             return true;
         }
 
