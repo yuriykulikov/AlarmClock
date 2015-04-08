@@ -124,6 +124,12 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
         PendingIntent pendingDismiss = PresentationToModelIntents.createPendingIntent(mContext,
                 PresentationToModelIntents.ACTION_REQUEST_DISMISS, id);
 
+        // When button Reschedule is clicked, the TransparentActivity with
+        // TimePickerFragment to set new alarm time is launched
+        Intent reschedule = new Intent(mContext, TransparentActivity.class);
+        reschedule.putExtra(Intents.EXTRA_ID, id);
+        PendingIntent pendingReschedule = PendingIntent.getActivity(mContext, id, reschedule, 0);
+
         //@formatter:off
         Notification status = new NotificationCompat.Builder(mContext)
                 .setContentTitle(alarm.getLabelOrDefault(mContext))
@@ -137,6 +143,7 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
                 .setContentIntent(pendingNotify)
                 .setOngoing(true)
                 .addAction(R.drawable.ic_action_snooze, mContext.getString(R.string.alarm_alert_snooze_text), pendingSnooze)
+                .addAction(R.drawable.ic_action_reschedule_snooze, mContext.getString(R.string.alarm_alert_reschedule_text), pendingReschedule)
                 .addAction(R.drawable.ic_action_dismiss, mContext.getString(R.string.alarm_alert_dismiss_text), pendingDismiss)
                 .setDefaults(Notification.DEFAULT_LIGHTS)
                 .build();

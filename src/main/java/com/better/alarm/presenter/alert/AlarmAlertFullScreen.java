@@ -43,9 +43,12 @@ import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.presenter.DynamicThemeHandler;
 import com.better.alarm.presenter.SettingsActivity;
+import com.better.alarm.presenter.TimePickerDialogFragment;
 import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialogHandler;
 import com.better.alarm.presenter.TimePickerDialogFragment.OnAlarmTimePickerCanceledListener;
 import com.github.androidutils.logger.Logger;
+
+import java.util.logging.Handler;
 
 /**
  * Alarm Clock alarm alert: pops visible indicator and plays alarm tone. This
@@ -182,6 +185,24 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
             @Override
             public void onClick(View v) {
                 snoozeIfEnabledInSettings();
+            }
+        });
+
+        snooze.setOnLongClickListener(new Button.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (isSnoozeEnabled()) {
+                    TimePickerDialogFragment.showTimePicker(getFragmentManager());
+                    AlarmAlertFullScreen.this.sendBroadcast(new Intent(Intents.ACTION_MUTE));
+                    new android.os.Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            //TODO think about removing this or whatevar
+                            AlarmAlertFullScreen.this.sendBroadcast(new Intent(Intents.ACTION_DEMUTE));
+                        }
+                    }, 10000);
+                }
+                return true;
             }
         });
 
