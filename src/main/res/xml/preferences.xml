@@ -18,94 +18,92 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res/com.better.alarm"
     android:title="@string/settings">
-
-    <CheckBoxPreference
-        android:key="alarm_in_silent_mode"
-        android:title="@string/alarm_in_silent_mode_title"
-        android:defaultValue="true"
-        android:summary="@string/alarm_in_silent_mode_summary" />
     
-    <CheckBoxPreference
-        android:key="vibrate"
-        android:title="@string/alarm_vibrate"
-        android:defaultValue="true" />
-
-    <com.better.alarm.view.VolumePreference
-        android:title="@string/alarm_volume_title"
-        android:summary="@string/alarm_volume_summary"
-        android:dialogTitle="@string/alarm_volume_title"
-        android:persistent="false"
-        custom:cancelButton="false"
-        android:streamType="alarm" />
-
-    <ListPreference
-        android:key="prealarm_duration"
-        android:title="@string/prealarm_duration_title"
-        android:entries="@array/prealarm_duration_entries"
-        android:entryValues="@array/prealarm_duration_values"
-        android:defaultValue="30"
-        android:dialogTitle="@string/prealarm_duration_title" />
-
-        
-    <ListPreference
-        android:key="fade_in_time_sec"
-        android:title="@string/fade_in_time_sec_title"
-        android:entries="@array/fade_in_time_sec_entries"
-        android:entryValues="@array/fade_in_time_sec_values"
-        android:defaultValue="30"
-        android:dialogTitle="@string/fade_in_time_sec_title" />
-
-    <ListPreference
-        android:key="snooze_duration"
-        android:title="@string/snooze_duration_title"
-        android:entries="@array/snooze_duration_with_off_entries"
-        android:entryValues="@array/snooze_duration_with_off_values"
-        android:defaultValue="10"
-        android:dialogTitle="@string/snooze_duration_title" />
-
-    <ListPreference
-        android:key="auto_silence"
-        android:title="@string/auto_silence_title"
-        android:entries="@array/auto_silence_entries"
-        android:entryValues="@array/auto_silence_values"
-        android:defaultValue="10"
-        android:dialogTitle="@string/auto_silence_title" />
-
-    <ListPreference
-        android:key="volume_button_setting"
-        android:title="@string/volume_button_setting_title"
-        android:dialogTitle="@string/volume_button_dialog_title"
-        android:entries="@array/volume_button_setting_entries"
-        android:entryValues="@array/volume_button_setting_values"
-        android:summary="@string/volume_button_setting_summary"
-        android:defaultValue="0" />
-
-    <com.better.alarm.view.AlarmPreference
-        android:key="default_ringtone"
-        android:title="@string/default_ringtone_setting_title"
-        android:ringtoneType="alarm"
-        android:showDefault="false"
-        android:persistent="false"
-        android:showSilent="true" />
+        <com.better.alarm.view.VolumePreference
+            android:title="@string/alarm_volume_title"
+            android:summary="@string/alarm_volume_summary"
+            android:dialogTitle="@string/alarm_volume_title"
+            android:persistent="false"
+            custom:cancelButton="false"
+            android:streamType="alarm" />
 
         <CheckBoxPreference
-        android:key="longclick_dismiss_key"
-        android:defaultValue="true"
-        android:title="@string/longclick_dismiss_title"
-        android:summary="@string/longclick_dismiss_summary" />
-        
-    <CheckBoxPreference
-        android:key="show_info_fragment"
-        android:defaultValue="true"
-        android:title="@string/show_info_fragment_title"
-        android:summary="@string/show_info_fragment_summary" />
+            android:key="alarm_in_silent_mode"
+            android:title="@string/alarm_in_silent_mode_title"
+            android:defaultValue="true"
+            android:summary="@string/alarm_in_silent_mode_summary" />
 
-    <ListPreference
-        android:key="theme"
-        android:title="@string/theme_title"
-        android:entries="@array/themes_entries"
-        android:entryValues="@array/themes_values"
-        android:defaultValue="light"
-        android:dialogTitle="@string/theme_title" />
+        <CheckBoxPreference
+            android:key="vibrate"
+            android:title="@string/alarm_vibrate"
+            android:defaultValue="true" />
 
+        <com.better.alarm.view.AlarmPreference
+            android:key="default_ringtone"
+            android:title="@string/default_ringtone_setting_title"
+            android:ringtoneType="alarm"
+            android:showDefault="false"
+            android:persistent="false"
+            android:showSilent="true" />
+
+        <ListPreference
+            android:key="theme"
+            android:title="@string/theme_title"
+            android:entries="@array/themes_entries"
+            android:entryValues="@array/themes_values"
+            android:defaultValue="light"
+            android:dialogTitle="@string/theme_title" />
+
+        <ListPreference
+            android:key="volume_button_setting"
+            android:title="@string/volume_button_setting_title"
+            android:dialogTitle="@string/volume_button_dialog_title"
+            android:entries="@array/volume_button_setting_entries"
+            android:entryValues="@array/volume_button_setting_values"
+            android:summary="@string/volume_button_setting_summary"
+            android:defaultValue="0" />
+
+        <CheckBoxPreference
+            android:key="longclick_dismiss_key"
+            android:defaultValue="true"
+            android:title="@string/longclick_dismiss_title"
+            android:summary="@string/longclick_dismiss_summary" />
+
+        <CheckBoxPreference
+            android:key="show_info_fragment"
+            android:defaultValue="true"
+            android:title="@string/show_info_fragment_title"
+            android:summary="@string/show_info_fragment_summary" />
+
+        <ListPreference
+            android:key="prealarm_duration"
+            android:title="@string/prealarm_duration_title"
+            android:entries="@array/prealarm_duration_entries"
+            android:entryValues="@array/prealarm_duration_values"
+            android:defaultValue="30"
+            android:dialogTitle="@string/prealarm_duration_title" />
+
+        <ListPreference
+            android:key="fade_in_time_sec"
+            android:title="@string/fade_in_time_sec_title"
+            android:entries="@array/fade_in_time_sec_entries"
+            android:entryValues="@array/fade_in_time_sec_values"
+            android:defaultValue="30"
+            android:dialogTitle="@string/fade_in_time_sec_title" />
+
+        <ListPreference
+            android:key="snooze_duration"
+            android:title="@string/snooze_duration_title"
+            android:entries="@array/snooze_duration_with_off_entries"
+            android:entryValues="@array/snooze_duration_with_off_values"
+            android:defaultValue="10"
+            android:dialogTitle="@string/snooze_duration_title" />
+
+        <ListPreference
+            android:key="auto_silence"
+            android:title="@string/auto_silence_title"
+            android:entries="@array/auto_silence_entries"
+            android:entryValues="@array/auto_silence_values"
+            android:defaultValue="10"
+            android:dialogTitle="@string/auto_silence_title" />
 </PreferenceScreen>
