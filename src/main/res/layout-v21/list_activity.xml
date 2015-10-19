@@ -32,14 +32,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout="@layout/list_fragment"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/frameLayout" />
 
     <FrameLayout
         android:elevation="15dp"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:background="?android:attr/colorBackground"
-        android:layout_height="?android:attr/actionBarSize">
+        android:layout_height="?android:attr/actionBarSize"
+        android:id="@+id/frameLayout">
         <fragment
             android:id="@+id/list_activity_info_fragment"
             android:name="com.better.alarm.presenter.InfoFragment"
