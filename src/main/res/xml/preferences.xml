@@ -16,7 +16,6 @@
 
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res/com.better.alarm"
     android:title="@string/settings">
     
         <com.better.alarm.view.VolumePreference
@@ -24,7 +23,6 @@
             android:summary="@string/alarm_volume_summary"
             android:dialogTitle="@string/alarm_volume_title"
             android:persistent="false"
-            custom:cancelButton="false"
             android:streamType="alarm" />
 
         <CheckBoxPreference

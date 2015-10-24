@@ -34,11 +34,12 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
 
+import com.better.alarm.BuildConfig;
 import com.better.alarm.model.interfaces.Intents;
 import com.github.androidutils.logger.Logger;
 
 public class AlarmsScheduler implements IAlarmsScheduler {
-    static final String ACTION_FIRED = "com.better.alarm.ACTION_FIRED";
+    static final String ACTION_FIRED = BuildConfig.APPLICATION_ID + ".ACTION_FIRED";
     static final String EXTRA_ID = "intent.extra.alarm";
     static final String EXTRA_TYPE = "intent.extra.type";
 

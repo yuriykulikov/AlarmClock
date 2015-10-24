@@ -27,6 +27,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import com.better.alarm.BuildConfig;
 import com.github.androidutils.logger.LogcatLogWriter;
 import com.github.androidutils.logger.Logger;
 
@@ -40,8 +41,8 @@ public class AlarmProvider extends ContentProvider {
     private static final UriMatcher sURLMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
-        sURLMatcher.addURI("com.better.alarm.model", "alarm", ALARMS);
-        sURLMatcher.addURI("com.better.alarm.model", "alarm/#", ALARMS_ID);
+        sURLMatcher.addURI(BuildConfig.APPLICATION_ID + ".model", "alarm", ALARMS);
+        sURLMatcher.addURI(BuildConfig.APPLICATION_ID + ".model", "alarm/#", ALARMS_ID);
     }
 
     public AlarmProvider() {

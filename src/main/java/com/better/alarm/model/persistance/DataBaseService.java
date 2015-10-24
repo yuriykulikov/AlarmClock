@@ -7,12 +7,12 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 
+import com.better.alarm.BuildConfig;
 import com.better.alarm.model.interfaces.Intents;
 import com.github.androidutils.wakelock.WakeLockManager;
 
 public class DataBaseService extends IntentService {
-
-    public static final String SAVE_ALARM_ACTION = "com.better.alarm.ACTION_SAVE_ALARM";
+    public static final String SAVE_ALARM_ACTION = BuildConfig.APPLICATION_ID + ".ACTION_SAVE_ALARM";
 
     ContentResolver mContentResolver;
 

@@ -11,6 +11,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import com.better.alarm.BuildConfig;
 import com.better.alarm.model.DaysOfWeek;
 import com.better.alarm.model.IAlarmContainer;
 import com.better.alarm.model.interfaces.Intents;
@@ -31,7 +32,7 @@ public class AlarmContainer implements IAlarmContainer {
         /**
          * The content:// style URL for this table
          */
-        public static final Uri CONTENT_URI = Uri.parse("content://com.better.alarm.model/alarm");
+        public static final Uri CONTENT_URI = Uri.parse("content://" + BuildConfig.APPLICATION_ID + ".model/alarm");
 
         /**
          * Hour in 24-hour localtime 0 - 23.

@@ -19,6 +19,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+
+    productFlavors {
+        develop {
+            applicationId "com.better.alarm"
+        }
+        premium {
+            applicationId "com.premium.alarm"
+        }
+    }
 }
 
 dependencies {
