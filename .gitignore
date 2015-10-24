@@ -5,3 +5,9 @@
 .DS_Store
 /build
 *.iml
+.idea/
+*.apk
+gradle/
+gradlew
+gradlew.bat
+
