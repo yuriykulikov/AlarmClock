@@ -117,7 +117,8 @@ public class AlarmsScheduler implements IAlarmsScheduler {
 
     private ISetAlarmStrategy initSetStrategyForVersion() {
         log.d("SDK is " + android.os.Build.VERSION.SDK_INT);
-        if (android.os.Build.VERSION.SDK_INT >= 19) return new KitKatSetter();
+        if (android.os.Build.VERSION.SDK_INT >= 23) return new MarshmallowSetter();
+        else if (android.os.Build.VERSION.SDK_INT >= 19) return new KitKatSetter();
         else return new IceCreamSetter();
     }
 
@@ -278,6 +279,20 @@ public class AlarmsScheduler implements IAlarmsScheduler {
         @Override
         public void setRTCAlarm(ScheduledAlarm alarm, PendingIntent sender) {
             am.setExact(AlarmManager.RTC_WAKEUP, alarm.calendar.getTimeInMillis(), sender);
+        }
+    }
+
+    @TargetApi(23)
+    private final class MarshmallowSetter implements ISetAlarmStrategy {
+        @Override
+        public void setRTCAlarm(ScheduledAlarm alarm, PendingIntent sender) {
+            try {
+                am.getClass()
+                        .getMethod("setExactAndAllowWhileIdle", int.class, long.class, PendingIntent.class)
+                        .invoke(am, AlarmManager.RTC_WAKEUP, alarm.calendar.getTimeInMillis(), sender);
+            } catch (ReflectiveOperationException e) {
+                am.setExact(AlarmManager.RTC_WAKEUP, alarm.calendar.getTimeInMillis(), sender);
+            }
         }
     }
 }
