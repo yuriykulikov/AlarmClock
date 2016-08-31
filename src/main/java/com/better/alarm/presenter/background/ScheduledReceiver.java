@@ -45,8 +45,11 @@ public class ScheduledReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Logger.getDefaultLogger().d(intent.toString());
-        doForPreLollipop(context, intent);
-        doForLollipop(context, intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            doForLollipop(context, intent);
+        } else {
+            doForPreLollipop(context, intent);
+        }
     }
 
     private void doForPreLollipop(Context context, Intent intent) {
@@ -78,22 +81,20 @@ public class ScheduledReceiver extends BroadcastReceiver {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void doForLollipop(Context context, Intent intent) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            if (intent.getAction().equals(Intents.ACTION_ALARM_SCHEDULED)) {
-                int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
+        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        if (intent.getAction().equals(Intents.ACTION_ALARM_SCHEDULED)) {
+            int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
 
-                Intent showList = new Intent(context, AlarmsListActivity.class);
-                showList.putExtra(Intents.EXTRA_ID, id);
-                PendingIntent showIntent = PendingIntent.getActivity(context, id, showList, 0);
+            Intent showList = new Intent(context, AlarmsListActivity.class);
+            showList.putExtra(Intents.EXTRA_ID, id);
+            PendingIntent showIntent = PendingIntent.getActivity(context, id, showList, 0);
 
-                long milliseconds = intent.getLongExtra(Intents.EXTRA_NEXT_NORMAL_TIME_IN_MILLIS, -1);
-                am.setAlarmClock(new AlarmClockInfo(milliseconds, showIntent),
-                        PendingIntent.getBroadcast(context, 0, FAKE_INTENT_JUST_TO_DISPLAY_IN_ICON, 0));
+            long milliseconds = intent.getLongExtra(Intents.EXTRA_NEXT_NORMAL_TIME_IN_MILLIS, -1);
+            am.setAlarmClock(new AlarmClockInfo(milliseconds, showIntent),
+                    PendingIntent.getBroadcast(context, 0, FAKE_INTENT_JUST_TO_DISPLAY_IN_ICON, 0));
 
-            } else if (intent.getAction().equals(Intents.ACTION_ALARMS_UNSCHEDULED)) {
-                am.cancel(PendingIntent.getBroadcast(context, 0, FAKE_INTENT_JUST_TO_DISPLAY_IN_ICON, 0));
-            }
+        } else if (intent.getAction().equals(Intents.ACTION_ALARMS_UNSCHEDULED)) {
+            am.cancel(PendingIntent.getBroadcast(context, 0, FAKE_INTENT_JUST_TO_DISPLAY_IN_ICON, 0));
         }
     }
 }
