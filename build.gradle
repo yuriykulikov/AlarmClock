@@ -1,3 +1,11 @@
+buildscript {
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    classpath 'com.android.tools.build:gradle:2.2.3'
+  }
+}
 apply plugin: 'com.android.application'
 
 android {
@@ -29,9 +37,11 @@ android {
         }
     }
 }
+repositories {
+    jcenter()
+}
 
 dependencies {
-    compile project(':androidUtils')
     compile 'com.android.support:support-v4:21.0.3'
     compile 'com.google.guava:guava:15.0'
     compile 'ch.acra:acra:4.6.1'
