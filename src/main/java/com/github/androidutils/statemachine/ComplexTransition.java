@@ -1,7 +1,5 @@
 package com.github.androidutils.statemachine;
 
-import android.os.Message;
-
 public abstract class ComplexTransition extends State {
     abstract public void performComplexTransition();
 

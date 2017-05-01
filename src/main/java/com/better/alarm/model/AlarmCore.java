@@ -28,8 +28,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
-import android.os.Looper;
-import android.os.Message;
 import android.preference.PreferenceManager;
 
 import com.better.alarm.R;
@@ -39,9 +37,10 @@ import com.better.alarm.model.interfaces.AlarmEditor.AlarmChangeData;
 import com.better.alarm.model.interfaces.Intents;
 import com.github.androidutils.logger.Logger;
 import com.github.androidutils.statemachine.ComplexTransition;
-import com.github.androidutils.statemachine.IMessageWhatToStringConverter;
+import com.github.androidutils.statemachine.HandlerFactory;
 import com.github.androidutils.statemachine.IOnStateChangedListener;
 import com.github.androidutils.statemachine.IState;
+import com.github.androidutils.statemachine.Message;
 import com.github.androidutils.statemachine.State;
 import com.github.androidutils.statemachine.StateMachine;
 
@@ -132,7 +131,7 @@ public final class AlarmCore implements Alarm {
     private final DateFormat df;
 
     public AlarmCore(IAlarmContainer container, Context context, Logger logger, IAlarmsScheduler alarmsScheduler,
-            IStateNotifier broadcaster) {
+                     IStateNotifier broadcaster, HandlerFactory handlerFactory) {
         mContext = context;
         this.log = logger;
         mAlarmsScheduler = alarmsScheduler;
@@ -143,7 +142,7 @@ public final class AlarmCore implements Alarm {
         PreferenceManager.getDefaultSharedPreferences(mContext).registerOnSharedPreferenceChangeListener(
                 mOnSharedPreferenceChangeListener);
 
-        stateMachine = new AlarmStateMachine(container.getState(), "Alarm " + container.getId());
+        stateMachine = new AlarmStateMachine(container.getState(), "Alarm " + container.getId(), handlerFactory);
         // we always resume SM. This means that initial state will not receive
         // enter(), only resume()
         stateMachine.resume();
@@ -195,8 +194,8 @@ public final class AlarmCore implements Alarm {
         public final PreAlarmSnoozedState preAlarmSnoozed;
         public final FiredState fired;
 
-        public AlarmStateMachine(String initialState, String name) {
-            super(name, Looper.getMainLooper(), log);
+        public AlarmStateMachine(String initialState, String name, HandlerFactory handlerFactory) {
+            super(name, handlerFactory, log);
             disabledState = new DisabledState();
             enabledState = new EnabledState();
             rescheduleTransition = new RescheduleTransition();
@@ -218,39 +217,6 @@ public final class AlarmCore implements Alarm {
             addState(preAlarmFired, enabledState);
             addState(fired, enabledState);
             addState(preAlarmSnoozed, enabledState);
-
-            setDbg(true);
-            setMessageWhatToStringConverter(new IMessageWhatToStringConverter() {
-                @Override
-                public String messageWhatToString(int what) {
-                    switch (what) {
-                    case ENABLE:
-                        return "ENABLE";
-                    case DISABLE:
-                        return "DISABLE";
-                    case SNOOZE:
-                        return "SNOOZE";
-                    case DISMISS:
-                        return "DISMISS";
-                    case CHANGE:
-                        return "CHANGE";
-                    case FIRED:
-                        return "FIRED";
-                    case PREALARM_DURATION_CHANGED:
-                        return "PREALARM_DURATION_CHANGED";
-                    case PREALARM_TIMED_OUT:
-                        return "PREALARM_TIMED_OUT";
-                    case REFRESH:
-                        return "REFRESH";
-                    case DELETE:
-                        return "DELETE";
-                    case TIME_SET:
-                        return "TIME_SET";
-                    default:
-                        return "UNKNOWN";
-                    }
-                }
-            });
 
             addOnStateChangedListener(new IOnStateChangedListener() {
                 @Override
@@ -392,7 +358,7 @@ public final class AlarmCore implements Alarm {
         private class SetState extends AlarmState {
             @Override
             public void enter() {
-                int what = getCurrentMessage().what;
+                int what = getCurrentMessage().what();
                 if (what == DISMISS || what == SNOOZE || what == CHANGE) {
                     broadcastAlarmSetWithNormalTime(calculateNextTime().getTimeInMillis());
                 }
@@ -467,10 +433,11 @@ public final class AlarmCore implements Alarm {
                 Calendar nextTime;
                 Calendar now = Calendar.getInstance();
                 Message reason = getCurrentMessage();
-                if (reason.obj != null) {
+                if (reason.obj().isPresent()) {
                     Calendar customTime = Calendar.getInstance();
-                    customTime.set(Calendar.HOUR_OF_DAY, reason.arg1);
-                    customTime.set(Calendar.MINUTE, reason.arg2);
+                    //TODO pass an object, dont misuse these poor args
+                    customTime.set(Calendar.HOUR_OF_DAY, reason.arg1().get());
+                    customTime.set(Calendar.MINUTE, reason.arg2().get());
                     if (customTime.after(now)) {
                         nextTime = customTime;
                     } else {
@@ -519,7 +486,7 @@ public final class AlarmCore implements Alarm {
 
             @Override
             public void enter() {
-                int what = getCurrentMessage().what;
+                int what = getCurrentMessage().what();
                 if (what == DISMISS || what == SNOOZE || what == CHANGE) {
                     broadcastAlarmSetWithNormalTime(calculateNextTime().getTimeInMillis());
                 }
@@ -599,10 +566,10 @@ public final class AlarmCore implements Alarm {
                 Calendar nextTime;
                 Calendar now = Calendar.getInstance();
                 Message reason = getCurrentMessage();
-                if (reason.obj != null) {
+                if (reason.obj().isPresent()) {
                     Calendar customTime = Calendar.getInstance();
-                    customTime.set(Calendar.HOUR_OF_DAY, reason.arg1);
-                    customTime.set(Calendar.MINUTE, reason.arg2);
+                    customTime.set(Calendar.HOUR_OF_DAY, reason.arg1().get());
+                    customTime.set(Calendar.MINUTE, reason.arg2().get());
                     if (customTime.after(now)) {
                         nextTime = customTime;
                     } else {
@@ -706,7 +673,7 @@ public final class AlarmCore implements Alarm {
         }
 
         private boolean alarmWillBeRescheduled(Message reason) {
-            boolean alarmWillBeRescheduled = reason.what == CHANGE && ((AlarmChangeData) reason.obj).enabled;
+            boolean alarmWillBeRescheduled = reason.what() == CHANGE && ((AlarmChangeData) reason.obj().get()).enabled;
             return alarmWillBeRescheduled;
         }
 
@@ -716,7 +683,7 @@ public final class AlarmCore implements Alarm {
             @Override
             public final boolean processMessage(Message msg) {
                 handled = true;
-                switch (msg.what) {
+                switch (msg.what()) {
                 case ENABLE:
                     onEnable();
                     break;
@@ -730,7 +697,7 @@ public final class AlarmCore implements Alarm {
                     onDismiss();
                     break;
                 case CHANGE:
-                    onChange((AlarmChangeData) msg.obj);
+                    onChange((AlarmChangeData) msg.obj().get());
                     break;
                 case FIRED:
                     onFired();
@@ -751,7 +718,7 @@ public final class AlarmCore implements Alarm {
                     onDelete();
                     break;
                 default:
-                    throw new RuntimeException("Handling of message code " + msg.what + " is not implemented");
+                    throw new RuntimeException("Handling of message code " + msg.what() + " is not implemented");
                 }
                 return handled;
             }
@@ -819,10 +786,9 @@ public final class AlarmCore implements Alarm {
     }
 
     public void change(AlarmChangeData data) {
-        Message msg = stateMachine.obtainMessage();
-        msg.what = AlarmStateMachine.CHANGE;
-        msg.obj = data;
-        msg.sendToTarget();
+        stateMachine.obtainMessage(AlarmStateMachine.CHANGE)
+                .withObj(data)
+                .send();
     }
 
     @Override
@@ -837,11 +803,12 @@ public final class AlarmCore implements Alarm {
 
     @Override
     public void snooze(int hourOfDay, int minute) {
-        Message msg = stateMachine.obtainMessage(AlarmStateMachine.SNOOZE);
-        msg.arg1 = hourOfDay;
-        msg.arg2 = minute;
-        msg.obj = new Object();
-        msg.sendToTarget();
+        stateMachine.obtainMessage(AlarmStateMachine.SNOOZE)
+                .withArg1(hourOfDay)
+                .withArg2(minute)
+                //This is a marker, sick stuff
+                .withObj(new Object())
+                .send();
     }
 
     @Override

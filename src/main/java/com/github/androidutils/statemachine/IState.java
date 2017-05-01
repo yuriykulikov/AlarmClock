@@ -16,8 +16,6 @@
 
 package com.github.androidutils.statemachine;
 
-import android.os.Message;
-
 /**
  * {@hide}
  * 

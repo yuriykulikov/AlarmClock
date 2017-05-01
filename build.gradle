@@ -4,9 +4,12 @@ buildscript {
   }
   dependencies {
     classpath 'com.android.tools.build:gradle:2.3.1'
+    // add dependency to plugin
+    classpath "com.neenbedankt.gradle.plugins:android-apt:1.6"
   }
 }
 apply plugin: 'com.android.application'
+apply plugin: "android-apt"
 
 android {
     compileSdkVersion 21
@@ -48,4 +51,6 @@ dependencies {
     compile 'com.melnykov:floatingactionbutton:1.2.0'
     androidTestCompile 'com.android.support:support-v4:21.0.3'
     androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.2.1'
+    apt "org.immutables:value:2.4.3" // <-- for annotation processor
+    provided "org.immutables:value:2.4.3" // <-- for annotation API
 }
