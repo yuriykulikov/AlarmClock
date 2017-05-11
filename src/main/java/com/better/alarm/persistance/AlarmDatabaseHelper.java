@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.better.alarm.model.persistance;
+package com.better.alarm.persistance;
 
 import android.content.ContentUris;
 import android.content.ContentValues;

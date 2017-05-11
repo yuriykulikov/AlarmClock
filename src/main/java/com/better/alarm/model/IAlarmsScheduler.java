@@ -25,9 +25,9 @@ public interface IAlarmsScheduler {
      * Set all from a map.
      * 
      * @param id
-     * @param activeCalendars
      */
-    public void setAlarm(int id, CalendarType calendarType, Calendar calendar);
+    public void setAlarm(int id, CalendarType calendarType, Calendar calendar, AlarmValue alarmValue);
 
+    @Deprecated
     public void onAlarmFired(int id);
 }

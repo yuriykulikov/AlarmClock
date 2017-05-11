@@ -27,10 +27,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
-import com.better.alarm.model.AlarmsManager;
+import com.better.alarm.model.AlarmValue;
 import com.better.alarm.model.interfaces.Alarm;
-import com.better.alarm.model.interfaces.AlarmNotFoundException;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.presenter.AlarmsListFragment.ShowDetailsStrategy;
 import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialogHandler;
@@ -137,7 +137,7 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
 
     private final ShowDetailsStrategy showDetailsInActivityFragment = new ShowDetailsStrategy() {
         @Override
-        public void showDetails(Alarm alarm) {
+        public void showDetails(AlarmValue alarm) {
             Intent intent = new Intent(AlarmsListActivity.this, AlarmDetailsActivity.class);
             if (alarm != null) {
                 intent.putExtra(Intents.EXTRA_ID, alarm.getId());
@@ -149,8 +149,8 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
 
     private Alarm timePickerAlarm;
 
-    public void showTimePicker(Alarm alarm) {
-        timePickerAlarm = alarm;
+    public void showTimePicker(AlarmValue alarm) {
+        timePickerAlarm = AlarmApplication.alarms().getAlarm(alarm.getId());
         TimePickerDialogFragment.showTimePicker(getFragmentManager());
     }
 
@@ -159,7 +159,7 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
         timePickerAlarm.edit().setEnabled(true).setHour(hourOfDay).setMinutes(minute).commit();
         // this must be invoked synchronously on the Pickers's OK button onClick
         // otherwise fragment is closed too soon and the time is not updated
-        alarmsListFragment.updateAlarmsList();
+        //alarmsListFragment.updateAlarmsList();
     }
 
     @Override
@@ -198,10 +198,10 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         try {
-            timePickerAlarm = AlarmsManager.getAlarmsManager().getAlarm(
+            timePickerAlarm = AlarmApplication.alarms().getAlarm(
                     savedInstanceState.getInt("timePickerAlarm", -1));
             Logger.getDefaultLogger().d("restored " + timePickerAlarm.toString());
-        } catch (AlarmNotFoundException e) {
+        } catch (Exception e) {
             Logger.getDefaultLogger().d("no timePickerAlarm was restored");
         }
     }

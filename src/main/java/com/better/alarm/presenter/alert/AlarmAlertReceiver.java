@@ -30,10 +30,9 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
 
+import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
-import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.interfaces.Alarm;
-import com.better.alarm.model.interfaces.AlarmNotFoundException;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.model.interfaces.PresentationToModelIntents;
@@ -58,7 +57,7 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, final Intent intent) {
         mContext = context;
-        alarmsManager = AlarmsManager.getAlarmsManager();
+        alarmsManager = AlarmApplication.alarms();
         nm = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         String action = intent.getAction();
         int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
@@ -90,7 +89,7 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
             } else if (action.equals(ACTION_CANCEL_NOTIFICATION)) {
                 alarmsManager.dismiss(alarm);
             }
-        } catch (AlarmNotFoundException e) {
+        } catch (Exception e) {
             Logger.getDefaultLogger().d("Alarm not found");
             nm.cancel(id);
             nm.cancel(id + NOTIFICATION_OFFSET);
@@ -132,7 +131,7 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
 
         //@formatter:off
         Notification status = new NotificationCompat.Builder(mContext)
-                .setContentTitle(alarm.getLabelOrDefault(mContext))
+                .setContentTitle(alarm.getLabelOrDefault())
                 .setContentText(mContext.getString(R.string.alarm_notify_text))
                 .setSmallIcon(R.drawable.stat_notify_alarm)
                 // setFullScreenIntent to show the user AlarmAlert dialog at the same time 
@@ -171,7 +170,7 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
         PendingIntent pendingDismiss = PresentationToModelIntents.createPendingIntent(mContext,
                 PresentationToModelIntents.ACTION_REQUEST_DISMISS, id);
 
-        String label = alarm.getLabelOrDefault(mContext);
+        String label = alarm.getLabelOrDefault();
 
         //@formatter:off
         Notification status = new NotificationCompat.Builder(mContext)
@@ -206,7 +205,7 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
         PendingIntent intent = PendingIntent.getBroadcast(mContext, id, dismissAlarm, 0);
         // Update the notification to indicate that the alert has been
         // silenced.
-        String label = alarm.getLabelOrDefault(mContext);
+        String label = alarm.getLabelOrDefault();
         int autoSilenceMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext).getString(
                 "auto_silence", "10"));
         String text = mContext.getString(R.string.alarm_alert_alert_silenced, autoSilenceMinutes);

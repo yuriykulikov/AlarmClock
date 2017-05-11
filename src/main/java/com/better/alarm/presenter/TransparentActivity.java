@@ -4,9 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.better.alarm.model.AlarmsManager;
+import com.better.alarm.AlarmApplication;
 import com.better.alarm.model.interfaces.Alarm;
-import com.better.alarm.model.interfaces.AlarmNotFoundException;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialogHandler;
@@ -23,7 +22,7 @@ public class TransparentActivity extends Activity implements AlarmTimePickerDial
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        alarmsManager = AlarmsManager.getAlarmsManager();
+        alarmsManager = AlarmApplication.alarms();
         log = Logger.getDefaultLogger();
         Intent intent = getIntent();
         log.d("Intent in TransparentActivity was received");
@@ -31,7 +30,7 @@ public class TransparentActivity extends Activity implements AlarmTimePickerDial
         try {
             alarm = alarmsManager.getAlarm(id);
             log.d("Alarm, that has to be rescheduled:" + alarm.toString());
-        } catch (AlarmNotFoundException e) {
+        } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

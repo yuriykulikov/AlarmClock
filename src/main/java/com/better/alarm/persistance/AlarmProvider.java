@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.better.alarm.model.persistance;
+package com.better.alarm.persistance;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -51,7 +51,7 @@ public class AlarmProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         log = new Logger();
-        log.addLogWriter(LogcatLogWriter.getInstance());
+        //log.addLogWriter(LogcatLogWriter.getInstance());
         mOpenHelper = new AlarmDatabaseHelper(getContext(), log);
         return true;
     }

@@ -21,39 +21,49 @@ import android.app.AlarmManager;
 import android.app.AlarmManager.AlarmClockInfo;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.format.DateFormat;
+import android.util.Log;
 
+import com.better.alarm.Store;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.presenter.AlarmsListActivity;
 import com.github.androidutils.logger.Logger;
+import com.google.common.base.Optional;
+import com.google.inject.Inject;
+
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
 
 /**
- * This class reacts on {@link } and {@link } and
- * 
  * @author Yuriy
  * 
  */
-public class ScheduledReceiver extends BroadcastReceiver {
+public class ScheduledReceiver {
     private static final String DM12 = "E h:mm aa";
     private static final String DM24 = "E kk:mm";
     private static final Intent FAKE_INTENT_JUST_TO_DISPLAY_IN_ICON = new Intent("FAKE_ACTION_JUST_TO_DISPLAY_AN_ICON");
 
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        Logger.getDefaultLogger().d(intent.toString());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            doForLollipop(context, intent);
-        } else {
-            doForPreLollipop(context, intent);
-        }
+    @Inject
+    ScheduledReceiver(Store store, final Context context){
+        store.next().subscribe(new Consumer<Optional<Store.Next>>() {
+            @Override
+            public void accept(@NonNull Optional<Store.Next> nextOptional) throws Exception {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    doForLollipop(context, nextOptional);
+                } else {
+                    doForPreLollipop(context, nextOptional);
+                }
+            }
+        });
     }
 
-    private void doForPreLollipop(Context context, Intent intent) {
-        if (intent.getAction().equals(Intents.ACTION_ALARM_SCHEDULED)) {
+    private void doForPreLollipop(Context context, Optional<Store.Next> nextOptional) {
+        if (nextOptional.isPresent()) {
             // Broadcast intent for the notification bar
             Intent alarmChanged = new Intent("android.intent.action.ALARM_CHANGED");
             alarmChanged.putExtra("alarmSet", true);
@@ -64,11 +74,11 @@ public class ScheduledReceiver extends BroadcastReceiver {
             // will react accordingly
             String format = android.text.format.DateFormat.is24HourFormat(context) ? DM24 : DM12;
             Calendar calendar = Calendar.getInstance();
-            long milliseconds = intent.getLongExtra(Intents.EXTRA_NEXT_NORMAL_TIME_IN_MILLIS, -1);
+            long milliseconds = nextOptional.get().nextNonPrealarmTime();
             calendar.setTimeInMillis(milliseconds);
             String timeString = (String) DateFormat.format(format, calendar);
             Settings.System.putString(context.getContentResolver(), Settings.System.NEXT_ALARM_FORMATTED, timeString);
-        } else if (intent.getAction().equals(Intents.ACTION_ALARMS_UNSCHEDULED)) {
+        } else {
             // Broadcast intent for the notification bar
             Intent alarmChanged = new Intent("android.intent.action.ALARM_CHANGED");
             alarmChanged.putExtra("alarmSet", false);
@@ -80,20 +90,20 @@ public class ScheduledReceiver extends BroadcastReceiver {
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void doForLollipop(Context context, Intent intent) {
+    private void doForLollipop(Context context, Optional<Store.Next> nextOptional) {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        if (intent.getAction().equals(Intents.ACTION_ALARM_SCHEDULED)) {
-            int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
+        if (nextOptional.isPresent()) {
+            int id = nextOptional.get().alarm().getId();
 
             Intent showList = new Intent(context, AlarmsListActivity.class);
             showList.putExtra(Intents.EXTRA_ID, id);
             PendingIntent showIntent = PendingIntent.getActivity(context, id, showList, 0);
 
-            long milliseconds = intent.getLongExtra(Intents.EXTRA_NEXT_NORMAL_TIME_IN_MILLIS, -1);
+            long milliseconds = nextOptional.get().nextNonPrealarmTime();
             am.setAlarmClock(new AlarmClockInfo(milliseconds, showIntent),
                     PendingIntent.getBroadcast(context, 0, FAKE_INTENT_JUST_TO_DISPLAY_IN_ICON, 0));
 
-        } else if (intent.getAction().equals(Intents.ACTION_ALARMS_UNSCHEDULED)) {
+        } else {
             am.cancel(PendingIntent.getBroadcast(context, 0, FAKE_INTENT_JUST_TO_DISPLAY_IN_ICON, 0));
         }
     }

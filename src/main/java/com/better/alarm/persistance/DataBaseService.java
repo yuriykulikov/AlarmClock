@@ -1,4 +1,4 @@
-package com.better.alarm.model.persistance;
+package com.better.alarm.persistance;
 
 import android.app.IntentService;
 import android.content.ContentResolver;
@@ -7,13 +7,15 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 
+import com.better.alarm.AlarmApplication;
 import com.better.alarm.BuildConfig;
 import com.better.alarm.model.interfaces.Intents;
-import com.github.androidutils.wakelock.WakeLockManager;
+import com.google.inject.Inject;
 
 public class DataBaseService extends IntentService {
     public static final String SAVE_ALARM_ACTION = BuildConfig.APPLICATION_ID + ".ACTION_SAVE_ALARM";
 
+    @Inject
     ContentResolver mContentResolver;
 
     public DataBaseService() {
@@ -22,7 +24,7 @@ public class DataBaseService extends IntentService {
 
     @Override
     public void onCreate() {
-        mContentResolver = getContentResolver();
+        AlarmApplication.guice().injectMembers(this);
         super.onCreate();
     }
 
@@ -33,7 +35,7 @@ public class DataBaseService extends IntentService {
             ContentValues values = intent.getParcelableExtra("extra_values");
             Uri uriWithAppendedId = ContentUris.withAppendedId(AlarmContainer.Columns.CONTENT_URI, id);
             mContentResolver.update(uriWithAppendedId, values, null, null);
-            WakeLockManager.getWakeLockManager().releasePartialWakeLock(intent);
+            AlarmApplication.wakeLocks().releasePartialWakeLock(intent);
         }
     }
 }

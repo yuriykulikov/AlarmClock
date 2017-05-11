@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,13 +21,20 @@ import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher.ViewFactory;
 
+import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
-import com.better.alarm.model.AlarmsManager;
+import com.better.alarm.Store;
+import com.better.alarm.model.AlarmValue;
 import com.better.alarm.model.interfaces.Alarm;
-import com.better.alarm.model.interfaces.AlarmNotFoundException;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
 import com.github.androidutils.logger.Logger;
+import com.google.common.base.Optional;
+import com.google.inject.Inject;
+
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 /**
  * 
@@ -37,16 +45,13 @@ public class InfoFragment extends Fragment implements ViewFactory {
 
     private final Logger log = Logger.getDefaultLogger();
 
-    private IAlarmsManager alarms;
-    private BroadcastReceiver mAlarmsScheduledReceiver;
-
     private static final String DM12 = "E h:mm aa";
     private static final String DM24 = "E kk:mm";
 
     private TextSwitcher textView;
     private TextSwitcher remainingTime;
 
-    private Alarm alarm;
+    private AlarmValue alarm;
 
     private TickReceiver mTickReceiver;
 
@@ -54,7 +59,14 @@ public class InfoFragment extends Fragment implements ViewFactory {
 
     private boolean isPrealarm;
 
+    @Inject
     private SharedPreferences sp;
+    @Inject
+    private Store store;
+
+    @Inject Context context;
+
+    private Disposable nextDisposable;
 
     private final class TickReceiver extends BroadcastReceiver {
         @Override
@@ -65,43 +77,34 @@ public class InfoFragment extends Fragment implements ViewFactory {
         }
     }
 
-    private class AlarmChangedReceiver extends BroadcastReceiver {
+    private class AlarmChangedReceiver implements Consumer<Optional<Store.Next>> {
         @Override
-        public void onReceive(Context context, Intent intent) {
-            try {
-                if (intent.getAction().equals(Intents.ACTION_ALARM_SCHEDULED)) {
-                    int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
-                    alarm = alarms.getAlarm(id);
-                    log.d(intent.toString() + " " + alarm.toString());
+        public void accept(@NonNull Optional<Store.Next> nextOptional) throws Exception {
+                if (nextOptional.isPresent()) {
+                    alarm = nextOptional.get().alarm();
                     String format = android.text.format.DateFormat.is24HourFormat(context) ? DM24 : DM12;
 
-                    milliseconds = intent.getLongExtra(Intents.EXTRA_NEXT_NORMAL_TIME_IN_MILLIS, -1);
+                    milliseconds = nextOptional.get().nextNonPrealarmTime();
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(milliseconds);
 
                     String timeString = (String) DateFormat.format(format, calendar);
                     textView.setText(timeString);
-                    isPrealarm = intent.getBooleanExtra(Intents.EXTRA_IS_PREALARM, false);
+                    isPrealarm = nextOptional.get().isPrealarm();
                     formatString();
-                } else if (intent.getAction().equals(Intents.ACTION_ALARMS_UNSCHEDULED)) {
-                    log.d(intent.toString());
+                } else {
                     textView.setText("");
                     remainingTime.setText("");
                     alarm = null;
                 }
-            } catch (AlarmNotFoundException e) {
-                Logger.getDefaultLogger().d("Alarm not found");
-            }
         }
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        alarms = AlarmsManager.getAlarmsManager();
-        mAlarmsScheduledReceiver = new AlarmChangedReceiver();
         mTickReceiver = new TickReceiver();
-        sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        AlarmApplication.guice().injectMembers(this);
     }
 
     @Override
@@ -126,20 +129,15 @@ public class InfoFragment extends Fragment implements ViewFactory {
     @Override
     public void onResume() {
         super.onResume();
-        log.d("onResume");
-        IntentFilter intentFilter = new IntentFilter(Intents.ACTION_ALARM_SCHEDULED);
-        intentFilter.addAction(Intents.ACTION_ALARMS_UNSCHEDULED);
-        getActivity().registerReceiver(mAlarmsScheduledReceiver, intentFilter);
-        getActivity().sendBroadcast(new Intent(Intents.REQUEST_LAST_SCHEDULED_ALARM));
         getActivity().registerReceiver(mTickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
+        nextDisposable = store.next().subscribe(new AlarmChangedReceiver());
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        log.d("onPause");
-        getActivity().unregisterReceiver(mAlarmsScheduledReceiver);
         getActivity().unregisterReceiver(mTickReceiver);
+        nextDisposable.dispose();
     }
 
     /**
@@ -167,7 +165,7 @@ public class InfoFragment extends Fragment implements ViewFactory {
 
         int index = (dispDays ? 1 : 0) | (dispHour ? 2 : 0) | (dispMinute ? 4 : 0);
 
-        String[] formats = getActivity().getResources().getStringArray(R.array.alarm_set_short);
+        String[] formats = context.getResources().getStringArray(R.array.alarm_set_short);
         return String.format(formats[index], daySeq, hourSeq, minSeq);
     }
 

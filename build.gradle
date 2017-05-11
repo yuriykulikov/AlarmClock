@@ -3,7 +3,7 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath 'com.android.tools.build:gradle:2.3.1'
+    classpath 'com.android.tools.build:gradle:2.3.2'
     // add dependency to plugin
     classpath "com.neenbedankt.gradle.plugins:android-apt:1.6"
   }
@@ -11,14 +11,15 @@ buildscript {
 apply plugin: 'com.android.application'
 apply plugin: "android-apt"
 
+
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    buildToolsVersion '25.0.0'
 
     defaultConfig {
         applicationId "com.better.alarm"
         minSdkVersion 15
-        targetSdkVersion 21
+        targetSdkVersion 25
 
         testApplicationId "com.better.alarm.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
@@ -45,12 +46,28 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:21.0.3'
-    compile 'com.google.guava:guava:15.0'
+    //compile 'com.android.support:support-v4:21.0.3'
+    compile 'com.google.guava:guava:19.0'
     compile 'ch.acra:acra:4.6.1'
     compile 'com.melnykov:floatingactionbutton:1.2.0'
-    androidTestCompile 'com.android.support:support-v4:21.0.3'
     androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.2.1'
     apt "org.immutables:value:2.4.3" // <-- for annotation processor
-    provided "org.immutables:value:2.4.3" // <-- for annotation API
+    compile "org.immutables:value:2.4.3" // <-- for annotation API
+    compile 'com.squareup:javapoet:1.9.0'
+
+    compile 'io.reactivex.rxjava2:rxjava:2.1.0'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    compile 'com.f2prateek.rx.preferences2:rx-preferences:2.0.0-RC2'
+
+    apt 'com.google.auto.factory:auto-factory:1.0-beta5'
+    compile 'javax.annotation:jsr250-api:1.0'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+
+    compile 'com.google.inject:guice:4.1.0:no_aop'
+    compile ('com.google.auto.factory:auto-factory:1.0-beta5') {transitive = false;}
+
+    testCompile 'com.google.googlejavaformat:google-java-format:1.3'
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:2.8.47'
 }

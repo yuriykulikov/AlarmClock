@@ -15,24 +15,25 @@
  * limitations under the License.
  */
 
-package com.better.alarm;
+package com.better.alarm.presenter;
 
 import static android.provider.AlarmClock.ACTION_SET_ALARM;
 import static android.provider.AlarmClock.EXTRA_HOUR;
 
 import java.util.Collection;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.AlarmClock;
 
-import com.better.alarm.model.AlarmsManager;
+import com.better.alarm.AlarmApplication;
+import com.better.alarm.Store;
+import com.better.alarm.model.AlarmValue;
 import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
-import com.better.alarm.presenter.AlarmDetailsActivity;
-import com.better.alarm.presenter.AlarmsListActivity;
 import com.github.androidutils.logger.Logger;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -44,7 +45,7 @@ public class HandleSetAlarm extends Activity {
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        alarms = AlarmsManager.getAlarmsManager();
+        alarms = AlarmApplication.alarms();
         Intent intent = getIntent();
         Intent startDetailsIntent = new Intent(this, AlarmDetailsActivity.class);
         if (intent == null || !ACTION_SET_ALARM.equals(intent.getAction())) {
@@ -78,9 +79,10 @@ public class HandleSetAlarm extends Activity {
         final String msg = intent.getStringExtra(AlarmClock.EXTRA_MESSAGE);
         final String label = msg == null ? "" : msg;
 
-        Collection<Alarm> sameAlarms = Collections2.filter(alarms.getAlarmsList(), new Predicate<Alarm>() {
+        List<AlarmValue> alarms = AlarmApplication.guice().getInstance(Store.class).alarms().blockingFirst();
+        Collection<AlarmValue> sameAlarms = Collections2.filter(alarms, new Predicate<AlarmValue>() {
             @Override
-            public boolean apply(Alarm candidate) {
+            public boolean apply(AlarmValue candidate) {
                 boolean hoursMatch = candidate.getHour() == hours;
                 boolean minutesMatch = candidate.getMinutes() == minutes;
                 boolean labelsMatch = candidate.getLabel() != null && candidate.getLabel().equals(label);
@@ -92,7 +94,7 @@ public class HandleSetAlarm extends Activity {
         Alarm alarm;
         if (sameAlarms.isEmpty()) {
             Logger.getDefaultLogger().d("No alarm found, creating a new one");
-            alarm = AlarmsManager.getAlarmsManager().createNewAlarm();
+            alarm = AlarmApplication.alarms().createNewAlarm();
             //@formatter:off
             alarm.edit()
                 .setHour(hours)
@@ -103,7 +105,7 @@ public class HandleSetAlarm extends Activity {
         //@formatter:on
         } else {
             Logger.getDefaultLogger().d("Enable existing alarm");
-            alarm = sameAlarms.iterator().next();
+            alarm = AlarmApplication.alarms().getAlarm(sameAlarms.iterator().next().getId());
             alarm.enable(true);
         }
         return alarm;

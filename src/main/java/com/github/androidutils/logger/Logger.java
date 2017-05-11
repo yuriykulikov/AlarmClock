@@ -28,8 +28,9 @@ public class Logger {
         logLevel = LogLevel.DBG;
     }
 
-    public void addLogWriter(LogWriter logWriter) {
+    public Logger addLogWriter(LogWriter logWriter) {
         writers.addIfAbsent(logWriter);
+        return this;
     }
 
     public void removeLogWriter(LogWriter logWriter) {

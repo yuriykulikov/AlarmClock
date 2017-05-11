@@ -2,16 +2,21 @@ package com.better.alarm.model;
 
 import android.os.Handler;
 
+import com.github.androidutils.statemachine.HandlerFactory;
 import com.github.androidutils.statemachine.IHandler;
 import com.github.androidutils.statemachine.ImmutableMessage;
 import com.github.androidutils.statemachine.Message;
 import com.github.androidutils.statemachine.MessageHandler;
 import com.github.androidutils.statemachine.StateMachine;
+import com.google.inject.Inject;
 
 /**
  * Created by Yuriy on 01.05.2017.
  */
-public class MainLooperHandlerFactory implements com.github.androidutils.statemachine.HandlerFactory {
+public class MainLooperHandlerFactory implements HandlerFactory {
+    @Inject
+    public MainLooperHandlerFactory(){};
+
     @Override
     public IHandler create(final MessageHandler handler) {
         final Handler realHandler = new Handler(new Handler.Callback() {

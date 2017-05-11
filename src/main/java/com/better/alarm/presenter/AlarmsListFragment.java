@@ -1,19 +1,13 @@
 package com.better.alarm.presenter;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
 import android.app.AlertDialog;
 import android.app.ListFragment;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.text.format.DateFormat;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -30,14 +24,26 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
-import com.better.alarm.model.AlarmsManager;
+import com.better.alarm.Store;
+import com.better.alarm.model.AlarmValue;
 import com.better.alarm.model.DaysOfWeek;
 import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.IAlarmsManager;
-import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.view.DigitalClock;
 import com.github.androidutils.logger.Logger;
+import com.google.inject.Inject;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 /**
  * Shows a list of alarms. To react on user interaction, requires a strategy. An
@@ -49,21 +55,37 @@ import com.github.androidutils.logger.Logger;
  */
 public class AlarmsListFragment extends ListFragment {
     public interface ShowDetailsStrategy {
-        public void showDetails(Alarm alarm);
+        void showDetails(AlarmValue alarm);
     }
 
-    private ShowDetailsStrategy showDetailsStrategy;
+    public static final String PREFERENCES = "AlarmClock";
+    /**
+     * This must be false for production. If true, turns on logging, test code,
+     * etc.
+     */
+    public static final boolean DEBUG = false;
+    public final static String M12 = "h:mm aa";
+    public final static String M24 = "kk:mm";
 
+    private ShowDetailsStrategy showDetailsStrategy;
     private final int mCurCheckPosition = 0;
 
-    private final Logger log = Logger.getDefaultLogger();
+    @Inject
+    private Logger log;
+    @Inject
+    private IAlarmsManager alarms;
 
-    public class AlarmListAdapter extends ArrayAdapter<Alarm> {
+    @Inject
+    Store store;
+
+    private AlarmListAdapter mAdapter;
+
+    public class AlarmListAdapter extends ArrayAdapter<AlarmValue> {
         private final Context context;
-        private final List<Alarm> values;
+        private final List<AlarmValue> values;
         private final boolean isMaterial;
 
-        public AlarmListAdapter(Context context, int alarmTime, int label, List<Alarm> values) {
+        public AlarmListAdapter(Context context, int alarmTime, int label, List<AlarmValue> values) {
             super(context, alarmTime, label, values);
             this.context = context;
             this.values = values;
@@ -84,7 +106,7 @@ public class AlarmsListFragment extends ListFragment {
             digitalClock.setLive(false);
 
             // get the alarm which we have to display
-            final Alarm alarm = values.get(position);
+            final AlarmValue alarm = values.get(position);
 
             // now populate rows views
             View indicator = rowView.findViewById(R.id.list_row_on_off_checkbox_container);
@@ -155,30 +177,10 @@ public class AlarmsListFragment extends ListFragment {
         }
     }
 
-    public static final String PREFERENCES = "AlarmClock";
-    /**
-     * This must be false for production. If true, turns on logging, test code,
-     * etc.
-     */
-    public static final boolean DEBUG = false;
-    public final static String M12 = "h:mm aa";
-    public final static String M24 = "kk:mm";
-    private IAlarmsManager alarms;
-    private AlarmListAdapter mAdapter;
-    private BroadcastReceiver mAlarmsChangedReceiver;
-
-    private class AlarmChangedReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            log.d(intent.toString());
-            updateAlarmsList();
-        }
-    }
-
     @Override
     public boolean onContextItemSelected(final MenuItem item) {
         final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-        final Alarm alarm = mAdapter.getItem(info.position);
+        final AlarmValue alarm = mAdapter.getItem(info.position);
         switch (item.getItemId()) {
         case R.id.delete_alarm: {
             // Confirm that the alarm will be deleted.
@@ -216,13 +218,19 @@ public class AlarmsListFragment extends ListFragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        AlarmApplication.guice().injectMembers(this);
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        alarms = AlarmsManager.getAlarmsManager();
+        alarms = AlarmApplication.alarms();
 
         setListAdapter(new AlarmListAdapter(getActivity(), R.layout.list_row, R.string.alarm_list_title,
-                new ArrayList<Alarm>()));
+                new ArrayList<AlarmValue>()));
 
         mAdapter = (AlarmListAdapter) getListAdapter();
 
@@ -232,13 +240,36 @@ public class AlarmsListFragment extends ListFragment {
         setHasOptionsMenu(true);
 
         getListView().setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-
-        mAlarmsChangedReceiver = new AlarmChangedReceiver();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    Disposable alarmsSub;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        alarmsSub = store.alarms().subscribe(new Consumer<List<AlarmValue>>() {
+            @Override
+            public void accept(@NonNull List<AlarmValue> alarms) throws Exception {
+                mAdapter.clear();
+                List<AlarmValue> sorted = new ArrayList<AlarmValue>(alarms);
+                Collections.sort(sorted, new MinuteComparator());
+                Collections.sort(sorted, new HourComparator());
+                Collections.sort(sorted, new RepeatComparator());
+                mAdapter.addAll(sorted);
+            }
+        });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        alarmsSub.dispose();
     }
 
     @Override
@@ -250,26 +281,13 @@ public class AlarmsListFragment extends ListFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        getActivity().registerReceiver(mAlarmsChangedReceiver, new IntentFilter(Intents.ACTION_ALARM_CHANGED));
-        updateAlarmsList();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        getActivity().unregisterReceiver(mAlarmsChangedReceiver);
-    }
-
-    @Override
     public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
         // Inflate the menu from xml.
         getActivity().getMenuInflater().inflate(R.menu.list_context_menu, menu);
 
         // Use the current item to create a custom view for the header.
         final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-        final Alarm alarm = mAdapter.getItem(info.position);
+        final AlarmValue alarm = mAdapter.getItem(info.position);
 
         // Construct the Calendar to compute the time.
         final Calendar cal = Calendar.getInstance();
@@ -293,11 +311,43 @@ public class AlarmsListFragment extends ListFragment {
         }
     }
 
-    public void updateAlarmsList() {
-        AlarmListAdapter adapter = mAdapter;
-        adapter.clear();
-        // TODO fixme when we have Parcelable
-        adapter.addAll(alarms.getAlarmsList());
+    private final class RepeatComparator implements Comparator<AlarmValue> {
+        @Override
+        public int compare(AlarmValue lhs, AlarmValue rhs) {
+            return Integer.valueOf(getPrio(lhs)).compareTo(Integer.valueOf(getPrio(rhs)));
+        }
+
+        /**
+         * First comes on Weekdays, than on weekends and then the rest
+         *
+         * @param alarm
+         * @return
+         */
+        private int getPrio(AlarmValue alarm) {
+            switch (alarm.getDaysOfWeek().getCoded()) {
+                case 0x7F:
+                    return 1;
+                case 0x1F:
+                    return 2;
+                case 0x60:
+                    return 3;
+                default:
+                    return 0;
+            }
+        }
     }
 
+    private final class HourComparator implements Comparator<AlarmValue> {
+        @Override
+        public int compare(AlarmValue lhs, AlarmValue rhs) {
+            return Integer.valueOf(lhs.getHour()).compareTo(Integer.valueOf(rhs.getHour()));
+        }
+    }
+
+    private final class MinuteComparator implements Comparator<AlarmValue> {
+        @Override
+        public int compare(AlarmValue lhs, AlarmValue rhs) {
+            return Integer.valueOf(lhs.getMinutes()).compareTo(Integer.valueOf(rhs.getMinutes()));
+        }
+    }
 }

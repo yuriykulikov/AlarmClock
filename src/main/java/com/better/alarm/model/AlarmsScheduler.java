@@ -15,50 +15,50 @@
  */
 package com.better.alarm.model;
 
+import com.better.alarm.BuildConfig;
+import com.better.alarm.ImmutableNext;
+import com.better.alarm.Prefs;
+import com.better.alarm.Store;
+import com.better.alarm.model.interfaces.IAlarmsManager;
+import com.github.androidutils.logger.Logger;
+import com.google.common.base.Optional;
+import com.google.inject.Inject;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.PriorityQueue;
 
-import android.annotation.TargetApi;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.os.Build;
-import android.preference.PreferenceManager;
-
-import com.better.alarm.BuildConfig;
-import com.better.alarm.model.interfaces.Intents;
-import com.github.androidutils.logger.Logger;
+import io.reactivex.Maybe;
+import io.reactivex.Observable;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
 
 public class AlarmsScheduler implements IAlarmsScheduler {
-    static final String ACTION_FIRED = BuildConfig.APPLICATION_ID + ".ACTION_FIRED";
-    static final String EXTRA_ID = "intent.extra.alarm";
-    static final String EXTRA_TYPE = "intent.extra.type";
+    public static final String ACTION_FIRED = BuildConfig.APPLICATION_ID + ".ACTION_FIRED";
+    public static final String EXTRA_ID = "intent.extra.alarm";
+    public static final String EXTRA_TYPE = "intent.extra.type";
 
-    private interface ISetAlarmStrategy {
+    private final Store store;
+    private final IAlarmsManager alarms;
+    private Prefs prefs;
 
-        void setRTCAlarm(ScheduledAlarm alarm, PendingIntent sender);
-
-    }
-
-    private class ScheduledAlarm implements Comparable<ScheduledAlarm> {
+    public class ScheduledAlarm implements Comparable<ScheduledAlarm> {
         public final int id;
         public final Calendar calendar;
         public final CalendarType type;
         private final DateFormat df;
+        private final Optional<AlarmValue> alarmValue;
 
-        public ScheduledAlarm(int id, Calendar calendar, CalendarType type) {
+        public ScheduledAlarm(int id, Calendar calendar, CalendarType type, AlarmValue alarmValue) {
             this.id = id;
             this.calendar = calendar;
             this.type = type;
+            this.alarmValue = Optional.of(alarmValue);
             this.df = new SimpleDateFormat("dd-MM-yy HH:mm:ss", Locale.GERMANY);
         }
 
@@ -66,6 +66,7 @@ public class AlarmsScheduler implements IAlarmsScheduler {
             this.id = id;
             this.calendar = null;
             this.type = null;
+            this.alarmValue = Optional.absent();
             this.df = new SimpleDateFormat("dd-MM-yy HH:mm:ss", Locale.GERMANY);
         }
 
@@ -90,41 +91,26 @@ public class AlarmsScheduler implements IAlarmsScheduler {
         }
     }
 
-    private final Context mContext;
-    private final SharedPreferences sp;
+    private final AlarmSetter setter;
 
     private final PriorityQueue<ScheduledAlarm> queue;
 
     private final Logger log;
-    private final ISetAlarmStrategy setAlarmStrategy;
-    private final AlarmManager am;
 
-    public AlarmsScheduler(Context context, Logger logger) {
-        mContext = context;
-        am = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+
+    @Inject
+    public AlarmsScheduler(AlarmSetter setter, Logger logger, Store store, IAlarmsManager alarms, Prefs prefs) {
+        this.setter = setter;
+        this.store = store;
+        this.alarms = alarms;
+        this.prefs = prefs;
         queue = new PriorityQueue<ScheduledAlarm>();
         this.log = logger;
-        context.registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                notifyListeners();
-            }
-        }, new IntentFilter(Intents.REQUEST_LAST_SCHEDULED_ALARM));
-        setAlarmStrategy = initSetStrategyForVersion();
-        sp = PreferenceManager.getDefaultSharedPreferences(mContext);
-        log.d("Using " + setAlarmStrategy);
-    }
-
-    private ISetAlarmStrategy initSetStrategyForVersion() {
-        log.d("SDK is " + android.os.Build.VERSION.SDK_INT);
-        if (android.os.Build.VERSION.SDK_INT >= 23) return new MarshmallowSetter();
-        else if (android.os.Build.VERSION.SDK_INT >= 19) return new KitKatSetter();
-        else return new IceCreamSetter();
     }
 
     @Override
-    public void setAlarm(int id, CalendarType type, Calendar calendar) {
-        ScheduledAlarm scheduledAlarm = new ScheduledAlarm(id, calendar, type);
+    public void setAlarm(int id, CalendarType type, Calendar calendar, AlarmValue alarmValue) {
+        ScheduledAlarm scheduledAlarm = new ScheduledAlarm(id, calendar, type, alarmValue);
         replaceAlarm(scheduledAlarm, true);
     }
 
@@ -142,7 +128,7 @@ public class AlarmsScheduler implements IAlarmsScheduler {
         ScheduledAlarm previousHead = queue.peek();
 
         // remove if we have already an alarm
-        for (Iterator<ScheduledAlarm> iterator = queue.iterator(); iterator.hasNext();) {
+        for (Iterator<ScheduledAlarm> iterator = queue.iterator(); iterator.hasNext(); ) {
             ScheduledAlarm presentAlarm = iterator.next();
             if (presentAlarm.id == newAlarm.id) {
                 iterator.remove();
@@ -160,10 +146,10 @@ public class AlarmsScheduler implements IAlarmsScheduler {
         // compare by reference!
         if (previousHead != currentHead) {
             if (!queue.isEmpty()) {
-                setUpRTCAlarm(currentHead);
+                setter.setUpRTCAlarm(currentHead);
             } else {
                 log.d("no more alarms to schedule, remove pending intent");
-                removeRTCAlarm();
+                setter.removeRTCAlarm();
             }
             notifyListeners();
         }
@@ -181,10 +167,7 @@ public class AlarmsScheduler implements IAlarmsScheduler {
             // remove happens in fire
             ScheduledAlarm firedInThePastAlarm = queue.poll();
             log.d("In the past - " + firedInThePastAlarm.toString());
-            Intent intent = new Intent(ACTION_FIRED);
-            intent.putExtra(EXTRA_ID, firedInThePastAlarm.id);
-            intent.putExtra(EXTRA_TYPE, firedInThePastAlarm.type.name());
-            mContext.sendBroadcast(intent);
+            setter.fireNow(firedInThePastAlarm);
         }
     }
 
@@ -196,103 +179,42 @@ public class AlarmsScheduler implements IAlarmsScheduler {
      * rest.
      */
     private void notifyListeners() {
-        Intent intent = new Intent();
-        if (queue.isEmpty()) {
-            intent.setAction(Intents.ACTION_ALARMS_UNSCHEDULED);
-        } else if (queue.peek().type != CalendarType.AUTOSILENCE) {
-            ScheduledAlarm scheduledAlarm = queue.peek();
-            intent.setAction(Intents.ACTION_ALARM_SCHEDULED);
-            intent.putExtra(Intents.EXTRA_ID, scheduledAlarm.id);
-            // here it gets messy, but i could not care much because refactored
-            // version is not far
-            if (scheduledAlarm.type == CalendarType.PREALARM) {
-                // we can only assume that the real one will be a little later,
-                // namely:
-                String asString = sp.getString("prealarm_duration", "30");
-                int prealarmMinutes = Integer.parseInt(asString);
-                int prealarmOffsetInMillis = prealarmMinutes * 60 * 1000;
+        findNextNormalAlarm()
+                .map(new Function<ScheduledAlarm, Optional<Store.Next>>() {
+                    @Override
+                    public Optional<Store.Next> apply(@NonNull ScheduledAlarm scheduledAlarm) throws Exception {
+                        boolean isPrealarm = scheduledAlarm.type == CalendarType.PREALARM;
+                        return Optional.of((Store.Next) ImmutableNext.builder()
+                                .alarm(scheduledAlarm.alarmValue.get())
+                                .isPrealarm(isPrealarm)
+                                .nextNonPrealarmTime(isPrealarm ? findNormalTime(scheduledAlarm) : scheduledAlarm.calendar.getTimeInMillis())
+                                .build());
+                    }
 
-                intent.putExtra(Intents.EXTRA_NEXT_NORMAL_TIME_IN_MILLIS, scheduledAlarm.calendar.getTimeInMillis()
-                        + prealarmOffsetInMillis);
-                intent.putExtra(Intents.EXTRA_IS_PREALARM, true);
-            } else {
-                intent.putExtra(Intents.EXTRA_NEXT_NORMAL_TIME_IN_MILLIS, scheduledAlarm.calendar.getTimeInMillis());
-            }
-
-        } else {
-            // now this means that alarm in the closest future is AUTOSILENCE
-            ScheduledAlarm scheduledAlarm = findNextNormalAlarm();
-            if (scheduledAlarm != null) {
-                intent.setAction(Intents.ACTION_ALARM_SCHEDULED);
-                intent.putExtra(Intents.EXTRA_ID, scheduledAlarm.id);
-            } else {
-                intent.setAction(Intents.ACTION_ALARMS_UNSCHEDULED);
-            }
-        }
-        mContext.sendBroadcast(intent);
+                    private long findNormalTime(ScheduledAlarm scheduledAlarm) {
+                        // we can only assume that the real one will be a little later,
+                        // namely:
+                        int prealarmOffsetInMillis = prefs.preAlarmDuration().blockingFirst() * 60 * 1000;
+                        return scheduledAlarm.calendar.getTimeInMillis() + prealarmOffsetInMillis;
+                    }
+                })
+                .defaultIfEmpty(Optional.<Store.Next>absent())
+                .subscribe(new Consumer<Optional<Store.Next>>() {
+                    @Override
+                    public void accept(@NonNull Optional<Store.Next> nextOptional) throws Exception {
+                        store.next().onNext(nextOptional);
+                    }
+                });
     }
 
-    private ScheduledAlarm findNextNormalAlarm() {
-        // this means we have to find the next normal, snooze or prealarm
-        // since iterator does not have a specific order, and we cannot
-        // peek(i), remove elements one by one
-        ScheduledAlarm nextNormalAlarm = null;
-        ArrayList<ScheduledAlarm> temporaryCollection = new ArrayList<AlarmsScheduler.ScheduledAlarm>(queue.size());
-        while (!queue.isEmpty()) {
-            ScheduledAlarm scheduledAlarm = queue.poll();
-            temporaryCollection.add(scheduledAlarm);
-            if (scheduledAlarm.type != CalendarType.AUTOSILENCE) {
-                // that is our client
-                nextNormalAlarm = scheduledAlarm;
-                break;
-            }
-        }
-        // Put back everything what we have removed
-        queue.addAll(temporaryCollection);
-        return nextNormalAlarm;
-    }
-
-    private void removeRTCAlarm() {
-        AlarmManager am = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent sender = PendingIntent.getBroadcast(mContext, 0, new Intent(ACTION_FIRED), 0);
-        am.cancel(sender);
-    }
-
-    private void setUpRTCAlarm(ScheduledAlarm alarm) {
-        log.d("Set " + alarm.toString());
-        Intent intent = new Intent(ACTION_FIRED);
-        intent.putExtra(EXTRA_ID, alarm.id);
-        intent.putExtra(EXTRA_TYPE, alarm.type.name());
-        PendingIntent sender = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        setAlarmStrategy.setRTCAlarm(alarm, sender);
-    }
-
-    private final class IceCreamSetter implements ISetAlarmStrategy {
-        @Override
-        public void setRTCAlarm(ScheduledAlarm alarm, PendingIntent sender) {
-            am.set(AlarmManager.RTC_WAKEUP, alarm.calendar.getTimeInMillis(), sender);
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    private final class KitKatSetter implements ISetAlarmStrategy {
-        @Override
-        public void setRTCAlarm(ScheduledAlarm alarm, PendingIntent sender) {
-            am.setExact(AlarmManager.RTC_WAKEUP, alarm.calendar.getTimeInMillis(), sender);
-        }
-    }
-
-    @TargetApi(23)
-    private final class MarshmallowSetter implements ISetAlarmStrategy {
-        @Override
-        public void setRTCAlarm(ScheduledAlarm alarm, PendingIntent sender) {
-            try {
-                am.getClass()
-                        .getMethod("setExactAndAllowWhileIdle", int.class, long.class, PendingIntent.class)
-                        .invoke(am, AlarmManager.RTC_WAKEUP, alarm.calendar.getTimeInMillis(), sender);
-            } catch (ReflectiveOperationException e) {
-                am.setExact(AlarmManager.RTC_WAKEUP, alarm.calendar.getTimeInMillis(), sender);
-            }
-        }
+    private Maybe<ScheduledAlarm> findNextNormalAlarm() {
+        return Observable.fromIterable(queue)
+                .sorted()
+                .filter(new Predicate<ScheduledAlarm>() {
+                    @Override
+                    public boolean test(@NonNull ScheduledAlarm scheduledAlarm) throws Exception {
+                        return scheduledAlarm.type != CalendarType.AUTOSILENCE;
+                    }
+                }).firstElement();
     }
 }

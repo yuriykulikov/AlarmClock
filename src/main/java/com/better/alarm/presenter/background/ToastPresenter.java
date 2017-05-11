@@ -22,10 +22,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
+import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
-import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.interfaces.Alarm;
-import com.better.alarm.model.interfaces.AlarmNotFoundException;
 import com.better.alarm.model.interfaces.Intents;
 import com.github.androidutils.logger.Logger;
 
@@ -40,13 +39,13 @@ public class ToastPresenter extends BroadcastReceiver {
             Alarm alarm;
             int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
             try {
-                alarm = AlarmsManager.getAlarmsManager().getAlarm(id);
+                alarm = AlarmApplication.alarms().getAlarm(id);
                 if (alarm.isEnabled()) {
                     popAlarmSetToast(context, alarm, intent);
                 } else {
                     Logger.getDefaultLogger().w("Alarm " + id + " is already disabled");
                 }
-            } catch (AlarmNotFoundException e) {
+            } catch (Exception e) {
                 Logger.getDefaultLogger().w("Alarm " + id + " could not be found. Must be deleted");
             }
         }

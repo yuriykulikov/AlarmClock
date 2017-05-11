@@ -2,56 +2,46 @@ package com.better.alarm.model.interfaces;
 
 import java.util.Calendar;
 
-import android.content.Context;
 import android.net.Uri;
 
 import com.better.alarm.model.DaysOfWeek;
 
 public interface Alarm {
+    void enable(boolean enable);
 
-    /**
-     * A convenience method to enable or disable an
-     * 
-     * @param id
-     *            corresponds to the _id column
-     * @param enabled
-     *            corresponds to the ENABLED column
-     */
-    public void enable(boolean enable);
+    void snooze();
 
-    public void snooze();
+    void snooze(int hourOfDay, int minute);
 
-    public void snooze(int hourOfDay, int minute);
+    void dismiss();
 
-    public void dismiss();
+    void delete();
 
-    public void delete();
+    AlarmEditor edit();
 
-    public AlarmEditor edit();
+    boolean isPrealarm();
 
-    public boolean isPrealarm();
+    boolean isSilent();
 
-    public boolean isSilent();
+    Uri getAlert();
 
-    public Uri getAlert();
+    String getLabel();
 
-    public String getLabel();
+    boolean isVibrate();
 
-    public boolean isVibrate();
+    DaysOfWeek getDaysOfWeek();
 
-    public DaysOfWeek getDaysOfWeek();
+    int getMinutes();
 
-    public int getMinutes();
+    int getHour();
 
-    public int getHour();
+    boolean isEnabled();
 
-    public boolean isEnabled();
+    int getId();
 
-    public int getId();
+    boolean isSnoozed();
 
-    public boolean isSnoozed();
-
-    public String getLabelOrDefault(Context context);
+    String getLabelOrDefault();
 
     /**
      * @deprecated

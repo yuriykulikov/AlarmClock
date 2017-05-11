@@ -4,60 +4,48 @@ import java.util.Calendar;
 
 import android.net.Uri;
 
-public interface IAlarmContainer {
+public interface IAlarmContainer extends AlarmValue {
 
     /**
      * Persist data in the database
      */
-    public void writeToDb();
+    void writeToDb();
 
-    public void delete();
+    void delete();
 
-    public int getId();
+    void setId(int id);
 
-    public void setId(int id);
+    void setEnabled(boolean enabled);
 
-    public boolean isEnabled();
+    void setHour(int hour);
 
-    public void setEnabled(boolean enabled);
+    void setMinutes(int minutes);
 
-    public int getHour();
+    void setDaysOfWeek(DaysOfWeek daysOfWeek);
 
-    public void setHour(int hour);
+    boolean isVibrate();
 
-    public int getMinutes();
+    void setVibrate(boolean vibrate);
 
-    public void setMinutes(int minutes);
+    void setLabel(String label);
 
-    public DaysOfWeek getDaysOfWeek();
+    Uri getAlert();
 
-    public void setDaysOfWeek(DaysOfWeek daysOfWeek);
+    void setAlert(Uri alert);
 
-    public boolean isVibrate();
+    boolean isSilent();
 
-    public void setVibrate(boolean vibrate);
+    void setSilent(boolean silent);
 
-    public String getLabel();
+    boolean isPrealarm();
 
-    public void setLabel(String label);
+    void setPrealarm(boolean prealarm);
 
-    public Uri getAlert();
+    Calendar getNextTime();
 
-    public void setAlert(Uri alert);
+    void setNextTime(Calendar nextTime);
 
-    public boolean isSilent();
-
-    public void setSilent(boolean silent);
-
-    public boolean isPrealarm();
-
-    public void setPrealarm(boolean prealarm);
-
-    public Calendar getNextTime();
-
-    public void setNextTime(Calendar nextTime);
-
-    public String getState();
+    String getState();
 
     void setState(String state);
 }

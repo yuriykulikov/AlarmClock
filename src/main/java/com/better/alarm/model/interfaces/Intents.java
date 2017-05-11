@@ -49,22 +49,9 @@ public class Intents {
     public static final String ACTION_SOUND_EXPIRED = BuildConfig.APPLICATION_ID +".ACTION_SOUND_EXPIRED";
 
     /**
-     * Broadcasted when alarm is scheduled
-     */
-    public static final String ACTION_ALARM_SCHEDULED = BuildConfig.APPLICATION_ID +".model.Intents.ACTION_ALARM_SCHEDULED";
-
-    /**
-     * Broadcasted when alarm is scheduled
-     */
-    public static final String ACTION_ALARMS_UNSCHEDULED = BuildConfig.APPLICATION_ID +".model.Intents.ACTION_ALARMS_UNSCHEDULED";
-
-    /**
-     * Broadcasted when alarm is scheduled
-     */
-    public static final String ACTION_ALARM_CHANGED = BuildConfig.APPLICATION_ID +".model.Intents.ACTION_ALARM_CHANGED";
-
-    /**
      * Broadcasted when alarm is set
+     *
+     * TODO {@link com.better.alarm.presenter.background.ToastPresenter} only, replace soon with an Observable
      */
     public static final String ACTION_ALARM_SET = BuildConfig.APPLICATION_ID +".model.Intents.ACTION_ALARM_SET";
 
@@ -100,9 +87,4 @@ public class Intents {
     public static final String KEY_PREALARM_VOLUME = "key_prealarm_volume";
 
     public static final String KEY_ALARM_VOLUME = "key_alarm_volume";
-
-    /**
-     * Broadcasted when someone wants to get last scheduled alarm.
-     */
-    public static final String REQUEST_LAST_SCHEDULED_ALARM = BuildConfig.APPLICATION_ID +".model.interfaces.Intents.REQUEST_LAST_SCHEDULED_ALARM";
 }

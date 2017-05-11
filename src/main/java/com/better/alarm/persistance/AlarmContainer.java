@@ -1,4 +1,4 @@
-package com.better.alarm.model.persistance;
+package com.better.alarm.persistance;
 
 import java.util.Calendar;
 
@@ -11,7 +11,9 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import com.better.alarm.AlarmApplication;
 import com.better.alarm.BuildConfig;
+import com.better.alarm.model.ContainerFactory;
 import com.better.alarm.model.DaysOfWeek;
 import com.better.alarm.model.IAlarmContainer;
 import com.better.alarm.model.interfaces.Intents;
@@ -152,7 +154,7 @@ public class AlarmContainer implements IAlarmContainer {
     private DaysOfWeek daysOfWeek;
     private boolean vibrate;
     private String label;
-    private Uri alert;
+    private String alertString;
     private boolean silent;
     private boolean prealarm;
     /**
@@ -176,21 +178,9 @@ public class AlarmContainer implements IAlarmContainer {
         daysOfWeek = new DaysOfWeek(c.getInt(Columns.ALARM_DAYS_OF_WEEK_INDEX));
         vibrate = c.getInt(Columns.ALARM_VIBRATE_INDEX) == 1;
         label = c.getString(Columns.ALARM_MESSAGE_INDEX);
-        String alertString = c.getString(Columns.ALARM_ALERT_INDEX);
-        if (ALARM_ALERT_SILENT.equals(alertString)) {
-            log.d("AlarmCore is marked as silent");
-            silent = true;
-        } else {
-            if (alertString != null && alertString.length() != 0) {
-                alert = Uri.parse(alertString);
-            }
-
-            // If the database alert is null or it failed to parse, use the
-            // default alert.
-            if (alert == null) {
-                alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-            }
-        }
+        if (label == null) label = "";
+        alertString = c.getString(Columns.ALARM_ALERT_INDEX);
+        silent = ALARM_ALERT_SILENT.equals(alertString);
         prealarm = c.getInt(Columns.ALARM_PREALARM_INDEX) == 1;
         nextTime = Calendar.getInstance();
         nextTime.setTimeInMillis(c.getLong(Columns.ALARM_TIME_INDEX));
@@ -209,8 +199,9 @@ public class AlarmContainer implements IAlarmContainer {
         vibrate = true;
         daysOfWeek = new DaysOfWeek(0);
         nextTime = c;
-        alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        alertString = null;
         prealarm = false;
+        label = "";
 
         Uri uri = mContext.getContentResolver().insert(Columns.CONTENT_URI, createContentValues());
         id = (int) ContentUris.parseId(uri);
@@ -227,7 +218,7 @@ public class AlarmContainer implements IAlarmContainer {
         intent.setAction(DataBaseService.SAVE_ALARM_ACTION);
         intent.putExtra("extra_values", values);
         intent.putExtra(Intents.EXTRA_ID, id);
-        WakeLockManager.getWakeLockManager().acquirePartialWakeLock(intent, "forDBService");
+        AlarmApplication.wakeLocks().acquirePartialWakeLock(intent, "forDBService");
         mContext.startService(intent);
     }
 
@@ -241,7 +232,7 @@ public class AlarmContainer implements IAlarmContainer {
         values.put(Columns.VIBRATE, vibrate);
         values.put(Columns.MESSAGE, label);
         // A null alert Uri indicates a silent
-        values.put(Columns.ALERT, alert == null ? ALARM_ALERT_SILENT : alert.toString());
+        values.put(Columns.ALERT, alertString);
         values.put(Columns.PREALARM, prealarm);
         values.put(Columns.ALARM_TIME, nextTime.getTimeInMillis());
         values.put(Columns.STATE, state);
@@ -329,12 +320,22 @@ public class AlarmContainer implements IAlarmContainer {
 
     @Override
     public Uri getAlert() {
-        return alert;
+        if (alertString != null && alertString.length() != 0) {
+            try {
+                return Uri.parse(alertString);
+            } catch (Exception e){
+                // If the database alert is null or it failed to parse, use the
+                return RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+            }
+        } else {
+        // default alert.
+            return RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        }
     }
 
     @Override
     public void setAlert(Uri alert) {
-        this.alert = alert;
+        this.alertString = alert == null ? null : alert.toString();
     }
 
     @Override
@@ -382,7 +383,7 @@ public class AlarmContainer implements IAlarmContainer {
     @Override
     public String toString() {
         return "AlarmContainer [id=" + id + ", enabled=" + enabled + ", hour=" + hour + ", minutes=" + minutes
-                + ", daysOfWeek=" + daysOfWeek + ", vibrate=" + vibrate + ", label=" + label + ", alert=" + alert
+                + ", daysOfWeek=" + daysOfWeek + ", vibrate=" + vibrate + ", label=" + label + ", alert=" + alertString
                 + ", silent=" + silent + ", prealarm=" + prealarm + ", nextTime=" + nextTime + ", state=" + state + "]";
     }
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.better.alarm.model;
+package com.better.alarm.services;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -23,19 +23,26 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 
-import com.better.alarm.model.interfaces.AlarmNotFoundException;
+import com.better.alarm.AlarmApplication;
+import com.better.alarm.model.AlarmCore;
+import com.better.alarm.model.Alarms;
+import com.better.alarm.model.AlarmsScheduler;
+import com.better.alarm.model.CalendarType;
 import com.better.alarm.model.interfaces.PresentationToModelIntents;
 import com.github.androidutils.logger.Logger;
-import com.github.androidutils.wakelock.WakeLockManager;
+import com.google.inject.Inject;
 
-public class AlarmsService extends Service implements Handler.Callback {
+public class AlarmsService extends Service {
     /**
      * TODO SM should report when it is done
      */
     private static final int WAKELOCK_HOLD_TIME = 5000;
     private static final int EVENT_RELEASE_WAKELOCK = 1;
+    @Inject
     Alarms alarms;
-    private Logger log;
+    @Inject
+    Logger log;
+
     private Handler handler;
 
     /**
@@ -45,17 +52,22 @@ public class AlarmsService extends Service implements Handler.Callback {
         @Override
         public void onReceive(final Context context, final Intent intent) {
             intent.setClass(context, AlarmsService.class);
-            WakeLockManager.getWakeLockManager().acquirePartialWakeLock(intent, "AlarmsService");
+            AlarmApplication.wakeLocks().acquirePartialWakeLock(intent, "AlarmsService");
             context.startService(intent);
         }
     }
 
     @Override
     public void onCreate() {
-        alarms = AlarmsManager.getInstance();
-        log = Logger.getDefaultLogger();
-        handler = new Handler(this);
         super.onCreate();
+        this.handler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message msg) {
+                AlarmApplication.wakeLocks().releasePartialWakeLock((Intent) msg.obj);
+                return true;
+            }
+        });
+        AlarmApplication.guice().injectMembers(this);
     }
 
     @Override
@@ -87,7 +99,7 @@ public class AlarmsService extends Service implements Handler.Callback {
                 alarms.getAlarm(id).dismiss();
 
             }
-        } catch (AlarmNotFoundException e) {
+        } catch (Exception e) {
             Logger.getDefaultLogger().d("Alarm not found");
         }
 
@@ -96,12 +108,6 @@ public class AlarmsService extends Service implements Handler.Callback {
         handler.sendMessageDelayed(msg, WAKELOCK_HOLD_TIME);
 
         return START_NOT_STICKY;
-    }
-
-    @Override
-    public boolean handleMessage(Message msg) {
-        WakeLockManager.getWakeLockManager().releasePartialWakeLock((Intent) msg.obj);
-        return true;
     }
 
     @Override

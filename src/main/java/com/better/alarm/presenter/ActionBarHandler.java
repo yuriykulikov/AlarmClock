@@ -30,9 +30,6 @@ public class ActionBarHandler {
     private static final int JELLY_BEAN_MR1 = 17;
     private final Context mContext;
 
-    /**
-     * @param cmContext
-     */
     public ActionBarHandler(Context context) {
         this.mContext = Preconditions.checkNotNull(context);
     }

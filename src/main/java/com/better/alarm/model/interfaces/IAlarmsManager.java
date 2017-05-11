@@ -18,14 +18,9 @@ package com.better.alarm.model.interfaces;
 import java.util.List;
 
 import com.better.alarm.model.AlarmCore;
+import com.better.alarm.model.AlarmValue;
 
 /**
- * An interface for Presenter-Model interaction. Presenters can invoke
- * {@link #dismiss(Alarm)}, {@link #snooze(Alarm)} as a result of user
- * interaction. Model broadcasts intents representing lifecycle of the
- * {@link AlarmCore}. Each intent contains an {@link Alarm} as a parceable extra
- * with the key {@link #EXTRA_ID}
- * 
  * @author Yuriy
  * 
  */
@@ -62,17 +57,18 @@ public interface IAlarmsManager {
     public void enable(Alarm alarm, boolean enable);
 
     /**
+     * Enable of disable an alarm
+     *
+     * @param alarm
+     * @param enable
+     */
+    public void enable(AlarmValue alarm, boolean enable);
+
+    /**
      * Return an AlarmCore object representing the alarm id in the database.
      * Returns null if no alarm exists.
      */
-    public Alarm getAlarm(int alarmId) throws AlarmNotFoundException;
-
-    /**
-     * Queries all alarms
-     * 
-     * @return List of all alarms as a copy
-     */
-    public List<Alarm> getAlarmsList();
+    public Alarm getAlarm(int alarmId);
 
     /**
      * Create new AlarmCore with default settings
@@ -80,4 +76,6 @@ public interface IAlarmsManager {
      * @return Alarm
      */
     public Alarm createNewAlarm();
+
+    void delete(AlarmValue alarm);
 }

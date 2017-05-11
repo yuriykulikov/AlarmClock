@@ -38,8 +38,8 @@ import android.preference.PreferenceManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
+import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
-import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.presenter.SettingsActivity;
@@ -69,7 +69,7 @@ public class KlaxonService extends Service {
         @Override
         public void onReceive(final Context context, final Intent intent) {
             intent.setClass(context, KlaxonService.class);
-            WakeLockManager.getWakeLockManager().acquirePartialWakeLock(intent, "ForKlaxonService");
+            AlarmApplication.wakeLocks().acquirePartialWakeLock(intent, "ForKlaxonService");
             context.startService(intent);
         }
     }
@@ -262,17 +262,17 @@ public class KlaxonService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
-            WakeLockManager.getWakeLockManager().releasePartialWakeLock(intent);
+            AlarmApplication.wakeLocks().releasePartialWakeLock(intent);
         }
         try {
             String action = intent.getAction();
             if (action.equals(Intents.ALARM_ALERT_ACTION)) {
-                alarm = AlarmsManager.getAlarmsManager().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
+                alarm = AlarmApplication.alarms().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
                 onAlarm(alarm);
                 return START_STICKY;
 
             } else if (action.equals(Intents.ALARM_PREALARM_ACTION)) {
-                alarm = AlarmsManager.getAlarmsManager().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
+                alarm = AlarmApplication.alarms().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
                 onPreAlarm(alarm);
                 return START_STICKY;
 

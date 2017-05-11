@@ -54,7 +54,7 @@
         </activity>
 
         <activity
-            android:name=".HandleSetAlarm"
+            android:name=".presenter.HandleSetAlarm"
             android:excludeFromRecents="true"
             android:permission="com.android.alarm.permission.SET_ALARM"
             android:theme="@android:style/Theme.NoDisplay" >
@@ -168,7 +168,7 @@
 
         <!-- Model -->
         <receiver
-            android:name=".model.AlarmsService$Receiver"
+            android:name=".services.AlarmsService$Receiver"
             android:exported="false" >
             <intent-filter>
                 <action android:name="${applicationId}.ACTION_FIRED" />
@@ -181,16 +181,16 @@
             </intent-filter>
         </receiver>
         <service
-            android:name=".model.AlarmsService"
+            android:name=".services.AlarmsService"
             android:exported="false" >
         </service>
         <!-- Persistence -->
         <provider
-            android:name=".model.persistance.AlarmProvider"
+            android:name=".persistance.AlarmProvider"
             android:authorities="${applicationId}.model"
             android:exported="false" />
         <service
-            android:name=".model.persistance.DataBaseService"
+            android:name=".persistance.DataBaseService"
             android:exported="false" >
             <intent-filter>
                 <action android:name="${applicationId}.ACTION_SAVE_ALARM" />

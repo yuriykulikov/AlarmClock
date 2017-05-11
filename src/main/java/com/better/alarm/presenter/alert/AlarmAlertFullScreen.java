@@ -35,10 +35,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
-import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.interfaces.Alarm;
-import com.better.alarm.model.interfaces.AlarmNotFoundException;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.presenter.DynamicThemeHandler;
@@ -47,8 +46,7 @@ import com.better.alarm.presenter.TimePickerDialogFragment;
 import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialogHandler;
 import com.better.alarm.presenter.TimePickerDialogFragment.OnAlarmTimePickerCanceledListener;
 import com.github.androidutils.logger.Logger;
-
-import java.util.logging.Handler;
+import com.google.inject.Inject;
 
 /**
  * Alarm Clock alarm alert: pops visible indicator and plays alarm tone. This
@@ -64,9 +62,11 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
 
     protected Alarm mAlarm;
     private int mVolumeBehavior;
-    boolean mFullscreenStyle;
 
+    @Inject
     private IAlarmsManager alarmsManager;
+    @Inject
+    private SharedPreferences sp;
 
     private boolean longClickToDismiss;
     /**
@@ -94,14 +94,13 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
             }
         }
     };
-    private SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle icicle) {
         setTheme(DynamicThemeHandler.getInstance().getIdForName(getClassName()));
         super.onCreate(icicle);
 
-        sp = PreferenceManager.getDefaultSharedPreferences(this);
+        AlarmApplication.guice().injectMembers(this);
 
         if (getResources().getBoolean(R.bool.isTablet)) {
             // preserve initial rotation and disable rotation change
@@ -113,8 +112,6 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
         } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
-
-        alarmsManager = AlarmsManager.getAlarmsManager();
 
         int id = getIntent().getIntExtra(Intents.EXTRA_ID, -1);
         try {
@@ -143,13 +140,13 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
             filter.addAction(Intents.ACTION_CANCEL_SNOOZE);
             filter.addAction(Intents.ACTION_SOUND_EXPIRED);
             registerReceiver(mReceiver, filter);
-        } catch (AlarmNotFoundException e) {
+        } catch (Exception e) {
             Logger.getDefaultLogger().d("Alarm not found");
         }
     }
 
     private void setTitle() {
-        final String titleText = mAlarm.getLabelOrDefault(this);
+        final String titleText = mAlarm.getLabelOrDefault();
         setTitle(titleText);
         TextView textView = (TextView) findViewById(R.id.alarm_alert_label);
         textView.setText(titleText);
@@ -262,7 +259,7 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
         try {
             mAlarm = alarmsManager.getAlarm(id);
             setTitle();
-        } catch (AlarmNotFoundException e) {
+        } catch (Exception e) {
             Logger.getDefaultLogger().d("Alarm not found");
         }
 
@@ -291,29 +288,29 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
         // Do this on key down to handle a few of the system keys.
         boolean up = event.getAction() == KeyEvent.ACTION_UP;
         switch (event.getKeyCode()) {
-        // Volume keys and camera keys dismiss the alarm
-        case KeyEvent.KEYCODE_VOLUME_UP:
-        case KeyEvent.KEYCODE_VOLUME_DOWN:
-        case KeyEvent.KEYCODE_VOLUME_MUTE:
-        case KeyEvent.KEYCODE_CAMERA:
-        case KeyEvent.KEYCODE_FOCUS:
-            if (up) {
-                switch (mVolumeBehavior) {
-                case 1:
-                    snoozeIfEnabledInSettings();
-                    break;
+            // Volume keys and camera keys dismiss the alarm
+            case KeyEvent.KEYCODE_VOLUME_UP:
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+            case KeyEvent.KEYCODE_VOLUME_MUTE:
+            case KeyEvent.KEYCODE_CAMERA:
+            case KeyEvent.KEYCODE_FOCUS:
+                if (up) {
+                    switch (mVolumeBehavior) {
+                        case 1:
+                            snoozeIfEnabledInSettings();
+                            break;
 
-                case 2:
-                    dismiss();
-                    break;
+                        case 2:
+                            dismiss();
+                            break;
 
-                default:
-                    break;
+                        default:
+                            break;
+                    }
                 }
-            }
-            return true;
-        default:
-            break;
+                return true;
+            default:
+                break;
         }
         return super.dispatchKeyEvent(event);
     }

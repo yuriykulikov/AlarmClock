@@ -41,11 +41,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
-import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.AlarmEditor;
-import com.better.alarm.model.interfaces.AlarmNotFoundException;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.view.AlarmPreference;
@@ -96,7 +95,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         // each change.
         addPreferencesFromResource(R.xml.alarm_details);
 
-        alarms = AlarmsManager.getAlarmsManager();
+        alarms = AlarmApplication.alarms();
 
         EditText label = (EditText) getLayoutInflater().inflate(R.layout.details_label, null);
         ListView list = (ListView) findViewById(android.R.id.list);
@@ -194,7 +193,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         int mId = intent.getIntExtra(Intents.EXTRA_ID, -1);
         try {
             alarm = alarms.getAlarm(mId);
-        } catch (AlarmNotFoundException e) {
+        } catch (Exception e) {
             Logger.getDefaultLogger().d("Alarm not found");
             finish();
         }

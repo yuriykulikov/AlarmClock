@@ -14,6 +14,7 @@ import android.preference.PreferenceManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
+import com.better.alarm.AlarmApplication;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.presenter.SettingsActivity;
 import com.better.alarm.presenter.background.VibrationService.AlertConditionHelper.AlertStrategy;
@@ -37,7 +38,7 @@ public class VibrationService extends Service {
         @Override
         public void onReceive(final Context context, final Intent intent) {
             intent.setClass(context, VibrationService.class);
-            WakeLockManager.getWakeLockManager().acquirePartialWakeLock(intent, "ForVibrationService");
+            AlarmApplication.wakeLocks().acquirePartialWakeLock(intent, "ForVibrationService");
             context.startService(intent);
         }
     }
@@ -82,7 +83,7 @@ public class VibrationService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
-            WakeLockManager.getWakeLockManager().releasePartialWakeLock(intent);
+            AlarmApplication.wakeLocks().releasePartialWakeLock(intent);
         }
         try {
             String action = intent.getAction();

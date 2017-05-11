@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.better.alarm.BuildConfig;
-import com.better.alarm.model.AlarmsService;
+import com.better.alarm.services.AlarmsService;
 
 public class PresentationToModelIntents {
 

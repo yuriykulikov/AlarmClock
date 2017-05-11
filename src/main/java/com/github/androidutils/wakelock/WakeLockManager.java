@@ -26,6 +26,8 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 
 import com.github.androidutils.logger.Logger;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 /**
  * Utility class to pass {@link WakeLock} objects with intents. It contains a
@@ -36,33 +38,13 @@ import com.github.androidutils.logger.Logger;
 public class WakeLockManager {
     public static final String EXTRA_WAKELOCK_TAG = "WakeLockManager.EXTRA_WAKELOCK_TAG";
     public static final String EXTRA_WAKELOCK_HASH = "WakeLockManager.EXTRA_WAKELOCK_HASH";
-    private static final String TAG = "WakeLockManager";
+
     private final Logger log;
-
-    private static volatile WakeLockManager sInstance;
-
     private final CopyOnWriteArrayList<WakeLock> wakeLocks;
     private final PowerManager pm;
 
-    @Deprecated
-    public static WakeLockManager getWakeLockManager() {
-        if (sInstance == null) throw new RuntimeException(TAG + " was not initialized");
-        return sInstance;
-    }
-
-    @Deprecated
-    public static void init(Context context, Logger logger, boolean debug) {
-        if (sInstance != null) {
-            logger.w("Attempt to reinitalize");
-            WakeLockManager oldManager = sInstance;
-            sInstance = new WakeLockManager(context, logger, debug);
-            sInstance.wakeLocks.addAllAbsent(oldManager.wakeLocks);
-        } else {
-            sInstance = new WakeLockManager(context, logger, debug);
-        }
-    }
-
-    public WakeLockManager(Context context, Logger logger, boolean debug) {
+    @Inject
+    public WakeLockManager(Context context, @Named("debug") Logger logger) {
         pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         wakeLocks = new CopyOnWriteArrayList<PowerManager.WakeLock>();
         log = logger;
