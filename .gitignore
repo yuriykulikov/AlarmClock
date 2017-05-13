@@ -1,4 +1,4 @@
-.gradle
+#.gradle
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries
@@ -7,7 +7,7 @@
 *.iml
 .idea/
 *.apk
-gradle/
-gradlew
-gradlew.bat
+#gradle/
+#gradlew
+#gradlew.bat
 
