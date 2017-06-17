@@ -97,6 +97,14 @@
             android:defaultValue="10"
             android:dialogTitle="@string/snooze_duration_title" />
 
+        <EditTextPreference
+            android:key="custom_snooze_duration"
+            android:title="@string/snooze_duration_custom_option_title"
+            android:summary="Setup a custom snooze (minutes)"
+            android:numeric="integer"
+            android:maxLength="2"
+            />
+
         <ListPreference
             android:key="auto_silence"
             android:title="@string/auto_silence_title"

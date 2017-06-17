@@ -488,6 +488,9 @@ public final class AlarmCore implements Alarm {
                 Calendar nextTime = Calendar.getInstance();
                 int snoozeMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext).getString(
                         "snooze_duration", "10"));
+                if(snoozeMinutes == -2) {
+                    snoozeMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext).getString("custom_snooze_duration", "10"));
+                }
                 nextTime.add(Calendar.MINUTE, snoozeMinutes);
                 return nextTime;
             }
