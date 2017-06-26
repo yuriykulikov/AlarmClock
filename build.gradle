@@ -7,11 +7,13 @@ buildscript {
         // add dependency to plugin
         classpath "com.neenbedankt.gradle.plugins:android-apt:1.6"
         classpath 'com.f2prateek.javafmt:javafmt:0.1.6'
+        classpath 'com.dicedmelon.gradle:jacoco-android:0.1.1'
     }
 }
 apply plugin: 'com.android.application'
 apply plugin: "android-apt"
 apply plugin: 'com.f2prateek.javafmt'
+apply plugin: 'jacoco-android'
 
 android {
     compileSdkVersion 21
@@ -27,12 +29,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            testCoverageEnabled true
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-        }
-        debug {
-            testCoverageEnabled true
         }
     }
 
