@@ -147,16 +147,6 @@
             android:exported="false" >
         </service>
 
-        <!-- Reacts on Alarms being set/unset and changes notification bar and lockscreen -->
-        <receiver
-            android:name=".presenter.background.ScheduledReceiver"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="${applicationId}.model.Intents.ACTION_ALARMS_UNSCHEDULED" />
-                <action android:name="${applicationId}.model.Intents.ACTION_ALARM_SCHEDULED" />
-            </intent-filter>
-        </receiver>
-
         <!-- Reacts on Alarms set and displays a toast -->
         <receiver
             android:name=".presenter.background.ToastPresenter"
