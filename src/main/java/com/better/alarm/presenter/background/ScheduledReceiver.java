@@ -49,7 +49,7 @@ public class ScheduledReceiver {
     private static final Intent FAKE_INTENT_JUST_TO_DISPLAY_IN_ICON = new Intent("FAKE_ACTION_JUST_TO_DISPLAY_AN_ICON");
 
     @Inject
-    ScheduledReceiver(Store store, final Context context){
+    public ScheduledReceiver(Store store, final Context context){
         store.next().subscribe(new Consumer<Optional<Store.Next>>() {
             @Override
             public void accept(@NonNull Optional<Store.Next> nextOptional) throws Exception {
