@@ -46,6 +46,10 @@ android {
             applicationId "com.premium.alarm"
         }
     }
+
+    lintOptions {
+        abortOnError false
+    }
 }
 repositories {
     jcenter()
