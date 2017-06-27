@@ -2,7 +2,7 @@ language: android
 jdk: oraclejdk8
 env:
   global:
-    - ANDROID_TARGET=android-15
+    - ANDROID_TARGET=android-21
     - ANDROID_ABI=armeabi-v7a
 android:
   components:
