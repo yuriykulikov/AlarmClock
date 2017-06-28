@@ -23,10 +23,7 @@ class TestAlarmContainer implements IAlarmContainer {
     private Calendar nextTime;
     private String state;
 
-    private static int idCounter;
-
-    public TestAlarmContainer() {
-        id = idCounter++;
+    public TestAlarmContainer(int id) {
         hour = 18;
         minutes = 0;
         vibrate = true;

@@ -10,6 +10,7 @@ import com.better.alarm.model.Alarms;
 import com.better.alarm.model.AlarmsScheduler;
 import com.better.alarm.model.ContainerFactory;
 import com.better.alarm.model.IAlarmsScheduler;
+import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.persistance.AlarmContainer;
 import com.better.alarm.persistance.DatabaseQuery;
@@ -81,7 +82,7 @@ public class AlarmsTest {
                 binder.bind(AlarmCoreFactory.class).asEagerSingleton();
 
                 //stubs
-                binder.bind(ContainerFactory.class).to(TestAlarmContainerFactory.class);
+                binder.bind(ContainerFactory.class).to(TestAlarmContainerFactory.class).asEagerSingleton();
                 binder.bind(Scheduler.class).toInstance(testScheduler);
                 binder.bind(HandlerFactory.class).to(TestHandlerFactory.class);
                 binder.bind(Context.class).toInstance(mock(Context.class));
@@ -111,14 +112,50 @@ public class AlarmsTest {
     public void create() {
         //when
         IAlarmsManager instance = guice.getInstance(IAlarmsManager.class);
-        instance.createNewAlarm();
-        instance.getAlarm(0).enable(true);
+        Alarm newAlarm = instance.createNewAlarm();
+        newAlarm.enable(true);
         testScheduler.triggerActions();
         //verify
         store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
             @Override
             public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
                 return alarmValues.size() == 1 && alarmValues.get(0).isEnabled();
+            }
+        });
+    }
+
+    @Test
+    public void deleteDisabledAlarm() {
+        //when
+        IAlarmsManager instance = guice.getInstance(IAlarmsManager.class);
+        Alarm newAlarm = instance.createNewAlarm();
+        testScheduler.triggerActions();
+        newAlarm.delete();
+        testScheduler.triggerActions();
+        //verify
+        store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
+            @Override
+            public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
+                return alarmValues.size() == 0;
+            }
+        });
+    }
+
+    @Test
+    public void deleteEnabledAlarm() {
+        //when
+        IAlarmsManager instance = guice.getInstance(IAlarmsManager.class);
+        Alarm newAlarm = instance.createNewAlarm();
+        testScheduler.triggerActions();
+        newAlarm.enable(true);
+        testScheduler.triggerActions();
+        newAlarm.delete();
+        testScheduler.triggerActions();
+        //verify
+        store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
+            @Override
+            public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
+                return alarmValues.size() == 0;
             }
         });
     }

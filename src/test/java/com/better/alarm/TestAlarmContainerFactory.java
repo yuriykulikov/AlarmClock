@@ -8,12 +8,15 @@ import com.google.inject.Inject;
  * Created by Yuriy on 25.06.2017.
  */
 public class TestAlarmContainerFactory implements ContainerFactory {
+    int idCounter;
+
     @Inject
-    public TestAlarmContainerFactory(){
+    public TestAlarmContainerFactory() {
 
     }
+
     @Override
     public IAlarmContainer create() {
-        return new TestAlarmContainer();
+        return new TestAlarmContainer(idCounter++);
     }
 }
