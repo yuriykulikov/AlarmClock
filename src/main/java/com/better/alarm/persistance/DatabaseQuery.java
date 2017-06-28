@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.better.alarm.model.IAlarmContainer;
 import com.github.androidutils.logger.Logger;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -47,7 +48,7 @@ public class DatabaseQuery {
         this.context = context;
     }
 
-    public Single<List<AlarmContainer>> query() {
+    public Single<List<IAlarmContainer>> query() {
 
         return Single
                 .create(new SingleOnSubscribe<Cursor>() {
@@ -68,10 +69,10 @@ public class DatabaseQuery {
                                 .delay(500, TimeUnit.MILLISECONDS);
                     }
                 })
-                .map(new Function<Cursor, List<AlarmContainer>>() {
+                .map(new Function<Cursor, List<IAlarmContainer>>() {
                     @Override
-                    public List<AlarmContainer> apply(@NonNull Cursor cursor) throws Exception {
-                        List<AlarmContainer> alarms = new ArrayList<AlarmContainer>();
+                    public List<IAlarmContainer> apply(@NonNull Cursor cursor) throws Exception {
+                        List<IAlarmContainer> alarms = new ArrayList<IAlarmContainer>();
                         try {
                             if (cursor.moveToFirst()) {
                                 do {
@@ -85,6 +86,6 @@ public class DatabaseQuery {
                     }
                 })
                 //emit an empty list if it all fails
-                .onErrorResumeNext(Single.just(Lists.<AlarmContainer>newArrayList()));
+                .onErrorResumeNext(Single.just(Lists.<IAlarmContainer>newArrayList()));
     }
 }

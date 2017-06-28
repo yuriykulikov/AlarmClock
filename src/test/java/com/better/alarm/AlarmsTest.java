@@ -9,6 +9,7 @@ import com.better.alarm.model.AlarmValue;
 import com.better.alarm.model.Alarms;
 import com.better.alarm.model.AlarmsScheduler;
 import com.better.alarm.model.ContainerFactory;
+import com.better.alarm.model.IAlarmContainer;
 import com.better.alarm.model.IAlarmsScheduler;
 import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.IAlarmsManager;
@@ -24,6 +25,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
+import com.google.inject.util.Modules;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -47,11 +49,12 @@ public class AlarmsTest {
     private TestScheduler testScheduler;
     private ImmutableStore store;
     private ImmutablePrefs prefs;
+    private Logger logger;
 
     @Before
     public void setup() {
         testScheduler = new TestScheduler();
-        final Logger logger = Logger.getDefaultLogger().addLogWriter(new SysoutLogWriter());
+        logger = Logger.getDefaultLogger().addLogWriter(new SysoutLogWriter());
 
         prefs = ImmutablePrefs.builder()
                 .preAlarmDuration(BehaviorSubject.createDefault(10))
@@ -66,44 +69,45 @@ public class AlarmsTest {
 
         stateNotifierMock = mock(AlarmCore.IStateNotifier.class);
 
-        guice = Guice.createInjector(new Module() {
-            @Override
-            public void configure(Binder binder) {
-                //initial config
-                binder.requireExplicitBindings();
-                binder.requireAtInjectOnConstructors();
-                binder.requireExactBindingAnnotations();
+        guice = Guice.createInjector(new TestModule());
+    }
 
-                //real stuff
-                binder.bind(Logger.class).toInstance(logger);
-                binder.bind(Logger.class).annotatedWith(Names.named("debug")).toInstance(new Logger());
-                binder.bind(IAlarmsManager.class).to(Alarms.class).asEagerSingleton();
-                binder.bind(IAlarmsScheduler.class).to(AlarmsScheduler.class).asEagerSingleton();
-                binder.bind(AlarmCoreFactory.class).asEagerSingleton();
+    private class TestModule implements Module {
+        @Override
+        public void configure(Binder binder) {
+            //initial config
+            binder.requireExplicitBindings();
+            binder.requireAtInjectOnConstructors();
+            binder.requireExactBindingAnnotations();
 
-                //stubs
-                binder.bind(ContainerFactory.class).to(TestAlarmContainerFactory.class).asEagerSingleton();
-                binder.bind(Scheduler.class).toInstance(testScheduler);
-                binder.bind(HandlerFactory.class).to(TestHandlerFactory.class);
-                binder.bind(Context.class).toInstance(mock(Context.class));
-                binder.bind(DatabaseQuery.class).toInstance(mockQuery());
-                binder.bind(AlarmSetter.class).to(TestAlarmSetter.class).asEagerSingleton();
+            //real stuff
+            binder.bind(Logger.class).toInstance(logger);
+            binder.bind(Logger.class).annotatedWith(Names.named("debug")).toInstance(new Logger());
+            binder.bind(IAlarmsManager.class).to(Alarms.class).asEagerSingleton();
+            binder.bind(IAlarmsScheduler.class).to(AlarmsScheduler.class).asEagerSingleton();
+            binder.bind(AlarmCoreFactory.class).asEagerSingleton();
 
-                //stores and settings without persistance
-                binder.bind(Prefs.class).toInstance(prefs);
-                binder.bind(Store.class).toInstance(store);
+            //stubs
+            binder.bind(ContainerFactory.class).to(TestAlarmContainerFactory.class).asEagerSingleton();
+            binder.bind(Scheduler.class).toInstance(testScheduler);
+            binder.bind(HandlerFactory.class).to(TestHandlerFactory.class);
+            binder.bind(Context.class).toInstance(mock(Context.class));
+            binder.bind(DatabaseQuery.class).toInstance(mockQuery());
+            binder.bind(AlarmSetter.class).to(TestAlarmSetter.class).asEagerSingleton();
 
-                //mocks for verification
-                binder.bind(AlarmCore.IStateNotifier.class).toInstance(stateNotifierMock);
-            }
-        });
+            //stores and settings without persistance
+            binder.bind(Prefs.class).toInstance(prefs);
+            binder.bind(Store.class).toInstance(store);
 
+            //mocks for verification
+            binder.bind(AlarmCore.IStateNotifier.class).toInstance(stateNotifierMock);
+        }
     }
 
     @android.support.annotation.NonNull
     private DatabaseQuery mockQuery() {
         final DatabaseQuery query = mock(DatabaseQuery.class);
-        List<AlarmContainer> list = Lists.newArrayList();
+        List<IAlarmContainer> list = Lists.newArrayList();
         when(query.query()).thenReturn(Single.just(list));
         return query;
     }
@@ -130,7 +134,7 @@ public class AlarmsTest {
         IAlarmsManager instance = guice.getInstance(IAlarmsManager.class);
         Alarm newAlarm = instance.createNewAlarm();
         testScheduler.triggerActions();
-        newAlarm.delete();
+        instance.delete(newAlarm);
         testScheduler.triggerActions();
         //verify
         store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
@@ -149,13 +153,64 @@ public class AlarmsTest {
         testScheduler.triggerActions();
         newAlarm.enable(true);
         testScheduler.triggerActions();
-        newAlarm.delete();
+        instance.getAlarm(0).delete();
         testScheduler.triggerActions();
         //verify
         store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
             @Override
             public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
                 return alarmValues.size() == 0;
+            }
+        });
+    }
+
+    @Test
+    public void createThreeAlarms() {
+        //when
+        IAlarmsManager instance = guice.getInstance(IAlarmsManager.class);
+        instance.createNewAlarm();
+        testScheduler.triggerActions();
+        instance.createNewAlarm().enable(true);
+        testScheduler.triggerActions();
+        instance.createNewAlarm();
+        testScheduler.triggerActions();
+        //verify
+        store.alarms().test().assertValueAt(0, new Predicate<List<AlarmValue>>() {
+            @Override
+            public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
+                System.out.println(alarmValues);
+                return alarmValues.size() == 3
+                        && !alarmValues.get(0).isEnabled()
+                        && alarmValues.get(1).isEnabled()
+                        && !alarmValues.get(2).isEnabled();
+            }
+        });
+    }
+
+    @Test
+    public void alarmsFromMemoryMustBePresentInTheList() {
+        //when
+        IAlarmsManager instance = Guice.createInjector(Modules.override(new TestModule()).with(new Module() {
+            @Override
+            public void configure(Binder binder) {
+                final DatabaseQuery query = mock(DatabaseQuery.class);
+                TestAlarmContainer existingContainer = new TestAlarmContainer(100500);
+                existingContainer.setEnabled(true);
+                existingContainer.setLabel("hello");
+                List<IAlarmContainer> list = Lists.<IAlarmContainer>newArrayList(existingContainer);
+                when(query.query()).thenReturn(Single.just(list));
+                binder.bind(DatabaseQuery.class).toInstance(query);
+            }
+        })).getInstance(IAlarmsManager.class);
+
+        //verify
+        store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
+            @Override
+            public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
+                System.out.println(alarmValues);
+                return alarmValues.size() == 1
+                        && alarmValues.get(0).isEnabled()
+                        && alarmValues.get(0).getLabel().equals("hello");
             }
         });
     }

@@ -24,6 +24,7 @@ class TestAlarmContainer implements IAlarmContainer {
     private String state;
 
     public TestAlarmContainer(int id) {
+        this.id = id;
         hour = 18;
         minutes = 0;
         vibrate = true;

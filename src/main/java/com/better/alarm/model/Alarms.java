@@ -56,10 +56,10 @@ public class Alarms implements IAlarmsManager {
         this.containerFactory = containerFactory;
         this.alarms = new HashMap<Integer, AlarmCore>();
 
-        query.query().subscribe(new Consumer<List<AlarmContainer>>() {
+        query.query().subscribe(new Consumer<List<IAlarmContainer>>() {
             @Override
-            public void accept(@NonNull List<AlarmContainer> alarmContainers) throws Exception {
-                for (AlarmContainer container : alarmContainers) {
+            public void accept(@NonNull List<IAlarmContainer> alarmContainers) throws Exception {
+                for (IAlarmContainer container : alarmContainers) {
                     final AlarmCore a = factory.create(container);
                     alarms.put(a.getId(), a);
                     //TODO a.refresh();, but with a delay or something. We do not want to refresh the alarms that have just fired, right?
