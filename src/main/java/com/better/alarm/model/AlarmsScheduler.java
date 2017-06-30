@@ -45,7 +45,7 @@ public class AlarmsScheduler implements IAlarmsScheduler {
 
     private final Store store;
     private final IAlarmsManager alarms;
-    private Prefs prefs;
+    private final Prefs prefs;
 
     public class ScheduledAlarm implements Comparable<ScheduledAlarm> {
         public final int id;
@@ -94,18 +94,18 @@ public class AlarmsScheduler implements IAlarmsScheduler {
     private final AlarmSetter setter;
 
     private final PriorityQueue<ScheduledAlarm> queue;
-
     private final Logger log;
-
+    private final Calendars calendars;
 
     @Inject
-    public AlarmsScheduler(AlarmSetter setter, Logger logger, Store store, IAlarmsManager alarms, Prefs prefs) {
+    public AlarmsScheduler(AlarmSetter setter, Logger logger, Store store, IAlarmsManager alarms, Prefs prefs, Calendars calendars) {
         this.setter = setter;
         this.store = store;
         this.alarms = alarms;
         this.prefs = prefs;
         queue = new PriorityQueue<ScheduledAlarm>();
         this.log = logger;
+        this.calendars = calendars;
     }
 
     @Override
@@ -162,7 +162,7 @@ public class AlarmsScheduler implements IAlarmsScheduler {
      */
 
     private void fireAlarmsInThePast() {
-        Calendar now = Calendar.getInstance();
+        Calendar now = calendars.now();
         while (!queue.isEmpty() && queue.peek().calendar.before(now)) {
             // remove happens in fire
             ScheduledAlarm firedInThePastAlarm = queue.poll();

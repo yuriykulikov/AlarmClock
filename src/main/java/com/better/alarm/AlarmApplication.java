@@ -34,6 +34,7 @@ import com.better.alarm.model.AlarmStateNotifier;
 import com.better.alarm.model.AlarmValue;
 import com.better.alarm.model.Alarms;
 import com.better.alarm.model.AlarmsScheduler;
+import com.better.alarm.model.Calendars;
 import com.better.alarm.model.ContainerFactory;
 import com.better.alarm.model.IAlarmsScheduler;
 import com.better.alarm.model.MainLooperHandlerFactory;
@@ -62,6 +63,7 @@ import org.acra.annotation.ReportsCrashes;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import io.reactivex.annotations.NonNull;
@@ -147,7 +149,7 @@ public class AlarmApplication extends Application {
         store.next().subscribe(new Consumer<Optional<Store.Next>>() {
             @Override
             public void accept(@NonNull Optional<Store.Next> next) throws Exception {
-                logger.d("Store: #######################    " + next );
+                logger.d("Store: #######################    " + next);
             }
         });
 
@@ -234,6 +236,12 @@ public class AlarmApplication extends Application {
             binder.bind(Alarms.class).asEagerSingleton();
             binder.bind(ContainerFactory.class).to(ContainerFactory.ContainerFactoryImpl.class).asEagerSingleton();
             binder.bind(AlarmSetter.class).to(AlarmSetter.AlarmSetterImpl.class).asEagerSingleton();
+            binder.bind(Calendars.class).toInstance(new Calendars() {
+                @Override
+                public Calendar now() {
+                    return Calendar.getInstance();
+                }
+            });
         }
     }
 }

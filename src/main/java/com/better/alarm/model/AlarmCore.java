@@ -132,11 +132,13 @@ public final class AlarmCore implements Alarm {
     private final Observable<Integer> autoSilence;
 
     private final Store store;
+    private final Calendars calendars;
 
     @AutoFactory
     public AlarmCore(IAlarmContainer container, @Provided Logger logger, @Provided IAlarmsScheduler alarmsScheduler,
-                     @Provided IStateNotifier broadcaster, @Provided HandlerFactory handlerFactory, @Provided Prefs prefs, @Provided Store store) {
+                     @Provided IStateNotifier broadcaster, @Provided HandlerFactory handlerFactory, @Provided Prefs prefs, @Provided Store store, @Provided Calendars calendars) {
         this.log = logger;
+        this.calendars = calendars;
         this.mAlarmsScheduler = alarmsScheduler;
         this.container = container;
         this.broadcaster = broadcaster;
@@ -380,7 +382,7 @@ public final class AlarmCore implements Alarm {
                 Calendar preAlarm = calculateNextTime();
                 Integer preAlarmMinutes = preAlarmDuration.blockingFirst();
                 preAlarm.add(Calendar.MINUTE, -1 * preAlarmMinutes);
-                if (container.isPrealarm() && preAlarm.after(Calendar.getInstance()) && preAlarmMinutes != -1) {
+                if (container.isPrealarm() && preAlarm.after(calendars.now()) && preAlarmMinutes != -1) {
                     transitionTo(preAlarmSet);
                 } else {
                     transitionTo(set);
@@ -431,7 +433,7 @@ public final class AlarmCore implements Alarm {
                 int autoSilenceMinutes = autoSilence.blockingFirst();
                 if (autoSilenceMinutes > 0) {
                     // -1 means OFF
-                    Calendar nextTime = Calendar.getInstance();
+                    Calendar nextTime = calendars.now();
                     nextTime.add(Calendar.MINUTE, autoSilenceMinutes);
                     setAlarm(nextTime, CalendarType.AUTOSILENCE);
                 }
@@ -465,10 +467,10 @@ public final class AlarmCore implements Alarm {
             @Override
             public void enter() {
                 Calendar nextTime;
-                Calendar now = Calendar.getInstance();
+                Calendar now = calendars.now();
                 Message reason = getCurrentMessage();
                 if (reason.obj().isPresent()) {
-                    Calendar customTime = Calendar.getInstance();
+                    Calendar customTime = calendars.now();
                     //TODO pass an object, dont misuse these poor args
                     customTime.set(Calendar.HOUR_OF_DAY, reason.arg1().get());
                     customTime.set(Calendar.MINUTE, reason.arg2().get());
@@ -486,7 +488,7 @@ public final class AlarmCore implements Alarm {
             }
 
             private Calendar getNextRegualarSnoozeCalendar() {
-                Calendar nextTime = Calendar.getInstance();
+                Calendar nextTime = calendars.now();
                 int snoozeMinutes = snoozeDuration.blockingFirst();
                 nextTime.add(Calendar.MINUTE, snoozeMinutes);
                 return nextTime;
@@ -534,7 +536,7 @@ public final class AlarmCore implements Alarm {
                 // since prealarm is before main alarm, it can be already in the
                 // past, so it has to be adjusted.
                 advanceCalendar(c);
-                if (c.after(Calendar.getInstance())) {
+                if (c.after(calendars.now())) {
                     setAlarm(c, CalendarType.PREALARM);
                 } else {
                     // TODO this should never happen
@@ -599,10 +601,10 @@ public final class AlarmCore implements Alarm {
             @Override
             public void enter() {
                 Calendar nextTime;
-                Calendar now = Calendar.getInstance();
+                Calendar now = calendars.now();
                 Message reason = getCurrentMessage();
                 if (reason.obj().isPresent()) {
-                    Calendar customTime = Calendar.getInstance();
+                    Calendar customTime = calendars.now();
                     customTime.set(Calendar.HOUR_OF_DAY, reason.arg1().get());
                     customTime.set(Calendar.MINUTE, reason.arg2().get());
                     if (customTime.after(now)) {
@@ -693,7 +695,7 @@ public final class AlarmCore implements Alarm {
         }
 
         private Calendar calculateNextTime() {
-            Calendar c = Calendar.getInstance();
+            Calendar c = calendars.now();
             c.set(Calendar.HOUR_OF_DAY, container.getHour());
             c.set(Calendar.MINUTE, container.getMinutes());
             c.set(Calendar.SECOND, 0);
@@ -703,7 +705,7 @@ public final class AlarmCore implements Alarm {
         }
 
         private void advanceCalendar(Calendar calendar) {
-            Calendar now = Calendar.getInstance();
+            Calendar now = calendars.now();
             // if alarm is behind current time, advance one day
             if (calendar.before(now)) {
                 calendar.add(Calendar.DAY_OF_YEAR, 1);
