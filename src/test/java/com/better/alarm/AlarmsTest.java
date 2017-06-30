@@ -2,6 +2,8 @@ package com.better.alarm;
 
 import android.content.Context;
 
+import com.better.alarm.logger.Logger;
+import com.better.alarm.logger.SysoutLogWriter;
 import com.better.alarm.model.AlarmCore;
 import com.better.alarm.model.AlarmSetter;
 import com.better.alarm.model.AlarmValue;
@@ -10,9 +12,6 @@ import com.better.alarm.model.IAlarmContainer;
 import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.persistance.DatabaseQuery;
-import com.better.alarm.presenter.background.ScheduledReceiver;
-import com.better.alarm.logger.Logger;
-import com.better.alarm.logger.SysoutLogWriter;
 import com.better.alarm.statemachine.HandlerFactory;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
@@ -34,6 +33,7 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.TestScheduler;
 import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.PublishSubject;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -60,6 +60,7 @@ public class AlarmsTest {
         store = ImmutableStore.builder()
                 .alarms(BehaviorSubject.<List<AlarmValue>>createDefault(new ArrayList<AlarmValue>()))
                 .next(BehaviorSubject.createDefault(Optional.<Store.Next>absent()))
+                .sets(PublishSubject.<Store.AlarmSet>create())
                 .build();
 
         stateNotifierMock = mock(AlarmCore.IStateNotifier.class);
@@ -79,7 +80,6 @@ public class AlarmsTest {
             binder.bind(Context.class).toInstance(mock(Context.class));
             binder.bind(DatabaseQuery.class).toInstance(mockQuery());
             binder.bind(AlarmSetter.class).to(TestAlarmSetter.class).asEagerSingleton();
-            binder.bind(ScheduledReceiver.class).toInstance(mock(ScheduledReceiver.class));
 
             //mocks for verification
             binder.bind(AlarmCore.IStateNotifier.class).toInstance(stateNotifierMock);

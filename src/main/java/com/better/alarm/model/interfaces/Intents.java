@@ -49,13 +49,6 @@ public class Intents {
     public static final String ACTION_SOUND_EXPIRED = BuildConfig.APPLICATION_ID +".ACTION_SOUND_EXPIRED";
 
     /**
-     * Broadcasted when alarm is set
-     *
-     * TODO {@link com.better.alarm.presenter.background.ToastPresenter} only, replace soon with an Observable
-     */
-    public static final String ACTION_ALARM_SET = BuildConfig.APPLICATION_ID +".model.Intents.ACTION_ALARM_SET";
-
-    /**
      * Key of the AlarmCore attached as a parceble extra
      */
     public static final String EXTRA_ID = "intent.extra.alarm";

@@ -17,68 +17,51 @@
 
 package com.better.alarm.presenter.background;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.widget.Toast;
 
-import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
-import com.better.alarm.model.interfaces.Alarm;
-import com.better.alarm.model.interfaces.Intents;
-import com.better.alarm.logger.Logger;
+import com.better.alarm.Store;
 
-public class ToastPresenter extends BroadcastReceiver {
+import javax.inject.Inject;
 
-    private static Toast sToast = null;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
 
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        String action = intent.getAction();
-        if (Intents.ACTION_ALARM_SET.equals(action)) {
-            Alarm alarm;
-            int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
-            try {
-                alarm = AlarmApplication.alarms().getAlarm(id);
-                if (alarm.isEnabled()) {
-                    popAlarmSetToast(context, alarm, intent);
-                } else {
-                    Logger.getDefaultLogger().w("Alarm " + id + " is already disabled");
+public class ToastPresenter {
+    private Toast sToast = null;
+
+    @Inject
+    public ToastPresenter(Store store, final Context context) {
+        store.sets().subscribe(new Consumer<Store.AlarmSet>() {
+            @Override
+            public void accept(@NonNull Store.AlarmSet alarmSet) throws Exception {
+                if (alarmSet.alarm().isEnabled()) {
+                    popAlarmSetToast(context, alarmSet.millis());
                 }
-            } catch (Exception e) {
-                Logger.getDefaultLogger().w("Alarm " + id + " could not be found. Must be deleted");
             }
-        }
+        });
     }
 
-    public static void setToast(Toast toast) {
+    public void setToast(Toast toast) {
         if (sToast != null) {
             sToast.cancel();
         }
         sToast = toast;
     }
 
-    public static void cancelToast() {
-        if (sToast != null) {
-            sToast.cancel();
-        }
-        sToast = null;
-    }
-
-    static void popAlarmSetToast(Context context, Alarm alarm, Intent intent) {
-        String toastText;
-        long timeInMillis = intent.getLongExtra(Intents.EXTRA_NEXT_NORMAL_TIME_IN_MILLIS, -1);
-        toastText = formatToast(context, timeInMillis);
+    void popAlarmSetToast(Context context, long timeInMillis) {
+        String toastText = formatToast(context, timeInMillis);
         Toast toast = Toast.makeText(context, toastText, Toast.LENGTH_LONG);
-        ToastPresenter.setToast(toast);
+        setToast(toast);
         toast.show();
     }
 
     /**
      * format "Alarm set for 2 days 7 hours and 53 minutes from now"
-     * 
+     * <p>
      * If prealarm is on it will be
-     * 
+     * <p>
      * "Alarm set for 2 days 7 hours and 53 minutes from now. Prealarm will
      * start 30 minutes before the main alarm".
      */

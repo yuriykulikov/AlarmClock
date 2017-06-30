@@ -147,15 +147,6 @@
             android:exported="false" >
         </service>
 
-        <!-- Reacts on Alarms set and displays a toast -->
-        <receiver
-            android:name=".presenter.background.ToastPresenter"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="${applicationId}.model.Intents.ACTION_ALARM_SET" />
-            </intent-filter>
-        </receiver>
-
         <!-- Model -->
         <receiver
             android:name=".services.AlarmsService$Receiver"

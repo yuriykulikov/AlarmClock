@@ -19,6 +19,7 @@ package com.better.alarm.model;
 
 import android.net.Uri;
 
+import com.better.alarm.ImmutableAlarmSet;
 import com.better.alarm.Prefs;
 import com.better.alarm.Store;
 import com.better.alarm.model.interfaces.Alarm;
@@ -646,9 +647,7 @@ public final class AlarmCore implements Alarm {
         }
 
         private void broadcastAlarmSetWithNormalTime(long millis) {
-            String action = Intents.ACTION_ALARM_SET;
-            log.d(container.getId() + " - " + action + " - " + millis);
-            broadcaster.broadcastAlarmState(container.getId(), action, millis);
+            store.sets().onNext(ImmutableAlarmSet.of(container,millis));
             updateListInStore();
         }
 

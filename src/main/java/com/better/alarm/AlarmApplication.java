@@ -23,6 +23,10 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.view.ViewConfiguration;
 
+import com.better.alarm.logger.LogcatLogWriter;
+import com.better.alarm.logger.Logger;
+import com.better.alarm.logger.LoggingExceptionHandler;
+import com.better.alarm.logger.StartupLogWriter;
 import com.better.alarm.model.AlarmCore;
 import com.better.alarm.model.AlarmCoreFactory;
 import com.better.alarm.model.AlarmSetter;
@@ -37,13 +41,10 @@ import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.persistance.DatabaseQuery;
 import com.better.alarm.presenter.DynamicThemeHandler;
 import com.better.alarm.presenter.background.ScheduledReceiver;
-import com.f2prateek.rx.preferences2.RxSharedPreferences;
-import com.better.alarm.logger.LogcatLogWriter;
-import com.better.alarm.logger.Logger;
-import com.better.alarm.logger.LoggingExceptionHandler;
-import com.better.alarm.logger.StartupLogWriter;
+import com.better.alarm.presenter.background.ToastPresenter;
 import com.better.alarm.statemachine.HandlerFactory;
 import com.better.alarm.wakelock.WakeLockManager;
+import com.f2prateek.rx.preferences2.RxSharedPreferences;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.inject.Binder;
@@ -67,6 +68,7 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.PublishSubject;
 
 @ReportsCrashes(
         mailTo = "yuriy.kulikov.87@gmail.com",
@@ -128,6 +130,7 @@ public class AlarmApplication extends Application {
         final ImmutableStore store = ImmutableStore.builder()
                 .alarms(BehaviorSubject.<List<AlarmValue>>createDefault(new ArrayList<AlarmValue>()))
                 .next(BehaviorSubject.createDefault(Optional.<Store.Next>absent()))
+                .sets(PublishSubject.<Store.AlarmSet>create())
                 .build();
 
         store.alarms().subscribe(new Consumer<List<AlarmValue>>() {
@@ -193,6 +196,9 @@ public class AlarmApplication extends Application {
             binder.bind(ContentResolver.class).toInstance(getApplicationContext().getContentResolver());
             binder.bind(SharedPreferences.class).toInstance(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
             binder.bind(AlarmManager.class).toInstance((AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE));
+
+            binder.bind(ScheduledReceiver.class).asEagerSingleton();
+            binder.bind(ToastPresenter.class).asEagerSingleton();
         }
     }
 
@@ -226,7 +232,6 @@ public class AlarmApplication extends Application {
             binder.bind(DatabaseQuery.class).asEagerSingleton();
             binder.bind(AlarmCore.IStateNotifier.class).to(AlarmStateNotifier.class).asEagerSingleton();
             binder.bind(Alarms.class).asEagerSingleton();
-            binder.bind(ScheduledReceiver.class).asEagerSingleton();
             binder.bind(ContainerFactory.class).to(ContainerFactory.ContainerFactoryImpl.class).asEagerSingleton();
             binder.bind(AlarmSetter.class).to(AlarmSetter.AlarmSetterImpl.class).asEagerSingleton();
         }
