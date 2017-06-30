@@ -15,6 +15,7 @@ import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.persistance.AlarmContainer;
 import com.better.alarm.persistance.DatabaseQuery;
+import com.better.alarm.presenter.background.ScheduledReceiver;
 import com.github.androidutils.logger.Logger;
 import com.github.androidutils.logger.SysoutLogWriter;
 import com.github.androidutils.statemachine.HandlerFactory;
@@ -69,24 +70,14 @@ public class AlarmsTest {
 
         stateNotifierMock = mock(AlarmCore.IStateNotifier.class);
 
-        guice = Guice.createInjector(new TestModule());
+        guice = Guice.createInjector(Modules
+                .override(new AlarmApplication.AppModule(logger, prefs, store))
+                .with(new TestModule()));
     }
 
     private class TestModule implements Module {
         @Override
         public void configure(Binder binder) {
-            //initial config
-            binder.requireExplicitBindings();
-            binder.requireAtInjectOnConstructors();
-            binder.requireExactBindingAnnotations();
-
-            //real stuff
-            binder.bind(Logger.class).toInstance(logger);
-            binder.bind(Logger.class).annotatedWith(Names.named("debug")).toInstance(new Logger());
-            binder.bind(IAlarmsManager.class).to(Alarms.class).asEagerSingleton();
-            binder.bind(IAlarmsScheduler.class).to(AlarmsScheduler.class).asEagerSingleton();
-            binder.bind(AlarmCoreFactory.class).asEagerSingleton();
-
             //stubs
             binder.bind(ContainerFactory.class).to(TestAlarmContainerFactory.class).asEagerSingleton();
             binder.bind(Scheduler.class).toInstance(testScheduler);
@@ -94,10 +85,7 @@ public class AlarmsTest {
             binder.bind(Context.class).toInstance(mock(Context.class));
             binder.bind(DatabaseQuery.class).toInstance(mockQuery());
             binder.bind(AlarmSetter.class).to(TestAlarmSetter.class).asEagerSingleton();
-
-            //stores and settings without persistance
-            binder.bind(Prefs.class).toInstance(prefs);
-            binder.bind(Store.class).toInstance(store);
+            binder.bind(ScheduledReceiver.class).toInstance(mock(ScheduledReceiver.class));
 
             //mocks for verification
             binder.bind(AlarmCore.IStateNotifier.class).toInstance(stateNotifierMock);
@@ -190,18 +178,23 @@ public class AlarmsTest {
     @Test
     public void alarmsFromMemoryMustBePresentInTheList() {
         //when
-        IAlarmsManager instance = Guice.createInjector(Modules.override(new TestModule()).with(new Module() {
-            @Override
-            public void configure(Binder binder) {
-                final DatabaseQuery query = mock(DatabaseQuery.class);
-                TestAlarmContainer existingContainer = new TestAlarmContainer(100500);
-                existingContainer.setEnabled(true);
-                existingContainer.setLabel("hello");
-                List<IAlarmContainer> list = Lists.<IAlarmContainer>newArrayList(existingContainer);
-                when(query.query()).thenReturn(Single.just(list));
-                binder.bind(DatabaseQuery.class).toInstance(query);
-            }
-        })).getInstance(IAlarmsManager.class);
+        IAlarmsManager instance = Guice.createInjector(Modules
+                .override(Modules
+                        .override(new AlarmApplication.AppModule(logger, prefs, store))
+                        .with(new TestModule()))
+                .with(new Module() {
+                    @Override
+                    public void configure(Binder binder) {
+                        final DatabaseQuery query = mock(DatabaseQuery.class);
+                        TestAlarmContainer existingContainer = new TestAlarmContainer(100500);
+                        existingContainer.setEnabled(true);
+                        existingContainer.setLabel("hello");
+                        List<IAlarmContainer> list = Lists.<IAlarmContainer>newArrayList(existingContainer);
+                        when(query.query()).thenReturn(Single.just(list));
+                        binder.bind(DatabaseQuery.class).toInstance(query);
+                    }
+                }))
+                .getInstance(IAlarmsManager.class);
 
         //verify
         store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {

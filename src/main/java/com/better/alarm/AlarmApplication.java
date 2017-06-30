@@ -149,37 +149,7 @@ public class AlarmApplication extends Application {
             }
         });
 
-        guice = Guice.createInjector(new Module() {
-            @Override
-            public void configure(Binder binder) {
-                binder.requireExplicitBindings();
-                binder.requireAtInjectOnConstructors();
-                binder.requireExactBindingAnnotations();
-
-                binder.bind(Context.class).toInstance(getApplicationContext());
-                binder.bind(Logger.class).toInstance(logger);
-                binder.bind(Logger.class).annotatedWith(Names.named("debug")).toInstance(new Logger());
-                binder.bind(Prefs.class).toInstance(prefs);
-                binder.bind(AlarmManager.class).toInstance((AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE));
-                binder.bind(SharedPreferences.class).toInstance(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
-                binder.bind(ContentResolver.class).toInstance(getApplicationContext().getContentResolver());
-
-                //eager singletons to fail faster
-                binder.bind(WakeLockManager.class).asEagerSingleton();
-                binder.bind(IAlarmsManager.class).to(Alarms.class).asEagerSingleton();
-                binder.bind(IAlarmsScheduler.class).to(AlarmsScheduler.class).asEagerSingleton();
-                binder.bind(AlarmCoreFactory.class).asEagerSingleton();
-                binder.bind(HandlerFactory.class).to(MainLooperHandlerFactory.class).asEagerSingleton();
-                binder.bind(DatabaseQuery.class).asEagerSingleton();
-                binder.bind(AlarmCore.IStateNotifier.class).to(AlarmStateNotifier.class).asEagerSingleton();
-                binder.bind(Alarms.class).asEagerSingleton();
-
-                binder.bind(Store.class).toInstance(store);
-                binder.bind(ScheduledReceiver.class);
-                binder.bind(ContainerFactory.class).to(ContainerFactory.ContainerFactoryImpl.class);
-                binder.bind(AlarmSetter.class).to(AlarmSetter.AlarmSetterImpl.class);
-            }
-        });
+        guice = Guice.createInjector(new AppModule(logger, prefs, store), new AndroidModule());
 
         ACRA.getErrorReporter().setExceptionHandlerInitializer(new ExceptionHandlerInitializer() {
             @Override
@@ -215,5 +185,51 @@ public class AlarmApplication extends Application {
 
     public static IAlarmsManager alarms() {
         return guice.getInstance(IAlarmsManager.class);
+    }
+
+    private class AndroidModule implements Module {
+        @Override
+        public void configure(Binder binder) {
+            binder.bind(Context.class).toInstance(getApplicationContext());
+            binder.bind(ContentResolver.class).toInstance(getApplicationContext().getContentResolver());
+            binder.bind(SharedPreferences.class).toInstance(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
+            binder.bind(AlarmManager.class).toInstance((AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE));
+        }
+    }
+
+    public static class AppModule implements Module {
+        private final Logger logger;
+        private final ImmutablePrefs prefs;
+        private final ImmutableStore store;
+
+        public AppModule(Logger logger, ImmutablePrefs prefs, ImmutableStore store) {
+            this.logger = logger;
+            this.prefs = prefs;
+            this.store = store;
+        }
+
+        @Override
+        public void configure(Binder binder) {
+            binder.requireExplicitBindings();
+            binder.requireAtInjectOnConstructors();
+            binder.requireExactBindingAnnotations();
+
+            binder.bind(Logger.class).toInstance(logger);
+            binder.bind(Logger.class).annotatedWith(Names.named("debug")).toInstance(new Logger());
+            binder.bind(Prefs.class).toInstance(prefs);
+            binder.bind(Store.class).toInstance(store);
+
+            binder.bind(WakeLockManager.class).asEagerSingleton();
+            binder.bind(IAlarmsManager.class).to(Alarms.class).asEagerSingleton();
+            binder.bind(IAlarmsScheduler.class).to(AlarmsScheduler.class).asEagerSingleton();
+            binder.bind(AlarmCoreFactory.class).asEagerSingleton();
+            binder.bind(HandlerFactory.class).to(MainLooperHandlerFactory.class).asEagerSingleton();
+            binder.bind(DatabaseQuery.class).asEagerSingleton();
+            binder.bind(AlarmCore.IStateNotifier.class).to(AlarmStateNotifier.class).asEagerSingleton();
+            binder.bind(Alarms.class).asEagerSingleton();
+            binder.bind(ScheduledReceiver.class).asEagerSingleton();
+            binder.bind(ContainerFactory.class).to(ContainerFactory.ContainerFactoryImpl.class).asEagerSingleton();
+            binder.bind(AlarmSetter.class).to(AlarmSetter.AlarmSetterImpl.class).asEagerSingleton();
+        }
     }
 }
