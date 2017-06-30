@@ -1,4 +1,4 @@
-package com.github.androidutils.statemachine;
+package com.better.alarm.statemachine;
 
 public abstract class ComplexTransition extends State {
     abstract public void performComplexTransition();

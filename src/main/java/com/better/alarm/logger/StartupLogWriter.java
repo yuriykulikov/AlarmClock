@@ -1,19 +1,22 @@
-package com.github.androidutils.logger;
+package com.better.alarm.logger;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.github.androidutils.logger.Logger.LogLevel;
-import com.github.androidutils.logger.Logger.LogWriter;
+import com.better.alarm.logger.Logger.LogLevel;
+import com.better.alarm.logger.Logger.LogWriter;
 
 public class StartupLogWriter implements LogWriter {
-
     private static final int STARTUP_BUFFER_SIZE = 100;
 
     private final DateFormat dtf;
     private final CopyOnWriteArrayList<String> messages;
+
+    public static StartupLogWriter create() {
+        return new StartupLogWriter();
+    }
 
     private StartupLogWriter() {
         dtf = new SimpleDateFormat("dd-MM HH:mm:ss");
@@ -30,11 +33,6 @@ public class StartupLogWriter implements LogWriter {
             sb.append(message).append('\n');
         }
         return sb.toString();
-    }
-
-    @Override
-    public void write(LogLevel level, String tag, String message) {
-        write(level, tag, message, null);
     }
 
     @Override
@@ -55,14 +53,5 @@ public class StartupLogWriter implements LogWriter {
             }
             messages.add(buf.toString());
         }
-    }
-
-    private static volatile StartupLogWriter sInstance;
-
-    public static synchronized StartupLogWriter getInstance() {
-        if (sInstance == null) {
-            sInstance = new StartupLogWriter();
-        }
-        return sInstance;
     }
 }

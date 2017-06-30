@@ -44,7 +44,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import com.better.alarm.R;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.view.VolumePreference.SeekBarVolumizer;
-import com.github.androidutils.logger.Logger;
+import com.better.alarm.logger.Logger;
 
 interface IVolumizerMaster {
     void onSampleStarting(SeekBarVolumizer volumizer);

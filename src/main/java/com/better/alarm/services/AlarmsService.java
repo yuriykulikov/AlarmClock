@@ -29,7 +29,7 @@ import com.better.alarm.model.Alarms;
 import com.better.alarm.model.AlarmsScheduler;
 import com.better.alarm.model.CalendarType;
 import com.better.alarm.model.interfaces.PresentationToModelIntents;
-import com.github.androidutils.logger.Logger;
+import com.better.alarm.logger.Logger;
 import com.google.inject.Inject;
 
 public class AlarmsService extends Service {

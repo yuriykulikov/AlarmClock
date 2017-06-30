@@ -1,14 +1,13 @@
 package com.better.alarm;
 
-import com.github.androidutils.statemachine.HandlerFactory;
-import com.github.androidutils.statemachine.IHandler;
-import com.github.androidutils.statemachine.ImmutableMessage;
-import com.github.androidutils.statemachine.Message;
-import com.github.androidutils.statemachine.MessageHandler;
+import com.better.alarm.statemachine.HandlerFactory;
+import com.better.alarm.statemachine.IHandler;
+import com.better.alarm.statemachine.ImmutableMessage;
+import com.better.alarm.statemachine.Message;
+import com.better.alarm.statemachine.MessageHandler;
 import com.google.inject.Inject;
 
 import io.reactivex.Scheduler;
-import io.reactivex.schedulers.TestScheduler;
 
 /**
  * Created by Yuriy on 25.06.2017.

@@ -34,7 +34,7 @@ import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.presenter.AlarmsListFragment.ShowDetailsStrategy;
 import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialogHandler;
-import com.github.androidutils.logger.Logger;
+import com.better.alarm.logger.Logger;
 import com.melnykov.fab.*;
 
 /**

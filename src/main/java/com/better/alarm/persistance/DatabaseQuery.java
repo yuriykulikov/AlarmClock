@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.better.alarm.model.IAlarmContainer;
-import com.github.androidutils.logger.Logger;
+import com.better.alarm.logger.Logger;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Flowable;
-import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;

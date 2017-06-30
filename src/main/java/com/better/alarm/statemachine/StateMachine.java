@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.github.androidutils.statemachine;
+package com.better.alarm.statemachine;
 
-import com.github.androidutils.logger.Logger;
+import com.better.alarm.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;

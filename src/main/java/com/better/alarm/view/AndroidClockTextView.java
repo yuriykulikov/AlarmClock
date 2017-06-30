@@ -24,7 +24,7 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-import com.github.androidutils.logger.Logger;
+import com.better.alarm.logger.Logger;
 
 /**
  * Displays text using the special AndroidClock font.

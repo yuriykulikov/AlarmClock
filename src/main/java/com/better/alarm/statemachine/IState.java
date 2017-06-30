@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.androidutils.statemachine;
+package com.better.alarm.statemachine;
 
 /**
  * {@hide}

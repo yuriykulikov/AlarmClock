@@ -1,4 +1,4 @@
-package com.github.androidutils.logger;
+package com.better.alarm.logger;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -14,9 +14,7 @@ public class Logger {
      * 
      */
     public interface LogWriter {
-        public void write(LogLevel level, String tag, String message);
-
-        public void write(LogLevel level, String tag, String message, Throwable e);
+        void write(LogLevel level, String tag, String message, Throwable e);
     }
 
     private final CopyOnWriteArrayList<LogWriter> writers;
@@ -98,11 +96,16 @@ public class Logger {
         return tag;
     }
 
+    @Deprecated
     public static synchronized Logger getDefaultLogger() {
         if (sDefaultLogger == null) {
             sDefaultLogger = new Logger();
         }
         return sDefaultLogger;
+    }
+
+    public static Logger create(){
+        return getDefaultLogger();
     }
 
     private static volatile Logger sDefaultLogger;

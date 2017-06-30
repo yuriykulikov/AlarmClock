@@ -28,7 +28,7 @@ import android.os.Message;
 
 import com.better.alarm.R;
 import com.better.alarm.model.interfaces.Intents;
-import com.github.androidutils.logger.Logger;
+import com.better.alarm.logger.Logger;
 
 /**
  * Full screen alarm alert: pops visible indicator and plays alarm tone. This

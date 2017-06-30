@@ -20,7 +20,7 @@ import com.better.alarm.ImmutableNext;
 import com.better.alarm.Prefs;
 import com.better.alarm.Store;
 import com.better.alarm.model.interfaces.IAlarmsManager;
-import com.github.androidutils.logger.Logger;
+import com.better.alarm.logger.Logger;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
 

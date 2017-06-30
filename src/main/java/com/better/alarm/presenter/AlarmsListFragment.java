@@ -29,10 +29,9 @@ import com.better.alarm.R;
 import com.better.alarm.Store;
 import com.better.alarm.model.AlarmValue;
 import com.better.alarm.model.DaysOfWeek;
-import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.view.DigitalClock;
-import com.github.androidutils.logger.Logger;
+import com.better.alarm.logger.Logger;
 import com.google.inject.Inject;
 
 import java.util.ArrayList;

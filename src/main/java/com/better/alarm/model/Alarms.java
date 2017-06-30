@@ -20,9 +20,8 @@ import android.content.Context;
 
 import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.IAlarmsManager;
-import com.better.alarm.persistance.AlarmContainer;
 import com.better.alarm.persistance.DatabaseQuery;
-import com.github.androidutils.logger.Logger;
+import com.better.alarm.logger.Logger;
 import com.google.inject.Inject;
 
 import java.util.HashMap;

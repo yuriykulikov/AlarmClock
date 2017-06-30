@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
-import com.github.androidutils.logger.Logger;
+import com.better.alarm.logger.Logger;
 import com.google.inject.Inject;
 
 /**

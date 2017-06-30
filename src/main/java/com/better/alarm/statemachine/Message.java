@@ -1,4 +1,4 @@
-package com.github.androidutils.statemachine;
+package com.better.alarm.statemachine;
 
 import com.google.common.base.Optional;
 

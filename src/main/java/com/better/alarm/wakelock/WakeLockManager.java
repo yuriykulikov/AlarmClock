@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.androidutils.wakelock;
+package com.better.alarm.wakelock;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -25,7 +25,7 @@ import android.content.Intent;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 
-import com.github.androidutils.logger.Logger;
+import com.better.alarm.logger.Logger;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 

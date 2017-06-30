@@ -3,10 +3,8 @@ package com.better.alarm.model;
 import android.content.Context;
 
 import com.better.alarm.persistance.AlarmContainer;
-import com.github.androidutils.logger.Logger;
+import com.better.alarm.logger.Logger;
 import com.google.inject.Inject;
-
-import java.util.Calendar;
 
 /**
  * Created by Yuriy on 24.06.2017.

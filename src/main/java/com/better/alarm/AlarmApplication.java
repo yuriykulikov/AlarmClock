@@ -33,19 +33,17 @@ import com.better.alarm.model.AlarmsScheduler;
 import com.better.alarm.model.ContainerFactory;
 import com.better.alarm.model.IAlarmsScheduler;
 import com.better.alarm.model.MainLooperHandlerFactory;
-import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.persistance.DatabaseQuery;
 import com.better.alarm.presenter.DynamicThemeHandler;
 import com.better.alarm.presenter.background.ScheduledReceiver;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
-import com.github.androidutils.logger.LogcatLogWriter;
-import com.github.androidutils.logger.LogcatLogWriterWithLines;
-import com.github.androidutils.logger.Logger;
-import com.github.androidutils.logger.LoggingExceptionHandler;
-import com.github.androidutils.logger.StartupLogWriter;
-import com.github.androidutils.statemachine.HandlerFactory;
-import com.github.androidutils.wakelock.WakeLockManager;
+import com.better.alarm.logger.LogcatLogWriter;
+import com.better.alarm.logger.Logger;
+import com.better.alarm.logger.LoggingExceptionHandler;
+import com.better.alarm.logger.StartupLogWriter;
+import com.better.alarm.statemachine.HandlerFactory;
+import com.better.alarm.wakelock.WakeLockManager;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.inject.Binder;
@@ -104,9 +102,10 @@ public class AlarmApplication extends Application {
             // Ignore
         }
 
-        final Logger logger = Logger.getDefaultLogger();
-        logger.addLogWriter(LogcatLogWriter.getInstance());
-        logger.addLogWriter(StartupLogWriter.getInstance());
+        final StartupLogWriter startupLogWriter = StartupLogWriter.create();
+        final Logger logger = Logger.create();
+        logger.addLogWriter(LogcatLogWriter.create());
+        logger.addLogWriter(startupLogWriter);
 
         LoggingExceptionHandler.addLoggingExceptionHandlerToAllThreads(logger);
 
@@ -154,7 +153,7 @@ public class AlarmApplication extends Application {
         ACRA.getErrorReporter().setExceptionHandlerInitializer(new ExceptionHandlerInitializer() {
             @Override
             public void initializeExceptionHandler(ErrorReporter reporter) {
-                reporter.putCustomData("STARTUP_LOG", StartupLogWriter.getInstance().getMessagesAsString());
+                reporter.putCustomData("STARTUP_LOG", startupLogWriter.getMessagesAsString());
             }
         });
 

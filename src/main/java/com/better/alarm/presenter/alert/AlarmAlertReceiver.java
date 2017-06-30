@@ -37,7 +37,7 @@ import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.model.interfaces.PresentationToModelIntents;
 import com.better.alarm.presenter.TransparentActivity;
-import com.github.androidutils.logger.Logger;
+import com.better.alarm.logger.Logger;
 
 /**
  * Glue class: connects AlarmAlert IntentReceiver to AlarmAlert activity. Passes

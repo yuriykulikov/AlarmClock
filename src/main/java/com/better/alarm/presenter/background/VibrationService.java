@@ -18,8 +18,7 @@ import com.better.alarm.AlarmApplication;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.presenter.SettingsActivity;
 import com.better.alarm.presenter.background.VibrationService.AlertConditionHelper.AlertStrategy;
-import com.github.androidutils.logger.Logger;
-import com.github.androidutils.wakelock.WakeLockManager;
+import com.better.alarm.logger.Logger;
 
 public class VibrationService extends Service {
     private static final long[] sVibratePattern = new long[] { 500, 500 };

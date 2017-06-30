@@ -49,7 +49,7 @@ import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.view.AlarmPreference;
 import com.better.alarm.view.RepeatPreference;
-import com.github.androidutils.logger.Logger;
+import com.better.alarm.logger.Logger;
 
 /**
  * Manages each alarm

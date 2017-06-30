@@ -28,8 +28,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.better.alarm.BuildConfig;
-import com.github.androidutils.logger.LogcatLogWriter;
-import com.github.androidutils.logger.Logger;
+import com.better.alarm.logger.Logger;
 
 public class AlarmProvider extends ContentProvider {
     private AlarmDatabaseHelper mOpenHelper;
@@ -51,7 +50,7 @@ public class AlarmProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         log = new Logger();
-        //log.addLogWriter(LogcatLogWriter.getInstance());
+        //log.addLogWriter(LogcatLogWriter.create());
         mOpenHelper = new AlarmDatabaseHelper(getContext(), log);
         return true;
     }

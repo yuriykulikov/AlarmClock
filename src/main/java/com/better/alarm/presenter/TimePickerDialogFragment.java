@@ -30,7 +30,7 @@ import android.widget.Button;
 
 import com.better.alarm.R;
 import com.better.alarm.view.TimePicker;
-import com.github.androidutils.logger.Logger;
+import com.better.alarm.logger.Logger;
 
 /**
  * Dialog to set alarm time.

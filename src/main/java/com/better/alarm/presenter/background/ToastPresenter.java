@@ -26,7 +26,7 @@ import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
 import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.Intents;
-import com.github.androidutils.logger.Logger;
+import com.better.alarm.logger.Logger;
 
 public class ToastPresenter extends BroadcastReceiver {
 

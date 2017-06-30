@@ -43,8 +43,7 @@ import com.better.alarm.R;
 import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.presenter.SettingsActivity;
-import com.github.androidutils.logger.Logger;
-import com.github.androidutils.wakelock.WakeLockManager;
+import com.better.alarm.logger.Logger;
 
 /**
  * Manages alarms and vibe. Runs as a service so that it can continue to play if

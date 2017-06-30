@@ -13,12 +13,10 @@ import android.provider.BaseColumns;
 
 import com.better.alarm.AlarmApplication;
 import com.better.alarm.BuildConfig;
-import com.better.alarm.model.ContainerFactory;
 import com.better.alarm.model.DaysOfWeek;
 import com.better.alarm.model.IAlarmContainer;
 import com.better.alarm.model.interfaces.Intents;
-import com.github.androidutils.logger.Logger;
-import com.github.androidutils.wakelock.WakeLockManager;
+import com.better.alarm.logger.Logger;
 
 /**
  * Active record container for all alarm data.

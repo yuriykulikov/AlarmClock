@@ -45,7 +45,7 @@ import com.better.alarm.presenter.SettingsActivity;
 import com.better.alarm.presenter.TimePickerDialogFragment;
 import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialogHandler;
 import com.better.alarm.presenter.TimePickerDialogFragment.OnAlarmTimePickerCanceledListener;
-import com.github.androidutils.logger.Logger;
+import com.better.alarm.logger.Logger;
 import com.google.inject.Inject;
 
 /**

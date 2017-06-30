@@ -2,12 +2,11 @@ package com.better.alarm.model;
 
 import android.os.Handler;
 
-import com.github.androidutils.statemachine.HandlerFactory;
-import com.github.androidutils.statemachine.IHandler;
-import com.github.androidutils.statemachine.ImmutableMessage;
-import com.github.androidutils.statemachine.Message;
-import com.github.androidutils.statemachine.MessageHandler;
-import com.github.androidutils.statemachine.StateMachine;
+import com.better.alarm.statemachine.HandlerFactory;
+import com.better.alarm.statemachine.IHandler;
+import com.better.alarm.statemachine.ImmutableMessage;
+import com.better.alarm.statemachine.Message;
+import com.better.alarm.statemachine.MessageHandler;
 import com.google.inject.Inject;
 
 /**

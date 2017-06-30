@@ -34,7 +34,7 @@ import com.better.alarm.model.AlarmValue;
 import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
-import com.github.androidutils.logger.Logger;
+import com.better.alarm.logger.Logger;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 

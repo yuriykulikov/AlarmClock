@@ -1,4 +1,4 @@
-package com.github.androidutils.logger;
+package com.better.alarm.logger;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 

@@ -20,19 +20,15 @@ import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.AlarmManager.AlarmClockInfo;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.format.DateFormat;
-import android.util.Log;
 
 import com.better.alarm.Store;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.presenter.AlarmsListActivity;
-import com.github.androidutils.logger.Logger;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
 

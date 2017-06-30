@@ -10,7 +10,7 @@ import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialogHandler;
 import com.better.alarm.presenter.TimePickerDialogFragment.OnAlarmTimePickerCanceledListener;
-import com.github.androidutils.logger.Logger;
+import com.better.alarm.logger.Logger;
 
 public class TransparentActivity extends Activity implements AlarmTimePickerDialogHandler,
         OnAlarmTimePickerCanceledListener {
