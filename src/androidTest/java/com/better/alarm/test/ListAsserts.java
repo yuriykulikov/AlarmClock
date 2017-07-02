@@ -1,0 +1,69 @@
+package com.better.alarm.test;
+
+import android.support.test.espresso.NoMatchingViewException;
+import android.support.test.espresso.ViewAssertion;
+import android.view.View;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+
+import org.assertj.core.api.AbstractListAssert;
+
+import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Predicate;
+
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static org.assertj.core.api.Assertions.assertThat;
+
+/**
+ * Created by Yuriy on 09.07.2017.
+ */
+
+public class ListAsserts<T> {
+    public interface ListAssert<T> {
+        AbstractListAssert<?, ? extends List<? extends T>, T> items();
+
+        ListAssert<T> filter(Predicate<T> predicate);
+    }
+
+    public static <T> ListAssert<T> assertThatList(final int id) {
+        return createListAssert(Observable.create(new ObservableOnSubscribe<T>() {
+            @Override
+            public void subscribe(@NonNull final ObservableEmitter<T> e) throws Exception {
+                onView(withId(id)).check(new ViewAssertion() {
+                    @Override
+                    public void check(View view, NoMatchingViewException noViewFoundException) {
+                        if (noViewFoundException != null) {
+                            e.onError(noViewFoundException);
+                        } else {
+                            ListAdapter adapter = ((ListView) view).getAdapter();
+                            for (int i = 0; i < adapter.getCount(); i++) {
+                                e.onNext((T) adapter.getItem(i));
+                            }
+                            e.onComplete();
+                        }
+                    }
+                });
+            }
+        }));
+    }
+
+    private static <T> ListAssert<T> createListAssert(final Observable<T> observable) {
+        return new ListAssert<T>() {
+            @Override
+            public AbstractListAssert<?, ? extends List<? extends T>, T> items() {
+                return assertThat(observable.toList().blockingGet());
+            }
+
+            @Override
+            public ListAssert<T> filter(Predicate<T> predicate) {
+                return createListAssert(observable.filter(predicate));
+            }
+        };
+    }
+}
