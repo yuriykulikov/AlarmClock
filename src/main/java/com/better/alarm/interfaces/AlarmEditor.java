@@ -1,4 +1,4 @@
-package com.better.alarm.model.interfaces;
+package com.better.alarm.interfaces;
 
 import android.net.Uri;
 

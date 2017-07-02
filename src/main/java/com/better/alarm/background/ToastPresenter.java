@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.better.alarm.presenter.background;
+package com.better.alarm.background;
 
 import android.content.Context;
 import android.widget.Toast;
@@ -30,9 +30,16 @@ import io.reactivex.functions.Consumer;
 
 public class ToastPresenter {
     private Toast sToast = null;
+    private Store store;
+    private Context context;
 
     @Inject
     public ToastPresenter(Store store, final Context context) {
+        this.store = store;
+        this.context = context;
+    }
+
+    public void start() {
         store.sets().subscribe(new Consumer<Store.AlarmSet>() {
             @Override
             public void accept(@NonNull Store.AlarmSet alarmSet) throws Exception {

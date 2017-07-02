@@ -7,10 +7,11 @@ import com.better.alarm.logger.SysoutLogWriter;
 import com.better.alarm.model.AlarmCore;
 import com.better.alarm.model.AlarmSetter;
 import com.better.alarm.model.AlarmValue;
+import com.better.alarm.model.Alarms;
 import com.better.alarm.model.ContainerFactory;
 import com.better.alarm.model.IAlarmContainer;
-import com.better.alarm.model.interfaces.Alarm;
-import com.better.alarm.model.interfaces.IAlarmsManager;
+import com.better.alarm.interfaces.Alarm;
+import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.persistance.DatabaseQuery;
 import com.better.alarm.statemachine.HandlerFactory;
 import com.google.common.base.Optional;
@@ -172,7 +173,7 @@ public class AlarmsTest {
     @Test
     public void alarmsFromMemoryMustBePresentInTheList() {
         //when
-        IAlarmsManager instance = Guice.createInjector(Modules
+        Alarms instance = Guice.createInjector(Modules
                 .override(Modules
                         .override(new AlarmApplication.AppModule(logger, prefs, store))
                         .with(new TestModule()))
@@ -188,7 +189,9 @@ public class AlarmsTest {
                         binder.bind(DatabaseQuery.class).toInstance(query);
                     }
                 }))
-                .getInstance(IAlarmsManager.class);
+                .getInstance(Alarms.class);
+
+        instance.start();
 
         //verify
         store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {

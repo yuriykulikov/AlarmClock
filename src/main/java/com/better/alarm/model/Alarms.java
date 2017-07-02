@@ -18,8 +18,8 @@ package com.better.alarm.model;
 import android.annotation.SuppressLint;
 import android.content.Context;
 
-import com.better.alarm.model.interfaces.Alarm;
-import com.better.alarm.model.interfaces.IAlarmsManager;
+import com.better.alarm.interfaces.Alarm;
+import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.persistance.DatabaseQuery;
 import com.better.alarm.logger.Logger;
 import com.google.inject.Inject;
@@ -43,6 +43,7 @@ public class Alarms implements IAlarmsManager {
     private final IAlarmsScheduler mAlarmsScheduler;
 
     private final Map<Integer, AlarmCore> alarms;
+    private DatabaseQuery query;
     private final AlarmCoreFactory factory;
     private final ContainerFactory containerFactory;
 
@@ -51,10 +52,13 @@ public class Alarms implements IAlarmsManager {
         this.mContext = context;
         this.log = logger;
         this.mAlarmsScheduler = alarmsScheduler;
+        this.query = query;
         this.factory = factory;
         this.containerFactory = containerFactory;
         this.alarms = new HashMap<Integer, AlarmCore>();
+    }
 
+    public void start() {
         query.query().subscribe(new Consumer<List<IAlarmContainer>>() {
             @Override
             public void accept(@NonNull List<IAlarmContainer> alarmContainers) throws Exception {

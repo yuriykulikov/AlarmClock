@@ -43,10 +43,10 @@ import android.widget.ListView;
 
 import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
-import com.better.alarm.model.interfaces.Alarm;
-import com.better.alarm.model.interfaces.AlarmEditor;
-import com.better.alarm.model.interfaces.IAlarmsManager;
-import com.better.alarm.model.interfaces.Intents;
+import com.better.alarm.interfaces.Alarm;
+import com.better.alarm.interfaces.AlarmEditor;
+import com.better.alarm.interfaces.IAlarmsManager;
+import com.better.alarm.interfaces.Intents;
 import com.better.alarm.view.AlarmPreference;
 import com.better.alarm.view.RepeatPreference;
 import com.better.alarm.logger.Logger;

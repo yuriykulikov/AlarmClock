@@ -38,11 +38,11 @@ import com.better.alarm.model.Calendars;
 import com.better.alarm.model.ContainerFactory;
 import com.better.alarm.model.IAlarmsScheduler;
 import com.better.alarm.model.MainLooperHandlerFactory;
-import com.better.alarm.model.interfaces.IAlarmsManager;
+import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.persistance.DatabaseQuery;
 import com.better.alarm.presenter.DynamicThemeHandler;
-import com.better.alarm.presenter.background.ScheduledReceiver;
-import com.better.alarm.presenter.background.ToastPresenter;
+import com.better.alarm.background.ScheduledReceiver;
+import com.better.alarm.background.ToastPresenter;
 import com.better.alarm.statemachine.HandlerFactory;
 import com.better.alarm.wakelock.WakeLockManager;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
@@ -164,11 +164,13 @@ public class AlarmApplication extends Application {
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
-        guice.getInstance(ScheduledReceiver.class);
-
         deleteLogs(getApplicationContext());
 
-        logger.d("onCreate");
+        guice.getInstance(Alarms.class).start();
+        guice.getInstance(ScheduledReceiver.class).start();
+        guice.getInstance(ToastPresenter.class).start();
+
+        logger.d("onCreate done");
         super.onCreate();
     }
 

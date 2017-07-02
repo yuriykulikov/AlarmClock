@@ -8,8 +8,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.better.alarm.R;
-import com.better.alarm.presenter.alert.AlarmAlert;
-import com.better.alarm.presenter.alert.AlarmAlertFullScreen;
+import com.better.alarm.alert.AlarmAlert;
+import com.better.alarm.alert.AlarmAlertFullScreen;
 
 public class DynamicThemeHandler {
     public static final String KEY_THEME = "theme";

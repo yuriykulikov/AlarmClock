@@ -1,4 +1,4 @@
-package com.better.alarm.presenter.background;
+package com.better.alarm.background;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -15,9 +15,9 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
 import com.better.alarm.AlarmApplication;
-import com.better.alarm.model.interfaces.Intents;
+import com.better.alarm.interfaces.Intents;
 import com.better.alarm.presenter.SettingsActivity;
-import com.better.alarm.presenter.background.VibrationService.AlertConditionHelper.AlertStrategy;
+import com.better.alarm.background.VibrationService.AlertConditionHelper.AlertStrategy;
 import com.better.alarm.logger.Logger;
 
 public class VibrationService extends Service {

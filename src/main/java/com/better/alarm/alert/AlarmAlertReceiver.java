@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.better.alarm.presenter.alert;
+package com.better.alarm.alert;
 
 import java.util.Calendar;
 
@@ -32,10 +32,10 @@ import android.text.format.DateFormat;
 
 import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
-import com.better.alarm.model.interfaces.Alarm;
-import com.better.alarm.model.interfaces.IAlarmsManager;
-import com.better.alarm.model.interfaces.Intents;
-import com.better.alarm.model.interfaces.PresentationToModelIntents;
+import com.better.alarm.interfaces.Alarm;
+import com.better.alarm.interfaces.IAlarmsManager;
+import com.better.alarm.interfaces.Intents;
+import com.better.alarm.interfaces.PresentationToModelIntents;
 import com.better.alarm.presenter.TransparentActivity;
 import com.better.alarm.logger.Logger;
 

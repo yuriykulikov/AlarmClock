@@ -1,7 +1,6 @@
 package com.better.alarm;
 
 import com.better.alarm.model.AlarmValue;
-import com.better.alarm.model.interfaces.Alarm;
 import com.google.common.base.Optional;
 
 import org.immutables.value.Value;

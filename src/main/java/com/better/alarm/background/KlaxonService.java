@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.better.alarm.presenter.background;
+package com.better.alarm.background;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -39,20 +39,17 @@ import android.telephony.TelephonyManager;
 import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
 import com.better.alarm.logger.Logger;
-import com.better.alarm.model.interfaces.Alarm;
-import com.better.alarm.model.interfaces.Intents;
+import com.better.alarm.interfaces.Alarm;
+import com.better.alarm.interfaces.Intents;
 import com.better.alarm.presenter.SettingsActivity;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
 import com.google.common.base.Optional;
 
 import io.reactivex.Observable;
 import io.reactivex.annotations.NonNull;
-import io.reactivex.annotations.Nullable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
-
-import static android.R.attr.key;
 
 /**
  * Manages alarms and vibe. Runs as a service so that it can continue to play if

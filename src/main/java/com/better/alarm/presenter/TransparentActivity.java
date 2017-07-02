@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.better.alarm.AlarmApplication;
-import com.better.alarm.model.interfaces.Alarm;
-import com.better.alarm.model.interfaces.IAlarmsManager;
-import com.better.alarm.model.interfaces.Intents;
+import com.better.alarm.interfaces.Alarm;
+import com.better.alarm.interfaces.IAlarmsManager;
+import com.better.alarm.interfaces.Intents;
 import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialogHandler;
 import com.better.alarm.presenter.TimePickerDialogFragment.OnAlarmTimePickerCanceledListener;
 import com.better.alarm.logger.Logger;
