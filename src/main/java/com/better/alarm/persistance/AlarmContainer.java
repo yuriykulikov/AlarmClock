@@ -15,7 +15,7 @@ import com.better.alarm.AlarmApplication;
 import com.better.alarm.BuildConfig;
 import com.better.alarm.model.DaysOfWeek;
 import com.better.alarm.model.IAlarmContainer;
-import com.better.alarm.model.interfaces.Intents;
+import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
 
 /**

@@ -65,7 +65,7 @@
         </activity>
 <!-- Forwards intents to the AlarmAlert or AlarmAlertFullScreen -->
         <receiver
-            android:name=".presenter.alert.AlarmAlertReceiver"
+            android:name=".alert.AlarmAlertReceiver"
             android:exported="false" >
             <intent-filter>
                 <action android:name="${applicationId}.ALARM_ALERT" />
@@ -79,7 +79,7 @@
 
         <!-- Alarm alert with snooze and dismiss buttons -->
         <activity
-            android:name=".presenter.alert.AlarmAlert"
+            android:name=".alert.AlarmAlert"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
@@ -89,7 +89,7 @@
         <!-- This activity is basically the same as AlarmAlert 
              but full-screen so that it can turn the display on. -->
         <activity
-            android:name=".presenter.alert.AlarmAlertFullScreen"
+            android:name=".alert.AlarmAlertFullScreen"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
@@ -106,7 +106,7 @@
 
         <!-- KlaxonPresenter plays sound -->
         <receiver
-            android:name=".presenter.background.KlaxonService$Receiver"
+            android:name=".background.KlaxonService$Receiver"
             android:exported="false" >
             <intent-filter>
                 <action android:name="${applicationId}.ALARM_ALERT" />
@@ -123,14 +123,14 @@
             </intent-filter>
         </receiver>
         <service
-            android:name=".presenter.background.KlaxonService"
+            android:name=".background.KlaxonService"
             android:description="@string/alarm_klaxon_service_desc"
             android:exported="false" >
         </service>
 
         <!-- VibrationPresenter vibrates -->
         <receiver
-            android:name=".presenter.background.VibrationService$Receiver"
+            android:name=".background.VibrationService$Receiver"
             android:exported="false" >
             <intent-filter>
                 <action android:name="${applicationId}.ALARM_ALERT" />
@@ -142,7 +142,7 @@
             </intent-filter>
         </receiver>
         <service
-            android:name=".presenter.background.VibrationService"
+            android:name=".background.VibrationService"
             android:description="@string/alarm_klaxon_service_desc"
             android:exported="false" >
         </service>

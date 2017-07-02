@@ -42,7 +42,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.better.alarm.R;
-import com.better.alarm.model.interfaces.Intents;
+import com.better.alarm.interfaces.Intents;
 import com.better.alarm.view.VolumePreference.SeekBarVolumizer;
 import com.better.alarm.logger.Logger;
 

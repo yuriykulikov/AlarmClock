@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.better.alarm.presenter.background;
+package com.better.alarm.background;
 
 import java.util.Calendar;
 
@@ -27,7 +27,7 @@ import android.provider.Settings;
 import android.text.format.DateFormat;
 
 import com.better.alarm.Store;
-import com.better.alarm.model.interfaces.Intents;
+import com.better.alarm.interfaces.Intents;
 import com.better.alarm.presenter.AlarmsListActivity;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
@@ -43,9 +43,16 @@ public class ScheduledReceiver {
     private static final String DM12 = "E h:mm aa";
     private static final String DM24 = "E kk:mm";
     private static final Intent FAKE_INTENT_JUST_TO_DISPLAY_IN_ICON = new Intent("FAKE_ACTION_JUST_TO_DISPLAY_AN_ICON");
+    private Store store;
+    private Context context;
 
     @Inject
     public ScheduledReceiver(Store store, final Context context){
+        this.store = store;
+        this.context = context;
+    }
+
+    public void start(){
         store.next().subscribe(new Consumer<Optional<Store.Next>>() {
             @Override
             public void accept(@NonNull Optional<Store.Next> nextOptional) throws Exception {

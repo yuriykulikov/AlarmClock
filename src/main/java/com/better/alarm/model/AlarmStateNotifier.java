@@ -3,9 +3,8 @@ package com.better.alarm.model;
 import android.content.Context;
 import android.content.Intent;
 
-import com.better.alarm.Store;
 import com.better.alarm.model.AlarmCore.IStateNotifier;
-import com.better.alarm.model.interfaces.Intents;
+import com.better.alarm.interfaces.Intents;
 import com.google.inject.Inject;
 
 /**

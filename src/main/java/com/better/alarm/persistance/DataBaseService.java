@@ -9,7 +9,7 @@ import android.net.Uri;
 
 import com.better.alarm.AlarmApplication;
 import com.better.alarm.BuildConfig;
-import com.better.alarm.model.interfaces.Intents;
+import com.better.alarm.interfaces.Intents;
 import com.google.inject.Inject;
 
 public class DataBaseService extends IntentService {

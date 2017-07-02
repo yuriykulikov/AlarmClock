@@ -29,7 +29,7 @@ import com.better.alarm.R;
 import com.better.alarm.Store;
 import com.better.alarm.model.AlarmValue;
 import com.better.alarm.model.DaysOfWeek;
-import com.better.alarm.model.interfaces.IAlarmsManager;
+import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.view.DigitalClock;
 import com.better.alarm.logger.Logger;
 import com.google.inject.Inject;
