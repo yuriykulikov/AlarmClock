@@ -18,6 +18,7 @@ import com.better.alarm.model.AlarmValue;
 import com.better.alarm.persistance.AlarmDatabaseHelper;
 import com.better.alarm.presenter.AlarmsListActivity;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -108,6 +109,12 @@ public class ListTest {
         dbHelper.onCreate(db);
         db.close();
         System.out.println("Dropped database");
+    }
+
+    @After
+    public void tearDown() throws InterruptedException {
+        //TODO actually mock database access in these tests
+        Thread.sleep(1000);
     }
 
     @Test
