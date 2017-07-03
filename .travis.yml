@@ -5,6 +5,7 @@ env:
   global:
     - ANDROID_TARGET=android-21
     - ANDROID_ABI=armeabi-v7a
+    - ADB_INSTALL_TIMEOUT=8
 android:
   components:
   - tools
