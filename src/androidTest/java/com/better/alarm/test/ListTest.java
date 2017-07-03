@@ -126,6 +126,8 @@ public class ListTest {
 
     @Test
     public void testBugreportButton() throws Exception {
+        sleep();
+
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
         sleep();
 
@@ -139,6 +141,8 @@ public class ListTest {
 
     @Test
     public void newAlarm_shouldBeDisabled_ifNotEdited() throws Exception {
+        sleep();
+
         onView(withId(R.id.fab)).perform(click());
         sleep();
         onView(withText("Cancel")).perform(click());
@@ -170,6 +174,7 @@ public class ListTest {
         Cortado.onView().withText("2").perform().click();
         Cortado.onView().withText("3").perform().click();
         Cortado.onView().withText("5").perform().click();
+        Cortado.onView().withText("AM").perform().click();
         sleep();
         onView(withText("OK")).perform(click());
         Cortado.onView().withText("OK").perform().click();
