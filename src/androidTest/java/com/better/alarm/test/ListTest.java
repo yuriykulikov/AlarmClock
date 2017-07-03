@@ -20,6 +20,7 @@ import com.better.alarm.presenter.AlarmsListActivity;
 
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,6 +42,7 @@ import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.longClick;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -55,7 +57,7 @@ public class ListTest {
     @Rule
     public TestRule chain = RuleChain.outerRule(new ForceLocaleRule(Locale.US)).around(listActivity);
 
-    private static final boolean DBG = false;
+    private static final boolean DBG = true;
 
     private static void sleep(int howLong) {
         if (DBG) {
@@ -109,6 +111,11 @@ public class ListTest {
         dbHelper.onCreate(db);
         db.close();
         System.out.println("Dropped database");
+    }
+
+    @Before
+    public void closeSoftKeyBoard(){
+        closeSoftKeyboard();
     }
 
     @After
