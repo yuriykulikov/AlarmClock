@@ -10,6 +10,13 @@ buildscript {
         classpath 'com.dicedmelon.gradle:jacoco-android:0.1.1'
     }
 }
+
+ext {
+    travisBuild = System.getenv("TRAVIS") == "true"
+    // allows for -Dpre-dex=false to be set
+    preDexEnabled = "true".equals(System.getProperty("pre-dex", "true"))
+}
+
 apply plugin: 'com.android.application'
 apply plugin: "android-apt"
 //apply plugin: 'com.f2prateek.javafmt'
@@ -54,7 +61,12 @@ android {
     // This enables long timeouts required on slow environments, e.g. Travis
     adbOptions {
         timeOutInMs 20 * 60 * 1000  // 20 minutes
-        installOptions "-d","-t"
+        installOptions "-d", "-t"
+    }
+
+    dexOptions {
+        // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
+        preDexLibraries = preDexEnabled && !travisBuild
     }
 }
 repositories {
