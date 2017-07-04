@@ -1,14 +1,18 @@
 package com.better.alarm.test;
 
+import android.app.Activity;
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.annotation.UiThreadTest;
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.espresso.ViewAssertion;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -38,6 +42,7 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Predicate;
 
 import static android.app.PendingIntent.getActivity;
+import static android.content.Context.KEYGUARD_SERVICE;
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
@@ -121,6 +126,27 @@ public class ListTest {
     @Before
     public void closeSoftKeyBoard(){
         closeSoftKeyboard();
+    }
+
+    @UiThreadTest
+    @Before
+    public void setUp() throws Throwable {
+        final Activity activity = listActivity.getActivity();
+        listActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                KeyguardManager mKG = (KeyguardManager) activity.getSystemService(KEYGUARD_SERVICE);
+                KeyguardManager.KeyguardLock mLock = mKG.newKeyguardLock(KEYGUARD_SERVICE);
+                mLock.disableKeyguard();
+
+                //turn the screen on
+                activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                        | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                        | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                        | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                        | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON);
+            }
+        });
     }
 
     @After
