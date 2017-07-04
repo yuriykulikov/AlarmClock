@@ -19,6 +19,11 @@ script:
   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
   - emulator -avd test -no-skin -no-audio -no-window &
   - android-wait-for-emulator
+  - adb shell settings put global window_animation_scale 0.0
+  - adb shell settings put global transition_animation_scale 0.0
+  - adb shell settings put global animator_duration_scale 0.0
+  - adb shell settings put secure show_ime_with_hard_keyboard 0
+  - adb shell am broadcast -a com.android.intent.action.SET_LOCALE --es com.android.intent.extra.LOCALE EN
   - adb shell setprop dalvik.vm.dexopt-flags v=n,o=v
   - travis_wait 30 ./gradlew connectedDevelopDebugAndroidTest createDevelopDebugAndroidTestCoverageReport
 after_success:
