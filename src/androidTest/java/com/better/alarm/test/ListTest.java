@@ -37,6 +37,7 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Predicate;
 
+import static android.app.PendingIntent.getActivity;
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
@@ -44,9 +45,13 @@ import static android.support.test.espresso.Espresso.openActionBarOverflowOrOpti
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.longClick;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
+import static android.support.test.espresso.matcher.RootMatchers.withDecorView;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.anything;
+import static org.hamcrest.Matchers.not;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -131,13 +136,30 @@ public class ListTest {
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
         sleep();
 
-        onView(withText("Send a bugreport")).perform(click());
+        onView(withText("Send a bugreport")).perform(scrollTo()).perform(click());
         sleep();
 
         onView(withText("Cancel")).perform(click());
         sleep();
     }
 
+    @Test
+    public void testBugreportButton2() throws Exception {
+        sleep();
+
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        sleep();
+
+        onView(withText("Send a bugreport"))
+                .inRoot(withDecorView(not(is(listActivity.getActivity().getWindow().getDecorView()))))
+                .perform(click());
+        sleep();
+
+        onView(withText("Cancel"))
+                .inRoot(withDecorView(not(is(listActivity.getActivity().getWindow().getDecorView()))))
+                .perform(click());
+        sleep();
+    }
 
     @Test
     public void newAlarm_shouldBeDisabled_ifNotEdited() throws Exception {
