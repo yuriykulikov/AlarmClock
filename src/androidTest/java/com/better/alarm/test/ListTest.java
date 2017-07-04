@@ -44,9 +44,12 @@ import static android.support.test.espresso.Espresso.openActionBarOverflowOrOpti
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.longClick;
+import static android.support.test.espresso.matcher.RootMatchers.withDecorView;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.anything;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -131,7 +134,9 @@ public class ListTest {
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
         sleep();
 
-        onView(withText("Send a bugreport")).perform(click());
+        onView(withText("Send a bugreport"))
+                .inRoot(withDecorView(not(is(listActivity.getActivity().getWindow().getDecorView()))))
+                .perform(click());
         sleep();
 
         onView(withText("Cancel")).perform(click());
