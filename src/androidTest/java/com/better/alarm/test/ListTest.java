@@ -131,7 +131,9 @@ public class ListTest {
     public void testBugreportButton() throws Exception {
         sleep();
 
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        openActionBarOverflowOrOptionsMenu(listActivity.getActivity());
+        sleep();
+        sleep();
         sleep();
 
         onView(withText("Send a bugreport"))
