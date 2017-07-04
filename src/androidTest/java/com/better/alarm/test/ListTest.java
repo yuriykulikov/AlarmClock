@@ -128,6 +128,16 @@ public class ListTest {
         closeSoftKeyboard();
     }
 
+
+    @Before
+    public void closeEmulatorStuff(){
+       try {
+           Cortado.onView().withText("OK").perform().click();
+       } catch (Exception e){
+           
+       }
+    }
+
     @UiThreadTest
     @Before
     public void setUp() throws Throwable {
