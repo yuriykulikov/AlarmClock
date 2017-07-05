@@ -288,71 +288,32 @@ public class KlaxonService extends Service {
         if (intent != null) {
             AlarmApplication.wakeLocks().releasePartialWakeLock(intent);
         }
-        try {
-            String action = intent.getAction();
-            if (action.equals(Intents.ALARM_ALERT_ACTION)) {
-                alarm = AlarmApplication.alarms().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
-                onAlarm(alarm);
-                return START_STICKY;
-
-            } else if (action.equals(Intents.ALARM_PREALARM_ACTION)) {
-                alarm = AlarmApplication.alarms().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
-                onPreAlarm(alarm);
-                return START_STICKY;
-
-            } else if (action.equals(Intents.ALARM_DISMISS_ACTION)) {
-                stopAndCleanup();
-                return START_NOT_STICKY;
-
-            } else if (action.equals(Intents.ALARM_SNOOZE_ACTION)) {
-                stopAndCleanup();
-                return START_NOT_STICKY;
-
-            } else if (action.equals(Intents.ACTION_SOUND_EXPIRED)) {
-                stopAndCleanup();
-                return START_NOT_STICKY;
-
-            } else if (action.equals(Intents.ACTION_START_PREALARM_SAMPLE)) {
-                onStartAlarmSample(Type.PREALARM);
-                return START_STICKY;
-
-            } else if (action.equals(Intents.ACTION_STOP_PREALARM_SAMPLE)) {
-                stopAndCleanup();
-                return START_NOT_STICKY;
-
-            } else if (action.equals(Intents.ACTION_START_ALARM_SAMPLE)) {
-                onStartAlarmSample(Type.NORMAL);
-                return START_STICKY;
-
-            } else if (action.equals(Intents.ACTION_STOP_ALARM_SAMPLE)) {
-                stopAndCleanup();
-                return START_NOT_STICKY;
-
-            } else if (action.equals(Intents.ACTION_MUTE)) {
-                volume.mute();
-                return START_STICKY;
-
-            } else if (action.equals(Intents.ACTION_DEMUTE)) {
-                volume.fadeInFast();
-                return START_STICKY;
-
-            } else if (action.equals(Intents.ACTION_STOP_ALARM_SAMPLE)) {
-                stopAndCleanup();
-                return START_NOT_STICKY;
-
-            } else {
-                log.e("unexpected intent " + intent.getAction());
-                stopAndCleanup();
-                return START_NOT_STICKY;
-            }
-        } catch (Exception e) {
-            log.e("Something went wrong" + e.getMessage());
+        String action = intent.getAction();
+        if (action.equals(Intents.ALARM_ALERT_ACTION)) {
+            alarm = AlarmApplication.alarms().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
+            onAlarm(alarm);
+        } else if (action.equals(Intents.ALARM_PREALARM_ACTION)) {
+            alarm = AlarmApplication.alarms().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
+            onPreAlarm(alarm);
+        } else if (action.equals(Intents.ACTION_START_PREALARM_SAMPLE)) {
+            onStartAlarmSample(Type.PREALARM);
+        } else if (action.equals(Intents.ACTION_MUTE)) {
+            volume.mute();
+        } else if (action.equals(Intents.ACTION_DEMUTE)) {
+            volume.fadeInFast();
+        } else {
             stopAndCleanup();
-            return START_NOT_STICKY;
         }
+
+        return (action.equals(Intents.ALARM_ALERT_ACTION)
+                || action.equals(Intents.ALARM_PREALARM_ACTION)
+                || action.equals(Intents.ACTION_START_PREALARM_SAMPLE)
+                || action.equals(Intents.ACTION_START_ALARM_SAMPLE)
+                || action.equals(Intents.ACTION_MUTE)
+                || action.equals(Intents.ACTION_DEMUTE)) ? START_STICKY : START_NOT_STICKY;
     }
 
-    private void onAlarm(Alarm alarm) throws Exception {
+    private void onAlarm(Alarm alarm) {
         volume.cancelFadeIn();
         volume.setMode(Type.NORMAL);
         if (!alarm.isSilent()) {
@@ -361,7 +322,7 @@ public class KlaxonService extends Service {
         }
     }
 
-    private void onPreAlarm(Alarm alarm) throws Exception {
+    private void onPreAlarm(Alarm alarm) {
         volume.cancelFadeIn();
         volume.setMode(Type.PREALARM);
         if (!alarm.isSilent()) {
@@ -391,8 +352,6 @@ public class KlaxonService extends Service {
             stop(mMediaPlayer.get());
         }
 
-        // TODO: Reuse mMediaPlayer instead of creating a new one and/or use
-        // RingtoneManager.
         MediaPlayer created = new MediaPlayer();
         mMediaPlayer = Optional.of(created);
         created.setOnErrorListener(new OnErrorListener() {
