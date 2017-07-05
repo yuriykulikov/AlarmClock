@@ -1,16 +1,28 @@
 package com.better.alarm.test;
 
-import junit.framework.Assert;
-
+import android.app.ListActivity;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.test.ActivityInstrumentationTestCase2;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
+import com.better.alarm.*;
 import com.better.alarm.R;
+import com.better.alarm.model.AlarmValue;
 import com.better.alarm.presenter.AlarmsListActivity;
+import com.robotium.solo.Condition;
 import com.robotium.solo.Solo;
 
+import junit.framework.Assert;
+
 import java.util.Locale;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Predicate;
 
 public class ListTest extends ActivityInstrumentationTestCase2<AlarmsListActivity> {
 
@@ -37,10 +49,60 @@ public class ListTest extends ActivityInstrumentationTestCase2<AlarmsListActivit
         setLocale("en", "EN");
     }
 
+    private <T> Observable<T> listItems(final int id) {
+        return Observable.create(new ObservableOnSubscribe<T>() {
+            @Override
+            public void subscribe(final @NonNull ObservableEmitter<T> e) throws Exception {
+                ListAdapter adapter = ((ListView) solo.getView(id)).getAdapter();
+                for (int i = 0; i < adapter.getCount(); i++) {
+                    e.onNext((T) adapter.getItem(i));
+                }
+                e.onComplete();
+            }
+        });
+    }
+
     public void testAddNewAlarm() throws Exception {
-        //solo.clickOnImageButton(0);//fab
-        //solo.clickOnButton("Cancel");
-        //Assert.assertFalse(solo.isCheckBoxChecked(0));
+        solo.clickOnView(solo.getView(R.id.fab));
+        solo.clickOnButton("Cancel");
+        solo.clickOnButton("OK");
+
+        solo.waitForActivity(AlarmsListActivity.class);
+        solo.waitForCondition(new Condition() {
+            @Override
+            public boolean isSatisfied() {
+                return listItems(android.R.id.list).test().valueCount() == 3;
+            }
+        }, 15000);
+
+        listItems(android.R.id.list).test().assertValueCount(3);
+
+        this.<AlarmValue>listItems(android.R.id.list)
+                .filter(new Predicate<AlarmValue>() {
+                    @Override
+                    public boolean test(@NonNull AlarmValue alarmValue) throws Exception {
+                        return alarmValue.isEnabled();
+                    }
+                })
+                .test()
+                .assertValueCount(0);
+
+        deleteAlarm(0);
+
+        solo.waitForCondition(new Condition() {
+            @Override
+            public boolean isSatisfied() {
+                return listItems(android.R.id.list).test().valueCount() == 2;
+            }
+        }, 15000);
+
+        listItems(android.R.id.list).test().assertValueCount(2);
+    }
+
+    private void deleteAlarm(int position) {
+        solo.clickLongInList(position);
+        solo.clickOnText("Delete alarm");
+        solo.clickOnButton("OK");
     }
 
     public void testBugreportButton() throws Exception {
