@@ -22,6 +22,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -128,6 +129,7 @@ public class ListTest {
     }
 
     @Test
+    @Ignore
     public void testBugreportButton() throws Exception {
         sleep();
 
