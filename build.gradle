@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.3'
@@ -8,6 +9,8 @@ buildscript {
         classpath "com.neenbedankt.gradle.plugins:android-apt:1.6"
         //classpath 'com.f2prateek.javafmt:javafmt:0.1.6'
         classpath 'com.dicedmelon.gradle:jacoco-android:0.1.1'
+
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.3"
     }
 }
 
@@ -18,6 +21,7 @@ ext {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 apply plugin: "android-apt"
 //apply plugin: 'com.f2prateek.javafmt'
 apply plugin: 'jacoco-android'
@@ -32,7 +36,8 @@ android {
         targetSdkVersion 25
 
         testApplicationId "com.better.alarm.test"
-        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -68,6 +73,10 @@ android {
         // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
         preDexLibraries = preDexEnabled && !travisBuild
     }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
 }
 repositories {
     jcenter()
@@ -78,7 +87,6 @@ dependencies {
     compile 'com.google.guava:guava:19.0'
     compile 'ch.acra:acra:4.6.1'
     compile 'com.melnykov:floatingactionbutton:1.2.0'
-    androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.2.1'
     apt "org.immutables:value:2.4.3" // <-- for annotation processor
     compile "org.immutables:value:2.4.3" // <-- for annotation API
     compile 'com.squareup:javapoet:1.9.0'
@@ -98,4 +106,15 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.8.47'
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.3"
+    // App dependencies
+    compile 'com.android.support:support-annotations:25.1.1'
+    // Testing-only dependencies
+    // Force usage of support annotations in the test app, since it is internally used by the runner module.
+    androidTestCompile 'com.android.support:support-annotations:25.1.1'
+    androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile 'com.android.support.test:rules:0.5'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    androidTestCompile 'com.bartoszlipinski:cortado:1.2.0'
 }
