@@ -326,18 +326,15 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     }
 
     private void saveAlarm() {
-        AlarmEditor editor = alarm.edit();
-        //@formatter:off
-        editor.setEnabled(mEnabledPref.isChecked())
-              .setHour(mHour)
-              .setMinutes(mMinute)
-              .setDaysOfWeek(mRepeatPref.getDaysOfWeek())
-              .setVibrate(true)
-              .setLabel(mLabel.getText().toString())
-              .setAlert(mAlarmPref.getAlert())
-              .setPrealarm(mPreAlarmPref.isChecked());
-        //@formatter:on
-        editor.commit();
+        alarm.edit().withIsEnabled(mEnabledPref.isChecked())
+                .withHour(mHour)
+                .withMinutes(mMinute)
+                .withDaysOfWeek(mRepeatPref.getDaysOfWeek())
+                .withIsVibrate(true)
+                .withLabel(mLabel.getText().toString())
+                .withAlert(mAlarmPref.getAlert())
+                .withIsPrealarm(mPreAlarmPref.isChecked())
+                .commit();
         isNewAlarm = false;
     }
 

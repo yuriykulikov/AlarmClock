@@ -1,11 +1,10 @@
 package com.better.alarm.persistance;
 
 import android.content.ContentResolver;
-import android.content.Context;
 import android.database.Cursor;
 
-import com.better.alarm.model.IAlarmContainer;
-import com.better.alarm.logger.Logger;
+import com.better.alarm.model.AlarmContainer;
+import com.better.alarm.model.ContainerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -28,33 +27,23 @@ import io.reactivex.functions.Function;
  */
 
 public class DatabaseQuery {
-    /**
-     * in millis
-     */
-    private static final long RETRY_TOTAL_TIME = 61 * 1000;
-    /**
-     * in millis
-     */
-    private static final long RETRY_INTERVAL = 500;
     private final ContentResolver contentResolver;
-    private final Logger logger;
-    private final Context context;
+    private final ContainerFactory factory;
 
     @Inject
-    public DatabaseQuery(ContentResolver contentResolver, Logger logger, Context context) {
+    public DatabaseQuery(ContentResolver contentResolver, ContainerFactory factory) {
         this.contentResolver = contentResolver;
-        this.logger = logger;
-        this.context = context;
+        this.factory = factory;
     }
 
-    public Single<List<IAlarmContainer>> query() {
+    public Single<List<AlarmContainer>> query() {
 
         return Single
                 .create(new SingleOnSubscribe<Cursor>() {
                     @Override
                     public void subscribe(@NonNull SingleEmitter<Cursor> e) throws Exception {
                         final Cursor cursor = contentResolver
-                                .query(AlarmContainer.Columns.CONTENT_URI, AlarmContainer.Columns.ALARM_QUERY_COLUMNS, null, null, AlarmContainer.Columns.DEFAULT_SORT_ORDER);
+                                .query(PersistingContainerFactory.Columns.CONTENT_URI, PersistingContainerFactory.Columns.ALARM_QUERY_COLUMNS, null, null, PersistingContainerFactory.Columns.DEFAULT_SORT_ORDER);
                         e.onSuccess(Preconditions.checkNotNull(cursor));
                     }
                 })
@@ -68,14 +57,14 @@ public class DatabaseQuery {
                                 .delay(500, TimeUnit.MILLISECONDS);
                     }
                 })
-                .map(new Function<Cursor, List<IAlarmContainer>>() {
+                .map(new Function<Cursor, List<AlarmContainer>>() {
                     @Override
-                    public List<IAlarmContainer> apply(@NonNull Cursor cursor) throws Exception {
-                        List<IAlarmContainer> alarms = new ArrayList<IAlarmContainer>();
+                    public List<AlarmContainer> apply(@NonNull Cursor cursor) throws Exception {
+                        List<AlarmContainer> alarms = new ArrayList<AlarmContainer>();
                         try {
                             if (cursor.moveToFirst()) {
                                 do {
-                                    alarms.add(new AlarmContainer(cursor, logger, context));
+                                    alarms.add(factory.create(cursor));
                                 } while (cursor.moveToNext());
                             }
                         } finally {
@@ -85,6 +74,6 @@ public class DatabaseQuery {
                     }
                 })
                 //emit an empty list if it all fails
-                .onErrorResumeNext(Single.just(Lists.<IAlarmContainer>newArrayList()));
+                .onErrorResumeNext(Single.just(Lists.<AlarmContainer>newArrayList()));
     }
 }

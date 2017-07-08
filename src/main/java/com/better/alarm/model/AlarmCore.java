@@ -23,8 +23,7 @@ import com.better.alarm.ImmutableAlarmSet;
 import com.better.alarm.Prefs;
 import com.better.alarm.Store;
 import com.better.alarm.interfaces.Alarm;
-import com.better.alarm.interfaces.AlarmEditor;
-import com.better.alarm.interfaces.AlarmEditor.AlarmChangeData;
+import com.better.alarm.interfaces.ImmutableAlarmEditor;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.statemachine.ComplexTransition;
@@ -106,24 +105,24 @@ import io.reactivex.functions.Consumer;
  *
  * @author Yuriy
  */
-public final class AlarmCore implements Alarm {
-
-    //context.getString(R.string.default_label)
-    private final String defaultLabel = "";
+public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
+    /** for {@link #edit()}*/
+    @Override
+    public void accept(@NonNull AlarmChangeData alarmChangeData) throws Exception {
+        change(alarmChangeData);
+    }
 
     /**
      * Strategy used to notify other components about alarm state.
      */
     public interface IStateNotifier {
         void broadcastAlarmState(int id, String action);
-
-        void broadcastAlarmState(int id, String action, long millis);
     }
 
     private final IAlarmsScheduler mAlarmsScheduler;
     private final Logger log;
     private final IStateNotifier broadcaster;
-    private final IAlarmContainer container;
+    private ImmutableAlarmContainer container;
     private final AlarmStateMachine stateMachine;
     private final DateFormat df;
 
@@ -135,12 +134,12 @@ public final class AlarmCore implements Alarm {
     private final Calendars calendars;
 
     @AutoFactory
-    public AlarmCore(IAlarmContainer container, @Provided Logger logger, @Provided IAlarmsScheduler alarmsScheduler,
+    public AlarmCore(AlarmContainer container, @Provided Logger logger, @Provided IAlarmsScheduler alarmsScheduler,
                      @Provided IStateNotifier broadcaster, @Provided HandlerFactory handlerFactory, @Provided Prefs prefs, @Provided Store store, @Provided Calendars calendars) {
         this.log = logger;
         this.calendars = calendars;
         this.mAlarmsScheduler = alarmsScheduler;
-        this.container = container;
+        this.container = ImmutableAlarmContainer.copyOf(container);
         this.broadcaster = broadcaster;
         this.df = new SimpleDateFormat("dd-MM-yy HH:mm:ss", Locale.GERMANY);
 
@@ -224,7 +223,7 @@ public final class AlarmCore implements Alarm {
                 public void onStateChanged(IState state) {
                     if (state != enabledState && !(state instanceof ComplexTransition)) {
                         log.d("saving state " + state.getName());
-                        container.setState(state.getName());
+                        container = container.withState(state.getName());
                     }
                 }
             });
@@ -273,7 +272,7 @@ public final class AlarmCore implements Alarm {
 
             @Override
             protected void onEnable() {
-                container.setEnabled(true);
+                container = container.withIsEnabled(true);
                 transitionTo(enableTransition);
             }
 
@@ -323,7 +322,7 @@ public final class AlarmCore implements Alarm {
 
             @Override
             protected void onDisable() {
-                container.setEnabled(false);
+                container = container.withIsEnabled(false);
                 transitionTo(disabledState);
             }
 
@@ -364,7 +363,7 @@ public final class AlarmCore implements Alarm {
                     }
                 } else {
                     log.d("Repeating is not set, disabling the alarm");
-                    container.setEnabled(false);
+                    container = container.withIsEnabled(false);
                     transitionTo(disabledState);
                 }
             }
@@ -654,8 +653,8 @@ public final class AlarmCore implements Alarm {
         }
 
         private void setAlarm(Calendar calendar, CalendarType calendarType) {
-            mAlarmsScheduler.setAlarm(container.getId(), calendarType, calendar, ImmutableAlarmValue.copyOf(container));
-            container.setNextTime(calendar);
+            mAlarmsScheduler.setAlarm(container.getId(), calendarType, calendar, container);
+            container = container.withNextTime(calendar);
         }
 
         private void removeAlarm() {
@@ -682,16 +681,10 @@ public final class AlarmCore implements Alarm {
         }
 
         private void writeChangeData(AlarmChangeData data) {
-            container.setHour(data.hour);
-            container.setAlert(data.alert);
-            container.setDaysOfWeek(data.daysOfWeek);
-            container.setLabel(data.label);
-            container.setMinutes(data.minutes);
-            container.setPrealarm(data.prealarm);
-            container.setVibrate(data.vibrate);
-            // this will cause a DB flush
-            // TODO better solution, e.g. edit/commit
-            container.setEnabled(data.enabled);
+           container = ImmutableAlarmContainer.builder()
+                   .from(container)
+                   .from(data)
+                   .build();
         }
 
         private Calendar calculateNextTime() {
@@ -729,7 +722,7 @@ public final class AlarmCore implements Alarm {
         }
 
         private boolean alarmWillBeRescheduled(Message reason) {
-            boolean alarmWillBeRescheduled = reason.what() == CHANGE && ((AlarmChangeData) reason.obj().get()).enabled;
+            boolean alarmWillBeRescheduled = reason.what() == CHANGE && ((AlarmChangeData) reason.obj().get()).isEnabled();
             return alarmWillBeRescheduled;
         }
 
@@ -830,7 +823,7 @@ public final class AlarmCore implements Alarm {
     }
 
     private void updateListInStore() {
-        final ImmutableAlarmValue toStore = ImmutableAlarmValue.copyOf(container);
+        final AlarmValue toStore = container;
 
         log.d("Storing " + toStore);
 
@@ -996,8 +989,8 @@ public final class AlarmCore implements Alarm {
     }
 
     @Override
-    public AlarmEditor edit() {
-        return new AlarmEditor(this);
+    public ImmutableAlarmEditor edit() {
+        return ImmutableAlarmEditor.builder().from(container).callback(this).build();
     }
 
     @Override

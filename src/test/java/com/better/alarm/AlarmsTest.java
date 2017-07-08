@@ -1,23 +1,26 @@
 package com.better.alarm;
 
+import android.content.ContentResolver;
 import android.content.Context;
 
 import com.better.alarm.logger.Logger;
 import com.better.alarm.logger.SysoutLogWriter;
+import com.better.alarm.model.AlarmContainer;
 import com.better.alarm.model.AlarmCore;
 import com.better.alarm.model.AlarmSetter;
 import com.better.alarm.model.AlarmValue;
 import com.better.alarm.model.Alarms;
 import com.better.alarm.model.ContainerFactory;
-import com.better.alarm.model.IAlarmContainer;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
+import com.better.alarm.model.ImmutableAlarmContainer;
 import com.better.alarm.persistance.DatabaseQuery;
 import com.better.alarm.statemachine.HandlerFactory;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.inject.Binder;
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.util.Modules;
@@ -75,7 +78,7 @@ public class AlarmsTest {
         @Override
         public void configure(Binder binder) {
             //stubs
-            binder.bind(ContainerFactory.class).to(TestAlarmContainerFactory.class).asEagerSingleton();
+            binder.bind(ContainerFactory.class).to(TestContainerFactory.class).asEagerSingleton();
             binder.bind(Scheduler.class).toInstance(testScheduler);
             binder.bind(HandlerFactory.class).to(TestHandlerFactory.class);
             binder.bind(Context.class).toInstance(mock(Context.class));
@@ -90,7 +93,7 @@ public class AlarmsTest {
     @android.support.annotation.NonNull
     private DatabaseQuery mockQuery() {
         final DatabaseQuery query = mock(DatabaseQuery.class);
-        List<IAlarmContainer> list = Lists.newArrayList();
+        List<AlarmContainer> list = Lists.newArrayList();
         when(query.query()).thenReturn(Single.just(list));
         return query;
     }
@@ -170,6 +173,28 @@ public class AlarmsTest {
         });
     }
 
+    static class DatabaseQueryMock extends DatabaseQuery {
+        private ContainerFactory factory;
+
+        @Inject
+        public DatabaseQueryMock(ContainerFactory factory) {
+            super(mock(ContentResolver.class), factory);
+            this.factory = factory;
+        }
+
+        @Override
+        public Single<List<AlarmContainer>> query() {
+            AlarmContainer container =
+                    ImmutableAlarmContainer.copyOf(factory.create())
+                            .withId(100500)
+                            .withIsEnabled(true)
+                            .withLabel("hello");
+
+            List<AlarmContainer> item = Lists.newArrayList(container);
+            return Single.just(item);
+        }
+    }
+
     @Test
     public void alarmsFromMemoryMustBePresentInTheList() {
         //when
@@ -180,13 +205,7 @@ public class AlarmsTest {
                 .with(new Module() {
                     @Override
                     public void configure(Binder binder) {
-                        final DatabaseQuery query = mock(DatabaseQuery.class);
-                        TestAlarmContainer existingContainer = new TestAlarmContainer(100500);
-                        existingContainer.setEnabled(true);
-                        existingContainer.setLabel("hello");
-                        List<IAlarmContainer> list = Lists.<IAlarmContainer>newArrayList(existingContainer);
-                        when(query.query()).thenReturn(Single.just(list));
-                        binder.bind(DatabaseQuery.class).toInstance(query);
+                        binder.bind(DatabaseQuery.class).to(DatabaseQueryMock.class);
                     }
                 }))
                 .getInstance(Alarms.class);

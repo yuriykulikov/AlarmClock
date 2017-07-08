@@ -7,8 +7,6 @@ import org.immutables.value.Value;
 /**
  * Created by Yuriy on 11.06.2017.
  */
-@Value.Immutable
-@Value.Style(stagedBuilder = true)
 public interface AlarmValue {
     int getId();
 
