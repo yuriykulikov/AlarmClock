@@ -97,10 +97,10 @@ public class HandleSetAlarm extends Activity {
             alarm = AlarmApplication.alarms().createNewAlarm();
             //@formatter:off
             alarm.edit()
-                .setHour(hours)
-                .setMinutes(minutes)
-                .setLabel(label)
-                .setEnabled(true)
+                .withHour(hours)
+                .withMinutes(minutes)
+                .withLabel(label)
+                .withIsEnabled(true)
                 .commit();
         //@formatter:on
         } else {

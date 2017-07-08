@@ -39,6 +39,7 @@ import com.better.alarm.model.ContainerFactory;
 import com.better.alarm.model.IAlarmsScheduler;
 import com.better.alarm.model.MainLooperHandlerFactory;
 import com.better.alarm.interfaces.IAlarmsManager;
+import com.better.alarm.persistance.PersistingContainerFactory;
 import com.better.alarm.persistance.DatabaseQuery;
 import com.better.alarm.presenter.DynamicThemeHandler;
 import com.better.alarm.background.ScheduledReceiver;
@@ -236,7 +237,7 @@ public class AlarmApplication extends Application {
             binder.bind(DatabaseQuery.class).asEagerSingleton();
             binder.bind(AlarmCore.IStateNotifier.class).to(AlarmStateNotifier.class).asEagerSingleton();
             binder.bind(Alarms.class).asEagerSingleton();
-            binder.bind(ContainerFactory.class).to(ContainerFactory.ContainerFactoryImpl.class).asEagerSingleton();
+            binder.bind(ContainerFactory.class).to(PersistingContainerFactory.class).asEagerSingleton();
             binder.bind(AlarmSetter.class).to(AlarmSetter.AlarmSetterImpl.class).asEagerSingleton();
             binder.bind(Calendars.class).toInstance(new Calendars() {
                 @Override

@@ -28,12 +28,4 @@ public class AlarmStateNotifier implements IStateNotifier {
         intent.putExtra(Intents.EXTRA_ID, id);
         mContext.sendBroadcast(intent);
     }
-
-    @Override
-    public void broadcastAlarmState(int id, String action, long millis) {
-        Intent intent = new Intent(action);
-        intent.putExtra(Intents.EXTRA_ID, id);
-        intent.putExtra(Intents.EXTRA_NEXT_NORMAL_TIME_IN_MILLIS, millis);
-        mContext.sendBroadcast(intent);
-    }
 }

@@ -17,7 +17,7 @@ public interface Alarm {
 
     void delete();
 
-    AlarmEditor edit();
+    ImmutableAlarmEditor edit();
 
     boolean isPrealarm();
 
