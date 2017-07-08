@@ -170,12 +170,5 @@
             android:name=".persistance.AlarmProvider"
             android:authorities="${applicationId}.model"
             android:exported="false" />
-        <service
-            android:name=".persistance.DataBaseService"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="${applicationId}.ACTION_SAVE_ALARM" />
-            </intent-filter>
-        </service>
     </application>
 </manifest>
