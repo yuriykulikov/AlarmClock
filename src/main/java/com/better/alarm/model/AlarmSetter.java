@@ -15,6 +15,10 @@ import com.google.inject.Inject;
  */
 
 public interface AlarmSetter {
+    public static final String ACTION_FIRED = AlarmsScheduler.ACTION_FIRED;
+    public static final String EXTRA_ID = AlarmsScheduler.EXTRA_ID;
+    public static final String EXTRA_TYPE = AlarmsScheduler.EXTRA_TYPE;
+
     void removeRTCAlarm();
 
     void setUpRTCAlarm(AlarmsScheduler.ScheduledAlarm alarm);
@@ -22,10 +26,6 @@ public interface AlarmSetter {
     void fireNow(AlarmsScheduler.ScheduledAlarm firedInThePastAlarm);
 
     class AlarmSetterImpl implements AlarmSetter {
-        public static final String ACTION_FIRED = AlarmsScheduler.ACTION_FIRED;
-        public static final String EXTRA_ID = AlarmsScheduler.EXTRA_ID;
-        public static final String EXTRA_TYPE = AlarmsScheduler.EXTRA_TYPE;
-
         private final Context mContext;
         private AlarmManager am;
 
