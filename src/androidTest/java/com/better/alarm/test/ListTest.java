@@ -1,6 +1,7 @@
 package com.better.alarm.test;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.FailureHandler;
@@ -10,10 +11,15 @@ import android.test.suitebuilder.annotation.LargeTest;
 import android.view.View;
 
 import com.better.alarm.R;
+import com.better.alarm.interfaces.Intents;
+import com.better.alarm.interfaces.PresentationToModelIntents;
 import com.better.alarm.logger.Logger;
+import com.better.alarm.model.AlarmSetter;
 import com.better.alarm.model.AlarmValue;
+import com.better.alarm.model.CalendarType;
 import com.better.alarm.persistance.AlarmDatabaseHelper;
 import com.better.alarm.presenter.AlarmsListActivity;
+import com.better.alarm.services.AlarmsService;
 
 import org.hamcrest.Matcher;
 import org.junit.After;
@@ -52,7 +58,7 @@ public class ListTest {
     @Rule
     public TestRule chain = RuleChain.outerRule(new ForceLocaleRule(Locale.US)).around(listActivity);
 
-    private static final boolean DBG = false;
+    private static final boolean DBG = true;
 
     private static void sleep(int howLong) {
         if (DBG) {
@@ -113,12 +119,7 @@ public class ListTest {
         assertThatList(android.R.id.list).items().hasSize(3);
 
         ListAsserts.<AlarmValue>assertThatList(android.R.id.list)
-                .filter(new Predicate<AlarmValue>() {
-                    @Override
-                    public boolean test(@NonNull AlarmValue alarmValue) throws Exception {
-                        return alarmValue.isEnabled();
-                    }
-                })
+                .filter(enabled())
                 .items()
                 .isEmpty();
 
@@ -151,17 +152,22 @@ public class ListTest {
         assertThatList(android.R.id.list).items().hasSize(3);
 
         ListAsserts.<AlarmValue>assertThatList(android.R.id.list)
-                .filter(new Predicate<AlarmValue>() {
-                    @Override
-                    public boolean test(@NonNull AlarmValue alarmValue) throws Exception {
-                        return alarmValue.isEnabled();
-                    }
-                })
+                .filter(enabled())
                 .items()
                 .hasSize(1);
 
         deleteAlarm(0);
         assertThatList(android.R.id.list).items().hasSize(2);
+    }
+
+    @android.support.annotation.NonNull
+    private Predicate<AlarmValue> enabled() {
+        return new Predicate<AlarmValue>() {
+            @Override
+            public boolean test(@NonNull AlarmValue alarmValue) throws Exception {
+                return alarmValue.isEnabled();
+            }
+        };
     }
 
     @Test
@@ -184,6 +190,61 @@ public class ListTest {
         Cortado.onView().withText("OK").perform().click();
         sleep();
 
+        assertThatList(android.R.id.list).items().hasSize(2);
+    }
+
+    @Test
+    public void newAlarm_shouldBe_disabled_after_dismiss() throws Exception {
+        onView(withId(R.id.fab)).perform(click());
+        sleep();
+        Cortado.onView().withText("1").perform().click();
+        Cortado.onView().withText("2").perform().click();
+        Cortado.onView().withText("3").perform().click();
+        Cortado.onView().withText("5").perform().click();
+
+        onView(withText("AM"))
+                .withFailureHandler(new FailureHandler() {
+                    @Override
+                    public void handle(Throwable error, Matcher<View> viewMatcher) {
+                    }
+                })
+                .perform(click());
+
+        sleep();
+        onView(withText("OK")).perform(click());
+        Cortado.onView().withText("OK").perform().click();
+        sleep();
+
+        ListAsserts.<AlarmValue>assertThatList(android.R.id.list)
+                .filter(enabled())
+                .items()
+                .hasSize(1);
+
+        int id = ListAsserts.<AlarmValue>listObservable(android.R.id.list).firstOrError().blockingGet().getId();
+
+        //simulate alarm fired
+        Intent intent = new Intent(AlarmSetter.ACTION_FIRED);
+        intent.putExtra(AlarmSetter.EXTRA_ID, id);
+        intent.putExtra(AlarmSetter.EXTRA_TYPE, CalendarType.NORMAL.name());
+        listActivity.getActivity().sendBroadcast(intent);
+
+        sleep();
+
+        //simulate dismiss from the notification bar
+        Intent dismiss = new Intent( PresentationToModelIntents.ACTION_REQUEST_DISMISS);
+        dismiss.putExtra(AlarmSetter.EXTRA_ID, id);
+        dismiss.setClass(listActivity.getActivity(), AlarmsService.class);
+        listActivity.getActivity().startService(dismiss);
+
+        sleep();
+
+        //alarm must be disabled because there is no repeating
+        ListAsserts.<AlarmValue>assertThatList(android.R.id.list)
+                .filter(enabled())
+                .items()
+                .isEmpty();
+
+        deleteAlarm(0);
         assertThatList(android.R.id.list).items().hasSize(2);
     }
 }

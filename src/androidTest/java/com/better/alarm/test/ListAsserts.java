@@ -32,7 +32,11 @@ public class ListAsserts<T> {
     }
 
     public static <T> ListAssert<T> assertThatList(final int id) {
-        return createListAssert(Observable.create(new ObservableOnSubscribe<T>() {
+        return createListAssert(ListAsserts.<T>listObservable(id));
+    }
+
+    public static <T> Observable<T> listObservable(final int id) {
+        return Observable.create(new ObservableOnSubscribe<T>() {
             @Override
             public void subscribe(@NonNull final ObservableEmitter<T> e) throws Exception {
                 onView(withId(id)).check(new ViewAssertion() {
@@ -50,7 +54,7 @@ public class ListAsserts<T> {
                     }
                 });
             }
-        }));
+        });
     }
 
     private static <T> ListAssert<T> createListAssert(final Observable<T> observable) {
