@@ -23,4 +23,4 @@ Apache 2.0
 [![Get it on Google Play](https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png)](https://play.google.com/store/apps/details?id=com.better.alarm&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)
 
 # Code coverage
-[![Codecov](https://codecov.io/gh/yuriykulikov/AlarmClock/branch/develop/graphs/tree.svg)](https://codecov.io/github/yuriykulikov/AlarmClock/coverage.png?branch=develop)
+[![Codecov](https://codecov.io/gh/yuriykulikov/AlarmClock/branch/develop/graphs/tree.svg)](https://codecov.io/github/yuriykulikov/AlarmClock?branch=develop)
