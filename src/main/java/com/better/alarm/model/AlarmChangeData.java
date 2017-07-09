@@ -9,7 +9,7 @@ import android.net.Uri;
 public interface AlarmChangeData extends  AlarmValue {
     boolean isPrealarm();
 
-    Uri getAlert();
+    String alertString();
 
     boolean isVibrate();
 }

@@ -49,10 +49,7 @@ public abstract class AlarmContainer implements AlarmChangeData {
 
     public abstract String getState();
 
-    public abstract String alertString();
-
     @Value.Lazy
-    @Override
     public Uri getAlert() {
         String alertString = alertString();
         if (alertString.length() != 0) {

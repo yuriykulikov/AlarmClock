@@ -332,7 +332,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
                 .withDaysOfWeek(mRepeatPref.getDaysOfWeek())
                 .withIsVibrate(true)
                 .withLabel(mLabel.getText().toString())
-                .withAlert(mAlarmPref.getAlert())
+                .withAlertString(mAlarmPref.getAlert().toString())
                 .withIsPrealarm(mPreAlarmPref.isChecked())
                 .commit();
         isNewAlarm = false;
