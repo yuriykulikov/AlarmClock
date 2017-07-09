@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/yuriykulikov/AlarmClock.svg?branch=develop)](https://travis-ci.org/yuriykulikov/AlarmClock)
 [![Coverage Status](https://codecov.io/github/yuriykulikov/AlarmClock/coverage.png?branch=develop)](https://codecov.io/github/yuriykulikov/AlarmClock?branch=develop)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 # Simple alarm clock
 Simple Alarm Clock is an alarm clock for Android smartphones and tablets that brings pure alarm experience to you by combining powerful features and clean interface.
