@@ -30,6 +30,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.better.alarm.AlarmApplication;
+import com.better.alarm.Prefs;
 import com.better.alarm.R;
 
 public class TimePicker extends TimerSetupView implements Button.OnClickListener {
@@ -39,7 +41,7 @@ public class TimePicker extends TimerSetupView implements Button.OnClickListener
     private final String mNoAmPmLabel;
     private int mAmPmState;
     private Button mSetButton;
-    private final boolean mIs24HoursMode = DateFormat.is24HourFormat(mContext);
+    private final boolean mIs24HoursMode;
 
     private static final int AMPM_NOT_SELECTED = 0;
     private static final int PM_SELECTED = 1;
@@ -58,6 +60,7 @@ public class TimePicker extends TimerSetupView implements Button.OnClickListener
         super(context, attrs);
         mInputSize = 4;
         mNoAmPmLabel = context.getResources().getString(R.string.time_picker_ampm_label);
+        mIs24HoursMode = AlarmApplication.guice().getInstance(Prefs.class).is24HoutFormat().blockingGet();
     }
 
     @Override

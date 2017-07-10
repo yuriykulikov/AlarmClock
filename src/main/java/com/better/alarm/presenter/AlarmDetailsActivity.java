@@ -42,14 +42,15 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.better.alarm.AlarmApplication;
+import com.better.alarm.Prefs;
 import com.better.alarm.R;
 import com.better.alarm.interfaces.Alarm;
-import com.better.alarm.interfaces.AlarmEditor;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.view.AlarmPreference;
 import com.better.alarm.view.RepeatPreference;
 import com.better.alarm.logger.Logger;
+import com.google.inject.Inject;
 
 /**
  * Manages each alarm
@@ -58,7 +59,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         OnCancelListener, TimePickerDialogFragment.AlarmTimePickerDialogHandler {
     public final static String M12 = "h:mm aa";
     public final static String M24 = "kk:mm";
-
+    @Inject
     private IAlarmsManager alarms;
 
     private EditText mLabel;
@@ -75,12 +76,16 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     private int mMinute;
     private TimePickerDialog mTimePickerDialog;
 
+    @Inject
     private SharedPreferences sp;
+    @Inject
+    private Prefs prefs;
 
     @Override
     protected void onCreate(Bundle icicle) {
         setTheme(DynamicThemeHandler.getInstance().getIdForName(AlarmDetailsActivity.class.getName()));
         super.onCreate(icicle);
+        AlarmApplication.guice().injectMembers(this);
 
         if (!getResources().getBoolean(R.bool.isTablet)) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -89,13 +94,9 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         // Override the default content view.
         setContentView(R.layout.details_activity);
 
-        sp = PreferenceManager.getDefaultSharedPreferences(this);
-
         // TODO Stop using preferences for this view. Save on done, not after
         // each change.
         addPreferencesFromResource(R.xml.alarm_details);
-
-        alarms = AlarmApplication.alarms();
 
         EditText label = (EditText) getLayoutInflater().inflate(R.layout.details_label, null);
         ListView list = (ListView) findViewById(android.R.id.list);
@@ -119,7 +120,9 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         if (intent.hasExtra(Intents.EXTRA_ID)) {
             editExistingAlarm(intent);
         } else {
-            createNewDefaultAlarm(intent);
+            // No alarm means create a new alarm.
+            alarm = alarms.createNewAlarm();
+            isNewAlarm = true;
         }
 
         // Populate the prefs with the original alarm data. updatePrefs also
@@ -197,15 +200,6 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
             Logger.getDefaultLogger().d("Alarm not found");
             finish();
         }
-    }
-
-    /**
-     * A new alarm has to be created.
-     */
-    private void createNewDefaultAlarm(Intent intent) {
-        // No alarm means create a new alarm.
-        alarm = alarms.createNewAlarm();
-        isNewAlarm = true;
     }
 
     @Override
@@ -320,7 +314,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         Calendar c = Calendar.getInstance();
         c.set(Calendar.HOUR_OF_DAY, mHour);
         c.set(Calendar.MINUTE, mMinute);
-        String format = android.text.format.DateFormat.is24HourFormat(this) ? M24 : M12;
+        String format = prefs.is24HoutFormat().blockingGet() ? M24 : M12;
         CharSequence summary = c == null ? "" : (String) DateFormat.format(format, c);
         mTimePref.setSummary(summary);
     }

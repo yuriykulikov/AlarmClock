@@ -59,6 +59,7 @@ public class AlarmsTest {
                 .preAlarmDuration(BehaviorSubject.createDefault(10))
                 .snoozeDuration(BehaviorSubject.createDefault(10))
                 .autoSilence(BehaviorSubject.createDefault(10))
+                .is24HoutFormat(Single.just(true))
                 .build();
 
         store = ImmutableStore.builder()

@@ -17,6 +17,7 @@ package com.better.alarm;
 
 import android.app.AlarmManager;
 import android.app.Application;
+import android.app.NotificationManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -49,6 +50,7 @@ import com.better.alarm.wakelock.WakeLockManager;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.primitives.Booleans;
 import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -63,15 +65,23 @@ import org.acra.annotation.ReportsCrashes;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import io.reactivex.Maybe;
+import io.reactivex.MaybeEmitter;
+import io.reactivex.MaybeOnSubscribe;
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
+import io.reactivex.SingleOnSubscribe;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 @ReportsCrashes(
         mailTo = "yuriy.kulikov.87@gmail.com",
@@ -88,6 +98,7 @@ import io.reactivex.subjects.PublishSubject;
 public class AlarmApplication extends Application {
 
     private static Injector guice;
+    public static Optional<Boolean> is24hoursFormatOverride = Optional.absent();
 
     @Override
     public void onCreate() {
@@ -124,10 +135,30 @@ public class AlarmApplication extends Application {
             }
         };
 
+        Single<Boolean> dateFormat = Maybe
+                .create(new MaybeOnSubscribe<Boolean>() {
+                    @Override
+                    public void subscribe(@NonNull MaybeEmitter<Boolean> e) throws Exception {
+                        if (is24hoursFormatOverride.isPresent()) {
+                            e.onSuccess(is24hoursFormatOverride.get());
+                        } else {
+                            e.onComplete();
+                        }
+                    }
+                })
+                .switchIfEmpty(Maybe.create(new MaybeOnSubscribe<Boolean>() {
+                    @Override
+                    public void subscribe(@NonNull MaybeEmitter<Boolean> e) throws Exception {
+                        e.onSuccess(android.text.format.DateFormat.is24HourFormat(getApplicationContext()));
+                    }
+                }))
+                .toSingle();
+
         final ImmutablePrefs prefs = ImmutablePrefs.builder()
                 .preAlarmDuration(rxPreferences.getString("prealarm_duration", "30").asObservable().map(parseInt))
                 .snoozeDuration(rxPreferences.getString("snooze_duration", "10").asObservable().map(parseInt))
                 .autoSilence(rxPreferences.getString("auto_silence", "10").asObservable().map(parseInt))
+                .is24HoutFormat(dateFormat)
                 .build();
 
         final ImmutableStore store = ImmutableStore.builder()
@@ -201,6 +232,7 @@ public class AlarmApplication extends Application {
             binder.bind(ContentResolver.class).toInstance(getApplicationContext().getContentResolver());
             binder.bind(SharedPreferences.class).toInstance(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
             binder.bind(AlarmManager.class).toInstance((AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE));
+            binder.bind(NotificationManager.class).toInstance((NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE));
 
             binder.bind(ScheduledReceiver.class).asEagerSingleton();
             binder.bind(ToastPresenter.class).asEagerSingleton();

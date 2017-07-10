@@ -31,6 +31,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.better.alarm.AlarmApplication;
+import com.better.alarm.Prefs;
 import com.better.alarm.R;
 
 /**
@@ -47,6 +49,8 @@ public class DigitalClock extends LinearLayout {
     private ContentObserver mFormatChangeObserver;
     private boolean mLive = true;
     private boolean mAttached;
+
+    private Prefs prefs;
 
     /* called by system on minute ticks */
     private final Handler mHandler = new Handler();
@@ -110,6 +114,7 @@ public class DigitalClock extends LinearLayout {
 
     public DigitalClock(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.prefs = AlarmApplication.guice().getInstance(Prefs.class);
     }
 
     @Override
@@ -180,7 +185,7 @@ public class DigitalClock extends LinearLayout {
     }
 
     private void setDateFormat() {
-        mFormat = android.text.format.DateFormat.is24HourFormat(getContext()) ? M24 : M12;
+        mFormat = prefs.is24HoutFormat().blockingGet() ? M24 : M12;
         mAmPm.setShowAmPm(mFormat == M12 || isInEditMode());
     }
 
