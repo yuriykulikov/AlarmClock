@@ -25,6 +25,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.better.alarm.AlarmApplication;
+import com.better.alarm.Prefs;
 import com.better.alarm.R;
 import com.better.alarm.Store;
 import com.better.alarm.model.AlarmValue;
@@ -73,9 +74,10 @@ public class AlarmsListFragment extends ListFragment {
     private Logger log;
     @Inject
     private IAlarmsManager alarms;
-
     @Inject
-    Store store;
+    private Store store;
+    @Inject
+    private Prefs prefs;
 
     private AlarmListAdapter mAdapter;
 
@@ -292,7 +294,7 @@ public class AlarmsListFragment extends ListFragment {
         final Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, alarm.getHour());
         cal.set(Calendar.MINUTE, alarm.getMinutes());
-        String format = android.text.format.DateFormat.is24HourFormat(getActivity()) ? M24 : M12;
+        String format = prefs.is24HoutFormat().blockingGet() ? M24 : M12;
         final String time = cal == null ? "" : (String) DateFormat.format(format, cal);
 
         // Inflate the custom view and set each TextView's text.

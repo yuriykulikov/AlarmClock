@@ -26,6 +26,7 @@ import android.os.Build;
 import android.provider.Settings;
 import android.text.format.DateFormat;
 
+import com.better.alarm.Prefs;
 import com.better.alarm.Store;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.presenter.AlarmsListActivity;
@@ -45,11 +46,13 @@ public class ScheduledReceiver {
     private static final Intent FAKE_INTENT_JUST_TO_DISPLAY_IN_ICON = new Intent("FAKE_ACTION_JUST_TO_DISPLAY_AN_ICON");
     private Store store;
     private Context context;
+    private Prefs prefs;
 
     @Inject
-    public ScheduledReceiver(Store store, final Context context){
+    public ScheduledReceiver(Store store, final Context context, Prefs prefs){
         this.store = store;
         this.context = context;
+        this.prefs = prefs;
     }
 
     public void start(){
@@ -75,7 +78,7 @@ public class ScheduledReceiver {
             // Update systems settings, so that interested Apps (like
             // KeyGuard)
             // will react accordingly
-            String format = android.text.format.DateFormat.is24HourFormat(context) ? DM24 : DM12;
+            String format = prefs.is24HoutFormat().blockingGet() ? DM24 : DM12;
             Calendar calendar = Calendar.getInstance();
             long milliseconds = nextOptional.get().nextNonPrealarmTime();
             calendar.setTimeInMillis(milliseconds);

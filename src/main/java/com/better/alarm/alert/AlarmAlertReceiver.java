@@ -31,6 +31,7 @@ import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
 
 import com.better.alarm.AlarmApplication;
+import com.better.alarm.Prefs;
 import com.better.alarm.R;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
@@ -38,6 +39,7 @@ import com.better.alarm.interfaces.Intents;
 import com.better.alarm.interfaces.PresentationToModelIntents;
 import com.better.alarm.presenter.TransparentActivity;
 import com.better.alarm.logger.Logger;
+import com.google.inject.Inject;
 
 /**
  * Glue class: connects AlarmAlert IntentReceiver to AlarmAlert activity. Passes
@@ -49,16 +51,22 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
     private static final String DM12 = "E h:mm aa";
     private static final String DM24 = "E kk:mm";
     private static final int NOTIFICATION_OFFSET = 1000;
+
     Context mContext;
+
+    @Inject
     NotificationManager nm;
+    @Inject
     IAlarmsManager alarmsManager;
+    @Inject
+    Prefs prefs;
+
     Alarm alarm;
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
         mContext = context;
-        alarmsManager = AlarmApplication.alarms();
-        nm = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        AlarmApplication.guice().injectMembers(this);
         String action = intent.getAction();
         int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
         try {
@@ -192,7 +200,7 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
     }
 
     private String formatTimeString() {
-        String format = android.text.format.DateFormat.is24HourFormat(mContext) ? DM24 : DM12;
+        String format = prefs.is24HoutFormat().blockingGet() ? DM24 : DM12;
         Calendar calendar = alarm.getSnoozedTime();
         String timeString = (String) DateFormat.format(format, calendar);
         return timeString;

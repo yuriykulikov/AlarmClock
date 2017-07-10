@@ -20,12 +20,14 @@ import android.widget.TextView;
 import android.widget.ViewSwitcher.ViewFactory;
 
 import com.better.alarm.AlarmApplication;
+import com.better.alarm.Prefs;
 import com.better.alarm.R;
 import com.better.alarm.Store;
 import com.better.alarm.model.AlarmValue;
 import com.better.alarm.logger.Logger;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
@@ -55,11 +57,11 @@ public class InfoFragment extends Fragment implements ViewFactory {
     private boolean isPrealarm;
 
     @Inject
-    private SharedPreferences sp;
+    private Prefs prefs;
     @Inject
     private Store store;
-
-    @Inject Context context;
+    @Inject
+    private Context context;
 
     private Disposable nextDisposable;
 
@@ -77,7 +79,7 @@ public class InfoFragment extends Fragment implements ViewFactory {
         public void accept(@NonNull Optional<Store.Next> nextOptional) throws Exception {
                 if (nextOptional.isPresent()) {
                     alarm = nextOptional.get().alarm();
-                    String format = android.text.format.DateFormat.is24HourFormat(context) ? DM24 : DM12;
+                    String format = prefs.is24HoutFormat().blockingGet() ? DM24 : DM12;
 
                     milliseconds = nextOptional.get().nextNonPrealarmTime();
                     Calendar calendar = Calendar.getInstance();
@@ -166,7 +168,7 @@ public class InfoFragment extends Fragment implements ViewFactory {
 
     private void formatString() {
         if (isPrealarm) {
-            int duration = Integer.parseInt(sp.getString("prealarm_duration", "-1"));
+            int duration = prefs.preAlarmDuration().blockingFirst();
             remainingTime.setText(formatRemainingTimeString(milliseconds) + "\n"
                     + getResources().getString(R.string.info_fragment_prealarm_summary, duration));
         } else {

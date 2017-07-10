@@ -10,6 +10,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.view.View;
 
+import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.interfaces.PresentationToModelIntents;
@@ -20,6 +21,7 @@ import com.better.alarm.model.CalendarType;
 import com.better.alarm.persistance.AlarmDatabaseHelper;
 import com.better.alarm.presenter.AlarmsListActivity;
 import com.better.alarm.services.AlarmsService;
+import com.google.common.base.Optional;
 
 import org.hamcrest.Matcher;
 import org.junit.After;
@@ -128,7 +130,18 @@ public class ListTest {
     }
 
     @Test
-    public void newAlarm_shouldBeEnabled_ifEdited() throws Exception {
+    public void newAlarm_shouldBeEnabled_ifEdited_12()throws Exception {
+        AlarmApplication.is24hoursFormatOverride = Optional.of(false);
+        newAlarm_shouldBeEnabled_ifEdited();
+    }
+
+    @Test
+    public void newAlarm_shouldBeEnabled_ifEdited_24()throws Exception {
+        AlarmApplication.is24hoursFormatOverride = Optional.of(true);
+        newAlarm_shouldBeEnabled_ifEdited();
+    }
+
+    private void newAlarm_shouldBeEnabled_ifEdited() throws Exception {
         onView(withId(R.id.fab)).perform(click());
         sleep();
         Cortado.onView().withText("1").perform().click();
