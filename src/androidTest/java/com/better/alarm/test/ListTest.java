@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.FailureHandler;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
@@ -45,6 +46,7 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.longClick;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -130,13 +132,13 @@ public class ListTest {
     }
 
     @Test
-    public void newAlarm_shouldBeEnabled_ifEdited_12()throws Exception {
+    public void newAlarm_shouldBeEnabled_ifEdited_12() throws Exception {
         AlarmApplication.is24hoursFormatOverride = Optional.of(false);
         newAlarm_shouldBeEnabled_ifEdited();
     }
 
     @Test
-    public void newAlarm_shouldBeEnabled_ifEdited_24()throws Exception {
+    public void newAlarm_shouldBeEnabled_ifEdited_24() throws Exception {
         AlarmApplication.is24hoursFormatOverride = Optional.of(true);
         newAlarm_shouldBeEnabled_ifEdited();
     }
@@ -244,7 +246,7 @@ public class ListTest {
         sleep();
 
         //simulate dismiss from the notification bar
-        Intent dismiss = new Intent( PresentationToModelIntents.ACTION_REQUEST_DISMISS);
+        Intent dismiss = new Intent(PresentationToModelIntents.ACTION_REQUEST_DISMISS);
         dismiss.putExtra(AlarmSetter.EXTRA_ID, id);
         dismiss.setClass(listActivity.getActivity(), AlarmsService.class);
         listActivity.getActivity().startService(dismiss);
@@ -259,5 +261,39 @@ public class ListTest {
 
         deleteAlarm(0);
         assertThatList(android.R.id.list).items().hasSize(2);
+    }
+
+    @Test
+    public void editAlarmALot() throws Exception {
+        onView(withId(R.id.fab)).perform(click());
+        sleep();
+        assertTimerView("--:--");
+        Cortado.onView().withText("1").perform().click();
+        assertTimerView("--:-1");
+        Cortado.onView().withText("2").perform().click();
+        assertTimerView("--:12");
+        Cortado.onView().withText("3").perform().click();
+        assertTimerView("-1:23");
+        Cortado.onView().withText("5").perform().click();
+        assertTimerView("12:35");
+        Cortado.onView().withId(R.id.delete).perform().click();
+        assertTimerView("-1:23");
+        Cortado.onView().withId(R.id.delete).perform().click();
+        assertTimerView("--:12");
+        Cortado.onView().withId(R.id.delete).perform().longClick();
+        assertTimerView("--:--");
+        sleep();
+        onView(withText("Cancel")).perform(click());
+        sleep();
+        onView(withText("Cancel")).perform(click());
+        assertThatList(android.R.id.list).items().hasSize(2);
+    }
+
+    private void assertTimerView(String s) {
+        String[] split = s.split("");
+        Cortado.onView().withId(R.id.hours_tens).check().matches(withText("" + s.charAt(0)));
+        Cortado.onView().withId(R.id.hours_ones).check().matches(withText("" + s.charAt(1)));
+        Cortado.onView().withId(R.id.minutes_tens).check().matches(withText("" + s.charAt(3)));
+        Cortado.onView().withId(R.id.minutes_ones).check().matches(withText("" + s.charAt(4)));
     }
 }
