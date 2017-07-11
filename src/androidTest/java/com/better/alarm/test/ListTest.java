@@ -1,11 +1,7 @@
 package com.better.alarm.test;
 
-import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.FailureHandler;
-import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
@@ -13,22 +9,15 @@ import android.view.View;
 
 import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
-import com.better.alarm.interfaces.Intents;
 import com.better.alarm.interfaces.PresentationToModelIntents;
-import com.better.alarm.logger.Logger;
 import com.better.alarm.model.AlarmSetter;
 import com.better.alarm.model.AlarmValue;
 import com.better.alarm.model.CalendarType;
-import com.better.alarm.persistance.AlarmDatabaseHelper;
 import com.better.alarm.presenter.AlarmsListActivity;
 import com.better.alarm.services.AlarmsService;
 import com.google.common.base.Optional;
 
 import org.hamcrest.Matcher;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -38,16 +27,10 @@ import org.junit.runner.RunWith;
 import java.util.Locale;
 
 import cortado.Cortado;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Predicate;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static android.support.test.espresso.action.ViewActions.longClick;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.better.alarm.test.ListAsserts.assertThatList;
@@ -55,60 +38,12 @@ import static org.hamcrest.Matchers.anything;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class ListTest {
+public class ListTest extends BaseTest {
     public ActivityTestRule<AlarmsListActivity> listActivity = new ActivityTestRule<AlarmsListActivity>(
             AlarmsListActivity.class, false, /* autostart*/ true);
 
     @Rule
     public TestRule chain = RuleChain.outerRule(new ForceLocaleRule(Locale.US)).around(listActivity);
-
-    private static final boolean DBG = true;
-
-    private static void sleep(int howLong) {
-        if (DBG) {
-            try {
-                Thread.sleep(howLong);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private static void sleep() {
-        sleep(1000);
-    }
-
-    private void deleteAlarm(int position) {
-        onData(anything()).atPosition(position).perform(longClick());
-        sleep(200);
-        Cortado.onView().withText("Delete alarm").perform().click();
-        sleep(200);
-        Cortado.onView().withText("OK").perform().click();
-        sleep(200);
-    }
-
-    @BeforeClass
-    @AfterClass
-    public static void dropDatabase() {
-        final Context context = InstrumentationRegistry.getTargetContext();
-        AlarmDatabaseHelper dbHelper = new AlarmDatabaseHelper(context, Logger.create());
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.execSQL("DROP TABLE IF EXISTS alarms");
-        dbHelper.onCreate(db);
-        db.close();
-        System.out.println("Dropped database");
-    }
-
-    @Before
-    public void closeSoftKeyBoard() {
-        closeSoftKeyboard();
-    }
-
-    @After
-    public void tearDown() throws InterruptedException {
-        //TODO actually mock database access in these tests
-        Thread.sleep(1000);
-    }
 
     @Test
     public void newAlarm_shouldBeDisabled_ifNotEdited() throws Exception {
@@ -173,16 +108,6 @@ public class ListTest {
 
         deleteAlarm(0);
         assertThatList(android.R.id.list).items().hasSize(2);
-    }
-
-    @android.support.annotation.NonNull
-    private Predicate<AlarmValue> enabled() {
-        return new Predicate<AlarmValue>() {
-            @Override
-            public boolean test(@NonNull AlarmValue alarmValue) throws Exception {
-                return alarmValue.isEnabled();
-            }
-        };
     }
 
     @Test
@@ -289,11 +214,4 @@ public class ListTest {
         assertThatList(android.R.id.list).items().hasSize(2);
     }
 
-    private void assertTimerView(String s) {
-        String[] split = s.split("");
-        Cortado.onView().withId(R.id.hours_tens).check().matches(withText("" + s.charAt(0)));
-        Cortado.onView().withId(R.id.hours_ones).check().matches(withText("" + s.charAt(1)));
-        Cortado.onView().withId(R.id.minutes_tens).check().matches(withText("" + s.charAt(3)));
-        Cortado.onView().withId(R.id.minutes_ones).check().matches(withText("" + s.charAt(4)));
-    }
 }

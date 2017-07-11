@@ -289,12 +289,17 @@ public class KlaxonService extends Service {
             AlarmApplication.wakeLocks().releasePartialWakeLock(intent);
         }
         String action = intent.getAction();
+
+        log.d(intent.getAction());
+
         if (action.equals(Intents.ALARM_ALERT_ACTION)) {
             alarm = AlarmApplication.alarms().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
             onAlarm(alarm);
         } else if (action.equals(Intents.ALARM_PREALARM_ACTION)) {
             alarm = AlarmApplication.alarms().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
             onPreAlarm(alarm);
+        } else if (action.equals(Intents.ACTION_START_ALARM_SAMPLE)) {
+            onStartAlarmSample(Type.NORMAL);
         } else if (action.equals(Intents.ACTION_START_PREALARM_SAMPLE)) {
             onStartAlarmSample(Type.PREALARM);
         } else if (action.equals(Intents.ACTION_MUTE)) {
@@ -335,7 +340,7 @@ public class KlaxonService extends Service {
         volume.cancelFadeIn();
         volume.setMode(type);
         // if already playing do nothing. In this case signal continues.
-        if (mMediaPlayer.isPresent() && !mMediaPlayer.get().isPlaying()) {
+        if (!mMediaPlayer.isPresent() || mMediaPlayer.isPresent() && !mMediaPlayer.get().isPlaying()) {
             initializePlayer(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
         }
         volume.apply();
