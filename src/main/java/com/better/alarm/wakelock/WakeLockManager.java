@@ -44,8 +44,8 @@ public class WakeLockManager {
     private final PowerManager pm;
 
     @Inject
-    public WakeLockManager(Context context, @Named("debug") Logger logger) {
-        pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+    public WakeLockManager(Context context, @Named("debug") Logger logger, PowerManager pm) {
+        this.pm = pm;
         wakeLocks = new CopyOnWriteArrayList<PowerManager.WakeLock>();
         log = logger;
     }

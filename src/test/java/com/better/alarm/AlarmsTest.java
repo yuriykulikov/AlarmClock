@@ -2,6 +2,7 @@ package com.better.alarm;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.os.PowerManager;
 
 import com.better.alarm.logger.Logger;
 import com.better.alarm.logger.SysoutLogWriter;
@@ -85,6 +86,7 @@ public class AlarmsTest {
             binder.bind(Context.class).toInstance(mock(Context.class));
             binder.bind(DatabaseQuery.class).toInstance(mockQuery());
             binder.bind(AlarmSetter.class).to(TestAlarmSetter.class).asEagerSingleton();
+            binder.bind(PowerManager.class).toInstance(mock(PowerManager.class));
 
             //mocks for verification
             binder.bind(AlarmCore.IStateNotifier.class).toInstance(stateNotifierMock);

@@ -18,6 +18,7 @@ import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
 import com.better.alarm.presenter.SettingsActivity
 import com.f2prateek.rx.preferences2.RxSharedPreferences
+import com.google.inject.Inject
 
 import java.util.concurrent.TimeUnit
 
@@ -28,9 +29,19 @@ import io.reactivex.functions.Function4
 import io.reactivex.subjects.BehaviorSubject
 
 class VibrationService : Service() {
-    private val log: Logger = Logger.getDefaultLogger();
-    private var mVibrator: Vibrator? = null
-    private var sp: SharedPreferences? = null
+    @Inject
+    private lateinit var log: Logger
+    @Inject
+    private lateinit var mVibrator: Vibrator
+    @Inject
+    private lateinit var sp: SharedPreferences
+    @Inject
+    private lateinit var pm: PowerManager
+    @Inject
+    private lateinit var telephonyManager: TelephonyManager
+    @Inject
+    private lateinit var rxPrefs: RxSharedPreferences
+
     private var wakeLock: WakeLock? = null
 
     //isEnabled && !inCall && !isMuted && isStarted
@@ -50,13 +61,10 @@ class VibrationService : Service() {
     }
 
     override fun onCreate() {
-        val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+        AlarmApplication.guice().injectMembers(this);
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "VibrationService")
         wakeLock?.acquire()
-        mVibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        sp = PreferenceManager.getDefaultSharedPreferences(this)
 
-        val telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
         telephonyManager.listen(object : PhoneStateListener() {
             override fun onCallStateChanged(state: Int, incomingNumber: String) {
                 inCall.onNext(state != TelephonyManager.CALL_STATE_IDLE)
@@ -94,10 +102,10 @@ class VibrationService : Service() {
 
     private fun onAlert() {
         muted.onNext(false)
-        val asString = sp!!.getString(SettingsActivity.KEY_FADE_IN_TIME_SEC, "30")
+        val asString = sp.getString(SettingsActivity.KEY_FADE_IN_TIME_SEC, "30")
         val time = Integer.parseInt(asString)
 
-        val preference: Observable<Boolean> = RxSharedPreferences.create(sp!!).getBoolean("vibrate").asObservable()
+        val preference: Observable<Boolean> = rxPrefs.getBoolean("vibrate").asObservable()
         val timer: Observable<Boolean> = Observable
                 .just(true)
                 .delay(time.toLong(), TimeUnit.SECONDS, AndroidSchedulers.mainThread())
@@ -112,17 +120,17 @@ class VibrationService : Service() {
                 .subscribe({ vibrate ->
                     if (vibrate) {
                         log.d("Starting vibration")
-                        mVibrator!!.vibrate(sVibratePattern, 0)
+                        mVibrator.vibrate(sVibratePattern, 0)
                     } else {
                         log.d("Canceling vibration")
-                        mVibrator!!.cancel()
+                        mVibrator.cancel()
                     }
                 })
     }
 
     private fun stopAndCleanup() {
         log.d("stopAndCleanup")
-        mVibrator!!.cancel()
+        mVibrator.cancel()
         subscription.dispose()
         stopSelf()
     }
