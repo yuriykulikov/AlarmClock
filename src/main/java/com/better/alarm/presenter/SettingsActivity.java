@@ -35,8 +35,10 @@ import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
 import com.better.alarm.view.AlarmPreference;
+import com.google.inject.Inject;
 
 /**
  * Settings for the Alarm Clock.
@@ -52,11 +54,14 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
     static final String KEY_AUTO_SILENCE = "auto_silence";
     static final String KEY_PREALARM_DURATION = "prealarm_duration";
     public static final String KEY_FADE_IN_TIME_SEC = "fade_in_time_sec";
+    @Inject
+    private Vibrator vibrator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(DynamicThemeHandler.getInstance().getIdForName(SettingsActivity.class.getName()));
         super.onCreate(savedInstanceState);
+        AlarmApplication.guice().injectMembers(this);
 
         addPreferencesFromResource(R.xml.preferences);
 
@@ -67,7 +72,7 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         }
         ringtone.setChangeDefault();
 
-        boolean hasVibrator = ((Vibrator) getSystemService(Context.VIBRATOR_SERVICE)).hasVibrator();
+        boolean hasVibrator = vibrator.hasVibrator();
         // #65 we have to check if preference is present before we try to remove
         // it TODO this is very strange!
         if (!hasVibrator && findPreference("vibrate") != null) {

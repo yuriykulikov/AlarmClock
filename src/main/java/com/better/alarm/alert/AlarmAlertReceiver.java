@@ -60,6 +60,8 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
     IAlarmsManager alarmsManager;
     @Inject
     Prefs prefs;
+    @Inject
+    KeyguardManager km;
 
     Alarm alarm;
 
@@ -114,7 +116,6 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
         // Decide which activity to start based on the state of the
         // keyguard - is the screen locked or not.
         Class<? extends AlarmAlertFullScreen> c = AlarmAlert.class;
-        KeyguardManager km = (KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE);
         if (km.inKeyguardRestrictedInputMode()) {
             // Use the full screen activity to unlock the screen.
             c = AlarmAlertFullScreen.class;

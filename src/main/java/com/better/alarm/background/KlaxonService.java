@@ -44,6 +44,7 @@ import com.better.alarm.interfaces.Intents;
 import com.better.alarm.presenter.SettingsActivity;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
 import com.google.common.base.Optional;
+import com.google.inject.Inject;
 
 import io.reactivex.Observable;
 import io.reactivex.annotations.NonNull;
@@ -58,21 +59,26 @@ import io.reactivex.functions.Function;
 public class KlaxonService extends Service {
     private Optional<MediaPlayer> mMediaPlayer = Optional.absent();
 
+    @Inject
     private TelephonyManager mTelephonyManager;
+    @Inject
     private Logger log;
     private Volume volume;
+    @Inject
     private PowerManager pm;
     private WakeLock wakeLock;
 
     private Alarm alarm;
     private boolean lastInCallState;
     private Observable<Integer> fadeInTimeInSeconds;
+    @Inject
     private RxSharedPreferences rxPreferences;
-
+    @Inject
+    private AudioManager audioManager;
     CompositeDisposable disposables = new CompositeDisposable();
 
     /**
-     * Dispatches intents to the KlaxonService
+     * android.media.AudioManagerDispatches intents to the KlaxonService
      */
     public static class Receiver extends BroadcastReceiver {
         @Override
@@ -243,14 +249,11 @@ public class KlaxonService extends Service {
 
     @Override
     public void onCreate() {
-        rxPreferences = RxSharedPreferences.create(PreferenceManager.getDefaultSharedPreferences(getApplication()));
+        AlarmApplication.guice().injectMembers(this);
         mMediaPlayer = Optional.absent();
-        log = Logger.getDefaultLogger();
-        pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "KlaxonService");
         wakeLock.acquire();
         // Listen for incoming calls to kill the alarm.
-        mTelephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         volume = new Volume();
         lastInCallState = mTelephonyManager.getCallState() != TelephonyManager.CALL_STATE_IDLE;
         mTelephonyManager.listen(phoneStateListenerImpl, PhoneStateListener.LISTEN_CALL_STATE);
@@ -412,7 +415,6 @@ public class KlaxonService extends Service {
     // Do the common stuff when starting the alarm.
     private void startAlarm(MediaPlayer player) throws java.io.IOException, IllegalArgumentException,
             IllegalStateException {
-        final AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         // do not play alarms if stream targetVolume is 0
         // (typically because ringer mode is silent).
         if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0) {

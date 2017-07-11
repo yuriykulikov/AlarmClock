@@ -47,12 +47,14 @@ public class ScheduledReceiver {
     private Store store;
     private Context context;
     private Prefs prefs;
+    private AlarmManager am;
 
     @Inject
-    public ScheduledReceiver(Store store, final Context context, Prefs prefs){
+    public ScheduledReceiver(Store store, final Context context, Prefs prefs, AlarmManager am){
         this.store = store;
         this.context = context;
         this.prefs = prefs;
+        this.am = am;
     }
 
     public void start(){
@@ -97,7 +99,6 @@ public class ScheduledReceiver {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void doForLollipop(Context context, Optional<Store.Next> nextOptional) {
-        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         if (nextOptional.isPresent()) {
             int id = nextOptional.get().alarm().getId();
 

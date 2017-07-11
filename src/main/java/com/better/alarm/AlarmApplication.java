@@ -17,11 +17,16 @@ package com.better.alarm;
 
 import android.app.AlarmManager;
 import android.app.Application;
+import android.app.KeyguardManager;
 import android.app.NotificationManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
+import android.os.PowerManager;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
+import android.telephony.TelephonyManager;
 import android.view.ViewConfiguration;
 
 import com.better.alarm.logger.LogcatLogWriter;
@@ -99,6 +104,8 @@ public class AlarmApplication extends Application {
 
     private static Injector guice;
     public static Optional<Boolean> is24hoursFormatOverride = Optional.absent();
+    private SharedPreferences preferences;
+    private RxSharedPreferences rxPreferences;
 
     @Override
     public void onCreate() {
@@ -125,8 +132,8 @@ public class AlarmApplication extends Application {
 
         LoggingExceptionHandler.addLoggingExceptionHandlerToAllThreads(logger);
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        RxSharedPreferences rxPreferences = RxSharedPreferences.create(preferences);
+        preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        rxPreferences = RxSharedPreferences.create(preferences);
 
         Function<String, Integer> parseInt = new Function<String, Integer>() {
             @Override
@@ -231,8 +238,14 @@ public class AlarmApplication extends Application {
             binder.bind(Context.class).toInstance(getApplicationContext());
             binder.bind(ContentResolver.class).toInstance(getApplicationContext().getContentResolver());
             binder.bind(SharedPreferences.class).toInstance(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
-            binder.bind(AlarmManager.class).toInstance((AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE));
-            binder.bind(NotificationManager.class).toInstance((NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE));
+            binder.bind(AlarmManager.class).toInstance((AlarmManager) getSystemService(Context.ALARM_SERVICE));
+            binder.bind(NotificationManager.class).toInstance((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));
+            binder.bind(AudioManager.class).toInstance((AudioManager) getSystemService(Context.AUDIO_SERVICE));
+            binder.bind(KeyguardManager.class).toInstance((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE));
+            binder.bind(TelephonyManager.class).toInstance((TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE));
+            binder.bind(PowerManager.class).toInstance((PowerManager) getSystemService(Context.POWER_SERVICE));
+            binder.bind(RxSharedPreferences.class).toInstance(rxPreferences);
+            binder.bind(Vibrator.class).toInstance((Vibrator) getSystemService(Context.VIBRATOR_SERVICE));
 
             binder.bind(ScheduledReceiver.class).asEagerSingleton();
             binder.bind(ToastPresenter.class).asEagerSingleton();

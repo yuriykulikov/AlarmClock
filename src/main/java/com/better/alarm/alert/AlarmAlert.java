@@ -26,9 +26,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
+import com.google.inject.Inject;
 
 /**
  * Full screen alarm alert: pops visible indicator and plays alarm tone. This
@@ -47,10 +49,12 @@ public class AlarmAlert extends AlarmAlertFullScreen {
         }
     };
 
+    @Inject
+    private KeyguardManager km;
+
     private final BroadcastReceiver mScreenOffReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            KeyguardManager km = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
             handleScreenOff(km);
         }
     };
@@ -58,7 +62,7 @@ public class AlarmAlert extends AlarmAlertFullScreen {
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-
+        AlarmApplication.guice().injectMembers(this);
         // Listen for the screen turning off so that when the screen comes back
         // on, the user does not need to unlock the phone to dismiss the alarm.
         registerReceiver(mScreenOffReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));

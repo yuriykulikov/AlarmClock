@@ -41,6 +41,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
+import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.view.VolumePreference.SeekBarVolumizer;
@@ -97,7 +98,7 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
 
         final SeekBar seekBar = (SeekBar) view.findViewById(R.id.seekbar_dialog_seekbar_master_volume);
         volumizers.add(new SeekBarVolumizer(seekBar, new AudioManagerVolumizerStrategy(getContext(),
-                AudioManager.STREAM_ALARM, null), this));
+                AudioManager.STREAM_ALARM, null, AlarmApplication.guice().getInstance(AudioManager.class)), this));
 
         final SeekBar alarmSeekBar = (SeekBar) view.findViewById(R.id.seekbar_dialog_seekbar_alarm_volume);
         volumizers.add(new SeekBarVolumizer(alarmSeekBar, new AlarmVolumizerStrategy(getContext()), this));
@@ -210,10 +211,10 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
         private final Ringtone mRingtone;
         private final Handler mHandler = new Handler(this);
 
-        public AudioManagerVolumizerStrategy(Context context, int streamType, Uri defaultUri) {
+        public AudioManagerVolumizerStrategy(Context context, int streamType, Uri defaultUri, AudioManager am) {
             mContext = context;
             mStreamType = streamType;
-            mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+            this.mAudioManager = am;
 
             if (defaultUri == null) {
                 if (mStreamType == AudioManager.STREAM_RING) {
