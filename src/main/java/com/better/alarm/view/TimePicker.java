@@ -48,10 +48,6 @@ public class TimePicker extends TimerSetupView implements Button.OnClickListener
     private static final int AM_SELECTED = 2;
     private static final int HOURS24_MODE = 3;
 
-    private static final String TIME_PICKER_SAVED_BUFFER_POINTER = "timer_picker_saved_buffer_pointer";
-    private static final String TIME_PICKER_SAVED_INPUT = "timer_picker_saved_input";
-    private static final String TIME_PICKER_SAVED_AMPM = "timer_picker_saved_ampm";
-
     public TimePicker(Context context) {
         this(context, null);
     }
@@ -497,80 +493,5 @@ public class TimePicker extends TimerSetupView implements Button.OnClickListener
 
     public int getMinutes() {
         return mInput[1] * 10 + mInput[0];
-    }
-
-    @Override
-    public Parcelable onSaveInstanceState() {
-        final Parcelable parcel = super.onSaveInstanceState();
-        final SavedState state = new SavedState(parcel);
-        state.mInput = mInput;
-        state.mAmPmState = mAmPmState;
-        state.mInputPointer = mInputPointer;
-        return state;
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Parcelable state) {
-        if (!(state instanceof SavedState)) {
-            super.onRestoreInstanceState(state);
-            return;
-        }
-
-        final SavedState savedState = (SavedState) state;
-        super.onRestoreInstanceState(savedState.getSuperState());
-
-        mInputPointer = savedState.mInputPointer;
-        mInput = savedState.mInput;
-        if (mInput == null) {
-            mInput = new int[mInputSize];
-            mInputPointer = -1;
-        }
-        mAmPmState = savedState.mAmPmState;
-        updateKeypad();
-    }
-
-    private static class SavedState extends BaseSavedState {
-        int mInputPointer;
-        int[] mInput;
-        int mAmPmState;
-
-        public SavedState(Parcelable superState) {
-            super(superState);
-        }
-
-        private SavedState(Parcel in) {
-            super(in);
-            try {
-                mInputPointer = in.readInt();
-                mInput = new int[in.readInt()];
-                in.readIntArray(mInput);
-                mAmPmState = in.readInt();
-            } catch (Exception e) {
-                mInputPointer = -1;
-                mInput = null;
-                ACRA.getErrorReporter().handleSilentException(e);
-            }
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            super.writeToParcel(dest, flags);
-            dest.writeInt(mInputPointer);
-            dest.writeInt(mInput.length);
-            dest.writeIntArray(mInput);
-            dest.writeInt(mAmPmState);
-        }
-
-        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
-            @Override
-            public SavedState createFromParcel(Parcel in) {
-                return new SavedState(in);
-            }
-
-            @Override
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        };
     }
 }
