@@ -41,8 +41,9 @@ import com.melnykov.fab.*;
  * This activity displays a list of alarms and optionally a details fragment.
  */
 public class AlarmsListActivity extends Activity implements AlarmTimePickerDialogHandler {
-
     private ActionBarHandler mActionBarHandler;
+    private AlarmsListFragment alarmsListFragment;
+    private Alarm timePickerAlarm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,9 +146,6 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
             startActivity(intent);
         }
     };
-    private AlarmsListFragment alarmsListFragment;
-
-    private Alarm timePickerAlarm;
 
     public void showTimePicker(AlarmValue alarm) {
         timePickerAlarm = AlarmApplication.alarms().getAlarm(alarm.getId());

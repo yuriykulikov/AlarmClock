@@ -33,7 +33,7 @@ public class PersistingContainerFactory implements ContainerFactory, AlarmContai
         /**
          * The content:// style URL for this table
          */
-        static final Uri CONTENT_URI = Uri.parse("content://" + BuildConfig.APPLICATION_ID + ".model/alarm");
+        public static final Uri CONTENT_URI = Uri.parse("content://" + BuildConfig.APPLICATION_ID + ".model/alarm");
 
         /**
          * Hour in 24-hour localtime 0 - 23.
@@ -41,7 +41,7 @@ public class PersistingContainerFactory implements ContainerFactory, AlarmContai
          * Type: INTEGER
          * </P>
          */
-        static final String HOUR = "hour";
+        public static final String HOUR = "hour";
 
         /**
          * Minutes in localtime 0 - 59
@@ -49,7 +49,7 @@ public class PersistingContainerFactory implements ContainerFactory, AlarmContai
          * Type: INTEGER
          * </P>
          */
-        static final String MINUTES = "minutes";
+        public static final String MINUTES = "minutes";
 
         /**
          * Days of week coded as integer
@@ -57,7 +57,7 @@ public class PersistingContainerFactory implements ContainerFactory, AlarmContai
          * Type: INTEGER
          * </P>
          */
-        static final String DAYS_OF_WEEK = "daysofweek";
+        public static final String DAYS_OF_WEEK = "daysofweek";
 
         /**
          * AlarmCore time in UTC milliseconds from the epoch.
@@ -65,7 +65,7 @@ public class PersistingContainerFactory implements ContainerFactory, AlarmContai
          * Type: INTEGER
          * </P>
          */
-        static final String ALARM_TIME = "alarmtime";
+        public static final String ALARM_TIME = "alarmtime";
 
         /**
          * True if alarm is active
@@ -73,7 +73,7 @@ public class PersistingContainerFactory implements ContainerFactory, AlarmContai
          * Type: BOOLEAN
          * </P>
          */
-        static final String ENABLED = "enabled";
+        public static final String ENABLED = "enabled";
 
         /**
          * True if alarm should vibrate
@@ -81,7 +81,7 @@ public class PersistingContainerFactory implements ContainerFactory, AlarmContai
          * Type: BOOLEAN
          * </P>
          */
-        static final String VIBRATE = "vibrate";
+        public static final String VIBRATE = "vibrate";
 
         /**
          * Message to show when alarm triggers Note: not currently used
@@ -89,7 +89,7 @@ public class PersistingContainerFactory implements ContainerFactory, AlarmContai
          * Type: STRING
          * </P>
          */
-        static final String MESSAGE = "message";
+        public static final String MESSAGE = "message";
 
         /**
          * Audio alert to play when alarm triggers
@@ -97,7 +97,7 @@ public class PersistingContainerFactory implements ContainerFactory, AlarmContai
          * Type: STRING
          * </P>
          */
-        static final String ALERT = "alert";
+        public static final String ALERT = "alert";
 
         /**
          * Use prealarm
@@ -105,7 +105,7 @@ public class PersistingContainerFactory implements ContainerFactory, AlarmContai
          * Type: STRING
          * </P>
          */
-        static final String PREALARM = "prealarm";
+        public static final String PREALARM = "prealarm";
 
         /**
          * State machine state
@@ -113,31 +113,31 @@ public class PersistingContainerFactory implements ContainerFactory, AlarmContai
          * Type: STRING
          * </P>
          */
-        static final String STATE = "state";
+        public static final String STATE = "state";
 
         /**
          * The default sort order for this table
          */
-        static final String DEFAULT_SORT_ORDER = HOUR + ", " + MINUTES + " ASC";
+        public static final String DEFAULT_SORT_ORDER = HOUR + ", " + MINUTES + " ASC";
 
-        static final String[] ALARM_QUERY_COLUMNS = {_ID, HOUR, MINUTES, DAYS_OF_WEEK, ALARM_TIME, ENABLED,
+        public static final String[] ALARM_QUERY_COLUMNS = {_ID, HOUR, MINUTES, DAYS_OF_WEEK, ALARM_TIME, ENABLED,
                 VIBRATE, MESSAGE, ALERT, PREALARM, STATE};
 
         /**
          * These save calls to cursor.getColumnIndexOrThrow() THEY MUST BE KEPT
          * IN SYNC WITH ABOVE QUERY COLUMNS
          */
-        static final int ALARM_ID_INDEX = 0;
-        static final int ALARM_HOUR_INDEX = 1;
-        static final int ALARM_MINUTES_INDEX = 2;
-        static final int ALARM_DAYS_OF_WEEK_INDEX = 3;
-        static final int ALARM_TIME_INDEX = 4;
-        static final int ALARM_ENABLED_INDEX = 5;
-        static final int ALARM_VIBRATE_INDEX = 6;
-        static final int ALARM_MESSAGE_INDEX = 7;
-        static final int ALARM_ALERT_INDEX = 8;
-        static final int ALARM_PREALARM_INDEX = 9;
-        static final int ALARM_STATE_INDEX = 10;
+        public static final int ALARM_ID_INDEX = 0;
+        public static final int ALARM_HOUR_INDEX = 1;
+        public static final int ALARM_MINUTES_INDEX = 2;
+        public static final int ALARM_DAYS_OF_WEEK_INDEX = 3;
+        public static final int ALARM_TIME_INDEX = 4;
+        public static final int ALARM_ENABLED_INDEX = 5;
+        public static final int ALARM_VIBRATE_INDEX = 6;
+        public static final int ALARM_MESSAGE_INDEX = 7;
+        public static final int ALARM_ALERT_INDEX = 8;
+        public static final int ALARM_PREALARM_INDEX = 9;
+        public static final int ALARM_STATE_INDEX = 10;
     }
 
     @Inject

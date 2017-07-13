@@ -146,6 +146,7 @@ public class ListTest extends BaseTest {
                 .withFailureHandler(new FailureHandler() {
                     @Override
                     public void handle(Throwable error, Matcher<View> viewMatcher) {
+                        //ignore fails - only use if View is found
                     }
                 })
                 .perform(click());

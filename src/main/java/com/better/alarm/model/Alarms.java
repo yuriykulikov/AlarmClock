@@ -36,10 +36,6 @@ import io.reactivex.functions.Consumer;
  */
 @SuppressLint("UseSparseArrays")
 public class Alarms implements IAlarmsManager {
-
-    private final Context mContext;
-    private final Logger log;
-
     private final IAlarmsScheduler mAlarmsScheduler;
 
     private final Map<Integer, AlarmCore> alarms;
@@ -49,8 +45,6 @@ public class Alarms implements IAlarmsManager {
 
     @Inject
     Alarms(Context context, Logger logger, IAlarmsScheduler alarmsScheduler, DatabaseQuery query, final AlarmCoreFactory factory, ContainerFactory containerFactory) {
-        this.mContext = context;
-        this.log = logger;
         this.mAlarmsScheduler = alarmsScheduler;
         this.query = query;
         this.factory = factory;
@@ -87,7 +81,7 @@ public class Alarms implements IAlarmsManager {
     public AlarmCore getAlarm(int alarmId) {
         AlarmCore alarm = alarms.get(alarmId);
         if (alarm != null) return alarm;
-        else throw new RuntimeException("AlarmID " + alarmId + " could not be resolved");
+        else throw new IllegalStateException("AlarmID " + alarmId + " could not be resolved");
     }
 
     @Override

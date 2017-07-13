@@ -3,23 +3,15 @@ package com.better.alarm.test;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.rule.ActivityTestRule;
 
-import com.better.alarm.*;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.model.AlarmValue;
 import com.better.alarm.persistance.AlarmDatabaseHelper;
-import com.better.alarm.presenter.AlarmsListActivity;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
-
-import java.util.Locale;
 
 import cortado.Cortado;
 import io.reactivex.annotations.NonNull;

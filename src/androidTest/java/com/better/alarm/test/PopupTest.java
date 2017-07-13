@@ -2,30 +2,18 @@ package com.better.alarm.test;
 
 import android.content.Intent;
 import android.provider.AlarmClock;
-import android.support.test.espresso.FailureHandler;
-import android.support.test.espresso.action.GeneralClickAction;
-import android.support.test.espresso.action.GeneralLocation;
-import android.support.test.espresso.action.Press;
-import android.support.test.espresso.action.Tap;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
-import android.view.View;
 
-import com.better.alarm.R;
 import com.better.alarm.alert.AlarmAlert;
-import com.better.alarm.alert.AlarmAlertFullScreen;
 import com.better.alarm.interfaces.Intents;
-import com.better.alarm.interfaces.PresentationToModelIntents;
 import com.better.alarm.model.AlarmSetter;
 import com.better.alarm.model.AlarmValue;
 import com.better.alarm.model.CalendarType;
 import com.better.alarm.presenter.AlarmsListActivity;
 import com.better.alarm.presenter.HandleSetAlarm;
-import com.better.alarm.presenter.SettingsActivity;
-import com.better.alarm.services.AlarmsService;
 
-import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -37,10 +25,6 @@ import java.util.Locale;
 import cortado.Cortado;
 
 import static android.provider.AlarmClock.ACTION_SET_ALARM;
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.better.alarm.test.ListAsserts.assertThatList;
 
 /**

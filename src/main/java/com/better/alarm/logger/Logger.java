@@ -3,19 +3,7 @@ package com.better.alarm.logger;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Logger {
-    public enum LogLevel {
-        ERR, WRN, DBG, INF
-    }
-
-    /**
-     * Log writing strategy
-     * 
-     * @author Yuriy
-     * 
-     */
-    public interface LogWriter {
-        void write(LogLevel level, String tag, String message, Throwable e);
-    }
+    private static volatile Logger sDefaultLogger;
 
     private final CopyOnWriteArrayList<LogWriter> writers;
 
@@ -29,23 +17,6 @@ public class Logger {
     public Logger addLogWriter(LogWriter logWriter) {
         writers.addIfAbsent(logWriter);
         return this;
-    }
-
-    public void removeLogWriter(LogWriter logWriter) {
-        writers.remove(logWriter);
-    }
-
-    /**
-     * For a given logClass only messages with logLevel above will be logged.
-     * 
-     * @param logLevel
-     */
-    public void setLogLevel(LogLevel logLevel) {
-        this.logLevel = logLevel;
-    }
-
-    public LogLevel getLevel() {
-        return logLevel;
     }
 
     /**
@@ -108,5 +79,17 @@ public class Logger {
         return getDefaultLogger();
     }
 
-    private static volatile Logger sDefaultLogger;
+    public enum LogLevel {
+        ERR, WRN, DBG, INF
+    }
+
+    /**
+     * Log writing strategy
+     *
+     * @author Yuriy
+     *
+     */
+    public interface LogWriter {
+        void write(LogLevel level, String tag, String message, Throwable e);
+    }
 }

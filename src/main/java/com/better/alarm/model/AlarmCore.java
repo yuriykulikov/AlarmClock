@@ -106,19 +106,6 @@ import io.reactivex.functions.Consumer;
  * @author Yuriy
  */
 public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
-    /** for {@link #edit()}*/
-    @Override
-    public void accept(@NonNull AlarmChangeData alarmChangeData) throws Exception {
-        change(alarmChangeData);
-    }
-
-    /**
-     * Strategy used to notify other components about alarm state.
-     */
-    public interface IStateNotifier {
-        void broadcastAlarmState(int id, String action);
-    }
-
     private final IAlarmsScheduler mAlarmsScheduler;
     private final Logger log;
     private final IStateNotifier broadcaster;
@@ -162,6 +149,13 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
                 stateMachine.sendMessage(AlarmStateMachine.PREALARM_DURATION_CHANGED);
             }
         });
+    }
+
+    /**
+     * Strategy used to notify other components about alarm state.
+     */
+    public interface IStateNotifier {
+        void broadcastAlarmState(int id, String action);
     }
 
     /**
@@ -648,7 +642,7 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
         }
 
         private void broadcastAlarmSetWithNormalTime(long millis) {
-            store.sets().onNext(ImmutableAlarmSet.of(container,millis));
+            store.sets().onNext(ImmutableAlarmSet.of(container, millis));
             updateListInStore();
         }
 
@@ -661,7 +655,7 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
             mAlarmsScheduler.removeAlarm(container.getId());
         }
 
-        private void removeFromStore(){
+        private void removeFromStore() {
             store.alarms().take(1).subscribe(new Consumer<List<AlarmValue>>() {
                 @Override
                 public void accept(@NonNull List<AlarmValue> alarmValues) throws Exception {
@@ -681,10 +675,10 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
         }
 
         private void writeChangeData(AlarmChangeData data) {
-           container = ImmutableAlarmContainer.builder()
-                   .from(container)
-                   .from(data)
-                   .build();
+            container = ImmutableAlarmContainer.builder()
+                    .from(container)
+                    .from(data)
+                    .build();
         }
 
         private Calendar calculateNextTime() {
@@ -850,6 +844,14 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
                 store.alarms().onNext(copy);
             }
         });
+    }
+
+    /**
+     * for {@link #edit()}
+     */
+    @Override
+    public void accept(@NonNull AlarmChangeData alarmChangeData) throws Exception {
+        change(alarmChangeData);
     }
 
     public void onAlarmFired(CalendarType calendarType) {

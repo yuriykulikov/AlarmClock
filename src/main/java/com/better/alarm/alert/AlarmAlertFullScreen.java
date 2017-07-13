@@ -319,7 +319,6 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
     public void onBackPressed() {
         // Don't allow back to dismiss. This method is overriden by AlarmAlert
         // so that the dialog is dismissed.
-        return;
     }
 
     @Override

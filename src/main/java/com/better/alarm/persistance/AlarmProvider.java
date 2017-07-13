@@ -44,9 +44,6 @@ public class AlarmProvider extends ContentProvider {
         sURLMatcher.addURI(BuildConfig.APPLICATION_ID + ".model", "alarm/#", ALARMS_ID);
     }
 
-    public AlarmProvider() {
-    }
-
     @Override
     public boolean onCreate() {
         log = new Logger();
@@ -141,7 +138,7 @@ public class AlarmProvider extends ContentProvider {
     @Override
     public int delete(Uri url, String where, String[] whereArgs) {
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        int count;
+        final int count;
         switch (sURLMatcher.match(url)) {
         case ALARMS:
             count = db.delete("alarms", where, whereArgs);
@@ -149,11 +146,10 @@ public class AlarmProvider extends ContentProvider {
         case ALARMS_ID:
             String segment = url.getPathSegments().get(1);
             if (TextUtils.isEmpty(where)) {
-                where = "_id=" + segment;
+                count = db.delete("alarms", "_id=" + segment, whereArgs);
             } else {
-                where = "_id=" + segment + " AND (" + where + ")";
+                count = db.delete("alarms", "_id=" + segment + " AND (" + where + ")", whereArgs);
             }
-            count = db.delete("alarms", where, whereArgs);
             break;
         default:
             throw new IllegalArgumentException("Cannot delete from URL: " + url);

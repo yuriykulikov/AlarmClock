@@ -44,16 +44,15 @@ import com.google.inject.Inject;
  * Settings for the Alarm Clock.
  */
 public class SettingsActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener {
-
     private static final int ALARM_STREAM_TYPE_BIT = 1 << AudioManager.STREAM_ALARM;
-
     private static final String KEY_ALARM_IN_SILENT_MODE = "alarm_in_silent_mode";
     public static final String KEY_ALARM_SNOOZE = "snooze_duration";
     public static final String KEY_VOLUME_BEHAVIOR = "volume_button_setting";
-    static final String KEY_DEFAULT_RINGTONE = "default_ringtone";
-    static final String KEY_AUTO_SILENCE = "auto_silence";
-    static final String KEY_PREALARM_DURATION = "prealarm_duration";
+    private static final String KEY_DEFAULT_RINGTONE = "default_ringtone";
+    private static final String KEY_AUTO_SILENCE = "auto_silence";
+    private static final String KEY_PREALARM_DURATION = "prealarm_duration";
     public static final String KEY_FADE_IN_TIME_SEC = "fade_in_time_sec";
+
     @Inject
     private Vibrator vibrator;
 
