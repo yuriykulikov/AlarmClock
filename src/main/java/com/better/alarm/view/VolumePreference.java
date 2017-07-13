@@ -129,23 +129,23 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
         if (volumizers.isEmpty()) return true;
         boolean isdown = event.getAction() == KeyEvent.ACTION_DOWN;
         switch (keyCode) {
-        case KeyEvent.KEYCODE_VOLUME_DOWN:
-            if (isdown) {
-                activeVolumizer.changeVolumeBy(-1);
-            }
-            return true;
-        case KeyEvent.KEYCODE_VOLUME_UP:
-            if (isdown) {
-                activeVolumizer.changeVolumeBy(1);
-            }
-            return true;
-        case KeyEvent.KEYCODE_VOLUME_MUTE:
-            if (isdown) {
-                activeVolumizer.muteVolume();
-            }
-            return true;
-        default:
-            return false;
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                if (isdown) {
+                    activeVolumizer.changeVolumeBy(-1);
+                }
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                if (isdown) {
+                    activeVolumizer.changeVolumeBy(1);
+                }
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_MUTE:
+                if (isdown) {
+                    activeVolumizer.muteVolume();
+                }
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -216,17 +216,18 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
             mStreamType = streamType;
             this.mAudioManager = am;
 
-            if (defaultUri == null) {
-                if (mStreamType == AudioManager.STREAM_RING) {
-                    defaultUri = Settings.System.DEFAULT_RINGTONE_URI;
-                } else if (mStreamType == AudioManager.STREAM_NOTIFICATION) {
-                    defaultUri = Settings.System.DEFAULT_NOTIFICATION_URI;
-                } else {
-                    defaultUri = Settings.System.DEFAULT_ALARM_ALERT_URI;
-                }
+            final Uri correctedUri;
+            if (defaultUri != null) {
+                correctedUri = defaultUri;
+            } else if (mStreamType == AudioManager.STREAM_RING) {
+                correctedUri = Settings.System.DEFAULT_RINGTONE_URI;
+            } else if (mStreamType == AudioManager.STREAM_NOTIFICATION) {
+                correctedUri = Settings.System.DEFAULT_NOTIFICATION_URI;
+            } else {
+                correctedUri = Settings.System.DEFAULT_ALARM_ALERT_URI;
             }
 
-            mRingtone = RingtoneManager.getRingtone(mContext, defaultUri);
+            mRingtone = RingtoneManager.getRingtone(mContext, correctedUri);
 
             if (mRingtone != null) {
                 mRingtone.setStreamType(mStreamType);
@@ -236,12 +237,12 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
-            case MSG_SET_VOLUME:
-                mAudioManager.setStreamVolume(mStreamType, msg.arg1, 0);
-                return true;
+                case MSG_SET_VOLUME:
+                    mAudioManager.setStreamVolume(mStreamType, msg.arg1, 0);
+                    return true;
 
-            default:
-                return false;
+                default:
+                    return false;
             }
 
         }
@@ -289,7 +290,6 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
      */
     public static class PreAlarmVolumizerStrategy implements IVolumizerStrategy {
         private final Context mContext;
-        Logger log = Logger.getDefaultLogger();
         private final SharedPreferences sp;
         private boolean isPlaying = false;
 
@@ -313,7 +313,9 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
             Editor editor = sp.edit();
             editor.putInt(Intents.KEY_PREALARM_VOLUME, progress);
             editor.commit();
-        };
+        }
+
+        ;
 
         @Override
         public void stopSample() {
@@ -363,7 +365,9 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
             Editor editor = sp.edit();
             editor.putInt(Intents.KEY_ALARM_VOLUME, progress);
             editor.commit();
-        };
+        }
+
+        ;
 
         @Override
         public void stopSample() {
@@ -410,6 +414,7 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
 
         @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
+            //empty
         }
 
         @Override

@@ -64,8 +64,6 @@ public class AlarmsListFragment extends ListFragment {
     private ShowDetailsStrategy showDetailsStrategy;
 
     @Inject
-    private Logger log;
-    @Inject
     private IAlarmsManager alarms;
     @Inject
     private Store store;

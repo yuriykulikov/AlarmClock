@@ -1,13 +1,10 @@
 package com.better.alarm.presenter;
 
-import java.util.Calendar;
-
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
@@ -23,11 +20,12 @@ import com.better.alarm.AlarmApplication;
 import com.better.alarm.Prefs;
 import com.better.alarm.R;
 import com.better.alarm.Store;
-import com.better.alarm.model.AlarmValue;
 import com.better.alarm.logger.Logger;
+import com.better.alarm.model.AlarmValue;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
+
+import java.util.Calendar;
 
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
@@ -39,9 +37,6 @@ import io.reactivex.functions.Consumer;
  * 
  */
 public class InfoFragment extends Fragment implements ViewFactory {
-
-    private final Logger log = Logger.getDefaultLogger();
-
     private static final String DM12 = "E h:mm aa";
     private static final String DM24 = "E kk:mm";
 

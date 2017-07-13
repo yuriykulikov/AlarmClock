@@ -16,15 +16,8 @@
 
 package com.better.alarm.view;
 
-import java.text.DateFormatSymbols;
-
-import org.acra.ACRA;
-
 import android.content.Context;
 import android.content.res.Resources;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
@@ -33,6 +26,8 @@ import android.widget.TextView;
 import com.better.alarm.AlarmApplication;
 import com.better.alarm.Prefs;
 import com.better.alarm.R;
+
+import java.text.DateFormatSymbols;
 
 public class TimePicker extends TimerSetupView implements Button.OnClickListener {
 
@@ -152,7 +147,6 @@ public class TimePicker extends TimerSetupView implements Button.OnClickListener
         // Hide digit by passing -2 (for highest hours digit only);
 
         int hours1 = -1;
-        int time = getEnteredTime();
         // If the user entered 2 to 9 or 13 to 15 , there is no need for a 4th
         // digit (AM/PM mode)
         // If the user entered 3 to 9 or 24 to 25 , there is no need for a 4th

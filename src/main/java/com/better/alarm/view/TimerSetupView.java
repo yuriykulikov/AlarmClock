@@ -51,7 +51,7 @@ public abstract class TimerSetupView extends LinearLayout implements Button.OnCl
         layoutInflater.inflate(getLayoutId(), this);
     }
 
-    abstract int getLayoutId();
+    protected abstract int getLayoutId();
 
     @Override
     protected void onFinishInflate() {

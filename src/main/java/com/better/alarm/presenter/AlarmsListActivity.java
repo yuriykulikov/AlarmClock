@@ -42,7 +42,6 @@ import com.melnykov.fab.*;
  */
 public class AlarmsListActivity extends Activity implements AlarmTimePickerDialogHandler {
     private ActionBarHandler mActionBarHandler;
-    private AlarmsListFragment alarmsListFragment;
     private Alarm timePickerAlarm;
 
     @Override
@@ -58,7 +57,7 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
         }
 
         setContentView(R.layout.list_activity);
-        alarmsListFragment = (AlarmsListFragment) getFragmentManager().findFragmentById(
+        AlarmsListFragment alarmsListFragment = (AlarmsListFragment) getFragmentManager().findFragmentById(
                 R.id.list_activity_list_fragment);
 
         if (isTablet) {

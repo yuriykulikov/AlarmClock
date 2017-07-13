@@ -17,7 +17,6 @@
 
 package com.better.alarm.presenter;
 
-import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.RingtoneManager;

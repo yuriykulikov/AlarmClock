@@ -15,15 +15,13 @@ import com.better.alarm.logger.Logger;
 public class TransparentActivity extends Activity implements AlarmTimePickerDialogHandler,
         OnAlarmTimePickerCanceledListener {
 
-    private IAlarmsManager alarmsManager;
     private Alarm alarm;
-    Logger log;
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        alarmsManager = AlarmApplication.alarms();
-        log = Logger.getDefaultLogger();
+        IAlarmsManager alarmsManager = AlarmApplication.alarms();
+        Logger log = Logger.getDefaultLogger();
         Intent intent = getIntent();
         log.d("Intent in TransparentActivity was received");
         int id = intent.getIntExtra(Intents.EXTRA_ID, -1);

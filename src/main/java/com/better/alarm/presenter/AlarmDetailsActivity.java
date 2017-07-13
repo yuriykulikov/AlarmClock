@@ -17,12 +17,8 @@
 
 package com.better.alarm.presenter;
 
-import java.util.Calendar;
-
 import android.app.AlertDialog;
-import android.app.TimePickerDialog;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -47,10 +43,12 @@ import com.better.alarm.R;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
+import com.better.alarm.logger.Logger;
 import com.better.alarm.view.AlarmPreference;
 import com.better.alarm.view.RepeatPreference;
-import com.better.alarm.logger.Logger;
 import com.google.inject.Inject;
+
+import java.util.Calendar;
 
 /**
  * Manages each alarm
@@ -115,7 +113,6 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         mPreAlarmPref.setOnPreferenceChangeListener(this);
 
         Intent intent = getIntent();
-        String action = intent.getAction();
         if (intent.hasExtra(Intents.EXTRA_ID)) {
             editExistingAlarm(intent);
         } else {
@@ -281,7 +278,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
 
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
-        if (preference == mTimePref) {
+        if (preference.equals(mTimePref)) {
             TimePickerDialogFragment.showTimePicker(getFragmentManager());
         }
 

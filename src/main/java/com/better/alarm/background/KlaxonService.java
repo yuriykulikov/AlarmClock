@@ -32,15 +32,14 @@ import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
-import android.preference.PreferenceManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
 import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
-import com.better.alarm.logger.Logger;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.Intents;
+import com.better.alarm.logger.Logger;
 import com.better.alarm.presenter.SettingsActivity;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
 import com.google.common.base.Optional;

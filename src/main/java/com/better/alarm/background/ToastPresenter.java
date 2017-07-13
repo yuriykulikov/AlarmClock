@@ -57,7 +57,7 @@ public class ToastPresenter {
         sToast = toast;
     }
 
-    void popAlarmSetToast(Context context, long timeInMillis) {
+    private void popAlarmSetToast(Context context, long timeInMillis) {
         String toastText = formatToast(context, timeInMillis);
         Toast toast = Toast.makeText(context, toastText, Toast.LENGTH_LONG);
         setToast(toast);
@@ -72,7 +72,7 @@ public class ToastPresenter {
      * "Alarm set for 2 days 7 hours and 53 minutes from now. Prealarm will
      * start 30 minutes before the main alarm".
      */
-    static String formatToast(Context context, long timeInMillis) {
+    private static String formatToast(Context context, long timeInMillis) {
         long delta = timeInMillis - System.currentTimeMillis();
         long hours = delta / (1000 * 60 * 60);
         long minutes = delta / (1000 * 60) % 60;

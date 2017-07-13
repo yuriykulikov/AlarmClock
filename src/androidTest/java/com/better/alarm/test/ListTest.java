@@ -46,7 +46,7 @@ public class ListTest extends BaseTest {
     public TestRule chain = RuleChain.outerRule(new ForceLocaleRule(Locale.US)).around(listActivity);
 
     @Test
-    public void newAlarm_shouldBeDisabled_ifNotEdited() throws Exception {
+    public void newAlarmShouldBeDisabledIfNotEdited() throws Exception {
         sleep();
         onView(withId(R.id.fab)).perform(click());
         sleep();
@@ -67,18 +67,18 @@ public class ListTest extends BaseTest {
     }
 
     @Test
-    public void newAlarm_shouldBeEnabled_ifEdited_12() throws Exception {
+    public void newAlarmShouldBeEnabledIfEdited12() throws Exception {
         AlarmApplication.is24hoursFormatOverride = Optional.of(false);
-        newAlarm_shouldBeEnabled_ifEdited();
+        newAlarmShouldBeEnabledIfEdited();
     }
 
     @Test
-    public void newAlarm_shouldBeEnabled_ifEdited_24() throws Exception {
+    public void newAlarmShouldBeEnabledIfEdited24() throws Exception {
         AlarmApplication.is24hoursFormatOverride = Optional.of(true);
-        newAlarm_shouldBeEnabled_ifEdited();
+        newAlarmShouldBeEnabledIfEdited();
     }
 
-    private void newAlarm_shouldBeEnabled_ifEdited() throws Exception {
+    private void newAlarmShouldBeEnabledIfEdited() throws Exception {
         onView(withId(R.id.fab)).perform(click());
         sleep();
         Cortado.onView().withText("1").perform().click();
@@ -134,7 +134,7 @@ public class ListTest extends BaseTest {
     }
 
     @Test
-    public void newAlarm_shouldBe_disabled_after_dismiss() throws Exception {
+    public void newAlarmShouldBeDisabledAfterDismiss() throws Exception {
         onView(withId(R.id.fab)).perform(click());
         sleep();
         Cortado.onView().withText("1").perform().click();

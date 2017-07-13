@@ -52,18 +52,17 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
     private static final String DM24 = "E kk:mm";
     private static final int NOTIFICATION_OFFSET = 1000;
 
-    Context mContext;
+    private Context mContext;
+    @Inject
+    private NotificationManager nm;
+    @Inject
+    private IAlarmsManager alarmsManager;
+    @Inject
+    private Prefs prefs;
+    @Inject
+    private KeyguardManager km;
 
-    @Inject
-    NotificationManager nm;
-    @Inject
-    IAlarmsManager alarmsManager;
-    @Inject
-    Prefs prefs;
-    @Inject
-    KeyguardManager km;
-
-    Alarm alarm;
+    private Alarm alarm;
 
     @Override
     public void onReceive(final Context context, final Intent intent) {

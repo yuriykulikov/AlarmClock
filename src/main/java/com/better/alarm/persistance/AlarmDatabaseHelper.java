@@ -72,7 +72,7 @@ public class AlarmDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    Uri commonInsert(ContentValues values) {
+    public Uri commonInsert(ContentValues values) {
         SQLiteDatabase db = getWritableDatabase();
         long rowId = db.insert("alarms", PersistingContainerFactory.Columns.MESSAGE, values);
         if (rowId < 0) throw new SQLException("Failed to insert row");

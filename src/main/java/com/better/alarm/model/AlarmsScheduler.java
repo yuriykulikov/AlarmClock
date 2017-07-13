@@ -44,7 +44,6 @@ public class AlarmsScheduler implements IAlarmsScheduler {
     public static final String EXTRA_TYPE = "intent.extra.type";
 
     private final Store store;
-    private final IAlarmsManager alarms;
     private final Prefs prefs;
 
     private final AlarmSetter setter;
@@ -97,10 +96,9 @@ public class AlarmsScheduler implements IAlarmsScheduler {
     }
 
     @Inject
-    public AlarmsScheduler(AlarmSetter setter, Logger logger, Store store, IAlarmsManager alarms, Prefs prefs, Calendars calendars) {
+    public AlarmsScheduler(AlarmSetter setter, Logger logger, Store store, Prefs prefs, Calendars calendars) {
         this.setter = setter;
         this.store = store;
-        this.alarms = alarms;
         this.prefs = prefs;
         queue = new PriorityQueue<ScheduledAlarm>();
         this.log = logger;

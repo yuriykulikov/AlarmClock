@@ -52,7 +52,7 @@ public class AlarmsTest {
     private Logger logger;
 
     @Before
-    public void setup() {
+    public void setUp() {
         testScheduler = new TestScheduler();
         logger = Logger.getDefaultLogger().addLogWriter(new SysoutLogWriter());
 

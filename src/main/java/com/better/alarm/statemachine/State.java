@@ -22,13 +22,6 @@ package com.better.alarm.statemachine;
  * The class for implementing states in a StateMachine
  */
 public class State implements IState {
-
-    /**
-     * Constructor
-     */
-    public State() {
-    }
-
     /*
      * (non-Javadoc)
      * 

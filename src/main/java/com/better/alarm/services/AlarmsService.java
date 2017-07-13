@@ -39,9 +39,9 @@ public class AlarmsService extends Service {
     private static final int WAKELOCK_HOLD_TIME = 5000;
     private static final int EVENT_RELEASE_WAKELOCK = 1;
     @Inject
-    Alarms alarms;
+    private Alarms alarms;
     @Inject
-    Logger log;
+    private Logger log;
 
     private Handler handler;
 

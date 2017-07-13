@@ -40,12 +40,12 @@ import com.better.alarm.R;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
+import com.better.alarm.logger.Logger;
 import com.better.alarm.presenter.DynamicThemeHandler;
 import com.better.alarm.presenter.SettingsActivity;
 import com.better.alarm.presenter.TimePickerDialogFragment;
 import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialogHandler;
 import com.better.alarm.presenter.TimePickerDialogFragment.OnAlarmTimePickerCanceledListener;
-import com.better.alarm.logger.Logger;
 import com.google.inject.Inject;
 
 /**
@@ -77,16 +77,12 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
-            if (action.equals(Intents.ALARM_SNOOZE_ACTION)) {
-                if (mAlarm.getId() == id) {
+            if (mAlarm.getId() == id) {
+                if (action.equals(Intents.ALARM_SNOOZE_ACTION)) {
                     finish();
-                }
-            } else if (action.equals(Intents.ALARM_DISMISS_ACTION)) {
-                if (mAlarm.getId() == id) {
+                } else if (action.equals(Intents.ALARM_DISMISS_ACTION)) {
                     finish();
-                }
-            } else if (action.equals(Intents.ACTION_SOUND_EXPIRED)) {
-                if (mAlarm.getId() == id) {
+                } else if (action.equals(Intents.ACTION_SOUND_EXPIRED)) {
                     // if sound has expired there is no need to keep the screen
                     // on
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

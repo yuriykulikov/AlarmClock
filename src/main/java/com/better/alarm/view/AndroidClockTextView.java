@@ -39,8 +39,6 @@ public class AndroidClockTextView extends TextView {
     private static Typeface sClockTypeface;
     private static Typeface sStandardTypeface;
 
-    private boolean mUseClockTypeface;
-
     public AndroidClockTextView(Context context) {
         super(context);
     }
@@ -56,15 +54,15 @@ public class AndroidClockTextView extends TextView {
     }
 
     private void init(AttributeSet attrs) {
-        mUseClockTypeface = attrs.getAttributeBooleanValue(null, ATTR_USE_CLOCK_TYPEFACE, true) && !isInEditMode();
+        boolean useClockTypeface = attrs.getAttributeBooleanValue(null, ATTR_USE_CLOCK_TYPEFACE, true) && !isInEditMode();
 
         sStandardTypeface = Typeface.DEFAULT;
         Paint paint = getPaint();
         try {
-            if (sClockTypeface == null && mUseClockTypeface) {
+            if (sClockTypeface == null && useClockTypeface) {
                 sClockTypeface = Typeface.createFromFile(SYSTEM_FONT_TIME_BACKGROUND);
             }
-            paint.setTypeface(mUseClockTypeface ? sClockTypeface : sStandardTypeface);
+            paint.setTypeface(useClockTypeface ? sClockTypeface : sStandardTypeface);
         } catch (RuntimeException e) {
             Logger.getDefaultLogger().e(e.getMessage());
             ACRA.getErrorReporter().handleSilentException(e);

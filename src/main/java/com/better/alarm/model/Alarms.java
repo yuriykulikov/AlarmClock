@@ -44,7 +44,7 @@ public class Alarms implements IAlarmsManager {
     private final ContainerFactory containerFactory;
 
     @Inject
-    Alarms(Context context, Logger logger, IAlarmsScheduler alarmsScheduler, DatabaseQuery query, final AlarmCoreFactory factory, ContainerFactory containerFactory) {
+    Alarms(IAlarmsScheduler alarmsScheduler, DatabaseQuery query, final AlarmCoreFactory factory, ContainerFactory containerFactory) {
         this.mAlarmsScheduler = alarmsScheduler;
         this.query = query;
         this.factory = factory;

@@ -15,7 +15,7 @@ import java.util.Calendar;
  * Created by Yuriy on 25.06.2017.
  */
 public class TestContainerFactory implements ContainerFactory {
-    int idCounter;
+    private int idCounter;
     private Calendars calendars;
 
     @Inject

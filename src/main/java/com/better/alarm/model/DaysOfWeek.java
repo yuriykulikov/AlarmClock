@@ -14,8 +14,8 @@ import com.better.alarm.R;
  */
 public final class DaysOfWeek {
 
-    private static int[] DAY_MAP = new int[] { Calendar.MONDAY, Calendar.TUESDAY, Calendar.WEDNESDAY,
-            Calendar.THURSDAY, Calendar.FRIDAY, Calendar.SATURDAY, Calendar.SUNDAY, };
+    private static int[] DAY_MAP = new int[]{Calendar.MONDAY, Calendar.TUESDAY, Calendar.WEDNESDAY,
+            Calendar.THURSDAY, Calendar.FRIDAY, Calendar.SATURDAY, Calendar.SUNDAY,};
 
     // Bitmask of all repeating days
     private int mDays;
@@ -34,7 +34,9 @@ public final class DaysOfWeek {
         if (mDays == 0x7f) return context.getText(R.string.every_day).toString();
 
         // count selected days
-        int dayCount = 0, days = mDays;
+        int dayCount = 0;
+        int days = mDays;
+
         while (days > 0) {
             if ((days & 1) == 1) {
                 dayCount++;
@@ -98,9 +100,8 @@ public final class DaysOfWeek {
 
     /**
      * returns number of days from today until next alarm
-     * 
-     * @param c
-     *            must be set to today
+     *
+     * @param c must be set to today
      */
     public int getNextAlarm(Calendar c) {
         if (mDays == 0) return -1;

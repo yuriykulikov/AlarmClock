@@ -1,7 +1,5 @@
 package com.better.alarm.model;
 
-import android.net.Uri;
-
 /**
  * Created by Yuriy on 08.07.2017.
  */
