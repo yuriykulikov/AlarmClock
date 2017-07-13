@@ -56,7 +56,7 @@ import com.google.inject.Inject;
  * Manages each alarm
  */
 public class AlarmDetailsActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener,
-        OnCancelListener, TimePickerDialogFragment.AlarmTimePickerDialogHandler {
+        TimePickerDialogFragment.AlarmTimePickerDialogHandler {
     public final static String M12 = "h:mm aa";
     public final static String M24 = "kk:mm";
     @Inject
@@ -74,7 +74,6 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     // these are to get data from TimerPicker
     private int mHour;
     private int mMinute;
-    private TimePickerDialog mTimePickerDialog;
 
     @Inject
     private SharedPreferences sp;
@@ -217,19 +216,19 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.set_alarm_menu_delete_alarm:
-            deleteAlarm();
-            break;
+            case R.id.set_alarm_menu_delete_alarm:
+                deleteAlarm();
+                break;
 
-        case android.R.id.home:
-            Intent parentActivityIntent = new Intent(this, AlarmsListActivity.class);
-            parentActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(parentActivityIntent);
-            finish();
-            return true;
+            case android.R.id.home:
+                Intent parentActivityIntent = new Intent(this, AlarmsListActivity.class);
+                parentActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(parentActivityIntent);
+                finish();
+                return true;
 
-        default:
-            break;
+            default:
+                break;
         }
         return true;
     }
@@ -305,11 +304,6 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         mEnabledPref.setChecked(true);
     }
 
-    @Override
-    public void onCancel(DialogInterface dialog) {
-        mTimePickerDialog = null;
-    }
-
     private void updateTime() {
         Calendar c = Calendar.getInstance();
         c.set(Calendar.HOUR_OF_DAY, mHour);
@@ -348,8 +342,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         // "Revert" on a newly created alarm should delete it.
         if (isNewAlarm) {
             alarms.delete(alarm);
-        } else {
-            // do not save changes
         }
+        // else do not save changes
     }
 }

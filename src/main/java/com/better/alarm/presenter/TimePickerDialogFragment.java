@@ -36,13 +36,10 @@ import com.better.alarm.logger.Logger;
  * Dialog to set alarm time.
  */
 public class TimePickerDialogFragment extends DialogFragment {
-    private Button mSet, mCancel;
     private TimePicker mPicker;
     private final Logger log = Logger.getDefaultLogger();
 
     /**
-     * 
-     * @param handler
      * @return
      */
     public static TimePickerDialogFragment newInstance() {
@@ -70,9 +67,9 @@ public class TimePickerDialogFragment extends DialogFragment {
 
         View v = inflater.inflate(R.layout.time_picker_dialog, null);
 
-        mSet = (Button) v.findViewById(R.id.set_button);
-        mCancel = (Button) v.findViewById(R.id.cancel_button);
-        mCancel.setOnClickListener(new View.OnClickListener() {
+        Button set = (Button) v.findViewById(R.id.set_button);
+        Button cancel = (Button) v.findViewById(R.id.cancel_button);
+        cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 notifyOnCancelListener();
@@ -80,8 +77,8 @@ public class TimePickerDialogFragment extends DialogFragment {
             }
         });
         mPicker = (TimePicker) v.findViewById(R.id.time_picker);
-        mPicker.setSetButton(mSet);
-        mSet.setOnClickListener(new View.OnClickListener() {
+        mPicker.setSetButton(set);
+        set.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final Activity activity = getActivity();

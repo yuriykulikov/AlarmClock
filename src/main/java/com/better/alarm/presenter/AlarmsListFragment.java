@@ -49,16 +49,10 @@ import io.reactivex.functions.Consumer;
  * Shows a list of alarms. To react on user interaction, requires a strategy. An
  * activity hosting this fragment should provide a proper strategy for single
  * and multi-pane modes.
- * 
+ *
  * @author Yuriy
- * 
  */
 public class AlarmsListFragment extends ListFragment {
-    public interface ShowDetailsStrategy {
-        void showDetails(AlarmValue alarm);
-    }
-
-    public static final String PREFERENCES = "AlarmClock";
     /**
      * This must be false for production. If true, turns on logging, test code,
      * etc.
@@ -68,7 +62,6 @@ public class AlarmsListFragment extends ListFragment {
     public final static String M24 = "kk:mm";
 
     private ShowDetailsStrategy showDetailsStrategy;
-    private final int mCurCheckPosition = 0;
 
     @Inject
     private Logger log;
@@ -80,6 +73,7 @@ public class AlarmsListFragment extends ListFragment {
     private Prefs prefs;
 
     private AlarmListAdapter mAdapter;
+    private Disposable alarmsSub;
 
     public class AlarmListAdapter extends ArrayAdapter<AlarmValue> {
         private final Context context;
@@ -183,33 +177,33 @@ public class AlarmsListFragment extends ListFragment {
         final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
         final AlarmValue alarm = mAdapter.getItem(info.position);
         switch (item.getItemId()) {
-        case R.id.delete_alarm: {
-            // Confirm that the alarm will be deleted.
-            new AlertDialog.Builder(getActivity()).setTitle(getString(R.string.delete_alarm))
-                    .setMessage(getString(R.string.delete_alarm_confirm))
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface d, int w) {
-                            alarms.delete(alarm);
-                        }
-                    }).setNegativeButton(android.R.string.cancel, null).show();
-            return true;
-        }
-
-        case R.id.enable_alarm: {
-            alarms.enable(alarm, !alarm.isEnabled());
-            return true;
-        }
-
-        case R.id.edit_alarm: {
-            if (showDetailsStrategy != null) {
-                showDetailsStrategy.showDetails(alarm);
+            case R.id.delete_alarm: {
+                // Confirm that the alarm will be deleted.
+                new AlertDialog.Builder(getActivity()).setTitle(getString(R.string.delete_alarm))
+                        .setMessage(getString(R.string.delete_alarm_confirm))
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface d, int w) {
+                                alarms.delete(alarm);
+                            }
+                        }).setNegativeButton(android.R.string.cancel, null).show();
+                return true;
             }
-            return true;
-        }
 
-        default:
-            break;
+            case R.id.enable_alarm: {
+                alarms.enable(alarm, !alarm.isEnabled());
+                return true;
+            }
+
+            case R.id.edit_alarm: {
+                if (showDetailsStrategy != null) {
+                    showDetailsStrategy.showDetails(alarm);
+                }
+                return true;
+            }
+
+            default:
+                break;
         }
         return super.onContextItemSelected(item);
     }
@@ -247,8 +241,6 @@ public class AlarmsListFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return super.onCreateView(inflater, container, savedInstanceState);
     }
-
-    Disposable alarmsSub;
 
     @Override
     public void onResume() {
@@ -350,5 +342,9 @@ public class AlarmsListFragment extends ListFragment {
         public int compare(AlarmValue lhs, AlarmValue rhs) {
             return Integer.valueOf(lhs.getMinutes()).compareTo(Integer.valueOf(rhs.getMinutes()));
         }
+    }
+
+    public interface ShowDetailsStrategy {
+        void showDetails(AlarmValue alarm);
     }
 }

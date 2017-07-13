@@ -47,6 +47,11 @@ public class AlarmsScheduler implements IAlarmsScheduler {
     private final IAlarmsManager alarms;
     private final Prefs prefs;
 
+    private final AlarmSetter setter;
+    private final PriorityQueue<ScheduledAlarm> queue;
+    private final Logger log;
+    private final Calendars calendars;
+
     public class ScheduledAlarm implements Comparable<ScheduledAlarm> {
         public final int id;
         public final Calendar calendar;
@@ -90,12 +95,6 @@ public class AlarmsScheduler implements IAlarmsScheduler {
             return sb.toString();
         }
     }
-
-    private final AlarmSetter setter;
-
-    private final PriorityQueue<ScheduledAlarm> queue;
-    private final Logger log;
-    private final Calendars calendars;
 
     @Inject
     public AlarmsScheduler(AlarmSetter setter, Logger logger, Store store, IAlarmsManager alarms, Prefs prefs, Calendars calendars) {

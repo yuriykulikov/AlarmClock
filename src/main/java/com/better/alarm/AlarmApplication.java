@@ -29,6 +29,9 @@ import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 import android.view.ViewConfiguration;
 
+import com.better.alarm.background.ScheduledReceiver;
+import com.better.alarm.background.ToastPresenter;
+import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.logger.LogcatLogWriter;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.logger.LoggingExceptionHandler;
@@ -44,18 +47,14 @@ import com.better.alarm.model.Calendars;
 import com.better.alarm.model.ContainerFactory;
 import com.better.alarm.model.IAlarmsScheduler;
 import com.better.alarm.model.MainLooperHandlerFactory;
-import com.better.alarm.interfaces.IAlarmsManager;
-import com.better.alarm.persistance.PersistingContainerFactory;
 import com.better.alarm.persistance.DatabaseQuery;
+import com.better.alarm.persistance.PersistingContainerFactory;
 import com.better.alarm.presenter.DynamicThemeHandler;
-import com.better.alarm.background.ScheduledReceiver;
-import com.better.alarm.background.ToastPresenter;
 import com.better.alarm.statemachine.HandlerFactory;
 import com.better.alarm.wakelock.WakeLockManager;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.primitives.Booleans;
 import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -70,7 +69,6 @@ import org.acra.annotation.ReportsCrashes;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -79,14 +77,11 @@ import io.reactivex.Maybe;
 import io.reactivex.MaybeEmitter;
 import io.reactivex.MaybeOnSubscribe;
 import io.reactivex.Single;
-import io.reactivex.SingleEmitter;
-import io.reactivex.SingleOnSubscribe;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
 
 @ReportsCrashes(
         mailTo = "yuriy.kulikov.87@gmail.com",

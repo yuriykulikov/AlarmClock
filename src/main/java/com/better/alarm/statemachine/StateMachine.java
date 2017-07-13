@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2009 The Android Open Source Project
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -57,29 +57,6 @@ public class StateMachine {
 
         private final IHandler handler;
 
-        /**
-         * Information about a state. Used to maintain the hierarchy.
-         */
-        private class StateInfo {
-            /** The state */
-            State state;
-
-            /** The parent of this state, null if there is no parent */
-            StateInfo parentStateInfo;
-
-            /** True when the state has been entered and on the stack */
-            boolean active;
-
-            /**
-             * Convert StateInfo to string
-             */
-            @Override
-            public String toString() {
-                return "state=" + state.getName() + ",active=" + active + ",parent="
-                        + (parentStateInfo == null ? "null" : parentStateInfo.state.getName());
-            }
-        }
-
         /** The map of all of the states in the state machine */
         private final HashMap<State, StateInfo> mStateInfo = new HashMap<State, StateInfo>();
 
@@ -93,6 +70,29 @@ public class StateMachine {
         private final ArrayList<Message> mDeferredMessages = new ArrayList<Message>();
 
         private final CopyOnWriteArrayList<IOnStateChangedListener> onStateChangedListeners = new CopyOnWriteArrayList<IOnStateChangedListener>();
+
+        /**
+         * Information about a state. Used to maintain the hierarchy.
+         */
+        private class StateInfo {
+            /** The state */
+            public State state;
+
+            /** The parent of this state, null if there is no parent */
+            public StateInfo parentStateInfo;
+
+            /** True when the state has been entered and on the stack */
+            public boolean active;
+
+            /**
+             * Convert StateInfo to string
+             */
+            @Override
+            public String toString() {
+                return "state=" + state.getName() + ",active=" + active + ",parent="
+                        + (parentStateInfo == null ? "null" : parentStateInfo.state.getName());
+            }
+        }
 
         /**
          * Handle messages sent to the state machine by calling the current
@@ -158,7 +158,7 @@ public class StateMachine {
 
         /**
          * Complete the construction of the state machine.
-         * 
+         *
          * @param resume
          */
         private final void completeConstruction(boolean resume) {
@@ -234,7 +234,7 @@ public class StateMachine {
         /**
          * Invoke the enter method starting at the entering index to top of
          * state stack
-         * 
+         *
          * @param resume
          *            true if state machine is resuming from hibernation. In
          *            this case {@link IState#enter()} will not be invoked
@@ -270,7 +270,7 @@ public class StateMachine {
         /**
          * Move the contents of the temporary stack to the state stack reversing
          * the order of the items on the temporary stack as they are moved.
-         * 
+         *
          * @return index into mStateStack where entering needs to start
          */
         private final int moveTempStateStackToStateStack() {
@@ -289,12 +289,12 @@ public class StateMachine {
 
         /**
          * Setup the mTempStateStack with the states we are going to enter.
-         * 
+         *
          * This is found by searching up the destState's ancestors for a state
          * that is already active i.e. StateInfo.active == true. The destStae
          * and all of its inactive parents will be on the TempStateStack as the
          * list of states to enter.
-         * 
+         *
          * @return StateInfo of the common ancestor for the destState and
          *         current state or null if there is no common parent.
          */
@@ -348,7 +348,7 @@ public class StateMachine {
         /**
          * Add a new state to the state machine. Bottom up addition of states is
          * allowed but the same state may only exist in one hierarchy.
-         * 
+         *
          * @param state
          *            the state to add
          * @param parent
@@ -380,7 +380,7 @@ public class StateMachine {
             return stateInfo;
         }
 
-        private SmHandler(HandlerFactory hf, StateMachine sm,  Logger log) {
+        private SmHandler(HandlerFactory hf, StateMachine sm, Logger log) {
             mSm = sm;
             this.log = log;
             this.handler = hf.create(this);
@@ -406,7 +406,7 @@ public class StateMachine {
 
         /**
          * Get all states.
-         * 
+         *
          * @return
          */
         public Collection<State> getStates() {
@@ -428,7 +428,7 @@ public class StateMachine {
 
     /**
      * Constructor creates a StateMachine using the looper.
-     * 
+     *
      * @param name
      *            of the state machine
      */
@@ -440,7 +440,7 @@ public class StateMachine {
 
     /**
      * Add a new state to the state machine
-     * 
+     *
      * @param state
      *            the state to add
      * @param parent
@@ -470,7 +470,7 @@ public class StateMachine {
 
     /**
      * Add a new state to the state machine, parent will be null
-     * 
+     *
      * @param state
      *            to add
      */
@@ -481,7 +481,7 @@ public class StateMachine {
     /**
      * Set the initial state. This must be invoked before and messages are sent
      * to the state machine.
-     * 
+     *
      * @param initialState
      *            is the state which will receive the first message.
      */
@@ -493,13 +493,13 @@ public class StateMachine {
      * transition to destination state. Upon returning from processMessage the
      * current state's exit will be executed and upon the next message arriving
      * destState.enter will be invoked.
-     * 
+     *
      * this function can also be called inside the enter function of the
      * previous transition target, but the behavior is undefined when it is
      * called mid-way through a previous transition (for example, calling this
      * in the enter() routine of a intermediate node when the current transition
      * target is one of the nodes descendants).
-     * 
+     *
      * @param destState
      *            will be the state that receives the next message.
      */
@@ -511,13 +511,13 @@ public class StateMachine {
      * transition to destination state. Upon returning from processMessage the
      * current state's exit will be executed and upon the next message arriving
      * destState.enter will be invoked.
-     * 
+     *
      * this function can also be called inside the enter function of the
      * previous transition target, but the behavior is undefined when it is
      * called mid-way through a previous transition (for example, calling this
      * in the enter() routine of a intermediate node when the current transition
      * target is one of the nodes descendants).
-     * 
+     *
      * @param destState
      *            will be the state that receives the next message.
      */
@@ -536,7 +536,7 @@ public class StateMachine {
      * deferred messages will be placed on the queue and reprocessed in the
      * original order. (i.e. The next state the oldest messages will be
      * processed first)
-     * 
+     *
      * @param msg
      *            is deferred until the next transition.
      */

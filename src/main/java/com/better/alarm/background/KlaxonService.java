@@ -125,6 +125,12 @@ public class KlaxonService extends Service {
 
         private static final int MAX_VOLUME = 10;
 
+        private Type type = Type.NORMAL;
+        private int preAlarmVolume = 0;
+        private int alarmVolume = 4;
+
+        private CountDownTimer timer;
+
         Volume() {
             disposables.add(
                     rxPreferences.getInteger(Intents.KEY_PREALARM_VOLUME, Intents.DEFAULT_PREALARM_VOLUME)
@@ -135,11 +141,11 @@ public class KlaxonService extends Service {
                             .asObservable()
                             .subscribe(new VolumePrefConsumer(Type.NORMAL)));
         }
-
         private final class FadeInTimer extends CountDownTimer {
             private final long fadeInTime;
             private final long fadeInStep;
             private final float targetVolume;
+
             private final double multiplier;
 
             private FadeInTimer(long millisInFuture, long countDownInterval) {
@@ -159,18 +165,12 @@ public class KlaxonService extends Service {
                     mMediaPlayer.get().setVolume(adjustedVolume, adjustedVolume);
                 }
             }
-
             @Override
             public void onFinish() {
                 log.d("Fade in completed");
             }
+
         }
-
-        private Type type = Type.NORMAL;
-        private int preAlarmVolume = 0;
-        private int alarmVolume = 4;
-
-        private CountDownTimer timer;
 
         public void setMode(Type type) {
             this.type = type;
@@ -238,7 +238,7 @@ public class KlaxonService extends Service {
             public void accept(@NonNull Integer preAlarmVolume) throws Exception {
                 if (mMediaPlayer.isPresent()) {
                     MediaPlayer player = mMediaPlayer.get();
-                    if (player.isPlaying() && type == consumerType) {
+                    if (player.isPlaying() && type.equals(consumerType)) {
                         float volumeFor = getVolumeFor(consumerType);
                         player.setVolume(volumeFor, volumeFor);
                     }

@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2009 The Android Open Source Project
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,7 +18,7 @@ package com.better.alarm.statemachine;
 
 /**
  * {@hide}
- * 
+ * <p>
  * The class for implementing states in a StateMachine
  */
 public class State implements IState {
@@ -36,12 +36,13 @@ public class State implements IState {
      */
     @Override
     public void enter() {
+        //default
     }
 
     @Override
     @Deprecated
     public void resume() {
-
+        //default
     }
 
     /*
@@ -51,6 +52,7 @@ public class State implements IState {
      */
     @Override
     public void exit() {
+        //default
     }
 
     /*
@@ -65,14 +67,14 @@ public class State implements IState {
 
     /**
      * Name of State for debugging purposes.
-     * 
+     * <p>
      * This default implementation returns the class name, returning the
      * instance name would better in cases where a State class is used for
      * multiple states. But normally there is one class per state and the class
      * name is sufficient and easy to get. You may want to provide a setName or
      * some other mechanism for setting another name if the class name is not
      * appropriate.
-     * 
+     *
      * @see com.android.internal.util.IState#processMessage(android.os.Message)
      */
     @Override

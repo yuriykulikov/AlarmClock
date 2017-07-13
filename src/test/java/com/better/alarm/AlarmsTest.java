@@ -4,6 +4,8 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.os.PowerManager;
 
+import com.better.alarm.interfaces.Alarm;
+import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.logger.SysoutLogWriter;
 import com.better.alarm.model.AlarmContainer;
@@ -12,8 +14,6 @@ import com.better.alarm.model.AlarmSetter;
 import com.better.alarm.model.AlarmValue;
 import com.better.alarm.model.Alarms;
 import com.better.alarm.model.ContainerFactory;
-import com.better.alarm.interfaces.Alarm;
-import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.model.ImmutableAlarmContainer;
 import com.better.alarm.persistance.DatabaseQuery;
 import com.better.alarm.statemachine.HandlerFactory;
@@ -216,14 +216,15 @@ public class AlarmsTest {
         instance.start();
 
         //verify
-        store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
-            @Override
-            public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
-                System.out.println(alarmValues);
-                return alarmValues.size() == 1
-                        && alarmValues.get(0).isEnabled()
-                        && alarmValues.get(0).getLabel().equals("hello");
-            }
-        });
+        store.alarms().test()
+                .assertValue(new Predicate<List<AlarmValue>>() {
+                    @Override
+                    public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
+                        System.out.println(alarmValues);
+                        return alarmValues.size() == 1
+                                && alarmValues.get(0).isEnabled()
+                                && alarmValues.get(0).getLabel().equals("hello");
+                    }
+                });
     }
 }
