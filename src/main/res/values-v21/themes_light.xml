@@ -4,19 +4,11 @@
     <style name="DefaultLightTheme" parent="android:Theme.Material.Light.DarkActionBar">
         <item name="alarmDetailsButtonStyle">@style/LightAlarmDetailsButtonStyle</item>
     </style> 
-    <style name="AlarmAlertLightTheme" parent="android:Theme.Material.Light.Dialog"/>
     <style name="AlarmAlertFullScreenLightTheme" parent="android:Theme.Material.Light.NoActionBar">
-         <item name="android:windowShowWallpaper">true</item>
-         <item name="android:windowBackground">@android:color/transparent</item>
-         <item name="android:colorBackgroundCacheHint">@null</item>
          <item name="android:windowNoTitle">true</item>
-         <item name="alertFullScreenBackground">@style/LightAlertFullScreenBackground</item>
     </style>
     <style name="TimePickerDialogFragmentLight" parent="android:style/Theme.Material.Light.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="timePickerDeleteButtonStyle">@style/LightTimePickerDeleteButtonStyle</item>
-    </style>
-    <style name="LightAlertFullScreenBackground" >
-        <item name="android:background">@android:drawable/alert_light_frame</item>
     </style>
 </resources>

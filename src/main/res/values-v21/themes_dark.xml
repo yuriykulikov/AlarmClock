@@ -4,19 +4,11 @@
     <style name="DefaultDarkTheme" parent="android:Theme.Material">
         <item name="alarmDetailsButtonStyle">@style/DarkAlarmDetailsButtonStyle</item>
     </style> 
-    <style name="AlarmAlertDarkTheme" parent="android:Theme.Material.Dialog"/>
     <style name="AlarmAlertFullScreenDarkTheme" parent="android:Theme.Material.NoActionBar">
-         <item name="android:windowShowWallpaper">true</item>
-         <item name="android:windowBackground">@android:color/transparent</item>
-         <item name="android:colorBackgroundCacheHint">@null</item>
          <item name="android:windowNoTitle">true</item>
-         <item name="alertFullScreenBackground">@style/DarkAlertFullScreenBackground</item>
     </style>
     <style name="TimePickerDialogFragmentDark" parent="android:style/Theme.Material.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="timePickerDeleteButtonStyle">@style/DarkTimePickerDeleteButtonStyle</item>
-    </style>
-    <style name="DarkAlertFullScreenBackground" >
-        <item name="android:background">@android:drawable/alert_dark_frame</item>
     </style>
 </resources>
