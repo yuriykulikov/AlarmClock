@@ -35,6 +35,9 @@ import com.better.alarm.AlarmApplication;
 import com.better.alarm.Prefs;
 import com.better.alarm.R;
 
+import io.reactivex.Completable;
+import io.reactivex.Single;
+
 /**
  * Displays the time
  */
@@ -50,7 +53,7 @@ public class DigitalClock extends LinearLayout {
     private boolean mLive = true;
     private boolean mAttached;
 
-    private Prefs prefs;
+    private final Single<Boolean> is24HoutFormat;
 
     /* called by system on minute ticks */
     private final Handler mHandler = new Handler();
@@ -114,7 +117,11 @@ public class DigitalClock extends LinearLayout {
 
     public DigitalClock(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.prefs = AlarmApplication.guice().getInstance(Prefs.class);
+        if (isInEditMode()) {
+            is24HoutFormat = Single.just(true);
+        } else {
+            is24HoutFormat = AlarmApplication.guice().getInstance(Prefs.class).is24HoutFormat();
+        }
     }
 
     @Override
@@ -185,7 +192,7 @@ public class DigitalClock extends LinearLayout {
     }
 
     private void setDateFormat() {
-        mFormat = prefs.is24HoutFormat().blockingGet() ? M24 : M12;
+        mFormat = is24HoutFormat.blockingGet() ? M24 : M12;
         mAmPm.setShowAmPm(mFormat == M12 || isInEditMode());
     }
 

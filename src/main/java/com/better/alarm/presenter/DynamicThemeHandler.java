@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.better.alarm.R;
-import com.better.alarm.alert.AlarmAlert;
 import com.better.alarm.alert.AlarmAlertFullScreen;
 
 public class DynamicThemeHandler {
@@ -54,17 +53,14 @@ public class DynamicThemeHandler {
         sp = PreferenceManager.getDefaultSharedPreferences(context);
 
         Map<String, Integer> darkThemes = new HashMapWithDefault(R.style.DefaultDarkTheme);
-        darkThemes.put(AlarmAlert.class.getName(), R.style.AlarmAlertDarkTheme);
         darkThemes.put(AlarmAlertFullScreen.class.getName(), R.style.AlarmAlertFullScreenDarkTheme);
         darkThemes.put(TimePickerDialogFragment.class.getName(), R.style.TimePickerDialogFragmentDark);
 
         Map<String, Integer> lightThemes = new HashMapWithDefault(R.style.DefaultLightTheme);
-        lightThemes.put(AlarmAlert.class.getName(), R.style.AlarmAlertLightTheme);
         lightThemes.put(AlarmAlertFullScreen.class.getName(), R.style.AlarmAlertFullScreenLightTheme);
         lightThemes.put(TimePickerDialogFragment.class.getName(), R.style.TimePickerDialogFragmentLight);
 
         Map<String, Integer> greenThemes = new HashMapWithDefault(R.style.GreenTheme);
-        greenThemes.put(AlarmAlert.class.getName(), R.style.AlarmAlertGreenTheme);
         greenThemes.put(AlarmAlertFullScreen.class.getName(), R.style.AlarmAlertFullScreenGreenTheme);
         greenThemes.put(TimePickerDialogFragment.class.getName(), R.style.TimePickerDialogFragmentGreen);
 

@@ -59,8 +59,6 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
     private IAlarmsManager alarmsManager;
     @Inject
     private Prefs prefs;
-    @Inject
-    private KeyguardManager km;
 
     private Alarm alarm;
 
@@ -112,18 +110,10 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
         Intent closeDialogs = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         mContext.sendBroadcast(closeDialogs);
 
-        // Decide which activity to start based on the state of the
-        // keyguard - is the screen locked or not.
-        Class<? extends AlarmAlertFullScreen> c = AlarmAlert.class;
-        if (km.inKeyguardRestrictedInputMode()) {
-            // Use the full screen activity to unlock the screen.
-            c = AlarmAlertFullScreen.class;
-        }
-
         // Trigger a notification that, when clicked, will show the alarm
         // alert dialog. No need to check for fullscreen since this will always
         // be launched from a user action.
-        Intent notify = new Intent(mContext, c);
+        Intent notify = new Intent(mContext, AlarmAlertFullScreen.class);
         notify.putExtra(Intents.EXTRA_ID, id);
         PendingIntent pendingNotify = PendingIntent.getActivity(mContext, id, notify, 0);
         PendingIntent pendingSnooze = PresentationToModelIntents.createPendingIntent(mContext,

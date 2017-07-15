@@ -63,7 +63,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-<!-- Forwards intents to the AlarmAlert or AlarmAlertFullScreen -->
+        <!-- Forwards intents to the AlarmAlertFullScreen -->
         <receiver
             android:name=".alert.AlarmAlertReceiver"
             android:exported="false" >
@@ -78,15 +78,8 @@
         </receiver>
 
         <!-- Alarm alert with snooze and dismiss buttons -->
-        <activity
-            android:name=".alert.AlarmAlert"
-            android:configChanges="orientation|keyboardHidden|keyboard|navigation"
-            android:excludeFromRecents="true"
-            android:launchMode="singleInstance"
-            android:theme="@android:style/Theme.Holo.Dialog"
-            android:taskAffinity="" />
 
-        <!-- This activity is basically the same as AlarmAlert 
+        <!-- This activity is basically the same as AlarmAlert
              but full-screen so that it can turn the display on. -->
         <activity
             android:name=".alert.AlarmAlertFullScreen"
