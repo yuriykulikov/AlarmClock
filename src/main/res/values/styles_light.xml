@@ -4,12 +4,10 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <style name="LightAlarmDetailsButtonStyle" >
         <item name="android:src">@android:drawable/ic_menu_more</item>
-        <item name="android:background">@drawable/item_background</item>
         <item name="android:tint">@color/blackish</item>
     </style>
     <style name="LightTimePickerDeleteButtonStyle">
         <item name="android:src">@drawable/ic_backspace</item>
-        <item name="android:background">@drawable/item_background</item>
         <item name="android:tint">@color/blackish</item>
     </style>
 </resources>
