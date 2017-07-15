@@ -19,8 +19,11 @@ package com.better.alarm.view;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.better.alarm.AlarmApplication;
@@ -29,7 +32,13 @@ import com.better.alarm.R;
 
 import java.text.DateFormatSymbols;
 
-public class TimePicker extends TimerSetupView implements Button.OnClickListener {
+public class TimePicker extends LinearLayout implements Button.OnClickListener, Button.OnLongClickListener  {
+    private static final int AMPM_NOT_SELECTED = 0;
+    private static final int PM_SELECTED = 1;
+    private static final int AM_SELECTED = 2;
+    private static final int HOURS24_MODE = 3;
+
+    private final Context mContext;
 
     private TextView mAmPmLabel;
     private String[] mAmpm;
@@ -37,11 +46,14 @@ public class TimePicker extends TimerSetupView implements Button.OnClickListener
     private int mAmPmState;
     private Button mSetButton;
     private final boolean mIs24HoursMode;
+    protected int mInputSize = 5;
 
-    private static final int AMPM_NOT_SELECTED = 0;
-    private static final int PM_SELECTED = 1;
-    private static final int AM_SELECTED = 2;
-    private static final int HOURS24_MODE = 3;
+    protected final Button mNumbers[] = new Button[10];
+    protected int mInput[] = new int[mInputSize];
+    protected int mInputPointer = -1;
+    protected Button mLeft, mRight;
+    protected ImageButton mDelete;
+    protected TimerView mEnteredTime;
 
     public TimePicker(Context context) {
         this(context, null);
@@ -49,19 +61,52 @@ public class TimePicker extends TimerSetupView implements Button.OnClickListener
 
     public TimePicker(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mContext = context;
+        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        layoutInflater.inflate(R.layout.time_picker_view, this);
         mInputSize = 4;
         mNoAmPmLabel = context.getResources().getString(R.string.time_picker_ampm_label);
         mIs24HoursMode = AlarmApplication.guice().getInstance(Prefs.class).is24HoutFormat().blockingGet();
     }
 
     @Override
-    protected int getLayoutId() {
-        return R.layout.time_picker_view;
-    }
-
-    @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+
+        View v1 = findViewById(R.id.first);
+        View v2 = findViewById(R.id.second);
+        View v3 = findViewById(R.id.third);
+        View v4 = findViewById(R.id.fourth);
+        mEnteredTime = (TimerView) findViewById(R.id.timer_time_text);
+        mDelete = (ImageButton) findViewById(R.id.delete);
+        mDelete.setOnClickListener(this);
+        mDelete.setOnLongClickListener(this);
+
+        mNumbers[1] = (Button) v1.findViewById(R.id.key_left);
+        mNumbers[2] = (Button) v1.findViewById(R.id.key_middle);
+        mNumbers[3] = (Button) v1.findViewById(R.id.key_right);
+
+        mNumbers[4] = (Button) v2.findViewById(R.id.key_left);
+        mNumbers[5] = (Button) v2.findViewById(R.id.key_middle);
+        mNumbers[6] = (Button) v2.findViewById(R.id.key_right);
+
+        mNumbers[7] = (Button) v3.findViewById(R.id.key_left);
+        mNumbers[8] = (Button) v3.findViewById(R.id.key_middle);
+        mNumbers[9] = (Button) v3.findViewById(R.id.key_right);
+
+        mLeft = (Button) v4.findViewById(R.id.key_left);
+        mNumbers[0] = (Button) v4.findViewById(R.id.key_middle);
+        mRight = (Button) v4.findViewById(R.id.key_right);
+        setLeftRightEnabled(false);
+
+        for (int i = 0; i < 10; i++) {
+            mNumbers[i].setOnClickListener(this);
+            mNumbers[i].setText(String.format("%d", i));
+            mNumbers[i].setTag(R.id.numbers_key, new Integer(i));
+        }
+
+        updateTime();
+
         Resources res = mContext.getResources();
         mAmpm = new DateFormatSymbols().getAmPmStrings();
 
@@ -84,7 +129,6 @@ public class TimePicker extends TimerSetupView implements Button.OnClickListener
         doOnClick(v);
     }
 
-    @Override
     protected void doOnClick(View v) {
         Integer val = (Integer) v.getTag(R.id.numbers_key);
         // A number was pressed
@@ -141,7 +185,6 @@ public class TimePicker extends TimerSetupView implements Button.OnClickListener
     // Special cases:
     // 1. show "-" for digits not entered yet.
     // 2. hide the hours digits when it is not relevant
-    @Override
     protected void updateTime() {
         // Put "-" in digits that was not entered by passing -1
         // Hide digit by passing -2 (for highest hours digit only);
@@ -487,5 +530,33 @@ public class TimePicker extends TimerSetupView implements Button.OnClickListener
 
     public int getMinutes() {
         return mInput[1] * 10 + mInput[0];
+    }
+
+    public void updateDeleteButton() {
+        boolean enabled = mInputPointer != -1;
+        if (mDelete != null) {
+            mDelete.setEnabled(enabled);
+        }
+    }
+
+    public void reset() {
+        for (int i = 0; i < mInputSize; i++) {
+            mInput[i] = 0;
+        }
+        mInputPointer = -1;
+        updateTime();
+    }
+
+    public int getTime() {
+        return mInput[4] * 3600 + mInput[3] * 600 + mInput[2] * 60 + mInput[1] * 10 + mInput[0];
+    }
+
+    protected void setLeftRightEnabled(boolean enabled) {
+        mLeft.setEnabled(enabled);
+        mRight.setEnabled(enabled);
+        if (!enabled) {
+            mLeft.setContentDescription(null);
+            mRight.setContentDescription(null);
+        }
     }
 }
