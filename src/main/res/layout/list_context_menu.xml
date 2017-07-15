@@ -23,14 +23,6 @@
     android:paddingRight="10dip"
     android:paddingTop="6dip" >
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:paddingRight="10dip"
-        android:paddingTop="6dip"
-        android:src="@drawable/ic_dialog_time" />
-
     <TextView
         android:id="@+id/list_context_menu_header_time"
         style="?android:attr/textAppearanceLarge"

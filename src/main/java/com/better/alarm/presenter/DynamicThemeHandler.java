@@ -35,8 +35,16 @@ public class DynamicThemeHandler {
     }
 
     public int getIdForName(String name) {
-        String activeThemeName = sp.getString(KEY_THEME, "green");
-        Map<String, Integer> activeThemeMap = themes.get(activeThemeName);
+        final String activeThemeName = sp.getString(KEY_THEME, "light");
+        final String correctedTheme;
+        if (!"light".equals(activeThemeName) && !"dark".equals(activeThemeName)) {
+            sp.edit().putString(KEY_THEME, "light").commit();
+            correctedTheme = "light";
+        } else {
+            correctedTheme = activeThemeName;
+        }
+        Map<String, Integer> activeThemeMap = themes.get(correctedTheme);
+
         Integer themeForName = activeThemeMap.get(name);
         return themeForName;
     }
@@ -60,17 +68,8 @@ public class DynamicThemeHandler {
         lightThemes.put(AlarmAlertFullScreen.class.getName(), R.style.AlarmAlertFullScreenLightTheme);
         lightThemes.put(TimePickerDialogFragment.class.getName(), R.style.TimePickerDialogFragmentLight);
 
-        Map<String, Integer> greenThemes = new HashMapWithDefault(R.style.GreenTheme);
-        greenThemes.put(AlarmAlertFullScreen.class.getName(), R.style.AlarmAlertFullScreenGreenTheme);
-        greenThemes.put(TimePickerDialogFragment.class.getName(), R.style.TimePickerDialogFragmentGreen);
-
         themes = new HashMap<String, Map<String, Integer>>(3);
         themes.put("light", lightThemes);
         themes.put("dark", darkThemes);
-        themes.put("green", greenThemes);
-        // fallback
-        themes.put("Light", lightThemes);
-        themes.put("Dark", darkThemes);
-        themes.put("Green", greenThemes);
     }
 }
