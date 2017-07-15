@@ -9,7 +9,7 @@ import android.test.suitebuilder.annotation.LargeTest;
 import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
 import com.better.alarm.Store;
-import com.better.alarm.alert.AlarmAlert;
+import com.better.alarm.alert.AlarmAlertFullScreen;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.model.AlarmSetter;
 import com.better.alarm.model.AlarmValue;
@@ -21,6 +21,7 @@ import com.google.common.base.Optional;
 
 import org.assertj.core.api.Condition;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -42,8 +43,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class PopupTest extends BaseTest {
-    public ActivityTestRule<AlarmAlert> alertActivity = new ActivityTestRule<AlarmAlert>(
-            AlarmAlert.class, false, /* autostart*/ false);
+    public ActivityTestRule<AlarmAlertFullScreen> alertActivity = new ActivityTestRule<AlarmAlertFullScreen>(
+            AlarmAlertFullScreen.class, false, /* autostart*/ false);
     public ActivityTestRule<AlarmsListActivity> listActivity = new ActivityTestRule<AlarmsListActivity>(
             AlarmsListActivity.class, false, /* autostart*/ true);
     public ActivityTestRule<TransparentActivity> transparentActivity = new ActivityTestRule<TransparentActivity>(
@@ -113,25 +114,22 @@ public class PopupTest extends BaseTest {
         deleteAlarm();
     }
 
+    @Ignore
     @Test
-    public void snoozeViaLonglick() {
-        int id = createAlarmAndFire();
+    public void testSnoozeInThePastIsNotAccepted(){
 
-        Intent startIntent = new Intent();
-        startIntent.putExtra(Intents.EXTRA_ID, id);
-        alertActivity.launchActivity(startIntent);
+    }
 
-        sleep();
-
-        Cortado.onView().withText("Snooze").perform().longClick();
-
+    private void snoozeAlarmChechAndDelete() {
         assertTimerView("--:--");
-        Cortado.onView().withText("9").perform().click();
-        assertTimerView("--:-9");
+        Cortado.onView().withText("2").perform().click();
+        assertTimerView("--:-2");
         Cortado.onView().withText("3").perform().click();
-        assertTimerView("--:93");
-        Cortado.onView().withText("0").perform().click();
-        assertTimerView("-9:30");
+        assertTimerView("--:23");
+        Cortado.onView().withText("5").perform().click();
+        assertTimerView("-2:35");
+        Cortado.onView().withText("9").perform().click();
+        assertTimerView("23:59");
         sleep();
 
         Cortado.onView().withText("OK").perform().click();
@@ -142,17 +140,15 @@ public class PopupTest extends BaseTest {
                 .next()
                 .blockingFirst();
 
-        assertThat(next).is(new Condition<Optional<Store.Next>>("Present and snoozed at 9:30") {
-            @Override
-            public boolean matches(Optional<Store.Next> value) {
-                System.out.println(value.get().alarm());
-                Calendar nextTime = Calendar.getInstance();
-                nextTime.setTimeInMillis(value.get().nextNonPrealarmTime());
-                return value.isPresent() && value.get().alarm().isEnabled()
-                        && (int)nextTime.get(Calendar.HOUR_OF_DAY) == 9
-                        && (int)nextTime.get(Calendar.MINUTE) == 30;
-            }
-        });
+
+        assertThat(next.isPresent()).isTrue();
+
+        Calendar nextTime = Calendar.getInstance();
+        nextTime.setTimeInMillis(next.get().nextNonPrealarmTime());
+
+        assertThat((int)nextTime.get(Calendar.HOUR_OF_DAY)).isEqualTo(23);
+        assertThat((int)nextTime.get(Calendar.MINUTE)).isEqualTo(59);
+        assertThat(next.get().alarm().isEnabled()).isTrue();
 
         //disable the snoozed alarm
         Cortado.onView().withId(R.id.list_row_on_off_switch).and().isChecked().perform().click();
@@ -168,6 +164,20 @@ public class PopupTest extends BaseTest {
     }
 
     @Test
+    public void snoozeViaLonglick() {
+        int id = createAlarmAndFire();
+
+        Intent startIntent = new Intent();
+        startIntent.putExtra(Intents.EXTRA_ID, id);
+        alertActivity.launchActivity(startIntent);
+
+        sleep();
+        Cortado.onView().withText("Snooze").perform().longClick();
+
+        snoozeAlarmChechAndDelete();
+    }
+
+    @Test
     public void snoozeViaNotificationPicker() {
         int id = createAlarmAndFire();
 
@@ -175,35 +185,6 @@ public class PopupTest extends BaseTest {
         startIntent.putExtra(Intents.EXTRA_ID, id);
         transparentActivity.launchActivity(startIntent);
 
-        assertTimerView("--:--");
-        Cortado.onView().withText("3").perform().click();
-        assertTimerView("--:-3");
-        Cortado.onView().withText("5").perform().click();
-        assertTimerView("--:35");
-        Cortado.onView().withText("9").perform().click();
-        assertTimerView("-3:59");
-        sleep();
-
-        Cortado.onView().withText("OK").perform().click();
-
-        sleep();
-
-        Optional<Store.Next> next = AlarmApplication.guice().getInstance(Store.class)
-                .next()
-                .blockingFirst();
-
-        assertThat(next).is(new Condition<Optional<Store.Next>>("Present and snoozed at 3:59") {
-            @Override
-            public boolean matches(Optional<Store.Next> value) {
-                System.out.println(value.get().alarm());
-                Calendar nextTime = Calendar.getInstance();
-                nextTime.setTimeInMillis(value.get().nextNonPrealarmTime());
-                return value.isPresent() && value.get().alarm().isEnabled()
-                        && (int)nextTime.get(Calendar.HOUR_OF_DAY) == 3
-                        && (int)nextTime.get(Calendar.MINUTE) == 59;
-            }
-        });
-
-        deleteAlarm();
+        snoozeAlarmChechAndDelete();
     }
 }
