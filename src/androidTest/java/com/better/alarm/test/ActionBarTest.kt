@@ -56,4 +56,33 @@ class ActionBarTest {
         Assert.assertTrue(solo.searchText("Describe"))
         solo.clickOnButton("Cancel")
     }
+
+    @Test
+    fun rateTheApp() {
+        val solo = solo!!
+        solo.sendKey(Solo.MENU)
+        solo.clickOnText("Rate the app")
+        Assert.assertTrue(solo.searchText("Would you like to proceed?"))
+        solo.clickOnButton("Cancel")
+    }
+
+    @Test
+    fun dashClock() {
+        val solo = solo!!
+        solo.sendKey(Solo.MENU)
+        solo.clickOnText("Extensions")
+        solo.clickOnText("DashClock")
+        Assert.assertTrue(solo.searchText("transferred"))
+        solo.clickOnButton("Cancel")
+    }
+
+    @Test
+    fun mp3Cutter() {
+        val solo = solo!!
+        solo.sendKey(Solo.MENU)
+        solo.clickOnText("Extensions")
+        solo.clickOnText("MP3")
+        Assert.assertTrue(solo.searchText("transferred"))
+        solo.clickOnButton("Cancel")
+    }
 }
