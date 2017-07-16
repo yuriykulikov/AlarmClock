@@ -60,19 +60,17 @@
             android:gravity="center"
             android:orientation="horizontal" >
 
-            <com.better.alarm.view.AndroidClockTextView
+            <TextView
                 android:id="@+id/digital_clock_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                useClockTypeface="false"
                 android:paddingRight="6dip"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
-            <com.better.alarm.view.AndroidClockTextView
+            <TextView
                 android:id="@+id/digital_clock_am_pm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                useClockTypeface="false"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textStyle="bold" />
         </com.better.alarm.view.DigitalClock>

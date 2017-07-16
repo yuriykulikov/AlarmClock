@@ -151,8 +151,7 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
             // in non-full screen mode we already see the label in the title.
             // Therefore we hade the views with an additional label
             // also, if the label is default, do not show it
-            textView.setVisibility(View.GONE);
-            findViewById(R.id.alert_label_divider).setVisibility(View.GONE);
+            textView.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -268,7 +267,9 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
                 LONGCLICK_DISMISS_DEFAULT);
 
         Button snooze = (Button) findViewById(R.id.alert_button_snooze);
+        View snoozeText = findViewById(R.id.alert_text_snooze);
         snooze.setEnabled(isSnoozeEnabled());
+        snoozeText.setEnabled(isSnoozeEnabled());
     }
 
     @Override

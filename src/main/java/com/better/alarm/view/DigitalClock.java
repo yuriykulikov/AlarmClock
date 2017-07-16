@@ -30,6 +30,7 @@ import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.better.alarm.AlarmApplication;
 import com.better.alarm.Prefs;
@@ -47,7 +48,7 @@ public class DigitalClock extends LinearLayout {
 
     private Calendar mCalendar;
     private String mFormat;
-    private AndroidClockTextView mTimeDisplay;
+    private TextView mTimeDisplay;
     private AmPm mAmPm;
     private ContentObserver mFormatChangeObserver;
     private boolean mLive = true;
@@ -74,11 +75,11 @@ public class DigitalClock extends LinearLayout {
     };
 
     static class AmPm {
-        private final AndroidClockTextView mAmPm;
+        private final TextView mAmPm;
         private final String mAmString, mPmString;
 
         AmPm(View parent) {
-            mAmPm = (AndroidClockTextView) parent.findViewById(R.id.digital_clock_am_pm);
+            mAmPm = (TextView) parent.findViewById(R.id.digital_clock_am_pm);
 
             String[] ampm = new DateFormatSymbols().getAmPmStrings();
             mAmString = ampm[0];
@@ -128,7 +129,7 @@ public class DigitalClock extends LinearLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        mTimeDisplay = (AndroidClockTextView) findViewById(R.id.digital_clock_time);
+        mTimeDisplay = (TextView) findViewById(R.id.digital_clock_time);
         mAmPm = new AmPm(this);
         mCalendar = Calendar.getInstance();
 
@@ -187,7 +188,7 @@ public class DigitalClock extends LinearLayout {
             mTimeDisplay.setText(newTime);
         }
         if (mAmPm != null) {
-            mAmPm.setIsMorning(mCalendar.get(Calendar.AM_PM) == 0 || isInEditMode());
+            mAmPm.setIsMorning((int)mCalendar.get(Calendar.AM_PM) == 0 || isInEditMode());
         }
     }
 
