@@ -7,6 +7,7 @@ import org.immutables.value.Value;
 
 import java.util.List;
 
+import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 
@@ -16,10 +17,10 @@ import io.reactivex.subjects.Subject;
 
 @Value.Immutable
 @Value.Style(stagedBuilder = true)
-public interface Store {
+public abstract class Store {
     @Value.Immutable
     @Value.Style(stagedBuilder = true)
-    interface Next {
+    public interface Next {
 
         AlarmValue alarm();
 
@@ -29,7 +30,7 @@ public interface Store {
     }
 
     @Value.Immutable
-    interface AlarmSet {
+    public interface AlarmSet {
         @Value.Parameter
         AlarmValue alarm();
 
@@ -37,9 +38,13 @@ public interface Store {
         long millis();
     }
 
-    BehaviorSubject<List<AlarmValue>> alarms();
+    public Observable<List<AlarmValue>> alarms(){
+        return alarmsSubject().distinctUntilChanged();
+    }
 
-    BehaviorSubject<Optional<Next>> next();
+    public abstract BehaviorSubject<List<AlarmValue>> alarmsSubject();
 
-    Subject<AlarmSet> sets();
+    public abstract BehaviorSubject<Optional<Next>> next();
+
+    public abstract Subject<AlarmSet> sets();
 }

@@ -34,15 +34,6 @@
             android:duplicateParentState="true"
             android:focusable="false" />
         
-        <Switch
-            android:id="@+id/list_row_on_off_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:clickable="false"
-            android:duplicateParentState="true"
-            android:focusable="false" />
-
     </com.better.alarm.view.DontPressWithParentLayout>
 
     <LinearLayout

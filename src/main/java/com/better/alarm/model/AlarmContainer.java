@@ -41,7 +41,7 @@ public abstract class AlarmContainer implements AlarmChangeData {
     public abstract Persistence persistence();
 
     @Value.Derived
-    public boolean isSilent(){
+    public boolean isSilent() {
         return ALARM_ALERT_SILENT.equals(alertString());
     }
 
@@ -63,5 +63,10 @@ public abstract class AlarmContainer implements AlarmChangeData {
             // default alert.
             return RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         }
+    }
+
+    @Override
+    public String toString() {
+        return getId() + " " + (isEnabled() ? "[x] " : "[ ] ") + getHour() + ":" + getMinutes() + " " + getDaysOfWeek() + " " + getLabel();
     }
 }

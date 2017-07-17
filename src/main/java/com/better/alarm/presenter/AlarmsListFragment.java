@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.text.format.DateFormat;
 import android.view.ContextMenu;
@@ -29,11 +28,12 @@ import com.better.alarm.Prefs;
 import com.better.alarm.R;
 import com.better.alarm.Store;
 import com.better.alarm.model.AlarmValue;
-import com.better.alarm.model.DaysOfWeek;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.view.DigitalClock;
 import com.better.alarm.logger.Logger;
 import com.google.inject.Inject;
+
+import org.immutables.value.Value;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -53,13 +53,9 @@ import io.reactivex.functions.Consumer;
  * @author Yuriy
  */
 public class AlarmsListFragment extends ListFragment {
-    /**
-     * This must be false for production. If true, turns on logging, test code,
-     * etc.
-     */
-    public static final boolean DEBUG = false;
     public final static String M12 = "h:mm aa";
     public final static String M24 = "kk:mm";
+    public static final boolean MATERIAL_DESIGN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
 
     private ShowDetailsStrategy showDetailsStrategy;
 
@@ -69,104 +65,140 @@ public class AlarmsListFragment extends ListFragment {
     private Store store;
     @Inject
     private Prefs prefs;
+    @Inject
+    private Logger logger;
 
     private AlarmListAdapter mAdapter;
     private Disposable alarmsSub;
 
+    @Value.Immutable
+    @Value.Style(stagedBuilder = true)
+    interface RowHolder {
+        DigitalClock digitalClock();
+
+        View rowView();
+
+        CompoundButton onOff();
+
+        View container();
+
+        int alarmId();
+
+        TextView daysOfWeek();
+
+        TextView label();
+    }
+
     public class AlarmListAdapter extends ArrayAdapter<AlarmValue> {
         private final Context context;
         private final List<AlarmValue> values;
-        private final boolean isMaterial;
 
         public AlarmListAdapter(Context context, int alarmTime, int label, List<AlarmValue> values) {
             super(context, alarmTime, label, values);
             this.context = context;
             this.values = values;
-            this.isMaterial = !PreferenceManager.getDefaultSharedPreferences(context).getString("theme", "dark")
-                    .equals("green");
+        }
+
+        private RowHolder recycleView(View convertView, ViewGroup parent) {
+            if (convertView != null) return (RowHolder) convertView.getTag();
+
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View rowView = inflater.inflate(R.layout.list_row, parent, false);
+
+            ImmutableRowHolder holder = ImmutableRowHolder.builder()
+                    .digitalClock((DigitalClock) rowView.findViewById(R.id.list_row_digital_clock))
+                    .rowView(rowView)
+                    .onOff((CompoundButton) rowView.findViewById(R.id.list_row_on_off_switch))
+                    .container(rowView.findViewById(R.id.list_row_on_off_checkbox_container))
+                    .alarmId(-1)
+                    .daysOfWeek((TextView) rowView.findViewById(R.id.list_row_daysOfWeek))
+                    .label((TextView) rowView.findViewById(R.id.list_row_label))
+                    .build();
+
+            holder.digitalClock().setLive(false);
+            rowView.setTag(holder);
+            return holder;
         }
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            View rowView;
-            if (convertView == null) {
-                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                rowView = inflater.inflate(R.layout.list_row, parent, false);
-            } else {
-                rowView = convertView;
-            }
-            DigitalClock digitalClock = (DigitalClock) rowView.findViewById(R.id.list_row_digital_clock);
-            digitalClock.setLive(false);
-
             // get the alarm which we have to display
             final AlarmValue alarm = values.get(position);
 
-            // now populate rows views
-            View indicator = rowView.findViewById(R.id.list_row_on_off_checkbox_container);
+            RowHolder row = recycleView(convertView, parent);
+            row.onOff().setOnCheckedChangeListener(null);
+            row.container().setOnClickListener(null);
+            row.onOff().setChecked(alarm.isEnabled());
 
-            // Set the initial state of the clock "checkbox"
-            final CompoundButton clockOnOff;
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && isMaterial) {
-                clockOnOff = (CompoundButton) indicator.findViewById(R.id.list_row_on_off_switch);
-                indicator.findViewById(R.id.list_row_on_off_checkbox).setVisibility(View.GONE);
-            } else {
-                clockOnOff = (CompoundButton) indicator.findViewById(R.id.list_row_on_off_checkbox);
-                indicator.findViewById(R.id.list_row_on_off_switch).setVisibility(View.GONE);
+            //Delete add, skip animation
+            if (row.alarmId() != alarm.getId()) {
+                row.onOff().jumpDrawablesToCurrentState();
+                row.rowView().setTag(ImmutableRowHolder.copyOf(row).withAlarmId(alarm.getId()));
             }
 
-            clockOnOff.setChecked(alarm.isEnabled());
+            row.container()
+                    //onOff
+                    .setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            boolean enable = !alarm.isEnabled();
+                            logger.d("onClick: " + (enable ? "enable" : "disable"));
+                            alarms.enable(alarm, enable);
+                        }
+                    });
 
-            // Clicking outside the "checkbox" should also change the state.
-            indicator.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    clockOnOff.toggle();
-                    alarms.enable(alarm, clockOnOff.isChecked());
-                }
-            });
+            if (MATERIAL_DESIGN) {
+                row.onOff().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean enable) {
+                        logger.d("onCheckedChanged: " + (enable ? "enabled" : "disabled"));
+                        alarms.enable(alarm, enable);
+                    }
+                });
 
-            View detailsWrapper = rowView.findViewById(R.id.details_button_container);
-            // Set the initial state of the clock "checkbox"
-            final ImageButton detailsButton = (ImageButton) detailsWrapper.findViewById(R.id.list_row_details_button);
-            detailsButton.setFocusable(false);
-            detailsWrapper.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (showDetailsStrategy != null) {
+                row.digitalClock().setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ((AlarmsListActivity) getActivity()).showTimePicker(alarm);
+                    }
+                });
+            } else {
+                final View detailsWrapper = convertView.findViewById(R.id.details_button_container);
+                // Set the initial state of the clock "checkbox"
+                final ImageButton detailsButton = (ImageButton) detailsWrapper.findViewById(R.id.list_row_details_button);
+                detailsButton.setFocusable(false);
+                detailsWrapper.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
                         showDetailsStrategy.showDetails(mAdapter.getItem(position));
                     }
-                }
-            });
+                });
+            }
 
             // set the alarm text
             final Calendar c = Calendar.getInstance();
             c.set(Calendar.HOUR_OF_DAY, alarm.getHour());
             c.set(Calendar.MINUTE, alarm.getMinutes());
-            digitalClock.updateTime(c);
+            row.digitalClock().updateTime(c);
 
             // Set the repeat text or leave it blank if it does not repeat.
-            TextView subtitle = (TextView) rowView.findViewById(R.id.list_row_daysOfWeek);
-            DaysOfWeek days = alarm.getDaysOfWeek();
-            final String daysOfWeekStr = days.toString(getContext(), false);
-            if (daysOfWeekStr != null && daysOfWeekStr.length() != 0) {
-                subtitle.setText(daysOfWeekStr);
-                subtitle.setVisibility(View.VISIBLE);
+            final String daysOfWeekStr = alarm.getDaysOfWeek().toString(getContext(), false);
+            if (daysOfWeekStr.length() != 0) {
+                row.daysOfWeek().setText(daysOfWeekStr);
+                row.daysOfWeek().setVisibility(View.VISIBLE);
             } else {
-                subtitle.setVisibility(View.GONE);
+                row.daysOfWeek().setVisibility(MATERIAL_DESIGN ? View.INVISIBLE : View.GONE);
             }
 
             // Set the repeat text or leave it blank if it does not repeat.
-            TextView label = (TextView) rowView.findViewById(R.id.list_row_label);
-            boolean hasLabel = alarm.getLabel() != null && !alarm.getLabel().isEmpty();
-            if (hasLabel) {
-                label.setText(alarm.getLabel());
-                label.setVisibility(View.VISIBLE);
+            if (alarm.getLabel() != null && !alarm.getLabel().isEmpty()) {
+                row.label().setText(alarm.getLabel());
+                row.label().setVisibility(View.VISIBLE);
             } else {
-                label.setVisibility(View.GONE);
+                row.label().setVisibility(MATERIAL_DESIGN ? View.INVISIBLE : View.GONE);
             }
 
-            return rowView;
+            return row.rowView();
         }
     }
 
@@ -194,9 +226,7 @@ public class AlarmsListFragment extends ListFragment {
             }
 
             case R.id.edit_alarm: {
-                if (showDetailsStrategy != null) {
-                    showDetailsStrategy.showDetails(alarm);
-                }
+                showDetailsStrategy.showDetails(alarm);
                 return true;
             }
 
@@ -265,10 +295,14 @@ public class AlarmsListFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        // We can display everything in-place with fragments, so update
-        // the list to highlight the selected item and show the data.
-        getListView().setSelection(position);
-        ((AlarmsListActivity) getActivity()).showTimePicker(mAdapter.getItem(position));
+        if (MATERIAL_DESIGN) {
+            showDetailsStrategy.showDetails(mAdapter.getItem(position));
+        } else {
+            // We can display everything in-place with fragments, so update
+            // the list to highlight the selected item and show the data.
+            getListView().setSelection(position);
+            ((AlarmsListActivity) getActivity()).showTimePicker(mAdapter.getItem(position));
+        }
     }
 
     @Override

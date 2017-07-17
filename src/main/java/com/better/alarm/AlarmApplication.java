@@ -164,7 +164,7 @@ public class AlarmApplication extends Application {
                 .build();
 
         final ImmutableStore store = ImmutableStore.builder()
-                .alarms(BehaviorSubject.<List<AlarmValue>>createDefault(new ArrayList<AlarmValue>()))
+                .alarmsSubject(BehaviorSubject.<List<AlarmValue>>createDefault(new ArrayList<AlarmValue>()))
                 .next(BehaviorSubject.createDefault(Optional.<Store.Next>absent()))
                 .sets(PublishSubject.<Store.AlarmSet>create())
                 .build();
@@ -172,18 +172,17 @@ public class AlarmApplication extends Application {
         store.alarms().subscribe(new Consumer<List<AlarmValue>>() {
             @Override
             public void accept(@NonNull List<AlarmValue> alarmValues) throws Exception {
-                logger.d("Store: ###########################");
+                logger.d("###########################");
                 for (AlarmValue alarmValue : alarmValues) {
                     logger.d("Store: " + alarmValue);
                 }
-                logger.d("Store: ###########################");
             }
         });
 
         store.next().subscribe(new Consumer<Optional<Store.Next>>() {
             @Override
             public void accept(@NonNull Optional<Store.Next> next) throws Exception {
-                logger.d("Store: #######################    " + next);
+                logger.d("## Next: " + next);
             }
         });
 
