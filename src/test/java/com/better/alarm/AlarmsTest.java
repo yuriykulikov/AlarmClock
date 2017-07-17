@@ -64,7 +64,7 @@ public class AlarmsTest {
                 .build();
 
         store = ImmutableStore.builder()
-                .alarms(BehaviorSubject.<List<AlarmValue>>createDefault(new ArrayList<AlarmValue>()))
+                .alarmsSubject(BehaviorSubject.<List<AlarmValue>>createDefault(new ArrayList<AlarmValue>()))
                 .next(BehaviorSubject.createDefault(Optional.<Store.Next>absent()))
                 .sets(PublishSubject.<Store.AlarmSet>create())
                 .build();

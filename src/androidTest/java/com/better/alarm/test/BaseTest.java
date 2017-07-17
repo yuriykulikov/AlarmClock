@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.test.InstrumentationRegistry;
 
+import com.better.alarm.*;
+import com.better.alarm.R;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.model.AlarmValue;
 import com.better.alarm.persistance.AlarmDatabaseHelper;
@@ -20,6 +22,7 @@ import io.reactivex.functions.Predicate;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.longClick;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.anything;
 
@@ -57,7 +60,7 @@ class BaseTest {
     }
 
     protected void deleteAlarm(int position) {
-        onData(anything()).atPosition(position).perform(longClick());
+        onData(anything()).onChildView(withId(R.id.details_button_container)).atPosition(position).perform(longClick());
         sleep(200);
         Cortado.onView().withText("Delete alarm").perform().click();
         sleep(200);
