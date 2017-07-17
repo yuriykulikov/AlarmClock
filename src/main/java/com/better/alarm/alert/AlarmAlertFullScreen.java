@@ -48,6 +48,16 @@ import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialog
 import com.better.alarm.presenter.TimePickerDialogFragment.OnAlarmTimePickerCanceledListener;
 import com.google.inject.Inject;
 
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Predicate;
+import io.reactivex.schedulers.Timed;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
+
 /**
  * Alarm Clock alarm alert: pops visible indicator and plays alarm tone. This
  * activity is the full screen version which shows over the lock screen with the
@@ -58,7 +68,6 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
     private static final boolean LONGCLICK_DISMISS_DEFAULT = false;
     private static final String LONGCLICK_DISMISS_KEY = "longclick_dismiss_key";
     private static final String DEFAULT_VOLUME_BEHAVIOR = "2";
-    protected static final String SCREEN_OFF = "screen_off";
 
     protected Alarm mAlarm;
     private int mVolumeBehavior;
@@ -67,6 +76,8 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
     private IAlarmsManager alarmsManager;
     @Inject
     private SharedPreferences sp;
+    @Inject
+    private Logger logger;
 
     private boolean longClickToDismiss;
     /**
@@ -113,19 +124,17 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
         try {
             mAlarm = alarmsManager.getAlarm(id);
 
+            logger.d("alert for " + mAlarm);
+
             final String vol = sp.getString(SettingsActivity.KEY_VOLUME_BEHAVIOR, DEFAULT_VOLUME_BEHAVIOR);
             mVolumeBehavior = Integer.parseInt(vol);
 
             final Window win = getWindow();
-            win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-            // Turn on the screen unless we are being launched from the
-            // AlarmAlert
-            // subclass as a result of the screen turning off.
-            if (!getIntent().getBooleanExtra(SCREEN_OFF, false)) {
-                win.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                        | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-                        | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON);
-            }
+            // Turn on the screen
+            win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                    | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                    | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                    | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON);
 
             updateLayout();
 
@@ -173,12 +182,33 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
          */
         final Button snooze = (Button) findViewById(R.id.alert_button_snooze);
         snooze.requestFocus();
+
+
+        final Subject<View> clicks = PublishSubject.create();
         snooze.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                snoozeIfEnabledInSettings();
+                logger.d("Snooze click");
+                clicks.onNext(v);
             }
         });
+
+        clicks
+                .timeInterval(AndroidSchedulers.mainThread())
+                .skip(1)
+                .filter(new Predicate<Timed<View>>() {
+                    @Override
+                    public boolean test(@NonNull Timed<View> interval) throws Exception {
+                        return interval.time(TimeUnit.MILLISECONDS) < 750;
+                    }
+                })
+                .subscribe(new Consumer<Timed<View>>() {
+                    @Override
+                    public void accept(@NonNull Timed<View> timed) throws Exception {
+                        logger.d("Double click");
+                        snoozeIfEnabledInSettings();
+                    }
+                });
 
         snooze.setOnLongClickListener(new Button.OnLongClickListener() {
             @Override

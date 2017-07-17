@@ -58,7 +58,7 @@ public class PopupTest extends BaseTest {
             .around(transparentActivity);
 
     @Before
-    public void set24HourMode(){
+    public void set24HourMode() {
         AlarmApplication.is24hoursFormatOverride = Optional.of(true);
     }
 
@@ -116,7 +116,7 @@ public class PopupTest extends BaseTest {
 
     @Ignore
     @Test
-    public void testSnoozeInThePastIsNotAccepted(){
+    public void testSnoozeInThePastIsNotAccepted() {
 
     }
 
@@ -146,8 +146,8 @@ public class PopupTest extends BaseTest {
         Calendar nextTime = Calendar.getInstance();
         nextTime.setTimeInMillis(next.get().nextNonPrealarmTime());
 
-        assertThat((int)nextTime.get(Calendar.HOUR_OF_DAY)).isEqualTo(23);
-        assertThat((int)nextTime.get(Calendar.MINUTE)).isEqualTo(59);
+        assertThat((int) nextTime.get(Calendar.HOUR_OF_DAY)).isEqualTo(23);
+        assertThat((int) nextTime.get(Calendar.MINUTE)).isEqualTo(59);
         assertThat(next.get().alarm().isEnabled()).isTrue();
 
         //disable the snoozed alarm
@@ -176,6 +176,24 @@ public class PopupTest extends BaseTest {
 
         snoozeAlarmChechAndDelete();
     }
+
+    @Test
+    public void snoozeViaDoulbelick() {
+        int id = createAlarmAndFire();
+
+        Intent startIntent = new Intent();
+        startIntent.putExtra(Intents.EXTRA_ID, id);
+        alertActivity.launchActivity(startIntent);
+
+        sleep();
+        Cortado.onView().withText("Snooze").perform().doubleClick();
+        sleep();
+        sleep();
+        sleep();
+
+        deleteAlarm();
+    }
+
 
     @Test
     public void snoozeViaNotificationPicker() {
