@@ -339,11 +339,6 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
             protected void onPreAlarmDurationChanged() {
                 // nothing to do
             }
-
-            @Override
-            protected void onEnable() {
-                deferMessage(getCurrentMessage());
-            }
         }
 
         private class RescheduleTransition extends ComplexTransition {
