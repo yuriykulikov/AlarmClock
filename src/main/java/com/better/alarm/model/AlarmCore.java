@@ -664,7 +664,7 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
                     }).iterator().next();
                     copy.remove(alarmValues.indexOf(old));
 
-                    store.alarms().onNext(copy);
+                    store.alarmsSubject().onNext(copy);
                 }
             });
         }
@@ -814,8 +814,6 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
     private void updateListInStore() {
         final AlarmValue toStore = container;
 
-        log.d("Storing " + toStore);
-
         store.alarms().take(1).subscribe(new Consumer<List<AlarmValue>>() {
             @Override
             public void accept(@NonNull List<AlarmValue> alarmValues) throws Exception {
@@ -836,7 +834,7 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
                     copy.add(toStore);
                 }
 
-                store.alarms().onNext(copy);
+                store.alarmsSubject().onNext(copy);
             }
         });
     }
