@@ -227,7 +227,7 @@ public class AlarmsListFragment extends ListFragment {
 
         mAdapter = (AlarmListAdapter) getListAdapter();
 
-        getListView().setVerticalScrollBarEnabled(true);
+        getListView().setVerticalScrollBarEnabled(false);
         getListView().setOnCreateContextMenuListener(this);
 
         setHasOptionsMenu(true);
