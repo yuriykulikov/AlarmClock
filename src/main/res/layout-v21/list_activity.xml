@@ -31,6 +31,8 @@
         android:name="com.better.alarm.presenter.AlarmsListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
         tools:layout="@layout/list_fragment"
         android:layout_alignParentTop="true"
         android:layout_above="@+id/frameLayout" />
