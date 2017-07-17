@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.PowerManager;
 import android.os.Vibrator;
+import android.support.annotation.NonNull;
 import android.telephony.TelephonyManager;
 
 import com.better.alarm.interfaces.IAlarmsManager;
@@ -16,70 +17,81 @@ import com.f2prateek.rx.preferences2.RxSharedPreferences;
 
 import org.immutables.value.Value;
 
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+
 /**
  * Created by Yuriy on 09.08.2017.
  */
 @Value.Immutable
 @Value.Style(stagedBuilder = true)
 public abstract class Container {
-    @android.support.annotation.NonNull
+    @NonNull
     public abstract Context context();
 
-    @android.support.annotation.NonNull
+    @NonNull
     public abstract Logger logger();
 
-    @android.support.annotation.NonNull
+    @NonNull
     public abstract SharedPreferences sharedPreferences();
 
-    @android.support.annotation.NonNull
+    @NonNull
     public abstract RxSharedPreferences rxPrefs();
 
-    @android.support.annotation.NonNull
+    @NonNull
     public abstract Prefs prefs();
 
-    @android.support.annotation.NonNull
+    @NonNull
     public abstract Store store();
 
-    @android.support.annotation.NonNull
+    @NonNull
     public abstract Alarms rawAlarms();
 
-    @android.support.annotation.NonNull
+    /**
+     * Scheduler which can be used to schedule timed events.
+     * Typically {@link AndroidSchedulers#finalize()} in production
+     * and some kind of {@link io.reactivex.schedulers.TestScheduler} in tests.
+     */
+    @NonNull
+    public abstract Scheduler scheduler();
+
+    @NonNull
     @Value.Derived
     public IAlarmsManager alarms() {
         return rawAlarms();
     }
 
-    @android.support.annotation.NonNull
+    @NonNull
     @Value.Derived
     public WakeLockManager wakeLocks() {
         return new WakeLockManager(logger(), powerManager());
     }
 
-    @android.support.annotation.NonNull
+    @NonNull
     @Value.Derived
     public Vibrator vibrator() {
         return (Vibrator) context().getSystemService(Context.VIBRATOR_SERVICE);
     }
 
-    @android.support.annotation.NonNull
+    @NonNull
     @Value.Derived
     public PowerManager powerManager() {
         return (PowerManager) context().getSystemService(Context.POWER_SERVICE);
     }
 
-    @android.support.annotation.NonNull
+    @NonNull
     @Value.Derived
     public TelephonyManager telephonyManager() {
         return (TelephonyManager) context().getSystemService(Context.TELEPHONY_SERVICE);
     }
 
-    @android.support.annotation.NonNull
+    @NonNull
     @Value.Derived
     public NotificationManager notificationManager() {
         return (NotificationManager) context().getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
-    @android.support.annotation.NonNull
+    @NonNull
     @Value.Derived
     public AudioManager audioManager() {
         return (AudioManager) context().getSystemService(Context.AUDIO_SERVICE);

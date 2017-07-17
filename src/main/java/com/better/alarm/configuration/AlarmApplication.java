@@ -64,6 +64,7 @@ import io.reactivex.Maybe;
 import io.reactivex.MaybeEmitter;
 import io.reactivex.MaybeOnSubscribe;
 import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
@@ -230,6 +231,7 @@ public class AlarmApplication extends Application {
                 .prefs(prefs)
                 .store(store)
                 .rawAlarms(alarms)
+                .scheduler(AndroidSchedulers.mainThread())
                 .build();
 
         new ScheduledReceiver(store, getApplicationContext(), prefs, alarmManager).start();

@@ -23,15 +23,15 @@ class ActionBarTest {
 
     @JvmField
     @Rule
-    public var chain: TestRule = RuleChain.outerRule(ForceLocaleRule(Locale.US)).around(listActivity)
+    var chain: TestRule = RuleChain.outerRule(ForceLocaleRule(Locale.US)).around(listActivity)
 
-    private var solo: Solo? = null;
+    private lateinit var solo: Solo
 
     companion object {
         @JvmStatic
         @BeforeClass
         @AfterClass
-        public fun dropDatabase() {
+        fun dropDatabase() {
             val context = InstrumentationRegistry.getTargetContext()
             val dbHelper = AlarmDatabaseHelper(context, Logger.create())
             val db = dbHelper.writableDatabase
@@ -42,13 +42,13 @@ class ActionBarTest {
         }
     }
 
-    @Before public fun setup() {
+    @Before
+    fun setup() {
         solo = Solo(InstrumentationRegistry.getInstrumentation(), listActivity.activity)
     }
 
     @Test
     fun testBugreportButton() {
-        val solo = solo!!
         solo.sendKey(Solo.MENU)
         solo.clickOnText("bugreport")
         Assert.assertTrue(solo.searchText("Describe"))
@@ -57,7 +57,6 @@ class ActionBarTest {
 
     @Test
     fun rateTheApp() {
-        val solo = solo!!
         solo.sendKey(Solo.MENU)
         solo.clickOnText("Rate the app")
         Assert.assertTrue(solo.searchText("Would you like to proceed?"))
@@ -66,7 +65,6 @@ class ActionBarTest {
 
     @Test
     fun dashClock() {
-        val solo = solo!!
         solo.sendKey(Solo.MENU)
         solo.clickOnText("Extensions")
         solo.clickOnText("DashClock")
@@ -76,7 +74,6 @@ class ActionBarTest {
 
     @Test
     fun mp3Cutter() {
-        val solo = solo!!
         solo.sendKey(Solo.MENU)
         solo.clickOnText("Extensions")
         solo.clickOnText("MP3")

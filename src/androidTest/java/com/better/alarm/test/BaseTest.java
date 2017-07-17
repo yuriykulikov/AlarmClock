@@ -15,6 +15,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 
 import cortado.Cortado;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Predicate;
 
@@ -43,7 +45,9 @@ class BaseTest {
     }
 
     protected static void sleep() {
+        Single.just("wait").observeOn(AndroidSchedulers.mainThread()).blockingGet();
         sleep(1000);
+        Single.just("wait").observeOn(AndroidSchedulers.mainThread()).blockingGet();
     }
 
     @BeforeClass
