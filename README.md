@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/yuriykulikov/AlarmClock.svg?branch=develop)](https://travis-ci.org/yuriykulikov/AlarmClock)
-[![Coverage Status](https://codecov.io/github/yuriykulikov/AlarmClock/coverage.png?branch=develop)](https://codecov.io/github/yuriykulikov/AlarmClock?branch=develop)
+[![codecov](https://codecov.io/gh/yuriykulikov/AlarmClock/branch/develop/graph/badge.svg)](https://codecov.io/gh/yuriykulikov/AlarmClock)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/f5af63df137746bcb45e43b4f2a78217)](https://www.codacy.com/app/yuriy.kulikov.87/AlarmClock?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=yuriykulikov/AlarmClock&amp;utm_campaign=Badge_Grade)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
