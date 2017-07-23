@@ -19,7 +19,6 @@
         <com.better.alarm.view.VolumePreference
             android:dialogTitle="@string/alarm_volume_title"
             android:persistent="false"
-            android:streamType="alarm"
             android:summary="@string/alarm_volume_summary"
             android:title="@string/alarm_volume_title" />
 

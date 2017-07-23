@@ -53,31 +53,17 @@ public class Intents {
      */
     public static final String EXTRA_ID = "intent.extra.alarm";
 
-    public static final String EXTRA_NEXT_NORMAL_TIME_IN_MILLIS = "EXTRA_NEXT_NORMAL_TIME_IN_MILLIS";
-
-    public static final String EXTRA_IS_PREALARM = "EXTRA_IS_PREALARM";
-
     public static final String ACTION_STOP_PREALARM_SAMPLE = BuildConfig.APPLICATION_ID +".ACTION_STOP_PREALARM_SAMPLE";
 
     public static final String ACTION_START_PREALARM_SAMPLE = BuildConfig.APPLICATION_ID +".ACTION_START_PREALARM_SAMPLE";
-
-    public static final String ACTION_STOP_ALARM_SAMPLE = BuildConfig.APPLICATION_ID +".ACTION_STOP_ALARM_SAMPLE";
-
-    public static final String ACTION_START_ALARM_SAMPLE = BuildConfig.APPLICATION_ID +".ACTION_START_ALARM_SAMPLE";
 
     public static final String ACTION_MUTE = BuildConfig.APPLICATION_ID +".ACTION_MUTE";
 
     public static final String ACTION_DEMUTE = BuildConfig.APPLICATION_ID +".ACTION_DEMUTE";
 
-    public static final int MAX_ALARM_VOLUME = 10;
-
     public static final int MAX_PREALARM_VOLUME = 10;
 
     public static final int DEFAULT_PREALARM_VOLUME = 5;
 
-    public static final int DEFAULT_ALARM_VOLUME = 10;
-
     public static final String KEY_PREALARM_VOLUME = "key_prealarm_volume";
-
-    public static final String KEY_ALARM_VOLUME = "key_alarm_volume";
 }

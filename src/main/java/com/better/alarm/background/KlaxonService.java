@@ -41,6 +41,7 @@ import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.presenter.SettingsActivity;
+import com.f2prateek.rx.preferences2.Preference;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
@@ -125,21 +126,19 @@ public class KlaxonService extends Service {
         private static final int MAX_VOLUME = 10;
 
         private Type type = Type.NORMAL;
-        private int preAlarmVolume = 0;
-        private int alarmVolume = 4;
 
         private CountDownTimer timer;
 
+        private final Preference<Integer> prealarmVolume;
+
         Volume() {
+            prealarmVolume = rxPreferences.getInteger(Intents.KEY_PREALARM_VOLUME, Intents.DEFAULT_PREALARM_VOLUME);
             disposables.add(
-                    rxPreferences.getInteger(Intents.KEY_PREALARM_VOLUME, Intents.DEFAULT_PREALARM_VOLUME)
+                    prealarmVolume
                             .asObservable()
                             .subscribe(new VolumePrefConsumer(Type.PREALARM)));
-            disposables.add(
-                    rxPreferences.getInteger(Intents.KEY_ALARM_VOLUME, Intents.DEFAULT_ALARM_VOLUME)
-                            .asObservable()
-                            .subscribe(new VolumePrefConsumer(Type.NORMAL)));
         }
+
         private final class FadeInTimer extends CountDownTimer {
             private final long fadeInTime;
             private final long fadeInStep;
@@ -164,6 +163,7 @@ public class KlaxonService extends Service {
                     mMediaPlayer.get().setVolume(adjustedVolume, adjustedVolume);
                 }
             }
+
             @Override
             public void onFinish() {
                 log.d("Fade in completed");
@@ -220,10 +220,22 @@ public class KlaxonService extends Service {
         }
 
         private float getVolumeFor(Type type) {
-            int volume = Math.min(type.equals(Type.PREALARM) ? preAlarmVolume : alarmVolume, MAX_VOLUME);
-            float fVolume = (float) (Math.pow(volume + 1, 2) / Math.pow(MAX_VOLUME + 1, 2));
-            if (type.equals(Type.PREALARM)) return fVolume / 4;
-            else return fVolume;
+            if (type.equals(Type.NORMAL)) {
+                log.d("fVolume is " + 1f);
+                return 1f;
+            } else {
+                int volume = Math.min(prealarmVolume.get(), MAX_VOLUME);
+                log.d("Volume is " + volume);
+                float fVolume =
+                        //volumes square
+                        (float) (Math.pow(volume + 1, 2)
+                                //by max volume square
+                                / Math.pow(MAX_VOLUME + 1, 2))
+                                //by 2 sqaure
+                                / 4;
+                log.d("fVolume is " + fVolume);
+                return fVolume;
+            }
         }
 
         private class VolumePrefConsumer implements Consumer<Integer> {
@@ -300,10 +312,8 @@ public class KlaxonService extends Service {
         } else if (action.equals(Intents.ALARM_PREALARM_ACTION)) {
             alarm = AlarmApplication.alarms().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
             onPreAlarm(alarm);
-        } else if (action.equals(Intents.ACTION_START_ALARM_SAMPLE)) {
-            onStartAlarmSample(Type.NORMAL);
         } else if (action.equals(Intents.ACTION_START_PREALARM_SAMPLE)) {
-            onStartAlarmSample(Type.PREALARM);
+            onStartAlarmSample();
         } else if (action.equals(Intents.ACTION_MUTE)) {
             volume.mute();
         } else if (action.equals(Intents.ACTION_DEMUTE)) {
@@ -315,7 +325,6 @@ public class KlaxonService extends Service {
         return (action.equals(Intents.ALARM_ALERT_ACTION)
                 || action.equals(Intents.ALARM_PREALARM_ACTION)
                 || action.equals(Intents.ACTION_START_PREALARM_SAMPLE)
-                || action.equals(Intents.ACTION_START_ALARM_SAMPLE)
                 || action.equals(Intents.ACTION_MUTE)
                 || action.equals(Intents.ACTION_DEMUTE)) ? START_STICKY : START_NOT_STICKY;
     }
@@ -338,9 +347,9 @@ public class KlaxonService extends Service {
         }
     }
 
-    private void onStartAlarmSample(Type type) {
+    private void onStartAlarmSample() {
         volume.cancelFadeIn();
-        volume.setMode(type);
+        volume.setMode(Type.PREALARM);
         // if already playing do nothing. In this case signal continues.
         if (!mMediaPlayer.isPresent() || mMediaPlayer.isPresent() && !mMediaPlayer.get().isPlaying()) {
             initializePlayer(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
