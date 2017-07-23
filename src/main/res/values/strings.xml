@@ -133,4 +133,8 @@
     <string name="alarm_alert_reschedule_text">Reschedule</string>
     <string name="alarm_alert_hold_the_button_text">Hold the button!</string>
     <string name="menu_extensions">Extensions</string>
+
+    <string name="preference_category_sound">Volumes and sound</string>
+    <string name="preference_category_ui">User interface</string>
+    <string name="preference_category_durations">Durations</string>
 </resources>
