@@ -36,15 +36,23 @@ public class SettingsTest extends BaseTest {
     @Test
     public void controlVolume() {
         sleep();
-        Cortado.onView().withText("Alarm volume").perform().click();
-        sleep();
         Cortado.onView()
-                .withId(R.id.seekbar_dialog_seekbar_alarm_volume)
+                .withId(R.id.seekbar_dialog_seekbar_master_volume)
                 .perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_LEFT, Press.FINGER));
 
         sleep();
         Cortado.onView()
-                .withId(R.id.seekbar_dialog_seekbar_alarm_volume)
+                .withId(R.id.seekbar_dialog_seekbar_master_volume)
+                .perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_RIGHT, Press.FINGER));
+
+        sleep();
+        Cortado.onView()
+                .withId(R.id.seekbar_dialog_seekbar_prealarm_volume)
+                .perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_LEFT, Press.FINGER));
+
+        sleep();
+        Cortado.onView()
+                .withId(R.id.seekbar_dialog_seekbar_prealarm_volume)
                 .perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_RIGHT, Press.FINGER));
     }
 }
