@@ -140,6 +140,7 @@ public class KlaxonService extends Service {
                             .asObservable()
                             .subscribe(new VolumePrefConsumer(Type.NORMAL)));
         }
+
         private final class FadeInTimer extends CountDownTimer {
             private final long fadeInTime;
             private final long fadeInStep;
@@ -164,6 +165,7 @@ public class KlaxonService extends Service {
                     mMediaPlayer.get().setVolume(adjustedVolume, adjustedVolume);
                 }
             }
+
             @Override
             public void onFinish() {
                 log.d("Fade in completed");
@@ -287,9 +289,12 @@ public class KlaxonService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent != null) {
-            AlarmApplication.wakeLocks().releasePartialWakeLock(intent);
+        if (intent == null) {
+            return START_NOT_STICKY;
         }
+
+        AlarmApplication.wakeLocks().releasePartialWakeLock(intent);
+
         String action = intent.getAction();
 
         log.d(intent.getAction());
