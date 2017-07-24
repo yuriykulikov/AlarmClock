@@ -169,7 +169,6 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
         public static final int CHANGE = 5;
         public static final int FIRED = 6;
         public static final int PREALARM_DURATION_CHANGED = 7;
-        public static final int PREALARM_TIMED_OUT = 8;
         public static final int REFRESH = 9;
         public static final int DELETE = 10;
         public static final int TIME_SET = 11;
@@ -478,12 +477,12 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
 
                 @Override
                 protected void onSnooze() {
-                    transitionTo(preAlarmSnoozed);
-                }
-
-                @Override
-                protected void onPreAlarmTimedOut() {
-                    transitionTo(fired);
+                    if ( getCurrentMessage().obj().isPresent()) {
+                        //snooze to time with prealarm -> go to snoozed
+                        transitionTo(snoozed);
+                    } else {
+                        transitionTo(preAlarmSnoozed);
+                    }
                 }
 
                 @Override
@@ -530,11 +529,6 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
                 }
 
                 @Override
-                protected void onSnooze() {
-                    enter();
-                }
-
-                @Override
                 public void exit() {
                     removeAlarm();
                     broadcastAlarmState(Intents.ACTION_CANCEL_SNOOZE);
@@ -544,34 +538,13 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
             private class PreAlarmSnoozedState extends AlarmState {
                 @Override
                 public void enter() {
-                    Calendar nextTime;
-                    Calendar now = calendars.now();
-                    Message reason = getCurrentMessage();
-                    if (reason.obj().isPresent()) {
-                        Calendar customTime = calendars.now();
-                        customTime.set(Calendar.HOUR_OF_DAY, reason.arg1().get());
-                        customTime.set(Calendar.MINUTE, reason.arg2().get());
-                        if (customTime.after(now)) {
-                            nextTime = customTime;
-                        } else {
-                            nextTime = calculateNextTime();
-                        }
-                    } else {
-                        nextTime = calculateNextTime();
-                    }
-
-                    setAlarm(nextTime, CalendarType.NORMAL);
+                    setAlarm(calculateNextTime(), CalendarType.NORMAL);
                     broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION);
                 }
 
                 @Override
                 protected void onFired() {
                     transitionTo(fired);
-                }
-
-                @Override
-                protected void onSnooze() {
-                    enter();
                 }
 
                 @Override
@@ -695,9 +668,6 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
                     case PREALARM_DURATION_CHANGED:
                         onPreAlarmDurationChanged();
                         break;
-                    case PREALARM_TIMED_OUT:
-                        onPreAlarmTimedOut();
-                        break;
                     case REFRESH:
                         onRefresh();
                         break;
@@ -742,10 +712,6 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
             }
 
             protected void onPreAlarmDurationChanged() {
-                markNotHandled();
-            }
-
-            protected void onPreAlarmTimedOut() {
                 markNotHandled();
             }
 
@@ -912,18 +878,6 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
     @Override
     public String getLabelOrDefault() {
         return container.getLabel();
-    }
-
-    @Override
-    public int hashCode() {
-        return container.getId();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof AlarmCore)) return false;
-        final AlarmCore other = (AlarmCore) o;
-        return container.getId() == other.container.getId();
     }
 
     @Override

@@ -6,6 +6,7 @@ import android.os.PowerManager;
 
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
+import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.logger.SysoutLogWriter;
 import com.better.alarm.model.AlarmContainer;
@@ -13,7 +14,10 @@ import com.better.alarm.model.AlarmCore;
 import com.better.alarm.model.AlarmSetter;
 import com.better.alarm.model.AlarmValue;
 import com.better.alarm.model.Alarms;
+import com.better.alarm.model.AlarmsScheduler;
+import com.better.alarm.model.CalendarType;
 import com.better.alarm.model.ContainerFactory;
+import com.better.alarm.model.DaysOfWeek;
 import com.better.alarm.model.ImmutableAlarmContainer;
 import com.better.alarm.persistance.DatabaseQuery;
 import com.better.alarm.statemachine.HandlerFactory;
@@ -32,6 +36,7 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
+import org.mockito.ArgumentCaptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,23 +49,29 @@ import io.reactivex.schedulers.TestScheduler;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class AlarmsTest {
     private Injector guice;
     private AlarmCore.IStateNotifier stateNotifierMock;
+    private AlarmSetter alarmSetterMock;
     private TestScheduler testScheduler;
     private ImmutableStore store;
     private ImmutablePrefs prefs;
     private Logger logger;
-
     @Rule
     public TestRule watcher = new TestWatcher() {
         protected void starting(Description description) {
             System.out.println("---- " + description.getMethodName() + " ----");
         }
     };
+
 
     @Before
     public void setUp() {
@@ -81,6 +92,7 @@ public class AlarmsTest {
                 .build();
 
         stateNotifierMock = mock(AlarmCore.IStateNotifier.class);
+        alarmSetterMock = mock(AlarmSetter.class);
 
         guice = Guice.createInjector(Modules
                 .override(new AlarmApplication.AppModule(logger, prefs, store))
@@ -96,7 +108,7 @@ public class AlarmsTest {
             binder.bind(HandlerFactory.class).to(TestHandlerFactory.class);
             binder.bind(Context.class).toInstance(mock(Context.class));
             binder.bind(DatabaseQuery.class).toInstance(mockQuery());
-            binder.bind(AlarmSetter.class).to(TestAlarmSetter.class).asEagerSingleton();
+            binder.bind(AlarmSetter.class).toInstance(alarmSetterMock);
             binder.bind(PowerManager.class).toInstance(mock(PowerManager.class));
 
             //mocks for verification
@@ -237,5 +249,214 @@ public class AlarmsTest {
                                 && alarmValues.get(0).getLabel().equals("hello");
                     }
                 });
+    }
+
+    @Test
+    public void editAlarm() {
+        //when
+        IAlarmsManager instance = guice.getInstance(IAlarmsManager.class);
+        Alarm newAlarm = instance.createNewAlarm();
+        newAlarm.edit().withIsEnabled(true).withHour(7).commit();
+        testScheduler.triggerActions();
+        //verify
+        store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
+            @Override
+            public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
+                return alarmValues.size() == 1
+                        && alarmValues.get(0).isEnabled()
+                        && alarmValues.get(0).getHour() == 7;
+            }
+        });
+    }
+
+    @Test
+    public void firedAlarmShouldBeDisabledIfNoRepeatingIsSet() {
+        //when
+        Alarms instance = guice.getInstance(Alarms.class);
+        Alarm newAlarm = instance.createNewAlarm();
+        newAlarm.enable(true);
+        testScheduler.triggerActions();
+
+        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
+        testScheduler.triggerActions();
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
+
+        newAlarm.dismiss();
+        testScheduler.triggerActions();
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
+
+        //verify
+        store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
+            @Override
+            public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
+                return alarmValues.size() == 1
+                        && !alarmValues.get(0).isEnabled();
+            }
+        });
+    }
+
+    @Test
+    public void firedAlarmShouldBeRescheduledIfRepeatingIsSet() {
+        //when
+        Alarms instance = guice.getInstance(Alarms.class);
+        Alarm newAlarm = instance.createNewAlarm();
+        newAlarm.edit().withIsEnabled(true).withDaysOfWeek(new DaysOfWeek(1)).commit();
+        testScheduler.triggerActions();
+
+        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
+        testScheduler.triggerActions();
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
+
+        newAlarm.dismiss();
+        testScheduler.triggerActions();
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
+
+        //verify
+        store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
+            @Override
+            public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
+                return alarmValues.size() == 1
+                        && alarmValues.get(0).isEnabled();
+            }
+        });
+    }
+
+    @Test
+    public void changingAlarmWhileItIsFiredShouldReschedule() {
+        //when
+        Alarms instance = guice.getInstance(Alarms.class);
+        Alarm newAlarm = instance.createNewAlarm();
+        newAlarm.enable(true);
+        testScheduler.triggerActions();
+
+        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
+        testScheduler.triggerActions();
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
+
+        newAlarm.edit().withDaysOfWeek(new DaysOfWeek(1)).withIsPrealarm(true).commit();
+        testScheduler.triggerActions();
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
+
+        //verify
+        store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
+            @Override
+            public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
+                return alarmValues.size() == 1
+                        && alarmValues.get(0).isEnabled();
+            }
+        });
+
+        ArgumentCaptor<AlarmsScheduler.ScheduledAlarm> captor = ArgumentCaptor.forClass(AlarmsScheduler.ScheduledAlarm.class);
+        verify(alarmSetterMock, atLeastOnce()).setUpRTCAlarm(captor.capture());
+
+        assertEquals(newAlarm.getId(), captor.getValue().id);
+    }
+
+
+    @Test
+    public void firedAlarmShouldBeStillEnabledAfterSnoozed() {
+        //given
+        Alarms instance = guice.getInstance(Alarms.class);
+        Alarm newAlarm = instance.createNewAlarm();
+        //TODO circle the time, otherwise the tests may fail around 0 hours
+        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(new DaysOfWeek(1)).withIsPrealarm(true).commit();
+        testScheduler.triggerActions();
+        //TODO verify
+
+        //when pre-alarm fired
+        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.PREALARM);
+        testScheduler.triggerActions();
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_PREALARM_ACTION));
+
+        //when pre-alarm-snoozed
+        newAlarm.snooze();
+        testScheduler.triggerActions();
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_SNOOZE_ACTION));
+
+        //when alarm fired
+        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
+        testScheduler.triggerActions();
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
+
+        //when alarm is snoozed
+        newAlarm.snooze();
+        testScheduler.triggerActions();
+        verify(stateNotifierMock, times(2)).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
+
+        newAlarm.delete();
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ACTION_CANCEL_SNOOZE));
+    }
+
+
+    @Test
+    public void snoozeToTime() {
+        //given
+        Alarms instance = guice.getInstance(Alarms.class);
+        Alarm newAlarm = instance.createNewAlarm();
+        //TODO circle the time, otherwise the tests may fail around 0 hours
+        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(new DaysOfWeek(1)).commit();
+        testScheduler.triggerActions();
+        //TODO verify
+
+        //when alarm fired
+        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
+        testScheduler.triggerActions();
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
+
+        //when pre-alarm-snoozed
+        newAlarm.snooze(23, 59);
+        testScheduler.triggerActions();
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_SNOOZE_ACTION));
+    }
+
+    @Test
+    public void snoozePreAlarmToTime() {
+        //given
+        Alarms instance = guice.getInstance(Alarms.class);
+        Alarm newAlarm = instance.createNewAlarm();
+        //TODO circle the time, otherwise the tests may fail around 0 hours
+        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(new DaysOfWeek(1)).withIsPrealarm(true).commit();
+        testScheduler.triggerActions();
+        //TODO verify
+
+        //when alarm fired
+        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.PREALARM);
+        testScheduler.triggerActions();
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_PREALARM_ACTION));
+
+        //when pre-alarm-snoozed
+        newAlarm.snooze(23, 59);
+        testScheduler.triggerActions();
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_SNOOZE_ACTION));
+
+        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.SNOOZE);
+        testScheduler.triggerActions();
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
+    }
+
+
+    @Test
+    public void prealarmTimedOutAndThenDisabled() {
+        //given
+        Alarms instance = guice.getInstance(Alarms.class);
+        Alarm newAlarm = instance.createNewAlarm();
+        //TODO circle the time, otherwise the tests may fail around 0 hours
+        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(new DaysOfWeek(1)).withIsPrealarm(true).commit();
+        testScheduler.triggerActions();
+        //TODO verify
+
+        //when alarm fired
+        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.PREALARM);
+        testScheduler.triggerActions();
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_PREALARM_ACTION));
+
+        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
+        testScheduler.triggerActions();
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
+
+        //when pre-alarm-snoozed
+        newAlarm.enable(false);
+        testScheduler.triggerActions();
+        verify(stateNotifierMock, atLeastOnce()).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
     }
 }
