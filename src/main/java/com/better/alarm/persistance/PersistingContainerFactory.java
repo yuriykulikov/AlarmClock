@@ -13,6 +13,7 @@ import com.better.alarm.model.Calendars;
 import com.better.alarm.model.ContainerFactory;
 import com.better.alarm.model.DaysOfWeek;
 import com.better.alarm.model.ImmutableAlarmContainer;
+import com.better.alarm.model.ImmutableDaysOfWeek;
 import com.google.inject.Inject;
 
 import java.util.Calendar;
@@ -153,7 +154,7 @@ public class PersistingContainerFactory implements ContainerFactory, AlarmContai
                 .isEnabled(c.getInt(Columns.ALARM_ENABLED_INDEX) == 1)
                 .hour(c.getInt(Columns.ALARM_HOUR_INDEX))
                 .minutes(c.getInt(Columns.ALARM_MINUTES_INDEX))
-                .daysOfWeek(new DaysOfWeek(c.getInt(Columns.ALARM_DAYS_OF_WEEK_INDEX)))
+                .daysOfWeek(ImmutableDaysOfWeek.of(c.getInt(Columns.ALARM_DAYS_OF_WEEK_INDEX)))
                 .isVibrate(c.getInt(Columns.ALARM_VIBRATE_INDEX) == 1)
                 .isPrealarm(c.getInt(Columns.ALARM_PREALARM_INDEX) == 1)
                 .state(c.getString(Columns.ALARM_STATE_INDEX));
@@ -186,7 +187,7 @@ public class PersistingContainerFactory implements ContainerFactory, AlarmContai
                 .hour(now.get(Calendar.HOUR_OF_DAY))
                 .minutes(now.get(Calendar.MINUTE))
                 .isVibrate(true)
-                .daysOfWeek(new DaysOfWeek(0))
+                .daysOfWeek(ImmutableDaysOfWeek.of(0))
                 .alertString("")
                 .isPrealarm(false)
                 .label("")
