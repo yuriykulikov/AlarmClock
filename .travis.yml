@@ -14,6 +14,9 @@ android:
   - android-25
   - extra-android-m2repository
   - sys-img-${ANDROID_ABI}-${ANDROID_TARGET}
+before_install:
+  - sudo apt-get install jq
+  - wget -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r .assets[0].browser_download_url)
 script:
   - ./gradlew build jacocoTestReport assembleDevelopDebugAndroidTest
   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI --skin WXGA720
@@ -28,3 +31,4 @@ script:
   - travis_wait 30 ./gradlew connectedDevelopDebugAndroidTest createDevelopDebugAndroidTestCoverageReport
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+  - java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter -l Java -r build/reports/jacoco/test/jacocoTestReport.xml
