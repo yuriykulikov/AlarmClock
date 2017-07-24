@@ -76,7 +76,7 @@ public class Logger {
     }
 
     public static Logger create(){
-        return getDefaultLogger();
+        return new Logger();
     }
 
     public enum LogLevel {

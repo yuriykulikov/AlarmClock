@@ -179,25 +179,28 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
         public final EnabledState enabledState;
         public final RescheduleTransition rescheduleTransition;
         public final EnableTransition enableTransition;
-        public final PreAlarmSetState preAlarmSet;
-        public final SetState set;
-        public final SnoozedState snoozed;
-        public final PreAlarmFiredState preAlarmFired;
-        public final PreAlarmSnoozedState preAlarmSnoozed;
-        public final FiredState fired;
+        public final EnabledState.SetState.PreAlarmSetState preAlarmSet;
+        public final EnabledState.SetState.NormalSetState normalSet;
+        public final EnabledState.SnoozedState snoozed;
+        public final EnabledState.PreAlarmFiredState preAlarmFired;
+        public final EnabledState.PreAlarmSnoozedState preAlarmSnoozed;
+        public final EnabledState.FiredState fired;
 
         public AlarmStateMachine(String initialState, String name, HandlerFactory handlerFactory) {
             super(name, handlerFactory, log);
             disabledState = new DisabledState();
-            enabledState = new EnabledState();
             rescheduleTransition = new RescheduleTransition();
             enableTransition = new EnableTransition();
-            preAlarmSet = new PreAlarmSetState();
-            set = new SetState();
-            snoozed = new SnoozedState();
-            preAlarmFired = new PreAlarmFiredState();
-            preAlarmSnoozed = new PreAlarmSnoozedState();
-            fired = new FiredState();
+
+            enabledState = new EnabledState();
+            EnabledState.SetState set = enabledState.new SetState();
+            normalSet = set.new NormalSetState();
+            preAlarmSet = set.new PreAlarmSetState();
+
+            snoozed = enabledState.new SnoozedState();
+            preAlarmFired = enabledState.new PreAlarmFiredState();
+            preAlarmSnoozed = enabledState.new PreAlarmSnoozedState();
+            fired = enabledState.new FiredState();
             deletedState = new DeletedState();
 
             addState(disabledState);
@@ -205,8 +208,10 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
             addState(deletedState);
             addState(rescheduleTransition);
             addState(enableTransition);
-            addState(preAlarmSet, enabledState);
+
             addState(set, enabledState);
+            addState(preAlarmSet, set);
+            addState(normalSet, set);
             addState(snoozed, enabledState);
             addState(preAlarmFired, enabledState);
             addState(fired, enabledState);
@@ -231,21 +236,7 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
                 removeAlarm();
                 container.delete();
                 removeFromStore();
-            }
-
-            @Override
-            protected void onRefresh() {
-                // nothing to do
-            }
-
-            @Override
-            protected void onTimeSet() {
-                // nothing to do
-            }
-
-            @Override
-            protected void onPreAlarmDurationChanged() {
-                // nothing to do
+                //TODO unregister from updates
             }
         }
 
@@ -274,20 +265,43 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
             protected void onDelete() {
                 transitionTo(deletedState);
             }
+        }
 
+
+        private class RescheduleTransition extends ComplexTransition {
             @Override
-            protected void onRefresh() {
-                // nothing to do
+            public void performComplexTransition() {
+                if (container.getDaysOfWeek().isRepeatSet()) {
+                    if (container.isPrealarm() && preAlarmDuration.blockingFirst() != -1) {
+                        transitionTo(preAlarmSet);
+                    } else {
+                        transitionTo(normalSet);
+                    }
+                } else {
+                    log.d("Repeating is not set, disabling the alarm");
+                    container = container.withIsEnabled(false);
+                    transitionTo(disabledState);
+                }
             }
+        }
 
+        /**
+         * Transition checks if preAlarm for the next alarm is in the future.
+         * This is required to prevent the situation when user sets alarm in
+         * time which is less than preAlarm duration. In this case main alarm
+         * should be set.
+         */
+        private class EnableTransition extends ComplexTransition {
             @Override
-            protected void onTimeSet() {
-                // nothing to do
-            }
-
-            @Override
-            protected void onPreAlarmDurationChanged() {
-                // nothing to do
+            public void performComplexTransition() {
+                Calendar preAlarm = calculateNextTime();
+                Integer preAlarmMinutes = preAlarmDuration.blockingFirst();
+                preAlarm.add(Calendar.MINUTE, -1 * preAlarmMinutes);
+                if (container.isPrealarm() && preAlarm.after(calendars.now()) && preAlarmMinutes != -1) {
+                    transitionTo(preAlarmSet);
+                } else {
+                    transitionTo(normalSet);
+                }
             }
         }
 
@@ -327,7 +341,7 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
 
             @Override
             protected void onTimeSet() {
-                transitionTo(enableTransition);
+                // nothing to do
             }
 
             @Override
@@ -335,298 +349,236 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
                 transitionTo(deletedState);
             }
 
-            @Override
-            protected void onPreAlarmDurationChanged() {
-                // nothing to do
-            }
-        }
+            private class SetState extends AlarmState {
 
-        private class RescheduleTransition extends ComplexTransition {
-            @Override
-            public void performComplexTransition() {
-                if (container.getDaysOfWeek().isRepeatSet()) {
-                    if (container.isPrealarm() && preAlarmDuration.blockingFirst() != -1) {
-                        transitionTo(preAlarmSet);
-                    } else {
-                        transitionTo(set);
+                private class NormalSetState extends AlarmState {
+                    @Override
+                    public void enter() {
+                        int what = getCurrentMessage().what();
+                        if (what == DISMISS || what == SNOOZE || what == CHANGE) {
+                            broadcastAlarmSetWithNormalTime(calculateNextTime().getTimeInMillis());
+                        }
                     }
-                } else {
-                    log.d("Repeating is not set, disabling the alarm");
-                    container = container.withIsEnabled(false);
-                    transitionTo(disabledState);
+
+                    @Override
+                    public void resume() {
+                        Calendar nextTime = calculateNextTime();
+                        setAlarm(nextTime, CalendarType.NORMAL);
+                    }
+
+                    @Override
+                    protected void onFired() {
+                        transitionTo(fired);
+                    }
+
+                    @Override
+                    protected void onPreAlarmDurationChanged() {
+                        transitionTo(enableTransition);
+                    }
+                }
+
+                private class PreAlarmSetState extends AlarmState {
+
+                    @Override
+                    public void enter() {
+                        int what = getCurrentMessage().what();
+                        if (what == DISMISS || what == SNOOZE || what == CHANGE) {
+                            broadcastAlarmSetWithNormalTime(calculateNextTime().getTimeInMillis());
+                        }
+
+                        updateListInStore();
+                    }
+
+                    @Override
+                    public void resume() {
+                        Calendar c = calculateNextTime();
+                        c.add(Calendar.MINUTE, -1 * preAlarmDuration.blockingFirst());
+                        // since prealarm is before main alarm, it can be already in the
+                        // past, so it has to be adjusted.
+                        advanceCalendar(c);
+                        if (c.after(calendars.now())) {
+                            setAlarm(c, CalendarType.PREALARM);
+                        } else {
+                            // TODO this should never happen
+                            log.e("PreAlarm is still in the past!");
+                            transitionTo(container.isEnabled() ? enableTransition : disabledState);
+                        }
+                    }
+
+                    @Override
+                    protected void onFired() {
+                        transitionTo(preAlarmFired);
+                    }
+
+                    @Override
+                    protected void onPreAlarmDurationChanged() {
+                        transitionTo(enableTransition);
+                    }
+                }
+
+                @Override
+                public void exit() {
+                    if (!alarmWillBeRescheduled(getCurrentMessage())) {
+                        removeAlarm();
+                    }
+                }
+
+                @Override
+                protected void onTimeSet() {
+                    transitionTo(enableTransition);
                 }
             }
-        }
 
-        /**
-         * Transition checks if preAlarm for the next alarm is in the future.
-         * This is required to prevent the situation when user sets alarm in
-         * time which is less than preAlarm duration. In this case main alarm
-         * should be set.
-         */
-        private class EnableTransition extends ComplexTransition {
-            @Override
-            public void performComplexTransition() {
-                Calendar preAlarm = calculateNextTime();
-                Integer preAlarmMinutes = preAlarmDuration.blockingFirst();
-                preAlarm.add(Calendar.MINUTE, -1 * preAlarmMinutes);
-                if (container.isPrealarm() && preAlarm.after(calendars.now()) && preAlarmMinutes != -1) {
-                    transitionTo(preAlarmSet);
-                } else {
-                    transitionTo(set);
+            /**
+             * handles both snoozed and main for now
+             */
+            private class FiredState extends AlarmState {
+                @Override
+                public void enter() {
+                    broadcastAlarmState(Intents.ALARM_ALERT_ACTION);
+                    int autoSilenceMinutes = autoSilence.blockingFirst();
+                    if (autoSilenceMinutes > 0) {
+                        // -1 means OFF
+                        Calendar nextTime = calendars.now();
+                        nextTime.add(Calendar.MINUTE, autoSilenceMinutes);
+                        setAlarm(nextTime, CalendarType.AUTOSILENCE);
+                    }
                 }
-            }
-        }
 
-        private class SetState extends AlarmState {
-            @Override
-            public void enter() {
-                int what = getCurrentMessage().what();
-                if (what == DISMISS || what == SNOOZE || what == CHANGE) {
-                    broadcastAlarmSetWithNormalTime(calculateNextTime().getTimeInMillis());
+                @Override
+                protected void onFired() {
+                    // TODO actually we have to create a new state for this
+                    // or maybe not :-)
+                    broadcastAlarmState(Intents.ACTION_SOUND_EXPIRED);
                 }
-            }
 
-            @Override
-            public void resume() {
-                Calendar nextTime = calculateNextTime();
-                setAlarm(nextTime, CalendarType.NORMAL);
-            }
+                @Override
+                protected void onSnooze() {
+                    transitionTo(snoozed);
+                }
 
-            @Override
-            protected void onFired() {
-                transitionTo(fired);
-            }
-
-            @Override
-            protected void onPreAlarmDurationChanged() {
-                transitionTo(enableTransition);
-            }
-
-            @Override
-            public void exit() {
-                if (!alarmWillBeRescheduled(getCurrentMessage())) {
+                @Override
+                public void exit() {
+                    broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
                     removeAlarm();
                 }
             }
-        }
 
-        /**
-         * handles both snoozed and main for now
-         */
-        private class FiredState extends AlarmState {
-            @Override
-            public void enter() {
-                broadcastAlarmState(Intents.ALARM_ALERT_ACTION);
-                int autoSilenceMinutes = autoSilence.blockingFirst();
-                if (autoSilenceMinutes > 0) {
-                    // -1 means OFF
-                    Calendar nextTime = calendars.now();
-                    nextTime.add(Calendar.MINUTE, autoSilenceMinutes);
-                    setAlarm(nextTime, CalendarType.AUTOSILENCE);
+            private class PreAlarmFiredState extends AlarmState {
+                @Override
+                public void enter() {
+                    broadcastAlarmState(Intents.ALARM_PREALARM_ACTION);
+                    setAlarm(calculateNextTime(), CalendarType.NORMAL);
+                }
+
+                @Override
+                protected void onFired() {
+                    transitionTo(fired);
+                }
+
+                @Override
+                protected void onSnooze() {
+                    transitionTo(preAlarmSnoozed);
+                }
+
+                @Override
+                protected void onPreAlarmTimedOut() {
+                    transitionTo(fired);
+                }
+
+                @Override
+                public void exit() {
+                    removeAlarm();
+                    broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
                 }
             }
 
-            @Override
-            protected void onFired() {
-                // TODO actually we have to create a new state for this
-                // or maybe not :-)
-                broadcastAlarmState(Intents.ACTION_SOUND_EXPIRED);
-            }
-
-            @Override
-            protected void onSnooze() {
-                transitionTo(snoozed);
-            }
-
-            @Override
-            protected void onTimeSet() {
-                // nothing to do
-            }
-
-            @Override
-            public void exit() {
-                broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
-                removeAlarm();
-            }
-        }
-
-        private class SnoozedState extends AlarmState {
-            @Override
-            public void enter() {
-                Calendar nextTime;
-                Calendar now = calendars.now();
-                Message reason = getCurrentMessage();
-                if (reason.obj().isPresent()) {
-                    Calendar customTime = calendars.now();
-                    //TODO pass an object, dont misuse these poor args
-                    customTime.set(Calendar.HOUR_OF_DAY, reason.arg1().get());
-                    customTime.set(Calendar.MINUTE, reason.arg2().get());
-                    if (customTime.after(now)) {
-                        nextTime = customTime;
+            private class SnoozedState extends AlarmState {
+                @Override
+                public void enter() {
+                    Calendar nextTime;
+                    Calendar now = calendars.now();
+                    Message reason = getCurrentMessage();
+                    if (reason.obj().isPresent()) {
+                        Calendar customTime = calendars.now();
+                        //TODO pass an object, dont misuse these poor args
+                        customTime.set(Calendar.HOUR_OF_DAY, reason.arg1().get());
+                        customTime.set(Calendar.MINUTE, reason.arg2().get());
+                        if (customTime.after(now)) {
+                            nextTime = customTime;
+                        } else {
+                            nextTime = getNextRegualarSnoozeCalendar();
+                        }
                     } else {
                         nextTime = getNextRegualarSnoozeCalendar();
                     }
-                } else {
-                    nextTime = getNextRegualarSnoozeCalendar();
+
+                    setAlarm(nextTime, CalendarType.NORMAL);
+                    broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION);
                 }
 
-                setAlarm(nextTime, CalendarType.NORMAL);
-                broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION);
-            }
-
-            private Calendar getNextRegualarSnoozeCalendar() {
-                Calendar nextTime = calendars.now();
-                int snoozeMinutes = snoozeDuration.blockingFirst();
-                nextTime.add(Calendar.MINUTE, snoozeMinutes);
-                return nextTime;
-            }
-
-            @Override
-            protected void onFired() {
-                transitionTo(fired);
-            }
-
-            @Override
-            protected void onTimeSet() {
-                // Do nothing
-            }
-
-            @Override
-            protected void onSnooze() {
-                enter();
-            }
-
-            @Override
-            public void exit() {
-                removeAlarm();
-                broadcastAlarmState(Intents.ACTION_CANCEL_SNOOZE);
-            }
-        }
-
-        // enabled states
-        private class PreAlarmSetState extends AlarmState {
-
-            @Override
-            public void enter() {
-                int what = getCurrentMessage().what();
-                if (what == DISMISS || what == SNOOZE || what == CHANGE) {
-                    broadcastAlarmSetWithNormalTime(calculateNextTime().getTimeInMillis());
+                private Calendar getNextRegualarSnoozeCalendar() {
+                    Calendar nextTime = calendars.now();
+                    int snoozeMinutes = snoozeDuration.blockingFirst();
+                    nextTime.add(Calendar.MINUTE, snoozeMinutes);
+                    return nextTime;
                 }
 
-                updateListInStore();
-            }
-
-            @Override
-            public void resume() {
-                Calendar c = calculateNextTime();
-                c.add(Calendar.MINUTE, -1 * preAlarmDuration.blockingFirst());
-                // since prealarm is before main alarm, it can be already in the
-                // past, so it has to be adjusted.
-                advanceCalendar(c);
-                if (c.after(calendars.now())) {
-                    setAlarm(c, CalendarType.PREALARM);
-                } else {
-                    // TODO this should never happen
-                    log.e("PreAlarm is still in the past!");
-                    transitionTo(container.isEnabled() ? enableTransition : disabledState);
+                @Override
+                protected void onFired() {
+                    transitionTo(fired);
                 }
-            }
 
-            @Override
-            protected void onFired() {
-                transitionTo(preAlarmFired);
-            }
+                @Override
+                protected void onSnooze() {
+                    enter();
+                }
 
-            @Override
-            protected void onPreAlarmDurationChanged() {
-                transitionTo(enableTransition);
-            }
-
-            @Override
-            public void exit() {
-                if (!alarmWillBeRescheduled(getCurrentMessage())) {
+                @Override
+                public void exit() {
                     removeAlarm();
+                    broadcastAlarmState(Intents.ACTION_CANCEL_SNOOZE);
                 }
             }
-        }
 
-        private class PreAlarmFiredState extends AlarmState {
-            @Override
-            public void enter() {
-                broadcastAlarmState(Intents.ALARM_PREALARM_ACTION);
-                setAlarm(calculateNextTime(), CalendarType.NORMAL);
-            }
-
-            @Override
-            protected void onFired() {
-                transitionTo(fired);
-            }
-
-            @Override
-            protected void onSnooze() {
-                transitionTo(preAlarmSnoozed);
-            }
-
-            @Override
-            protected void onPreAlarmTimedOut() {
-                transitionTo(fired);
-            }
-
-            @Override
-            protected void onTimeSet() {
-                // nothing to do
-            }
-
-            @Override
-            public void exit() {
-                removeAlarm();
-                broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
-            }
-        }
-
-        private class PreAlarmSnoozedState extends AlarmState {
-            @Override
-            public void enter() {
-                Calendar nextTime;
-                Calendar now = calendars.now();
-                Message reason = getCurrentMessage();
-                if (reason.obj().isPresent()) {
-                    Calendar customTime = calendars.now();
-                    customTime.set(Calendar.HOUR_OF_DAY, reason.arg1().get());
-                    customTime.set(Calendar.MINUTE, reason.arg2().get());
-                    if (customTime.after(now)) {
-                        nextTime = customTime;
+            private class PreAlarmSnoozedState extends AlarmState {
+                @Override
+                public void enter() {
+                    Calendar nextTime;
+                    Calendar now = calendars.now();
+                    Message reason = getCurrentMessage();
+                    if (reason.obj().isPresent()) {
+                        Calendar customTime = calendars.now();
+                        customTime.set(Calendar.HOUR_OF_DAY, reason.arg1().get());
+                        customTime.set(Calendar.MINUTE, reason.arg2().get());
+                        if (customTime.after(now)) {
+                            nextTime = customTime;
+                        } else {
+                            nextTime = calculateNextTime();
+                        }
                     } else {
                         nextTime = calculateNextTime();
                     }
-                } else {
-                    nextTime = calculateNextTime();
+
+                    setAlarm(nextTime, CalendarType.NORMAL);
+                    broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION);
                 }
 
-                setAlarm(nextTime, CalendarType.NORMAL);
-                broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION);
-            }
+                @Override
+                protected void onFired() {
+                    transitionTo(fired);
+                }
 
-            @Override
-            protected void onFired() {
-                transitionTo(fired);
-            }
+                @Override
+                protected void onSnooze() {
+                    enter();
+                }
 
-            @Override
-            protected void onSnooze() {
-                enter();
-            }
-
-            @Override
-            protected void onTimeSet() {
-                // nothing to do
-            }
-
-            @Override
-            public void exit() {
-                removeAlarm();
-                broadcastAlarmState(Intents.ACTION_CANCEL_SNOOZE);
+                @Override
+                public void exit() {
+                    removeAlarm();
+                    broadcastAlarmState(Intents.ACTION_CANCEL_SNOOZE);
+                }
             }
         }
 

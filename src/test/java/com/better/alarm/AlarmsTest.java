@@ -27,7 +27,11 @@ import com.google.inject.Module;
 import com.google.inject.util.Modules;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,10 +55,17 @@ public class AlarmsTest {
     private ImmutablePrefs prefs;
     private Logger logger;
 
+    @Rule
+    public TestRule watcher = new TestWatcher() {
+        protected void starting(Description description) {
+            System.out.println("---- " + description.getMethodName() + " ----");
+        }
+    };
+
     @Before
     public void setUp() {
         testScheduler = new TestScheduler();
-        logger = Logger.getDefaultLogger().addLogWriter(new SysoutLogWriter());
+        logger = Logger.create().addLogWriter(new SysoutLogWriter());
 
         prefs = ImmutablePrefs.builder()
                 .preAlarmDuration(BehaviorSubject.createDefault(10))
