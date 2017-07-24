@@ -19,6 +19,7 @@ package com.better.alarm.presenter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.Menu;
@@ -35,6 +36,9 @@ public class SettingsActivity extends Activity {
         setTheme(DynamicThemeHandler.getInstance().getIdForName(SettingsActivity.class.getName()));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);
+        if (!getResources().getBoolean(R.bool.isTablet)) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
     }
 
     @Override
