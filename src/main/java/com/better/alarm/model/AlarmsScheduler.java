@@ -19,7 +19,6 @@ import com.better.alarm.BuildConfig;
 import com.better.alarm.ImmutableNext;
 import com.better.alarm.Prefs;
 import com.better.alarm.Store;
-import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.logger.Logger;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
