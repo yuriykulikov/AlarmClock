@@ -139,13 +139,6 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
         setTitle(titleText);
         TextView textView = (TextView) findViewById(R.id.alarm_alert_label);
         textView.setText(titleText);
-
-        if (getString(R.string.default_label).equals(titleText)) {
-            // in non-full screen mode we already see the label in the title.
-            // Therefore we hade the views with an additional label
-            // also, if the label is default, do not show it
-            textView.setVisibility(View.INVISIBLE);
-        }
     }
 
     protected int getLayoutResId() {
