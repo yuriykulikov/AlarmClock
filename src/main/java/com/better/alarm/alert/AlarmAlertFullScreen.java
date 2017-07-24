@@ -27,7 +27,6 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -42,12 +41,13 @@ import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.presenter.DynamicThemeHandler;
-import com.better.alarm.presenter.SettingsActivity;
 import com.better.alarm.presenter.TimePickerDialogFragment;
 import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialogHandler;
 import com.better.alarm.presenter.TimePickerDialogFragment.OnAlarmTimePickerCanceledListener;
 import com.google.inject.Inject;
 
+import static com.better.alarm.Prefs.LONGCLICK_DISMISS_DEFAULT;
+import static com.better.alarm.Prefs.LONGCLICK_DISMISS_KEY;
 /**
  * Alarm Clock alarm alert: pops visible indicator and plays alarm tone. This
  * activity is the full screen version which shows over the lock screen with the
@@ -55,13 +55,9 @@ import com.google.inject.Inject;
  */
 public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDialogHandler,
         OnAlarmTimePickerCanceledListener {
-    private static final boolean LONGCLICK_DISMISS_DEFAULT = false;
-    private static final String LONGCLICK_DISMISS_KEY = "longclick_dismiss_key";
-    private static final String DEFAULT_VOLUME_BEHAVIOR = "2";
     protected static final String SCREEN_OFF = "screen_off";
 
     protected Alarm mAlarm;
-    private int mVolumeBehavior;
 
     @Inject
     private IAlarmsManager alarmsManager;
@@ -112,9 +108,6 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
         int id = getIntent().getIntExtra(Intents.EXTRA_ID, -1);
         try {
             mAlarm = alarmsManager.getAlarm(id);
-
-            final String vol = sp.getString(SettingsActivity.KEY_VOLUME_BEHAVIOR, DEFAULT_VOLUME_BEHAVIOR);
-            mVolumeBehavior = Integer.parseInt(vol);
 
             final Window win = getWindow();
             win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
@@ -281,47 +274,13 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
     }
 
     @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        // Do this on key down to handle a few of the system keys.
-        boolean up = event.getAction() == KeyEvent.ACTION_UP;
-        switch (event.getKeyCode()) {
-            // Volume keys and camera keys dismiss the alarm
-            case KeyEvent.KEYCODE_VOLUME_UP:
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-            case KeyEvent.KEYCODE_VOLUME_MUTE:
-            case KeyEvent.KEYCODE_CAMERA:
-            case KeyEvent.KEYCODE_FOCUS:
-                if (up) {
-                    switch (mVolumeBehavior) {
-                        case 1:
-                            snoozeIfEnabledInSettings();
-                            break;
-
-                        case 2:
-                            dismiss();
-                            break;
-
-                        default:
-                            break;
-                    }
-                }
-                return true;
-            default:
-                break;
-        }
-        return super.dispatchKeyEvent(event);
-    }
-
-    @Override
     public void onBackPressed() {
-        // Don't allow back to dismiss. This method is overriden by AlarmAlert
-        // so that the dialog is dismissed.
+        // Don't allow back to dismiss
     }
 
     @Override
     public void onDialogTimeSet(int hourOfDay, int minute) {
         mAlarm.snooze(hourOfDay, minute);
-
     }
 
     @Override

@@ -42,6 +42,10 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 import io.reactivex.subjects.PublishSubject;
 
+import static com.better.alarm.Prefs.DEFAULT_PREALARM_VOLUME;
+import static com.better.alarm.Prefs.KEY_PREALARM_VOLUME;
+import static com.better.alarm.Prefs.MAX_PREALARM_VOLUME;
+
 public class VolumePreference extends Preference {
     private final Ringtone ringtone;
     private final Context context;
@@ -118,8 +122,8 @@ public class VolumePreference extends Preference {
         SeekBarListener prealarmListener = new SeekBarListener();
         preAlarmSeekBar.setOnSeekBarChangeListener(prealarmListener);
 
-        final com.f2prateek.rx.preferences2.Preference<Integer> prealarmPreference = rxPrefs.getInteger(Intents.KEY_PREALARM_VOLUME, Intents.DEFAULT_PREALARM_VOLUME);
-        preAlarmSeekBar.setMax(Intents.MAX_PREALARM_VOLUME);
+        final com.f2prateek.rx.preferences2.Preference<Integer> prealarmPreference = rxPrefs.getInteger(KEY_PREALARM_VOLUME, DEFAULT_PREALARM_VOLUME);
+        preAlarmSeekBar.setMax(MAX_PREALARM_VOLUME);
 
         prealarmPreference.asObservable().subscribe(new Consumer<Integer>() {
             @Override

@@ -15,7 +15,9 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="@string/settings">
-    <PreferenceCategory android:title="@string/preference_category_sound">
+    <PreferenceCategory
+        android:key="preference_category_sound_key"
+        android:title="@string/preference_category_sound">
         <com.better.alarm.view.VolumePreference
             android:dialogTitle="@string/alarm_volume_title"
             android:persistent="false"
@@ -50,27 +52,11 @@
             android:key="theme"
             android:title="@string/theme_title" />
 
-
-        <ListPreference
-            android:defaultValue="0"
-            android:dialogTitle="@string/volume_button_dialog_title"
-            android:entries="@array/volume_button_setting_entries"
-            android:entryValues="@array/volume_button_setting_values"
-            android:key="volume_button_setting"
-            android:summary="@string/volume_button_setting_summary"
-            android:title="@string/volume_button_setting_title" />
-
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="longclick_dismiss_key"
             android:summary="@string/longclick_dismiss_summary"
             android:title="@string/longclick_dismiss_title" />
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="show_info_fragment"
-            android:summary="@string/show_info_fragment_summary"
-            android:title="@string/show_info_fragment_title" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/preference_category_durations">
         <ListPreference

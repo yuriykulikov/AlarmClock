@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -29,6 +30,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceScreen;
 import android.provider.Settings;
 import android.view.Menu;
@@ -39,18 +41,18 @@ import com.better.alarm.R;
 import com.better.alarm.view.AlarmPreference;
 import com.google.inject.Inject;
 
+import static com.better.alarm.Prefs.KEY_ALARM_IN_SILENT_MODE;
+import static com.better.alarm.Prefs.KEY_ALARM_SNOOZE;
+import static com.better.alarm.Prefs.KEY_AUTO_SILENCE;
+import static com.better.alarm.Prefs.KEY_DEFAULT_RINGTONE;
+import static com.better.alarm.Prefs.KEY_FADE_IN_TIME_SEC;
+import static com.better.alarm.Prefs.KEY_PREALARM_DURATION;
+
 /**
  * Settings for the Alarm Clock.
  */
 public class SettingsActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener {
     private static final int ALARM_STREAM_TYPE_BIT = 1 << AudioManager.STREAM_ALARM;
-    private static final String KEY_ALARM_IN_SILENT_MODE = "alarm_in_silent_mode";
-    public static final String KEY_ALARM_SNOOZE = "snooze_duration";
-    public static final String KEY_VOLUME_BEHAVIOR = "volume_button_setting";
-    private static final String KEY_DEFAULT_RINGTONE = "default_ringtone";
-    private static final String KEY_AUTO_SILENCE = "auto_silence";
-    private static final String KEY_PREALARM_DURATION = "prealarm_duration";
-    public static final String KEY_FADE_IN_TIME_SEC = "fade_in_time_sec";
 
     @Inject
     private Vibrator vibrator;
@@ -70,11 +72,17 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         }
         ringtone.setChangeDefault();
 
+        PreferenceCategory category = (PreferenceCategory) findPreference("preference_category_sound_key");
+
         boolean hasVibrator = vibrator.hasVibrator();
         // #65 we have to check if preference is present before we try to remove
         // it TODO this is very strange!
         if (!hasVibrator && findPreference("vibrate") != null) {
-            getPreferenceScreen().removePreference(findPreference("vibrate"));
+            category.removePreference(findPreference("vibrate"));
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            category.removePreference(findPreference(KEY_ALARM_IN_SILENT_MODE));
         }
 
         final Preference theme = findPreference("theme");
@@ -188,10 +196,12 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
     }
 
     private void refresh() {
-        final CheckBoxPreference alarmInSilentModePref = (CheckBoxPreference) findPreference(KEY_ALARM_IN_SILENT_MODE);
-        final int silentModeStreams = Settings.System.getInt(getContentResolver(),
-                Settings.System.MODE_RINGER_STREAMS_AFFECTED, 0);
-        alarmInSilentModePref.setChecked((silentModeStreams & ALARM_STREAM_TYPE_BIT) == 0);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            final CheckBoxPreference alarmInSilentModePref = (CheckBoxPreference) findPreference(KEY_ALARM_IN_SILENT_MODE);
+            final int silentModeStreams = Settings.System.getInt(getContentResolver(),
+                    Settings.System.MODE_RINGER_STREAMS_AFFECTED, 0);
+            alarmInSilentModePref.setChecked((silentModeStreams & ALARM_STREAM_TYPE_BIT) == 0);
+        }
 
         ListPreference listPref = (ListPreference) findPreference(KEY_ALARM_SNOOZE);
         listPref.setSummary(listPref.getEntry());
