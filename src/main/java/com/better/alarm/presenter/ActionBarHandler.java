@@ -1,7 +1,5 @@
 package com.better.alarm.presenter;
 
-import org.acra.ACRA;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -18,25 +16,31 @@ import android.widget.ShareActionProvider;
 
 import com.better.alarm.R;
 import com.google.common.base.Preconditions;
+import com.google.inject.Inject;
+
+import org.acra.ACRA;
 
 /**
  * This class handles options menu and action bar
- * 
+ *
  * @author Kate
- * 
  */
 public class ActionBarHandler {
 
     private static final int JELLY_BEAN_MR1 = 17;
     private final Context mContext;
 
-    public ActionBarHandler(Context context) {
+    private final AlarmsListFragment.ShowDetailsStrategy details;
+
+    //not injected - requires activity to work
+    public ActionBarHandler(Activity context, AlarmsListFragment.ShowDetailsStrategy details) {
         this.mContext = Preconditions.checkNotNull(context);
+        this.details = details;
     }
 
     /**
      * Delegate {@link Activity#onCreateOptionsMenu(Menu)}
-     * 
+     *
      * @param menu
      * @param inflater
      * @param actionBar
@@ -64,38 +68,47 @@ public class ActionBarHandler {
             menuItemDashclock.setVisible(false);
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            menu.findItem(R.id.menu_item_add_alarm).setVisible(false);
+        }
+
         return true;
     }
 
     /**
      * Delegate {@link Activity#onOptionsItemSelected(MenuItem)}
-     * 
+     *
      * @param item
      * @return
      */
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.menu_item_add_alarm:
+                details.createNewAlarm();
+                return true;
 
-        case R.id.menu_item_settings:
-            // TODO show details
-            mContext.startActivity(new Intent(mContext, SettingsActivity.class));
-            return true;
+            case R.id.menu_item_settings:
+                // TODO show details
+                mContext.startActivity(new Intent(mContext, SettingsActivity.class));
+                return true;
 
-        case R.id.menu_review:
-            showReview();
-            return true;
+            case R.id.menu_review:
+                showReview();
+                return true;
 
-        case R.id.menu_bugreport:
-            showBugreport();
-            return true;
+            case R.id.menu_bugreport:
+                showBugreport();
+                return true;
 
-        case R.id.menu_dashclock:
-            showDashClock();
-            return true;
+            case R.id.menu_dashclock:
+                showDashClock();
+                return true;
 
-        case R.id.menu_mp3cutter:
-            showMp3();
-            return true;
+            case R.id.menu_mp3cutter:
+                showMp3();
+                return true;
+
+            default:
         }
         return false;
     }

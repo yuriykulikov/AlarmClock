@@ -26,11 +26,12 @@ import android.widget.TextView;
 import com.better.alarm.AlarmApplication;
 import com.better.alarm.Prefs;
 import com.better.alarm.R;
+import com.better.alarm.ShowDetailsInActivity;
 import com.better.alarm.Store;
-import com.better.alarm.model.AlarmValue;
 import com.better.alarm.interfaces.IAlarmsManager;
-import com.better.alarm.view.DigitalClock;
 import com.better.alarm.logger.Logger;
+import com.better.alarm.model.AlarmValue;
+import com.better.alarm.view.DigitalClock;
 import com.google.inject.Inject;
 
 import org.immutables.value.Value;
@@ -45,6 +46,7 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
+
 /**
  * Shows a list of alarms. To react on user interaction, requires a strategy. An
  * activity hosting this fragment should provide a proper strategy for single
@@ -57,8 +59,7 @@ public class AlarmsListFragment extends ListFragment {
     public final static String M24 = "kk:mm";
     public static final boolean MATERIAL_DESIGN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
 
-    private ShowDetailsStrategy showDetailsStrategy;
-
+    private ShowDetailsStrategy details;
     @Inject
     private IAlarmsManager alarms;
     @Inject
@@ -170,7 +171,7 @@ public class AlarmsListFragment extends ListFragment {
                 detailsWrapper.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        showDetailsStrategy.showDetails(mAdapter.getItem(position));
+                        details.showDetails(mAdapter.getItem(position));
                     }
                 });
             }
@@ -226,7 +227,7 @@ public class AlarmsListFragment extends ListFragment {
             }
 
             case R.id.edit_alarm: {
-                showDetailsStrategy.showDetails(alarm);
+                details.showDetails(alarm);
                 return true;
             }
 
@@ -236,14 +237,11 @@ public class AlarmsListFragment extends ListFragment {
         return super.onContextItemSelected(item);
     }
 
-    public void setShowDetailsStrategy(ShowDetailsStrategy showDetailsStrategy) {
-        this.showDetailsStrategy = showDetailsStrategy;
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         AlarmApplication.guice().injectMembers(this);
         super.onCreate(savedInstanceState);
+        this.details = new ShowDetailsInActivity(getActivity());
     }
 
     @Override
@@ -296,7 +294,7 @@ public class AlarmsListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         if (MATERIAL_DESIGN) {
-            showDetailsStrategy.showDetails(mAdapter.getItem(position));
+            details.showDetails(mAdapter.getItem(position));
         } else {
             // We can display everything in-place with fragments, so update
             // the list to highlight the selected item and show the data.
@@ -378,5 +376,7 @@ public class AlarmsListFragment extends ListFragment {
 
     public interface ShowDetailsStrategy {
         void showDetails(AlarmValue alarm);
+
+        void createNewAlarm();
     }
 }
