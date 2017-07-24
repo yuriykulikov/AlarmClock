@@ -1,5 +1,6 @@
 sudo: required
 language: android
+dist: precise
 jdk: oraclejdk8
 env:
   global:
