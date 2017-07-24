@@ -17,8 +17,8 @@ import com.better.alarm.model.Alarms;
 import com.better.alarm.model.AlarmsScheduler;
 import com.better.alarm.model.CalendarType;
 import com.better.alarm.model.ContainerFactory;
-import com.better.alarm.model.DaysOfWeek;
 import com.better.alarm.model.ImmutableAlarmContainer;
+import com.better.alarm.model.ImmutableDaysOfWeek;
 import com.better.alarm.persistance.DatabaseQuery;
 import com.better.alarm.statemachine.HandlerFactory;
 import com.google.common.base.Optional;
@@ -300,7 +300,7 @@ public class AlarmsTest {
         //when
         Alarms instance = guice.getInstance(Alarms.class);
         Alarm newAlarm = instance.createNewAlarm();
-        newAlarm.edit().withIsEnabled(true).withDaysOfWeek(new DaysOfWeek(1)).commit();
+        newAlarm.edit().withIsEnabled(true).withDaysOfWeek(ImmutableDaysOfWeek.of(1)).commit();
         testScheduler.triggerActions();
 
         instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
@@ -333,7 +333,7 @@ public class AlarmsTest {
         testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
 
-        newAlarm.edit().withDaysOfWeek(new DaysOfWeek(1)).withIsPrealarm(true).commit();
+        newAlarm.edit().withDaysOfWeek(ImmutableDaysOfWeek.of(1)).withIsPrealarm(true).commit();
         testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
 
@@ -359,7 +359,7 @@ public class AlarmsTest {
         Alarms instance = guice.getInstance(Alarms.class);
         Alarm newAlarm = instance.createNewAlarm();
         //TODO circle the time, otherwise the tests may fail around 0 hours
-        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(new DaysOfWeek(1)).withIsPrealarm(true).commit();
+        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(ImmutableDaysOfWeek.of(1)).withIsPrealarm(true).commit();
         testScheduler.triggerActions();
         //TODO verify
 
@@ -394,7 +394,7 @@ public class AlarmsTest {
         Alarms instance = guice.getInstance(Alarms.class);
         Alarm newAlarm = instance.createNewAlarm();
         //TODO circle the time, otherwise the tests may fail around 0 hours
-        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(new DaysOfWeek(1)).commit();
+        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(ImmutableDaysOfWeek.of(1)).commit();
         testScheduler.triggerActions();
         //TODO verify
 
@@ -415,7 +415,7 @@ public class AlarmsTest {
         Alarms instance = guice.getInstance(Alarms.class);
         Alarm newAlarm = instance.createNewAlarm();
         //TODO circle the time, otherwise the tests may fail around 0 hours
-        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(new DaysOfWeek(1)).withIsPrealarm(true).commit();
+        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(ImmutableDaysOfWeek.of(1)).withIsPrealarm(true).commit();
         testScheduler.triggerActions();
         //TODO verify
 
@@ -441,7 +441,7 @@ public class AlarmsTest {
         Alarms instance = guice.getInstance(Alarms.class);
         Alarm newAlarm = instance.createNewAlarm();
         //TODO circle the time, otherwise the tests may fail around 0 hours
-        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(new DaysOfWeek(1)).withIsPrealarm(true).commit();
+        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(ImmutableDaysOfWeek.of(1)).withIsPrealarm(true).commit();
         testScheduler.triggerActions();
         //TODO verify
 

@@ -2,11 +2,11 @@ package com.better.alarm;
 
 import android.database.Cursor;
 
+import com.better.alarm.model.AlarmContainer;
 import com.better.alarm.model.Calendars;
 import com.better.alarm.model.ContainerFactory;
-import com.better.alarm.model.DaysOfWeek;
-import com.better.alarm.model.AlarmContainer;
 import com.better.alarm.model.ImmutableAlarmContainer;
+import com.better.alarm.model.ImmutableDaysOfWeek;
 import com.google.inject.Inject;
 
 import java.util.Calendar;
@@ -33,7 +33,7 @@ public class TestContainerFactory implements ContainerFactory {
                 .hour(now.get(Calendar.HOUR_OF_DAY))
                 .minutes(now.get(Calendar.MINUTE))
                 .isVibrate(true)
-                .daysOfWeek(new DaysOfWeek(0))
+                .daysOfWeek(ImmutableDaysOfWeek.of(0))
                 .alertString("")
                 .isPrealarm(false)
                 .label("")
