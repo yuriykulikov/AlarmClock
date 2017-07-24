@@ -22,20 +22,19 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
-import com.better.alarm.model.AlarmValue;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.Intents;
+import com.better.alarm.logger.Logger;
+import com.better.alarm.model.AlarmValue;
 import com.better.alarm.presenter.AlarmsListFragment.ShowDetailsStrategy;
 import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialogHandler;
-import com.better.alarm.logger.Logger;
-import com.melnykov.fab.*;
+import com.melnykov.fab.FloatingActionButton;
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.
@@ -68,7 +67,7 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
             alarmsListFragment.setShowDetailsStrategy(showDetailsInActivityFragment);
         }
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
             fab.attachToListView(alarmsListFragment.getListView());
             fab.setOnClickListener(new View.OnClickListener() {
@@ -81,21 +80,9 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        View nextAlarmFragment = findViewById(R.id.list_activity_info_fragment);
-        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("show_info_fragment", false)) {
-            nextAlarmFragment.setVisibility(View.VISIBLE);
-        } else {
-            nextAlarmFragment.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         boolean ret = mActionBarHandler.onCreateOptionsMenu(menu, getMenuInflater(), getActionBar());
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             menu.findItem(R.id.menu_item_add_alarm).setVisible(false);
         }
         return ret;
@@ -169,7 +156,7 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
 
     /**
      * I do not know why but sometimes we get funny exceptions like this:
-     * 
+     * <p>
      * <pre>
      * STACK_TRACE=java.lang.NullPointerException
      *         at com.better.alarm.presenter.AlarmsListActivity.onDialogTimeSet(AlarmsListActivity.java:139)
@@ -186,7 +173,7 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
      *         at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:560)
      *         at dalvik.system.NativeStart.main(Native Method)
      * </pre>
-     * 
+     * <p>
      * And this happens on application start. So I suppose the fragment is
      * showing event though the activity is not there. So we can use this method
      * to make sure the alarm is there.

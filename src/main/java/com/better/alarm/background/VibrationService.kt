@@ -9,24 +9,20 @@ import android.os.IBinder
 import android.os.PowerManager
 import android.os.PowerManager.WakeLock
 import android.os.Vibrator
-import android.preference.PreferenceManager
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
-
 import com.better.alarm.AlarmApplication
+import com.better.alarm.Prefs
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
-import com.better.alarm.presenter.SettingsActivity
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.google.inject.Inject
-
-import java.util.concurrent.TimeUnit
-
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposables
 import io.reactivex.functions.Function4
 import io.reactivex.subjects.BehaviorSubject
+import java.util.concurrent.TimeUnit
 
 class VibrationService : Service() {
     @Inject
@@ -102,7 +98,7 @@ class VibrationService : Service() {
 
     private fun onAlert() {
         muted.onNext(false)
-        val asString = sp.getString(SettingsActivity.KEY_FADE_IN_TIME_SEC, "30")
+        val asString = sp.getString(Prefs.KEY_FADE_IN_TIME_SEC, "30")
         val time = Integer.parseInt(asString)
 
         val preference: Observable<Boolean> = rxPrefs.getBoolean("vibrate").asObservable()
