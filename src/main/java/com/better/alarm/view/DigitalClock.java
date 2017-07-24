@@ -16,9 +16,6 @@
 
 package com.better.alarm.view;
 
-import java.text.DateFormatSymbols;
-import java.util.Calendar;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -36,7 +33,9 @@ import com.better.alarm.AlarmApplication;
 import com.better.alarm.Prefs;
 import com.better.alarm.R;
 
-import io.reactivex.Completable;
+import java.text.DateFormatSymbols;
+import java.util.Calendar;
+
 import io.reactivex.Single;
 
 /**
@@ -74,11 +73,11 @@ public class DigitalClock extends LinearLayout {
         }
     };
 
-    static class AmPm {
+    private static class AmPm {
         private final TextView mAmPm;
         private final String mAmString, mPmString;
 
-        AmPm(View parent) {
+        public AmPm(View parent) {
             mAmPm = (TextView) parent.findViewById(R.id.digital_clock_am_pm);
 
             String[] ampm = new DateFormatSymbols().getAmPmStrings();
@@ -86,14 +85,14 @@ public class DigitalClock extends LinearLayout {
             mPmString = ampm[1];
         }
 
-        void setShowAmPm(boolean show) {
+        public void setShowAmPm(boolean show) {
             if (mAmPm != null) {
                 // check for null to be able to use ADT preview
                 mAmPm.setVisibility(show ? View.VISIBLE : View.GONE);
             }
         }
 
-        void setIsMorning(boolean isMorning) {
+        public void setIsMorning(boolean isMorning) {
             if (mAmPm != null) {
                 mAmPm.setText(isMorning ? mAmString : mPmString);
             }
@@ -101,7 +100,7 @@ public class DigitalClock extends LinearLayout {
     }
 
     private class FormatChangeObserver extends ContentObserver {
-        public FormatChangeObserver() {
+        FormatChangeObserver() {
             super(new Handler());
         }
 
@@ -188,13 +187,13 @@ public class DigitalClock extends LinearLayout {
             mTimeDisplay.setText(newTime);
         }
         if (mAmPm != null) {
-            mAmPm.setIsMorning((int)mCalendar.get(Calendar.AM_PM) == 0 || isInEditMode());
+            mAmPm.setIsMorning((int) mCalendar.get(Calendar.AM_PM) == 0 || isInEditMode());
         }
     }
 
     private void setDateFormat() {
         mFormat = is24HoutFormat.blockingGet() ? M24 : M12;
-        mAmPm.setShowAmPm(mFormat == M12 || isInEditMode());
+        mAmPm.setShowAmPm(M12.equals(mFormat) || isInEditMode());
     }
 
     public void setLive(boolean live) {
