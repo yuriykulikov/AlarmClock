@@ -18,7 +18,6 @@
 package com.better.alarm.presenter;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,27 +27,31 @@ import android.view.View;
 
 import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
+import com.better.alarm.ShowDetailsInActivity;
 import com.better.alarm.interfaces.Alarm;
-import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.model.AlarmValue;
 import com.better.alarm.presenter.AlarmsListFragment.ShowDetailsStrategy;
 import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialogHandler;
 import com.melnykov.fab.FloatingActionButton;
 
+
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */
 public class AlarmsListActivity extends Activity implements AlarmTimePickerDialogHandler {
     private ActionBarHandler mActionBarHandler;
+    private ShowDetailsStrategy details;
+
     private Alarm timePickerAlarm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(DynamicThemeHandler.getInstance().getIdForName(AlarmsListActivity.class.getName()));
         super.onCreate(savedInstanceState);
-
-        mActionBarHandler = new ActionBarHandler(this);
+        AlarmApplication.guice().injectMembers(this);
+        this.details = new ShowDetailsInActivity(this);
+        this.mActionBarHandler = new ActionBarHandler(this, details);
 
         boolean isTablet = !getResources().getBoolean(R.bool.isTablet);
         if (isTablet) {
@@ -56,24 +59,17 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
         }
 
         setContentView(R.layout.list_activity);
-        AlarmsListFragment alarmsListFragment = (AlarmsListFragment) getFragmentManager().findFragmentById(
-                R.id.list_activity_list_fragment);
-
-        if (isTablet) {
-            // TODO
-            // alarmsListFragment.setShowDetailsStrategy(showDetailsInFragmentStrategy);
-            alarmsListFragment.setShowDetailsStrategy(showDetailsInActivityFragment);
-        } else {
-            alarmsListFragment.setShowDetailsStrategy(showDetailsInActivityFragment);
-        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            AlarmsListFragment alarmsListFragment = (AlarmsListFragment) getFragmentManager()
+                    .findFragmentById(R.id.list_activity_list_fragment);
+
             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
             fab.attachToListView(alarmsListFragment.getListView());
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showDetailsInActivityFragment.showDetails(null);
+                    details.createNewAlarm();
                 }
             });
         }
@@ -81,57 +77,13 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        boolean ret = mActionBarHandler.onCreateOptionsMenu(menu, getMenuInflater(), getActionBar());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            menu.findItem(R.id.menu_item_add_alarm).setVisible(false);
-        }
-        return ret;
+        return mActionBarHandler.onCreateOptionsMenu(menu, getMenuInflater(), getActionBar());
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_item_add_alarm) {
-            showDetailsInActivityFragment.showDetails(null);
-            return true;
-        } else return mActionBarHandler.onOptionsItemSelected(item);
+        return mActionBarHandler.onOptionsItemSelected(item);
     }
-
-    // private final ShowDetailsStrategy showDetailsInFragmentStrategy = new
-    // ShowDetailsStrategy() {
-    //
-    // @Override
-    // public void showDetails(Alarm alarm) {
-    // Intent intent = new Intent();
-    // intent.putExtra(Intents.EXTRA_ID, alarm.getId());
-    //
-    // // Check what fragment is currently shown, replace if needed.
-    // AlarmDetailsFragment details = (AlarmDetailsFragment)
-    // getFragmentManager().findFragmentById(
-    // R.id.alarmsDetailsFragmentFrame);
-    // if (details == null || details.getIntent() != intent) {
-    // // Make new fragment to show this selection.
-    // details = AlarmDetailsFragment.newInstance(intent);
-    //
-    // // Execute a transaction, replacing any existing fragment
-    // // with this one inside the frame.
-    // FragmentTransaction ft = getFragmentManager().beginTransaction();
-    // ft.replace(R.id.alarmsDetailsFragmentFrame, details);
-    // ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-    // ft.commit();
-    // }
-    // }
-    // };
-
-    private final ShowDetailsStrategy showDetailsInActivityFragment = new ShowDetailsStrategy() {
-        @Override
-        public void showDetails(AlarmValue alarm) {
-            Intent intent = new Intent(AlarmsListActivity.this, AlarmDetailsActivity.class);
-            if (alarm != null) {
-                intent.putExtra(Intents.EXTRA_ID, alarm.getId());
-            }
-            startActivity(intent);
-        }
-    };
 
     public void showTimePicker(AlarmValue alarm) {
         timePickerAlarm = AlarmApplication.alarms().getAlarm(alarm.getId());
@@ -175,7 +127,7 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
      * </pre>
      * <p>
      * And this happens on application start. So I suppose the fragment is
-     * showing event though the activity is not there. So we can use this method
+     * showing even though the activity is not there. So we can use this method
      * to make sure the alarm is there.
      */
     @Override
