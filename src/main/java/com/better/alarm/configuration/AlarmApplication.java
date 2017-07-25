@@ -18,6 +18,8 @@ package com.better.alarm.configuration;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.view.ViewConfiguration;
 
@@ -45,6 +47,7 @@ import com.better.alarm.persistance.PersistingContainerFactory;
 import com.better.alarm.presenter.DynamicThemeHandler;
 import com.better.alarm.statemachine.HandlerFactory;
 import com.better.alarm.wakelock.WakeLockManager;
+import com.f2prateek.rx.preferences2.Preference;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -130,7 +133,7 @@ public class AlarmApplication extends Application {
             }
         };
 
-        Single<Boolean> dateFormat = Maybe
+        final Single<Boolean> dateFormat = Maybe
                 .create(new MaybeOnSubscribe<Boolean>() {
                     @Override
                     public void subscribe(@NonNull MaybeEmitter<Boolean> e) throws Exception {
@@ -189,6 +192,20 @@ public class AlarmApplication extends Application {
         });
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+
+        final Preference<String> defaultAlert = rxPreferences.getString(Prefs.KEY_DEFAULT_RINGTONE, "");
+        defaultAlert
+                .asObservable()
+                .firstOrError()
+                .subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept(@NonNull String s) throws Exception {
+                        if (s.isEmpty()) {
+                            Uri alert = RingtoneManager.getActualDefaultRingtoneUri(getApplicationContext(), RingtoneManager.TYPE_ALARM);
+                            defaultAlert.set(alert.toString());
+                        }
+                    }
+                });
 
         deleteLogs(getApplicationContext());
 

@@ -35,12 +35,10 @@
             android:key="vibrate"
             android:title="@string/alarm_vibrate" />
 
-        <com.better.alarm.view.AlarmPreference
+        <RingtonePreference
             android:key="default_ringtone"
-            android:persistent="false"
             android:ringtoneType="alarm"
-            android:showDefault="false"
-            android:showSilent="true"
+            android:showDefault="true"
             android:title="@string/default_ringtone_setting_title" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/preference_category_ui">

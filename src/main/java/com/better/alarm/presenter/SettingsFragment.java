@@ -3,8 +3,6 @@ package com.better.alarm.presenter;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.media.AudioManager;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,9 +15,8 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.provider.Settings;
 
-import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.R;
-import com.better.alarm.view.AlarmPreference;
+import com.better.alarm.configuration.AlarmApplication;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
 import com.google.inject.Inject;
 
@@ -34,6 +31,7 @@ import static com.better.alarm.configuration.Prefs.KEY_AUTO_SILENCE;
 import static com.better.alarm.configuration.Prefs.KEY_DEFAULT_RINGTONE;
 import static com.better.alarm.configuration.Prefs.KEY_FADE_IN_TIME_SEC;
 import static com.better.alarm.configuration.Prefs.KEY_PREALARM_DURATION;
+import static com.better.alarm.view.RingtonePreferenceExtension.updatePreferenceSummary;
 
 /**
  * Created by Yuriy on 24.07.2017.
@@ -55,13 +53,6 @@ public class SettingsFragment extends PreferenceFragment {
         AlarmApplication.guice().injectMembers(this);
 
         addPreferencesFromResource(R.xml.preferences);
-
-        final AlarmPreference ringtone = (AlarmPreference) findPreference(KEY_DEFAULT_RINGTONE);
-        Uri alert = RingtoneManager.getActualDefaultRingtoneUri(getActivity(), RingtoneManager.TYPE_ALARM);
-        if (alert != null) {
-            ringtone.setAlert(alert);
-        }
-        ringtone.setChangeDefault();
 
         PreferenceCategory category = (PreferenceCategory) findPreference("preference_category_sound_key");
 
@@ -183,6 +174,10 @@ public class SettingsFragment extends PreferenceFragment {
                             fadeInDuration.setSummary(getString(R.string.fade_in_summary, i));
                         }
                     });
+            dispoables.add(disposable);
+        }
+        {
+            Disposable disposable = updatePreferenceSummary(rxSharedPreferences, findPreference(KEY_DEFAULT_RINGTONE), getActivity());
             dispoables.add(disposable);
         }
 

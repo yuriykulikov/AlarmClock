@@ -29,6 +29,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+import android.preference.RingtonePreference;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,21 +38,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.better.alarm.R;
 import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.configuration.Prefs;
-import com.better.alarm.R;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
-import com.better.alarm.view.AlarmPreference;
 import com.better.alarm.view.RepeatPreference;
+import com.f2prateek.rx.preferences2.RxSharedPreferences;
 import com.google.inject.Inject;
 
 import java.util.Calendar;
 
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
+
+import static com.better.alarm.view.RingtonePreferenceExtension.updatePreferenceSummary;
 
 /**
  * Manages each alarm
@@ -66,7 +69,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     private EditText mLabel;
     private CheckBoxPreference mEnabledPref;
     private Preference mTimePref;
-    private AlarmPreference mAlarmPref;
+    private RingtonePreference mAlarmPref;
     private RepeatPreference mRepeatPref;
     private CheckBoxPreference mPreAlarmPref;
 
@@ -79,8 +82,11 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     @Inject
     private SharedPreferences sp;
     @Inject
+    private RxSharedPreferences rxSharedPreferences;
+    @Inject
     private Prefs prefs;
     private Disposable disposableDialog = Disposables.disposed();
+    private Disposable disposable;
 
     @Override
     protected void onCreate(Bundle icicle) {
@@ -109,7 +115,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         // remove enable preference from screen
         getPreferenceScreen().removePreference(mEnabledPref);
         mTimePref = findPreference("time");
-        mAlarmPref = (AlarmPreference) findPreference("alarm");
+        mAlarmPref = (RingtonePreference) findPreference("alarm");
         mAlarmPref.setOnPreferenceChangeListener(this);
         mRepeatPref = (RepeatPreference) findPreference("setRepeat");
         mRepeatPref.setOnPreferenceChangeListener(this);
@@ -165,6 +171,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     @Override
     public void onResume() {
         super.onResume();
+        disposable = updatePreferenceSummary(rxSharedPreferences, mAlarmPref, this);
         sp.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
         refreshPrealarmVisibilityAndSummary();
     }
@@ -183,6 +190,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     @Override
     protected void onPause() {
         super.onPause();
+        disposable.dispose();
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(
                 onSharedPreferenceChangeListener);
 
@@ -276,8 +284,10 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         mHour = alarm.getHour();
         mMinute = alarm.getMinutes();
         mRepeatPref.setDaysOfWeek(alarm.getDaysOfWeek());
+
         // Give the alert uri to the preference.
-        mAlarmPref.setAlert(alarm.getAlert());
+        rxSharedPreferences.getString(mAlarmPref.getKey()).set(alarm.getAlert().toString());
+
         mPreAlarmPref.setChecked(alarm.isPrealarm());
         updateTime();
     }
@@ -323,7 +333,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
                 .withDaysOfWeek(mRepeatPref.getDaysOfWeek())
                 .withIsVibrate(true)
                 .withLabel(mLabel.getText().toString())
-                .withAlertString(mAlarmPref.getAlert().toString())
+                .withAlertString(sp.getString(mAlarmPref.getKey(), ""))
                 .withIsPrealarm(mPreAlarmPref.isChecked())
                 .commit();
         isNewAlarm = false;
