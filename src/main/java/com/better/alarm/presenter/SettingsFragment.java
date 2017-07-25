@@ -20,7 +20,13 @@ import android.provider.Settings;
 import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
 import com.better.alarm.view.AlarmPreference;
+import com.f2prateek.rx.preferences2.RxSharedPreferences;
 import com.google.inject.Inject;
+
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 import static com.better.alarm.Prefs.KEY_ALARM_IN_SILENT_MODE;
 import static com.better.alarm.Prefs.KEY_ALARM_SNOOZE;
@@ -33,11 +39,15 @@ import static com.better.alarm.Prefs.KEY_PREALARM_DURATION;
  * Created by Yuriy on 24.07.2017.
  */
 
-public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
+public class SettingsFragment extends PreferenceFragment {
     private static final int ALARM_STREAM_TYPE_BIT = 1 << AudioManager.STREAM_ALARM;
 
     @Inject
     private Vibrator vibrator;
+    @Inject
+    private RxSharedPreferences rxSharedPreferences;
+
+    private final CompositeDisposable dispoables = new CompositeDisposable();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,13 +93,6 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         });
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        refresh();
-    }
-
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
         if (KEY_ALARM_IN_SILENT_MODE.equals(preference.getKey())) {
@@ -113,47 +116,8 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     }
 
     @Override
-    public boolean onPreferenceChange(Preference pref, Object newValue) {
-        if (KEY_ALARM_SNOOZE.equals(pref.getKey())) {
-            final ListPreference listPref = (ListPreference) pref;
-            final int idx = listPref.findIndexOfValue((String) newValue);
-            listPref.setSummary(listPref.getEntries()[idx]);
-        } else if (KEY_AUTO_SILENCE.equals(pref.getKey())) {
-            final ListPreference listPref = (ListPreference) pref;
-            String delay = (String) newValue;
-            updateAutoSnoozeSummary(listPref, delay);
-        } else if (KEY_PREALARM_DURATION.equals(pref.getKey())) {
-            updatePreAlarmDurationSummary((ListPreference) pref, (String) newValue);
-        } else if (KEY_FADE_IN_TIME_SEC.equals(pref.getKey())) {
-            updateFadeInTimeSummary((ListPreference) pref, (String) newValue);
-        }
-        return true;
-    }
-
-    private void updateFadeInTimeSummary(ListPreference listPref, String duration) {
-        int i = Integer.parseInt(duration);
-        listPref.setSummary(getString(R.string.fade_in_summary, i));
-    }
-
-    private void updateAutoSnoozeSummary(ListPreference listPref, String delay) {
-        int i = Integer.parseInt(delay);
-        if (i == -1) {
-            listPref.setSummary(R.string.auto_silence_never);
-        } else {
-            listPref.setSummary(getString(R.string.auto_silence_summary, i));
-        }
-    }
-
-    private void updatePreAlarmDurationSummary(ListPreference listPref, String duration) {
-        int i = Integer.parseInt(duration);
-        if (i == -1) {
-            listPref.setSummary(getString(R.string.prealarm_off_summary));
-        } else {
-            listPref.setSummary(getString(R.string.prealarm_summary, i));
-        }
-    }
-
-    private void refresh() {
+    public void onResume() {
+        super.onResume();
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             final CheckBoxPreference alarmInSilentModePref = (CheckBoxPreference) findPreference(KEY_ALARM_IN_SILENT_MODE);
             final int silentModeStreams = Settings.System.getInt(getContentResolver(),
@@ -161,25 +125,75 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             alarmInSilentModePref.setChecked((silentModeStreams & ALARM_STREAM_TYPE_BIT) == 0);
         }
 
-        ListPreference listPref = (ListPreference) findPreference(KEY_ALARM_SNOOZE);
-        listPref.setSummary(listPref.getEntry());
-        listPref.setOnPreferenceChangeListener(this);
-
-        listPref = (ListPreference) findPreference(KEY_AUTO_SILENCE);
-        String delay = listPref.getValue();
-        updateAutoSnoozeSummary(listPref, delay);
-        listPref.setOnPreferenceChangeListener(this);
-
-        listPref = (ListPreference) findPreference(KEY_PREALARM_DURATION);
-        updatePreAlarmDurationSummary(listPref, listPref.getValue());
-        listPref.setOnPreferenceChangeListener(this);
-
-        listPref = (ListPreference) findPreference(KEY_FADE_IN_TIME_SEC);
-        updateFadeInTimeSummary(listPref, listPref.getValue());
-        listPref.setOnPreferenceChangeListener(this);
+        {
+            final ListPreference snoozePref = (ListPreference) findPreference(KEY_ALARM_SNOOZE);
+            Disposable disposable = rxSharedPreferences.getString(KEY_ALARM_SNOOZE)
+                    .asObservable()
+                    .subscribe(new Consumer<String>() {
+                        @Override
+                        public void accept(@NonNull String newValue) throws Exception {
+                            final int idx = snoozePref.findIndexOfValue(newValue);
+                            snoozePref.setSummary(snoozePref.getEntries()[idx]);
+                        }
+                    });
+            dispoables.add(disposable);
+        }
+        {
+            final ListPreference autoSilence = (ListPreference) findPreference(KEY_AUTO_SILENCE);
+            Disposable disposable = rxSharedPreferences.getString(KEY_AUTO_SILENCE)
+                    .asObservable()
+                    .subscribe(new Consumer<String>() {
+                        @Override
+                        public void accept(@NonNull String newValue) throws Exception {
+                            int i = Integer.parseInt(newValue);
+                            if (i == -1) {
+                                autoSilence.setSummary(R.string.auto_silence_never);
+                            } else {
+                                autoSilence.setSummary(getString(R.string.auto_silence_summary, i));
+                            }
+                        }
+                    });
+            dispoables.add(disposable);
+        }
+        {
+            final ListPreference preAlarmDuration = (ListPreference) findPreference(KEY_PREALARM_DURATION);
+            Disposable disposable = rxSharedPreferences.getString(KEY_PREALARM_DURATION)
+                    .asObservable()
+                    .subscribe(new Consumer<String>() {
+                        @Override
+                        public void accept(@NonNull String newValue) throws Exception {
+                            int i = Integer.parseInt(newValue);
+                            if (i == -1) {
+                                preAlarmDuration.setSummary(getString(R.string.prealarm_off_summary));
+                            } else {
+                                preAlarmDuration.setSummary(getString(R.string.prealarm_summary, i));
+                            }
+                        }
+                    });
+            dispoables.add(disposable);
+        }
+        {
+            final ListPreference fadeInDuration = (ListPreference) findPreference(KEY_FADE_IN_TIME_SEC);
+            Disposable disposable = rxSharedPreferences.getString(KEY_FADE_IN_TIME_SEC)
+                    .asObservable()
+                    .subscribe(new Consumer<String>() {
+                        @Override
+                        public void accept(@NonNull String newValue) throws Exception {
+                            int i = Integer.parseInt(newValue);
+                            fadeInDuration.setSummary(getString(R.string.fade_in_summary, i));
+                        }
+                    });
+            dispoables.add(disposable);
+        }
 
         ListPreference theme = (ListPreference) findPreference("theme");
         theme.setSummary(theme.getEntry());
+    }
+
+    @Override
+    public void onPause() {
+        dispoables.dispose();
+        super.onPause();
     }
 
     private ContentResolver getContentResolver() {
