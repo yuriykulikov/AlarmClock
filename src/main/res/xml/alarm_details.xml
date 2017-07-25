@@ -26,11 +26,10 @@
         android:persistent="false"
         android:key="setRepeat"
         android:title="@string/alarm_repeat" />
-    <com.better.alarm.view.AlarmPreference
+    <RingtonePreference
         android:key="alarm"
         android:title="@string/alert"
         android:ringtoneType="alarm"
-        android:persistent="false"
         android:showDefault="false"
         android:showSilent="true" />
     <CheckBoxPreference
