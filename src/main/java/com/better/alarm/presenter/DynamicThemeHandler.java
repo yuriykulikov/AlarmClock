@@ -1,14 +1,14 @@
 package com.better.alarm.presenter;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.better.alarm.R;
 import com.better.alarm.alert.AlarmAlertFullScreen;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class DynamicThemeHandler {
     public static final String KEY_THEME = "theme";

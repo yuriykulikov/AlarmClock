@@ -15,12 +15,7 @@
  */
 package com.better.alarm.wakelock;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -28,6 +23,10 @@ import android.os.PowerManager.WakeLock;
 import com.better.alarm.logger.Logger;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Utility class to pass {@link WakeLock} objects with intents. It contains a

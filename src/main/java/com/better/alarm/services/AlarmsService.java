@@ -24,12 +24,12 @@ import android.os.IBinder;
 import android.os.Message;
 
 import com.better.alarm.AlarmApplication;
+import com.better.alarm.interfaces.PresentationToModelIntents;
+import com.better.alarm.logger.Logger;
 import com.better.alarm.model.AlarmCore;
 import com.better.alarm.model.Alarms;
 import com.better.alarm.model.AlarmsScheduler;
 import com.better.alarm.model.CalendarType;
-import com.better.alarm.interfaces.PresentationToModelIntents;
-import com.better.alarm.logger.Logger;
 import com.google.inject.Inject;
 
 public class AlarmsService extends Service {

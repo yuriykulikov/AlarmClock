@@ -16,12 +16,10 @@
 package com.better.alarm.model;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.persistance.DatabaseQuery;
-import com.better.alarm.logger.Logger;
 import com.google.inject.Inject;
 
 import java.util.HashMap;

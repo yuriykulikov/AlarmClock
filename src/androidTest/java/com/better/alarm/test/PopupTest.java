@@ -19,7 +19,6 @@ import com.better.alarm.presenter.HandleSetAlarm;
 import com.better.alarm.presenter.TransparentActivity;
 import com.google.common.base.Optional;
 
-import org.assertj.core.api.Condition;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;

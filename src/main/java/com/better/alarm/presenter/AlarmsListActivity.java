@@ -29,15 +29,14 @@ import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
 import com.better.alarm.ShowDetailsInActivity;
 import com.better.alarm.interfaces.Alarm;
-import com.better.alarm.logger.Logger;
 import com.better.alarm.model.AlarmValue;
 import com.better.alarm.presenter.AlarmsListFragment.ShowDetailsStrategy;
 import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialogHandler;
 import com.melnykov.fab.FloatingActionButton;
 
-
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
+
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.

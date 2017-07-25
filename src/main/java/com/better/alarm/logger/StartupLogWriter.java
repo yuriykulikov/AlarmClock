@@ -1,12 +1,12 @@
 package com.better.alarm.logger;
 
+import com.better.alarm.logger.Logger.LogLevel;
+import com.better.alarm.logger.Logger.LogWriter;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import com.better.alarm.logger.Logger.LogLevel;
-import com.better.alarm.logger.Logger.LogWriter;
 
 public class StartupLogWriter implements LogWriter {
     private static final int STARTUP_BUFFER_SIZE = 100;

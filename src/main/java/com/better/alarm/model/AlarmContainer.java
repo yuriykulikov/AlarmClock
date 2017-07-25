@@ -1,11 +1,11 @@
 package com.better.alarm.model;
 
-import java.util.Calendar;
-
 import android.media.RingtoneManager;
 import android.net.Uri;
 
 import org.immutables.value.Value;
+
+import java.util.Calendar;
 
 @Value.Immutable
 //@Value.Style(stagedBuilder = true)

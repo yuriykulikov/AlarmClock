@@ -1,10 +1,8 @@
 package com.better.alarm.test
 
-import android.app.Instrumentation
 import android.support.test.InstrumentationRegistry
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
-import android.test.ActivityInstrumentationTestCase2
 import android.test.suitebuilder.annotation.LargeTest
 import com.better.alarm.logger.Logger
 import com.better.alarm.persistance.AlarmDatabaseHelper
@@ -15,7 +13,7 @@ import org.junit.*
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
-import java.util.Locale
+import java.util.*
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
