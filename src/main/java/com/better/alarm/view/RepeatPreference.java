@@ -16,9 +16,6 @@
 
 package com.better.alarm.view;
 
-import java.text.DateFormatSymbols;
-import java.util.Calendar;
-
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -27,6 +24,9 @@ import android.util.AttributeSet;
 
 import com.better.alarm.model.DaysOfWeek;
 import com.better.alarm.model.ImmutableDaysOfWeek;
+
+import java.text.DateFormatSymbols;
+import java.util.Calendar;
 
 public class RepeatPreference extends ListPreference {
 

@@ -29,8 +29,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.better.alarm.R;
-import com.better.alarm.view.TimePicker;
 import com.better.alarm.logger.Logger;
+import com.better.alarm.view.TimePicker;
 
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;

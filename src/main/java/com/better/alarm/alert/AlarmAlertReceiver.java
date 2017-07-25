@@ -17,9 +17,6 @@
 
 package com.better.alarm.alert;
 
-import java.util.Calendar;
-
-import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -37,9 +34,11 @@ import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.interfaces.PresentationToModelIntents;
-import com.better.alarm.presenter.TransparentActivity;
 import com.better.alarm.logger.Logger;
+import com.better.alarm.presenter.TransparentActivity;
 import com.google.inject.Inject;
+
+import java.util.Calendar;
 
 /**
  * Glue class: connects AlarmAlert IntentReceiver to AlarmAlert activity. Passes

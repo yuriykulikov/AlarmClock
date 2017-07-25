@@ -10,7 +10,6 @@ import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialogHandler;
 import com.better.alarm.presenter.TimePickerDialogFragment.OnAlarmTimePickerCanceledListener;
-import com.better.alarm.logger.Logger;
 
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;

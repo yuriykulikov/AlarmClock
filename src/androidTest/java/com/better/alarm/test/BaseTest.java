@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.test.InstrumentationRegistry;
 
-import com.better.alarm.*;
 import com.better.alarm.R;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.model.AlarmValue;

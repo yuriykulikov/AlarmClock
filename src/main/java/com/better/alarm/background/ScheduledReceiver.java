@@ -14,8 +14,6 @@
  */
 package com.better.alarm.background;
 
-import java.util.Calendar;
-
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.AlarmManager.AlarmClockInfo;
@@ -32,6 +30,8 @@ import com.better.alarm.interfaces.Intents;
 import com.better.alarm.presenter.AlarmsListActivity;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
+
+import java.util.Calendar;
 
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;

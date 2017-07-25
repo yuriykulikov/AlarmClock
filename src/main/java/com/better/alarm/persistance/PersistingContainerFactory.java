@@ -11,7 +11,6 @@ import com.better.alarm.BuildConfig;
 import com.better.alarm.model.AlarmContainer;
 import com.better.alarm.model.Calendars;
 import com.better.alarm.model.ContainerFactory;
-import com.better.alarm.model.DaysOfWeek;
 import com.better.alarm.model.ImmutableAlarmContainer;
 import com.better.alarm.model.ImmutableDaysOfWeek;
 import com.google.inject.Inject;

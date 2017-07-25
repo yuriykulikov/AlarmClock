@@ -1,10 +1,10 @@
 package com.better.alarm.interfaces;
 
-import java.util.Calendar;
-
 import android.net.Uri;
 
 import com.better.alarm.model.DaysOfWeek;
+
+import java.util.Calendar;
 
 public interface Alarm {
     void enable(boolean enable);
