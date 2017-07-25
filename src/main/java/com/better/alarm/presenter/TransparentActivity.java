@@ -12,10 +12,14 @@ import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialog
 import com.better.alarm.presenter.TimePickerDialogFragment.OnAlarmTimePickerCanceledListener;
 import com.better.alarm.logger.Logger;
 
+import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposables;
+
 public class TransparentActivity extends Activity implements AlarmTimePickerDialogHandler,
         OnAlarmTimePickerCanceledListener {
 
     private Alarm alarm;
+    Disposable dialog = Disposables.disposed();
 
     @Override
     protected void onCreate(Bundle icicle) {
@@ -24,7 +28,18 @@ public class TransparentActivity extends Activity implements AlarmTimePickerDial
         Intent intent = getIntent();
         int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
         alarm = alarmsManager.getAlarm(id);
-        TimePickerDialogFragment.showTimePicker(getFragmentManager());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        dialog = TimePickerDialogFragment.showTimePicker(getFragmentManager());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dialog.dispose();
     }
 
     @Override

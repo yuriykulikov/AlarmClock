@@ -33,7 +33,7 @@ import static org.hamcrest.Matchers.anything;
 class BaseTest {
     private static final boolean DBG = true;
 
-    private static void sleep(int howLong) {
+    protected static void sleep(int howLong) {
         if (DBG) {
             try {
                 Thread.sleep(howLong);
