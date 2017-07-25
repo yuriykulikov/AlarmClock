@@ -36,6 +36,9 @@ import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialog
 import com.melnykov.fab.FloatingActionButton;
 
 
+import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposables;
+
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */
@@ -44,6 +47,7 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
     private ShowDetailsStrategy details;
 
     private Alarm timePickerAlarm;
+    private Disposable timePickerDialogDisposable = Disposables.disposed();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,58 +91,21 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
 
     public void showTimePicker(AlarmValue alarm) {
         timePickerAlarm = AlarmApplication.alarms().getAlarm(alarm.getId());
-        TimePickerDialogFragment.showTimePicker(getFragmentManager());
+        timePickerDialogDisposable = TimePickerDialogFragment.showTimePicker(getFragmentManager());
     }
 
     @Override
     public void onDialogTimeSet(int hourOfDay, int minute) {
         timePickerAlarm.edit().withIsEnabled(true).withHour(hourOfDay).withMinutes(minute).commit();
-        // this must be invoked synchronously on the Pickers's OK button onClick
-        // otherwise fragment is closed too soon and the time is not updated
-        //alarmsListFragment.updateAlarmsList();
+        timePickerAlarm = null;
+        timePickerDialogDisposable.dispose();
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (timePickerAlarm != null) {
-            outState.putInt("timePickerAlarm", timePickerAlarm.getId());
-        }
-    }
-
-    /**
-     * I do not know why but sometimes we get funny exceptions like this:
-     * <p>
-     * <pre>
-     * STACK_TRACE=java.lang.NullPointerException
-     *         at com.better.alarm.presenter.AlarmsListActivity.onDialogTimeSet(AlarmsListActivity.java:139)
-     *         at com.better.alarm.presenter.TimePickerDialogFragment$2.onClick(TimePickerDialogFragment.java:90)
-     *         at android.view.View.performClick(View.java:4204)
-     *         at android.view.View$PerformClick.run(View.java:17355)
-     *         at android.os.Handler.handleCallback(Handler.java:725)
-     *         at android.os.Handler.dispatchMessage(Handler.java:92)
-     *         at android.os.Looper.loop(Looper.java:137)
-     *         at android.app.ActivityThread.main(ActivityThread.java:5041)
-     *         at java.lang.reflect.Method.invokeNative(Native Method)
-     *         at java.lang.reflect.Method.invoke(Method.java:511)
-     *         at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:793)
-     *         at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:560)
-     *         at dalvik.system.NativeStart.main(Native Method)
-     * </pre>
-     * <p>
-     * And this happens on application start. So I suppose the fragment is
-     * showing even though the activity is not there. So we can use this method
-     * to make sure the alarm is there.
-     */
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        try {
-            timePickerAlarm = AlarmApplication.alarms().getAlarm(
-                    savedInstanceState.getInt("timePickerAlarm", -1));
-            Logger.getDefaultLogger().d("restored " + timePickerAlarm.toString());
-        } catch (Exception e) {
-            Logger.getDefaultLogger().d("no timePickerAlarm was restored");
-        }
+    protected void onPause() {
+        //dismiss the time picker if it was showing. Otherwise we will have to store the state and it is not nice for the user
+        timePickerDialogDisposable.dispose();
+        timePickerAlarm = null;
+        super.onPause();
     }
 }

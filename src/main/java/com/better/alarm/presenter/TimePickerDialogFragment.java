@@ -32,6 +32,10 @@ import com.better.alarm.R;
 import com.better.alarm.view.TimePicker;
 import com.better.alarm.logger.Logger;
 
+import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposables;
+import io.reactivex.functions.Action;
+
 /**
  * Dialog to set alarm time.
  */
@@ -47,11 +51,6 @@ public class TimePickerDialogFragment extends DialogFragment {
         Bundle args = new Bundle();
         frag.setArguments(args);
         return frag;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -117,7 +116,7 @@ public class TimePickerDialogFragment extends DialogFragment {
         void onTimePickerCanceled();
     }
 
-    public static void showTimePicker(FragmentManager fragmentManager) {
+    public static Disposable showTimePicker(FragmentManager fragmentManager) {
         final FragmentTransaction ft = fragmentManager.beginTransaction();
         final Fragment prev = fragmentManager.findFragmentByTag("time_dialog");
         if (prev != null) {
@@ -126,5 +125,13 @@ public class TimePickerDialogFragment extends DialogFragment {
 
         final TimePickerDialogFragment fragment = TimePickerDialogFragment.newInstance();
         fragment.show(ft, "time_dialog");
+        return Disposables.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                if (fragment.isAdded()) {
+                    fragment.dismiss();
+                }
+            }
+        });
     }
 }

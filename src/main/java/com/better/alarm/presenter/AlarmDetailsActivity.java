@@ -50,6 +50,9 @@ import com.google.inject.Inject;
 
 import java.util.Calendar;
 
+import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposables;
+
 /**
  * Manages each alarm
  */
@@ -77,6 +80,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     private SharedPreferences sp;
     @Inject
     private Prefs prefs;
+    private Disposable disposableDialog = Disposables.disposed();
 
     @Override
     protected void onCreate(Bundle icicle) {
@@ -147,7 +151,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
             }
         });
         if (isNewAlarm) {
-            TimePickerDialogFragment.showTimePicker(getFragmentManager());
+            disposableDialog = TimePickerDialogFragment.showTimePicker(getFragmentManager());
         }
     }
 
@@ -181,6 +185,8 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
         super.onPause();
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(
                 onSharedPreferenceChangeListener);
+
+        disposableDialog.dispose();
     }
 
     /**
@@ -279,7 +285,7 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
         if (preference.equals(mTimePref)) {
-            TimePickerDialogFragment.showTimePicker(getFragmentManager());
+            disposableDialog = TimePickerDialogFragment.showTimePicker(getFragmentManager());
         }
 
         return super.onPreferenceTreeClick(preferenceScreen, preference);

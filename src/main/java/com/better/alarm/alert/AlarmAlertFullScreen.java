@@ -46,8 +46,12 @@ import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialog
 import com.better.alarm.presenter.TimePickerDialogFragment.OnAlarmTimePickerCanceledListener;
 import com.google.inject.Inject;
 
+import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposables;
+
 import static com.better.alarm.Prefs.LONGCLICK_DISMISS_DEFAULT;
 import static com.better.alarm.Prefs.LONGCLICK_DISMISS_KEY;
+
 /**
  * Alarm Clock alarm alert: pops visible indicator and plays alarm tone. This
  * activity is the full screen version which shows over the lock screen with the
@@ -65,24 +69,20 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
     private SharedPreferences sp;
 
     private boolean longClickToDismiss;
+
+    private Disposable disposableDialog = Disposables.disposed();
     /**
      * Receives Intents from the model
+     * Intents.ALARM_SNOOZE_ACTION
+     * Intents.ALARM_DISMISS_ACTION
+     * Intents.ACTION_SOUND_EXPIRED
      */
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
             int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
             if (mAlarm.getId() == id) {
-                if (action.equals(Intents.ALARM_SNOOZE_ACTION)) {
                     finish();
-                } else if (action.equals(Intents.ALARM_DISMISS_ACTION)) {
-                    finish();
-                } else if (action.equals(Intents.ACTION_SOUND_EXPIRED)) {
-                    // if sound has expired there is no need to keep the screen
-                    // on
-                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                }
             }
         }
     };
@@ -126,7 +126,6 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
             IntentFilter filter = new IntentFilter();
             filter.addAction(Intents.ALARM_SNOOZE_ACTION);
             filter.addAction(Intents.ALARM_DISMISS_ACTION);
-            filter.addAction(Intents.ACTION_CANCEL_SNOOZE);
             filter.addAction(Intents.ACTION_SOUND_EXPIRED);
             registerReceiver(mReceiver, filter);
         } catch (Exception e) {
@@ -170,7 +169,7 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
             @Override
             public boolean onLongClick(View v) {
                 if (isSnoozeEnabled()) {
-                    TimePickerDialogFragment.showTimePicker(getFragmentManager());
+                    disposableDialog = TimePickerDialogFragment.showTimePicker(getFragmentManager());
                     AlarmAlertFullScreen.this.sendBroadcast(new Intent(Intents.ACTION_MUTE));
                     new android.os.Handler().postDelayed(new Runnable() {
                         @Override
@@ -256,6 +255,12 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
         View snoozeText = findViewById(R.id.alert_text_snooze);
         snooze.setEnabled(isSnoozeEnabled());
         snoozeText.setEnabled(isSnoozeEnabled());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        disposableDialog.dispose();
     }
 
     @Override

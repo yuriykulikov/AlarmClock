@@ -58,7 +58,7 @@ public class PopupTest extends BaseTest {
             .around(transparentActivity);
 
     @Before
-    public void set24HourMode(){
+    public void set24HourMode() {
         AlarmApplication.is24hoursFormatOverride = Optional.of(true);
     }
 
@@ -116,7 +116,7 @@ public class PopupTest extends BaseTest {
 
     @Ignore
     @Test
-    public void testSnoozeInThePastIsNotAccepted(){
+    public void testSnoozeInThePastIsNotAccepted() {
 
     }
 
@@ -146,8 +146,8 @@ public class PopupTest extends BaseTest {
         Calendar nextTime = Calendar.getInstance();
         nextTime.setTimeInMillis(next.get().nextNonPrealarmTime());
 
-        assertThat((int)nextTime.get(Calendar.HOUR_OF_DAY)).isEqualTo(23);
-        assertThat((int)nextTime.get(Calendar.MINUTE)).isEqualTo(59);
+        assertThat((int) nextTime.get(Calendar.HOUR_OF_DAY)).isEqualTo(23);
+        assertThat((int) nextTime.get(Calendar.MINUTE)).isEqualTo(59);
         assertThat(next.get().alarm().isEnabled()).isTrue();
 
         //disable the snoozed alarm
@@ -186,5 +186,25 @@ public class PopupTest extends BaseTest {
         transparentActivity.launchActivity(startIntent);
 
         snoozeAlarmChechAndDelete();
+    }
+
+    @Test
+    public void letAlarmExpireAndDismissIt() {
+        int id = createAlarmAndFire();
+
+        Intent startIntent = new Intent();
+        startIntent.putExtra(Intents.EXTRA_ID, id);
+        alertActivity.launchActivity(startIntent);
+
+        //simulate timed out
+        Intent intent = new Intent(AlarmSetter.ACTION_FIRED);
+        intent.putExtra(AlarmSetter.EXTRA_ID, id);
+        intent.putExtra(AlarmSetter.EXTRA_TYPE, CalendarType.AUTOSILENCE.name());
+
+        listActivity.getActivity().sendBroadcast(intent);
+        sleep();
+
+        //Popup must be closed in order for this to work
+        deleteAlarm();
     }
 }
