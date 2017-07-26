@@ -46,6 +46,7 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
 
     private Alarm timePickerAlarm;
     private Disposable timePickerDialogDisposable = Disposables.disposed();
+    private AlarmsListFragment alarmsListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +72,7 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
         });
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            AlarmsListFragment alarmsListFragment = (AlarmsListFragment) getFragmentManager()
-                    .findFragmentById(R.id.list_activity_list_fragment);
+            alarmsListFragment = (AlarmsListFragment) getFragmentManager().findFragmentById(R.id.list_activity_list_fragment);
 
             ((FloatingActionButton) fab).attachToListView(alarmsListFragment.getListView());
         }
@@ -96,6 +96,9 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
     @Override
     public void onDialogTimeSet(int hourOfDay, int minute) {
         timePickerAlarm.edit().withIsEnabled(true).withHour(hourOfDay).withMinutes(minute).commit();
+        // this must be invoked synchronously on the Pickers's OK button onClick
+        // otherwise fragment is closed too soon and the time is not updated causing a flicker
+        alarmsListFragment.performOptimisticTimeUpdate(timePickerAlarm, hourOfDay, minute);
         timePickerAlarm = null;
         timePickerDialogDisposable.dispose();
     }

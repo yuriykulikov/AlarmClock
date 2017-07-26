@@ -26,6 +26,7 @@ import com.better.alarm.R;
 import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.configuration.Prefs;
 import com.better.alarm.configuration.Store;
+import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.model.AlarmValue;
@@ -307,6 +308,26 @@ public class AlarmsListFragment extends ListFragment {
         if (alarm.isEnabled()) {
             menu.findItem(R.id.enable_alarm).setTitle(R.string.disable_alarm);
         }
+    }
+
+    public void performOptimisticTimeUpdate(Alarm timePickerAlarm, int hourOfDay, int minute) {
+        RowHolder row = (RowHolder) getListView()
+                .getChildAt(indexById(timePickerAlarm.getId()))
+                .getTag();
+
+        final Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        c.set(Calendar.MINUTE, minute);
+        row.digitalClock().updateTime(c);
+    }
+
+    private int indexById(int id) {
+        for (int i = 0; i < mAdapter.values.size(); i++) {
+            if (mAdapter.values.get(i).getId() == id) {
+                return i;
+            }
+        }
+        throw new RuntimeException("Id " + id + " was not found!");
     }
 
     private final class RepeatComparator implements Comparator<AlarmValue> {
