@@ -29,6 +29,7 @@ import android.text.TextUtils;
 
 import com.better.alarm.BuildConfig;
 import com.better.alarm.logger.Logger;
+import com.google.common.base.Preconditions;
 
 public class AlarmProvider extends ContentProvider {
     private AlarmDatabaseHelper mOpenHelper;
@@ -57,19 +58,8 @@ public class AlarmProvider extends ContentProvider {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 
         // Generate the body of the query
-        int match = sURLMatcher.match(url);
-        switch (match) {
-        case ALARMS:
-            qb.setTables("alarms");
-            break;
-        case ALARMS_ID:
-            qb.setTables("alarms");
-            qb.appendWhere("_id=");
-            qb.appendWhere(url.getPathSegments().get(1));
-            break;
-        default:
-            throw new IllegalArgumentException("Unknown URL " + url);
-        }
+        Preconditions.checkArgument(sURLMatcher.match(url) == ALARMS, "Invalid URL %s", url);
+        qb.setTables("alarms");
 
         SQLiteDatabase db = mOpenHelper.getReadableDatabase();
         Cursor ret;
@@ -82,9 +72,7 @@ public class AlarmProvider extends ContentProvider {
             mOpenHelper.onCreate(db);
             ret = qb.query(db, projectionIn, selection, selectionArgs, null, null, sort);
         }
-        if (ret == null) {
-            log.e("AlarmsManager.query: failed");
-        } else {
+        if (ret != null) {
             ret.setNotificationUri(getContext().getContentResolver(), url);
         }
 
@@ -95,32 +83,22 @@ public class AlarmProvider extends ContentProvider {
     public String getType(Uri url) {
         int match = sURLMatcher.match(url);
         switch (match) {
-        case ALARMS:
-            return "vnd.android.cursor.dir/alarms";
-        case ALARMS_ID:
-            return "vnd.android.cursor.item/alarms";
-        default:
-            throw new IllegalArgumentException("Unknown URL");
+            case ALARMS:
+                return "vnd.android.cursor.dir/alarms";
+            case ALARMS_ID:
+                return "vnd.android.cursor.item/alarms";
+            default:
+                throw new IllegalArgumentException("Invalid URL");
         }
     }
 
     @Override
     public int update(Uri url, ContentValues values, String where, String[] whereArgs) {
-        int count;
-        long rowId = 0;
-        int match = sURLMatcher.match(url);
+        Preconditions.checkArgument(sURLMatcher.match(url) == ALARMS_ID, "Invalid URL %s", url);
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        switch (match) {
-        case ALARMS_ID: {
-            String segment = url.getPathSegments().get(1);
-            rowId = Long.parseLong(segment);
-            count = db.update("alarms", values, "_id=" + rowId, null);
-            break;
-        }
-        default: {
-            throw new UnsupportedOperationException("Cannot update URL: " + url);
-        }
-        }
+        String segment = url.getPathSegments().get(1);
+        long rowId = Long.parseLong(segment);
+        int count = db.update("alarms", values, "_id=" + rowId, null);
         log.d("*** notifyChange() rowId: " + rowId + " url " + url);
         getContext().getContentResolver().notifyChange(url, null);
         return count;
@@ -128,8 +106,7 @@ public class AlarmProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri url, ContentValues initialValues) {
-        if (sURLMatcher.match(url) != ALARMS) throw new IllegalArgumentException("Cannot insert into URL: " + url);
-
+        Preconditions.checkArgument(sURLMatcher.match(url) == ALARMS, "Invalid URL %s", url);
         Uri newUrl = mOpenHelper.commonInsert(initialValues);
         getContext().getContentResolver().notifyChange(newUrl, null);
         return newUrl;
@@ -137,22 +114,15 @@ public class AlarmProvider extends ContentProvider {
 
     @Override
     public int delete(Uri url, String where, String[] whereArgs) {
+        Preconditions.checkArgument(sURLMatcher.match(url) == ALARMS_ID, "Invalid URL %s", url);
+
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int count;
-        switch (sURLMatcher.match(url)) {
-        case ALARMS:
-            count = db.delete("alarms", where, whereArgs);
-            break;
-        case ALARMS_ID:
-            String segment = url.getPathSegments().get(1);
-            if (TextUtils.isEmpty(where)) {
-                count = db.delete("alarms", "_id=" + segment, whereArgs);
-            } else {
-                count = db.delete("alarms", "_id=" + segment + " AND (" + where + ")", whereArgs);
-            }
-            break;
-        default:
-            throw new IllegalArgumentException("Cannot delete from URL: " + url);
+        String segment = url.getPathSegments().get(1);
+        if (TextUtils.isEmpty(where)) {
+            count = db.delete("alarms", "_id=" + segment, whereArgs);
+        } else {
+            count = db.delete("alarms", "_id=" + segment + " AND (" + where + ")", whereArgs);
         }
 
         getContext().getContentResolver().notifyChange(url, null);
