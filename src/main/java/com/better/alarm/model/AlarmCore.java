@@ -477,7 +477,7 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
 
                 @Override
                 protected void onSnooze() {
-                    if ( getCurrentMessage().obj().isPresent()) {
+                    if (getCurrentMessage().obj().isPresent()) {
                         //snooze to time with prealarm -> go to snoozed
                         transitionTo(snoozed);
                     } else {
@@ -529,6 +529,12 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
                 }
 
                 @Override
+                protected void onSnooze() {
+                    //reschedule from notification
+                    enter();
+                }
+
+                @Override
                 public void exit() {
                     removeAlarm();
                     broadcastAlarmState(Intents.ACTION_CANCEL_SNOOZE);
@@ -545,6 +551,12 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
                 @Override
                 protected void onFired() {
                     transitionTo(fired);
+                }
+
+                @Override
+                protected void onSnooze() {
+                    //reschedule from notification
+                    transitionTo(snoozed);
                 }
 
                 @Override
