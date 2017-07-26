@@ -29,8 +29,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.better.alarm.AlarmApplication;
-import com.better.alarm.Prefs;
+import com.better.alarm.configuration.AlarmApplication;
+import com.better.alarm.configuration.Prefs;
 import com.better.alarm.R;
 
 import java.text.DateFormatSymbols;

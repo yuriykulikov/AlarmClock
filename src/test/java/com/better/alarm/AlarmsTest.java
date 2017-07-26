@@ -4,6 +4,12 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.os.PowerManager;
 
+import com.better.alarm.background.ScheduledReceiver;
+import com.better.alarm.background.ToastPresenter;
+import com.better.alarm.configuration.AlarmApplication;
+import com.better.alarm.configuration.ImmutablePrefs;
+import com.better.alarm.configuration.ImmutableStore;
+import com.better.alarm.configuration.Store;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
@@ -113,6 +119,9 @@ public class AlarmsTest {
 
             //mocks for verification
             binder.bind(AlarmCore.IStateNotifier.class).toInstance(stateNotifierMock);
+
+            binder.bind(ScheduledReceiver.class).toInstance(mock(ScheduledReceiver.class));
+            binder.bind(ToastPresenter.class).toInstance(mock(ToastPresenter.class));
         }
     }
 

@@ -27,8 +27,8 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
 
-import com.better.alarm.AlarmApplication;
-import com.better.alarm.Prefs;
+import com.better.alarm.configuration.AlarmApplication;
+import com.better.alarm.configuration.Prefs;
 import com.better.alarm.R;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;

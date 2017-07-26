@@ -21,7 +21,7 @@ import android.content.Context;
 import android.widget.Toast;
 
 import com.better.alarm.R;
-import com.better.alarm.Store;
+import com.better.alarm.configuration.Store;
 
 import javax.inject.Inject;
 

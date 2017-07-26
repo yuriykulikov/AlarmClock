@@ -25,9 +25,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.better.alarm.AlarmApplication;
+import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.R;
-import com.better.alarm.ShowDetailsInActivity;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.model.AlarmValue;
 import com.better.alarm.presenter.AlarmsListFragment.ShowDetailsStrategy;

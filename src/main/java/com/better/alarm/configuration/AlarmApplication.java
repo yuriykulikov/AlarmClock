@@ -13,28 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.better.alarm;
+package com.better.alarm.configuration;
 
-import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.Application;
-import android.app.KeyguardManager;
-import android.app.NotificationManager;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.AudioManager;
-import android.os.PowerManager;
-import android.os.Vibrator;
 import android.preference.PreferenceManager;
-import android.telephony.TelephonyManager;
 import android.view.ViewConfiguration;
 
+import com.better.alarm.R;
 import com.better.alarm.background.ScheduledReceiver;
 import com.better.alarm.background.ToastPresenter;
 import com.better.alarm.interfaces.IAlarmsManager;
-import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.LogcatLogWriter;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.logger.LoggingExceptionHandler;
@@ -52,9 +42,6 @@ import com.better.alarm.model.IAlarmsScheduler;
 import com.better.alarm.model.MainLooperHandlerFactory;
 import com.better.alarm.persistance.DatabaseQuery;
 import com.better.alarm.persistance.PersistingContainerFactory;
-import com.better.alarm.presenter.ActionBarHandler;
-import com.better.alarm.presenter.AlarmDetailsActivity;
-import com.better.alarm.presenter.AlarmsListFragment;
 import com.better.alarm.presenter.DynamicThemeHandler;
 import com.better.alarm.statemachine.HandlerFactory;
 import com.better.alarm.wakelock.WakeLockManager;
@@ -63,7 +50,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.inject.Binder;
 import com.google.inject.Guice;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
@@ -193,7 +179,7 @@ public class AlarmApplication extends Application {
             }
         });
 
-        guice = Guice.createInjector(new AppModule(logger, prefs, store), new AndroidModule());
+        guice = Guice.createInjector(new AppModule(logger, prefs, store), createAndroidModule());
 
         ACRA.getErrorReporter().setExceptionHandlerInitializer(new ExceptionHandlerInitializer() {
             @Override
@@ -214,6 +200,10 @@ public class AlarmApplication extends Application {
         super.onCreate();
     }
 
+    protected Module createAndroidModule() {
+        return new AndroidModule(this);
+    }
+
     public static Injector guice() {
         return Preconditions.checkNotNull(guice);
     }
@@ -231,26 +221,6 @@ public class AlarmApplication extends Application {
 
     public static IAlarmsManager alarms() {
         return guice.getInstance(IAlarmsManager.class);
-    }
-
-    private class AndroidModule implements Module {
-        @Override
-        public void configure(Binder binder) {
-            binder.bind(Context.class).toInstance(getApplicationContext());
-            binder.bind(ContentResolver.class).toInstance(getApplicationContext().getContentResolver());
-            binder.bind(SharedPreferences.class).toInstance(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
-            binder.bind(AlarmManager.class).toInstance((AlarmManager) getSystemService(Context.ALARM_SERVICE));
-            binder.bind(NotificationManager.class).toInstance((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));
-            binder.bind(AudioManager.class).toInstance((AudioManager) getSystemService(Context.AUDIO_SERVICE));
-            binder.bind(KeyguardManager.class).toInstance((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE));
-            binder.bind(TelephonyManager.class).toInstance((TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE));
-            binder.bind(PowerManager.class).toInstance((PowerManager) getSystemService(Context.POWER_SERVICE));
-            binder.bind(RxSharedPreferences.class).toInstance(rxPreferences);
-            binder.bind(Vibrator.class).toInstance((Vibrator) getSystemService(Context.VIBRATOR_SERVICE));
-
-            binder.bind(ScheduledReceiver.class).asEagerSingleton();
-            binder.bind(ToastPresenter.class).asEagerSingleton();
-        }
     }
 
     public static class AppModule implements Module {
@@ -291,6 +261,9 @@ public class AlarmApplication extends Application {
                     return Calendar.getInstance();
                 }
             });
+
+            binder.bind(ScheduledReceiver.class).asEagerSingleton();
+            binder.bind(ToastPresenter.class).asEagerSingleton();
         }
     }
 

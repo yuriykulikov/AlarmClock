@@ -4,7 +4,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 
-import com.better.alarm.AlarmApplication;
+import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.R;
 import com.better.alarm.presenter.AlarmsListActivity;
 import com.google.common.base.Optional;

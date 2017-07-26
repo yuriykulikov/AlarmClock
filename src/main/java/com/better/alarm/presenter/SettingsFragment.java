@@ -17,7 +17,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.provider.Settings;
 
-import com.better.alarm.AlarmApplication;
+import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.R;
 import com.better.alarm.view.AlarmPreference;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
@@ -28,12 +28,12 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
-import static com.better.alarm.Prefs.KEY_ALARM_IN_SILENT_MODE;
-import static com.better.alarm.Prefs.KEY_ALARM_SNOOZE;
-import static com.better.alarm.Prefs.KEY_AUTO_SILENCE;
-import static com.better.alarm.Prefs.KEY_DEFAULT_RINGTONE;
-import static com.better.alarm.Prefs.KEY_FADE_IN_TIME_SEC;
-import static com.better.alarm.Prefs.KEY_PREALARM_DURATION;
+import static com.better.alarm.configuration.Prefs.KEY_ALARM_IN_SILENT_MODE;
+import static com.better.alarm.configuration.Prefs.KEY_ALARM_SNOOZE;
+import static com.better.alarm.configuration.Prefs.KEY_AUTO_SILENCE;
+import static com.better.alarm.configuration.Prefs.KEY_DEFAULT_RINGTONE;
+import static com.better.alarm.configuration.Prefs.KEY_FADE_IN_TIME_SEC;
+import static com.better.alarm.configuration.Prefs.KEY_PREALARM_DURATION;
 
 /**
  * Created by Yuriy on 24.07.2017.

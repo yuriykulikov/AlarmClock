@@ -34,7 +34,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.better.alarm.AlarmApplication;
+import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.R;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
@@ -49,8 +49,8 @@ import com.google.inject.Inject;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
 
-import static com.better.alarm.Prefs.LONGCLICK_DISMISS_DEFAULT;
-import static com.better.alarm.Prefs.LONGCLICK_DISMISS_KEY;
+import static com.better.alarm.configuration.Prefs.LONGCLICK_DISMISS_DEFAULT;
+import static com.better.alarm.configuration.Prefs.LONGCLICK_DISMISS_KEY;
 
 /**
  * Alarm Clock alarm alert: pops visible indicator and plays alarm tone. This

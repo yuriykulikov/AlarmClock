@@ -27,7 +27,7 @@ import android.view.View;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-import com.better.alarm.AlarmApplication;
+import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.R;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
@@ -42,9 +42,9 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 import io.reactivex.subjects.PublishSubject;
 
-import static com.better.alarm.Prefs.DEFAULT_PREALARM_VOLUME;
-import static com.better.alarm.Prefs.KEY_PREALARM_VOLUME;
-import static com.better.alarm.Prefs.MAX_PREALARM_VOLUME;
+import static com.better.alarm.configuration.Prefs.DEFAULT_PREALARM_VOLUME;
+import static com.better.alarm.configuration.Prefs.KEY_PREALARM_VOLUME;
+import static com.better.alarm.configuration.Prefs.MAX_PREALARM_VOLUME;
 
 public class VolumePreference extends Preference {
     private final Ringtone ringtone;

@@ -16,9 +16,9 @@
 package com.better.alarm.model;
 
 import com.better.alarm.BuildConfig;
-import com.better.alarm.ImmutableNext;
-import com.better.alarm.Prefs;
-import com.better.alarm.Store;
+import com.better.alarm.configuration.ImmutableNext;
+import com.better.alarm.configuration.Prefs;
+import com.better.alarm.configuration.Store;
 import com.better.alarm.logger.Logger;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
