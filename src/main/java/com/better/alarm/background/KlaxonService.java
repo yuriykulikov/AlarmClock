@@ -35,9 +35,9 @@ import android.os.PowerManager.WakeLock;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
+import com.better.alarm.R;
 import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.configuration.Prefs;
-import com.better.alarm.R;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
@@ -312,20 +312,25 @@ public class KlaxonService extends Service {
 
         log.d(intent.getAction());
 
-        if (action.equals(Intents.ALARM_ALERT_ACTION)) {
-            alarm = AlarmApplication.alarms().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
-            onAlarm(alarm);
-        } else if (action.equals(Intents.ALARM_PREALARM_ACTION)) {
-            alarm = AlarmApplication.alarms().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
-            onPreAlarm(alarm);
-        } else if (action.equals(Intents.ACTION_START_PREALARM_SAMPLE)) {
-            onStartAlarmSample();
-        } else if (action.equals(Intents.ACTION_MUTE)) {
-            volume.mute();
-        } else if (action.equals(Intents.ACTION_DEMUTE)) {
-            volume.fadeInFast();
-        } else {
-            stopAndCleanup();
+        switch (action) {
+            case Intents.ALARM_ALERT_ACTION:
+            case Intents.ALARM_PREALARM_ACTION:
+                alarm = AlarmApplication.alarms().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
+                Type type = action.equals(Intents.ALARM_PREALARM_ACTION) ? Type.PREALARM : Type.NORMAL;
+                onAlarm(alarm, type);
+                break;
+            case Intents.ACTION_START_PREALARM_SAMPLE:
+                onStartAlarmSample();
+                break;
+            case Intents.ACTION_MUTE:
+                volume.mute();
+                break;
+            case Intents.ACTION_DEMUTE:
+                volume.fadeInFast();
+                break;
+            default:
+                stopAndCleanup();
+                break;
         }
 
         return (action.equals(Intents.ALARM_ALERT_ACTION)
@@ -335,18 +340,9 @@ public class KlaxonService extends Service {
                 || action.equals(Intents.ACTION_DEMUTE)) ? START_STICKY : START_NOT_STICKY;
     }
 
-    private void onAlarm(Alarm alarm) {
+    private void onAlarm(Alarm alarm, Type type) {
         volume.cancelFadeIn();
-        volume.setMode(Type.NORMAL);
-        if (!alarm.isSilent()) {
-            initializePlayer(getAlertOrDefault(alarm));
-            volume.fadeInAsSetInSettings();
-        }
-    }
-
-    private void onPreAlarm(Alarm alarm) {
-        volume.cancelFadeIn();
-        volume.setMode(Type.PREALARM);
+        volume.setMode(type);
         if (!alarm.isSilent()) {
             initializePlayer(getAlertOrDefault(alarm));
             volume.fadeInAsSetInSettings();
