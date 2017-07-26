@@ -318,15 +318,6 @@ public class AlarmsListFragment extends ListFragment {
         String format = prefs.is24HoutFormat().blockingGet() ? M24 : M12;
         final String time = cal == null ? "" : (String) DateFormat.format(format, cal);
 
-        // Inflate the custom view and set each TextView's text.
-        final View v = getActivity().getLayoutInflater().inflate(R.layout.list_context_menu, null);
-        TextView textView = (TextView) v.findViewById(R.id.list_context_menu_header_time);
-        textView.setText(time);
-        textView = (TextView) v.findViewById(R.id.list_context_menu_header_label);
-        textView.setText(alarm.getLabel());
-
-        // Set the custom view on the menu.
-        menu.setHeaderView(v);
         // Change the text based on the state of the alarm.
         if (alarm.isEnabled()) {
             menu.findItem(R.id.enable_alarm).setTitle(R.string.disable_alarm);
