@@ -19,13 +19,12 @@ import android.widget.AbsListView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.better.alarm.R;
 import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.configuration.Prefs;
-import com.better.alarm.R;
 import com.better.alarm.configuration.Store;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.logger.Logger;
@@ -87,6 +86,8 @@ public class AlarmsListFragment extends ListFragment {
         TextView daysOfWeek();
 
         TextView label();
+
+        View detailsButton();
     }
 
     public class AlarmListAdapter extends ArrayAdapter<AlarmValue> {
@@ -113,6 +114,7 @@ public class AlarmsListFragment extends ListFragment {
                     .alarmId(-1)
                     .daysOfWeek((TextView) rowView.findViewById(R.id.list_row_daysOfWeek))
                     .label((TextView) rowView.findViewById(R.id.list_row_label))
+                    .detailsButton(rowView.findViewById(R.id.details_button_container))
                     .build();
 
             holder.digitalClock().setLive(false);
@@ -147,33 +149,20 @@ public class AlarmsListFragment extends ListFragment {
                         }
                     });
 
-            if (MATERIAL_DESIGN) {
-                row.onOff().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean enable) {
-                        logger.d("onCheckedChanged: " + (enable ? "enabled" : "disabled"));
-                        alarms.enable(alarm, enable);
-                    }
-                });
+            row.onOff().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean enable) {
+                    logger.d("onCheckedChanged: " + (enable ? "enabled" : "disabled"));
+                    alarms.enable(alarm, enable);
+                }
+            });
 
-                row.digitalClock().setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        ((AlarmsListActivity) getActivity()).showTimePicker(alarm);
-                    }
-                });
-            } else {
-                final View detailsWrapper = convertView.findViewById(R.id.details_button_container);
-                // Set the initial state of the clock "checkbox"
-                final ImageButton detailsButton = (ImageButton) detailsWrapper.findViewById(R.id.list_row_details_button);
-                detailsButton.setFocusable(false);
-                detailsWrapper.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        details.showDetails(mAdapter.getItem(position));
-                    }
-                });
-            }
+            row.detailsButton().setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    details.showDetails(mAdapter.getItem(position));
+                }
+            });
 
             // set the alarm text
             final Calendar c = Calendar.getInstance();
@@ -292,14 +281,10 @@ public class AlarmsListFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        if (MATERIAL_DESIGN) {
-            details.showDetails(mAdapter.getItem(position));
-        } else {
-            // We can display everything in-place with fragments, so update
-            // the list to highlight the selected item and show the data.
-            getListView().setSelection(position);
-            ((AlarmsListActivity) getActivity()).showTimePicker(mAdapter.getItem(position));
-        }
+        // We can display everything in-place with fragments, so update
+        // the list to highlight the selected item and show the data.
+        getListView().setSelection(position);
+        ((AlarmsListActivity) getActivity()).showTimePicker(mAdapter.getItem(position));
     }
 
     @Override

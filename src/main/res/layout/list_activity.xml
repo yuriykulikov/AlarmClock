@@ -39,4 +39,10 @@
         android:layout_height="?android:attr/actionBarSize"
         tools:layout="@layout/info_fragment" />
 
+    <Button
+        android:id="@+id/fab"
+        style="?android:attr/buttonBarButtonStyle"
+        android:text="@string/add_alarm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 </LinearLayout>
