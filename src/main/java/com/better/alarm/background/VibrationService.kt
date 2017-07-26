@@ -11,8 +11,8 @@ import android.os.PowerManager.WakeLock
 import android.os.Vibrator
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
-import com.better.alarm.AlarmApplication
-import com.better.alarm.Prefs
+import com.better.alarm.configuration.AlarmApplication
+import com.better.alarm.configuration.Prefs
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
 import com.f2prateek.rx.preferences2.RxSharedPreferences

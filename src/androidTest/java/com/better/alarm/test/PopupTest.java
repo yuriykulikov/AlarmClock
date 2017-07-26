@@ -6,10 +6,10 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 
-import com.better.alarm.AlarmApplication;
 import com.better.alarm.R;
-import com.better.alarm.Store;
 import com.better.alarm.alert.AlarmAlertFullScreen;
+import com.better.alarm.configuration.AlarmApplication;
+import com.better.alarm.configuration.Store;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.model.AlarmSetter;
 import com.better.alarm.model.AlarmValue;

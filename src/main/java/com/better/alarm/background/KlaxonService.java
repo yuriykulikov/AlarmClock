@@ -35,8 +35,8 @@ import android.os.PowerManager.WakeLock;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
-import com.better.alarm.AlarmApplication;
-import com.better.alarm.Prefs;
+import com.better.alarm.configuration.AlarmApplication;
+import com.better.alarm.configuration.Prefs;
 import com.better.alarm.R;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.Intents;
@@ -52,8 +52,8 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 
-import static com.better.alarm.Prefs.DEFAULT_PREALARM_VOLUME;
-import static com.better.alarm.Prefs.KEY_PREALARM_VOLUME;
+import static com.better.alarm.configuration.Prefs.DEFAULT_PREALARM_VOLUME;
+import static com.better.alarm.configuration.Prefs.KEY_PREALARM_VOLUME;
 
 /**
  * Manages alarms and vibe. Runs as a service so that it can continue to play if

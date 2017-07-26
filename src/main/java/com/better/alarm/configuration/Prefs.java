@@ -1,4 +1,4 @@
-package com.better.alarm;
+package com.better.alarm.configuration;
 
 import org.immutables.value.Value;
 

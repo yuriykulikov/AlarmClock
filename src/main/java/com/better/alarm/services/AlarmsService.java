@@ -23,7 +23,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 
-import com.better.alarm.AlarmApplication;
+import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.interfaces.PresentationToModelIntents;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.model.AlarmCore;

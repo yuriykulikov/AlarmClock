@@ -1,4 +1,4 @@
-package com.better.alarm;
+package com.better.alarm.presenter;
 
 import android.app.Activity;
 import android.content.Context;

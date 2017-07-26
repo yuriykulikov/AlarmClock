@@ -19,9 +19,9 @@ package com.better.alarm.model;
 
 import android.net.Uri;
 
-import com.better.alarm.ImmutableAlarmSet;
-import com.better.alarm.Prefs;
-import com.better.alarm.Store;
+import com.better.alarm.configuration.ImmutableAlarmSet;
+import com.better.alarm.configuration.Prefs;
+import com.better.alarm.configuration.Store;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.ImmutableAlarmEditor;
 import com.better.alarm.interfaces.Intents;

@@ -1,4 +1,4 @@
-package com.better.alarm;
+package com.better.alarm.configuration;
 
 import com.better.alarm.model.AlarmValue;
 import com.google.common.base.Optional;

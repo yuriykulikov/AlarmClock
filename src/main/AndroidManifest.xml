@@ -18,7 +18,7 @@
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
 
     <application
-        android:name=".AlarmApplication"
+        android:name=".configuration.AlarmApplication"
         android:icon="@mipmap/ic_launcher_alarmclock"
         android:label="@string/simple_alarm_clock" >
 

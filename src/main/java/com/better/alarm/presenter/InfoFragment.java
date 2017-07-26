@@ -16,10 +16,10 @@ import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher.ViewFactory;
 
-import com.better.alarm.AlarmApplication;
-import com.better.alarm.Prefs;
+import com.better.alarm.configuration.AlarmApplication;
+import com.better.alarm.configuration.Prefs;
 import com.better.alarm.R;
-import com.better.alarm.Store;
+import com.better.alarm.configuration.Store;
 import com.better.alarm.model.AlarmValue;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;

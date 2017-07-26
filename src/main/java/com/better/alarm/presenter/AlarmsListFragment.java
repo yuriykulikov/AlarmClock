@@ -23,11 +23,10 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.better.alarm.AlarmApplication;
-import com.better.alarm.Prefs;
+import com.better.alarm.configuration.AlarmApplication;
+import com.better.alarm.configuration.Prefs;
 import com.better.alarm.R;
-import com.better.alarm.ShowDetailsInActivity;
-import com.better.alarm.Store;
+import com.better.alarm.configuration.Store;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.model.AlarmValue;
