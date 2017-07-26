@@ -26,7 +26,7 @@
         android:gravity="center" >
 
         <CheckBox
-            android:id="@+id/list_row_on_off_checkbox"
+            android:id="@+id/list_row_on_off_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -87,15 +87,14 @@
         style="@style/alarm_list_left_column"
         android:gravity="center" >
 
-        <ImageButton
-            android:id="@+id/list_row_details_button"
-            style="?attr/alarmDetailsButtonStyle"
-            android:contentDescription="@string/set_alarm"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:duplicateParentState="true"
             android:clickable="false"
-            android:focusable="false"/>
+            android:focusable="false"
+            android:text="···"
+            android:textSize="40dp"
+            android:textStyle="normal" />
     </com.better.alarm.view.DontPressWithParentLayout>
 
 </LinearLayout>

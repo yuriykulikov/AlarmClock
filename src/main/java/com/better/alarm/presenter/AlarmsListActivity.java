@@ -62,18 +62,19 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
 
         setContentView(R.layout.list_activity);
 
+        View fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                details.createNewAlarm();
+            }
+        });
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             AlarmsListFragment alarmsListFragment = (AlarmsListFragment) getFragmentManager()
                     .findFragmentById(R.id.list_activity_list_fragment);
 
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-            fab.attachToListView(alarmsListFragment.getListView());
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    details.createNewAlarm();
-                }
-            });
+            ((FloatingActionButton) fab).attachToListView(alarmsListFragment.getListView());
         }
     }
 

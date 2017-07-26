@@ -68,10 +68,6 @@ public class ActionBarHandler {
             menuItemDashclock.setVisible(false);
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            menu.findItem(R.id.menu_item_add_alarm).setVisible(false);
-        }
-
         return true;
     }
 
@@ -83,12 +79,7 @@ public class ActionBarHandler {
      */
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_item_add_alarm:
-                details.createNewAlarm();
-                return true;
-
             case R.id.menu_item_settings:
-                // TODO show details
                 mContext.startActivity(new Intent(mContext, SettingsActivity.class));
                 return true;
 
