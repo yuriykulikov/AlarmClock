@@ -41,6 +41,7 @@
     <string name="longclick_dismiss_summary">Держать кнопку "Отключить" чтобы выключить будильник</string>
     <string name="fade_in_time_sec_title">Нарастание громкости</string>
     <string-array name="fade_in_time_sec_entries">
+        <item>Выкл.</item>
         <item>10 секунд</item>
         <item>20 секунд</item>
         <item>30 секунд</item>

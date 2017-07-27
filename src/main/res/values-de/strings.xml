@@ -41,6 +41,7 @@
     <string name="longclick_dismiss_summary">Lange drücken, um den Wecker auszuschalten</string>
     <string name="fade_in_time_sec_title">Fade-in Dauer</string>
     <string-array name="fade_in_time_sec_entries">
+        <item>Aus</item>
         <item>10 Sekunden</item>
         <item>20 Sekunden</item>
         <item>30 Sekunden</item>
