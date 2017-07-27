@@ -16,14 +16,6 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string-array name="fade_in_time_sec_values">
-        <item>1</item>
-        <item>10</item>
-        <item>20</item>
-        <item>30</item>
-        <item>60</item>
-        <item>120</item>
-    </string-array>
     <!-- Setting labels on Set alarm screen: Prealarm -->
     <string name="alarm_prealarm">Pre-sveglia soft</string>
     <!-- Pre-alarm duration title -->
