@@ -18,14 +18,6 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2" xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation">
     <!--      Here come strings which are not contained in the AOSP -->
 
-    <string-array name="fade_in_time_sec_values">
-        <item>1</item>
-        <item>10</item>
-        <item>20</item>
-        <item>30</item>
-        <item>60</item>
-        <item>120</item>
-    </string-array>
     <!-- Setting labels on Set alarm screen: Prealarm -->
     <string name="alarm_prealarm">Pre-alarma discreta</string>
     <!-- Pre-alarm duration title -->
@@ -41,18 +33,6 @@
         <item>30 minutos</item>
         <item>45 minutos</item>
         <item>60 minutos</item>
-    </string-array>
-    <!--
-         Values that are retrieved from the ListPreference. These must match
-         the prealarm_duration_entries above.
-    -->
-    <string-array name="prealarm_duration_values">
-        <item>-1</item>
-        <item>10</item>
-        <item>20</item>
-        <item>30</item>
-        <item>45</item>
-        <item>60</item>
     </string-array>
     <!-- Pre-alarm duration summary string set based on the preference value. -->
     <string name="prealarm_summary">La Pre-alarma comenzará
