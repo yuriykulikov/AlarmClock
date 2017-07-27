@@ -180,7 +180,11 @@ public class SettingsFragment extends PreferenceFragment {
                         @Override
                         public void accept(@NonNull String newValue) throws Exception {
                             int i = Integer.parseInt(newValue);
-                            fadeInDuration.setSummary(getString(R.string.fade_in_summary, i));
+                            if (i == 1) {
+                                fadeInDuration.setSummary(getString(R.string.fade_in_off_summary));
+                            } else {
+                                fadeInDuration.setSummary(getString(R.string.fade_in_summary, i));
+                            }
                         }
                     });
             dispoables.add(disposable);

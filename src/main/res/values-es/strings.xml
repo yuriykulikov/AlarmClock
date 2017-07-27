@@ -19,6 +19,7 @@
     <!--      Here come strings which are not contained in the AOSP -->
 
     <string-array name="fade_in_time_sec_values">
+        <item>1</item>
         <item>10</item>
         <item>20</item>
         <item>30</item>
@@ -70,6 +71,7 @@
     <string name="longclick_dismiss_summary">Manten el botón descartar presionado para descartar la alarma</string>
     <string name="fade_in_time_sec_title">Duración de aumento gradual de volumen</string>
     <string-array name="fade_in_time_sec_entries">
+        <item>está apagada</item>
         <item>10 segundos</item>
         <item>20 segundos</item>
         <item>30 segundos</item>

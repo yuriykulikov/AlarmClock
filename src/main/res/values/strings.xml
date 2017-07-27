@@ -19,6 +19,7 @@
     <!--      Here come strings which are not contained in the AOSP -->
 
     <string-array name="fade_in_time_sec_values" tools:ignore="MissingTranslation">
+        <item>1</item>
         <item>10</item>
         <item>20</item>
         <item>30</item>
@@ -70,6 +71,7 @@
     <string name="longclick_dismiss_summary">Hold the dismiss button to dismiss the alarm</string>
     <string name="fade_in_time_sec_title" tools:ignore="MissingTranslation">Fade-in duration</string>
     <string-array name="fade_in_time_sec_entries">
+        <item>Off</item>
         <item>10 seconds</item>
         <item>20 seconds</item>
         <item>30 seconds</item>
@@ -77,6 +79,7 @@
         <item>120 seconds</item>
     </string-array>
     <string name="fade_in_summary">Fade-in duration is <xliff:g id="seconds">%d</xliff:g> seconds</string>
+    <string name="fade_in_off_summary">Fade-in is switched off</string>
     <string-array name="alarm_set_short">
         <item>Less than a minute from now</item>
         <item><xliff:g id="DAYS" example="2 days">%1$s</xliff:g></item>

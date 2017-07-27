@@ -17,6 +17,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string-array name="fade_in_time_sec_values">
+        <item>1</item>
         <item>10</item>
         <item>20</item>
         <item>30</item>
@@ -56,6 +57,7 @@
     <string name="longclick_dismiss_summary">Tener premuto il tasto dismiss per far terminare la sveglia</string>
     <string name="fade_in_time_sec_title">Dissolvenza con una maggior durata</string>
     <string-array name="fade_in_time_sec_entries">
+        <item>Off</item>
         <item>10 secondi</item>
         <item>20 secondi</item>
         <item>30 secondi</item>
