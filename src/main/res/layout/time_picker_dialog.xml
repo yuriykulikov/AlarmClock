@@ -22,7 +22,8 @@
     <com.better.alarm.view.TimePicker
         android:id="@+id/time_picker"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_weight="1"
+        android:layout_height="0dp" />
 
     <View
         android:layout_width="match_parent"
