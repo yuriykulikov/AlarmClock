@@ -25,22 +25,24 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.R;
+import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.model.AlarmValue;
 import com.better.alarm.presenter.AlarmsListFragment.ShowDetailsStrategy;
-import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialogHandler;
+import com.google.common.base.Optional;
 import com.melnykov.fab.FloatingActionButton;
 
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
+import io.reactivex.functions.Consumer;
 
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */
-public class AlarmsListActivity extends Activity implements AlarmTimePickerDialogHandler {
+public class AlarmsListActivity extends Activity {
     private ActionBarHandler mActionBarHandler;
     private ShowDetailsStrategy details;
 
@@ -90,14 +92,20 @@ public class AlarmsListActivity extends Activity implements AlarmTimePickerDialo
 
     public void showTimePicker(AlarmValue alarm) {
         timePickerAlarm = AlarmApplication.alarms().getAlarm(alarm.getId());
-        timePickerDialogDisposable = TimePickerDialogFragment.showTimePicker(getFragmentManager());
-    }
-
-    @Override
-    public void onDialogTimeSet(int hourOfDay, int minute) {
-        timePickerAlarm.edit().withIsEnabled(true).withHour(hourOfDay).withMinutes(minute).commit();
-        timePickerAlarm = null;
-        timePickerDialogDisposable.dispose();
+        timePickerDialogDisposable = TimePickerDialogFragment.showTimePicker(getFragmentManager())
+                .subscribe(new Consumer<Optional<TimePickerDialogFragment.PickedTime>>() {
+                    @Override
+                    public void accept(@NonNull Optional<TimePickerDialogFragment.PickedTime> picked) {
+                        if (picked.isPresent()) {
+                            timePickerAlarm.edit()
+                                    .withIsEnabled(true)
+                                    .withHour(picked.get().hour())
+                                    .withMinutes(picked.get().minute())
+                                    .commit();
+                            timePickerAlarm = null;
+                        }
+                    }
+                });
     }
 
     @Override

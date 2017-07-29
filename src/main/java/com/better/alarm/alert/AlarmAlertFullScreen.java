@@ -34,20 +34,21 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.R;
+import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.presenter.DynamicThemeHandler;
 import com.better.alarm.presenter.TimePickerDialogFragment;
-import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialogHandler;
-import com.better.alarm.presenter.TimePickerDialogFragment.OnAlarmTimePickerCanceledListener;
+import com.google.common.base.Optional;
 import com.google.inject.Inject;
 
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
+import io.reactivex.functions.Consumer;
 
 import static com.better.alarm.configuration.Prefs.LONGCLICK_DISMISS_DEFAULT;
 import static com.better.alarm.configuration.Prefs.LONGCLICK_DISMISS_KEY;
@@ -57,8 +58,7 @@ import static com.better.alarm.configuration.Prefs.LONGCLICK_DISMISS_KEY;
  * activity is the full screen version which shows over the lock screen with the
  * wallpaper as the background.
  */
-public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDialogHandler,
-        OnAlarmTimePickerCanceledListener {
+public class AlarmAlertFullScreen extends Activity {
     protected static final String SCREEN_OFF = "screen_off";
 
     protected Alarm mAlarm;
@@ -82,7 +82,7 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
         public void onReceive(Context context, Intent intent) {
             int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
             if (mAlarm.getId() == id) {
-                    finish();
+                finish();
             }
         }
     };
@@ -169,7 +169,17 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
             @Override
             public boolean onLongClick(View v) {
                 if (isSnoozeEnabled()) {
-                    disposableDialog = TimePickerDialogFragment.showTimePicker(getFragmentManager());
+                    disposableDialog = TimePickerDialogFragment.showTimePicker(getFragmentManager())
+                            .subscribe(new Consumer<Optional<TimePickerDialogFragment.PickedTime>>() {
+                                @Override
+                                public void accept(@NonNull Optional<TimePickerDialogFragment.PickedTime> picked) {
+                                    if (picked.isPresent()) {
+                                        mAlarm.snooze(picked.get().hour(), picked.get().minute());
+                                    } else {
+                                        AlarmAlertFullScreen.this.sendBroadcast(new Intent(Intents.ACTION_DEMUTE));
+                                    }
+                                }
+                            });
                     AlarmAlertFullScreen.this.sendBroadcast(new Intent(Intents.ACTION_MUTE));
                     new android.os.Handler().postDelayed(new Runnable() {
                         @Override
@@ -274,15 +284,5 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
     @Override
     public void onBackPressed() {
         // Don't allow back to dismiss
-    }
-
-    @Override
-    public void onDialogTimeSet(int hourOfDay, int minute) {
-        mAlarm.snooze(hourOfDay, minute);
-    }
-
-    @Override
-    public void onTimePickerCanceled() {
-        AlarmAlertFullScreen.this.sendBroadcast(new Intent(Intents.ACTION_DEMUTE));
     }
 }
