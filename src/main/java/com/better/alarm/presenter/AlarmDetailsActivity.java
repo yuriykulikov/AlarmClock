@@ -47,20 +47,22 @@ import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.view.RepeatPreference;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
+import com.google.common.base.Optional;
 import com.google.inject.Inject;
 
 import java.util.Calendar;
 
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
+import io.reactivex.functions.Consumer;
 
 import static com.better.alarm.view.RingtonePreferenceExtension.updatePreferenceSummary;
 
 /**
  * Manages each alarm
  */
-public class AlarmDetailsActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener,
-        TimePickerDialogFragment.AlarmTimePickerDialogHandler {
+public class AlarmDetailsActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener {
     public final static String M12 = "h:mm aa";
     public final static String M24 = "kk:mm";
     @Inject
@@ -157,7 +159,8 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
             }
         });
         if (isNewAlarm) {
-            disposableDialog = TimePickerDialogFragment.showTimePicker(getFragmentManager());
+            disposableDialog = TimePickerDialogFragment.showTimePicker(getFragmentManager())
+                    .subscribe(new PickerConsumer());
         }
     }
 
@@ -295,7 +298,8 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
         if (preference.equals(mTimePref)) {
-            disposableDialog = TimePickerDialogFragment.showTimePicker(getFragmentManager());
+            disposableDialog = TimePickerDialogFragment.showTimePicker(getFragmentManager())
+                    .subscribe(new PickerConsumer());
         }
 
         return super.onPreferenceTreeClick(preferenceScreen, preference);
@@ -305,16 +309,6 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     public void onBackPressed() {
         revert();
         finish();
-    }
-
-    @Override
-    public void onDialogTimeSet(int hourOfDay, int minute) {
-        // onTimeSet is called when the user clicks "Set"
-        mHour = hourOfDay;
-        mMinute = minute;
-        updateTime();
-        // If the time has been changed, enable the alarm.
-        mEnabledPref.setChecked(true);
     }
 
     private void updateTime() {
@@ -357,5 +351,19 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
             alarms.delete(alarm);
         }
         // else do not save changes
+    }
+
+    private class PickerConsumer implements Consumer<Optional<TimePickerDialogFragment.PickedTime>> {
+        @Override
+        public void accept(@NonNull Optional<TimePickerDialogFragment.PickedTime> picked) {
+            if (picked.isPresent()) {
+                // onTimeSet is called when the user clicks "Set"
+                mHour = picked.get().hour();
+                mMinute = picked.get().minute();
+                updateTime();
+                // If the time has been changed, enable the alarm.
+                mEnabledPref.setChecked(true);
+            }
+        }
     }
 }

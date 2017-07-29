@@ -8,14 +8,14 @@ import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
-import com.better.alarm.presenter.TimePickerDialogFragment.AlarmTimePickerDialogHandler;
-import com.better.alarm.presenter.TimePickerDialogFragment.OnAlarmTimePickerCanceledListener;
+import com.google.common.base.Optional;
 
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
+import io.reactivex.functions.Consumer;
 
-public class TransparentActivity extends Activity implements AlarmTimePickerDialogHandler,
-        OnAlarmTimePickerCanceledListener {
+public class TransparentActivity extends Activity {
 
     private Alarm alarm;
     Disposable dialog = Disposables.disposed();
@@ -32,24 +32,21 @@ public class TransparentActivity extends Activity implements AlarmTimePickerDial
     @Override
     protected void onResume() {
         super.onResume();
-        dialog = TimePickerDialogFragment.showTimePicker(getFragmentManager());
+        dialog = TimePickerDialogFragment.showTimePicker(getFragmentManager()).subscribe(new Consumer<Optional<TimePickerDialogFragment.PickedTime>>() {
+            @Override
+            public void accept(@NonNull Optional<TimePickerDialogFragment.PickedTime> picked) {
+                if (picked.isPresent()) {
+                    alarm.snooze(picked.get().hour(), picked.get().minute());
+                }
+                finish();
+            }
+        });
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         dialog.dispose();
-    }
-
-    @Override
-    public void onTimePickerCanceled() {
-        finish();
-    }
-
-    @Override
-    public void onDialogTimeSet(int hourOfDay, int minute) {
-        alarm.snooze(hourOfDay, minute);
-        finish();
     }
 
     @Override

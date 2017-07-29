@@ -16,7 +16,6 @@
 
 package com.better.alarm.presenter;
 
-import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -31,10 +30,15 @@ import android.widget.Button;
 import com.better.alarm.R;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.view.TimePicker;
+import com.google.common.base.Optional;
 
-import io.reactivex.disposables.Disposable;
-import io.reactivex.disposables.Disposables;
-import io.reactivex.functions.Action;
+import org.immutables.value.Value;
+
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
+import io.reactivex.SingleOnSubscribe;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Cancellable;
 
 /**
  * Dialog to set alarm time.
@@ -42,6 +46,7 @@ import io.reactivex.functions.Action;
 public class TimePickerDialogFragment extends DialogFragment {
     private TimePicker mPicker;
     private final Logger log = Logger.getDefaultLogger();
+    private SingleEmitter<Optional<PickedTime>> emitter;
 
     /**
      * @return
@@ -80,14 +85,11 @@ public class TimePickerDialogFragment extends DialogFragment {
         set.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final Activity activity = getActivity();
-                if (activity instanceof AlarmTimePickerDialogHandler) {
-                    final AlarmTimePickerDialogHandler act = (AlarmTimePickerDialogHandler) activity;
-                    act.onDialogTimeSet(mPicker.getHours(), mPicker.getMinutes());
-                } else {
-                    log.e("Error! Activities that use TimePickerDialogFragment must implement "
-                            + "AlarmTimePickerDialogHandler");
-                }
+                PickedTime picked = ImmutablePickedTime.builder()
+                        .hour(mPicker.getHours())
+                        .minute(mPicker.getMinutes())
+                        .build();
+                emitter.onSuccess(Optional.of(picked));
                 dismiss();
             }
         });
@@ -101,36 +103,44 @@ public class TimePickerDialogFragment extends DialogFragment {
     }
 
     private void notifyOnCancelListener() {
-        Activity activity = getActivity();
-        if (activity instanceof OnAlarmTimePickerCanceledListener) {
-            final OnAlarmTimePickerCanceledListener act = (OnAlarmTimePickerCanceledListener) getActivity();
-            act.onTimePickerCanceled();
-        }
+        emitter.onSuccess(Optional.<PickedTime>absent());
     }
 
-    public interface AlarmTimePickerDialogHandler {
-        void onDialogTimeSet(int hourOfDay, int minute);
+    private void setEmitter(SingleEmitter<Optional<PickedTime>> emitter) {
+        this.emitter = emitter;
     }
 
-    public interface OnAlarmTimePickerCanceledListener {
-        void onTimePickerCanceled();
+    @Value.Immutable
+    @Value.Style(stagedBuilder = true)
+    public interface PickedTime {
+        int hour();
+
+        int minute();
     }
 
-    public static Disposable showTimePicker(FragmentManager fragmentManager) {
-        final FragmentTransaction ft = fragmentManager.beginTransaction();
-        final Fragment prev = fragmentManager.findFragmentByTag("time_dialog");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-
-        final TimePickerDialogFragment fragment = TimePickerDialogFragment.newInstance();
-        fragment.show(ft, "time_dialog");
-        return Disposables.fromAction(new Action() {
+    public static Single<Optional<PickedTime>> showTimePicker(final FragmentManager fragmentManager) {
+        return Single.create(new SingleOnSubscribe<Optional<PickedTime>>() {
             @Override
-            public void run() throws Exception {
-                if (fragment.isAdded()) {
-                    fragment.dismiss();
+            public void subscribe(@NonNull SingleEmitter<Optional<PickedTime>> emitter) throws Exception {
+
+                final FragmentTransaction ft = fragmentManager.beginTransaction();
+                final Fragment prev = fragmentManager.findFragmentByTag("time_dialog");
+                if (prev != null) {
+                    ft.remove(prev);
                 }
+
+                final TimePickerDialogFragment fragment = TimePickerDialogFragment.newInstance();
+                fragment.show(ft, "time_dialog");
+
+                fragment.setEmitter(emitter);
+                emitter.setCancellable(new Cancellable() {
+                    @Override
+                    public void cancel() throws Exception {
+                        if (fragment.isAdded()) {
+                            fragment.dismiss();
+                        }
+                    }
+                });
             }
         });
     }
