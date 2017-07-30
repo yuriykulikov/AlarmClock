@@ -49,6 +49,7 @@
         <item>120 секунд</item>
     </string-array>
     <string name="fade_in_summary">Нарастание громкости за <xliff:g id="seconds">%d</xliff:g> секунд</string>
+    <string name="fade_in_off_summary">Выкл</string>
     <string-array name="alarm_set_short">
         <item>"менее чем через минуту"</item>
         <item>"<xliff:g id="DAYS">%1$s</xliff:g>"</item>

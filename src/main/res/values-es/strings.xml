@@ -59,6 +59,7 @@
         <item>120 segundos</item>
     </string-array>
     <string name="fade_in_summary">Duración del aumento gradual de volumen es <xliff:g id="seconds">%d</xliff:g> segundos</string>
+    <string name="fade_in_off_summary">Está apagada</string>
     <string-array name="alarm_set_short">
         <item>Menos de un minuto a partir de ahora</item>
         <item><xliff:g id="DAYS" example="2 days">%1$s</xliff:g></item>
