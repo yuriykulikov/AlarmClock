@@ -57,6 +57,7 @@
         <item>120 secondi</item>
     </string-array>
     <string name="fade_in_summary">La dissolvenza con maggior durata è <xliff:g id="seconds">%d</xliff:g> secondi</string>
+    <string name="fade_in_off_summary">Off</string>
     <string-array name="alarm_set_short">
         <item>Meno di un minuto da questo istante</item>
         <item><xliff:g id="DAYS" example="2 giorni">%1$s</xliff:g></item>
