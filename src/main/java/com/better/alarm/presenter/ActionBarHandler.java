@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v4.view.ActionProvider;
+import android.support.v4.view.MenuItemCompat;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -49,7 +51,8 @@ public class ActionBarHandler {
         inflater.inflate(R.menu.settings_menu, menu);
 
         MenuItem menuItem = menu.findItem(R.id.menu_share);
-        ShareActionProvider sp = (ShareActionProvider) menuItem.getActionProvider();
+
+        ActionProvider sp = (ActionProvider) MenuItemCompat.getActionProvider(menuItem);
 
         Intent intent = new Intent(android.content.Intent.ACTION_SEND);
         intent.setType("text/plain");
@@ -60,7 +63,7 @@ public class ActionBarHandler {
         intent.putExtra(Intent.EXTRA_SUBJECT, "https://play.google.com/store/apps/details?id=com.better.alarm");
         intent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.better.alarm");
 
-        sp.setShareIntent(intent);
+        //TODO sp.setShareIntent(intent);
 
         if (Build.VERSION.SDK_INT < JELLY_BEAN_MR1) {
             MenuItem menuItemDashclock = menu.findItem(R.id.menu_dashclock);

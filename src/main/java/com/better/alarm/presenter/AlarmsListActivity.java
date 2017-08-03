@@ -17,10 +17,10 @@
 
 package com.better.alarm.presenter;
 
-import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,7 +31,6 @@ import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.model.AlarmValue;
 import com.better.alarm.presenter.AlarmsListFragment.ShowDetailsStrategy;
 import com.google.common.base.Optional;
-import com.melnykov.fab.FloatingActionButton;
 
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
@@ -44,7 +43,7 @@ import static com.better.alarm.configuration.AlarmApplication.container;
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */
-public class AlarmsListActivity extends Activity {
+public class AlarmsListActivity extends AppCompatActivity {
     private ActionBarHandler mActionBarHandler;
     private ShowDetailsStrategy details;
 
@@ -77,7 +76,7 @@ public class AlarmsListActivity extends Activity {
             AlarmsListFragment alarmsListFragment = (AlarmsListFragment) getFragmentManager()
                     .findFragmentById(R.id.list_activity_list_fragment);
 
-            ((FloatingActionButton) fab).attachToListView(alarmsListFragment.getListView());
+            //TODO ((FloatingActionButton) fab).attachToListView(alarmsListFragment.getListView());
         }
     }
 
