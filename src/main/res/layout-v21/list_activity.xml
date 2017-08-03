@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
      Copyright (C) 2010 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,9 +17,8 @@
 -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -31,19 +29,20 @@
         android:name="com.better.alarm.presenter.AlarmsListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/frameLayout"
+        android:layout_alignParentTop="true"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        tools:layout="@layout/list_fragment"
-        android:layout_alignParentTop="true"
-        android:layout_above="@+id/frameLayout" />
+        tools:layout="@android:layout/list_content" />
 
     <FrameLayout
-        android:elevation="15dp"
-        android:layout_alignParentBottom="true"
+        android:id="@+id/frameLayout"
         android:layout_width="match_parent"
-        android:background="?android:attr/colorBackground"
         android:layout_height="?android:attr/actionBarSize"
-        android:id="@+id/frameLayout">
+        android:layout_alignParentBottom="true"
+        android:background="?android:attr/colorBackground"
+        android:elevation="15dp">
+
         <fragment
             android:id="@+id/list_activity_info_fragment"
             android:name="com.better.alarm.presenter.InfoFragment"
@@ -52,17 +51,20 @@
             tools:layout="@layout/info_fragment" />
     </FrameLayout>
 
-    <com.melnykov.fab.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:src="@drawable/ic_menu_add"
-        android:elevation="20dp"
-        android:layout_marginRight="28dp"
-        android:layout_marginBottom="28dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="28dp" />
+        android:layout_alignParentRight="true"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="28dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginRight="28dp"
+        android:src="@drawable/ic_menu_add"
+        app:backgroundTint="?android:attr/colorAccent"
+        app:borderWidth="0dp"
+        app:elevation="30dp"
+        app:rippleColor="?android:attr/colorBackground" />
 </RelativeLayout>
