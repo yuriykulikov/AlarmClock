@@ -38,7 +38,7 @@ class VibrationService : Service() {
     @Inject
     private lateinit var rxPrefs: RxSharedPreferences
 
-    private var wakeLock: WakeLock? = null
+    private lateinit var wakeLock: WakeLock
 
     //isEnabled && !inCall && !isMuted && isStarted
     private val inCall: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
@@ -57,9 +57,9 @@ class VibrationService : Service() {
     }
 
     override fun onCreate() {
-        AlarmApplication.guice().injectMembers(this);
+        AlarmApplication.guice().injectMembers(this)
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "VibrationService")
-        wakeLock?.acquire()
+        wakeLock.acquire()
 
         telephonyManager.listen(object : PhoneStateListener() {
             override fun onCallStateChanged(state: Int, incomingNumber: String) {
@@ -71,28 +71,26 @@ class VibrationService : Service() {
     override fun onDestroy() {
         subscription.dispose()
         log.d("Service destroyed")
-        wakeLock!!.release()
+        wakeLock.release()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent != null) {
-            AlarmApplication.wakeLocks().releasePartialWakeLock(intent)
+        if (intent == null) return Service.START_NOT_STICKY
 
-            when (intent.action) {
-                Intents.ALARM_ALERT_ACTION -> onAlert()
-                Intents.ACTION_MUTE -> muted.onNext(true)
-                Intents.ACTION_DEMUTE -> muted.onNext(false)
-                else -> stopAndCleanup()
-            }
+        AlarmApplication.wakeLocks().releasePartialWakeLock(intent)
 
-            when (intent.action) {
-                Intents.ALARM_ALERT_ACTION,
-                Intents.ACTION_MUTE,
-                Intents.ACTION_DEMUTE -> return Service.START_STICKY
-                else -> return Service.START_NOT_STICKY
-            }
-        } else {
-            return Service.START_NOT_STICKY
+        when (intent.action) {
+            Intents.ALARM_ALERT_ACTION -> onAlert()
+            Intents.ACTION_MUTE -> muted.onNext(true)
+            Intents.ACTION_DEMUTE -> muted.onNext(false)
+            else -> stopAndCleanup()
+        }
+
+        when (intent.action) {
+            Intents.ALARM_ALERT_ACTION,
+            Intents.ACTION_MUTE,
+            Intents.ACTION_DEMUTE -> return Service.START_STICKY
+            else -> return Service.START_NOT_STICKY
         }
     }
 
