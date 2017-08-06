@@ -19,6 +19,7 @@ import android.app.Application;
 import android.content.Intent;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.support.annotation.NonNull;
 
 import com.better.alarm.logger.Logger;
 import com.google.inject.Inject;
@@ -72,7 +73,7 @@ public class WakeLockManager {
      * 
      * @param intent
      */
-    public void releasePartialWakeLock(Intent intent) {
+    public void releasePartialWakeLock(@NonNull Intent intent) {
         if (intent.hasExtra(WakeLockManager.EXTRA_WAKELOCK_TAG)) {
             final int hash = intent.getIntExtra(WakeLockManager.EXTRA_WAKELOCK_HASH, -1);
             final String tag = intent.getStringExtra(WakeLockManager.EXTRA_WAKELOCK_TAG);

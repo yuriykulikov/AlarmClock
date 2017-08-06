@@ -221,6 +221,7 @@ public class AlarmApplication extends Application {
         return new AndroidModule(this);
     }
 
+    @NonNull
     public static Injector guice() {
         return Preconditions.checkNotNull(guice);
     }
@@ -232,10 +233,12 @@ public class AlarmApplication extends Application {
         }
     }
 
+    @NonNull
     public static WakeLockManager wakeLocks() {
         return guice.getInstance(WakeLockManager.class);
     }
 
+    @NonNull
     public static IAlarmsManager alarms() {
         return guice.getInstance(IAlarmsManager.class);
     }
