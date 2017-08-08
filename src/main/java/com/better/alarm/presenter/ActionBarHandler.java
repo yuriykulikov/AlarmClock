@@ -1,6 +1,5 @@
 package com.better.alarm.presenter;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -8,18 +7,23 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v4.view.ActionProvider;
-import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.ShareActionProvider;
 
 import com.better.alarm.R;
+import com.better.alarm.configuration.EditedAlarm;
+import com.better.alarm.interfaces.IAlarmsManager;
 import com.google.common.base.Preconditions;
 
 import org.acra.ACRA;
+
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposables;
+import io.reactivex.functions.Consumer;
 
 /**
  * This class handles options menu and action bar
@@ -30,13 +34,15 @@ public class ActionBarHandler {
 
     private static final int JELLY_BEAN_MR1 = 17;
     private final Context mContext;
-
-    private final AlarmsListFragment.ShowDetailsStrategy details;
+    private final UiStore store;
+    private final IAlarmsManager alarms;
+    private Disposable sub = Disposables.disposed();
 
     //not injected - requires activity to work
-    public ActionBarHandler(Activity context, AlarmsListFragment.ShowDetailsStrategy details) {
+    public ActionBarHandler(Activity context, UiStore store, IAlarmsManager alarms) {
         this.mContext = Preconditions.checkNotNull(context);
-        this.details = details;
+        this.store = store;
+        this.alarms = alarms;
     }
 
     /**
@@ -47,12 +53,10 @@ public class ActionBarHandler {
      * @param actionBar
      * @return
      */
-    public boolean onCreateOptionsMenu(Menu menu, MenuInflater inflater, ActionBar actionBar) {
+    public boolean onCreateOptionsMenu(final Menu menu, MenuInflater inflater, final ActionBar actionBar) {
         inflater.inflate(R.menu.settings_menu, menu);
 
         MenuItem menuItem = menu.findItem(R.id.menu_share);
-
-        ActionProvider sp = (ActionProvider) MenuItemCompat.getActionProvider(menuItem);
 
         Intent intent = new Intent(android.content.Intent.ACTION_SEND);
         intent.setType("text/plain");
@@ -60,8 +64,8 @@ public class ActionBarHandler {
 
         // Add data to the intent, the receiving app will decide what to do with
         // it.
-        intent.putExtra(Intent.EXTRA_SUBJECT, "https://play.google.com/store/apps/details?id=com.better.alarm");
-        intent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.better.alarm");
+        intent.putExtra(Intent.EXTRA_SUBJECT, "https://play.google.com/uiStore/apps/details?id=com.better.alarm");
+        intent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/uiStore/apps/details?id=com.better.alarm");
 
         //TODO sp.setShareIntent(intent);
 
@@ -70,7 +74,23 @@ public class ActionBarHandler {
             menuItemDashclock.setVisible(false);
         }
 
+        sub = store.editing().subscribe(new Consumer<EditedAlarm>() {
+            @Override
+            public void accept(@NonNull EditedAlarm editedAlarm) throws Exception {
+                boolean showDelete = editedAlarm.isEdited() && !editedAlarm.isNew();
+
+                menu.findItem(R.id.set_alarm_menu_delete_alarm).setVisible(showDelete);
+
+                actionBar.setDisplayHomeAsUpEnabled(editedAlarm.isEdited());
+            }
+        });
+
         return true;
+    }
+
+
+    public void onDestroy() {
+        sub.dispose();
     }
 
     /**
@@ -101,9 +121,29 @@ public class ActionBarHandler {
                 showMp3();
                 return true;
 
+            case R.id.set_alarm_menu_delete_alarm:
+                deleteAlarm();
+                break;
+
+            case android.R.id.home:
+                store.onBackPressed().onNext("ActionBar");
+                return true;
+
             default:
         }
         return false;
+    }
+
+    private void deleteAlarm() {
+        new AlertDialog.Builder(mContext).setTitle(mContext.getString(R.string.delete_alarm))
+                .setMessage(mContext.getString(R.string.delete_alarm_confirm))
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface d, int w) {
+                        alarms.getAlarm(store.editing().blockingFirst().id()).delete();
+                        store.hideDetails();
+                    }
+                }).setNegativeButton(android.R.string.cancel, null).show();
     }
 
     private void showReview() {
@@ -188,5 +228,4 @@ public class ActionBarHandler {
         builder.setView(report);
         builder.create().show();
     }
-
 }

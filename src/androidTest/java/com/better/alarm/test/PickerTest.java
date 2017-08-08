@@ -46,7 +46,7 @@ public class PickerTest extends BaseTest {
         onView().withText("Cancel").perform().click();
         //sleep();
         onView().withText("Cancel").perform().click();
-        assertThatList(android.R.id.list).items().hasSize(2);
+        assertThatList().items().hasSize(2);
     }
 
     @Test

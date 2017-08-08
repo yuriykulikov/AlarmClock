@@ -62,12 +62,6 @@ public class PopupTest extends BaseTest {
         AlarmApplication.is24hoursFormatOverride = Optional.of(true);
     }
 
-    private void deleteAlarm() {
-        sleep();
-        deleteAlarm(0);
-        assertThatList(android.R.id.list).items().hasSize(2);
-    }
-
     public int createAlarmAndFire() {
         Intent createAlarm = new Intent();
         createAlarm.setClass(listActivity.getActivity(), HandleSetAlarm.class);
@@ -81,12 +75,12 @@ public class PopupTest extends BaseTest {
 
         sleep();
 
-        ListAsserts.<AlarmValue>assertThatList(android.R.id.list)
+        assertThatList()
                 .filter(enabled())
                 .items()
                 .hasSize(1);
 
-        int id = ListAsserts.<AlarmValue>listObservable(android.R.id.list).firstOrError().blockingGet().getId();
+        int id = ListAsserts.<AlarmValue>listObservable(R.id.list_fragment_list).firstOrError().blockingGet().getId();
 
         //simulate alarm fired
         Intent intent = new Intent(AlarmSetter.ACTION_FIRED);
@@ -155,7 +149,7 @@ public class PopupTest extends BaseTest {
 
         sleep();
 
-        ListAsserts.<AlarmValue>assertThatList(android.R.id.list)
+        assertThatList()
                 .filter(enabled())
                 .items()
                 .isEmpty();
@@ -206,5 +200,12 @@ public class PopupTest extends BaseTest {
 
         //Popup must be closed in order for this to work
         deleteAlarm();
+    }
+
+
+    private void deleteAlarm() {
+        sleep();
+        deleteAlarm(0);
+        assertThatList().items().hasSize(2);
     }
 }

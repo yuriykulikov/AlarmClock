@@ -16,36 +16,42 @@
 
 -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/set_alarm_menu_delete_alarm"
+        android:icon="@android:drawable/ic_menu_delete"
+        app:showAsAction="ifRoom|withText"
+        android:title="@string/delete_alarm"/>
     <item
         android:id="@+id/menu_item_settings"
         android:icon="@android:drawable/ic_menu_preferences"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:title="@string/settings"/>
     <item
         android:id="@+id/menu_bugreport"
         android:icon="@android:drawable/ic_menu_send"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:title="@string/bugreport"/>
     <item
         android:id="@+id/menu_review"
         android:icon="@android:drawable/ic_menu_edit"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:title="@string/review"/>
     <item 
         android:id="@+id/menu_share"
         android:title="@string/share"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:actionProviderClass="android.widget.ShareActionProvider" />
     <item android:title="@string/menu_extensions">
     <menu>
         <item
             android:id="@+id/menu_dashclock"
-            android:showAsAction="never"
+            app:showAsAction="never"
             android:title="@string/dashclock"/>
         <item
             android:id="@+id/menu_mp3cutter"
-            android:showAsAction="never"
+            app:showAsAction="never"
             android:title="@string/mp3cutter"/>
     </menu>
     </item>

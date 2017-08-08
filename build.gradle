@@ -23,6 +23,7 @@ ext {
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: "android-apt"
+apply plugin: 'kotlin-kapt'
 //apply plugin: 'com.f2prateek.javafmt'
 apply plugin: 'jacoco-android'
 
@@ -38,6 +39,8 @@ android {
         testApplicationId "com.better.alarm.test"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        //multiDexEnabled true
     }
 
     buildTypes {
@@ -96,7 +99,7 @@ dependencies {
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
     //apt
-    apt "org.immutables:value:2.5.5" // <-- for annotation processor
+    kapt "org.immutables:value:2.5.5" // <-- for annotation processor
     provided "org.immutables:value:2.5.5" // <-- for annotation API
 
     // Testing-only dependencies

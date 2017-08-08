@@ -19,14 +19,27 @@
     android:id="@+id/info_fragment_base_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".presenter.AlarmsListActivity">
+    android:orientation="vertical">
 
     <ListView
         android:id="@+id/list_fragment_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_weight="1"
         tools:listitem="@layout/list_row"/>
+
+    <fragment
+        android:id="@+id/list_activity_info_fragment"
+        android:name="com.better.alarm.presenter.InfoFragment"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        tools:layout="@layout/info_fragment" />
+
+    <Button
+        android:id="@+id/fab"
+        style="?android:attr/buttonBarButtonStyle"
+        android:text="@string/add_alarm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

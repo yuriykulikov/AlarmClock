@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -86,8 +87,8 @@ public class InfoFragment extends Fragment implements ViewFactory {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         mTickReceiver = new TickReceiver();
     }
 
@@ -107,19 +108,14 @@ public class InfoFragment extends Fragment implements ViewFactory {
         textView.setOutAnimation(out);
         remainingTime.setInAnimation(in);
         remainingTime.setOutAnimation(out);
+        getActivity().registerReceiver(mTickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
+        nextDisposable = store.next().subscribe(new AlarmChangedReceiver());
         return view;
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        getActivity().registerReceiver(mTickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
-        nextDisposable = store.next().subscribe(new AlarmChangedReceiver());
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
+    public void onDestroy() {
+        super.onDestroy();
         getActivity().unregisterReceiver(mTickReceiver);
         nextDisposable.dispose();
     }

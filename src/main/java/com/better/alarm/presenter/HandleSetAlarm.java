@@ -42,7 +42,6 @@ public class HandleSetAlarm extends Activity {
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         Intent intent = getIntent();
-        Intent startDetailsIntent = new Intent(this, AlarmDetailsActivity.class);
         if (intent == null || !AlarmClock.ACTION_SET_ALARM.equals(intent.getAction())) {
             finish();
             return;
@@ -58,6 +57,7 @@ public class HandleSetAlarm extends Activity {
         boolean skipUi = intent.getBooleanExtra(AlarmClock.EXTRA_SKIP_UI, false);
 
         if (!skipUi) {
+            Intent startDetailsIntent = new Intent(this, AlarmsListActivity.class);
             startDetailsIntent.putExtra(Intents.EXTRA_ID, alarm.getId());
             startActivity(startDetailsIntent);
         }

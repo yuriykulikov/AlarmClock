@@ -1,5 +1,8 @@
 package com.better.alarm.configuration;
 
+
+import android.support.annotation.NonNull;
+
 import com.better.alarm.model.AlarmValue;
 import com.google.common.base.Optional;
 
@@ -18,6 +21,9 @@ import io.reactivex.subjects.Subject;
 @Value.Immutable
 @Value.Style(stagedBuilder = true)
 public abstract class Store {
+    @NonNull
+    public static final String IS_NEW_ALARM = "isNewAlarm";
+
     @Value.Immutable
     @Value.Style(stagedBuilder = true)
     public interface Next {
@@ -38,7 +44,7 @@ public abstract class Store {
         long millis();
     }
 
-    public Observable<List<AlarmValue>> alarms(){
+    public Observable<List<AlarmValue>> alarms() {
         return alarmsSubject().distinctUntilChanged();
     }
 
