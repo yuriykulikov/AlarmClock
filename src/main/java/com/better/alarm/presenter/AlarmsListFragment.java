@@ -1,7 +1,8 @@
 package com.better.alarm.presenter;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.ListFragment;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
@@ -16,11 +17,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.better.alarm.R;
 import com.better.alarm.configuration.Prefs;
@@ -28,18 +28,16 @@ import com.better.alarm.configuration.Store;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.model.AlarmValue;
-import com.better.alarm.view.DigitalClock;
-
-import org.immutables.value.Value;
+import com.google.common.base.Optional;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposables;
 import io.reactivex.functions.Consumer;
 
 import static com.better.alarm.configuration.AlarmApplication.container;
@@ -52,40 +50,21 @@ import static com.better.alarm.configuration.AlarmApplication.container;
  *
  * @author Yuriy
  */
-public class AlarmsListFragment extends ListFragment {
+public class AlarmsListFragment extends Fragment {
     public final static String M12 = "h:mm aa";
     public final static String M24 = "kk:mm";
     public static final boolean MATERIAL_DESIGN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
 
     private final IAlarmsManager alarms = container().alarms();
     private final Store store = container().store();
+    private UiStore uiStore;
     private final Prefs prefs = container().prefs();
     private final Logger logger = container().logger();
 
-    private ShowDetailsStrategy details;
-
     private AlarmListAdapter mAdapter;
     private Disposable alarmsSub;
-
-    @Value.Immutable
-    @Value.Style(stagedBuilder = true)
-    interface RowHolder {
-        DigitalClock digitalClock();
-
-        View rowView();
-
-        CompoundButton onOff();
-
-        View container();
-
-        int alarmId();
-
-        TextView daysOfWeek();
-
-        TextView label();
-
-        View detailsButton();
-    }
+    private Disposable backSub;
+    private Disposable timePickerDialogDisposable = Disposables.disposed();
 
     public class AlarmListAdapter extends ArrayAdapter<AlarmValue> {
         private final Context context;
@@ -97,26 +76,22 @@ public class AlarmsListFragment extends ListFragment {
             this.values = values;
         }
 
-        private RowHolder recycleView(View convertView, ViewGroup parent) {
-            if (convertView != null) return (RowHolder) convertView.getTag();
+        private RowHolder recycleView(View convertView, ViewGroup parent, int id) {
+            if (convertView != null) return new RowHolder(convertView, id);
 
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View rowView = inflater.inflate(R.layout.list_row, parent, false);
+            RowHolder rowHolder = new RowHolder(rowView, id);
+            rowHolder.getDigitalClock().setLive(false);
+            return rowHolder;
+        }
 
-            ImmutableRowHolder holder = ImmutableRowHolder.builder()
-                    .digitalClock((DigitalClock) rowView.findViewById(R.id.list_row_digital_clock))
-                    .rowView(rowView)
-                    .onOff((CompoundButton) rowView.findViewById(R.id.list_row_on_off_switch))
-                    .container(rowView.findViewById(R.id.list_row_on_off_checkbox_container))
-                    .alarmId(-1)
-                    .daysOfWeek((TextView) rowView.findViewById(R.id.list_row_daysOfWeek))
-                    .label((TextView) rowView.findViewById(R.id.list_row_label))
-                    .detailsButton(rowView.findViewById(R.id.details_button_container))
-                    .build();
-
-            holder.digitalClock().setLive(false);
-            rowView.setTag(holder);
-            return holder;
+        @TargetApi(21)
+        private void setTranstionNames(RowHolder row, AlarmValue alarm) {
+            if (MATERIAL_DESIGN) {
+                row.digitalClock().setTransitionName("clock" + alarm.getId());
+                row.container().setTransitionName("onOff" + alarm.getId());
+            }
         }
 
         @Override
@@ -124,15 +99,16 @@ public class AlarmsListFragment extends ListFragment {
             // get the alarm which we have to display
             final AlarmValue alarm = values.get(position);
 
-            RowHolder row = recycleView(convertView, parent);
-            row.onOff().setOnCheckedChangeListener(null);
-            row.container().setOnClickListener(null);
+            final RowHolder row = recycleView(convertView, parent, alarm.getId());
+
             row.onOff().setChecked(alarm.isEnabled());
 
+            setTranstionNames(row, alarm);
+
             //Delete add, skip animation
-            if (row.alarmId() != alarm.getId()) {
-                row.onOff().jumpDrawablesToCurrentState();
-                row.rowView().setTag(ImmutableRowHolder.copyOf(row).withAlarmId(alarm.getId()));
+            if (row.idHasChanged()) {
+                logger.d("Jump to current state");
+                //row.onOff().jumpDrawablesToCurrentState();
             }
 
             row.container()
@@ -146,18 +122,23 @@ public class AlarmsListFragment extends ListFragment {
                         }
                     });
 
-            row.onOff().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean enable) {
-                    logger.d("onCheckedChanged: " + (enable ? "enabled" : "disabled"));
-                    alarms.enable(alarm, enable);
-                }
-            });
-
-            row.detailsButton().setOnClickListener(new OnClickListener() {
+            row.digitalClock().setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    details.showDetails(mAdapter.getItem(position));
+                    timePickerDialogDisposable = TimePickerDialogFragment.showTimePicker(getFragmentManager())
+                            .subscribe(new Consumer<Optional<TimePickerDialogFragment.PickedTime>>() {
+                                @Override
+                                public void accept(@NonNull Optional<TimePickerDialogFragment.PickedTime> picked) {
+                                    if (picked.isPresent()) {
+                                        alarms.getAlarm(alarm.getId())
+                                                .edit()
+                                                .withIsEnabled(true)
+                                                .withHour(picked.get().hour())
+                                                .withMinutes(picked.get().minute())
+                                                .commit();
+                                    }
+                                }
+                            });
                 }
             });
 
@@ -212,7 +193,7 @@ public class AlarmsListFragment extends ListFragment {
             }
 
             case R.id.edit_alarm: {
-                details.showDetails(alarm);
+                uiStore.edit(alarm.getId());
                 return true;
             }
 
@@ -225,44 +206,74 @@ public class AlarmsListFragment extends ListFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.details = new ShowDetailsInActivity(getActivity());
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        setListAdapter(new AlarmListAdapter(getActivity(), R.layout.list_row, R.string.alarm_list_title,
-                new ArrayList<AlarmValue>()));
-
-        mAdapter = (AlarmListAdapter) getListAdapter();
-
-        getListView().setVerticalScrollBarEnabled(false);
-        getListView().setOnCreateContextMenuListener(this);
-
-        setHasOptionsMenu(true);
-
-        getListView().setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+        uiStore = AlarmsListActivity.uiStore(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
+        View view = inflater.inflate(R.layout.list_fragment, container, false);
 
-    @Override
-    public void onResume() {
-        super.onResume();
+        ListView listView = (ListView) view.findViewById(R.id.list_fragment_list);
+
+        listView.setAdapter(new AlarmListAdapter(getActivity(), R.layout.list_row, R.string.alarm_list_title,
+                new ArrayList<AlarmValue>()));
+
+        mAdapter = (AlarmListAdapter) listView.getAdapter();
+
+        listView.setVerticalScrollBarEnabled(false);
+        listView.setOnCreateContextMenuListener(this);
+        listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                // We can display everything in-place with fragments, so update
+                // the list to highlight the selected item and show the data.
+                //TODO what does this do? listView.setSelection(position);
+
+                int id = mAdapter.getItem(position).getId();
+                uiStore.edit(id, (RowHolder) view.getTag());
+            }
+        });
+
+        registerForContextMenu(listView);
+
+        setHasOptionsMenu(true);
+
+        View fab = view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                uiStore.createNewAlarm();
+            }
+        });
+
+        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //((FloatingActionButton) fab).attachToListView(listView);
+        //}
 
         alarmsSub = store.alarms().subscribe(new Consumer<List<AlarmValue>>() {
             @Override
             public void accept(@NonNull List<AlarmValue> alarms) throws Exception {
                 mAdapter.clear();
                 List<AlarmValue> sorted = new ArrayList<AlarmValue>(alarms);
-                Collections.sort(sorted, new MinuteComparator());
-                Collections.sort(sorted, new HourComparator());
-                Collections.sort(sorted, new RepeatComparator());
+                Collections.sort(sorted, new Comparators.MinuteComparator());
+                Collections.sort(sorted, new Comparators.HourComparator());
+                Collections.sort(sorted, new Comparators.RepeatComparator());
                 mAdapter.addAll(sorted);
+            }
+        });
+
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        backSub = uiStore.onBackPressed().subscribe(new Consumer<String>() {
+            @Override
+            public void accept(@NonNull String s) throws Exception {
+                getActivity().finish();
             }
         });
     }
@@ -270,15 +281,15 @@ public class AlarmsListFragment extends ListFragment {
     @Override
     public void onPause() {
         super.onPause();
-        alarmsSub.dispose();
+        backSub.dispose();
+        //dismiss the time picker if it was showing. Otherwise we will have to uiStore the state and it is not nice for the user
+        timePickerDialogDisposable.dispose();
     }
 
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        // We can display everything in-place with fragments, so update
-        // the list to highlight the selected item and show the data.
-        getListView().setSelection(position);
-        ((AlarmsListActivity) getActivity()).showTimePicker(mAdapter.getItem(position));
+    public void onDestroy() {
+        super.onDestroy();
+        alarmsSub.dispose();
     }
 
     @Override
@@ -301,51 +312,5 @@ public class AlarmsListFragment extends ListFragment {
         if (alarm.isEnabled()) {
             menu.findItem(R.id.enable_alarm).setTitle(R.string.disable_alarm);
         }
-    }
-
-    private final class RepeatComparator implements Comparator<AlarmValue> {
-        @Override
-        public int compare(AlarmValue lhs, AlarmValue rhs) {
-            return Integer.valueOf(getPrio(lhs)).compareTo(Integer.valueOf(getPrio(rhs)));
-        }
-
-        /**
-         * First comes on Weekdays, than on weekends and then the rest
-         *
-         * @param alarm
-         * @return
-         */
-        private int getPrio(AlarmValue alarm) {
-            switch (alarm.getDaysOfWeek().getCoded()) {
-                case 0x7F:
-                    return 1;
-                case 0x1F:
-                    return 2;
-                case 0x60:
-                    return 3;
-                default:
-                    return 0;
-            }
-        }
-    }
-
-    private final class HourComparator implements Comparator<AlarmValue> {
-        @Override
-        public int compare(AlarmValue lhs, AlarmValue rhs) {
-            return Integer.valueOf(lhs.getHour()).compareTo(Integer.valueOf(rhs.getHour()));
-        }
-    }
-
-    private final class MinuteComparator implements Comparator<AlarmValue> {
-        @Override
-        public int compare(AlarmValue lhs, AlarmValue rhs) {
-            return Integer.valueOf(lhs.getMinutes()).compareTo(Integer.valueOf(rhs.getMinutes()));
-        }
-    }
-
-    public interface ShowDetailsStrategy {
-        void showDetails(AlarmValue alarm);
-
-        void createNewAlarm();
     }
 }

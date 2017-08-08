@@ -25,6 +25,7 @@ import io.reactivex.subjects.BehaviorSubject
 import java.util.concurrent.TimeUnit
 
 class VibrationService : Service {
+    private val sVibratePattern: LongArray = longArrayOf(500, 500)
     private val log: Logger
     private val mVibrator: Vibrator
     private val sp: SharedPreferences
@@ -136,9 +137,5 @@ class VibrationService : Service {
 
     override fun onBind(intent: Intent): IBinder? {
         return null
-    }
-
-    companion object {
-        private val sVibratePattern: LongArray = longArrayOf(500, 500)
     }
 }

@@ -59,7 +59,7 @@ class BaseTest {
     }
 
     protected void deleteAlarm(int position) {
-        onData(anything()).atPosition(position).perform(longClick());
+        onData(anything()).onChildView(withId(R.id.details_button_container)).atPosition(position).perform(longClick());
         sleep(200);
         Cortado.onView().withText("Delete alarm").perform().click();
         sleep(200);
@@ -94,5 +94,10 @@ class BaseTest {
         Cortado.onView().withId(com.better.alarm.R.id.hours_ones).check().matches(withText("" + s.charAt(1)));
         Cortado.onView().withId(com.better.alarm.R.id.minutes_tens).check().matches(withText("" + s.charAt(3)));
         Cortado.onView().withId(com.better.alarm.R.id.minutes_ones).check().matches(withText("" + s.charAt(4)));
+    }
+
+    @android.support.annotation.NonNull
+    protected ListAsserts.ListAssert<AlarmValue> assertThatList() {
+        return ListAsserts.assertThatList(R.id.list_fragment_list);
     }
 }

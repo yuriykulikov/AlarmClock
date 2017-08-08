@@ -7,8 +7,8 @@ import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.view.View;
 
-import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.R;
+import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.interfaces.PresentationToModelIntents;
 import com.better.alarm.model.AlarmSetter;
 import com.better.alarm.model.AlarmValue;
@@ -33,7 +33,6 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static com.better.alarm.test.ListAsserts.assertThatList;
 import static org.hamcrest.Matchers.anything;
 
 @RunWith(AndroidJUnit4.class)
@@ -55,15 +54,15 @@ public class ListTest extends BaseTest {
         Cortado.onView().withText("OK").perform().click();
         sleep();
 
-        assertThatList(android.R.id.list).items().hasSize(3);
+        assertThatList().items().hasSize(3);
 
-        ListAsserts.<AlarmValue>assertThatList(android.R.id.list)
+        ListAsserts.<AlarmValue>assertThatList(R.id.list_fragment_list)
                 .filter(enabled())
                 .items()
                 .isEmpty();
 
         deleteAlarm(0);
-        assertThatList(android.R.id.list).items().hasSize(2);
+        assertThatList().items().hasSize(2);
     }
 
     @Test
@@ -99,15 +98,15 @@ public class ListTest extends BaseTest {
         Cortado.onView().withText("OK").perform().click();
         sleep();
 
-        assertThatList(android.R.id.list).items().hasSize(3);
+        assertThatList().items().hasSize(3);
 
-        ListAsserts.<AlarmValue>assertThatList(android.R.id.list)
+        ListAsserts.<AlarmValue>assertThatList(R.id.list_fragment_list)
                 .filter(enabled())
                 .items()
                 .hasSize(1);
 
         deleteAlarm(0);
-        assertThatList(android.R.id.list).items().hasSize(2);
+        assertThatList().items().hasSize(2);
     }
 
     @Test
@@ -118,7 +117,7 @@ public class ListTest extends BaseTest {
         Cortado.onView().withText("OK").perform().click();
         sleep();
 
-        assertThatList(android.R.id.list).items().hasSize(3);
+        assertThatList().items().hasSize(3);
         sleep();
 
         onData(anything()).atPosition(0).onChildView(withId(R.id.details_button_container)).perform(click());
@@ -130,7 +129,7 @@ public class ListTest extends BaseTest {
         Cortado.onView().withText("OK").perform().click();
         sleep();
 
-        assertThatList(android.R.id.list).items().hasSize(2);
+        assertThatList().items().hasSize(2);
     }
 
     @Test
@@ -156,12 +155,12 @@ public class ListTest extends BaseTest {
         Cortado.onView().withText("OK").perform().click();
         sleep();
 
-        ListAsserts.<AlarmValue>assertThatList(android.R.id.list)
+        ListAsserts.<AlarmValue>assertThatList(R.id.list_fragment_list)
                 .filter(enabled())
                 .items()
                 .hasSize(1);
 
-        int id = ListAsserts.<AlarmValue>listObservable(android.R.id.list).firstOrError().blockingGet().getId();
+        int id = ListAsserts.<AlarmValue>listObservable(R.id.list_fragment_list).firstOrError().blockingGet().getId();
 
         //simulate alarm fired
         Intent intent = new Intent(AlarmSetter.ACTION_FIRED);
@@ -180,13 +179,13 @@ public class ListTest extends BaseTest {
         sleep();
 
         //alarm must be disabled because there is no repeating
-        ListAsserts.<AlarmValue>assertThatList(android.R.id.list)
+        ListAsserts.<AlarmValue>assertThatList(R.id.list_fragment_list)
                 .filter(enabled())
                 .items()
                 .isEmpty();
 
         deleteAlarm(0);
-        assertThatList(android.R.id.list).items().hasSize(2);
+        assertThatList().items().hasSize(2);
     }
 
     @Test
@@ -212,7 +211,7 @@ public class ListTest extends BaseTest {
         onView(withText("Cancel")).perform(click());
         sleep();
         onView(withText("Cancel")).perform(click());
-        assertThatList(android.R.id.list).items().hasSize(2);
+        assertThatList().items().hasSize(2);
     }
 
 }
