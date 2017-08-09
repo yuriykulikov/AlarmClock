@@ -15,6 +15,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
 import io.reactivex.functions.Consumer;
 
+import static com.better.alarm.configuration.AlarmApplication.container;
+
 public class TransparentActivity extends Activity {
 
     private Alarm alarm;
@@ -23,10 +25,9 @@ public class TransparentActivity extends Activity {
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        IAlarmsManager alarmsManager = AlarmApplication.alarms();
         Intent intent = getIntent();
         int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
-        alarm = alarmsManager.getAlarm(id);
+        alarm = container().alarms().getAlarm(id);
     }
 
     @Override

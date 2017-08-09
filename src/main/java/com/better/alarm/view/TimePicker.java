@@ -26,11 +26,11 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.better.alarm.configuration.AlarmApplication;
-import com.better.alarm.configuration.Prefs;
 import com.better.alarm.R;
 
 import java.text.DateFormatSymbols;
+
+import static com.better.alarm.configuration.AlarmApplication.container;
 
 public class TimePicker extends LinearLayout implements Button.OnClickListener, Button.OnLongClickListener  {
     private static final int AMPM_NOT_SELECTED = 0;
@@ -66,7 +66,7 @@ public class TimePicker extends LinearLayout implements Button.OnClickListener, 
         layoutInflater.inflate(R.layout.time_picker_view, this);
         mInputSize = 4;
         mNoAmPmLabel = context.getResources().getString(R.string.time_picker_ampm_label);
-        mIs24HoursMode = isInEditMode() ? true : AlarmApplication.guice().getInstance(Prefs.class).is24HoutFormat().blockingGet();
+        mIs24HoursMode = isInEditMode() ? true : container().prefs().is24HoutFormat().blockingGet();
     }
 
     @Override

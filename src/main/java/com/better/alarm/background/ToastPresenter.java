@@ -23,8 +23,6 @@ import android.widget.Toast;
 import com.better.alarm.R;
 import com.better.alarm.configuration.Store;
 
-import javax.inject.Inject;
-
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 
@@ -33,7 +31,6 @@ public class ToastPresenter {
     private Store store;
     private Context context;
 
-    @Inject
     public ToastPresenter(Store store, final Context context) {
         this.store = store;
         this.context = context;

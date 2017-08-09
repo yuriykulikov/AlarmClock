@@ -29,7 +29,6 @@ import com.better.alarm.configuration.Store;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.presenter.AlarmsListActivity;
 import com.google.common.base.Optional;
-import com.google.inject.Inject;
 
 import java.util.Calendar;
 
@@ -49,7 +48,6 @@ public class ScheduledReceiver {
     private Prefs prefs;
     private AlarmManager am;
 
-    @Inject
     public ScheduledReceiver(Store store, final Context context, Prefs prefs, AlarmManager am){
         this.store = store;
         this.context = context;

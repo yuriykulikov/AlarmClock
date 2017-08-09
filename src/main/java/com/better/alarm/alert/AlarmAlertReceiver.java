@@ -27,18 +27,18 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
 
-import com.better.alarm.configuration.AlarmApplication;
-import com.better.alarm.configuration.Prefs;
 import com.better.alarm.R;
+import com.better.alarm.configuration.Prefs;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.interfaces.PresentationToModelIntents;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.presenter.TransparentActivity;
-import com.google.inject.Inject;
 
 import java.util.Calendar;
+
+import static com.better.alarm.configuration.AlarmApplication.container;
 
 /**
  * Glue class: connects AlarmAlert IntentReceiver to AlarmAlert activity. Passes
@@ -52,19 +52,15 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
     private static final int NOTIFICATION_OFFSET = 1000;
 
     private Context mContext;
-    @Inject
-    private NotificationManager nm;
-    @Inject
-    private IAlarmsManager alarmsManager;
-    @Inject
-    private Prefs prefs;
+    private final NotificationManager nm = container().notificationManager();
+    private final IAlarmsManager alarmsManager = container().alarms();
+    private final Prefs prefs = container().prefs();
 
     private Alarm alarm;
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
         mContext = context;
-        AlarmApplication.guice().injectMembers(this);
         String action = intent.getAction();
         int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
         try {

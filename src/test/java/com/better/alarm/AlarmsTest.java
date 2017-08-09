@@ -1,12 +1,7 @@
 package com.better.alarm;
 
 import android.content.ContentResolver;
-import android.content.Context;
-import android.os.PowerManager;
 
-import com.better.alarm.background.ScheduledReceiver;
-import com.better.alarm.background.ToastPresenter;
-import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.configuration.ImmutablePrefs;
 import com.better.alarm.configuration.ImmutableStore;
 import com.better.alarm.configuration.Store;
@@ -17,24 +12,19 @@ import com.better.alarm.logger.Logger;
 import com.better.alarm.logger.SysoutLogWriter;
 import com.better.alarm.model.AlarmContainer;
 import com.better.alarm.model.AlarmCore;
+import com.better.alarm.model.AlarmCoreFactory;
 import com.better.alarm.model.AlarmSetter;
 import com.better.alarm.model.AlarmValue;
 import com.better.alarm.model.Alarms;
 import com.better.alarm.model.AlarmsScheduler;
 import com.better.alarm.model.CalendarType;
+import com.better.alarm.model.Calendars;
 import com.better.alarm.model.ContainerFactory;
 import com.better.alarm.model.ImmutableAlarmContainer;
 import com.better.alarm.model.ImmutableDaysOfWeek;
 import com.better.alarm.persistance.DatabaseQuery;
-import com.better.alarm.statemachine.HandlerFactory;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
-import com.google.inject.Binder;
-import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-import com.google.inject.util.Modules;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -45,9 +35,9 @@ import org.junit.runner.Description;
 import org.mockito.ArgumentCaptor;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
-import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Predicate;
@@ -64,7 +54,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class AlarmsTest {
-    private Injector guice;
     private AlarmCore.IStateNotifier stateNotifierMock;
     private AlarmSetter alarmSetterMock;
     private TestScheduler testScheduler;
@@ -100,29 +89,30 @@ public class AlarmsTest {
         stateNotifierMock = mock(AlarmCore.IStateNotifier.class);
         alarmSetterMock = mock(AlarmSetter.class);
 
-        guice = Guice.createInjector(Modules
-                .override(new AlarmApplication.AppModule(logger, prefs, store))
-                .with(new TestModule()));
     }
 
-    private class TestModule implements Module {
-        @Override
-        public void configure(Binder binder) {
-            //stubs
-            binder.bind(ContainerFactory.class).to(TestContainerFactory.class).asEagerSingleton();
-            binder.bind(Scheduler.class).toInstance(testScheduler);
-            binder.bind(HandlerFactory.class).to(TestHandlerFactory.class);
-            binder.bind(Context.class).toInstance(mock(Context.class));
-            binder.bind(DatabaseQuery.class).toInstance(mockQuery());
-            binder.bind(AlarmSetter.class).toInstance(alarmSetterMock);
-            binder.bind(PowerManager.class).toInstance(mock(PowerManager.class));
+    private Alarms createAlarms(DatabaseQuery query) {
+        Calendars calendars = new Calendars() {
+            @Override
+            public Calendar now() {
+                return Calendar.getInstance();
+            }
+        };
+        AlarmsScheduler alarmsScheduler = new AlarmsScheduler(alarmSetterMock, logger, store, prefs, calendars);
+        Alarms alarms = new Alarms(alarmsScheduler, query, new AlarmCoreFactory(logger,
+                alarmsScheduler,
+                stateNotifierMock,
+                new TestHandlerFactory(testScheduler),
+                prefs,
+                store,
+                calendars
 
-            //mocks for verification
-            binder.bind(AlarmCore.IStateNotifier.class).toInstance(stateNotifierMock);
+        ), new TestContainerFactory(calendars));
+        return alarms;
+    }
 
-            binder.bind(ScheduledReceiver.class).toInstance(mock(ScheduledReceiver.class));
-            binder.bind(ToastPresenter.class).toInstance(mock(ToastPresenter.class));
-        }
+    private Alarms createAlarms() {
+        return createAlarms(mockQuery());
     }
 
     @android.support.annotation.NonNull
@@ -136,7 +126,7 @@ public class AlarmsTest {
     @Test
     public void create() {
         //when
-        IAlarmsManager instance = guice.getInstance(IAlarmsManager.class);
+        IAlarmsManager instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
         newAlarm.enable(true);
         testScheduler.triggerActions();
@@ -152,7 +142,7 @@ public class AlarmsTest {
     @Test
     public void deleteDisabledAlarm() {
         //when
-        IAlarmsManager instance = guice.getInstance(IAlarmsManager.class);
+        IAlarmsManager instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
         testScheduler.triggerActions();
         instance.delete(newAlarm);
@@ -169,7 +159,7 @@ public class AlarmsTest {
     @Test
     public void deleteEnabledAlarm() {
         //when
-        IAlarmsManager instance = guice.getInstance(IAlarmsManager.class);
+        IAlarmsManager instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
         testScheduler.triggerActions();
         newAlarm.enable(true);
@@ -188,7 +178,7 @@ public class AlarmsTest {
     @Test
     public void createThreeAlarms() {
         //when
-        IAlarmsManager instance = guice.getInstance(IAlarmsManager.class);
+        IAlarmsManager instance = createAlarms();
         instance.createNewAlarm();
         testScheduler.triggerActions();
         instance.createNewAlarm().enable(true);
@@ -211,7 +201,6 @@ public class AlarmsTest {
     static class DatabaseQueryMock extends DatabaseQuery {
         private ContainerFactory factory;
 
-        @Inject
         public DatabaseQueryMock(ContainerFactory factory) {
             super(mock(ContentResolver.class), factory);
             this.factory = factory;
@@ -233,17 +222,12 @@ public class AlarmsTest {
     @Test
     public void alarmsFromMemoryMustBePresentInTheList() {
         //when
-        Alarms instance = Guice.createInjector(Modules
-                .override(Modules
-                        .override(new AlarmApplication.AppModule(logger, prefs, store))
-                        .with(new TestModule()))
-                .with(new Module() {
-                    @Override
-                    public void configure(Binder binder) {
-                        binder.bind(DatabaseQuery.class).to(DatabaseQueryMock.class);
-                    }
-                }))
-                .getInstance(Alarms.class);
+        Alarms instance = createAlarms(new DatabaseQueryMock(new TestContainerFactory(new Calendars() {
+            @Override
+            public Calendar now() {
+                return Calendar.getInstance();
+            }
+        })));
 
         instance.start();
 
@@ -263,7 +247,7 @@ public class AlarmsTest {
     @Test
     public void editAlarm() {
         //when
-        IAlarmsManager instance = guice.getInstance(IAlarmsManager.class);
+        IAlarmsManager instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
         newAlarm.edit().withIsEnabled(true).withHour(7).commit();
         testScheduler.triggerActions();
@@ -281,7 +265,7 @@ public class AlarmsTest {
     @Test
     public void firedAlarmShouldBeDisabledIfNoRepeatingIsSet() {
         //when
-        Alarms instance = guice.getInstance(Alarms.class);
+        Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
         newAlarm.enable(true);
         testScheduler.triggerActions();
@@ -307,7 +291,7 @@ public class AlarmsTest {
     @Test
     public void firedAlarmShouldBeRescheduledIfRepeatingIsSet() {
         //when
-        Alarms instance = guice.getInstance(Alarms.class);
+        Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
         newAlarm.edit().withIsEnabled(true).withDaysOfWeek(ImmutableDaysOfWeek.of(1)).commit();
         testScheduler.triggerActions();
@@ -333,7 +317,7 @@ public class AlarmsTest {
     @Test
     public void changingAlarmWhileItIsFiredShouldReschedule() {
         //when
-        Alarms instance = guice.getInstance(Alarms.class);
+        Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
         newAlarm.enable(true);
         testScheduler.triggerActions();
@@ -365,7 +349,7 @@ public class AlarmsTest {
     @Test
     public void firedAlarmShouldBeStillEnabledAfterSnoozed() {
         //given
-        Alarms instance = guice.getInstance(Alarms.class);
+        Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
         //TODO circle the time, otherwise the tests may fail around 0 hours
         newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(ImmutableDaysOfWeek.of(1)).withIsPrealarm(true).commit();
@@ -400,7 +384,7 @@ public class AlarmsTest {
     @Test
     public void snoozeToTime() {
         //given
-        Alarms instance = guice.getInstance(Alarms.class);
+        Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
         //TODO circle the time, otherwise the tests may fail around 0 hours
         newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(ImmutableDaysOfWeek.of(1)).commit();
@@ -421,7 +405,7 @@ public class AlarmsTest {
     @Test
     public void snoozePreAlarmToTime() {
         //given
-        Alarms instance = guice.getInstance(Alarms.class);
+        Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
         //TODO circle the time, otherwise the tests may fail around 0 hours
         newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(ImmutableDaysOfWeek.of(1)).withIsPrealarm(true).commit();
@@ -447,7 +431,7 @@ public class AlarmsTest {
     @Test
     public void prealarmTimedOutAndThenDisabled() {
         //given
-        Alarms instance = guice.getInstance(Alarms.class);
+        Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
         //TODO circle the time, otherwise the tests may fail around 0 hours
         newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(ImmutableDaysOfWeek.of(1)).withIsPrealarm(true).commit();

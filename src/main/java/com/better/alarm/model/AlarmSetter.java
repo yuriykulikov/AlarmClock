@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.Build;
 
 import com.better.alarm.logger.Logger;
-import com.google.inject.Inject;
 
 /**
  * Created by Yuriy on 24.06.2017.
@@ -36,7 +35,6 @@ public interface AlarmSetter {
         private final ISetAlarmStrategy setAlarmStrategy;
         private final Logger log;
 
-        @Inject
         public AlarmSetterImpl(Logger logger, AlarmManager am, Context context) {
             this.am = am;
             this.log = logger;
