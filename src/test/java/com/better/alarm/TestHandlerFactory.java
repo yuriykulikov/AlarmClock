@@ -5,7 +5,6 @@ import com.better.alarm.statemachine.IHandler;
 import com.better.alarm.statemachine.ImmutableMessage;
 import com.better.alarm.statemachine.Message;
 import com.better.alarm.statemachine.MessageHandler;
-import com.google.inject.Inject;
 
 import io.reactivex.Scheduler;
 
@@ -15,7 +14,6 @@ import io.reactivex.Scheduler;
 class TestHandlerFactory implements HandlerFactory {
     private Scheduler testScheduler;
 
-    @Inject
     public TestHandlerFactory(Scheduler scheduler) {
         this.testScheduler = scheduler;
     }

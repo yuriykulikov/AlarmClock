@@ -22,8 +22,6 @@ import android.os.PowerManager.WakeLock;
 import android.support.annotation.NonNull;
 
 import com.better.alarm.logger.Logger;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -43,8 +41,7 @@ public class WakeLockManager {
     private final CopyOnWriteArrayList<WakeLock> wakeLocks;
     private final PowerManager pm;
 
-    @Inject
-    public WakeLockManager(@Named("debug") Logger logger, PowerManager pm) {
+    public WakeLockManager(Logger logger, PowerManager pm) {
         this.pm = pm;
         wakeLocks = new CopyOnWriteArrayList<PowerManager.WakeLock>();
         log = logger;
@@ -54,7 +51,7 @@ public class WakeLockManager {
      * Acquires a partial {@link WakeLock}, stores it internally and puts the
      * tag into the {@link Intent}. To be used with
      * {@link WakeLockManager#releasePartialWakeLock(Intent)}
-     * 
+     *
      * @param intent
      * @param wlTag
      */
@@ -70,7 +67,7 @@ public class WakeLockManager {
     /**
      * Releases a partial {@link WakeLock} with a tag contained in the given
      * {@link Intent}
-     * 
+     *
      * @param intent
      */
     public void releasePartialWakeLock(@NonNull Intent intent) {
@@ -79,7 +76,7 @@ public class WakeLockManager {
             final String tag = intent.getStringExtra(WakeLockManager.EXTRA_WAKELOCK_TAG);
             // We use copy on write list. Iterator won't cause
             // ConcurrentModificationException
-            for (Iterator<WakeLock> iterator = wakeLocks.iterator(); iterator.hasNext();) {
+            for (Iterator<WakeLock> iterator = wakeLocks.iterator(); iterator.hasNext(); ) {
                 WakeLock wakeLock = iterator.next();
                 if (hash == wakeLock.hashCode()) {
                     if (wakeLock.isHeld()) {

@@ -15,6 +15,7 @@
  */
 package com.better.alarm.configuration;
 
+import android.app.AlarmManager;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -26,7 +27,6 @@ import android.view.ViewConfiguration;
 import com.better.alarm.R;
 import com.better.alarm.background.ScheduledReceiver;
 import com.better.alarm.background.ToastPresenter;
-import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.logger.LogcatLogWriter;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.logger.LoggingExceptionHandler;
@@ -39,23 +39,14 @@ import com.better.alarm.model.AlarmValue;
 import com.better.alarm.model.Alarms;
 import com.better.alarm.model.AlarmsScheduler;
 import com.better.alarm.model.Calendars;
-import com.better.alarm.model.ContainerFactory;
-import com.better.alarm.model.IAlarmsScheduler;
 import com.better.alarm.model.MainLooperHandlerFactory;
 import com.better.alarm.persistance.DatabaseQuery;
 import com.better.alarm.persistance.PersistingContainerFactory;
 import com.better.alarm.presenter.DynamicThemeHandler;
 import com.better.alarm.statemachine.HandlerFactory;
-import com.better.alarm.wakelock.WakeLockManager;
 import com.f2prateek.rx.preferences2.Preference;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.inject.Binder;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-import com.google.inject.name.Names;
 
 import org.acra.ACRA;
 import org.acra.ErrorReporter;
@@ -92,8 +83,8 @@ import io.reactivex.subjects.PublishSubject;
                 ReportField.SHARED_PREFERENCES,
         })
 public class AlarmApplication extends Application {
+    private static Container sContainer;
 
-    private static Injector guice;
     public static Optional<Boolean> is24hoursFormatOverride = Optional.absent();
     private SharedPreferences preferences;
     private RxSharedPreferences rxPreferences;
@@ -123,7 +114,7 @@ public class AlarmApplication extends Application {
 
         LoggingExceptionHandler.addLoggingExceptionHandlerToAllThreads(logger);
 
-        preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
         rxPreferences = RxSharedPreferences.create(preferences);
 
         Function<String, Integer> parseInt = new Function<String, Integer>() {
@@ -182,8 +173,6 @@ public class AlarmApplication extends Application {
             }
         });
 
-        guice = Guice.createInjector(new AppModule(logger, prefs, store), createAndroidModule());
-
         ACRA.getErrorReporter().setExceptionHandlerInitializer(new ExceptionHandlerInitializer() {
             @Override
             public void initializeExceptionHandler(ErrorReporter reporter) {
@@ -208,22 +197,46 @@ public class AlarmApplication extends Application {
                 });
 
         deleteLogs(getApplicationContext());
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        AlarmSetter.AlarmSetterImpl setter = new AlarmSetter.AlarmSetterImpl(logger, alarmManager, getApplicationContext());
+        Calendars calendars = new Calendars() {
+            @Override
+            public Calendar now() {
+                return Calendar.getInstance();
+            }
+        };
 
-        guice.getInstance(Alarms.class).start();
-        guice.getInstance(ScheduledReceiver.class).start();
-        guice.getInstance(ToastPresenter.class).start();
+        AlarmsScheduler alarmsScheduler = new AlarmsScheduler(setter, logger, store, prefs, calendars);
+        AlarmCore.IStateNotifier broadcaster = new AlarmStateNotifier(getApplicationContext());
+        HandlerFactory handlerFactory = new MainLooperHandlerFactory();
+        PersistingContainerFactory containerFactory = new PersistingContainerFactory(calendars, getApplicationContext());
+        Alarms alarms = new Alarms(alarmsScheduler, new DatabaseQuery(getContentResolver(), containerFactory), new AlarmCoreFactory(logger,
+                alarmsScheduler,
+                broadcaster,
+                handlerFactory,
+                prefs,
+                store,
+                calendars
+
+        ), containerFactory);
+
+        alarms.start();
+
+        sContainer = ImmutableContainer.builder()
+                .context(getApplicationContext())
+                .logger(logger)
+                .sharedPreferences(preferences)
+                .rxPrefs(rxPreferences)
+                .prefs(prefs)
+                .store(store)
+                .rawAlarms(alarms)
+                .build();
+
+        new ScheduledReceiver(store, getApplicationContext(), prefs, alarmManager).start();
+        new ToastPresenter(store, getApplicationContext()).start();
 
         logger.d("onCreate done");
         super.onCreate();
-    }
-
-    protected Module createAndroidModule() {
-        return new AndroidModule(this);
-    }
-
-    @NonNull
-    public static Injector guice() {
-        return Preconditions.checkNotNull(guice);
     }
 
     private void deleteLogs(Context context) {
@@ -233,58 +246,8 @@ public class AlarmApplication extends Application {
         }
     }
 
-    @NonNull
-    public static WakeLockManager wakeLocks() {
-        return guice.getInstance(WakeLockManager.class);
+    @android.support.annotation.NonNull
+    public static Container container() {
+        return sContainer;
     }
-
-    @NonNull
-    public static IAlarmsManager alarms() {
-        return guice.getInstance(IAlarmsManager.class);
-    }
-
-    public static class AppModule implements Module {
-        private final Logger logger;
-        private final ImmutablePrefs prefs;
-        private final ImmutableStore store;
-
-        public AppModule(Logger logger, ImmutablePrefs prefs, ImmutableStore store) {
-            this.logger = logger;
-            this.prefs = prefs;
-            this.store = store;
-        }
-
-        @Override
-        public void configure(Binder binder) {
-            binder.requireExplicitBindings();
-            binder.requireAtInjectOnConstructors();
-            binder.requireExactBindingAnnotations();
-
-            binder.bind(Logger.class).toInstance(logger);
-            binder.bind(Logger.class).annotatedWith(Names.named("debug")).toInstance(new Logger());
-            binder.bind(Prefs.class).toInstance(prefs);
-            binder.bind(Store.class).toInstance(store);
-
-            binder.bind(WakeLockManager.class).asEagerSingleton();
-            binder.bind(IAlarmsManager.class).to(Alarms.class).asEagerSingleton();
-            binder.bind(IAlarmsScheduler.class).to(AlarmsScheduler.class).asEagerSingleton();
-            binder.bind(AlarmCoreFactory.class).asEagerSingleton();
-            binder.bind(HandlerFactory.class).to(MainLooperHandlerFactory.class).asEagerSingleton();
-            binder.bind(DatabaseQuery.class).asEagerSingleton();
-            binder.bind(AlarmCore.IStateNotifier.class).to(AlarmStateNotifier.class).asEagerSingleton();
-            binder.bind(Alarms.class).asEagerSingleton();
-            binder.bind(ContainerFactory.class).to(PersistingContainerFactory.class).asEagerSingleton();
-            binder.bind(AlarmSetter.class).to(AlarmSetter.AlarmSetterImpl.class).asEagerSingleton();
-            binder.bind(Calendars.class).toInstance(new Calendars() {
-                @Override
-                public Calendar now() {
-                    return Calendar.getInstance();
-                }
-            });
-
-            binder.bind(ScheduledReceiver.class).asEagerSingleton();
-            binder.bind(ToastPresenter.class).asEagerSingleton();
-        }
-    }
-
 }

@@ -13,7 +13,6 @@ import com.better.alarm.model.Calendars;
 import com.better.alarm.model.ContainerFactory;
 import com.better.alarm.model.ImmutableAlarmContainer;
 import com.better.alarm.model.ImmutableDaysOfWeek;
-import com.google.inject.Inject;
 
 import java.util.Calendar;
 
@@ -140,7 +139,6 @@ public class PersistingContainerFactory implements ContainerFactory, AlarmContai
         public static final int ALARM_STATE_INDEX = 10;
     }
 
-    @Inject
     public PersistingContainerFactory(Calendars calendars, Context context) {
         this.calendars = calendars;
         this.mContext = context;

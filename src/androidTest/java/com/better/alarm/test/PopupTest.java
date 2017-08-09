@@ -33,6 +33,7 @@ import java.util.Locale;
 import cortado.Cortado;
 
 import static android.provider.AlarmClock.ACTION_SET_ALARM;
+import static com.better.alarm.configuration.AlarmApplication.container;
 import static com.better.alarm.test.ListAsserts.assertThatList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -135,7 +136,7 @@ public class PopupTest extends BaseTest {
 
         sleep();
 
-        Optional<Store.Next> next = AlarmApplication.guice().getInstance(Store.class)
+        Optional<Store.Next> next = container().store()
                 .next()
                 .blockingFirst();
 

@@ -35,7 +35,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.better.alarm.R;
-import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
@@ -43,13 +42,13 @@ import com.better.alarm.logger.Logger;
 import com.better.alarm.presenter.DynamicThemeHandler;
 import com.better.alarm.presenter.TimePickerDialogFragment;
 import com.google.common.base.Optional;
-import com.google.inject.Inject;
 
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
 import io.reactivex.functions.Consumer;
 
+import static com.better.alarm.configuration.AlarmApplication.container;
 import static com.better.alarm.configuration.Prefs.LONGCLICK_DISMISS_DEFAULT;
 import static com.better.alarm.configuration.Prefs.LONGCLICK_DISMISS_KEY;
 
@@ -63,10 +62,8 @@ public class AlarmAlertFullScreen extends Activity {
 
     protected Alarm mAlarm;
 
-    @Inject
-    private IAlarmsManager alarmsManager;
-    @Inject
-    private SharedPreferences sp;
+    private final IAlarmsManager alarmsManager = container().alarms();
+    private final SharedPreferences sp = container().sharedPreferences();
 
     private boolean longClickToDismiss;
 
@@ -91,8 +88,6 @@ public class AlarmAlertFullScreen extends Activity {
     protected void onCreate(Bundle icicle) {
         setTheme(DynamicThemeHandler.getInstance().getIdForName(getClassName()));
         super.onCreate(icicle);
-
-        AlarmApplication.guice().injectMembers(this);
 
         if (getResources().getBoolean(R.bool.isTablet)) {
             // preserve initial rotation and disable rotation change

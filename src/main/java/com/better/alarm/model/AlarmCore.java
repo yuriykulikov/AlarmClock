@@ -33,8 +33,6 @@ import com.better.alarm.statemachine.IState;
 import com.better.alarm.statemachine.Message;
 import com.better.alarm.statemachine.State;
 import com.better.alarm.statemachine.StateMachine;
-import com.google.auto.factory.AutoFactory;
-import com.google.auto.factory.Provided;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 
@@ -120,9 +118,7 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
     private final Store store;
     private final Calendars calendars;
 
-    @AutoFactory
-    public AlarmCore(AlarmContainer container, @Provided Logger logger, @Provided IAlarmsScheduler alarmsScheduler,
-                     @Provided IStateNotifier broadcaster, @Provided HandlerFactory handlerFactory, @Provided Prefs prefs, @Provided Store store, @Provided Calendars calendars) {
+    public AlarmCore(AlarmContainer container, Logger logger, IAlarmsScheduler alarmsScheduler, IStateNotifier broadcaster, HandlerFactory handlerFactory, Prefs prefs, Store store, Calendars calendars) {
         this.log = logger;
         this.calendars = calendars;
         this.mAlarmsScheduler = alarmsScheduler;

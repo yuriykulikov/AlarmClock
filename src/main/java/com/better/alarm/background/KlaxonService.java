@@ -36,15 +36,15 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
 import com.better.alarm.R;
-import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.configuration.Prefs;
 import com.better.alarm.interfaces.Alarm;
+import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
+import com.better.alarm.wakelock.WakeLockManager;
 import com.f2prateek.rx.preferences2.Preference;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
 import com.google.common.base.Optional;
-import com.google.inject.Inject;
 
 import io.reactivex.Observable;
 import io.reactivex.annotations.NonNull;
@@ -52,6 +52,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 
+import static com.better.alarm.configuration.AlarmApplication.container;
 import static com.better.alarm.configuration.Prefs.DEFAULT_PREALARM_VOLUME;
 import static com.better.alarm.configuration.Prefs.KEY_PREALARM_VOLUME;
 
@@ -62,22 +63,20 @@ import static com.better.alarm.configuration.Prefs.KEY_PREALARM_VOLUME;
 public class KlaxonService extends Service {
     private Optional<MediaPlayer> mMediaPlayer = Optional.absent();
 
-    @Inject
-    private TelephonyManager mTelephonyManager;
-    @Inject
-    private Logger log;
-    private Volume volume;
-    @Inject
-    private PowerManager pm;
-    private WakeLock wakeLock;
+    private final TelephonyManager mTelephonyManager =  container().telephonyManager();
+    private final Logger log = container().logger();
+    private final PowerManager pm = container().powerManager();
+    private final RxSharedPreferences rxPreferences = container().rxPrefs();
+    private final AudioManager audioManager = container().audioManager();
+    private WakeLockManager wakeLocks = container().wakeLocks();
+    private IAlarmsManager alarms = container().alarms();
 
-    private Alarm alarm;
-    private boolean lastInCallState;
     private Observable<Integer> fadeInTimeInSeconds;
-    @Inject
-    private RxSharedPreferences rxPreferences;
-    @Inject
-    private AudioManager audioManager;
+    private boolean lastInCallState;
+    private WakeLock wakeLock;
+    private Alarm alarm;
+    private Volume volume;
+
     CompositeDisposable disposables = new CompositeDisposable();
 
     /**
@@ -87,7 +86,7 @@ public class KlaxonService extends Service {
         @Override
         public void onReceive(final Context context, final Intent intent) {
             intent.setClass(context, KlaxonService.class);
-            AlarmApplication.wakeLocks().acquirePartialWakeLock(intent, "ForKlaxonService");
+            container().wakeLocks().acquirePartialWakeLock(intent, "ForKlaxonService");
             context.startService(intent);
         }
     }
@@ -263,7 +262,6 @@ public class KlaxonService extends Service {
 
     @Override
     public void onCreate() {
-        AlarmApplication.guice().injectMembers(this);
         mMediaPlayer = Optional.absent();
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "KlaxonService");
         wakeLock.acquire();
@@ -306,7 +304,7 @@ public class KlaxonService extends Service {
             return START_NOT_STICKY;
         }
 
-        AlarmApplication.wakeLocks().releasePartialWakeLock(intent);
+        wakeLocks.releasePartialWakeLock(intent);
 
         String action = intent.getAction();
 
@@ -315,7 +313,7 @@ public class KlaxonService extends Service {
         switch (action) {
             case Intents.ALARM_ALERT_ACTION:
             case Intents.ALARM_PREALARM_ACTION:
-                alarm = AlarmApplication.alarms().getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
+                alarm = alarms.getAlarm(intent.getIntExtra(Intents.EXTRA_ID, -1));
                 Type type = action.equals(Intents.ALARM_PREALARM_ACTION) ? Type.PREALARM : Type.NORMAL;
                 onAlarm(alarm, type);
                 break;

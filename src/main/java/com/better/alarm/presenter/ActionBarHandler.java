@@ -16,7 +16,6 @@ import android.widget.ShareActionProvider;
 
 import com.better.alarm.R;
 import com.google.common.base.Preconditions;
-import com.google.inject.Inject;
 
 import org.acra.ACRA;
 

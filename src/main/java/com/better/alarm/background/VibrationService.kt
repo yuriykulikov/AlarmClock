@@ -11,13 +11,12 @@ import android.os.PowerManager.WakeLock
 import android.os.Vibrator
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
-import com.better.alarm.configuration.AlarmApplication
-import com.better.alarm.configuration.AlarmApplication.guice
+import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
+import com.better.alarm.wakelock.WakeLockManager
 import com.f2prateek.rx.preferences2.RxSharedPreferences
-import com.google.inject.Inject
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposables
@@ -31,13 +30,15 @@ class VibrationService : Service {
     private val sp: SharedPreferences
     private val pm: PowerManager
     private val telephonyManager: TelephonyManager
+    private val wakeLocks: WakeLockManager
+
     private val rxPrefs: RxSharedPreferences
 
     private lateinit var wakeLock: WakeLock
-
     //isEnabled && !inCall && !isMuted && isStarted
     private val inCall: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
     private val muted: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
+
     private var subscription = Disposables.disposed()
 
     /**
@@ -46,22 +47,22 @@ class VibrationService : Service {
     class Receiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             intent.setClass(context, VibrationService::class.java)
-            AlarmApplication.wakeLocks().acquirePartialWakeLock(intent, "ForVibrationService")
+            container().wakeLocks().acquirePartialWakeLock(intent, "ForVibrationService")
             context.startService(intent)
         }
     }
 
     constructor() : super() {
-        log = guice().getInstance(Logger::class.java)
-        mVibrator = guice().getInstance(Vibrator::class.java)
-        sp = guice().getInstance(SharedPreferences::class.java)
-        pm = guice().getInstance(PowerManager::class.java)
-        telephonyManager = guice().getInstance(TelephonyManager::class.java)
-        rxPrefs = guice().getInstance(RxSharedPreferences::class.java)
+        log = container().logger()
+        mVibrator = container().vibrator()
+        sp = container().sharedPreferences()
+        pm = container().powerManager()
+        telephonyManager = container().telephonyManager()
+        rxPrefs = container().rxPrefs()
+        wakeLocks = container().wakeLocks()
     }
 
     override fun onCreate() {
-        AlarmApplication.guice().injectMembers(this)
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "VibrationService")
         wakeLock.acquire()
 
@@ -81,7 +82,7 @@ class VibrationService : Service {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent == null) return Service.START_NOT_STICKY
 
-        AlarmApplication.wakeLocks().releasePartialWakeLock(intent)
+        wakeLocks.releasePartialWakeLock(intent)
 
         when (intent.action) {
             Intents.ALARM_ALERT_ACTION -> onAlert()
