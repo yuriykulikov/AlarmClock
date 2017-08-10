@@ -55,31 +55,31 @@ public abstract class Container {
     }
 
     @android.support.annotation.NonNull
-    @Value.Derived
+    @Value.Lazy
     public Vibrator vibrator() {
         return (Vibrator) context().getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     @android.support.annotation.NonNull
-    @Value.Derived
+    @Value.Lazy
     public PowerManager powerManager() {
         return (PowerManager) context().getSystemService(Context.POWER_SERVICE);
     }
 
     @android.support.annotation.NonNull
-    @Value.Derived
+    @Value.Lazy
     public TelephonyManager telephonyManager() {
         return (TelephonyManager) context().getSystemService(Context.TELEPHONY_SERVICE);
     }
 
     @android.support.annotation.NonNull
-    @Value.Derived
+    @Value.Lazy
     public NotificationManager notificationManager() {
         return (NotificationManager) context().getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
     @android.support.annotation.NonNull
-    @Value.Derived
+    @Value.Lazy
     public AudioManager audioManager() {
         return (AudioManager) context().getSystemService(Context.AUDIO_SERVICE);
     }
