@@ -47,6 +47,7 @@ import com.better.alarm.statemachine.HandlerFactory;
 import com.f2prateek.rx.preferences2.Preference;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
 import com.google.common.base.Optional;
+import com.google.inject.Inject;
 
 import org.acra.ACRA;
 import org.acra.ErrorReporter;
@@ -83,6 +84,8 @@ import io.reactivex.subjects.PublishSubject;
                 ReportField.SHARED_PREFERENCES,
         })
 public class AlarmApplication extends Application {
+    @Inject//this is just here to trick the tests.
+    @javax.inject.Inject//this one also
     private static Container sContainer;
 
     public static Optional<Boolean> is24hoursFormatOverride = Optional.absent();
