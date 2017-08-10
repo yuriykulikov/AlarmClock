@@ -5,7 +5,6 @@ import android.content.Intent;
 
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.model.AlarmCore.IStateNotifier;
-import com.google.inject.Inject;
 
 /**
  * Broadcasts alarm state with an intent
@@ -17,7 +16,6 @@ public class AlarmStateNotifier implements IStateNotifier {
 
     private final Context mContext;
 
-    @Inject
     public AlarmStateNotifier(Context context) {
         mContext = context;
     }

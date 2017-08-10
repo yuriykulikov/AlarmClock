@@ -135,7 +135,7 @@ public class PopupTest extends BaseTest {
 
         sleep();
 
-        Optional<Store.Next> next = AlarmApplication.guice().getInstance(Store.class)
+        Optional<Store.Next> next = AlarmApplication.container().store()
                 .next()
                 .blockingFirst();
 

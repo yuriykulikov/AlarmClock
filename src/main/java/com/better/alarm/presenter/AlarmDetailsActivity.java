@@ -39,7 +39,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.better.alarm.R;
-import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.configuration.Prefs;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
@@ -48,7 +47,6 @@ import com.better.alarm.logger.Logger;
 import com.better.alarm.view.RepeatPreference;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
 import com.google.common.base.Optional;
-import com.google.inject.Inject;
 
 import java.util.Calendar;
 
@@ -57,6 +55,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
 import io.reactivex.functions.Consumer;
 
+import static com.better.alarm.configuration.AlarmApplication.container;
 import static com.better.alarm.view.RingtonePreferenceExtension.updatePreferenceSummary;
 
 /**
@@ -65,8 +64,11 @@ import static com.better.alarm.view.RingtonePreferenceExtension.updatePreference
 public class AlarmDetailsActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener {
     public final static String M12 = "h:mm aa";
     public final static String M24 = "kk:mm";
-    @Inject
-    private IAlarmsManager alarms;
+
+    private final IAlarmsManager alarms = container().alarms();
+    private final SharedPreferences sp = container().sharedPreferences();
+    private final RxSharedPreferences rxSharedPreferences = container().rxPrefs();
+    private final Prefs prefs = container().prefs();
 
     private EditText mLabel;
     private CheckBoxPreference mEnabledPref;
@@ -81,12 +83,6 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     private int mHour;
     private int mMinute;
 
-    @Inject
-    private SharedPreferences sp;
-    @Inject
-    private RxSharedPreferences rxSharedPreferences;
-    @Inject
-    private Prefs prefs;
     private Disposable disposableDialog = Disposables.disposed();
     private Disposable disposable;
 
@@ -94,7 +90,6 @@ public class AlarmDetailsActivity extends PreferenceActivity implements Preferen
     protected void onCreate(Bundle icicle) {
         setTheme(DynamicThemeHandler.getInstance().getIdForName(AlarmDetailsActivity.class.getName()));
         super.onCreate(icicle);
-        AlarmApplication.guice().injectMembers(this);
 
         if (!getResources().getBoolean(R.bool.isTablet)) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

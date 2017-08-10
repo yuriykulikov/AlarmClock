@@ -27,12 +27,10 @@ import android.view.View;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.R;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
-import com.google.inject.Inject;
 
 import java.util.concurrent.TimeUnit;
 
@@ -42,6 +40,7 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 import io.reactivex.subjects.PublishSubject;
 
+import static com.better.alarm.configuration.AlarmApplication.container;
 import static com.better.alarm.configuration.Prefs.DEFAULT_PREALARM_VOLUME;
 import static com.better.alarm.configuration.Prefs.KEY_PREALARM_VOLUME;
 import static com.better.alarm.configuration.Prefs.MAX_PREALARM_VOLUME;
@@ -49,12 +48,10 @@ import static com.better.alarm.configuration.Prefs.MAX_PREALARM_VOLUME;
 public class VolumePreference extends Preference {
     private final Ringtone ringtone;
     private final Context context;
-    @Inject
-    private RxSharedPreferences rxPrefs;
-    @Inject
-    private AudioManager am;
-    @Inject
-    private Logger log;
+
+    private final RxSharedPreferences rxPrefs = container().rxPrefs();
+    private final AudioManager am = container().audioManager();
+    private final Logger log = container().logger();
 
     public VolumePreference(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -69,7 +66,6 @@ public class VolumePreference extends Preference {
     @Override
     protected void onBindView(View view) {
         super.onBindView(view);
-        AlarmApplication.guice().injectMembers(this);
 
         bindPrealarmSeekBar((SeekBar) view.findViewById(R.id.seekbar_dialog_seekbar_prealarm_volume));
         bindAudioManagerVolume((SeekBar) view.findViewById(R.id.seekbar_dialog_seekbar_master_volume));

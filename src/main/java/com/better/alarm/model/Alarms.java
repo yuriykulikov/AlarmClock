@@ -20,7 +20,6 @@ import android.annotation.SuppressLint;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.persistance.DatabaseQuery;
-import com.google.inject.Inject;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,8 +40,7 @@ public class Alarms implements IAlarmsManager {
     private final AlarmCoreFactory factory;
     private final ContainerFactory containerFactory;
 
-    @Inject
-    Alarms(IAlarmsScheduler alarmsScheduler, DatabaseQuery query, final AlarmCoreFactory factory, ContainerFactory containerFactory) {
+    public Alarms(IAlarmsScheduler alarmsScheduler, DatabaseQuery query, final AlarmCoreFactory factory, ContainerFactory containerFactory) {
         this.mAlarmsScheduler = alarmsScheduler;
         this.query = query;
         this.factory = factory;

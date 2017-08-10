@@ -30,7 +30,8 @@ import com.better.alarm.model.AlarmCore;
 import com.better.alarm.model.Alarms;
 import com.better.alarm.model.AlarmsScheduler;
 import com.better.alarm.model.CalendarType;
-import com.google.inject.Inject;
+
+import static com.better.alarm.configuration.AlarmApplication.container;
 
 public class AlarmsService extends Service {
     /**
@@ -38,10 +39,8 @@ public class AlarmsService extends Service {
      */
     private static final int WAKELOCK_HOLD_TIME = 5000;
     private static final int EVENT_RELEASE_WAKELOCK = 1;
-    @Inject
-    private Alarms alarms;
-    @Inject
-    private Logger log;
+    private final Alarms alarms = container().rawAlarms();
+    private final Logger log = container().logger();
 
     private Handler handler;
 
@@ -52,7 +51,7 @@ public class AlarmsService extends Service {
         @Override
         public void onReceive(final Context context, final Intent intent) {
             intent.setClass(context, AlarmsService.class);
-            AlarmApplication.wakeLocks().acquirePartialWakeLock(intent, "AlarmsService");
+            container().wakeLocks().acquirePartialWakeLock(intent, "AlarmsService");
             context.startService(intent);
         }
     }
@@ -63,11 +62,10 @@ public class AlarmsService extends Service {
         this.handler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
-                AlarmApplication.wakeLocks().releasePartialWakeLock((Intent) msg.obj);
+                container().wakeLocks().releasePartialWakeLock((Intent) msg.obj);
                 return true;
             }
         });
-        AlarmApplication.guice().injectMembers(this);
     }
 
     @Override

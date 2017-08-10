@@ -7,7 +7,6 @@ import com.better.alarm.model.Calendars;
 import com.better.alarm.model.ContainerFactory;
 import com.better.alarm.model.ImmutableAlarmContainer;
 import com.better.alarm.model.ImmutableDaysOfWeek;
-import com.google.inject.Inject;
 
 import java.util.Calendar;
 
@@ -18,7 +17,6 @@ public class TestContainerFactory implements ContainerFactory {
     private int idCounter;
     private Calendars calendars;
 
-    @Inject
     public TestContainerFactory(Calendars calendars) {
         this.calendars = calendars;
     }
