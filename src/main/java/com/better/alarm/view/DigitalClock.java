@@ -38,6 +38,8 @@ import java.util.Calendar;
 
 import io.reactivex.Single;
 
+import static com.better.alarm.configuration.AlarmApplication.container;
+
 /**
  * Displays the time
  */
@@ -120,7 +122,7 @@ public class DigitalClock extends LinearLayout {
         if (isInEditMode()) {
             is24HoutFormat = Single.just(true);
         } else {
-            is24HoutFormat = AlarmApplication.guice().getInstance(Prefs.class).is24HoutFormat();
+            is24HoutFormat = container().prefs().is24HoutFormat();
         }
     }
 

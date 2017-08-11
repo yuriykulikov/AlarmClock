@@ -16,13 +16,11 @@ import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher.ViewFactory;
 
-import com.better.alarm.configuration.AlarmApplication;
-import com.better.alarm.configuration.Prefs;
 import com.better.alarm.R;
+import com.better.alarm.configuration.Prefs;
 import com.better.alarm.configuration.Store;
 import com.better.alarm.model.AlarmValue;
 import com.google.common.base.Optional;
-import com.google.inject.Inject;
 
 import java.util.Calendar;
 
@@ -30,10 +28,10 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
+import static com.better.alarm.configuration.AlarmApplication.container;
+
 /**
- * 
  * @author Yuriy
- * 
  */
 public class InfoFragment extends Fragment implements ViewFactory {
     private static final String DM12 = "E h:mm aa";
@@ -50,12 +48,8 @@ public class InfoFragment extends Fragment implements ViewFactory {
 
     private boolean isPrealarm;
 
-    @Inject
-    private Prefs prefs;
-    @Inject
-    private Store store;
-    @Inject
-    private Context context;
+    private final Prefs prefs = container().prefs();
+    private final Store store = container().store();
 
     private Disposable nextDisposable;
 
@@ -71,23 +65,23 @@ public class InfoFragment extends Fragment implements ViewFactory {
     private class AlarmChangedReceiver implements Consumer<Optional<Store.Next>> {
         @Override
         public void accept(@NonNull Optional<Store.Next> nextOptional) throws Exception {
-                if (nextOptional.isPresent()) {
-                    alarm = nextOptional.get().alarm();
-                    String format = prefs.is24HoutFormat().blockingGet() ? DM24 : DM12;
+            if (nextOptional.isPresent()) {
+                alarm = nextOptional.get().alarm();
+                String format = prefs.is24HoutFormat().blockingGet() ? DM24 : DM12;
 
-                    milliseconds = nextOptional.get().nextNonPrealarmTime();
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTimeInMillis(milliseconds);
+                milliseconds = nextOptional.get().nextNonPrealarmTime();
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(milliseconds);
 
-                    String timeString = (String) DateFormat.format(format, calendar);
-                    textView.setText(timeString);
-                    isPrealarm = nextOptional.get().isPrealarm();
-                    formatString();
-                } else {
-                    textView.setText("");
-                    remainingTime.setText("");
-                    alarm = null;
-                }
+                String timeString = (String) DateFormat.format(format, calendar);
+                textView.setText(timeString);
+                isPrealarm = nextOptional.get().isPrealarm();
+                formatString();
+            } else {
+                textView.setText("");
+                remainingTime.setText("");
+                alarm = null;
+            }
         }
     }
 
@@ -95,7 +89,6 @@ public class InfoFragment extends Fragment implements ViewFactory {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mTickReceiver = new TickReceiver();
-        AlarmApplication.guice().injectMembers(this);
     }
 
     @Override
@@ -156,7 +149,7 @@ public class InfoFragment extends Fragment implements ViewFactory {
 
         int index = (dispDays ? 1 : 0) | (dispHour ? 2 : 0) | (dispMinute ? 4 : 0);
 
-        String[] formats = context.getResources().getStringArray(R.array.alarm_set_short);
+        String[] formats = getActivity().getResources().getStringArray(R.array.alarm_set_short);
         return String.format(formats[index], daySeq, hourSeq, minSeq);
     }
 

@@ -21,7 +21,6 @@ import com.better.alarm.configuration.Prefs;
 import com.better.alarm.configuration.Store;
 import com.better.alarm.logger.Logger;
 import com.google.common.base.Optional;
-import com.google.inject.Inject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -94,7 +93,6 @@ public class AlarmsScheduler implements IAlarmsScheduler {
         }
     }
 
-    @Inject
     public AlarmsScheduler(AlarmSetter setter, Logger logger, Store store, Prefs prefs, Calendars calendars) {
         this.setter = setter;
         this.store = store;

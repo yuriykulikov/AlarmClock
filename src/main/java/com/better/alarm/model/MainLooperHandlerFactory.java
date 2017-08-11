@@ -7,15 +7,11 @@ import com.better.alarm.statemachine.IHandler;
 import com.better.alarm.statemachine.ImmutableMessage;
 import com.better.alarm.statemachine.Message;
 import com.better.alarm.statemachine.MessageHandler;
-import com.google.inject.Inject;
 
 /**
  * Created by Yuriy on 01.05.2017.
  */
 public class MainLooperHandlerFactory implements HandlerFactory {
-    @Inject
-    public MainLooperHandlerFactory(){};
-
     @Override
     public IHandler create(final MessageHandler handler) {
         final Handler realHandler = new Handler(new Handler.Callback() {

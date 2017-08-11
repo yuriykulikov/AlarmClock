@@ -34,6 +34,8 @@ import com.google.common.collect.Collections2;
 import java.util.Collection;
 import java.util.List;
 
+import static com.better.alarm.configuration.AlarmApplication.container;
+
 
 public class HandleSetAlarm extends Activity {
     @Override
@@ -72,7 +74,7 @@ public class HandleSetAlarm extends Activity {
         final String msg = intent.getStringExtra(AlarmClock.EXTRA_MESSAGE);
         final String label = msg == null ? "" : msg;
 
-        List<AlarmValue> alarms = AlarmApplication.guice().getInstance(Store.class).alarms().blockingFirst();
+        List<AlarmValue> alarms = container().store().alarms().blockingFirst();
         Collection<AlarmValue> sameAlarms = Collections2.filter(alarms, new Predicate<AlarmValue>() {
             @Override
             public boolean apply(AlarmValue candidate) {
@@ -87,7 +89,7 @@ public class HandleSetAlarm extends Activity {
         Alarm alarm;
         if (sameAlarms.isEmpty()) {
             Logger.getDefaultLogger().d("No alarm found, creating a new one");
-            alarm = AlarmApplication.alarms().createNewAlarm();
+            alarm = container().alarms().createNewAlarm();
             //@formatter:off
             alarm.edit()
                     .withHour(hours)
@@ -98,7 +100,7 @@ public class HandleSetAlarm extends Activity {
             //@formatter:on
         } else {
             Logger.getDefaultLogger().d("Enable existing alarm");
-            alarm = AlarmApplication.alarms().getAlarm(sameAlarms.iterator().next().getId());
+            alarm = container().alarms().getAlarm(sameAlarms.iterator().next().getId());
             alarm.enable(true);
         }
         return alarm;

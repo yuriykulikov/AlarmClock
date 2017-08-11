@@ -16,15 +16,14 @@ import android.preference.PreferenceScreen;
 import android.provider.Settings;
 
 import com.better.alarm.R;
-import com.better.alarm.configuration.AlarmApplication;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
-import com.google.inject.Inject;
 
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
+import static com.better.alarm.configuration.AlarmApplication.container;
 import static com.better.alarm.configuration.Prefs.KEY_ALARM_IN_SILENT_MODE;
 import static com.better.alarm.configuration.Prefs.KEY_ALARM_SNOOZE;
 import static com.better.alarm.configuration.Prefs.KEY_AUTO_SILENCE;
@@ -40,17 +39,14 @@ import static com.better.alarm.view.RingtonePreferenceExtension.updatePreference
 public class SettingsFragment extends PreferenceFragment {
     private static final int ALARM_STREAM_TYPE_BIT = 1 << AudioManager.STREAM_ALARM;
 
-    @Inject
-    private Vibrator vibrator;
-    @Inject
-    private RxSharedPreferences rxSharedPreferences;
+    private final Vibrator vibrator = container().vibrator();
+    private final RxSharedPreferences rxSharedPreferences = container().rxPrefs();
 
     private final CompositeDisposable dispoables = new CompositeDisposable();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AlarmApplication.guice().injectMembers(this);
 
         addPreferencesFromResource(R.xml.preferences);
 

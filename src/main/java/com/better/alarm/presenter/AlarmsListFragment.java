@@ -23,14 +23,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.better.alarm.R;
-import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.configuration.Prefs;
 import com.better.alarm.configuration.Store;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.model.AlarmValue;
 import com.better.alarm.view.DigitalClock;
-import com.google.inject.Inject;
 
 import org.immutables.value.Value;
 
@@ -43,6 +41,8 @@ import java.util.List;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+
+import static com.better.alarm.configuration.AlarmApplication.container;
 
 
 /**
@@ -57,15 +57,12 @@ public class AlarmsListFragment extends ListFragment {
     public final static String M24 = "kk:mm";
     public static final boolean MATERIAL_DESIGN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
 
+    private final IAlarmsManager alarms = container().alarms();
+    private final Store store = container().store();
+    private final Prefs prefs = container().prefs();
+    private final Logger logger = container().logger();
+
     private ShowDetailsStrategy details;
-    @Inject
-    private IAlarmsManager alarms;
-    @Inject
-    private Store store;
-    @Inject
-    private Prefs prefs;
-    @Inject
-    private Logger logger;
 
     private AlarmListAdapter mAdapter;
     private Disposable alarmsSub;
@@ -227,7 +224,6 @@ public class AlarmsListFragment extends ListFragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        AlarmApplication.guice().injectMembers(this);
         super.onCreate(savedInstanceState);
         this.details = new ShowDetailsInActivity(getActivity());
     }
@@ -235,8 +231,6 @@ public class AlarmsListFragment extends ListFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        alarms = AlarmApplication.alarms();
 
         setListAdapter(new AlarmListAdapter(getActivity(), R.layout.list_row, R.string.alarm_list_title,
                 new ArrayList<AlarmValue>()));

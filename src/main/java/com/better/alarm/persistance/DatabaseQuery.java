@@ -7,7 +7,6 @@ import com.better.alarm.model.AlarmContainer;
 import com.better.alarm.model.ContainerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.inject.Inject;
 
 import org.reactivestreams.Publisher;
 
@@ -30,7 +29,6 @@ public class DatabaseQuery {
     private final ContentResolver contentResolver;
     private final ContainerFactory factory;
 
-    @Inject
     public DatabaseQuery(ContentResolver contentResolver, ContainerFactory factory) {
         this.contentResolver = contentResolver;
         this.factory = factory;

@@ -38,6 +38,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
 import io.reactivex.functions.Consumer;
 
+import static com.better.alarm.configuration.AlarmApplication.container;
+
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.
@@ -53,7 +55,6 @@ public class AlarmsListActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(DynamicThemeHandler.getInstance().getIdForName(AlarmsListActivity.class.getName()));
         super.onCreate(savedInstanceState);
-        AlarmApplication.guice().injectMembers(this);
         this.details = new ShowDetailsInActivity(this);
         this.mActionBarHandler = new ActionBarHandler(this, details);
 
@@ -91,7 +92,7 @@ public class AlarmsListActivity extends Activity {
     }
 
     public void showTimePicker(AlarmValue alarm) {
-        timePickerAlarm = AlarmApplication.alarms().getAlarm(alarm.getId());
+        timePickerAlarm = container().alarms().getAlarm(alarm.getId());
         timePickerDialogDisposable = TimePickerDialogFragment.showTimePicker(getFragmentManager())
                 .subscribe(new Consumer<Optional<TimePickerDialogFragment.PickedTime>>() {
                     @Override
