@@ -17,7 +17,6 @@
 
 package com.better.alarm.background;
 
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -29,7 +28,6 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.CountDownTimer;
-import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.telephony.PhoneStateListener;
@@ -41,6 +39,7 @@ import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
+import com.better.alarm.util.Service;
 import com.better.alarm.wakelock.WakeLockManager;
 import com.f2prateek.rx.preferences2.Preference;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
@@ -291,11 +290,6 @@ public class KlaxonService extends Service {
         disposables.dispose();
         log.d("Service destroyed");
         wakeLock.release();
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
     }
 
     @Override

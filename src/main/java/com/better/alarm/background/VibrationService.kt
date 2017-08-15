@@ -1,11 +1,9 @@
 package com.better.alarm.background
 
-import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.IBinder
 import android.os.PowerManager
 import android.os.PowerManager.WakeLock
 import android.os.Vibrator
@@ -15,6 +13,7 @@ import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
+import com.better.alarm.util.Service
 import com.better.alarm.wakelock.WakeLockManager
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import io.reactivex.Observable
@@ -133,9 +132,5 @@ class VibrationService : Service {
         mVibrator.cancel()
         subscription.dispose()
         stopSelf()
-    }
-
-    override fun onBind(intent: Intent): IBinder? {
-        return null
     }
 }
