@@ -15,21 +15,19 @@
  */
 package com.better.alarm.services;
 
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 
-import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.interfaces.PresentationToModelIntents;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.model.AlarmCore;
 import com.better.alarm.model.Alarms;
 import com.better.alarm.model.AlarmsScheduler;
 import com.better.alarm.model.CalendarType;
+import com.better.alarm.util.Service;
 
 import static com.better.alarm.configuration.AlarmApplication.container;
 
@@ -106,10 +104,5 @@ public class AlarmsService extends Service {
         handler.sendMessageDelayed(msg, WAKELOCK_HOLD_TIME);
 
         return START_NOT_STICKY;
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
     }
 }
