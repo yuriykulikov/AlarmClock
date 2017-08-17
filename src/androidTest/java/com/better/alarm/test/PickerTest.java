@@ -4,8 +4,8 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 
-import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.R;
+import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.presenter.AlarmsListActivity;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
@@ -21,7 +21,6 @@ import org.junit.runner.RunWith;
 import java.util.Locale;
 
 import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
-import static com.better.alarm.test.ListAsserts.assertThatList;
 import static cortado.Cortado.onView;
 import static org.hamcrest.CoreMatchers.not;
 
@@ -70,19 +69,19 @@ public class PickerTest extends BaseTest {
     @Test
     public void test3() throws Exception {
         three().perform().click();
-        assertState(Next.ANY, QuickMinutes.AVAILABLE, Completion.NOT_FINISHED);
+        assertState(Next.TENS_OF_MINUTES, QuickMinutes.AVAILABLE, Completion.NOT_FINISHED);
     }
 
     @Test
     public void test4() throws Exception {
         four().perform().click();
-        assertState(Next.ANY, QuickMinutes.AVAILABLE, Completion.NOT_FINISHED);
+        assertState(Next.TENS_OF_MINUTES, QuickMinutes.AVAILABLE, Completion.NOT_FINISHED);
     }
 
     @Test
     public void test5() throws Exception {
         five().perform().click();
-        assertState(Next.ANY, QuickMinutes.AVAILABLE, Completion.NOT_FINISHED);
+        assertState(Next.TENS_OF_MINUTES, QuickMinutes.AVAILABLE, Completion.NOT_FINISHED);
     }
 
     @Test
@@ -135,11 +134,11 @@ public class PickerTest extends BaseTest {
                 }
                 break;
             case AFTER_20:
-                for (cortado.ViewInteraction view : Lists.newArrayList(zero(), one(), two(), three())) {
+                for (cortado.ViewInteraction view : Lists.newArrayList(zero(), one(), two(), three(), four(), five())) {
                     view.check().matches(isEnabled());
                 }
 
-                for (cortado.ViewInteraction view : Lists.newArrayList(four(), five(), six(), seven(), eight(), nine())) {
+                for (cortado.ViewInteraction view : Lists.newArrayList(six(), seven(), eight(), nine())) {
                     view.check().matches(not(isEnabled()));
                 }
                 break;
