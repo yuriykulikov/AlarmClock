@@ -103,6 +103,7 @@ dependencies {
     provided "org.immutables:value:2.5.5" // <-- for annotation API
 
     // Testing-only dependencies
+    testCompile 'net.wuerl.kotlin:assertj-core-kotlin:0.1.1'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.8.47'
     androidTestCompile 'com.squareup.assertj:assertj-android:1.1.1'
@@ -114,4 +115,8 @@ dependencies {
     androidTestCompile 'com.bartoszlipinski:cortado:1.2.0'
     //for some tests which do not work with espresso on travis
     androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.2.1'
+}
+
+configurations.all {
+    resolutionStrategy.force 'org.jetbrains.kotlin:kotlin-stdlib:1.1.3'
 }
