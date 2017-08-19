@@ -105,16 +105,6 @@ public class Alarms implements IAlarmsManager {
         alarm.onAlarmFired(calendarType);
     }
 
-    /**
-     * A convenience method to enable or disable an alarm
-     *
-     * @param enable corresponds to the ENABLED column
-     */
-    @Override
-    public void enable(Alarm alarm, boolean enable) {
-        alarm.enable(enable);
-    }
-
     @Override
     public void enable(AlarmValue alarm, boolean enable) {
         alarms.get(alarm.getId()).enable(enable);

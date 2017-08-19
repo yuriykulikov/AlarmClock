@@ -826,11 +826,6 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     @Override
-    public boolean isPrealarm() {
-        return container.isPrealarm();
-    }
-
-    @Override
     public boolean isSilent() {
         return container.isSilent();
     }
@@ -841,46 +836,8 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
     }
 
     @Override
-    public String getLabel() {
-        return container.getLabel();
-    }
-
-    @Override
-    public boolean isVibrate() {
-        return container.isVibrate();
-    }
-
-    @Override
-    public DaysOfWeek getDaysOfWeek() {
-        return container.getDaysOfWeek();
-    }
-
-    @Override
-    public int getMinutes() {
-        return container.getMinutes();
-    }
-
-    @Override
-    public int getHour() {
-        return container.getHour();
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return container.isEnabled();
-    }
-
-    @Override
     public int getId() {
         return container.getId();
-    }
-
-    /**
-     * this is only valid from the main thread
-     */
-    @Override
-    public boolean isSnoozed() {
-        return stateMachine.getCurrentState().equals(stateMachine.snoozed);
     }
 
     @Override
