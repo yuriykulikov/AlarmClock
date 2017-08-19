@@ -2,8 +2,6 @@ package com.better.alarm.interfaces;
 
 import android.net.Uri;
 
-import com.better.alarm.model.DaysOfWeek;
-
 import java.util.Calendar;
 
 public interface Alarm {
@@ -19,27 +17,11 @@ public interface Alarm {
 
     ImmutableAlarmEditor edit();
 
-    boolean isPrealarm();
-
     boolean isSilent();
 
     Uri getAlert();
 
-    String getLabel();
-
-    boolean isVibrate();
-
-    DaysOfWeek getDaysOfWeek();
-
-    int getMinutes();
-
-    int getHour();
-
-    boolean isEnabled();
-
     int getId();
-
-    boolean isSnoozed();
 
     String getLabelOrDefault();
 

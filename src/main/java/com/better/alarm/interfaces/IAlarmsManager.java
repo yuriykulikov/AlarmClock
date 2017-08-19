@@ -28,7 +28,7 @@ public interface IAlarmsManager {
      * 
      * @param alarm
      */
-    public void snooze(Alarm alarm);
+    void snooze(Alarm alarm);
 
     /**
      * Tell the model that a certain alarm has to be dismissed because of the
@@ -36,22 +36,14 @@ public interface IAlarmsManager {
      * 
      * @param alarm
      */
-    public void dismiss(Alarm alarm);
+    void dismiss(Alarm alarm);
 
     /**
      * Delete an AlarmCore from the database
      * 
      * @param alarm
      */
-    public void delete(Alarm alarm);
-
-    /**
-     * Enable of disable an alarm
-     * 
-     * @param alarm
-     * @param enable
-     */
-    public void enable(Alarm alarm, boolean enable);
+    void delete(Alarm alarm);
 
     /**
      * Enable of disable an alarm
@@ -59,20 +51,20 @@ public interface IAlarmsManager {
      * @param alarm
      * @param enable
      */
-    public void enable(AlarmValue alarm, boolean enable);
+    void enable(AlarmValue alarm, boolean enable);
 
     /**
      * Return an AlarmCore object representing the alarm id in the database.
      * Returns null if no alarm exists.
      */
-    public Alarm getAlarm(int alarmId);
+    Alarm getAlarm(int alarmId);
 
     /**
      * Create new AlarmCore with default settings
      * 
      * @return Alarm
      */
-    public Alarm createNewAlarm();
+    Alarm createNewAlarm();
 
     void delete(AlarmValue alarm);
 }
