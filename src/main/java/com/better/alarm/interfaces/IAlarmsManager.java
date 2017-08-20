@@ -15,6 +15,8 @@
  */
 package com.better.alarm.interfaces;
 
+import android.support.annotation.NonNull;
+
 import com.better.alarm.model.AlarmValue;
 
 /**
@@ -57,6 +59,7 @@ public interface IAlarmsManager {
      * Return an AlarmCore object representing the alarm id in the database.
      * Returns null if no alarm exists.
      */
+    @NonNull
     Alarm getAlarm(int alarmId);
 
     /**
