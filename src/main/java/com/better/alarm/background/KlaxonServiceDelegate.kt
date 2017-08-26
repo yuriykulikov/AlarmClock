@@ -28,13 +28,12 @@ import kotlin.properties.Delegates
  */
 class KlaxonServiceDelegate(
         private val log: Logger,
-        private val pm: PowerManager,
-        private val audioManager: AudioManager,
+        pm: PowerManager,
         private val wakeLocks: WakeLockManager,
         private val alarms: IAlarmsManager,
         private val context: Context,
         private val resources: Resources,
-        val callState: Observable<Int>,
+        private val callState: Observable<Int>,
         private val prealarmVolume: Observable<Int>,
         private val fadeInTimeInSeconds: Observable<Int>,
         private val callback: KlaxonServiceCallback,
@@ -156,33 +155,29 @@ class KlaxonServiceDelegate(
         }
 
         volume.mute()
-        try {
-            callState.map { it != TelephonyManager.CALL_STATE_IDLE }.firstOrError().subscribe { inCall ->
-                // Check if we are in a call. If we are, use the in-call alarm
-                // resource at a low targetVolume to not disrupt the call.
-                if (inCall) {
-                    log.d("Using the in-call alarm")
-                    player?.setDataSourceFromResource(resources, R.raw.in_call_alarm)
-                } else {
-                    player?.setDataSource(context, alert)
-                }
-            }
 
-            player?.startAlarm()
-        } catch (ex: Exception) {
-            log.w("Using the fallback ringtone")
-            // The alert may be on the sd card which could be busy right
-            // now. Use the fallback ringtone.
-            try {
-                // Must reset the media player to clear the error state.
+        callState.map { it != TelephonyManager.CALL_STATE_IDLE }.firstOrError().subscribe { inCall ->
+            // Check if we are in a call. If we are, use the in-call alarm
+            // resource at a low targetVolume to not disrupt the call.
+            if (inCall) {
+                log.d("Using the in-call alarm")
+                player?.setDataSourceFromResource(resources, R.raw.in_call_alarm)
+                player?.startAlarm()
+            } else {
                 player?.run {
-                    reset()
-                    setDataSourceFromResource(resources, R.raw.fallbackring)
-                    startAlarm()
+                    try {
+                        setDataSource(context, alert)
+                        startAlarm()
+                    } catch (ex: Exception) {
+                        log.w("Using the fallback ringtone")
+                        // The alert may be on the sd card which could be busy right
+                        // now. Use the fallback ringtone.
+                        // Must reset the media player to clear the error state.
+                        reset()
+                        setDataSourceFromResource(resources, R.raw.fallbackring)
+                        startAlarm()
+                    }
                 }
-            } catch (ex2: Exception) {
-                // At this point we just don't play anything.
-                log.e("Failed to play fallback ringtone", ex2)
             }
         }
     }
@@ -190,13 +185,13 @@ class KlaxonServiceDelegate(
     private fun Alarm.getAlertOrDefault(): Uri {
         // Fall back on the default alarm if the database does not have an
         // alarm stored.
-        if (alert == null) {
+        return if (alert == null) {
             val default: Uri? = callback.getDefaultUri(RingtoneManager.TYPE_ALARM)
             log.d("Using default alarm: " + default.toString())
             //TODO("Check this")
-            return default!!
+            default!!
         } else {
-            return alert
+            alert
         }
     }
 
@@ -205,12 +200,12 @@ class KlaxonServiceDelegate(
     private fun MediaPlayer.startAlarm() {
         // do not play alarms if stream targetVolume is 0
         // (typically because ringer mode is silent).
-        if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0) {
-            setAudioStreamType(AudioManager.STREAM_ALARM)
-            isLooping = true
-            prepare()
-            start()
-        }
+        //if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0) {
+        setAudioStreamType(AudioManager.STREAM_ALARM)
+        isLooping = true
+        prepare()
+        start()
+        //}
     }
 
     @Throws(java.io.IOException::class)
@@ -229,8 +224,6 @@ class KlaxonServiceDelegate(
         try {
             if (isPlaying) stop()
             release()
-        } catch (e: IllegalStateException) {
-            log.e("stop failed with ", e)
         } finally {
             player = null
         }

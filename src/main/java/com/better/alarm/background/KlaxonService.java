@@ -117,7 +117,6 @@ public class KlaxonService extends Service implements KlaxonServiceCallback {
         delegate = new KlaxonServiceDelegate(
                 container().logger(),
                 container().powerManager(),
-                container().audioManager(),
                 container().wakeLocks(),
                 container().alarms(),
                 this,
