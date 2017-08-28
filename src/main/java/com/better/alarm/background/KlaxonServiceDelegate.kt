@@ -20,6 +20,7 @@ import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
+import io.reactivex.functions.BiFunction
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
@@ -98,7 +99,7 @@ class KlaxonServiceDelegate(
             Intents.ACTION_MUTE -> volume.mute()
             Intents.ACTION_DEMUTE -> volume.fadeInFast()
             else -> {
-                volume.cancelFadeIn()
+                volume.mute()
                 callback.stopSelf()
             }
         }
@@ -114,7 +115,7 @@ class KlaxonServiceDelegate(
     }
 
     private fun onAlarm(alarm: Alarm, type: Type) {
-        volume.cancelFadeIn()
+        volume.mute()
         volume.type = type
         if (!alarm.isSilent) {
             initializePlayer(alarm.getAlertOrDefault())
@@ -123,7 +124,7 @@ class KlaxonServiceDelegate(
     }
 
     private fun onStartAlarmSample() {
-        volume.cancelFadeIn()
+        volume.mute()
         volume.type = Type.PREALARM
         // if already playing do nothing. In this case signal continues.
 
@@ -146,7 +147,7 @@ class KlaxonServiceDelegate(
         player = callback.createMediaPlayer().apply {
             setOnErrorListener { mp, what, extra ->
                 log.e("Error occurred while playing audio.")
-                volume.cancelFadeIn()
+                volume.mute()
                 mp.stop()
                 mp.release()
                 player = null
@@ -216,6 +217,12 @@ class KlaxonServiceDelegate(
         }
     }
 
+    private fun MediaPlayer.setPerceptedVolume(percepted: Float) {
+        val volume = percepted.squared()
+        //log.d("volume=$volume")
+        setVolume(volume, volume)
+    }
+
     /**
      * Stops alarm audio
      */
@@ -243,31 +250,15 @@ class KlaxonServiceDelegate(
 
         private val SILENT = 0f
 
-        private val MAX_VOLUME = 10
-
         internal var type = Type.NORMAL
 
         private var timer: Disposable = Disposables.disposed()
-
-        init {
-            val volumeSub = prealarmVolume
-                    .subscribe {
-                        player?.apply {
-                            if (isPlaying && type == Type.PREALARM) {
-                                val volumeFor = getVolumeFor(Type.PREALARM)
-                                setVolume(volumeFor, volumeFor)
-                            }
-                        }
-                    }
-            disposables.add(volumeSub)
-        }
 
         /**
          * Instantly apply the targetVolume. To fade in use [.fadeInAsSetInSettings]
          */
         fun apply() {
-            val volume = getVolumeFor(type)
-            player?.setVolume(volume, volume)
+            fadeIn(250)
         }
 
         /**
@@ -281,47 +272,51 @@ class KlaxonServiceDelegate(
             fadeIn(FAST_FADE_IN_TIME)
         }
 
-        fun cancelFadeIn() {
-            timer.dispose()
-        }
-
         fun mute() {
-            cancelFadeIn()
-            player?.setVolume(SILENT, SILENT)
+            player?.setPerceptedVolume(SILENT)
+            timer.dispose()
         }
 
         private fun fadeIn(time: Int) {
             val fadeInTime: Long = time.toLong()
+            mute()
+            player?.setPerceptedVolume(SILENT)
 
-            cancelFadeIn()
-            player?.setVolume(SILENT, SILENT)
-
-            var targetVolume: Float = getVolumeFor(type)
             val fadeInStep: Long = fadeInTime / FADE_IN_STEPS
-            val divider: Float = (fadeInTime / fadeInStep).squared()
-            var multiplier: Float = targetVolume / divider
 
-            timer = Observable.interval(fadeInStep, TimeUnit.MILLISECONDS, scheduler)
+            val fadeIn = Observable.interval(fadeInStep, TimeUnit.MILLISECONDS, scheduler)
                     .map { it * fadeInStep }
-                    .takeWhile { it < fadeInTime }
-                    .subscribe { elapsed ->
-                        val fraction: Long = elapsed / fadeInStep
-                        val adjustedVolume: Float = multiplier * fraction.squared()
-                        log.d("Fade in $adjustedVolume")
-                        player?.setVolume(adjustedVolume, adjustedVolume)
+                    .takeWhile { it <= fadeInTime }
+                    .map { elapsed -> elapsed.toFloat() / fadeInTime }
+                    .map { fraction -> fraction.squared() }
+                    .doOnComplete { log.d("Completed fade-in in $time milliseconds") }
+
+            timer = Observable.combineLatest(
+                    observeVolume(type),
+                    fadeIn,
+                    BiFunction<Float, Float, Float> { targetVolume, frqs -> frqs * targetVolume })
+                    .subscribe { perceptedVolume ->
+                        player?.setPerceptedVolume(perceptedVolume)
                     }
         }
 
-        private fun getVolumeFor(type: Type): Float {
-            return if (type == Type.NORMAL) 1f
-            else prealarmVolume.blockingFirst()
-                    .coerceAtMost(MAX_VOLUME).plus(1).squared()
-                    .div(MAX_VOLUME.plus(1).squared())
-                    .div(4)
-
+        /**
+         * Gets 1f doe NORMAL and a fraction of 0.5f for PREALARM
+         */
+        private fun observeVolume(type: Type): Observable<Float> {
+            val MAX_VOLUME = 11
+            return if (type == Type.NORMAL) Observable.just(1f)
+            else prealarmVolume.map {
+                it
+                        .plus(1)//0 is 1
+                        .coerceAtMost(MAX_VOLUME)
+                        .toFloat()
+                        .div(MAX_VOLUME)
+                        .div(2)
+                        .apply { log.d("targetVolume=$this") }
+            }
         }
     }
 
-    fun Int.squared() = Math.pow(this.toDouble(), 2.0).toFloat()
-    fun Long.squared() = Math.pow(this.toDouble(), 2.0).toFloat()
+    fun Float.squared() = this * this
 }

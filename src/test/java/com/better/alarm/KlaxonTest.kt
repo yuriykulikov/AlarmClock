@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.AssetFileDescriptor
 import android.content.res.Resources
-import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.PowerManager
@@ -15,6 +14,7 @@ import com.better.alarm.interfaces.Alarm
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
+import com.better.alarm.logger.SysoutLogWriter
 import com.better.alarm.wakelock.WakeLockManager
 import io.reactivex.Observable
 import io.reactivex.schedulers.TestScheduler
@@ -35,6 +35,7 @@ import java.util.concurrent.TimeUnit
  * Created by Yuriy on 20.08.2017.
  */
 class KlaxonTest {
+    private val FULL = 1f
 
     private val mediaPlayer: MediaPlayer
     private val klaxonServiceCallback: KlaxonServiceCallback
@@ -74,10 +75,13 @@ class KlaxonTest {
         ArgumentCaptor.forClass(Float::class.java)
                 .apply { verify(mediaPlayer, atLeast(1)).setVolume(capture(), capture()) }
                 .let { KotlinAssertions.assertThat(it.value) }
-                .isCloseTo(volume, Offset.offset(.05f))
+                .isCloseTo(volume, Offset.offset(.01f))
     }
 
-    private fun createDelegate(callState: Observable<Int>): KlaxonServiceDelegate {
+    private fun createDelegate(
+            callState: Observable<Int> = Observable.just(TelephonyManager.CALL_STATE_IDLE),
+            prealarmVolume: Observable<Int> = Observable.just(5)
+    ): KlaxonServiceDelegate {
         val powerManager = mock(PowerManager::class.java).apply {
             whenCalled(this.newWakeLock(anyInt(), anyString())).thenReturn(wakeLock)
         }
@@ -87,43 +91,44 @@ class KlaxonTest {
         }
 
         return KlaxonServiceDelegate(
-                Logger(),
+                Logger().apply { addLogWriter(SysoutLogWriter()) },
                 powerManager,
                 mock(WakeLockManager::class.java),
                 alarmsManager,
                 mock(Context::class.java),
                 resources,
                 callState,
-                Observable.just(2),
-                Observable.just(30000),
-                klaxonServiceCallback,
-                scheduler
+                prealarmVolume = prealarmVolume,
+                fadeInTimeInSeconds = Observable.just(30000),
+                callback = klaxonServiceCallback,
+                scheduler = scheduler
         )
     }
 
     @Test
     fun onAlarm() {
-        val klaxonServiceDelegate = createDelegate(Observable.just(TelephonyManager.CALL_STATE_IDLE))
+        val klaxonServiceDelegate = createDelegate()
 
         klaxonServiceDelegate.onStartCommand(mock(Intent::class.java).apply {
             whenCalled(action).thenReturn(Intents.ALARM_ALERT_ACTION)
         })
         scheduler.advanceTimeBy(35, TimeUnit.SECONDS)
 
-        verifyThatVolumeIs(1f)
+        verifyThatVolumeIs(FULL)
         verify(mediaPlayer).start()
     }
 
     @Test
     fun onPrealarm() {
-        val klaxonServiceDelegate = createDelegate(Observable.just(TelephonyManager.CALL_STATE_IDLE))
+        val klaxonServiceDelegate = createDelegate()
 
         klaxonServiceDelegate.onStartCommand(mock(Intent::class.java).apply {
             whenCalled(action).thenReturn(Intents.ALARM_PREALARM_ACTION)
         })
+
         scheduler.advanceTimeBy(35, TimeUnit.SECONDS)
 
-        verifyThatVolumeIs(0.25f * 0.25f)
+        verifyThatVolumeIs(5.preAlarm())
         verify(mediaPlayer).start()
     }
 
@@ -131,7 +136,7 @@ class KlaxonTest {
     @Test
     fun muteWhenStartsInCall() {
         val callState = BehaviorSubject.createDefault(TelephonyManager.CALL_STATE_OFFHOOK)
-        val klaxonServiceDelegate = createDelegate(callState)
+        val klaxonServiceDelegate = createDelegate(callState = callState)
 
         klaxonServiceDelegate.onStartCommand(mock(Intent::class.java).apply {
             whenCalled(action).thenReturn(Intents.ALARM_ALERT_ACTION)
@@ -145,7 +150,7 @@ class KlaxonTest {
     @Test
     fun muteWhenInCall() {
         val callState = BehaviorSubject.createDefault(TelephonyManager.CALL_STATE_IDLE)
-        val klaxonServiceDelegate = createDelegate(callState)
+        val klaxonServiceDelegate = createDelegate(callState = callState)
 
         klaxonServiceDelegate.onStartCommand(mock(Intent::class.java).apply {
             whenCalled(action).thenReturn(Intents.ALARM_ALERT_ACTION)
@@ -159,13 +164,13 @@ class KlaxonTest {
         callState.onNext(TelephonyManager.CALL_STATE_IDLE)
         scheduler.advanceTimeBy(10, TimeUnit.SECONDS)
 
-        verifyThatVolumeIs(1f)
+        verifyThatVolumeIs(FULL)
     }
 
     @Test
     @Ignore
     fun whenUriIsNull() {
-        val klaxonServiceDelegate = createDelegate(Observable.just(TelephonyManager.CALL_STATE_IDLE))
+        val klaxonServiceDelegate = createDelegate()
 
         whenCalled(klaxonServiceCallback.getDefaultUri(anyInt())).thenReturn(null)
 
@@ -180,7 +185,7 @@ class KlaxonTest {
 
     @Test
     fun whenSdBusy() {
-        val klaxonServiceDelegate = createDelegate(Observable.just(TelephonyManager.CALL_STATE_IDLE))
+        val klaxonServiceDelegate = createDelegate()
 
         whenCalled(mediaPlayer.start())
                 .thenThrow(RuntimeException())
@@ -199,7 +204,7 @@ class KlaxonTest {
 
     @Test
     fun whenStop() {
-        val klaxonServiceDelegate = createDelegate(Observable.just(TelephonyManager.CALL_STATE_IDLE))
+        val klaxonServiceDelegate = createDelegate()
 
         whenCalled(klaxonServiceCallback.stopSelf()).thenAnswer({ klaxonServiceDelegate.onDestroy() })
 
@@ -217,7 +222,7 @@ class KlaxonTest {
 
     @Test
     fun whenErrorShouldRelease() {
-        val klaxonServiceDelegate = createDelegate(Observable.just(TelephonyManager.CALL_STATE_IDLE))
+        val klaxonServiceDelegate = createDelegate()
 
         klaxonServiceDelegate.onStartCommand(mock(Intent::class.java).apply {
             whenCalled(action).thenReturn(Intents.ALARM_ALERT_ACTION)
@@ -233,7 +238,7 @@ class KlaxonTest {
 
     @Test
     fun fadeInShouldBeFastAfterDemute() {
-        val klaxonServiceDelegate = createDelegate(Observable.just(TelephonyManager.CALL_STATE_IDLE))
+        val klaxonServiceDelegate = createDelegate()
 
         klaxonServiceDelegate.onStartCommand(mock(Intent::class.java).apply {
             whenCalled(action).thenReturn(Intents.ALARM_ALERT_ACTION)
@@ -246,8 +251,71 @@ class KlaxonTest {
             whenCalled(action).thenReturn(Intents.ACTION_DEMUTE)
         })
 
+        scheduler.advanceTimeBy(6, TimeUnit.SECONDS)
+
+        verifyThatVolumeIs(FULL)
+    }
+
+    fun Float.squared() = Math.pow(this.toDouble(), 2.0).toFloat()
+    fun Int.preAlarm() = (this.plus(1).toFloat() / 11f / 2f).squared()
+
+    @Test
+    fun preAlarmSample() {
+        val prealarmVolume = BehaviorSubject.createDefault(1)
+        val klaxonServiceDelegate = createDelegate(prealarmVolume = prealarmVolume)
+
+        klaxonServiceDelegate.onStartCommand(mock(Intent::class.java).apply {
+            whenCalled(action).thenReturn(Intents.ACTION_START_PREALARM_SAMPLE)
+        })
         scheduler.advanceTimeBy(5, TimeUnit.SECONDS)
 
-        verifyThatVolumeIs(1f)
+        verifyThatVolumeIs(1.preAlarm())
+        prealarmVolume.onNext(5);
+        scheduler.advanceTimeBy(5, TimeUnit.SECONDS)
+        verifyThatVolumeIs(5.preAlarm())
+
+        prealarmVolume.onNext(10);
+        scheduler.advanceTimeBy(5, TimeUnit.SECONDS)
+        verifyThatVolumeIs(10.preAlarm())
+
+        klaxonServiceDelegate.onStartCommand(mock(Intent::class.java).apply {
+            whenCalled(action).thenReturn(Intents.ACTION_STOP_PREALARM_SAMPLE)
+        })
+
+        verifyThatVolumeIs(0f)
+
+        scheduler.advanceTimeBy(5, TimeUnit.SECONDS)
+    }
+
+    @Test
+    fun volumeAfterFadeInShouldBeCorrect() {
+        val prealarmVolume = BehaviorSubject.createDefault(1)
+        val klaxonServiceDelegate = createDelegate(prealarmVolume = prealarmVolume)
+
+        klaxonServiceDelegate.onStartCommand(mock(Intent::class.java).apply {
+            whenCalled(action).thenReturn(Intents.ALARM_PREALARM_ACTION)
+        })
+
+        scheduler.advanceTimeBy(35, TimeUnit.SECONDS)
+
+        verifyThatVolumeIs(1.preAlarm())
+    }
+
+    @Test
+    fun volumeChangedWhilePlaying() {
+        val prealarmVolume = BehaviorSubject.createDefault(2)
+        val klaxonServiceDelegate = createDelegate(prealarmVolume = prealarmVolume)
+
+        klaxonServiceDelegate.onStartCommand(mock(Intent::class.java).apply {
+            whenCalled(action).thenReturn(Intents.ALARM_PREALARM_ACTION)
+        })
+
+        scheduler.advanceTimeBy(35, TimeUnit.SECONDS)
+
+        verifyThatVolumeIs(2.preAlarm())
+        verify(mediaPlayer).start()
+
+        prealarmVolume.onNext(10);
+        verifyThatVolumeIs(10.preAlarm())
     }
 }
