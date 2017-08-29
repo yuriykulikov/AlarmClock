@@ -49,6 +49,7 @@ import io.reactivex.disposables.Disposables;
 import io.reactivex.functions.Consumer;
 
 import static com.better.alarm.configuration.AlarmApplication.container;
+import static com.better.alarm.configuration.AlarmApplication.themeHandler;
 import static com.better.alarm.configuration.Prefs.LONGCLICK_DISMISS_DEFAULT;
 import static com.better.alarm.configuration.Prefs.LONGCLICK_DISMISS_KEY;
 
@@ -86,7 +87,7 @@ public class AlarmAlertFullScreen extends Activity {
 
     @Override
     protected void onCreate(Bundle icicle) {
-        setTheme(DynamicThemeHandler.getInstance().getIdForName(getClassName()));
+        setTheme(themeHandler().getIdForName(getClassName()));
         super.onCreate(icicle);
 
         if (getResources().getBoolean(R.bool.isTablet)) {

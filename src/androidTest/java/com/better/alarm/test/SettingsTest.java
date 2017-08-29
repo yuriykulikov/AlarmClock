@@ -21,6 +21,8 @@ import java.util.Locale;
 
 import cortado.Cortado;
 
+import static android.support.test.espresso.action.ViewActions.click;
+
 /**
  * Created by Yuriy on 11.07.2017.
  */
@@ -54,5 +56,23 @@ public class SettingsTest extends BaseTest {
         Cortado.onView()
                 .withId(R.id.seekbar_dialog_seekbar_prealarm_volume)
                 .perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_RIGHT, Press.FINGER));
+    }
+
+    @Test
+    public void changeTheme() {
+        sleep();
+        Cortado.onView().withText("Interface theme").perform(click());
+
+        sleep();
+        Cortado.onView().withText("Classic light").perform(click());
+    }
+
+    @Test
+    public void changeThemeDark() {
+        sleep();
+        Cortado.onView().withText("Interface theme").perform(click());
+
+        sleep();
+        Cortado.onView().withText("Holo dark").perform(click());
     }
 }

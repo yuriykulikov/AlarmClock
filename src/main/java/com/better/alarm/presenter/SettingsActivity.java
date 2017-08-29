@@ -27,13 +27,15 @@ import android.view.MenuItem;
 
 import com.better.alarm.R;
 
+import static com.better.alarm.configuration.AlarmApplication.themeHandler;
+
 /**
  * Settings for the Alarm Clock.
  */
 public class SettingsActivity extends AppCompatActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        setTheme(DynamicThemeHandler.getInstance().getIdForName(SettingsActivity.class.getName()));
+        setTheme(themeHandler().getIdForName(SettingsActivity.class.getName()));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);
         if (!getResources().getBoolean(R.bool.isTablet)) {

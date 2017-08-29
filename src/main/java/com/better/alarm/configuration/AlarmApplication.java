@@ -84,6 +84,7 @@ import io.reactivex.subjects.PublishSubject;
         })
 public class AlarmApplication extends Application {
     private static Container sContainer;
+    private static DynamicThemeHandler sThemeHandler;
 
     public static Optional<Boolean> is24hoursFormatOverride = Optional.absent();
     private SharedPreferences preferences;
@@ -93,8 +94,8 @@ public class AlarmApplication extends Application {
     public void onCreate() {
         // The following line triggers the initialization of ACRA
         ACRA.init(this);
-        DynamicThemeHandler.init(this);
-        setTheme(DynamicThemeHandler.getInstance().getIdForName(DynamicThemeHandler.DEFAULT));
+        sThemeHandler = new DynamicThemeHandler(this);
+        setTheme(sThemeHandler.defaultTheme());
 
         try {
             ViewConfiguration config = ViewConfiguration.get(this);
@@ -249,5 +250,10 @@ public class AlarmApplication extends Application {
     @android.support.annotation.NonNull
     public static Container container() {
         return sContainer;
+    }
+
+    @android.support.annotation.NonNull
+    public static DynamicThemeHandler themeHandler() {
+        return sThemeHandler;
     }
 }

@@ -239,7 +239,7 @@ public class ListTest extends BaseTest {
         Cortado.onView().withText("OK").perform().click();
         sleep();
         sleep();
-        
+
         assertThatList().items().hasSize(3);
 
         ListAsserts.<AlarmValue>assertThatList(R.id.list_fragment_list)

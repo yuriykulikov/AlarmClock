@@ -26,7 +26,7 @@
         <activity
             android:name=".presenter.AlarmsListActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
-            android:launchMode="singleTask"
+            android:launchMode="singleInstance"
             android:exported="true"
             android:label="@string/alarm_list_title"
             android:taskAffinity="">
@@ -41,6 +41,7 @@
         <!-- Application Settings -->
         <activity
             android:name=".presenter.SettingsActivity"
+            android:autoRemoveFromRecents="true"
             android:excludeFromRecents="true"
             android:label="@string/settings"
             android:taskAffinity="" >

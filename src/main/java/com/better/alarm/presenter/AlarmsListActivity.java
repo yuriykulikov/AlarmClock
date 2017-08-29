@@ -20,6 +20,7 @@ package com.better.alarm.presenter;
 import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -51,6 +52,7 @@ import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
 import static com.better.alarm.configuration.AlarmApplication.container;
+import static com.better.alarm.configuration.AlarmApplication.themeHandler;
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.
@@ -63,9 +65,16 @@ public class AlarmsListActivity extends AppCompatActivity {
     private Disposable sub = Disposables.disposed();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        //in order to apply
+        finish();
+        startActivity(intent);
+    }
 
-        setTheme(DynamicThemeHandler.getInstance().getIdForName(AlarmsListActivity.class.getName()));
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        setTheme(themeHandler().getIdForName(AlarmsListActivity.class.getName()));
         super.onCreate(savedInstanceState);
         logger.d(AlarmsListActivity.this);
         this.mActionBarHandler = new ActionBarHandler(this, store, alarms);

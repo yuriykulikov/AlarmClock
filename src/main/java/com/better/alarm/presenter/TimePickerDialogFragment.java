@@ -40,6 +40,8 @@ import io.reactivex.SingleOnSubscribe;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Cancellable;
 
+import static com.better.alarm.configuration.AlarmApplication.themeHandler;
+
 /**
  * Dialog to set alarm time.
  */
@@ -62,8 +64,7 @@ public class TimePickerDialogFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setStyle(DialogFragment.STYLE_NO_TITLE,
-                DynamicThemeHandler.getInstance().getIdForName(TimePickerDialogFragment.class.getName()));
+        setStyle(DialogFragment.STYLE_NO_TITLE, themeHandler().getIdForName(TimePickerDialogFragment.class.getName()));
     }
 
     @Override
