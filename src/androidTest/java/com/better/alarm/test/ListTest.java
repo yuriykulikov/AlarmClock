@@ -27,10 +27,14 @@ import org.junit.runner.RunWith;
 import java.util.Locale;
 
 import cortado.Cortado;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Predicate;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.anything;
@@ -211,6 +215,51 @@ public class ListTest extends BaseTest {
         onView(withText("Cancel")).perform(click());
         sleep();
         onView(withText("Cancel")).perform(click());
+        assertThatList().items().hasSize(2);
+    }
+
+    @Test
+    public void editRepeat() throws Exception {
+        sleep();
+        onView(withId(R.id.fab)).perform(click());
+        sleep();
+        onView(withText("Cancel")).perform(click());
+        sleep();
+
+        onView(withText("Repeat")).perform(click());
+        onView(withText("Monday")).perform(click());
+        onView(withText("Tuesday")).perform(click());
+        onView(withText("Wednesday")).perform(click());
+        onView(withText("Thursday")).perform(click());
+        onView(withText("Friday")).perform(click());
+        onView(withText("Saturday")).perform(click());
+        onView(withText("Sunday")).perform(click());
+        onView(withText("OK")).perform(click());
+
+        Cortado.onView().withText("OK").perform().click();
+        sleep();
+        sleep();
+        
+        assertThatList().items().hasSize(3);
+
+        ListAsserts.<AlarmValue>assertThatList(R.id.list_fragment_list)
+                .filter(enabled())
+                .items()
+                .hasSize(1);
+
+        ListAsserts.<AlarmValue>assertThatList(R.id.list_fragment_list)
+                .filter(new Predicate<AlarmValue>() {
+                    @Override
+                    public boolean test(@NonNull AlarmValue alarmValue) throws Exception {
+                        return alarmValue.getDaysOfWeek().isRepeatSet();
+                    }
+                })
+                .items()
+                .hasSize(3);
+
+        onView(withText("Every day")).check(matches(isDisplayed()));
+
+        deleteAlarm(0);
         assertThatList().items().hasSize(2);
     }
 
