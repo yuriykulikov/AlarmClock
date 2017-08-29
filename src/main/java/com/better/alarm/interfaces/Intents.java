@@ -17,7 +17,7 @@ package com.better.alarm.interfaces;
 
 import com.better.alarm.BuildConfig;
 
-public class Intents {
+public interface Intents {
     /**
      * Broadcasted when an alarm fires.
      */

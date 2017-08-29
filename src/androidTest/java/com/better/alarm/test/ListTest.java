@@ -263,4 +263,39 @@ public class ListTest extends BaseTest {
         assertThatList().items().hasSize(2);
     }
 
+    @Test
+    public void changeTimeInList() throws Exception {
+        onData(anything()).atPosition(0).onChildView(withId(R.id.digital_clock_time)).perform(click());
+
+        sleep();
+        Cortado.onView().withText("1").perform().click();
+        Cortado.onView().withText("2").perform().click();
+        Cortado.onView().withText("3").perform().click();
+        Cortado.onView().withText("5").perform().click();
+
+        onView(withText("AM"))
+                .withFailureHandler(new FailureHandler() {
+                    @Override
+                    public void handle(Throwable error, Matcher<View> viewMatcher) {
+                        //ignore fails - only use if View is found
+                    }
+                })
+                .perform(click());
+
+        sleep();
+        onView(withText("OK")).perform(click());
+        sleep();
+
+        ListAsserts.<AlarmValue>assertThatList(R.id.list_fragment_list)
+                .filter(enabled())
+                .items()
+                .hasSize(1);
+
+        onData(anything()).atPosition(0).onChildView(withId(R.id.list_row_on_off_checkbox_container)).perform(click());
+        sleep();
+        ListAsserts.<AlarmValue>assertThatList(R.id.list_fragment_list)
+                .filter(enabled())
+                .items()
+                .isEmpty();
+    }
 }

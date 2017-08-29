@@ -13,22 +13,14 @@ import com.better.alarm.view.DigitalClock
  */
 class RowHolder {
     val digitalClock: DigitalClock
-
-    val rowView: View
-
-    val onOff: CompoundButton
-
-    val container: View
-
-    val alarmId: Int
-
-    val daysOfWeek: TextView
-
-    val label: TextView
-
-    val detailsButton: View
-
-    val idHasChanged: Boolean
+    private val rowView: View
+    private val onOff: CompoundButton
+    private val container: View
+    private val alarmId: Int
+    private val daysOfWeek: TextView
+    private val label: TextView
+    private val detailsButton: View
+    private val idHasChanged: Boolean
 
     constructor(view: View, id: Int) {
         rowView = view
