@@ -24,7 +24,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.transition.Explode;
 import android.transition.Fade;
 import android.transition.Slide;
 import android.transition.Transition;
@@ -179,11 +178,11 @@ public class AlarmsListActivity extends AppCompatActivity {
     private void showDetails(@NonNull EditedAlarm edited) {
         Fragment listFragment = getFragmentManager().findFragmentById(R.id.main_fragment_container);
         if (listFragment != null) {
-            Explode explode = new Explode();
-            if (edited.holder().isPresent()) {
-                explode.setEpicenterCallback(edited.holder().get().epicenter());
-            }
-            listFragment.setExitTransition(explode);
+            //Explode explode = new Explode();
+            //if (edited.holder().isPresent()) {
+            //    explode.setEpicenterCallback(edited.holder().get().epicenter());
+            //}
+            listFragment.setExitTransition(new Fade());
         }
 
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
