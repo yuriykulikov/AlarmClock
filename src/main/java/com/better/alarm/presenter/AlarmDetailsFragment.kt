@@ -28,6 +28,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ListView
 import com.better.alarm.R
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.Store
@@ -91,6 +92,8 @@ class AlarmDetailsFragment : PreferenceFragment {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
         logger.d("Inflating layout")
         val view = inflater.inflate(R.layout.details_activity, container, false)
+        (view.findViewById(android.R.id.list) as ListView).addFooterView(inflater.inflate(R.layout.details_label, null))
+
         this.fragmentView = view
 
         rowHolder.onOff().setOnClickListener({
