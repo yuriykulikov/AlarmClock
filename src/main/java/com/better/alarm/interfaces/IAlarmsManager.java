@@ -67,7 +67,8 @@ public interface IAlarmsManager {
      * 
      * @return Alarm
      */
+    @NonNull
     Alarm createNewAlarm();
 
-    void delete(AlarmValue alarm);
+    void delete(@NonNull AlarmValue alarm);
 }
