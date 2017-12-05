@@ -28,6 +28,7 @@ import android.transition.Fade;
 import android.transition.Slide;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
+import android.transition.TransitionSet;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -203,7 +204,7 @@ public class AlarmsListActivity extends AppCompatActivity {
         args.putBoolean(Store.IS_NEW_ALARM, edited.isNew());
         detailsFragment.setArguments(args);
         detailsFragment.setSharedElementEnterTransition(TransitionInflater.from(AlarmsListActivity.this).inflateTransition(android.R.transition.move));
-        detailsFragment.setEnterTransition(enterSlide);
+        detailsFragment.setEnterTransition(new TransitionSet().addTransition(enterSlide).addTransition(new Fade()));
 
         fragmentTransaction
                 .replace(R.id.main_fragment_container, detailsFragment)
