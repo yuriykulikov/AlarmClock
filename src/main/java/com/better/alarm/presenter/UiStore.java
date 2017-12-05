@@ -2,6 +2,7 @@ package com.better.alarm.presenter;
 
 import com.better.alarm.configuration.EditedAlarm;
 
+import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
@@ -15,6 +16,11 @@ public interface UiStore {
     PublishSubject<String> onBackPressed();
 
     void createNewAlarm();
+
+    /**
+     * createNewAlarm was called -> list updates should be ignored
+     */
+    Subject<Boolean> transitioningToNewAlarmDetails();
 
     void edit(int id);
 

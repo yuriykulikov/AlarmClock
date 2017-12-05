@@ -198,6 +198,7 @@ class AlarmDetailsFragment : PreferenceFragment {
     override fun onResume() {
         super.onResume()
         backButtonSub = store.onBackPressed().subscribe { saveAlarm() }
+        store.transitioningToNewAlarmDetails().onNext(false)
     }
 
     override fun onPause() {

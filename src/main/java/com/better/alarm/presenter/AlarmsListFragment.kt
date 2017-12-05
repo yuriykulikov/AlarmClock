@@ -16,6 +16,7 @@ import android.widget.ListView
 import com.better.alarm.R
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.model.AlarmValue
+import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import java.util.*
@@ -187,14 +188,16 @@ class AlarmsListFragment : Fragment() {
         //((FloatingActionButton) fab).attachToListView(listView);
         //}
 
-        alarmsSub = store.alarms().subscribe { alarms ->
-            val sorted = alarms
-                    .sortedWith(Comparators.MinuteComparator())
-                    .sortedWith(Comparators.HourComparator())
-                    .sortedWith(Comparators.RepeatComparator())
-            mAdapter.clear()
-            mAdapter.addAll(sorted)
-        }
+        alarmsSub = uiStore.transitioningToNewAlarmDetails()
+                .switchMap { transitioning -> if (transitioning) Observable.never() else store.alarms() }
+                .subscribe { alarms ->
+                    val sorted = alarms
+                            .sortedWith(Comparators.MinuteComparator())
+                            .sortedWith(Comparators.HourComparator())
+                            .sortedWith(Comparators.RepeatComparator())
+                    mAdapter.clear()
+                    mAdapter.addAll(sorted)
+                }
 
         return view
     }
