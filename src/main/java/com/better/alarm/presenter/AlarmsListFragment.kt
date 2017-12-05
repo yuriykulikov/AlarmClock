@@ -44,12 +44,12 @@ class AlarmsListFragment : Fragment() {
     private var backSub: Disposable = Disposables.disposed()
     private var timePickerDialogDisposable = Disposables.disposed()
 
-    inner class AlarmListAdapter(alarmTime: Int, label: Int, private val values: List<AlarmValue>) : ArrayAdapter<AlarmValue>(context, alarmTime, label, values) {
+    inner class AlarmListAdapter(alarmTime: Int, label: Int, private val values: List<AlarmValue>) : ArrayAdapter<AlarmValue>(activity, alarmTime, label, values) {
 
         private fun recycleView(convertView: View?, parent: ViewGroup, id: Int): RowHolder {
             if (convertView != null) return RowHolder(convertView, id)
 
-            val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val rowView = inflater.inflate(R.layout.list_row, parent, false)
             val rowHolder = RowHolder(rowView, id)
             rowHolder.digitalClock.setLive(false)
