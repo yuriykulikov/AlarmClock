@@ -217,6 +217,7 @@ public class AlarmsListActivity extends AppCompatActivity {
     private UiStore store = new UiStore() {
         public PublishSubject<String> onBackPressed = PublishSubject.<String>create();
         public Subject<EditedAlarm> editing = BehaviorSubject.createDefault((EditedAlarm) ImmutableEditedAlarm.builder().build());
+        public Subject<Boolean> transitioningToNewAlarmDetails = BehaviorSubject.createDefault(false);
 
         @Override
         public Subject<EditedAlarm> editing() {
@@ -230,12 +231,18 @@ public class AlarmsListActivity extends AppCompatActivity {
 
         @Override
         public void createNewAlarm() {
+            transitioningToNewAlarmDetails.onNext(true);
             AlarmValue newAlarm = alarms.createNewAlarm().edit();
             editing().onNext(ImmutableEditedAlarm.builder()
                     .isNew(true)
                     .id(newAlarm.getId())
                     .isEdited(true)
                     .build());
+        }
+
+        @Override
+        public Subject<Boolean> transitioningToNewAlarmDetails() {
+            return transitioningToNewAlarmDetails;
         }
 
         @Override
