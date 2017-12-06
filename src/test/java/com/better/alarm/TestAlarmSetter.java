@@ -9,16 +9,16 @@ import com.better.alarm.model.AlarmsScheduler;
 class TestAlarmSetter implements AlarmSetter {
     @Override
     public void removeRTCAlarm() {
-
+        //NOP
     }
 
     @Override
     public void setUpRTCAlarm(AlarmsScheduler.ScheduledAlarm alarm) {
-
+        //NOP
     }
 
     @Override
     public void fireNow(AlarmsScheduler.ScheduledAlarm firedInThePastAlarm) {
-//nothing for now
+        //NOP
     }
 }

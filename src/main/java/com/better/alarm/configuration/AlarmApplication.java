@@ -87,7 +87,6 @@ public class AlarmApplication extends Application {
     private static DynamicThemeHandler sThemeHandler;
 
     public static Optional<Boolean> is24hoursFormatOverride = Optional.absent();
-    private SharedPreferences preferences;
     private RxSharedPreferences rxPreferences;
 
     @Override
@@ -115,7 +114,7 @@ public class AlarmApplication extends Application {
 
         LoggingExceptionHandler.addLoggingExceptionHandlerToAllThreads(logger);
 
-        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         rxPreferences = RxSharedPreferences.create(preferences);
 
         Function<String, Integer> parseInt = new Function<String, Integer>() {

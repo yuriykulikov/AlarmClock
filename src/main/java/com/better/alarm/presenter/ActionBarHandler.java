@@ -56,9 +56,7 @@ public class ActionBarHandler {
     public boolean onCreateOptionsMenu(final Menu menu, MenuInflater inflater, final ActionBar actionBar) {
         inflater.inflate(R.menu.settings_menu, menu);
 
-        MenuItem menuItem = menu.findItem(R.id.menu_share);
-
-        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+        Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
 
@@ -159,11 +157,7 @@ public class ActionBarHandler {
         builder.setTitle(R.string.review);
         builder.setMessage(R.string.review_message);
         builder.setCancelable(true);
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
+        builder.setNegativeButton(android.R.string.cancel, new EmptyClickListener());
         builder.create().show();
     }
 
@@ -180,11 +174,7 @@ public class ActionBarHandler {
         builder.setTitle(R.string.dashclock);
         builder.setMessage(R.string.dashclock_message);
         builder.setCancelable(true);
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
+        builder.setNegativeButton(android.R.string.cancel, new EmptyClickListener());
         builder.create().show();
     }
 
@@ -200,11 +190,7 @@ public class ActionBarHandler {
         builder.setTitle(R.string.mp3cutter);
         builder.setMessage(R.string.mp3cutter_message);
         builder.setCancelable(true);
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
+        builder.setNegativeButton(android.R.string.cancel, new EmptyClickListener());
         builder.create().show();
     }
 
@@ -220,12 +206,15 @@ public class ActionBarHandler {
         });
         builder.setTitle(R.string.bugreport);
         builder.setCancelable(true);
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
+        builder.setNegativeButton(android.R.string.cancel, new EmptyClickListener());
         builder.setView(report);
         builder.create().show();
+    }
+
+    private static class EmptyClickListener implements DialogInterface.OnClickListener {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            //this listener does not do much
+        }
     }
 }

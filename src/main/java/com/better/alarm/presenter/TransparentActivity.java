@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.interfaces.Alarm;
-import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
 import com.google.common.base.Optional;
 
@@ -20,7 +18,7 @@ import static com.better.alarm.configuration.AlarmApplication.container;
 public class TransparentActivity extends Activity {
 
     private Alarm alarm;
-    Disposable dialog = Disposables.disposed();
+    private Disposable dialog = Disposables.disposed();
 
     @Override
     protected void onCreate(Bundle icicle) {

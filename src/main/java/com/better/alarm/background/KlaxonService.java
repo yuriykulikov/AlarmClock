@@ -45,24 +45,6 @@ import static com.better.alarm.configuration.Prefs.KEY_PREALARM_VOLUME;
  * Delegate everything to a {@link KlaxonDelegate} which will play some awesome music.
  */
 public class KlaxonService extends Service implements KlaxonServiceCallback {
-    public interface KlaxonDelegate {
-        void onDestroy();
-
-        boolean onStartCommand(@android.support.annotation.NonNull Intent intent);
-    }
-
-    /**
-     * android.media.AudioManagerDispatches intents to the KlaxonService
-     */
-    public static class Receiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            intent.setClass(context, KlaxonService.class);
-            container().wakeLocks().acquirePartialWakeLock(intent, "ForKlaxonService");
-            context.startService(intent);
-        }
-    }
-
     private KlaxonDelegate delegate;
 
     @Override
@@ -141,6 +123,24 @@ public class KlaxonService extends Service implements KlaxonServiceCallback {
         } else {
             container().wakeLocks().releasePartialWakeLock(intent);
             return delegate.onStartCommand(intent) ? START_STICKY : START_NOT_STICKY;
+        }
+    }
+
+    public interface KlaxonDelegate {
+        void onDestroy();
+
+        boolean onStartCommand(@android.support.annotation.NonNull Intent intent);
+    }
+
+    /**
+     * android.media.AudioManagerDispatches intents to the KlaxonService
+     */
+    public static class Receiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            intent.setClass(context, KlaxonService.class);
+            container().wakeLocks().acquirePartialWakeLock(intent, "ForKlaxonService");
+            context.startService(intent);
         }
     }
 }

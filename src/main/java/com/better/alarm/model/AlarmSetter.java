@@ -14,9 +14,9 @@ import com.better.alarm.logger.Logger;
  */
 
 public interface AlarmSetter {
-    public static final String ACTION_FIRED = AlarmsScheduler.ACTION_FIRED;
-    public static final String EXTRA_ID = AlarmsScheduler.EXTRA_ID;
-    public static final String EXTRA_TYPE = AlarmsScheduler.EXTRA_TYPE;
+    String ACTION_FIRED = AlarmsScheduler.ACTION_FIRED;
+    String EXTRA_ID = AlarmsScheduler.EXTRA_ID;
+    String EXTRA_TYPE = AlarmsScheduler.EXTRA_TYPE;
 
     void removeRTCAlarm();
 
@@ -27,11 +27,6 @@ public interface AlarmSetter {
     class AlarmSetterImpl implements AlarmSetter {
         private final Context mContext;
         private AlarmManager am;
-
-        private interface ISetAlarmStrategy {
-            void setRTCAlarm(AlarmsScheduler.ScheduledAlarm alarm, PendingIntent sender);
-        }
-
         private final ISetAlarmStrategy setAlarmStrategy;
         private final Logger log;
 
@@ -101,6 +96,10 @@ public interface AlarmSetter {
                     am.setExact(AlarmManager.RTC_WAKEUP, alarm.calendar.getTimeInMillis(), sender);
                 }
             }
+        }
+
+        private interface ISetAlarmStrategy {
+            void setRTCAlarm(AlarmsScheduler.ScheduledAlarm alarm, PendingIntent sender);
         }
     }
 }

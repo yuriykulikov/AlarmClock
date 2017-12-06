@@ -22,8 +22,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.AlarmClock;
 
-import com.better.alarm.configuration.AlarmApplication;
-import com.better.alarm.configuration.Store;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;

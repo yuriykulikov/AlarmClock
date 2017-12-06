@@ -39,7 +39,6 @@ import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
-import com.better.alarm.presenter.DynamicThemeHandler;
 import com.better.alarm.presenter.TimePickerDialogFragment;
 import com.google.common.base.Optional;
 

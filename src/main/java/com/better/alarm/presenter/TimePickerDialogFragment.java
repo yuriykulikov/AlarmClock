@@ -47,7 +47,6 @@ import static com.better.alarm.configuration.AlarmApplication.themeHandler;
  */
 public class TimePickerDialogFragment extends DialogFragment {
     private TimePicker mPicker;
-    private final Logger log = Logger.getDefaultLogger();
     private SingleEmitter<Optional<PickedTime>> emitter;
 
     /**
