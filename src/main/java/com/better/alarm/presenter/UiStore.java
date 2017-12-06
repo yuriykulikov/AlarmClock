@@ -2,7 +2,6 @@ package com.better.alarm.presenter;
 
 import com.better.alarm.configuration.EditedAlarm;
 
-import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 

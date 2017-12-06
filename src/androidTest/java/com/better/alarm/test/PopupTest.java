@@ -108,12 +108,6 @@ public class PopupTest extends BaseTest {
         deleteAlarm();
     }
 
-    @Ignore
-    @Test
-    public void testSnoozeInThePastIsNotAccepted() {
-
-    }
-
     private void snoozeAlarmChechAndDelete() {
         assertTimerView("--:--");
         Cortado.onView().withText("2").perform().click();

@@ -6,7 +6,7 @@ public class LoggingExceptionHandler implements UncaughtExceptionHandler {
 
     private final Logger logger;
 
-    UncaughtExceptionHandler previousExceptionHandler;
+    private UncaughtExceptionHandler previousExceptionHandler;
 
     public static void addLoggingExceptionHandlerToAllThreads(Logger logger) {
         Thread.setDefaultUncaughtExceptionHandler(new LoggingExceptionHandler(logger, Thread

@@ -15,10 +15,12 @@ public abstract class AlarmContainer implements AlarmChangeData {
     public static final Persistence PERSISTENCE_STUB = new Persistence() {
         @Override
         public void persist(AlarmContainer container) {
+            //STUB
         }
 
         @Override
         public void delete(AlarmContainer container) {
+            //STUB
         }
     };
 

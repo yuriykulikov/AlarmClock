@@ -28,8 +28,12 @@ public class StateMachine {
 
     private final Logger log;
 
-    /** Message.what value when initializing */
+    /**
+     * Message.what value when initializing
+     */
     private static final int SM_INIT_CMD = -2;
+
+    private SmHandler mSmHandler;
 
     private static class SmHandler implements MessageHandler {
         private final Logger log;
@@ -423,8 +427,6 @@ public class StateMachine {
             onStateChangedListeners.add(onStateChangedListener);
         }
     }
-
-    private SmHandler mSmHandler;
 
     /**
      * Constructor creates a StateMachine using the looper.

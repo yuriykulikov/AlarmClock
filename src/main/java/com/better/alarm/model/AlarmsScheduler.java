@@ -74,8 +74,7 @@ public class AlarmsScheduler implements IAlarmsScheduler {
 
         @Override
         public boolean equals(Object o) {
-            if (((ScheduledAlarm) o).id == id) return true;
-            else return false;
+            return ((ScheduledAlarm) o).id == id;
         }
 
         @Override
