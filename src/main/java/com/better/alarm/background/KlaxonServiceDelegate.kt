@@ -99,6 +99,7 @@ class KlaxonServiceDelegate(
             Intents.ACTION_MUTE -> volume.mute()
             Intents.ACTION_DEMUTE -> volume.fadeInFast()
             else -> {
+                callStateSub.dispose()
                 volume.mute()
                 callback.stopSelf()
             }
