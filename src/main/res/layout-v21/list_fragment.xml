@@ -21,49 +21,59 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ListView
-        android:id="@+id/list_fragment_list"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_weight="1"
-        tools:layout="@layout/list_fragment"
-        tools:listitem="@layout/list_row" />
-
-
-    app:backgroundTint="?android:attr/colorAccent"
-    app:borderWidth="0dp"
-    app:elevation="30dp"
-    app:rippleColor="?android:attr/colorBackground" />
-
-    <FrameLayout
-        android:id="@+id/frameLayout"
-        android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
-        android:layout_alignParentBottom="true"
-        android:background="?android:attr/colorBackground"
-        android:elevation="15dp">
-
-        <fragment
-            android:id="@+id/list_activity_info_fragment"
-            android:name="com.better.alarm.presenter.InfoFragment"
+        android:layout_height="match_parent">
+        <ListView
+            android:id="@+id/list_fragment_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:layout="@layout/info_fragment" />
-    </FrameLayout>
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_weight="1"
+            tools:layout="@layout/list_fragment"
+            tools:listitem="@layout/list_row" />
 
-    <com.melnykov.fab.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_gravity="bottom|right"
-        android:layout_marginBottom="28dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginRight="28dp"
-        android:elevation="20dp"
-        android:src="@drawable/ic_menu_add" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:elevation="1dp"
+        android:background="#00000000"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:layout_alignParentBottom="true"
+            android:background="?android:attr/colorBackground"
+            android:elevation="25dp">
+
+            <fragment
+                android:id="@+id/list_activity_info_fragment"
+                android:name="com.better.alarm.presenter.InfoFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#00000000"
+                tools:layout="@layout/info_fragment" />
+        </FrameLayout>
+
+        <com.melnykov.fab.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="28dp"
+            android:layout_marginEnd="28dp"
+            android:elevation="175dp"
+            android:src="@drawable/ic_menu_add" />
+    </RelativeLayout>
 </RelativeLayout>
