@@ -21,7 +21,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.transition.Fade;
@@ -63,14 +62,6 @@ public class AlarmsListActivity extends Activity {
     private final IAlarmsManager alarms = container().alarms();
 
     private Disposable sub = Disposables.disposed();
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        //in order to apply
-        finish();
-        startActivity(intent);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
