@@ -17,11 +17,11 @@
 
 package com.better.alarm.presenter;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -32,7 +32,7 @@ import static com.better.alarm.configuration.AlarmApplication.themeHandler;
 /**
  * Settings for the Alarm Clock.
  */
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends Activity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(themeHandler().getIdForName(SettingsActivity.class.getName()));
@@ -45,7 +45,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         return true;
     }
 

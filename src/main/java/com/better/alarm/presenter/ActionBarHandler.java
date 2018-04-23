@@ -1,5 +1,6 @@
 package com.better.alarm.presenter;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -7,11 +8,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.ShareActionProvider;
 
 import com.better.alarm.R;
 import com.better.alarm.configuration.EditedAlarm;
@@ -65,7 +66,9 @@ public class ActionBarHandler {
         intent.putExtra(Intent.EXTRA_SUBJECT, "https://play.google.com/uiStore/apps/details?id=com.better.alarm");
         intent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/uiStore/apps/details?id=com.better.alarm");
 
-        //TODO sp.setShareIntent(intent);
+        MenuItem menuItem = menu.findItem(R.id.menu_share);
+        ShareActionProvider sp = (ShareActionProvider) menuItem.getActionProvider();
+        sp.setShareIntent(intent);
 
         if (Build.VERSION.SDK_INT < JELLY_BEAN_MR1) {
             MenuItem menuItemDashclock = menu.findItem(R.id.menu_dashclock);
