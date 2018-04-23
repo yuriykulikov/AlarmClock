@@ -16,6 +16,7 @@ import android.widget.ListView
 import com.better.alarm.R
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.model.AlarmValue
+import com.melnykov.fab.FloatingActionButton
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
@@ -184,9 +185,9 @@ class AlarmsListFragment : Fragment() {
         val fab = view.findViewById(R.id.fab)
         fab.setOnClickListener { uiStore.createNewAlarm() }
 
-        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        //((FloatingActionButton) fab).attachToListView(listView);
-        //}
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            (fab as FloatingActionButton).attachToListView(listView)
+        }
 
         alarmsSub = uiStore.transitioningToNewAlarmDetails()
                 .switchMap { transitioning -> if (transitioning) Observable.never() else store.alarms() }
