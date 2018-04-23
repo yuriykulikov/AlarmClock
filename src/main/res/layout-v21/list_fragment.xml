@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?><!--
      Copyright (C) 2007 The Android Open Source Project
+     Copyright (C) 2010 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,7 +15,6 @@
      limitations under the License.-->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/info_fragment_base_layout"
     android:layout_width="match_parent"
@@ -25,30 +25,17 @@
         android:id="@+id/list_fragment_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/frameLayout"
-        android:layout_alignParentTop="true"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_weight="1"
         tools:layout="@layout/list_fragment"
         tools:listitem="@layout/list_row" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_gravity="bottom|right"
-        android:layout_marginBottom="28dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginRight="28dp"
-        android:src="@drawable/ic_menu_add"
-        app:backgroundTint="?android:attr/colorAccent"
-        app:borderWidth="0dp"
-        app:elevation="30dp"
-        app:rippleColor="?android:attr/colorBackground" />
+
+    app:backgroundTint="?android:attr/colorAccent"
+    app:borderWidth="0dp"
+    app:elevation="30dp"
+    app:rippleColor="?android:attr/colorBackground" />
 
     <FrameLayout
         android:id="@+id/frameLayout"
@@ -66,4 +53,17 @@
             tools:layout="@layout/info_fragment" />
     </FrameLayout>
 
+    <com.melnykov.fab.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="28dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginRight="28dp"
+        android:elevation="20dp"
+        android:src="@drawable/ic_menu_add" />
 </RelativeLayout>

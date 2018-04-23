@@ -18,12 +18,12 @@
 package com.better.alarm.presenter;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.transition.Fade;
 import android.transition.Slide;
 import android.transition.Transition;
@@ -57,7 +57,7 @@ import static com.better.alarm.configuration.AlarmApplication.themeHandler;
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */
-public class AlarmsListActivity extends AppCompatActivity {
+public class AlarmsListActivity extends Activity {
     private ActionBarHandler mActionBarHandler;
     private final Logger logger = container().logger();
     private final IAlarmsManager alarms = container().alarms();
@@ -115,7 +115,7 @@ public class AlarmsListActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        return mActionBarHandler.onCreateOptionsMenu(menu, getMenuInflater(), getSupportActionBar());
+        return mActionBarHandler.onCreateOptionsMenu(menu, getMenuInflater(), getActionBar());
     }
 
     @Override
