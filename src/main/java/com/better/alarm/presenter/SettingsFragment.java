@@ -13,6 +13,7 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
+import android.preference.RingtonePreference;
 import android.provider.Settings;
 
 import com.better.alarm.R;
@@ -30,7 +31,6 @@ import static com.better.alarm.configuration.Prefs.KEY_AUTO_SILENCE;
 import static com.better.alarm.configuration.Prefs.KEY_DEFAULT_RINGTONE;
 import static com.better.alarm.configuration.Prefs.KEY_FADE_IN_TIME_SEC;
 import static com.better.alarm.configuration.Prefs.KEY_PREALARM_DURATION;
-import static com.better.alarm.view.RingtonePreferenceExtension.updatePreferenceSummary;
 
 /**
  * Created by Yuriy on 24.07.2017.
@@ -177,7 +177,7 @@ public class SettingsFragment extends PreferenceFragment {
             dispoables.add(disposable);
         }
         {
-            Disposable disposable = updatePreferenceSummary(rxSharedPreferences, findPreference(KEY_DEFAULT_RINGTONE), getActivity());
+            Disposable disposable = AlarmDetailsFragmentKt.bindPreferenceSummary((RingtonePreference) findPreference(KEY_DEFAULT_RINGTONE), rxSharedPreferences, getActivity());
             dispoables.add(disposable);
         }
 
