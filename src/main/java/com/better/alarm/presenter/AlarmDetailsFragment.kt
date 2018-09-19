@@ -18,6 +18,10 @@
 package com.better.alarm.presenter
 
 import android.annotation.TargetApi
+import android.app.Activity
+import android.media.Ringtone
+import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.preference.CheckBoxPreference
@@ -38,7 +42,6 @@ import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
 import com.better.alarm.model.DaysOfWeek
 import com.better.alarm.view.RepeatPreference
-import com.better.alarm.view.RingtonePreferenceExtension.updatePreferenceSummary
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.google.common.base.Optional
 import io.reactivex.disposables.CompositeDisposable
@@ -181,7 +184,7 @@ class AlarmDetailsFragment : PreferenceFragment {
                 }))
 
         //Alert summary
-        disposables.add(updatePreferenceSummary(rxSharedPreferences, mAlarmPref, activity))
+        mAlarmPref.bindPreferenceSummary().let { disposables.add(it) }
         //Alert
         mAlarmPref.setOnPreferenceChangeListener({ _, alert ->
             modify("Alert", { editor -> editor.withAlertString(alert as String).withIsEnabled(true) })
@@ -246,4 +249,18 @@ class AlarmDetailsFragment : PreferenceFragment {
         logger.d("Performing modification because of " + reason)
         editor.firstOrError().subscribe { ed -> editor.onNext(function.invoke(ed)) }
     }
+
+    private fun RingtonePreference.bindPreferenceSummary(): Disposable {
+        return this.bindPreferenceSummary(rxSharedPreferences, activity)
+    }
+}
+
+fun RingtonePreference.bindPreferenceSummary(rxSharedPreferences: RxSharedPreferences, activity: Activity): Disposable {
+    return rxSharedPreferences.getString(this.key, "")
+            .asObservable()
+            .subscribe { uriString ->
+                val uri: Uri = Uri.parse(uriString)
+                val ringtone: Ringtone? = RingtoneManager.getRingtone(activity, uri)
+                this.summary = ringtone?.getTitle(activity) ?: "..."
+            }
 }
