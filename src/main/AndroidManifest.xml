@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.better.alarm"
-    android:versionCode="3001"
-    android:versionName="3.0.01" >
+    android:versionCode="3002"
+    android:versionName="3.0.02" >
 
     <uses-sdk
         android:minSdkVersion="15"
