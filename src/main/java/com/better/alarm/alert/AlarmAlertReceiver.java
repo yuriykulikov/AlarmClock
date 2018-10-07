@@ -17,16 +17,22 @@
 
 package com.better.alarm.alert;
 
+import android.annotation.TargetApi;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
 
+import com.better.alarm.Broadcasts;
+import com.better.alarm.BuildConfig;
 import com.better.alarm.R;
 import com.better.alarm.configuration.Prefs;
 import com.better.alarm.interfaces.Alarm;
@@ -46,6 +52,7 @@ import static com.better.alarm.configuration.AlarmApplication.container;
  */
 public class AlarmAlertReceiver extends BroadcastReceiver {
 
+    public static final String CHANNEL_ID = BuildConfig.APPLICATION_ID;
     private static final String ACTION_CANCEL_NOTIFICATION = "AlarmAlertReceiver.ACTION_CANCEL_NOTIFICATION";
     private static final String DM12 = "E h:mm aa";
     private static final String DM24 = "E kk:mm";
@@ -102,8 +109,7 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
         int id = alarm.getId();
 
         /* Close dialogs and window shade */
-        Intent closeDialogs = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-        mContext.sendBroadcast(closeDialogs);
+        Broadcasts.sendSystemBroadcast(mContext, new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
 
         // Trigger a notification that, when clicked, will show the alarm
         // alert dialog. No need to check for fullscreen since this will always
@@ -123,7 +129,7 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
         PendingIntent pendingReschedule = PendingIntent.getActivity(mContext, id, reschedule, 0);
 
         //@formatter:off
-        Notification status = new NotificationCompat.Builder(mContext)
+        Notification status = builder()
                 .setContentTitle(alarm.getLabelOrDefault())
                 .setContentText(mContext.getString(R.string.alarm_notify_text))
                 .setSmallIcon(R.drawable.stat_notify_alarm)
@@ -135,10 +141,10 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
                 .setContentIntent(pendingNotify)
                 .setOngoing(true)
                 .addAction(R.drawable.ic_action_snooze, mContext.getString(R.string.alarm_alert_snooze_text), pendingSnooze)
-                .addAction(R.drawable.ic_action_reschedule_snooze, mContext.getString(R.string.alarm_alert_reschedule_text), pendingReschedule)
+                // .addAction(R.drawable.ic_action_reschedule_snooze, mContext.getString(R.string.alarm_alert_reschedule_text), pendingReschedule)
                 .addAction(R.drawable.ic_action_dismiss, mContext.getString(R.string.alarm_alert_dismiss_text), pendingDismiss)
                 .setDefaults(Notification.DEFAULT_LIGHTS)
-                .build();
+                .getNotification();
         //@formatter:on
 
         // Send the notification using the alarm id to easily identify the
@@ -166,7 +172,7 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
         String label = alarm.getLabelOrDefault();
 
         //@formatter:off
-        Notification status = new NotificationCompat.Builder(mContext)
+        Notification status = builder()
                 // Get the display time for the snooze and update the notification.
                 .setContentTitle(mContext.getString(R.string.alarm_notify_snooze_label, label))
                 .setContentText(mContext.getString(R.string.alarm_notify_snooze_text, formatTimeString()))
@@ -176,7 +182,7 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
                 .addAction(R.drawable.ic_action_reschedule_snooze, mContext.getString(R.string.alarm_alert_reschedule_text), pendingReschedule)
                 .addAction(R.drawable.ic_action_dismiss, mContext.getString(R.string.alarm_alert_dismiss_text), pendingDismiss)
                 .setDefaults(Notification.DEFAULT_LIGHTS)
-                .build();
+                .getNotification();
         //@formatter:on
 
         // Send the notification using the alarm id to easily identify the
@@ -203,20 +209,50 @@ public class AlarmAlertReceiver extends BroadcastReceiver {
                 "auto_silence", "10"));
         String text = mContext.getString(R.string.alarm_alert_alert_silenced, autoSilenceMinutes);
 
-        Notification.Builder nb = new Notification.Builder(mContext);
-        nb.setAutoCancel(true);
-        nb.setSmallIcon(R.drawable.stat_notify_alarm);
-        nb.setWhen(Calendar.getInstance().getTimeInMillis());
-        nb.setContentIntent(intent);
-        nb.setContentTitle(label);
-        nb.setContentText(text);
-        nb.setTicker(text);
-        Notification n = nb.getNotification();
+        Notification n = builder()
+                .setAutoCancel(true)
+                .setSmallIcon(R.drawable.stat_notify_alarm)
+                .setWhen(Calendar.getInstance().getTimeInMillis())
+                .setContentIntent(intent)
+                .setContentTitle(label)
+                .setContentText(text)
+                .setTicker(text)
+                .getNotification();
 
         // We have to cancel the original notification since it is in the
         // ongoing section and we want the "killed" notification to be a plain
         // notification.
         nm.cancel(id);
         nm.notify(id, n);
+    }
+
+    @NonNull
+    private Notification.Builder builder() {
+        Notification.Builder builder = new Notification.Builder(mContext);
+        if (android.os.Build.VERSION.SDK_INT >= 26) {
+            return setChannel(builder);
+        } else {
+            return builder;
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private Notification.Builder setChannel(Notification.Builder builder) {
+        return builder.setChannelId(CHANNEL_ID);
+    }
+
+    public static void createNotificationChannel(Context context) {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = context.getString(R.string.app_label);
+            NotificationChannel channel = new NotificationChannel(BuildConfig.APPLICATION_ID, name, NotificationManager.IMPORTANCE_HIGH);
+            channel.setSound(null, null);
+
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 }

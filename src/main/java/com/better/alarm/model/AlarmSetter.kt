@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import com.better.alarm.logger.Logger
+import com.better.alarm.presenter.AlarmsListActivity
 
 /**
  * Created by Yuriy on 24.06.2017.
@@ -77,21 +78,19 @@ interface AlarmSetter {
 
         @TargetApi(23)
         private inner class MarshmallowSetter : ISetAlarmStrategy {
-            val setExactAndAllowWhileIdle: (Long, PendingIntent) -> Unit = try {
-                am.javaClass.getMethod(
-                        "setExactAndAllowWhileIdle",
-                        Int::class.javaPrimitiveType,
-                        Long::class.javaPrimitiveType,
-                        PendingIntent::class.java
-                ).let {
-                    { timeInMillis: Long, pendingIntent: PendingIntent -> it.invoke(am, AlarmManager.RTC_WAKEUP, timeInMillis, pendingIntent) }
-                }
-            } catch (e: ReflectiveOperationException) {
-                { timeInMillis, pendingIntent -> am.setExact(AlarmManager.RTC_WAKEUP, timeInMillis, pendingIntent) }
-            }
-
             override fun setRTCAlarm(alarm: AlarmsScheduler.ScheduledAlarm, pendingIntent: PendingIntent) {
-                setExactAndAllowWhileIdle(alarm.calendar!!.timeInMillis, pendingIntent)
+                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarm.calendar!!.timeInMillis, pendingIntent)
+            }
+        }
+
+        /** 8.0  */
+        @TargetApi(Build.VERSION_CODES.O)
+        private inner class OreoSetter : ISetAlarmStrategy {
+            override fun setRTCAlarm(alarm: AlarmsScheduler.ScheduledAlarm, sender: PendingIntent) {
+                val showList = Intent(mContext, AlarmsListActivity::class.java)
+                showList.putExtra(EXTRA_ID, alarm.id)
+                val showIntent = PendingIntent.getActivity(mContext, hashCode(), showList, PendingIntent.FLAG_UPDATE_CURRENT)
+                am.setAlarmClock(AlarmManager.AlarmClockInfo(alarm.calendar!!.timeInMillis, showIntent), sender)
             }
         }
 

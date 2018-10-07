@@ -27,6 +27,8 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -34,6 +36,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.better.alarm.Broadcasts;
 import com.better.alarm.R;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
@@ -75,7 +78,9 @@ public class AlarmAlertFullScreen extends Activity {
      * Intents.ALARM_DISMISS_ACTION
      * Intents.ACTION_SOUND_EXPIRED
      */
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mReceiver = new Receiver();
+
+    public class Receiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
@@ -83,7 +88,7 @@ public class AlarmAlertFullScreen extends Activity {
                 finish();
             }
         }
-    };
+    }
 
     @Override
     protected void onCreate(Bundle icicle) {
@@ -123,7 +128,7 @@ public class AlarmAlertFullScreen extends Activity {
             filter.addAction(Intents.ALARM_SNOOZE_ACTION);
             filter.addAction(Intents.ALARM_DISMISS_ACTION);
             filter.addAction(Intents.ACTION_SOUND_EXPIRED);
-            registerReceiver(mReceiver, filter);
+            Broadcasts.registerLocal(this, mReceiver, filter);
         } catch (Exception e) {
             Logger.getDefaultLogger().d("Alarm not found");
         }
@@ -132,7 +137,7 @@ public class AlarmAlertFullScreen extends Activity {
     private void setTitle() {
         final String titleText = mAlarm.getLabelOrDefault();
         setTitle(titleText);
-        TextView textView = (TextView) findViewById(R.id.alarm_alert_label);
+        TextView textView = findViewById(R.id.alarm_alert_label);
         textView.setText(titleText);
     }
 
@@ -176,12 +181,12 @@ public class AlarmAlertFullScreen extends Activity {
                                     }
                                 }
                             });
-                    AlarmAlertFullScreen.this.sendBroadcast(new Intent(Intents.ACTION_MUTE));
+                    Broadcasts.sendExplicit(AlarmAlertFullScreen.this, new Intent(Intents.ACTION_MUTE));
                     new android.os.Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             //TODO think about removing this or whatevar
-                            AlarmAlertFullScreen.this.sendBroadcast(new Intent(Intents.ACTION_DEMUTE));
+                            Broadcasts.sendExplicit(AlarmAlertFullScreen.this, new Intent(Intents.ACTION_DEMUTE));
                         }
                     }, 10000);
                 }
@@ -274,7 +279,7 @@ public class AlarmAlertFullScreen extends Activity {
         super.onDestroy();
         Logger.getDefaultLogger().d("AlarmAlert.onDestroy()");
         // No longer care about the alarm being killed.
-        unregisterReceiver(mReceiver);
+        Broadcasts.unregisterLocal(this, mReceiver);
     }
 
     @Override

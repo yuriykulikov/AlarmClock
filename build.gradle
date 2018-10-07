@@ -2,15 +2,12 @@ buildscript {
     repositories {
         jcenter()
         mavenCentral()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
-        // add dependency to plugin
-        classpath "com.neenbedankt.gradle.plugins:android-apt:1.6"
-        //classpath 'com.f2prateek.javafmt:javafmt:0.1.6'
-        classpath 'com.dicedmelon.gradle:jacoco-android:0.1.1'
-
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.3"
+        classpath 'com.android.tools.build:gradle:3.3.0'
+        // classpath 'com.dicedmelon.gradle:jacoco-android:0.1.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.11"
     }
 }
 
@@ -22,24 +19,21 @@ ext {
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: "android-apt"
-//apply plugin: 'com.f2prateek.javafmt'
-apply plugin: 'jacoco-android'
+// apply plugin: 'jacoco-android'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion '25.0.1'
-
+    compileSdkVersion 26
+    flavorDimensions "default"
     defaultConfig {
         applicationId "com.better.alarm"
-        minSdkVersion 15
-        targetSdkVersion 25
+        minSdkVersion 16
+        targetSdkVersion 26
 
         testApplicationId "com.better.alarm.test"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        //multiDexEnabled true
+        // multiDexEnabled true
     }
 
     buildTypes {
@@ -52,6 +46,7 @@ android {
         }
     }
 
+    flavorDimensions "default"
     productFlavors {
         develop {
             applicationId "com.better.alarm"
@@ -82,34 +77,30 @@ android {
 }
 repositories {
     jcenter()
+    google()
 }
 
 dependencies {
     // App dependencies
-    compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.3"
-    compile 'com.android.support:support-annotations:25.1.1'
-    compile 'ch.acra:acra:4.6.1'
-    compile 'com.melnykov:floatingactionbutton:1.2.0'
-    compile 'io.reactivex.rxjava2:rxjava:2.1.0'
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile 'com.f2prateek.rx.preferences2:rx-preferences:2.0.0-RC2'
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.3.11"
+    implementation 'com.android.support:support-annotations:28.0.0'
+    implementation 'ch.acra:acra:4.6.1'
+    implementation 'com.melnykov:floatingactionbutton:1.2.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.0'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    implementation 'com.f2prateek.rx.preferences2:rx-preferences:2.0.0'
 
     // Testing-only dependencies
-    testCompile 'net.wuerl.kotlin:assertj-core-kotlin:0.1.1'
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:2.8.47'
-    androidTestCompile 'com.squareup.assertj:assertj-android:1.1.1'
+    testImplementation 'net.wuerl.kotlin:assertj-core-kotlin:0.1.1'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.23.4'
+    androidTestImplementation 'com.squareup.assertj:assertj-android:1.1.1'
     // Force usage of support annotations in the test app, since it is internally used by the runner module.
-    androidTestCompile 'com.android.support:support-annotations:25.1.1'
-    androidTestCompile 'com.android.support.test:runner:0.5'
-    androidTestCompile 'com.android.support.test:rules:0.5'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
-    androidTestCompile 'com.bartoszlipinski:cortado:1.2.0'
+    androidTestImplementation 'com.android.support:support-annotations:28.0.0'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'com.bartoszlipinski:cortado:1.2.0'
     //for some tests which do not work with espresso on travis
-    androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.2.1'
-}
-
-configurations.all {
-    resolutionStrategy.force 'org.jetbrains.kotlin:kotlin-stdlib:1.1.3'
+    androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.2.1'
 }
