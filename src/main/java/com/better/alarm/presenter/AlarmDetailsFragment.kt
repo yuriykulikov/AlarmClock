@@ -130,8 +130,8 @@ class AlarmDetailsFragment : PreferenceFragment {
                     rowHolder.onOff().isChecked = editor.isEnabled
                 }
 
-        view.findViewById(R.id.details_activity_button_save).setOnClickListener { saveAlarm() }
-        view.findViewById(R.id.details_activity_button_revert).setOnClickListener { revert() }
+        view.findViewById<View>(R.id.details_activity_button_save).setOnClickListener { saveAlarm() }
+        view.findViewById<View>(R.id.details_activity_button_revert).setOnClickListener { revert() }
 
         if (isNewAlarm) {
             disposableDialog = TimePickerDialogFragment.showTimePicker(fragmentManager)
