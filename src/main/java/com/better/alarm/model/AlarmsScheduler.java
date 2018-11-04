@@ -16,11 +16,10 @@
 package com.better.alarm.model;
 
 import com.better.alarm.BuildConfig;
-import com.better.alarm.configuration.ImmutableNext;
 import com.better.alarm.configuration.Prefs;
 import com.better.alarm.configuration.Store;
 import com.better.alarm.logger.Logger;
-import com.google.common.base.Optional;
+import com.better.alarm.util.Optional;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -177,11 +176,12 @@ public class AlarmsScheduler implements IAlarmsScheduler {
                     @Override
                     public Optional<Store.Next> apply(@NonNull ScheduledAlarm scheduledAlarm) throws Exception {
                         boolean isPrealarm = scheduledAlarm.type == CalendarType.PREALARM;
-                        return Optional.of((Store.Next) ImmutableNext.builder()
-                                .alarm(scheduledAlarm.alarmValue.get())
-                                .isPrealarm(isPrealarm)
-                                .nextNonPrealarmTime(isPrealarm ? findNormalTime(scheduledAlarm) : scheduledAlarm.calendar.getTimeInMillis())
-                                .build());
+                        return Optional.of(
+                                new Store.Next(
+                                        /* isPrealarm */ isPrealarm,
+                                        /* alarm */ scheduledAlarm.alarmValue.get(),
+                                        /* nextNonPrealarmTime */ isPrealarm ? findNormalTime(scheduledAlarm) : scheduledAlarm.calendar.getTimeInMillis())
+                        );
                     }
 
                     private long findNormalTime(ScheduledAlarm scheduledAlarm) {

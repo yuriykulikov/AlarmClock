@@ -2,7 +2,6 @@ package com.better.alarm;
 
 import com.better.alarm.statemachine.HandlerFactory;
 import com.better.alarm.statemachine.IHandler;
-import com.better.alarm.statemachine.ImmutableMessage;
 import com.better.alarm.statemachine.Message;
 import com.better.alarm.statemachine.MessageHandler;
 
@@ -37,13 +36,13 @@ class TestHandlerFactory implements HandlerFactory {
             }
 
             @Override
-            public ImmutableMessage obtainMessage(int what, Object obj) {
-                return ImmutableMessage.builder().what(what).handler(this).obj(obj).build();
+            public Message obtainMessage(int what, Object obj) {
+                return new Message(what, this, null,null, obj);
             }
 
             @Override
-            public ImmutableMessage obtainMessage(int what) {
-                return ImmutableMessage.builder().what(what).handler(this).build();
+            public Message obtainMessage(int what) {
+                return new Message(what, this, null,null, null);
             }
         };
     }

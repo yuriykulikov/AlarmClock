@@ -46,7 +46,7 @@ import com.better.alarm.presenter.DynamicThemeHandler;
 import com.better.alarm.statemachine.HandlerFactory;
 import com.f2prateek.rx.preferences2.Preference;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
-import com.google.common.base.Optional;
+import com.better.alarm.util.Optional;
 
 import org.acra.ACRA;
 import org.acra.ErrorReporter;
@@ -143,18 +143,18 @@ public class AlarmApplication extends Application {
                 }))
                 .toSingle();
 
-        final ImmutablePrefs prefs = ImmutablePrefs.builder()
-                .preAlarmDuration(rxPreferences.getString("prealarm_duration", "30").asObservable().map(parseInt))
-                .snoozeDuration(rxPreferences.getString("snooze_duration", "10").asObservable().map(parseInt))
-                .autoSilence(rxPreferences.getString("auto_silence", "10").asObservable().map(parseInt))
-                .is24HoutFormat(dateFormat)
-                .build();
+        final Prefs prefs = new Prefs(dateFormat,
+                rxPreferences.getString("prealarm_duration", "30").asObservable().map(parseInt),
+                rxPreferences.getString("snooze_duration", "10").asObservable().map(parseInt),
+                rxPreferences.getString("auto_silence", "10").asObservable().map(parseInt));
 
-        final ImmutableStore store = ImmutableStore.builder()
-                .alarmsSubject(BehaviorSubject.<List<AlarmValue>>createDefault(new ArrayList<AlarmValue>()))
-                .next(BehaviorSubject.createDefault(Optional.<Store.Next>absent()))
-                .sets(PublishSubject.<Store.AlarmSet>create())
-                .build();
+        final Store store = new Store(
+                // alarmsSubject
+                BehaviorSubject.<List<AlarmValue>>createDefault(new ArrayList<AlarmValue>()),
+                // next
+                BehaviorSubject.createDefault(Optional.<Store.Next>absent()),
+                // sets
+                PublishSubject.<Store.AlarmSet>create());
 
         store.alarms().subscribe(new Consumer<List<AlarmValue>>() {
             @Override
@@ -222,15 +222,14 @@ public class AlarmApplication extends Application {
 
         alarms.start();
 
-        sContainer = ImmutableContainer.builder()
-                .context(getApplicationContext())
-                .logger(logger)
-                .sharedPreferences(preferences)
-                .rxPrefs(rxPreferences)
-                .prefs(prefs)
-                .store(store)
-                .rawAlarms(alarms)
-                .build();
+        sContainer = new Container(
+                getApplicationContext(),
+                logger,
+                preferences,
+                rxPreferences,
+                prefs,
+                store,
+                alarms);
 
         new ScheduledReceiver(store, getApplicationContext(), prefs, alarmManager).start();
         new ToastPresenter(store, getApplicationContext()).start();

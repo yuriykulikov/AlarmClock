@@ -29,7 +29,7 @@ import android.text.TextUtils;
 
 import com.better.alarm.BuildConfig;
 import com.better.alarm.logger.Logger;
-import com.google.common.base.Preconditions;
+import com.better.alarm.util.Preconditions;
 
 public class AlarmProvider extends ContentProvider {
     private AlarmDatabaseHelper mOpenHelper;

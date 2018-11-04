@@ -23,7 +23,6 @@ import android.preference.ListPreference;
 import android.util.AttributeSet;
 
 import com.better.alarm.model.DaysOfWeek;
-import com.better.alarm.model.ImmutableDaysOfWeek;
 
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
@@ -65,7 +64,7 @@ public class RepeatPreference extends ListPreference {
                         } else {
                             mutableDays &= ~(1 << which);
                         }
-                        mDaysOfWeek = ImmutableDaysOfWeek.of(mutableDays);
+                        mDaysOfWeek = new DaysOfWeek(mutableDays);
                     }
                 });
     }

@@ -21,7 +21,7 @@ import com.better.alarm.R;
 import com.better.alarm.configuration.Prefs;
 import com.better.alarm.configuration.Store;
 import com.better.alarm.model.AlarmValue;
-import com.google.common.base.Optional;
+import com.better.alarm.util.Optional;
 
 import java.util.Calendar;
 

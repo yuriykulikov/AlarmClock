@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.Intents;
-import com.google.common.base.Optional;
+import com.better.alarm.util.Optional;
 
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
@@ -31,11 +31,11 @@ public class TransparentActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        dialog = TimePickerDialogFragment.showTimePicker(getFragmentManager()).subscribe(new Consumer<Optional<TimePickerDialogFragment.PickedTime>>() {
+        dialog = TimePickerDialogFragment.showTimePicker(getFragmentManager()).subscribe(new Consumer<Optional<PickedTime>>() {
             @Override
-            public void accept(@NonNull Optional<TimePickerDialogFragment.PickedTime> picked) {
+            public void accept(@NonNull Optional<PickedTime> picked) {
                 if (picked.isPresent()) {
-                    alarm.snooze(picked.get().hour(), picked.get().minute());
+                    alarm.snooze(picked.get().getHour(), picked.get().getMinute());
                 }
                 finish();
             }

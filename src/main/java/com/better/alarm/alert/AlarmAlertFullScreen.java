@@ -39,8 +39,9 @@ import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
+import com.better.alarm.presenter.PickedTime;
 import com.better.alarm.presenter.TimePickerDialogFragment;
-import com.google.common.base.Optional;
+import com.better.alarm.util.Optional;
 
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
@@ -165,11 +166,11 @@ public class AlarmAlertFullScreen extends Activity {
             public boolean onLongClick(View v) {
                 if (isSnoozeEnabled()) {
                     disposableDialog = TimePickerDialogFragment.showTimePicker(getFragmentManager())
-                            .subscribe(new Consumer<Optional<TimePickerDialogFragment.PickedTime>>() {
+                            .subscribe(new Consumer<Optional<PickedTime>>() {
                                 @Override
-                                public void accept(@NonNull Optional<TimePickerDialogFragment.PickedTime> picked) {
+                                public void accept(@NonNull Optional<PickedTime> picked) {
                                     if (picked.isPresent()) {
-                                        mAlarm.snooze(picked.get().hour(), picked.get().minute());
+                                        mAlarm.snooze(picked.get().getHour(), picked.get().getMinute());
                                     } else {
                                         AlarmAlertFullScreen.this.sendBroadcast(new Intent(Intents.ACTION_DEMUTE));
                                     }

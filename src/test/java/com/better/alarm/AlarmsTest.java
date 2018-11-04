@@ -2,15 +2,14 @@ package com.better.alarm;
 
 import android.content.ContentResolver;
 
-import com.better.alarm.configuration.ImmutablePrefs;
-import com.better.alarm.configuration.ImmutableStore;
+import com.better.alarm.configuration.Prefs;
 import com.better.alarm.configuration.Store;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.logger.SysoutLogWriter;
-import com.better.alarm.model.AlarmContainer;
+import com.better.alarm.model.AlarmActiveRecord;
 import com.better.alarm.model.AlarmCore;
 import com.better.alarm.model.AlarmCoreFactory;
 import com.better.alarm.model.AlarmSetter;
@@ -20,11 +19,9 @@ import com.better.alarm.model.AlarmsScheduler;
 import com.better.alarm.model.CalendarType;
 import com.better.alarm.model.Calendars;
 import com.better.alarm.model.ContainerFactory;
-import com.better.alarm.model.ImmutableAlarmContainer;
-import com.better.alarm.model.ImmutableDaysOfWeek;
+import com.better.alarm.model.DaysOfWeek;
 import com.better.alarm.persistance.DatabaseQuery;
-import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
+import com.better.alarm.util.Optional;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -44,6 +41,7 @@ import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.TestScheduler;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
+import kotlin.collections.CollectionsKt;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
@@ -57,8 +55,8 @@ public class AlarmsTest {
     private AlarmCore.IStateNotifier stateNotifierMock;
     private AlarmSetter alarmSetterMock;
     private TestScheduler testScheduler;
-    private ImmutableStore store;
-    private ImmutablePrefs prefs;
+    private Store store;
+    private Prefs prefs;
     private Logger logger;
     @Rule
     public TestRule watcher = new TestWatcher() {
@@ -73,18 +71,16 @@ public class AlarmsTest {
         testScheduler = new TestScheduler();
         logger = Logger.create().addLogWriter(new SysoutLogWriter());
 
-        prefs = ImmutablePrefs.builder()
-                .preAlarmDuration(BehaviorSubject.createDefault(10))
-                .snoozeDuration(BehaviorSubject.createDefault(10))
-                .autoSilence(BehaviorSubject.createDefault(10))
-                .is24HoutFormat(Single.just(true))
-                .build();
+        prefs = new Prefs(
+                /* is24HoutFormat */ Single.just(true),
+                /* preAlarmDuration */ BehaviorSubject.createDefault(10),
+                /* snoozeDuration */ BehaviorSubject.createDefault(10),
+                /* autoSilence */ BehaviorSubject.createDefault(10));
 
-        store = ImmutableStore.builder()
-                .alarmsSubject(BehaviorSubject.<List<AlarmValue>>createDefault(new ArrayList<AlarmValue>()))
-                .next(BehaviorSubject.createDefault(Optional.<Store.Next>absent()))
-                .sets(PublishSubject.<Store.AlarmSet>create())
-                .build();
+        store = new Store(
+                /* alarmsSubject */ BehaviorSubject.<List<AlarmValue>>createDefault(new ArrayList<AlarmValue>()),
+                /* next */ BehaviorSubject.createDefault(Optional.<Store.Next>absent()),
+                /* sets */ PublishSubject.<Store.AlarmSet>create());
 
         stateNotifierMock = mock(AlarmCore.IStateNotifier.class);
         alarmSetterMock = mock(AlarmSetter.class);
@@ -118,7 +114,7 @@ public class AlarmsTest {
     @android.support.annotation.NonNull
     private DatabaseQuery mockQuery() {
         final DatabaseQuery query = mock(DatabaseQuery.class);
-        List<AlarmContainer> list = Lists.newArrayList();
+        List<AlarmActiveRecord> list = new ArrayList<>();
         when(query.query()).thenReturn(Single.just(list));
         return query;
     }
@@ -207,14 +203,14 @@ public class AlarmsTest {
         }
 
         @Override
-        public Single<List<AlarmContainer>> query() {
-            AlarmContainer container =
-                    ImmutableAlarmContainer.copyOf(factory.create())
+        public Single<List<AlarmActiveRecord>> query() {
+            AlarmActiveRecord container =
+                    factory.create()
                             .withId(100500)
                             .withIsEnabled(true)
                             .withLabel("hello");
 
-            List<AlarmContainer> item = Lists.newArrayList(container);
+            List<AlarmActiveRecord> item = CollectionsKt.arrayListOf(container);
             return Single.just(item);
         }
     }
@@ -293,7 +289,7 @@ public class AlarmsTest {
         //when
         Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
-        newAlarm.edit().withIsEnabled(true).withDaysOfWeek(ImmutableDaysOfWeek.of(1)).commit();
+        newAlarm.edit().withIsEnabled(true).withDaysOfWeek(new DaysOfWeek(1)).commit();
         testScheduler.triggerActions();
 
         instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
@@ -326,7 +322,7 @@ public class AlarmsTest {
         testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
 
-        newAlarm.edit().withDaysOfWeek(ImmutableDaysOfWeek.of(1)).withIsPrealarm(true).commit();
+        newAlarm.edit().withDaysOfWeek(new DaysOfWeek(1)).withIsPrealarm(true).commit();
         testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
 
@@ -352,7 +348,7 @@ public class AlarmsTest {
         Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
         //TODO circle the time, otherwise the tests may fail around 0 hours
-        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(ImmutableDaysOfWeek.of(1)).withIsPrealarm(true).commit();
+        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(new DaysOfWeek(1)).withIsPrealarm(true).commit();
         testScheduler.triggerActions();
         //TODO verify
 
@@ -387,7 +383,7 @@ public class AlarmsTest {
         Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
         //TODO circle the time, otherwise the tests may fail around 0 hours
-        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(ImmutableDaysOfWeek.of(1)).commit();
+        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(new DaysOfWeek(1)).commit();
         testScheduler.triggerActions();
         //TODO verify
 
@@ -408,7 +404,7 @@ public class AlarmsTest {
         Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
         //TODO circle the time, otherwise the tests may fail around 0 hours
-        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(ImmutableDaysOfWeek.of(1)).withIsPrealarm(true).commit();
+        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(new DaysOfWeek(1)).withIsPrealarm(true).commit();
         testScheduler.triggerActions();
         //TODO verify
 
@@ -434,7 +430,7 @@ public class AlarmsTest {
         Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
         //TODO circle the time, otherwise the tests may fail around 0 hours
-        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(ImmutableDaysOfWeek.of(1)).withIsPrealarm(true).commit();
+        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(new DaysOfWeek(1)).withIsPrealarm(true).commit();
         testScheduler.triggerActions();
         //TODO verify
 

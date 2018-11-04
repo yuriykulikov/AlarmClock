@@ -3,10 +3,8 @@ package com.better.alarm.persistance;
 import android.content.ContentResolver;
 import android.database.Cursor;
 
-import com.better.alarm.model.AlarmContainer;
+import com.better.alarm.model.AlarmActiveRecord;
 import com.better.alarm.model.ContainerFactory;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 import org.reactivestreams.Publisher;
 
@@ -20,6 +18,7 @@ import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
+import kotlin.jvm.internal.Intrinsics;
 
 /**
  * Created by Yuriy on 10.06.2017.
@@ -34,15 +33,16 @@ public class DatabaseQuery {
         this.factory = factory;
     }
 
-    public Single<List<AlarmContainer>> query() {
+    public Single<List<AlarmActiveRecord>> query() {
 
         return Single
                 .create(new SingleOnSubscribe<Cursor>() {
                     @Override
                     public void subscribe(@NonNull SingleEmitter<Cursor> e) throws Exception {
                         final Cursor cursor = contentResolver
-                                .query(PersistingContainerFactory.Columns.CONTENT_URI, PersistingContainerFactory.Columns.ALARM_QUERY_COLUMNS, null, null, PersistingContainerFactory.Columns.DEFAULT_SORT_ORDER);
-                        e.onSuccess(Preconditions.checkNotNull(cursor));
+                                .query(Columns.contentUri(), Columns.ALARM_QUERY_COLUMNS, null, null, Columns.DEFAULT_SORT_ORDER);
+                        Intrinsics.checkNotNull(cursor, "cursor");
+                        e.onSuccess(cursor);
                     }
                 })
                 .retryWhen(new Function<Flowable<Throwable>, Publisher<?>>() {
@@ -55,10 +55,10 @@ public class DatabaseQuery {
                                 .delay(500, TimeUnit.MILLISECONDS);
                     }
                 })
-                .map(new Function<Cursor, List<AlarmContainer>>() {
+                .map(new Function<Cursor, List<AlarmActiveRecord>>() {
                     @Override
-                    public List<AlarmContainer> apply(@NonNull Cursor cursor) throws Exception {
-                        List<AlarmContainer> alarms = new ArrayList<AlarmContainer>();
+                    public List<AlarmActiveRecord> apply(@NonNull Cursor cursor) throws Exception {
+                        List<AlarmActiveRecord> alarms = new ArrayList<AlarmActiveRecord>();
                         try {
                             if (cursor.moveToFirst()) {
                                 do {
@@ -72,6 +72,6 @@ public class DatabaseQuery {
                     }
                 })
                 //emit an empty list if it all fails
-                .onErrorResumeNext(Single.just(Lists.<AlarmContainer>newArrayList()));
+                .onErrorResumeNext(Single.just(new ArrayList<AlarmActiveRecord>()));
     }
 }

@@ -19,11 +19,10 @@ package com.better.alarm.model;
 
 import android.net.Uri;
 
-import com.better.alarm.configuration.ImmutableAlarmSet;
 import com.better.alarm.configuration.Prefs;
 import com.better.alarm.configuration.Store;
 import com.better.alarm.interfaces.Alarm;
-import com.better.alarm.interfaces.ImmutableAlarmEditor;
+import com.better.alarm.interfaces.AlarmEditor;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.statemachine.ComplexTransition;
@@ -33,14 +32,10 @@ import com.better.alarm.statemachine.IState;
 import com.better.alarm.statemachine.Message;
 import com.better.alarm.statemachine.State;
 import com.better.alarm.statemachine.StateMachine;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -103,11 +98,11 @@ import io.reactivex.functions.Consumer;
  *
  * @author Yuriy
  */
-public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
+public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
     private final IAlarmsScheduler mAlarmsScheduler;
     private final Logger log;
     private final IStateNotifier broadcaster;
-    private ImmutableAlarmContainer container;
+    private AlarmActiveRecord container;
     private final AlarmStateMachine stateMachine;
     private final DateFormat df;
 
@@ -118,11 +113,11 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
     private final Store store;
     private final Calendars calendars;
 
-    public AlarmCore(AlarmContainer container, Logger logger, IAlarmsScheduler alarmsScheduler, IStateNotifier broadcaster, HandlerFactory handlerFactory, Prefs prefs, Store store, Calendars calendars) {
+    public AlarmCore(AlarmActiveRecord container, Logger logger, IAlarmsScheduler alarmsScheduler, IStateNotifier broadcaster, HandlerFactory handlerFactory, Prefs prefs, Store store, Calendars calendars) {
         this.log = logger;
         this.calendars = calendars;
         this.mAlarmsScheduler = alarmsScheduler;
-        this.container = ImmutableAlarmContainer.copyOf(container);
+        this.container = container;
         this.broadcaster = broadcaster;
         this.df = new SimpleDateFormat("dd-MM-yy HH:mm:ss", Locale.GERMANY);
 
@@ -242,8 +237,8 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
             }
 
             @Override
-            protected void onChange(AlarmChangeData changeData) {
-                writeChangeData(changeData);
+            protected void onChange(AlarmValue alarmValue) {
+                writeChangeData(alarmValue);
                 updateListInStore();
                 if (container.isEnabled()) {
                     transitionTo(enableTransition);
@@ -306,12 +301,16 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
         private class EnabledState extends AlarmState {
             @Override
             public void enter() {
+                if (!container.isEnabled()) {
+                    // if due to an exception during development an alarm is not enabled but the state is
+                    container = container.withIsEnabled(true);
+                }
                 updateListInStore();
             }
 
             @Override
-            protected void onChange(AlarmChangeData changeData) {
-                writeChangeData(changeData);
+            protected void onChange(AlarmValue alarmValue) {
+                writeChangeData(alarmValue);
                 updateListInStore();
                 if (container.isEnabled()) {
                     transitionTo(enableTransition);
@@ -570,7 +569,7 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
         }
 
         private void broadcastAlarmSetWithNormalTime(long millis) {
-            store.sets().onNext(ImmutableAlarmSet.of(container, millis));
+            store.sets().onNext(new Store.AlarmSet(container, millis));
             updateListInStore();
         }
 
@@ -586,27 +585,15 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
         private void removeFromStore() {
             store.alarms().take(1).subscribe(new Consumer<List<AlarmValue>>() {
                 @Override
-                public void accept(@NonNull List<AlarmValue> alarmValues) throws Exception {
-                    List<AlarmValue> copy = new ArrayList<AlarmValue>(alarmValues);
-
-                    AlarmValue old = Collections2.filter(alarmValues, new Predicate<AlarmValue>() {
-                        @Override
-                        public boolean apply(AlarmValue input) {
-                            return input.getId() == container.getId();
-                        }
-                    }).iterator().next();
-                    copy.remove(alarmValues.indexOf(old));
-
-                    store.alarmsSubject().onNext(copy);
+                public void accept(@NonNull List<AlarmValue> alarmValues) {
+                    List<AlarmValue> withoutId = AlarmUtilsKt.removeWithId(alarmValues, container.getId());
+                    store.alarmsSubject().onNext(withoutId);
                 }
             });
         }
 
-        private void writeChangeData(AlarmChangeData data) {
-            container = ImmutableAlarmContainer.builder()
-                    .from(container)
-                    .from(data)
-                    .build();
+        private void writeChangeData(AlarmValue data) {
+            container = container.withChangeData(data);
         }
 
         private Calendar calculateNextTime() {
@@ -644,7 +631,7 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
         }
 
         private boolean alarmWillBeRescheduled(Message reason) {
-            boolean alarmWillBeRescheduled = reason.what() == CHANGE && ((AlarmChangeData) reason.obj().get()).isEnabled();
+            boolean alarmWillBeRescheduled = reason.what() == CHANGE && ((AlarmValue) reason.obj().get()).isEnabled();
             return alarmWillBeRescheduled;
         }
 
@@ -668,7 +655,7 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
                         onDismiss();
                         break;
                     case CHANGE:
-                        onChange((AlarmChangeData) msg.obj().get());
+                        onChange((AlarmValue) msg.obj().get());
                         break;
                     case FIRED:
                         onFired();
@@ -711,7 +698,7 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
                 markNotHandled();
             }
 
-            protected void onChange(AlarmChangeData changeData) {
+            protected void onChange(AlarmValue alarmValue) {
                 markNotHandled();
             }
 
@@ -738,27 +725,10 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
     }
 
     private void updateListInStore() {
-        final AlarmValue toStore = container;
-
         store.alarms().take(1).subscribe(new Consumer<List<AlarmValue>>() {
             @Override
-            public void accept(@NonNull List<AlarmValue> alarmValues) throws Exception {
-
-                Iterator<AlarmValue> optional = Collections2.filter(alarmValues, new Predicate<AlarmValue>() {
-                    @Override
-                    public boolean apply(AlarmValue input) {
-                        return input.getId() == container.getId();
-                    }
-                }).iterator();
-
-                List<AlarmValue> copy = new ArrayList<AlarmValue>(alarmValues);
-
-                if (optional.hasNext()) {
-                    AlarmValue old = optional.next();
-                    copy.set(alarmValues.indexOf(old), toStore);
-                } else {
-                    copy.add(toStore);
-                }
+            public void accept(@NonNull List<AlarmValue> alarmValues) {
+                List<AlarmValue> copy = AlarmUtilsKt.addOrReplace(alarmValues, container);
 
                 store.alarmsSubject().onNext(copy);
             }
@@ -769,7 +739,7 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
      * for {@link #edit()}
      */
     @Override
-    public void accept(@NonNull AlarmChangeData alarmChangeData) throws Exception {
+    public void accept(@NonNull AlarmValue alarmChangeData) throws Exception {
         change(alarmChangeData);
     }
 
@@ -785,7 +755,7 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
         stateMachine.sendMessage(AlarmStateMachine.TIME_SET);
     }
 
-    public void change(AlarmChangeData data) {
+    public void change(AlarmValue data) {
         stateMachine.obtainMessage(AlarmStateMachine.CHANGE)
                 .withObj(data)
                 .send();
@@ -855,8 +825,8 @@ public final class AlarmCore implements Alarm, Consumer<AlarmChangeData> {
     }
 
     @Override
-    public ImmutableAlarmEditor edit() {
-        return ImmutableAlarmEditor.builder().from(container).callback(this).build();
+    public AlarmEditor edit() {
+        return new AlarmEditor((Consumer<AlarmValue>) this, container.getAlarmValue());
     }
 
     @Override

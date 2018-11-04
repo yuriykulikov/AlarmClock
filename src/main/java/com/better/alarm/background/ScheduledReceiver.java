@@ -28,7 +28,7 @@ import com.better.alarm.configuration.Prefs;
 import com.better.alarm.configuration.Store;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.presenter.AlarmsListActivity;
-import com.google.common.base.Optional;
+import com.better.alarm.util.Optional;
 
 import java.util.Calendar;
 
