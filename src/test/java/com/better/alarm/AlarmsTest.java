@@ -338,7 +338,7 @@ public class AlarmsTest {
         ArgumentCaptor<AlarmsScheduler.ScheduledAlarm> captor = ArgumentCaptor.forClass(AlarmsScheduler.ScheduledAlarm.class);
         verify(alarmSetterMock, atLeastOnce()).setUpRTCAlarm(captor.capture());
 
-        assertEquals(newAlarm.getId(), captor.getValue().id);
+        assertEquals(newAlarm.getId(), captor.getValue().getId());
     }
 
 
