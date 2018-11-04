@@ -567,7 +567,7 @@ public class StateMachine {
         mSmHandler.handler.obtainMessage(what).send();
     }
 
-    public final ImmutableMessage obtainMessage(int what) {
+    public final Message obtainMessage(int what) {
         return mSmHandler.handler.obtainMessage(what);
     }
 

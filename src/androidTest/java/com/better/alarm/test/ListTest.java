@@ -15,7 +15,7 @@ import com.better.alarm.model.AlarmValue;
 import com.better.alarm.model.CalendarType;
 import com.better.alarm.presenter.AlarmsListActivity;
 import com.better.alarm.services.AlarmsService;
-import com.google.common.base.Optional;
+import com.better.alarm.util.Optional;
 
 import org.hamcrest.Matcher;
 import org.junit.Rule;

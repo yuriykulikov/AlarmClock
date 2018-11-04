@@ -7,8 +7,7 @@ import android.test.suitebuilder.annotation.LargeTest;
 import com.better.alarm.R;
 import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.presenter.AlarmsListActivity;
-import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
+import com.better.alarm.util.Optional;
 
 import org.junit.After;
 import org.junit.Before;
@@ -19,6 +18,8 @@ import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 
 import java.util.Locale;
+
+import kotlin.collections.CollectionsKt;
 
 import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
 import static cortado.Cortado.onView;
@@ -129,30 +130,30 @@ public class PickerTest extends BaseTest {
     private void assertState(Next next, QuickMinutes quickMinutes, Completion completion) {
         switch (next) {
             case ANY:
-                for (cortado.ViewInteraction view : Lists.newArrayList(zero(), one(), two(), three(), four(), five(), six(), seven(), eight(), nine())) {
+                for (cortado.ViewInteraction view : CollectionsKt.arrayListOf(zero(), one(), two(), three(), four(), five(), six(), seven(), eight(), nine())) {
                     view.check().matches(isEnabled());
                 }
                 break;
             case AFTER_20:
-                for (cortado.ViewInteraction view : Lists.newArrayList(zero(), one(), two(), three(), four(), five())) {
+                for (cortado.ViewInteraction view : CollectionsKt.arrayListOf(zero(), one(), two(), three(), four(), five())) {
                     view.check().matches(isEnabled());
                 }
 
-                for (cortado.ViewInteraction view : Lists.newArrayList(six(), seven(), eight(), nine())) {
+                for (cortado.ViewInteraction view : CollectionsKt.arrayListOf(six(), seven(), eight(), nine())) {
                     view.check().matches(not(isEnabled()));
                 }
                 break;
             case TENS_OF_MINUTES:
-                for (cortado.ViewInteraction view : Lists.newArrayList(zero(), one(), two(), three(), four(), five())) {
+                for (cortado.ViewInteraction view : CollectionsKt.arrayListOf(zero(), one(), two(), three(), four(), five())) {
                     view.check().matches(isEnabled());
                 }
 
-                for (cortado.ViewInteraction view : Lists.newArrayList(six(), seven(), eight(), nine())) {
+                for (cortado.ViewInteraction view : CollectionsKt.arrayListOf(six(), seven(), eight(), nine())) {
                     view.check().matches(not(isEnabled()));
                 }
                 break;
             case NONE:
-                for (cortado.ViewInteraction view : Lists.newArrayList(zero(), one(), two(), three(), four(), five(), six(), seven(), eight(), nine())) {
+                for (cortado.ViewInteraction view : CollectionsKt.arrayListOf(zero(), one(), two(), three(), four(), five(), six(), seven(), eight(), nine())) {
                     view.check().matches(not(isEnabled()));
                 }
                 break;

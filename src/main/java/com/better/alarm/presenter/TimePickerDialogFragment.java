@@ -28,11 +28,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.better.alarm.R;
-import com.better.alarm.logger.Logger;
 import com.better.alarm.view.TimePicker;
-import com.google.common.base.Optional;
-
-import org.immutables.value.Value;
+import com.better.alarm.util.Optional;
 
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
@@ -85,10 +82,7 @@ public class TimePickerDialogFragment extends DialogFragment {
         set.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PickedTime picked = ImmutablePickedTime.builder()
-                        .hour(mPicker.getHours())
-                        .minute(mPicker.getMinutes())
-                        .build();
+                PickedTime picked = new PickedTime(mPicker.getHours(), mPicker.getMinutes());
                 emitter.onSuccess(Optional.of(picked));
                 dismiss();
             }
@@ -108,14 +102,6 @@ public class TimePickerDialogFragment extends DialogFragment {
 
     private void setEmitter(SingleEmitter<Optional<PickedTime>> emitter) {
         this.emitter = emitter;
-    }
-
-    @Value.Immutable
-    @Value.Style(stagedBuilder = true)
-    public interface PickedTime {
-        int hour();
-
-        int minute();
     }
 
     public static Single<Optional<PickedTime>> showTimePicker(final FragmentManager fragmentManager) {

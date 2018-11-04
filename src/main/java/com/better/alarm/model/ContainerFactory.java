@@ -7,7 +7,7 @@ import android.database.Cursor;
  */
 
 public interface ContainerFactory {
-    AlarmContainer create();
+    AlarmActiveRecord create();
 
-    AlarmContainer create(Cursor cursor);
+    AlarmActiveRecord create(Cursor cursor);
 }

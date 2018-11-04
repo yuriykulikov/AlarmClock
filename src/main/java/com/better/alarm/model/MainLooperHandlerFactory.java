@@ -4,7 +4,6 @@ import android.os.Handler;
 
 import com.better.alarm.statemachine.HandlerFactory;
 import com.better.alarm.statemachine.IHandler;
-import com.better.alarm.statemachine.ImmutableMessage;
 import com.better.alarm.statemachine.Message;
 import com.better.alarm.statemachine.MessageHandler;
 
@@ -34,13 +33,13 @@ public class MainLooperHandlerFactory implements HandlerFactory {
             }
 
             @Override
-            public ImmutableMessage obtainMessage(int what, Object obj) {
+            public Message obtainMessage(int what, Object obj) {
                 return obtainMessage(what).withObj(obj);
             }
 
             @Override
-            public ImmutableMessage obtainMessage(int what) {
-                return ImmutableMessage.builder().what(what).handler(this).build();
+            public Message obtainMessage(int what) {
+                return Message.create(what, this);
             }
         };
     }

@@ -10,7 +10,7 @@ import android.preference.*
 import android.provider.Settings
 import com.better.alarm.R
 import com.better.alarm.configuration.AlarmApplication.container
-import com.better.alarm.configuration.Prefs.*
+import com.better.alarm.configuration.Prefs
 import io.reactivex.disposables.CompositeDisposable
 
 /**
@@ -38,7 +38,7 @@ class SettingsFragment : PreferenceFragment() {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            category.removePreference(findPreference(KEY_ALARM_IN_SILENT_MODE))
+            category.removePreference(findPreference(Prefs.KEY_ALARM_IN_SILENT_MODE))
         }
 
         findPreference("theme").onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
@@ -54,7 +54,7 @@ class SettingsFragment : PreferenceFragment() {
 
     override fun onPreferenceTreeClick(preferenceScreen: PreferenceScreen, preference: Preference): Boolean {
         when (preference.key) {
-            KEY_ALARM_IN_SILENT_MODE -> {
+            Prefs.KEY_ALARM_IN_SILENT_MODE -> {
                 val pref = preference as CheckBoxPreference
 
                 val ringerModeStreamTypes = when {
@@ -75,13 +75,13 @@ class SettingsFragment : PreferenceFragment() {
     override fun onResume() {
         super.onResume()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            val alarmInSilentModePref = findPreference(KEY_ALARM_IN_SILENT_MODE) as CheckBoxPreference
+            val alarmInSilentModePref = findPreference(Prefs.KEY_ALARM_IN_SILENT_MODE) as CheckBoxPreference
             alarmInSilentModePref.isChecked = (systemModeRingerStreamsAffected() and ALARM_STREAM_TYPE_BIT) == 0
         }
 
-        findListPreference(KEY_ALARM_SNOOZE)
+        findListPreference(Prefs.KEY_ALARM_SNOOZE)
                 .let { snoozePref ->
-                    rxSharedPreferences.getString(KEY_ALARM_SNOOZE)
+                    rxSharedPreferences.getString(Prefs.KEY_ALARM_SNOOZE)
                             .asObservable()
                             .subscribe { newValue ->
                                 val idx = snoozePref.findIndexOfValue(newValue)
@@ -90,9 +90,9 @@ class SettingsFragment : PreferenceFragment() {
                 }
                 .let { disposables.add(it) }
 
-        findListPreference(KEY_AUTO_SILENCE)
+        findListPreference(Prefs.KEY_AUTO_SILENCE)
                 .let { autoSilencePref ->
-                    rxSharedPreferences.getString(KEY_AUTO_SILENCE)
+                    rxSharedPreferences.getString(Prefs.KEY_AUTO_SILENCE)
                             .asObservable()
                             .subscribe { newValue ->
                                 autoSilencePref.summary = when {
@@ -103,9 +103,9 @@ class SettingsFragment : PreferenceFragment() {
                 }
                 .let { disposables.add(it) }
 
-        findListPreference(KEY_PREALARM_DURATION)
+        findListPreference(Prefs.KEY_PREALARM_DURATION)
                 .let { prealarmDurationPref ->
-                    rxSharedPreferences.getString(KEY_PREALARM_DURATION)
+                    rxSharedPreferences.getString(Prefs.KEY_PREALARM_DURATION)
                             .asObservable()
                             .subscribe { newValue ->
                                 prealarmDurationPref.summary = when {
@@ -117,9 +117,9 @@ class SettingsFragment : PreferenceFragment() {
                 }
                 .let { disposables.add(it) }
 
-        findListPreference(KEY_FADE_IN_TIME_SEC)
+        findListPreference(Prefs.KEY_FADE_IN_TIME_SEC)
                 .let { fadeInPref ->
-                    rxSharedPreferences.getString(KEY_FADE_IN_TIME_SEC)
+                    rxSharedPreferences.getString(Prefs.KEY_FADE_IN_TIME_SEC)
                             .asObservable()
                             .subscribe { newValue ->
                                 when {
@@ -131,7 +131,7 @@ class SettingsFragment : PreferenceFragment() {
                 .let { disposables.add(it) }
 
 
-        (findPreference(KEY_DEFAULT_RINGTONE) as RingtonePreference)
+        (findPreference(Prefs.KEY_DEFAULT_RINGTONE) as RingtonePreference)
                 .bindPreferenceSummary(rxSharedPreferences, activity)
                 .let { disposables.add(it) }
 

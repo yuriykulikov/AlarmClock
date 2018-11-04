@@ -8,7 +8,7 @@ public interface IHandler {
 
     void sendMessage(Message what);
 
-    ImmutableMessage obtainMessage(int what, Object obj);
+    Message obtainMessage(int what, Object obj);
 
-    ImmutableMessage obtainMessage(int what);
+    Message obtainMessage(int what);
 }

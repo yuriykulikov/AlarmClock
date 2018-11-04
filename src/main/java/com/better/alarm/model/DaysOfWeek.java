@@ -4,8 +4,6 @@ import android.content.Context;
 
 import com.better.alarm.R;
 
-import org.immutables.value.Value;
-
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 
@@ -14,11 +12,11 @@ import java.util.Calendar;
  * Tuesday 0x04: Wednesday 0x08: Thursday 0x10: Friday 0x20: Saturday 0x40:
  * Sunday
  */
-@Value.Immutable
-public abstract class DaysOfWeek {
+public class DaysOfWeek {
 
     private static final int[] DAY_MAP = new int[]{Calendar.MONDAY, Calendar.TUESDAY, Calendar.WEDNESDAY,
             Calendar.THURSDAY, Calendar.FRIDAY, Calendar.SATURDAY, Calendar.SUNDAY,};
+    private int coded;
 
     public String toString(Context context, boolean showNever) {
         StringBuilder ret = new StringBuilder();
@@ -61,11 +59,16 @@ public abstract class DaysOfWeek {
         return (getCoded() & 1 << day) > 0;
     }
 
-    @Value.Parameter
-    public abstract int getCoded();
+
+    public DaysOfWeek(int coded){
+        this.coded = coded;
+    }
+
+    public int getCoded(){
+        return coded;
+    }
 
     // Returns days of week encoded in an array of booleans.
-    @Value.Lazy
     public boolean[] getBooleanArray() {
         boolean[] ret = new boolean[7];
         for (int i = 0; i < 7; i++) {
@@ -74,7 +77,6 @@ public abstract class DaysOfWeek {
         return ret;
     }
 
-    @Value.Derived
     public boolean isRepeatSet() {
         return getCoded() != 0;
     }
@@ -98,5 +100,35 @@ public abstract class DaysOfWeek {
             }
         }
         return dayCount;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DaysOfWeek that = (DaysOfWeek) o;
+        return coded == that.coded;
+    }
+
+    @Override
+    public int hashCode() {
+        return coded;
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder(8)
+                .append(ifSet(0, 'm'))
+                .append(ifSet(1, 't'))
+                .append(ifSet(2, 'w'))
+                .append(ifSet(3, 't'))
+                .append(ifSet(4, 'f'))
+                .append(ifSet(5, 's'))
+                .append(ifSet(6, 's'))
+                .toString();
+    }
+
+    private char ifSet(int day, char letter) {
+        return isSet(day) ? letter : '_';
     }
 }

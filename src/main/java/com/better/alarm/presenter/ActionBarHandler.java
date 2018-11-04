@@ -17,7 +17,6 @@ import android.widget.ShareActionProvider;
 import com.better.alarm.R;
 import com.better.alarm.configuration.EditedAlarm;
 import com.better.alarm.interfaces.IAlarmsManager;
-import com.google.common.base.Preconditions;
 
 import org.acra.ACRA;
 
@@ -25,6 +24,7 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
 import io.reactivex.functions.Consumer;
+import kotlin.jvm.internal.Intrinsics;
 
 /**
  * This class handles options menu and action bar
@@ -41,7 +41,8 @@ public class ActionBarHandler {
 
     //not injected - requires activity to work
     public ActionBarHandler(Activity context, UiStore store, IAlarmsManager alarms) {
-        this.mContext = Preconditions.checkNotNull(context);
+        Intrinsics.checkNotNull(context, "context");
+        this.mContext = context;
         this.store = store;
         this.alarms = alarms;
     }

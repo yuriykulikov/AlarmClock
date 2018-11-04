@@ -50,7 +50,7 @@ class KlaxonServiceDelegate(
     init {
         volume = Volume()
         player = null
-        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "KlaxonService")
+        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SimpleAlarmClock:KlaxonService")
         wakeLock.acquire()
     }
 

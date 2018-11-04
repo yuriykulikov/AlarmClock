@@ -28,7 +28,7 @@ public class AlarmCoreFactory {
         this.calendars = calendars;
     }
 
-    public AlarmCore create(AlarmContainer container) {
+    public AlarmCore create(AlarmActiveRecord container) {
         return new AlarmCore(container, logger, alarmsScheduler, broadcaster, handlerFactory, prefs, store, calendars);
     }
 }

@@ -92,12 +92,12 @@ class AlarmsListFragment : Fragment() {
             row.digitalClock().setOnClickListener {
                 timePickerDialogDisposable = TimePickerDialogFragment.showTimePicker(fragmentManager)
                         .subscribe { picked ->
-                            if (picked.isPresent) {
+                            if (picked.isPresent()) {
                                 alarms.getAlarm(alarm.id)
                                         .edit()
                                         .withIsEnabled(true)
-                                        .withHour(picked.get().hour())
-                                        .withMinutes(picked.get().minute())
+                                        .withHour(picked.get().hour)
+                                        .withMinutes(picked.get().minute)
                                         .commit()
                             }
                         }
@@ -182,7 +182,7 @@ class AlarmsListFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
-        val fab = view.findViewById(R.id.fab)
+        val fab: View = view.findViewById(R.id.fab)
         fab.setOnClickListener { uiStore.createNewAlarm() }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

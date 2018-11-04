@@ -15,7 +15,7 @@ public interface Alarm {
 
     void delete();
 
-    ImmutableAlarmEditor edit();
+    AlarmEditor edit();
 
     boolean isSilent();
 

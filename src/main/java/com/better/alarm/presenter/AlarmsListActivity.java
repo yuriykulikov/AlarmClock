@@ -34,12 +34,12 @@ import android.view.MenuItem;
 
 import com.better.alarm.R;
 import com.better.alarm.configuration.EditedAlarm;
-import com.better.alarm.configuration.ImmutableEditedAlarm;
 import com.better.alarm.configuration.Store;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.model.AlarmValue;
+import com.better.alarm.util.Optional;
 
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
@@ -157,8 +157,8 @@ public class AlarmsListActivity extends Activity {
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-        if (edited.holder().isPresent()) {
-            RowHolder viewHolder = edited.holder().get();
+        if (edited.getHolder().isPresent()) {
+            RowHolder viewHolder = edited.getHolder().get();
             transaction.addSharedElement(viewHolder.digitalClock(), "clock" + viewHolder.alarmId());
             transaction.addSharedElement(viewHolder.container(), "onOff" + viewHolder.alarmId());
         }
@@ -171,8 +171,8 @@ public class AlarmsListActivity extends Activity {
         Fragment listFragment = getFragmentManager().findFragmentById(R.id.main_fragment_container);
         if (listFragment != null) {
             //Explode explode = new Explode();
-            //if (edited.holder().isPresent()) {
-            //    explode.setEpicenterCallback(edited.holder().get().epicenter());
+            //if (edited.getHolder().isPresent()) {
+            //    explode.setEpicenterCallback(edited.getHolder().get().epicenter());
             //}
             listFragment.setExitTransition(new Fade());
         }
@@ -180,8 +180,8 @@ public class AlarmsListActivity extends Activity {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         Slide enterSlide = new Slide();
 
-        if (edited.holder().isPresent()) {
-            final RowHolder viewHolder = edited.holder().get();
+        if (edited.getHolder().isPresent()) {
+            final RowHolder viewHolder = edited.getHolder().get();
             fragmentTransaction.addSharedElement(viewHolder.digitalClock(), "clock" + viewHolder.alarmId());
             fragmentTransaction.addSharedElement(viewHolder.container(), "onOff" + viewHolder.alarmId());
             enterSlide.setEpicenterCallback(viewHolder.epicenter());
@@ -192,7 +192,7 @@ public class AlarmsListActivity extends Activity {
 
         Bundle args = new Bundle();
         args.putInt(Intents.EXTRA_ID, edited.id());
-        args.putBoolean(Store.IS_NEW_ALARM, edited.isNew());
+        args.putBoolean(Store.Companion.getIS_NEW_ALARM(), edited.isNew());
         detailsFragment.setArguments(args);
         detailsFragment.setSharedElementEnterTransition(TransitionInflater.from(AlarmsListActivity.this).inflateTransition(android.R.transition.move));
         detailsFragment.setEnterTransition(new TransitionSet().addTransition(enterSlide).addTransition(new Fade()));
@@ -208,7 +208,7 @@ public class AlarmsListActivity extends Activity {
 
     private UiStore store = new UiStore() {
         public PublishSubject<String> onBackPressed = PublishSubject.<String>create();
-        public Subject<EditedAlarm> editing = BehaviorSubject.createDefault((EditedAlarm) ImmutableEditedAlarm.builder().build());
+        public Subject<EditedAlarm> editing = BehaviorSubject.createDefault(new EditedAlarm());
         public Subject<Boolean> transitioningToNewAlarmDetails = BehaviorSubject.createDefault(false);
 
         @Override
@@ -225,11 +225,11 @@ public class AlarmsListActivity extends Activity {
         public void createNewAlarm() {
             transitioningToNewAlarmDetails.onNext(true);
             AlarmValue newAlarm = alarms.createNewAlarm().edit();
-            editing().onNext(ImmutableEditedAlarm.builder()
-                    .isNew(true)
-                    .id(newAlarm.getId())
-                    .isEdited(true)
-                    .build());
+            editing().onNext(new EditedAlarm(
+                    /* new */ true,
+                    /* edited */true,
+                    /* id */ newAlarm.getId(),
+                    Optional.<RowHolder>absent()));
         }
 
         @Override
@@ -239,39 +239,34 @@ public class AlarmsListActivity extends Activity {
 
         @Override
         public void edit(int id) {
-            editing().onNext(ImmutableEditedAlarm.builder()
-                    .isNew(false)
-                    .id(id)
-                    .isEdited(true)
-                    .build());
+            editing().onNext(new EditedAlarm(
+                    /* new */ false,
+                    /* edited */true,
+                    /* id */ id,
+                    Optional.<RowHolder>absent()));
         }
 
         @Override
         public void edit(int id, RowHolder holder) {
-            editing().onNext(ImmutableEditedAlarm.builder()
-                    .isNew(false)
-                    .holder(holder)
-                    .id(id)
-                    .isEdited(true)
-                    .build());
+            editing().onNext(new EditedAlarm(
+                    /* new */ false,
+                    /* edited */true,
+                    /* id */ id,
+                    Optional.<RowHolder>of(holder)));
         }
 
         @Override
         public void hideDetails() {
-            editing().onNext(ImmutableEditedAlarm.builder()
-                    .isNew(false)
-                    .isEdited(false)
-                    .build());
+            editing().onNext(new EditedAlarm());
         }
 
         @Override
         public void hideDetails(RowHolder holder) {
-            editing().onNext(ImmutableEditedAlarm.builder()
-                    .isNew(false)
-                    .id(holder.alarmId())
-                    .isEdited(false)
-                    .holder(holder)
-                    .build());
+            editing().onNext(new EditedAlarm(
+                    /* new */ false,
+                    /* edited */false,
+                    /* id */ holder.alarmId(),
+                    Optional.<RowHolder>of(holder)));
         }
     };
 }

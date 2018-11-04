@@ -17,10 +17,9 @@ import com.better.alarm.model.CalendarType;
 import com.better.alarm.presenter.AlarmsListActivity;
 import com.better.alarm.presenter.HandleSetAlarm;
 import com.better.alarm.presenter.TransparentActivity;
-import com.google.common.base.Optional;
+import com.better.alarm.util.Optional;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -34,7 +33,6 @@ import cortado.Cortado;
 
 import static android.provider.AlarmClock.ACTION_SET_ALARM;
 import static com.better.alarm.configuration.AlarmApplication.container;
-import static com.better.alarm.test.ListAsserts.assertThatList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**

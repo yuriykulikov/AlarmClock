@@ -36,14 +36,14 @@ import android.widget.ListView
 import com.better.alarm.R
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.Store
+import com.better.alarm.interfaces.AlarmEditor
 import com.better.alarm.interfaces.IAlarmsManager
-import com.better.alarm.interfaces.ImmutableAlarmEditor
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
 import com.better.alarm.model.DaysOfWeek
 import com.better.alarm.view.RepeatPreference
 import com.f2prateek.rx.preferences2.RxSharedPreferences
-import com.google.common.base.Optional
+import com.better.alarm.util.Optional
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
@@ -72,7 +72,7 @@ class AlarmDetailsFragment : PreferenceFragment {
     private val mRepeatPref: RepeatPreference by lazy { findPreference("setRepeat") as RepeatPreference }
     private val mPreAlarmPref: CheckBoxPreference by lazy { findPreference("prealarm") as CheckBoxPreference }
 
-    private val editor: Subject<ImmutableAlarmEditor> = BehaviorSubject.create()
+    private val editor: Subject<AlarmEditor> = BehaviorSubject.create()
 
     private val isNewAlarm: Boolean by lazy { arguments.getBoolean(Store.IS_NEW_ALARM) }
     private val alarmId: Int by lazy { arguments.getInt(Intents.EXTRA_ID) }
@@ -99,11 +99,11 @@ class AlarmDetailsFragment : PreferenceFragment {
 
         this.fragmentView = view
 
-        rowHolder.onOff().setOnClickListener({
-            modify("onOff", { editor ->
+        rowHolder.onOff().setOnClickListener {
+            modify("onOff") { editor ->
                 editor.withIsEnabled(!editor.isEnabled)
-            })
-        })
+            }
+        }
 
         rowHolder.detailsButton().visibility = View.INVISIBLE
         rowHolder.daysOfWeek().visibility = View.INVISIBLE
@@ -111,24 +111,24 @@ class AlarmDetailsFragment : PreferenceFragment {
 
         setTransitionNames()
 
-        editor.subscribe { logger.d("---- " + it) }
+        editor.subscribe { logger.d("---- $it") }
 
         rowHolder.digitalClock().setLive(false)
-        rowHolder.digitalClock().setOnClickListener({
+        rowHolder.digitalClock().setOnClickListener {
             disposableDialog = TimePickerDialogFragment.showTimePicker(fragmentManager).subscribe(pickerConsumer)
-        })
+        }
 
         editor.firstOrError().subscribe { editor -> mLabel.setText(editor.label) }
 
         editor.distinctUntilChanged()
-                .subscribe({ editor ->
-                    val c = Calendar.getInstance()
-                    c.set(Calendar.HOUR_OF_DAY, editor.hour)
-                    c.set(Calendar.MINUTE, editor.minutes)
-                    rowHolder.digitalClock().updateTime(c)
+                .subscribe { editor ->
+                    rowHolder.digitalClock().updateTime(Calendar.getInstance().apply {
+                        set(Calendar.HOUR_OF_DAY, editor.hour)
+                        set(Calendar.MINUTE, editor.minutes)
+                    })
 
                     rowHolder.onOff().isChecked = editor.isEnabled
-                })
+                }
 
         view.findViewById(R.id.details_activity_button_save).setOnClickListener { saveAlarm() }
         view.findViewById(R.id.details_activity_button_revert).setOnClickListener { revert() }
@@ -159,7 +159,7 @@ class AlarmDetailsFragment : PreferenceFragment {
                 .subscribe { editor ->
                     mRepeatPref.daysOfWeek = editor.daysOfWeek
                     mPreAlarmPref.isChecked = editor.isPrealarm
-                    rxSharedPreferences.getString(mAlarmPref.key).set(editor.alertString())
+                    rxSharedPreferences.getString(mAlarmPref.key).set(editor.alertString)
                 }
 
         //pre-alarm duration
@@ -179,21 +179,21 @@ class AlarmDetailsFragment : PreferenceFragment {
         disposables.add(rxSharedPreferences.getBoolean(mPreAlarmPref.key)
                 .asObservable()
                 .skip(1)
-                .subscribe({ preAlarmEnabled ->
-                    modify("Pre-alarm", { editor -> editor.withIsPrealarm(preAlarmEnabled).withIsEnabled(true) })
-                }))
+                .subscribe { preAlarmEnabled ->
+                    modify("Pre-alarm") { editor -> editor.with(isPrealarm = preAlarmEnabled, enabled = true) }
+                })
 
         //Alert summary
         mAlarmPref.bindPreferenceSummary().let { disposables.add(it) }
         //Alert
-        mAlarmPref.setOnPreferenceChangeListener({ _, alert ->
-            modify("Alert", { editor -> editor.withAlertString(alert as String).withIsEnabled(true) })
+        mAlarmPref.setOnPreferenceChangeListener { _, alert ->
+            modify("Alert") { editor -> editor.with(alertString = alert as String, enabled = true) }
             true
-        })
+        }
 
         //repeat
         mRepeatPref.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, daysOfWeek ->
-            modify("Repeat", { editor -> editor.withDaysOfWeek(daysOfWeek as DaysOfWeek).withIsEnabled(true) })
+            modify("Repeat") { editor -> editor.with(daysOfWeek = daysOfWeek as DaysOfWeek, enabled = true) }
             true
         }
     }
@@ -235,18 +235,18 @@ class AlarmDetailsFragment : PreferenceFragment {
         }
     }
 
-    val pickerConsumer = { picked: Optional<TimePickerDialogFragment.PickedTime> ->
-        if (picked.isPresent) {
-            modify("Picker") { editor: ImmutableAlarmEditor ->
-                editor.withHour(picked.get().hour())
-                        .withMinutes(picked.get().minute())
-                        .withIsEnabled(true)
+    val pickerConsumer = { picked: Optional<PickedTime> ->
+        if (picked.isPresent()) {
+            modify("Picker") { editor: AlarmEditor ->
+                editor.with(hour = picked.get().hour,
+                        minutes = picked.get().minute,
+                        enabled = true)
             }
         }
     }
 
-    private fun modify(reason: String, function: (ImmutableAlarmEditor) -> ImmutableAlarmEditor) {
-        logger.d("Performing modification because of " + reason)
+    private fun modify(reason: String, function: (AlarmEditor) -> AlarmEditor) {
+        logger.d("Performing modification because of $reason")
         editor.firstOrError().subscribe { ed -> editor.onNext(function.invoke(ed)) }
     }
 
