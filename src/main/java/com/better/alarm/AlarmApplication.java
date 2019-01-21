@@ -16,12 +16,16 @@
 package com.better.alarm;
 
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.view.ViewConfiguration;
 
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.presenter.DynamicThemeHandler;
+import com.better.alarm.presenter.alert.AlarmAlertReceiver;
 import com.github.androidutils.logger.LogcatLogWriterWithLines;
 import com.github.androidutils.logger.Logger;
 import com.github.androidutils.logger.LoggingExceptionHandler;
@@ -89,6 +93,8 @@ public class AlarmApplication extends Application {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         deleteLogs(logger, getApplicationContext());
+
+        AlarmAlertReceiver.createNotificationChannel(this);
 
         logger.d("onCreate");
         super.onCreate();

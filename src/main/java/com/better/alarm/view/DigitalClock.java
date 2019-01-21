@@ -31,6 +31,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.better.alarm.Broadcasts;
 import com.better.alarm.R;
 
 /**
@@ -136,7 +137,7 @@ public class DigitalClock extends LinearLayout {
             filter.addAction(Intent.ACTION_TIME_TICK);
             filter.addAction(Intent.ACTION_TIME_CHANGED);
             filter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
-            getContext().registerReceiver(mIntentReceiver, filter);
+            Broadcasts.registerSystem(getContext(), mIntentReceiver, filter);
         }
 
         /* monitor 12/24-hour display preference */
@@ -155,7 +156,7 @@ public class DigitalClock extends LinearLayout {
         mAttached = false;
 
         if (mLive) {
-            getContext().unregisterReceiver(mIntentReceiver);
+            Broadcasts.unregisterSystem(getContext(), mIntentReceiver);
         }
         getContext().getContentResolver().unregisterContentObserver(mFormatChangeObserver);
     }

@@ -27,6 +27,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +36,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.better.alarm.Broadcasts;
 import com.better.alarm.R;
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.interfaces.Alarm;
@@ -72,7 +74,9 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
     /**
      * Receives Intents from the model
      */
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mReceiver = new Receiver();
+
+    public class Receiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -93,7 +97,9 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
                 }
             }
         }
-    };
+    }
+
+    ;
     private SharedPreferences sp;
 
     @Override
@@ -142,7 +148,7 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
             filter.addAction(Intents.ALARM_DISMISS_ACTION);
             filter.addAction(Intents.ACTION_CANCEL_SNOOZE);
             filter.addAction(Intents.ACTION_SOUND_EXPIRED);
-            registerReceiver(mReceiver, filter);
+            Broadcasts.registerLocal(this, mReceiver, filter);
         } catch (AlarmNotFoundException e) {
             Logger.getDefaultLogger().d("Alarm not found");
         }
@@ -193,12 +199,12 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
             public boolean onLongClick(View v) {
                 if (isSnoozeEnabled()) {
                     TimePickerDialogFragment.showTimePicker(getFragmentManager());
-                    AlarmAlertFullScreen.this.sendBroadcast(new Intent(Intents.ACTION_MUTE));
+                    Broadcasts.sendExplicit(AlarmAlertFullScreen.this, new Intent(Intents.ACTION_MUTE));
                     new android.os.Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             //TODO think about removing this or whatevar
-                            AlarmAlertFullScreen.this.sendBroadcast(new Intent(Intents.ACTION_DEMUTE));
+                            Broadcasts.sendExplicit(AlarmAlertFullScreen.this, new Intent(Intents.ACTION_DEMUTE));
                         }
                     }, 10000);
                 }
@@ -283,7 +289,7 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
         super.onDestroy();
         Logger.getDefaultLogger().d("AlarmAlert.onDestroy()");
         // No longer care about the alarm being killed.
-        unregisterReceiver(mReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
     }
 
     @Override
@@ -291,29 +297,29 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
         // Do this on key down to handle a few of the system keys.
         boolean up = event.getAction() == KeyEvent.ACTION_UP;
         switch (event.getKeyCode()) {
-        // Volume keys and camera keys dismiss the alarm
-        case KeyEvent.KEYCODE_VOLUME_UP:
-        case KeyEvent.KEYCODE_VOLUME_DOWN:
-        case KeyEvent.KEYCODE_VOLUME_MUTE:
-        case KeyEvent.KEYCODE_CAMERA:
-        case KeyEvent.KEYCODE_FOCUS:
-            if (up) {
-                switch (mVolumeBehavior) {
-                case 1:
-                    snoozeIfEnabledInSettings();
-                    break;
+            // Volume keys and camera keys dismiss the alarm
+            case KeyEvent.KEYCODE_VOLUME_UP:
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+            case KeyEvent.KEYCODE_VOLUME_MUTE:
+            case KeyEvent.KEYCODE_CAMERA:
+            case KeyEvent.KEYCODE_FOCUS:
+                if (up) {
+                    switch (mVolumeBehavior) {
+                        case 1:
+                            snoozeIfEnabledInSettings();
+                            break;
 
-                case 2:
-                    dismiss();
-                    break;
+                        case 2:
+                            dismiss();
+                            break;
 
-                default:
-                    break;
+                        default:
+                            break;
+                    }
                 }
-            }
-            return true;
-        default:
-            break;
+                return true;
+            default:
+                break;
         }
         return super.dispatchKeyEvent(event);
     }
@@ -333,6 +339,6 @@ public class AlarmAlertFullScreen extends Activity implements AlarmTimePickerDia
 
     @Override
     public void onTimePickerCanceled() {
-        AlarmAlertFullScreen.this.sendBroadcast(new Intent(Intents.ACTION_DEMUTE));
+        Broadcasts.sendExplicit(AlarmAlertFullScreen.this, new Intent(Intents.ACTION_DEMUTE));
     }
 }

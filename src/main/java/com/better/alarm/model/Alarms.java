@@ -31,7 +31,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
 
+import com.better.alarm.Broadcasts;
 import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.AlarmNotFoundException;
 import com.better.alarm.model.interfaces.IAlarmsManager;
@@ -44,9 +46,13 @@ import com.github.androidutils.logger.Logger;
  */
 @SuppressLint("UseSparseArrays")
 public class Alarms implements IAlarmsManager {
-    /** in millis */
+    /**
+     * in millis
+     */
     private static final long RETRY_TOTAL_TIME = 61 * 1000;
-    /** in millis */
+    /**
+     * in millis
+     */
     private static final long RETRY_INTERVAL = 500;
 
     private final Context mContext;
@@ -164,20 +170,20 @@ public class Alarms implements IAlarmsManager {
 
         /**
          * First comes on Weekdays, than on weekends and then the rest
-         * 
+         *
          * @param alarm
          * @return
          */
         private int getPrio(Alarm alarm) {
             switch (alarm.getDaysOfWeek().getCoded()) {
-            case 0x7F:
-                return 1;
-            case 0x1F:
-                return 2;
-            case 0x60:
-                return 3;
-            default:
-                return 0;
+                case 0x7F:
+                    return 1;
+                case 0x1F:
+                    return 2;
+                case 0x60:
+                    return 3;
+                default:
+                    return 0;
             }
         }
     }
@@ -204,9 +210,8 @@ public class Alarms implements IAlarmsManager {
 
     /**
      * A convenience method to enable or disable an alarm
-     * 
-     * @param enabled
-     *            corresponds to the ENABLED column
+     *
+     * @param enable corresponds to the ENABLED column
      * @throws AlarmNotFoundException
      */
     @Override
@@ -228,7 +233,7 @@ public class Alarms implements IAlarmsManager {
     }
 
     private void notifyAlarmListChangedListeners() {
-        mContext.sendBroadcast(new Intent(Intents.ACTION_ALARM_CHANGED));
+        Broadcasts.sendLocal(mContext, new Intent(Intents.ACTION_ALARM_CHANGED));
     }
 
     private final class DatabaseRetryCountDownTimer extends CountDownTimer {

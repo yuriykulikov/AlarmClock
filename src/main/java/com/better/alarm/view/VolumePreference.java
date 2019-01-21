@@ -41,6 +41,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
+import com.better.alarm.Broadcasts;
 import com.better.alarm.R;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.view.VolumePreference.SeekBarVolumizer;
@@ -128,23 +129,23 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
         if (volumizers.isEmpty()) return true;
         boolean isdown = event.getAction() == KeyEvent.ACTION_DOWN;
         switch (keyCode) {
-        case KeyEvent.KEYCODE_VOLUME_DOWN:
-            if (isdown) {
-                activeVolumizer.changeVolumeBy(-1);
-            }
-            return true;
-        case KeyEvent.KEYCODE_VOLUME_UP:
-            if (isdown) {
-                activeVolumizer.changeVolumeBy(1);
-            }
-            return true;
-        case KeyEvent.KEYCODE_VOLUME_MUTE:
-            if (isdown) {
-                activeVolumizer.muteVolume();
-            }
-            return true;
-        default:
-            return false;
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                if (isdown) {
+                    activeVolumizer.changeVolumeBy(-1);
+                }
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                if (isdown) {
+                    activeVolumizer.changeVolumeBy(1);
+                }
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_MUTE:
+                if (isdown) {
+                    activeVolumizer.muteVolume();
+                }
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -235,12 +236,12 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
-            case MSG_SET_VOLUME:
-                mAudioManager.setStreamVolume(mStreamType, msg.arg1, 0);
-                return true;
+                case MSG_SET_VOLUME:
+                    mAudioManager.setStreamVolume(mStreamType, msg.arg1, 0);
+                    return true;
 
-            default:
-                return false;
+                default:
+                    return false;
             }
 
         }
@@ -312,13 +313,15 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
             Editor editor = sp.edit();
             editor.putInt(Intents.KEY_PREALARM_VOLUME, progress);
             editor.commit();
-        };
+        }
+
+        ;
 
         @Override
         public void stopSample() {
             if (isPlaying) {
                 isPlaying = false;
-                mContext.sendBroadcast(new Intent(Intents.ACTION_STOP_PREALARM_SAMPLE));
+                Broadcasts.sendExplicit(mContext, new Intent(Intents.ACTION_STOP_PREALARM_SAMPLE));
             }
         }
 
@@ -326,7 +329,7 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
         public void startSample() {
             if (!isPlaying) {
                 isPlaying = true;
-                mContext.sendBroadcast(new Intent(Intents.ACTION_START_PREALARM_SAMPLE));
+                Broadcasts.sendExplicit(mContext, new Intent(Intents.ACTION_START_PREALARM_SAMPLE));
             }
         }
     }
@@ -362,13 +365,13 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
             Editor editor = sp.edit();
             editor.putInt(Intents.KEY_ALARM_VOLUME, progress);
             editor.commit();
-        };
+        }
 
         @Override
         public void stopSample() {
             if (isPlaying) {
                 isPlaying = false;
-                mContext.sendBroadcast(new Intent(Intents.ACTION_STOP_ALARM_SAMPLE));
+                Broadcasts.sendExplicit(mContext, new Intent(Intents.ACTION_STOP_ALARM_SAMPLE));
             }
         }
 
@@ -376,7 +379,7 @@ public class VolumePreference extends DialogPreference implements View.OnKeyList
         public void startSample() {
             if (!isPlaying) {
                 isPlaying = true;
-                mContext.sendBroadcast(new Intent(Intents.ACTION_START_ALARM_SAMPLE));
+                Broadcasts.sendExplicit(mContext, new Intent(Intents.ACTION_START_ALARM_SAMPLE));
             }
         }
     }

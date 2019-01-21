@@ -20,6 +20,7 @@ import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher.ViewFactory;
 
+import com.better.alarm.Broadcasts;
 import com.better.alarm.R;
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.interfaces.Alarm;
@@ -29,9 +30,7 @@ import com.better.alarm.model.interfaces.Intents;
 import com.github.androidutils.logger.Logger;
 
 /**
- * 
  * @author Yuriy
- * 
  */
 public class InfoFragment extends Fragment implements ViewFactory {
 
@@ -129,17 +128,17 @@ public class InfoFragment extends Fragment implements ViewFactory {
         log.d("onResume");
         IntentFilter intentFilter = new IntentFilter(Intents.ACTION_ALARM_SCHEDULED);
         intentFilter.addAction(Intents.ACTION_ALARMS_UNSCHEDULED);
-        getActivity().registerReceiver(mAlarmsScheduledReceiver, intentFilter);
-        getActivity().sendBroadcast(new Intent(Intents.REQUEST_LAST_SCHEDULED_ALARM));
-        getActivity().registerReceiver(mTickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
+        Broadcasts.registerLocal(getActivity(), mAlarmsScheduledReceiver, intentFilter);
+        Broadcasts.sendLocal(getActivity(), new Intent(Intents.REQUEST_LAST_SCHEDULED_ALARM));
+        Broadcasts.registerSystem(getActivity(), mTickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
     }
 
     @Override
     public void onPause() {
         super.onPause();
         log.d("onPause");
-        getActivity().unregisterReceiver(mAlarmsScheduledReceiver);
-        getActivity().unregisterReceiver(mTickReceiver);
+        Broadcasts.unregisterLocal(getActivity(), mAlarmsScheduledReceiver);
+        Broadcasts.unregisterSystem(getActivity(), mTickReceiver);
     }
 
     /**

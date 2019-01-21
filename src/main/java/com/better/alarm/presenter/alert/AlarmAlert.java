@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import com.better.alarm.Broadcasts;
 import com.better.alarm.R;
 import com.better.alarm.model.interfaces.Intents;
 import com.github.androidutils.logger.Logger;
@@ -61,13 +62,13 @@ public class AlarmAlert extends AlarmAlertFullScreen {
 
         // Listen for the screen turning off so that when the screen comes back
         // on, the user does not need to unlock the phone to dismiss the alarm.
-        registerReceiver(mScreenOffReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+        Broadcasts.registerSystem(this, mScreenOffReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mScreenOffReceiver);
+        Broadcasts.unregisterSystem(this, mScreenOffReceiver);
         // Remove any of the keyguard messages just in case
         mHandler.removeMessages(0);
     }

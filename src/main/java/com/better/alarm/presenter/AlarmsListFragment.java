@@ -14,6 +14,7 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateFormat;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -30,6 +31,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.better.alarm.Broadcasts;
 import com.better.alarm.R;
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.DaysOfWeek;
@@ -252,14 +254,14 @@ public class AlarmsListFragment extends ListFragment {
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().registerReceiver(mAlarmsChangedReceiver, new IntentFilter(Intents.ACTION_ALARM_CHANGED));
+        Broadcasts.registerLocal(getActivity(), mAlarmsChangedReceiver, Intents.ACTION_ALARM_CHANGED);
         updateAlarmsList();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        getActivity().unregisterReceiver(mAlarmsChangedReceiver);
+        Broadcasts.unregisterLocal(getActivity(), mAlarmsChangedReceiver);
     }
 
     @Override

@@ -1,21 +1,22 @@
 buildscript {
   repositories {
     jcenter()
+      google()
   }
   dependencies {
-    classpath 'com.android.tools.build:gradle:2.3.1'
+    classpath 'com.android.tools.build:gradle:3.2.1'
   }
 }
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 26
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId "com.better.alarm"
         minSdkVersion 15
-        targetSdkVersion 21
+        targetSdkVersion 26
 
         testApplicationId "com.better.alarm.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
@@ -28,6 +29,7 @@ android {
         }
     }
 
+    flavorDimensions "default"
     productFlavors {
         develop {
             applicationId "com.better.alarm"
@@ -39,13 +41,14 @@ android {
 }
 repositories {
     jcenter()
+    google()
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:21.0.3'
-    compile 'com.google.guava:guava:15.0'
-    compile 'ch.acra:acra:4.6.1'
-    compile 'com.melnykov:floatingactionbutton:1.2.0'
-    androidTestCompile 'com.android.support:support-v4:21.0.3'
-    androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.2.1'
+    implementation 'com.android.support:support-v4:26.1.0'
+    implementation 'com.google.guava:guava:15.0'
+    implementation 'ch.acra:acra:4.6.1'
+    implementation 'com.melnykov:floatingactionbutton:1.2.0'
+    androidTestImplementation 'com.android.support:support-v4:26.1.0'
+    androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.2.1'
 }

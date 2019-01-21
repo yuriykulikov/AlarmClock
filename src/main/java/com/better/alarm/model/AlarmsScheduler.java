@@ -33,9 +33,12 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
+import com.better.alarm.Broadcasts;
 import com.better.alarm.BuildConfig;
 import com.better.alarm.model.interfaces.Intents;
+import com.better.alarm.presenter.AlarmsListActivity;
 import com.github.androidutils.logger.Logger;
 
 public class AlarmsScheduler implements IAlarmsScheduler {
@@ -104,7 +107,7 @@ public class AlarmsScheduler implements IAlarmsScheduler {
         am = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
         queue = new PriorityQueue<ScheduledAlarm>();
         this.log = logger;
-        context.registerReceiver(new BroadcastReceiver() {
+        Broadcasts.registerLocal(context, new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 notifyListeners();
@@ -117,7 +120,8 @@ public class AlarmsScheduler implements IAlarmsScheduler {
 
     private ISetAlarmStrategy initSetStrategyForVersion() {
         log.d("SDK is " + android.os.Build.VERSION.SDK_INT);
-        if (android.os.Build.VERSION.SDK_INT >= 23) return new MarshmallowSetter();
+        if (android.os.Build.VERSION.SDK_INT >= 26) return new OreoSetter();
+        else if (android.os.Build.VERSION.SDK_INT >= 23) return new MarshmallowSetter();
         else if (android.os.Build.VERSION.SDK_INT >= 19) return new KitKatSetter();
         else return new IceCreamSetter();
     }
@@ -184,7 +188,7 @@ public class AlarmsScheduler implements IAlarmsScheduler {
             Intent intent = new Intent(ACTION_FIRED);
             intent.putExtra(EXTRA_ID, firedInThePastAlarm.id);
             intent.putExtra(EXTRA_TYPE, firedInThePastAlarm.type.name());
-            mContext.sendBroadcast(intent);
+            Broadcasts.sendExplicit(mContext, intent);
         }
     }
 
@@ -229,7 +233,7 @@ public class AlarmsScheduler implements IAlarmsScheduler {
                 intent.setAction(Intents.ACTION_ALARMS_UNSCHEDULED);
             }
         }
-        mContext.sendBroadcast(intent);
+        Broadcasts.sendExplicit(mContext, intent);
     }
 
     private ScheduledAlarm findNextNormalAlarm() {
@@ -260,10 +264,11 @@ public class AlarmsScheduler implements IAlarmsScheduler {
 
     private void setUpRTCAlarm(ScheduledAlarm alarm) {
         log.d("Set " + alarm.toString());
-        Intent intent = new Intent(ACTION_FIRED);
+        Intent intent = new Intent(mContext, AlarmsService.Receiver.class);
+        intent.setAction(ACTION_FIRED);
         intent.putExtra(EXTRA_ID, alarm.id);
         intent.putExtra(EXTRA_TYPE, alarm.type.name());
-        PendingIntent sender = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent sender = PendingIntent.getBroadcast(mContext,  hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         setAlarmStrategy.setRTCAlarm(alarm, sender);
     }
 
@@ -282,17 +287,26 @@ public class AlarmsScheduler implements IAlarmsScheduler {
         }
     }
 
-    @TargetApi(23)
+    /**
+     * 6.0
+     */
+    @TargetApi(Build.VERSION_CODES.M)
     private final class MarshmallowSetter implements ISetAlarmStrategy {
         @Override
         public void setRTCAlarm(ScheduledAlarm alarm, PendingIntent sender) {
-            try {
-                am.getClass()
-                        .getMethod("setExactAndAllowWhileIdle", int.class, long.class, PendingIntent.class)
-                        .invoke(am, AlarmManager.RTC_WAKEUP, alarm.calendar.getTimeInMillis(), sender);
-            } catch (ReflectiveOperationException e) {
-                am.setExact(AlarmManager.RTC_WAKEUP, alarm.calendar.getTimeInMillis(), sender);
-            }
+            am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarm.calendar.getTimeInMillis(), sender);
+        }
+    }
+
+    /** 8.0 */
+    @TargetApi(Build.VERSION_CODES.O)
+    private final class OreoSetter implements ISetAlarmStrategy {
+        @Override
+        public void setRTCAlarm(ScheduledAlarm alarm, PendingIntent sender) {
+            Intent showList = new Intent(mContext, AlarmsListActivity.class);
+            showList.putExtra(Intents.EXTRA_ID, alarm.id);
+            PendingIntent showIntent = PendingIntent.getActivity(mContext, hashCode(), showList, PendingIntent.FLAG_UPDATE_CURRENT);
+            am.setAlarmClock(new AlarmManager.AlarmClockInfo(alarm.calendar.getTimeInMillis(), showIntent), sender);
         }
     }
 }

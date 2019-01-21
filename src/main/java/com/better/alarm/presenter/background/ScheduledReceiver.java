@@ -27,15 +27,15 @@ import android.os.Build;
 import android.provider.Settings;
 import android.text.format.DateFormat;
 
+import com.better.alarm.Broadcasts;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.presenter.AlarmsListActivity;
 import com.github.androidutils.logger.Logger;
 
 /**
  * This class reacts on {@link } and {@link } and
- * 
+ *
  * @author Yuriy
- * 
  */
 public class ScheduledReceiver extends BroadcastReceiver {
     private static final String DM12 = "E h:mm aa";
@@ -45,7 +45,9 @@ public class ScheduledReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Logger.getDefaultLogger().d(intent.toString());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // we use setAlarmClock for these anyway, so nothing to do here.
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             doForLollipop(context, intent);
         } else {
             doForPreLollipop(context, intent);
@@ -57,7 +59,7 @@ public class ScheduledReceiver extends BroadcastReceiver {
             // Broadcast intent for the notification bar
             Intent alarmChanged = new Intent("android.intent.action.ALARM_CHANGED");
             alarmChanged.putExtra("alarmSet", true);
-            context.sendBroadcast(alarmChanged);
+            Broadcasts.sendSystemBroadcast(context, alarmChanged);
 
             // Update systems settings, so that interested Apps (like
             // KeyGuard)
@@ -72,7 +74,7 @@ public class ScheduledReceiver extends BroadcastReceiver {
             // Broadcast intent for the notification bar
             Intent alarmChanged = new Intent("android.intent.action.ALARM_CHANGED");
             alarmChanged.putExtra("alarmSet", false);
-            context.sendBroadcast(alarmChanged);
+            Broadcasts.sendSystemBroadcast(context, alarmChanged);
             // Update systems settings, so that interested Apps (like KeyGuard)
             // will react accordingly
             Settings.System.putString(context.getContentResolver(), Settings.System.NEXT_ALARM_FORMATTED, "");
@@ -87,14 +89,14 @@ public class ScheduledReceiver extends BroadcastReceiver {
 
             Intent showList = new Intent(context, AlarmsListActivity.class);
             showList.putExtra(Intents.EXTRA_ID, id);
-            PendingIntent showIntent = PendingIntent.getActivity(context, id, showList, 0);
+            PendingIntent showIntent = PendingIntent.getActivity(context, id, showList, PendingIntent.FLAG_UPDATE_CURRENT);
 
             long milliseconds = intent.getLongExtra(Intents.EXTRA_NEXT_NORMAL_TIME_IN_MILLIS, -1);
             am.setAlarmClock(new AlarmClockInfo(milliseconds, showIntent),
-                    PendingIntent.getBroadcast(context, 0, FAKE_INTENT_JUST_TO_DISPLAY_IN_ICON, 0));
+                    PendingIntent.getBroadcast(context, hashCode(), FAKE_INTENT_JUST_TO_DISPLAY_IN_ICON, 0));
 
         } else if (intent.getAction().equals(Intents.ACTION_ALARMS_UNSCHEDULED)) {
-            am.cancel(PendingIntent.getBroadcast(context, 0, FAKE_INTENT_JUST_TO_DISPLAY_IN_ICON, 0));
+            am.cancel(PendingIntent.getBroadcast(context, hashCode(), FAKE_INTENT_JUST_TO_DISPLAY_IN_ICON, 0));
         }
     }
 }
