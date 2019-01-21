@@ -79,7 +79,7 @@ public class AlarmsService extends Service {
                 log.d("AlarmCore fired " + id);
 
             } else if (action.equals(Intent.ACTION_BOOT_COMPLETED) || action.equals(Intent.ACTION_TIMEZONE_CHANGED)
-                    || action.equals(Intent.ACTION_LOCALE_CHANGED)) {
+                    || action.equals(Intent.ACTION_LOCALE_CHANGED) || action.equals(Intent.ACTION_MY_PACKAGE_REPLACED)) {
                 log.d("Refreshing alarms because of " + action);
                 alarms.refresh();
 

@@ -25,6 +25,7 @@ import android.preference.PreferenceManager;
 import android.view.ViewConfiguration;
 
 import com.better.alarm.R;
+import com.better.alarm.alert.AlarmAlertReceiver;
 import com.better.alarm.background.ScheduledReceiver;
 import com.better.alarm.background.ToastPresenter;
 import com.better.alarm.logger.LogcatLogWriter;
@@ -233,6 +234,7 @@ public class AlarmApplication extends Application {
 
         new ScheduledReceiver(store, getApplicationContext(), prefs, alarmManager).start();
         new ToastPresenter(store, getApplicationContext()).start();
+        AlarmAlertReceiver.createNotificationChannel(this);
 
         logger.d("onCreate done");
         super.onCreate();
