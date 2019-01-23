@@ -35,6 +35,7 @@ import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.better.alarm.BuildConfig;
 import com.better.alarm.R;
 import com.better.alarm.view.AlarmPreference;
 
@@ -66,6 +67,11 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
             ringtone.setAlert(alert);
         }
         ringtone.setChangeDefault();
+
+        if (android.os.Build.VERSION.SDK_INT > 21) {
+            getPreferenceScreen().removePreference(findPreference(KEY_DEFAULT_RINGTONE));
+            getPreferenceScreen().removePreference(findPreference("alarm_in_silent_mode"));
+        }
 
         boolean hasVibrator = ((Vibrator) getSystemService(Context.VIBRATOR_SERVICE)).hasVibrator();
         // #65 we have to check if preference is present before we try to remove
@@ -185,11 +191,12 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
     }
 
     private void refresh() {
-        final CheckBoxPreference alarmInSilentModePref = (CheckBoxPreference) findPreference(KEY_ALARM_IN_SILENT_MODE);
-        final int silentModeStreams = Settings.System.getInt(getContentResolver(),
-                Settings.System.MODE_RINGER_STREAMS_AFFECTED, 0);
-        alarmInSilentModePref.setChecked((silentModeStreams & ALARM_STREAM_TYPE_BIT) == 0);
-
+        if (android.os.Build.VERSION.SDK_INT <= 21) {
+            final CheckBoxPreference alarmInSilentModePref = (CheckBoxPreference) findPreference(KEY_ALARM_IN_SILENT_MODE);
+            final int silentModeStreams = Settings.System.getInt(getContentResolver(),
+                    Settings.System.MODE_RINGER_STREAMS_AFFECTED, 0);
+            alarmInSilentModePref.setChecked((silentModeStreams & ALARM_STREAM_TYPE_BIT) == 0);
+        }
         ListPreference listPref = (ListPreference) findPreference(KEY_ALARM_SNOOZE);
         listPref.setSummary(listPref.getEntry());
         listPref.setOnPreferenceChangeListener(this);
