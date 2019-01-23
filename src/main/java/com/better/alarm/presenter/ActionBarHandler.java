@@ -26,12 +26,10 @@ import com.google.common.base.Preconditions;
  * 
  */
 public class ActionBarHandler {
-
-    private static final int JELLY_BEAN_MR1 = 17;
     private final Context mContext;
 
     /**
-     * @param cmContext
+     * @param context
      */
     public ActionBarHandler(Context context) {
         this.mContext = Preconditions.checkNotNull(context);
@@ -62,7 +60,7 @@ public class ActionBarHandler {
 
         sp.setShareIntent(intent);
 
-        if (Build.VERSION.SDK_INT < JELLY_BEAN_MR1) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1 || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             MenuItem menuItemDashclock = menu.findItem(R.id.menu_dashclock);
             menuItemDashclock.setVisible(false);
         }
@@ -129,8 +127,7 @@ public class ActionBarHandler {
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="
-                        + "net.nurik.roman.dashclock"));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=dash+clock&c=app"));
                 mContext.startActivity(intent);
             }
         });
