@@ -191,7 +191,7 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
     }
 
     private void refresh() {
-        if (android.os.Build.VERSION.SDK_INT <= 21) {
+        if (android.os.Build.VERSION.SDK_INT <= 19) {
             final CheckBoxPreference alarmInSilentModePref = (CheckBoxPreference) findPreference(KEY_ALARM_IN_SILENT_MODE);
             final int silentModeStreams = Settings.System.getInt(getContentResolver(),
                     Settings.System.MODE_RINGER_STREAMS_AFFECTED, 0);
