@@ -26,6 +26,7 @@ import android.view.ViewConfiguration;
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.presenter.DynamicThemeHandler;
 import com.better.alarm.presenter.alert.AlarmAlertReceiver;
+import com.better.alarm.presenter.background.VibrationService;
 import com.github.androidutils.logger.LogcatLogWriterWithLines;
 import com.github.androidutils.logger.Logger;
 import com.github.androidutils.logger.LoggingExceptionHandler;

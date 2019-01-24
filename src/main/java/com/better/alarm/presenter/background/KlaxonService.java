@@ -17,6 +17,8 @@
 
 package com.better.alarm.presenter.background;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -35,13 +37,16 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
+import com.better.alarm.BuildConfig;
 import com.better.alarm.R;
 import com.better.alarm.model.AlarmsManager;
 import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.Intents;
+import com.better.alarm.presenter.AlarmsListActivity;
 import com.better.alarm.presenter.SettingsActivity;
 import com.github.androidutils.logger.Logger;
 import com.github.androidutils.wakelock.WakeLockManager;
@@ -70,7 +75,11 @@ public class KlaxonService extends Service {
         public void onReceive(final Context context, final Intent intent) {
             intent.setClass(context, KlaxonService.class);
             WakeLockManager.getWakeLockManager().acquirePartialWakeLock(intent, "ForKlaxonService");
-            context.startService(intent);
+            if (android.os.Build.VERSION.SDK_INT >= 26) {
+                context.startForegroundService(intent);
+            } else {
+                context.startService(intent);
+            }
         }
     }
 
@@ -264,6 +273,7 @@ public class KlaxonService extends Service {
         if (intent != null) {
             WakeLockManager.getWakeLockManager().releasePartialWakeLock(intent);
         }
+        startForeground();
         try {
             String action = intent.getAction();
             if (action.equals(Intents.ALARM_ALERT_ACTION)) {
@@ -325,6 +335,26 @@ public class KlaxonService extends Service {
             log.e("Something went wrong" + e.getMessage());
             stopAndCleanup();
             return START_NOT_STICKY;
+        }
+    }
+
+    private void startForeground() {
+        if (android.os.Build.VERSION.SDK_INT >= 26) {
+            Intent activity = new Intent(this, AlarmsListActivity.class);
+            PendingIntent pendingNotify = PendingIntent.getActivity(this, 1, activity, 0);
+            Notification notification = new NotificationCompat.Builder(this, BuildConfig.APPLICATION_ID)
+                    .setTicker("Alarm sound")
+                    .setWhen(System.currentTimeMillis())
+                    .setContentTitle("Alarm sound")
+                    .setContentText("Alarm sound")
+                    .setSmallIcon(R.drawable.stat_notify_alarm)
+                    .setPriority(NotificationCompat.PRIORITY_LOW)
+                    .setContentIntent(pendingNotify)
+                    .setOngoing(true)
+                    .setDefaults(Notification.DEFAULT_LIGHTS)
+                    .build();
+
+            startForeground(42, notification);
         }
     }
 
@@ -462,6 +492,9 @@ public class KlaxonService extends Service {
 
     private void stopAndCleanup() {
         volume.cancelFadeIn();
+        if (android.os.Build.VERSION.SDK_INT >= 26) {
+            stopForeground(true);
+        }
         stopSelf();
     }
 

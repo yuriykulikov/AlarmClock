@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.better.alarm"
-    android:versionCode="21003"
-    android:versionName="2.10.03" >
+    android:versionCode="21004"
+    android:versionName="2.10.04" >
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -126,6 +126,7 @@
         <service
             android:name=".presenter.background.KlaxonService"
             android:description="@string/alarm_klaxon_service_desc"
+            android:enabled="true"
             android:exported="false" >
         </service>
 
@@ -184,6 +185,7 @@
         </receiver>
         <service
             android:name=".model.AlarmsService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false" >
         </service>
         <!-- Persistence -->
