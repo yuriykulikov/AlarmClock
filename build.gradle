@@ -2,15 +2,12 @@ buildscript {
     repositories {
         jcenter()
         mavenCentral()
-        maven {
-            url 'https://maven.google.com/'
-            name 'Google'
-        }
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0'
+        classpath 'com.android.tools.build:gradle:3.3.0'
         classpath 'com.dicedmelon.gradle:jacoco-android:0.1.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.51"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.11"
     }
 }
 
@@ -49,6 +46,7 @@ android {
         }
     }
 
+    flavorDimensions "default"
     productFlavors {
         develop {
             applicationId "com.better.alarm"
@@ -79,10 +77,7 @@ android {
 }
 repositories {
     jcenter()
-    maven {
-        url 'https://maven.google.com/'
-        name 'Google'
-    }
+    google()
 }
 
 dependencies {
