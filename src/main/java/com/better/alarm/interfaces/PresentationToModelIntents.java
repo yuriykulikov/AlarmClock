@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.better.alarm.BuildConfig;
-import com.better.alarm.services.AlarmsService;
+import com.better.alarm.model.AlarmsReceiver;
 
 public class PresentationToModelIntents {
 
@@ -15,7 +15,7 @@ public class PresentationToModelIntents {
     public static PendingIntent createPendingIntent(Context context, String action, int id) {
         Intent intent = new Intent(action);
         intent.putExtra(Intents.EXTRA_ID, id);
-        intent.setClass(context, AlarmsService.class);
-        return PendingIntent.getService(context, id, intent, 0);
+        intent.setClass(context, AlarmsReceiver.class);
+        return PendingIntent.getBroadcast(context, id, intent, 0);
     }
 }

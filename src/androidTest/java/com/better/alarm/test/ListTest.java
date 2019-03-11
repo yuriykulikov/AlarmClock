@@ -12,9 +12,9 @@ import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.interfaces.PresentationToModelIntents;
 import com.better.alarm.model.AlarmSetter;
 import com.better.alarm.model.AlarmValue;
+import com.better.alarm.model.AlarmsReceiver;
 import com.better.alarm.model.CalendarType;
 import com.better.alarm.presenter.AlarmsListActivity;
-import com.better.alarm.services.AlarmsService;
 import com.better.alarm.util.Optional;
 
 import org.hamcrest.Matcher;
@@ -178,7 +178,7 @@ public class ListTest extends BaseTest {
         //simulate dismiss from the notification bar
         Intent dismiss = new Intent(PresentationToModelIntents.ACTION_REQUEST_DISMISS);
         dismiss.putExtra(AlarmSetter.EXTRA_ID, id);
-        dismiss.setClass(listActivity.getActivity(), AlarmsService.class);
+        dismiss.setClass(listActivity.getActivity(), AlarmsReceiver.class);
         listActivity.getActivity().startService(dismiss);
 
         sleep();

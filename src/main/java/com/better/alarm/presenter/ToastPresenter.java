@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.better.alarm.background;
+package com.better.alarm.presenter;
 
 import android.content.Context;
 import android.widget.Toast;

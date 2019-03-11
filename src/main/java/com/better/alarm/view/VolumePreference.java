@@ -27,7 +27,6 @@ import android.view.View;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-import com.better.alarm.Broadcasts;
 import com.better.alarm.R;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
@@ -72,7 +71,7 @@ public class VolumePreference extends Preference {
     protected void onPrepareForRemoval() {
         super.onPrepareForRemoval();
         ringtone.stop();
-        Broadcasts.sendExplicit(context, new Intent(Intents.ACTION_STOP_PREALARM_SAMPLE));
+        // TODO Broadcasts.sendExplicit(context, new Intent(Intents.ACTION_STOP_PREALARM_SAMPLE));
     }
 
     /**

@@ -1,10 +1,12 @@
 package com.better.alarm.configuration
 
 
+import com.better.alarm.background.Event
 import com.better.alarm.model.AlarmValue
 import com.better.alarm.util.Optional
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 
 /**
@@ -13,11 +15,9 @@ import io.reactivex.subjects.Subject
 
 data class Store(
         val alarmsSubject: BehaviorSubject<List<AlarmValue>>,
-
         val next: BehaviorSubject<Optional<Next>>,
-
-        val sets: Subject<AlarmSet>
-
+        val sets: Subject<AlarmSet>,
+        val events: Subject<Event>
 ) {
     fun alarms(): Observable<List<AlarmValue>> {
         return alarmsSubject().distinctUntilChanged()

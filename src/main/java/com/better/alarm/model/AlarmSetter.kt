@@ -15,7 +15,7 @@ import com.better.alarm.presenter.AlarmsListActivity
 
 interface AlarmSetter {
 
-    fun removeRTCAlarm()
+    fun removeRTCAlarm(previousHead: AlarmsScheduler.ScheduledAlarm)
 
     fun setUpRTCAlarm(alarm: AlarmsScheduler.ScheduledAlarm)
 
@@ -29,8 +29,18 @@ interface AlarmSetter {
             log.d("Using $setAlarmStrategy")
         }
 
-        override fun removeRTCAlarm() {
-            val pendingIntent = PendingIntent.getBroadcast(mContext, 0, Intent(ACTION_FIRED), 0)
+        private val requestCode = 42
+
+        override fun removeRTCAlarm(alarm: AlarmsScheduler.ScheduledAlarm) {
+            log.d("Clear " + alarm.toString())
+            val pendingIntent = Intent(ACTION_FIRED)
+                    .apply {
+                        setClass(mContext, AlarmsReceiver::class.java)
+                        putExtra(EXTRA_ID, alarm.id)
+                        putExtra(EXTRA_TYPE, alarm.type!!.name)
+                    }
+                    .let { PendingIntent.getBroadcast(mContext, requestCode, it, PendingIntent.FLAG_UPDATE_CURRENT) }
+
             am.cancel(pendingIntent)
         }
 
@@ -38,10 +48,11 @@ interface AlarmSetter {
             log.d("Set " + alarm.toString())
             val pendingIntent = Intent(ACTION_FIRED)
                     .apply {
+                        setClass(mContext, AlarmsReceiver::class.java)
                         putExtra(EXTRA_ID, alarm.id)
                         putExtra(EXTRA_TYPE, alarm.type!!.name)
                     }
-                    .let { PendingIntent.getBroadcast(mContext, 0, it, PendingIntent.FLAG_UPDATE_CURRENT) }
+                    .let { PendingIntent.getBroadcast(mContext, requestCode, it, PendingIntent.FLAG_UPDATE_CURRENT) }
 
             setAlarmStrategy.setRTCAlarm(alarm, pendingIntent)
         }
@@ -57,6 +68,7 @@ interface AlarmSetter {
         private fun initSetStrategyForVersion(): ISetAlarmStrategy {
             log.d("SDK is " + android.os.Build.VERSION.SDK_INT)
             return when {
+                android.os.Build.VERSION.SDK_INT >= 26 -> OreoSetter()
                 android.os.Build.VERSION.SDK_INT >= 23 -> MarshmallowSetter()
                 android.os.Build.VERSION.SDK_INT >= 19 -> KitKatSetter()
                 else -> IceCreamSetter()
@@ -88,7 +100,9 @@ interface AlarmSetter {
         private inner class OreoSetter : ISetAlarmStrategy {
             override fun setRTCAlarm(alarm: AlarmsScheduler.ScheduledAlarm, sender: PendingIntent) {
                 val showList = Intent(mContext, AlarmsListActivity::class.java)
-                showList.putExtra(EXTRA_ID, alarm.id)
+                        .apply {
+                            putExtra(EXTRA_ID, alarm.id)
+                        }
                 val showIntent = PendingIntent.getActivity(mContext, hashCode(), showList, PendingIntent.FLAG_UPDATE_CURRENT)
                 am.setAlarmClock(AlarmManager.AlarmClockInfo(alarm.calendar!!.timeInMillis, showIntent), sender)
             }
