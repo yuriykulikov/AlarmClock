@@ -20,7 +20,6 @@ import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.Store
 import com.better.alarm.logger.Logger
 import com.better.alarm.util.Optional
-import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 

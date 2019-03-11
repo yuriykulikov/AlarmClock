@@ -1,13 +1,9 @@
 package com.better.alarm.test
 
-import android.support.test.InstrumentationRegistry
-import android.support.test.rule.ActivityTestRule
-import android.support.test.runner.AndroidJUnit4
 import android.test.suitebuilder.annotation.LargeTest
 import com.better.alarm.logger.Logger
 import com.better.alarm.persistance.AlarmDatabaseHelper
 import com.better.alarm.presenter.AlarmsListActivity
-import com.robotium.solo.Solo
 import junit.framework.Assert
 import org.junit.*
 import org.junit.rules.RuleChain
@@ -42,7 +38,8 @@ class ActionBarTest {
         }
     }
 
-    @Before public fun setup() {
+    @Before
+    public fun setup() {
         solo = Solo(InstrumentationRegistry.getInstrumentation(), listActivity.activity)
     }
 

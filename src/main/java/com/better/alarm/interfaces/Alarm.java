@@ -26,8 +26,8 @@ public interface Alarm {
     String getLabelOrDefault();
 
     /**
-     * @deprecated
      * @return
+     * @deprecated
      */
     @Deprecated
     public Calendar getSnoozedTime();

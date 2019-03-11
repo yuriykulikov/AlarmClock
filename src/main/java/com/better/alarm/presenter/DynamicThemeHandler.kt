@@ -3,7 +3,6 @@ package com.better.alarm.presenter
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import android.util.Log
 import com.better.alarm.R
 import com.better.alarm.alert.AlarmAlertFullScreen
 

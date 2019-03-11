@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.better.alarm"
     android:versionCode="3002"
-    android:versionName="3.0.02" >
+    android:versionName="3.0.02">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -21,7 +21,7 @@
     <application
         android:name=".configuration.AlarmApplication"
         android:icon="@mipmap/ic_launcher_alarmclock"
-        android:label="@string/simple_alarm_clock" >
+        android:label="@string/simple_alarm_clock">
 
         <!-- Activity to set a new or modify existing alarm -->
         <activity
@@ -43,7 +43,7 @@
             android:name=".presenter.SettingsActivity"
             android:excludeFromRecents="true"
             android:label="@string/settings"
-            android:taskAffinity="" >
+            android:taskAffinity="">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -53,7 +53,7 @@
             android:name=".presenter.HandleSetAlarm"
             android:excludeFromRecents="true"
             android:permission="com.android.alarm.permission.SET_ALARM"
-            android:theme="@android:style/Theme.NoDisplay" >
+            android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
                 <action android:name="android.intent.action.SET_ALARM" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -62,7 +62,7 @@
         <!-- Forwards intents to the AlarmAlertFullScreen -->
         <receiver
             android:name=".alert.AlarmAlertReceiver"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="${applicationId}.ALARM_ALERT" />
                 <action android:name="${applicationId}.ALARM_PREALARM_ACTION" />
@@ -85,7 +85,7 @@
             android:taskAffinity="" />
 
         <!-- Transparent activity with TimPickerFragment -->
-       <activity
+        <activity
             android:name=".presenter.TransparentActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
             android:excludeFromRecents="true"
@@ -96,7 +96,7 @@
         <!-- KlaxonPresenter plays sound -->
         <receiver
             android:name=".background.KlaxonService$Receiver"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="${applicationId}.ALARM_ALERT" />
                 <action android:name="${applicationId}.ALARM_PREALARM_ACTION" />
@@ -114,13 +114,12 @@
         <service
             android:name=".background.KlaxonService"
             android:description="@string/alarm_klaxon_service_desc"
-            android:exported="false" >
-        </service>
+            android:exported="false"></service>
 
         <!-- VibrationPresenter vibrates -->
         <receiver
             android:name=".background.VibrationService$Receiver"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="${applicationId}.ALARM_ALERT" />
                 <action android:name="${applicationId}.ALARM_SNOOZE" />
@@ -133,13 +132,12 @@
         <service
             android:name=".background.VibrationService"
             android:description="@string/alarm_klaxon_service_desc"
-            android:exported="false" >
-        </service>
+            android:exported="false"></service>
 
         <!-- Model -->
         <receiver
             android:name=".services.AlarmsService$Receiver"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="${applicationId}.ACTION_FIRED" />
                 <action android:name="${applicationId}.ACTION_SNOOZED_FIRED" />
@@ -153,8 +151,7 @@
         </receiver>
         <service
             android:name=".services.AlarmsService"
-            android:exported="false" >
-        </service>
+            android:exported="false"></service>
         <!-- Persistence -->
         <provider
             android:name=".persistance.AlarmProvider"

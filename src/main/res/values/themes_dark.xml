@@ -6,9 +6,11 @@
     <style name="DefaultDarkTheme" parent="android:Theme.Holo">
         <item name="alarmDetailsButtonStyle">@style/DarkAlarmDetailsButtonStyle</item>
     </style>
+
     <style name="AlarmAlertFullScreenDarkTheme" parent="android:Theme.Holo.NoActionBar">
-         <item name="android:windowNoTitle">true</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
+
     <style name="TimePickerDialogFragmentDark" parent="android:style/Theme.Holo.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="timePickerDeleteButtonStyle">@style/DarkTimePickerDeleteButtonStyle</item>

@@ -45,9 +45,9 @@ import com.better.alarm.persistance.DatabaseQuery;
 import com.better.alarm.persistance.PersistingContainerFactory;
 import com.better.alarm.presenter.DynamicThemeHandler;
 import com.better.alarm.statemachine.HandlerFactory;
+import com.better.alarm.util.Optional;
 import com.f2prateek.rx.preferences2.Preference;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
-import com.better.alarm.util.Optional;
 
 import org.acra.ACRA;
 import org.acra.ErrorReporter;

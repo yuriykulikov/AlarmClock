@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
      Copyright (C) 2008 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,12 +17,12 @@
     android:baselineAligned="true"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal" >
+    android:orientation="horizontal">
 
     <com.better.alarm.view.DontPressWithParentLayout
         android:id="@+id/list_row_on_off_checkbox_container"
         style="@style/alarm_list_left_column"
-        android:gravity="center" >
+        android:gravity="center">
 
         <CheckBox
             android:id="@+id/list_row_on_off_switch"
@@ -33,7 +32,7 @@
             android:clickable="false"
             android:duplicateParentState="true"
             android:focusable="false" />
-        
+
     </com.better.alarm.view.DontPressWithParentLayout>
 
     <LinearLayout
@@ -41,7 +40,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="center"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <com.better.alarm.view.DigitalClock
             android:id="@+id/list_row_digital_clock"
@@ -49,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:gravity="center"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/digital_clock_time"
@@ -73,7 +72,8 @@
             android:paddingTop="2dip"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="?android:attr/textColorTertiary" />
-         <TextView
+
+        <TextView
             android:id="@+id/list_row_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
     <com.better.alarm.view.DontPressWithParentLayout
         android:id="@+id/details_button_container"
         style="@style/alarm_list_left_column"
-        android:gravity="center" >
+        android:gravity="center">
 
         <TextView
             android:layout_width="wrap_content"

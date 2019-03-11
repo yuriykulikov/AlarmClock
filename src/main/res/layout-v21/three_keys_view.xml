@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2012 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2012 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,33 +13,33 @@
      limitations under the License.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_weight="1"
-              android:gravity="center"
-              android:layout_height="0dip">
+    android:layout_width="match_parent"
+    android:layout_weight="1"
+    android:gravity="center"
+    android:layout_height="0dip">
 
     <Button
-            android:id="@+id/key_left"
-            android:layout_width="0dip"
-            android:layout_weight="1"
-            style="@style/dialpad"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:layout_height="match_parent"/>
+        android:id="@+id/key_left"
+        android:layout_width="0dip"
+        android:layout_weight="1"
+        style="@style/dialpad"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:layout_height="match_parent" />
 
     <Button
-            android:id="@+id/key_middle"
-            android:layout_width="0dip"
-            android:layout_weight="1"
-            style="@style/dialpad"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:layout_height="match_parent"/>
+        android:id="@+id/key_middle"
+        android:layout_width="0dip"
+        android:layout_weight="1"
+        style="@style/dialpad"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:layout_height="match_parent" />
 
     <Button
-            android:id="@+id/key_right"
-            android:layout_width="0dip"
-            android:layout_weight="1"
-            style="@style/dialpad"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:layout_height="match_parent"/>
+        android:id="@+id/key_right"
+        android:layout_width="0dip"
+        android:layout_weight="1"
+        style="@style/dialpad"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:layout_height="match_parent" />
 
 </LinearLayout>

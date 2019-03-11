@@ -41,9 +41,9 @@ import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
 import com.better.alarm.model.DaysOfWeek
+import com.better.alarm.util.Optional
 import com.better.alarm.view.RepeatPreference
 import com.f2prateek.rx.preferences2.RxSharedPreferences
-import com.better.alarm.util.Optional
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables

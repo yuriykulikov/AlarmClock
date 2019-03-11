@@ -37,12 +37,12 @@ class TestHandlerFactory implements HandlerFactory {
 
             @Override
             public Message obtainMessage(int what, Object obj) {
-                return new Message(what, this, null,null, obj);
+                return new Message(what, this, null, null, obj);
             }
 
             @Override
             public Message obtainMessage(int what) {
-                return new Message(what, this, null,null, null);
+                return new Message(what, this, null, null, null);
             }
         };
     }

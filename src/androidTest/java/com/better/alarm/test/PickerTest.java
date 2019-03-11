@@ -23,7 +23,6 @@ import kotlin.collections.CollectionsKt;
 
 import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
 import static cortado.Cortado.onView;
-import static org.hamcrest.CoreMatchers.not;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest

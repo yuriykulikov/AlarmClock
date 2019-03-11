@@ -60,11 +60,11 @@ public class DaysOfWeek {
     }
 
 
-    public DaysOfWeek(int coded){
+    public DaysOfWeek(int coded) {
         this.coded = coded;
     }
 
-    public int getCoded(){
+    public int getCoded() {
         return coded;
     }
 

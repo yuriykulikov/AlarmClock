@@ -23,7 +23,7 @@ public class Logger {
      * Logs the message if configured log level for the class is above requested
      * log level. If configured {@link LogLevel} is {@link LogLevel#WRN}, only
      * logs with {@link LogLevel#ERR} and {@link LogLevel#WRN} will be shown.
-     * 
+     *
      * @param logLevel
      * @param message
      */
@@ -75,7 +75,7 @@ public class Logger {
         return sDefaultLogger;
     }
 
-    public static Logger create(){
+    public static Logger create() {
         return new Logger();
     }
 
@@ -87,7 +87,6 @@ public class Logger {
      * Log writing strategy
      *
      * @author Yuriy
-     *
      */
     public interface LogWriter {
         void write(LogLevel level, String tag, String message, Throwable e);

@@ -21,13 +21,12 @@ import com.better.alarm.model.AlarmValue;
 
 /**
  * @author Yuriy
- * 
  */
 public interface IAlarmsManager {
     /**
      * Tell the model that a certain alarm has to be snoozed because of the user
      * interaction
-     * 
+     *
      * @param alarm
      */
     void snooze(Alarm alarm);
@@ -35,14 +34,14 @@ public interface IAlarmsManager {
     /**
      * Tell the model that a certain alarm has to be dismissed because of the
      * user interaction
-     * 
+     *
      * @param alarm
      */
     void dismiss(Alarm alarm);
 
     /**
      * Delete an AlarmCore from the database
-     * 
+     *
      * @param alarm
      */
     void delete(Alarm alarm);
@@ -64,7 +63,7 @@ public interface IAlarmsManager {
 
     /**
      * Create new AlarmCore with default settings
-     * 
+     *
      * @return Alarm
      */
     @NonNull
