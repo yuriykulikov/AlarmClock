@@ -24,7 +24,7 @@ package com.better.alarm.statemachine;
 public class State implements IState {
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.android.internal.util.IState#enter()
      */
     @Override
@@ -40,7 +40,7 @@ public class State implements IState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.android.internal.util.IState#exit()
      */
     @Override
@@ -50,7 +50,7 @@ public class State implements IState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.android.internal.util.IState#processMessage(android.os.Message)
      */
     @Override

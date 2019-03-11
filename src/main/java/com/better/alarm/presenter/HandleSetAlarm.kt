@@ -21,13 +21,10 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.provider.AlarmClock
-
+import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.interfaces.Alarm
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
-import com.better.alarm.model.AlarmValue
-
-import com.better.alarm.configuration.AlarmApplication.container
 
 
 class HandleSetAlarm : Activity() {

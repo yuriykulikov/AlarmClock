@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
      Copyright (C) 2007 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        tools:listitem="@layout/list_row"/>
+        tools:listitem="@layout/list_row" />
 
     <fragment
         android:id="@+id/list_activity_info_fragment"
@@ -40,6 +39,6 @@
         style="?android:attr/buttonBarButtonStyle"
         android:text="@string/add_alarm"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

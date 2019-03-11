@@ -25,9 +25,7 @@ import android.widget.TextView;
 import com.better.alarm.R;
 
 /**
- * 
  * @author Yuriy
- * 
  */
 public class TimerView extends LinearLayout {
 

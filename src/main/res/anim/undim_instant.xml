@@ -2,5 +2,4 @@
     android:fromAlpha="1.0"
     android:toAlpha="0.0"
     android:duration="0"
-    android:fillAfter="true"
-    />
+    android:fillAfter="true" />

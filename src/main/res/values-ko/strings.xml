@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--  Copyright (C) 2007 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!--  Copyright (C) 2007 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,8 +13,7 @@
      limitations under the License.
  -->
 
-<resources xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_label" msgid="6674495003718166674">"시계"</string>
     <string name="alarm_list_title" msgid="7589940465292950600">"알람"</string>
     <string name="add_alarm" msgid="5976616107390962899">"알람 추가"</string>
@@ -38,16 +36,16 @@
     <string name="alarm_alert_alert_silenced" msgid="2704775170733835993">"<xliff:g id="MINUTES">%d</xliff:g>분 후 알람이 중지됩니다."</string>
     <string name="alarm_alert_snooze_text" msgid="1774416052207651584">"다시 울림"</string>
     <string name="alarm_alert_snooze_set" msgid="656470966696912087">"<xliff:g id="MINUTES">%d</xliff:g>분 동안 알람 일시 중지"</string>
-  <string-array name="alarm_set">
-    <item msgid="6450913786084215050">"지금부터 1분 이내로 알람이 설정됩니다."</item>
-    <item msgid="6002066367368421848">"지금부터 <xliff:g id="DAYS">%1$s</xliff:g> 후로 알람이 설정됩니다."</item>
-    <item msgid="8824719306247973774">"지금부터 <xliff:g id="HOURS">%2$s</xliff:g> 후로 알람이 설정됩니다."</item>
-    <item msgid="8182406852935468862">"지금부터 <xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> 후로 알람이 설정됩니다."</item>
-    <item msgid="2532279224777213194">"지금부터 <xliff:g id="MINUTES">%3$s</xliff:g> 후로 알람이 설정됩니다."</item>
-    <item msgid="5936557894247187717">"지금부터 <xliff:g id="DAYS">%1$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g> 후로 알람이 설정됩니다."</item>
-    <item msgid="9115697840826129603">"지금부터 <xliff:g id="HOURS">%2$s</xliff:g>, <xliff:g id="MINUTES">%3$s</xliff:g> 후로 알람이 설정됩니다."</item>
-    <item msgid="2332583385137381060">"지금부터 <xliff:g id="DAYS">%1$s</xliff:g> <xliff:g id="HOURS">%2$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g> 후로 알람이 설정되었습니다."</item>
-  </string-array>
+    <string-array name="alarm_set">
+        <item msgid="6450913786084215050">"지금부터 1분 이내로 알람이 설정됩니다."</item>
+        <item msgid="6002066367368421848">"지금부터 <xliff:g id="DAYS">%1$s</xliff:g> 후로 알람이 설정됩니다."</item>
+        <item msgid="8824719306247973774">"지금부터 <xliff:g id="HOURS">%2$s</xliff:g> 후로 알람이 설정됩니다."</item>
+        <item msgid="8182406852935468862">"지금부터 <xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> 후로 알람이 설정됩니다."</item>
+        <item msgid="2532279224777213194">"지금부터 <xliff:g id="MINUTES">%3$s</xliff:g> 후로 알람이 설정됩니다."</item>
+        <item msgid="5936557894247187717">"지금부터 <xliff:g id="DAYS">%1$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g> 후로 알람이 설정됩니다."</item>
+        <item msgid="9115697840826129603">"지금부터 <xliff:g id="HOURS">%2$s</xliff:g>, <xliff:g id="MINUTES">%3$s</xliff:g> 후로 알람이 설정됩니다."</item>
+        <item msgid="2332583385137381060">"지금부터 <xliff:g id="DAYS">%1$s</xliff:g> <xliff:g id="HOURS">%2$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g> 후로 알람이 설정되었습니다."</item>
+    </string-array>
     <string name="day" msgid="7984755014526510295">"1일"</string>
     <string name="days" msgid="2070509222727852210">"<xliff:g id="DAYS">%s</xliff:g>일"</string>
     <string name="hour" msgid="2546819039651509323">"1시간"</string>
@@ -63,34 +61,34 @@
     <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"무음 모드에서 알람 설정"</string>
     <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"무음 모드에서도 알람이 울리도록 설정"</string>
     <string name="snooze_duration_title" msgid="1471249885139952670">"다시 울림 간격"</string>
-  <string-array name="snooze_duration_entries">
-    <item msgid="8337408933053603125">"5분"</item>
-    <item msgid="5294206441496024610">"10분"</item>
-    <item msgid="2165904039211935470">"15분"</item>
-    <item msgid="7248236967714374250">"20분"</item>
-    <item msgid="738394723625179423">"25분"</item>
-    <item msgid="1180222611308391616">"30분"</item>
-  </string-array>
-  <string-array name="snooze_duration_values">
-    <item msgid="3655014754453084122">"5"</item>
-    <item msgid="8939029597449573449">"10"</item>
-    <item msgid="3922647341176353315">"15"</item>
-    <item msgid="5821804105985044459">"20"</item>
-    <item msgid="6048861883552402852">"25"</item>
-    <item msgid="2740866721232379791">"30"</item>
-  </string-array>
+    <string-array name="snooze_duration_entries">
+        <item msgid="8337408933053603125">"5분"</item>
+        <item msgid="5294206441496024610">"10분"</item>
+        <item msgid="2165904039211935470">"15분"</item>
+        <item msgid="7248236967714374250">"20분"</item>
+        <item msgid="738394723625179423">"25분"</item>
+        <item msgid="1180222611308391616">"30분"</item>
+    </string-array>
+    <string-array name="snooze_duration_values">
+        <item msgid="3655014754453084122">"5"</item>
+        <item msgid="8939029597449573449">"10"</item>
+        <item msgid="3922647341176353315">"15"</item>
+        <item msgid="5821804105985044459">"20"</item>
+        <item msgid="6048861883552402852">"25"</item>
+        <item msgid="2740866721232379791">"30"</item>
+    </string-array>
     <string name="auto_silence_title" msgid="6940612987809171112">"자동 무음 모드"</string>
     <string name="auto_silence_summary" msgid="5757272454196171758">"<xliff:g id="MINUTES">%d</xliff:g>분 후에 무음 모드로 전환합니다."</string>
     <string name="auto_silence_never" msgid="4302257878142130807">"사용 안함"</string>
-  <string-array name="auto_silence_entries">
-    <item msgid="7718972982871612080">"사용 안함"</item>
-    <item msgid="5431906692406316549">"5분"</item>
-    <item msgid="7742728812068919959">"10분"</item>
-    <item msgid="2855948657259647629">"15분"</item>
-    <item msgid="6330196381284475079">"20분"</item>
-    <item msgid="7809240121716151904">"25분"</item>
-    <item msgid="2807487305575255986">"30분"</item>
-  </string-array>
+    <string-array name="auto_silence_entries">
+        <item msgid="7718972982871612080">"사용 안함"</item>
+        <item msgid="5431906692406316549">"5분"</item>
+        <item msgid="7742728812068919959">"10분"</item>
+        <item msgid="2855948657259647629">"15분"</item>
+        <item msgid="6330196381284475079">"20분"</item>
+        <item msgid="7809240121716151904">"25분"</item>
+        <item msgid="2807487305575255986">"30분"</item>
+    </string-array>
     <string name="done" msgid="6509722361933858451">"완료"</string>
     <string name="revert" msgid="9100911171235162926">"되돌리기"</string>
     <string name="delete" msgid="5732434972457000541">"삭제"</string>
@@ -103,16 +101,16 @@
     <string name="volume_button_setting_title" msgid="6937131248843413357">"볼륨 버튼"</string>
     <string name="volume_button_dialog_title" msgid="8768042543750036853">"버튼 효과"</string>
     <string name="volume_button_setting_summary" msgid="4776447991226047070">"알람이 울릴 때 버튼을 누르면 수행할 동작 설정"</string>
-  <string-array name="volume_button_setting_entries">
-    <item msgid="4520420953175098625">"없음"</item>
-    <item msgid="7111908302622811168">"다시 울림"</item>
-    <item msgid="8573552194573068996">"해제"</item>
-  </string-array>
-  <string-array name="volume_button_setting_values">
-    <item msgid="4851033050639608752">"0"</item>
-    <item msgid="3204893476515513084">"1"</item>
-    <item msgid="7687709558968154577">"2"</item>
-  </string-array>
+    <string-array name="volume_button_setting_entries">
+        <item msgid="4520420953175098625">"없음"</item>
+        <item msgid="7111908302622811168">"다시 울림"</item>
+        <item msgid="8573552194573068996">"해제"</item>
+    </string-array>
+    <string-array name="volume_button_setting_values">
+        <item msgid="4851033050639608752">"0"</item>
+        <item msgid="3204893476515513084">"1"</item>
+        <item msgid="7687709558968154577">"2"</item>
+    </string-array>
     <string name="default_ringtone_setting_title" msgid="4549726190682964245">"기본 벨소리 설정"</string>
     <string name="alarm_button_description" msgid="740283647046258651">"알람"</string>
     <string name="gallery_button_description" msgid="1151743663255257668">"갤러리"</string>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
      Copyright (C) 2007 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
@@ -87,7 +86,8 @@
 
     <!--
          Toast that appears after Alarm is snoozed from the Alarm
-         dialog. Says the alarm will snooze for xxx minutes.    -->
+         dialog. Says the alarm will snooze for xxx minutes.
+    -->
     <string name="alarm_alert_snooze_set">Snoozing for <xliff:g id="minutes">%d</xliff:g> minutes.</string>
 
     <!--
@@ -98,12 +98,14 @@
          4:            minutes
          5: days       minutes
          6:      hours minutes
-         7: days hours minutes    -->
+         7: days hours minutes
+    -->
     <skip />
 
     <!--
          Alarm confirmation toast: Describes how long from now until
-         alarm fires    -->
+         alarm fires
+    -->
     <string-array name="alarm_set">
         <item>Alarm set for less than 1 minute from now.</item>
         <item>Alarm set for <xliff:g id="DAYS" example="2 days">%1$s</xliff:g> from now.</item>
@@ -169,7 +171,8 @@
     <!--
          Setting title for whether the alarm should play in silent mode.
          Usually, silent mode only affects the ringer, but this setting
-         will make the alarms respect silent mode too.    -->
+         will make the alarms respect silent mode too.
+    -->
     <string name="alarm_in_silent_mode_title">Alarm in silent mode</string>
 
     <!-- Setting summary for whether the alarm should play in silent mode. -->
@@ -180,7 +183,8 @@
 
     <!--
          Entries listed in the ListPreference when invoking the snooze duration
-         preference.    -->
+         preference.
+    -->
     <string-array name="snooze_duration_entries">
         <item>5 minutes</item>
         <item>10 minutes</item>
@@ -207,14 +211,16 @@
     <string name="auto_silence_title">Auto-silence</string>
 
     <!-- Auto silence summary string set based on the preference value. -->
-    <string name="auto_silence_summary">Alarms will silence after<xliff:g id="minutes">%d</xliff:g> minutes</string>
+    <string name="auto_silence_summary">Alarms will silence after
+<xliff:g id="minutes">%d</xliff:g> minutes</string>
 
     <!-- Auto silence summary when turned off -->
     <string name="auto_silence_never">Off</string>
 
     <!--
          Entries listed in the ListPreference when invoking the auto silence
-         preference.    -->
+         preference.
+    -->
     <string-array name="auto_silence_entries">
         <item>Off</item>
         <item>5 minutes</item>
@@ -227,7 +233,8 @@
 
     <!--
          Values that are retrieved from the ListPreference. These must match
-         the auto_silence_entries above.    -->
+         the auto_silence_entries above.
+    -->
     <string-array name="auto_silence_values" translatable="false">
         <item>-1</item>
         <!-- Off -->
@@ -268,7 +275,8 @@
 
     <!--
          Title of the setting to change hardware button behavior. This string
-         should be changed for each piece of hardware. [CHAR LIMIT=20]    -->
+         should be changed for each piece of hardware. [CHAR LIMIT=20]
+    -->
     <string name="volume_button_setting_title">Volume buttons</string>
 
     <!-- Dialog title of the volume and power setting. -->
@@ -310,18 +318,21 @@
     <!--
          What to show the user if the weather widget exists but fails to
          respond. This is a sign of an error; if the weather widget is not
-         present on the device, we show nothing at all.    -->
+         present on the device, we show nothing at all.
+    -->
     <string name="weather_fetch_failure">Weather information isn\'t available right now.</string>
     <string name="menu_item_dock_settings" msgid="9161438664257429372">Dock settings</string>
 
     <!--
          A description for the DeskClock alarm sound playback service.
-         [CHAR LIMIT=NONE]    -->
+         [CHAR LIMIT=NONE]
+    -->
     <string name="alarm_klaxon_service_desc">Sound playback service for alarms set in Clock.</string>
 
     <!--
          String displayed as the alert summary while loading the alert name from
-         the media player. [CHAR LIMIT=NONE]    -->
+         the media player. [CHAR LIMIT=NONE]
+    -->
     <string name="loading_ringtone">Loading ringtone\u2026</string>
 
     <!-- Label on the main screen control used to set alarm [CHAR LIMIT=30] -->

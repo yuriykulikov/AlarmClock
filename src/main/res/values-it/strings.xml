@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--  Copyright (C) 2007 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!--  Copyright (C) 2007 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,12 +13,11 @@
      limitations under the License.
  -->
 
-<resources xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- Setting labels on Set alarm screen: Prealarm -->
     <string name="alarm_prealarm">Pre-sveglia soft</string>
     <!-- Pre-alarm duration title -->
-    <string name="prealarm_duration_title" >durata della pre-sveglia</string>
+    <string name="prealarm_duration_title">durata della pre-sveglia</string>
     <!--
          Entries listed in the ListPreference when invoking the pre-alarm duration
          preference.
@@ -91,6 +89,6 @@
         <item>"30 minuti"</item>
     </string-array>
     <string name="alarm_alert_reschedule_text">Ripianificare</string>
-    <string name = "alarm_alert_hold_the_button_text">Tenere premuto il tasto!</string>
+    <string name="alarm_alert_hold_the_button_text">Tenere premuto il tasto!</string>
     <string name="menu_extensions">"Estensioni"</string>
 </resources>

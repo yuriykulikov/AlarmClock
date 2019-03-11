@@ -2,12 +2,15 @@
 
 <!-- Generated with http://android-holo-colors.com -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
+
     <style name="DefaultLightTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <item name="alarmDetailsButtonStyle">@style/LightAlarmDetailsButtonStyle</item>
-    </style> 
-    <style name="AlarmAlertFullScreenLightTheme" parent="android:Theme.Holo.Light.NoActionBar">
-         <item name="android:windowNoTitle">true</item>
     </style>
+
+    <style name="AlarmAlertFullScreenLightTheme" parent="android:Theme.Holo.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
     <style name="TimePickerDialogFragmentLight" parent="android:style/Theme.Holo.Light.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="timePickerDeleteButtonStyle">@style/LightTimePickerDeleteButtonStyle</item>

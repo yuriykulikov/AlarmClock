@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
      Copyright (C) 2009 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,16 +14,16 @@
      limitations under the License.
 -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/enable_alarm"
-        android:title="@string/enable_alarm"/>
+        android:title="@string/enable_alarm" />
     <item
         android:id="@+id/edit_alarm"
-        android:title="@string/menu_edit_alarm"/>
+        android:title="@string/menu_edit_alarm" />
     <item
         android:id="@+id/delete_alarm"
-        android:title="@string/delete_alarm"/>
+        android:title="@string/delete_alarm" />
 
 </menu>

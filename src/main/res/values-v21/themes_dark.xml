@@ -3,10 +3,12 @@
     <!-- Dark Themes -->
     <style name="DefaultDarkTheme" parent="android:Theme.Material">
         <item name="alarmDetailsButtonStyle">@style/DarkAlarmDetailsButtonStyle</item>
-    </style> 
-    <style name="AlarmAlertFullScreenDarkTheme" parent="android:Theme.Material.NoActionBar">
-         <item name="android:windowNoTitle">true</item>
     </style>
+
+    <style name="AlarmAlertFullScreenDarkTheme" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
     <style name="TimePickerDialogFragmentDark" parent="android:style/Theme.Material.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="timePickerDeleteButtonStyle">@style/DarkTimePickerDeleteButtonStyle</item>

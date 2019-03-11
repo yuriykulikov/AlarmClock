@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2011 The Android Open Source Project
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,7 +18,7 @@ package com.better.alarm.statemachine;
 
 /**
  * {@hide}
- * 
+ * <p>
  * The interface for implementing states in a {@link StateMachine}
  */
 public interface IState {
@@ -50,23 +50,22 @@ public interface IState {
 
     /**
      * Called when a message is to be processed by the state machine.
-     * 
+     * <p>
      * This routine is never reentered thus no synchronization is needed as only
      * one processMessage method will ever be executing within a state machine
      * at any given time. This does mean that processing by this routine must be
      * completed as expeditiously as possible as no subsequent messages will be
      * processed until this routine returns.
-     * 
-     * @param msg
-     *            to process
+     *
+     * @param msg to process
      * @return HANDLED if processing has completed and NOT_HANDLED if the
-     *         message wasn't processed.
+     * message wasn't processed.
      */
     boolean processMessage(Message msg);
 
     /**
      * Name of State for debugging purposes.
-     * 
+     *
      * @return name of state.
      */
     String getName();

@@ -56,7 +56,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-thin"
                     android:textSize="100sp"
-                    android:textStyle="normal"/>
+                    android:textStyle="normal" />
 
                 <TextView
                     android:id="@+id/digital_clock_am_pm"
@@ -66,6 +66,7 @@
                     android:textSize="20sp"
                     android:textStyle="bold" />
             </com.better.alarm.view.DigitalClock>
+
             <TextView
                 android:id="@+id/alert_text_snooze"
                 android:layout_width="match_parent"
@@ -80,7 +81,7 @@
             android:id="@+id/alert_button_snooze"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
     </RelativeLayout>
 
     <View

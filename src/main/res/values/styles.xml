@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2008 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2008 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,6 +14,7 @@
 -->
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
+
     <style name="RoundTouchButton">
         <item name="android:gravity">center</item>
         <item name="android:layout_width">wrap_content</item>
@@ -26,18 +26,18 @@
         <item name="android:layout_width">68dip</item>
         <item name="android:layout_height">68dip</item>
     </style>
-    
+
     <!-- For the TimePicker from JB 4.2 -->
     <style name="small_bold">
         <item name="android:textSize">@dimen/small_font_size</item>
         <item name="android:textStyle">bold</item>
-     <!--   <item name="android:fontFamily">sans-serif</item> -->
+        <!--   <item name="android:fontFamily">sans-serif</item> -->
     </style>
 
     <style name="medium_bold">
         <item name="android:textSize">@dimen/medium_font_size</item>
         <item name="android:textStyle">bold</item>
-     <!--   <item name="android:fontFamily">sans-serif</item> -->
+        <!--   <item name="android:fontFamily">sans-serif</item> -->
     </style>
 
     <style name="widget_medium_bold" parent="medium_bold">
@@ -46,12 +46,12 @@
 
     <style name="small_light">
         <item name="android:textSize">@dimen/small_font_size</item>
-     <!--   <item name="android:fontFamily">sans-serif-light</item> -->
+        <!--   <item name="android:fontFamily">sans-serif-light</item> -->
     </style>
 
     <style name="medium_light">
         <item name="android:textSize">@dimen/medium_font_size</item>
-    <!--    <item name="android:fontFamily">sans-serif-light</item> -->
+        <!--    <item name="android:fontFamily">sans-serif-light</item> -->
     </style>
 
     <style name="widget_medium_light" parent="medium_light">
@@ -62,7 +62,7 @@
         <item name="android:textSize">@dimen/label_font_size</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">true</item>
-    <!--    <item name="android:fontFamily">sans-serif-condensed</item> -->
+        <!--    <item name="android:fontFamily">sans-serif-condensed</item> -->
     </style>
 
     <style name="label_not_caps" parent="label">
@@ -72,18 +72,18 @@
     <style name="header">
         <item name="android:textSize">@dimen/header_font_size</item>
         <item name="android:textAllCaps">true</item>
-     <!--   <item name="android:fontFamily">sans-serif-condensed</item> -->
+        <!--   <item name="android:fontFamily">sans-serif-condensed</item> -->
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="header_not_caps" parent ="header">
+    <style name="header_not_caps" parent="header">
         <item name="android:textAllCaps">false</item>
     </style>
 
     <style name="big_bold">
         <item name="android:textSize">@dimen/big_font_size</item>
         <item name="android:textStyle">bold</item>
-     <!--   <item name="android:fontFamily">sans-serif</item> -->
+        <!--   <item name="android:fontFamily">sans-serif</item> -->
     </style>
 
     <style name="widget_big_bold" parent="big_bold">
@@ -92,7 +92,7 @@
 
     <style name="big_thin">
         <item name="android:textSize">@dimen/big_font_size</item>
-     <!--   <item name="android:fontFamily">sans-serif-thin</item> -->
+        <!--   <item name="android:fontFamily">sans-serif-thin</item> -->
     </style>
 
     <style name="widget_big_thin" parent="big_thin">
@@ -102,7 +102,7 @@
     <style name="alarm_label">
         <item name="android:textSize">@dimen/alarm_label_size</item>
         <item name="android:textAllCaps">true</item>
-    <!--    <item name="android:fontFamily">sans-serif-condensed</item> -->
+        <!--    <item name="android:fontFamily">sans-serif-condensed</item> -->
     </style>
 
     <style name="alarm_label_not_caps" parent="alarm_label">
@@ -113,13 +113,13 @@
         <item name="android:textSize">@dimen/alarm_label_size</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textStyle">bold</item>
-    <!--    <item name="android:fontFamily">sans-serif-condensed</item> -->
+        <!--    <item name="android:fontFamily">sans-serif-condensed</item> -->
     </style>
 
     <style name="body">
         <item name="android:textSize">@dimen/body_font_size</item>
         <item name="android:textAllCaps">true</item>
-    <!--    <item name="android:fontFamily">sans-serif-condensed</item> -->
+        <!--    <item name="android:fontFamily">sans-serif-condensed</item> -->
     </style>
 
     <style name="body_not_caps" parent="body">
@@ -130,23 +130,23 @@
         <item name="android:textSize">@dimen/body_font_size</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textStyle">bold</item>
-    <!--    <item name="android:fontFamily">sans-serif-condensed</item> -->
+        <!--    <item name="android:fontFamily">sans-serif-condensed</item> -->
     </style>
 
     <style name="button">
         <item name="android:textSize">@dimen/button_font_size</item>
         <item name="android:textAllCaps">true</item>
-     <!--   <item name="android:fontFamily">sans-serif-condensed</item> -->
+        <!--   <item name="android:fontFamily">sans-serif-condensed</item> -->
     </style>
 
     <style name="timer_label">
         <item name="android:textSize">@dimen/timer_label_font_size</item>
-    <!--    <item name="android:fontFamily">sans-serif-condensed</item> -->
+        <!--    <item name="android:fontFamily">sans-serif-condensed</item> -->
     </style>
 
     <style name="dialog_button">
         <item name="android:textSize">@dimen/dialog_button_font_size</item>
-    <!--    <item name="android:fontFamily">sans-serif</item> -->
+        <!--    <item name="android:fontFamily">sans-serif</item> -->
     </style>
 
     <style name="bold_button" parent="button">
@@ -156,7 +156,7 @@
     <style name="dialpad">
         <item name="android:textSize">@dimen/dialpad_font_size</item>
         <item name="android:textAllCaps">true</item>
-    <!--    <item name="android:fontFamily">sans-serif-light</item> -->
+        <!--    <item name="android:fontFamily">sans-serif-light</item> -->
     </style>
 
     <style name="dialpad_ampm" parent="dialpad">
@@ -166,26 +166,26 @@
     <style name="city_name">
         <item name="android:textSize">@dimen/city_name_font_size</item>
         <item name="android:textAllCaps">true</item>
-    <!--    <item name="android:fontFamily">sans-serif-condensed</item> -->
+        <!--    <item name="android:fontFamily">sans-serif-condensed</item> -->
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="city_time">
         <item name="android:textSize">@dimen/city_time_font_size</item>
         <item name="android:textAllCaps">true</item>
-    <!--    <item name="android:fontFamily">sans-serif</item> -->
+        <!--    <item name="android:fontFamily">sans-serif</item> -->
     </style>
 
     <style name="tablet_dialpad">
         <item name="android:textSize">@dimen/tablet_dialpad_font_size</item>
         <item name="android:textAllCaps">true</item>
-    <!--    <item name="android:fontFamily">sans-serif-condensed</item> -->
+        <!--    <item name="android:fontFamily">sans-serif-condensed</item> -->
     </style>
 
     <style name="tablet_dialpad_ampm">
         <item name="android:textSize">@dimen/tablet_dialpad_font_size_ampm</item>
         <item name="android:textAllCaps">true</item>
-    <!--    <item name="android:fontFamily">sans-serif-condensed</item> -->
+        <!--    <item name="android:fontFamily">sans-serif-condensed</item> -->
     </style>
 
     <style name="TextAppearance">

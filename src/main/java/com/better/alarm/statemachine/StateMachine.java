@@ -38,39 +38,61 @@ public class StateMachine {
     private static class SmHandler implements MessageHandler {
         private final Logger log;
 
-        /** The current message */
+        /**
+         * The current message
+         */
         private Message mMsg;
 
-        /** true if construction of the state machine has not been completed */
+        /**
+         * true if construction of the state machine has not been completed
+         */
         private boolean mIsConstructionCompleted;
 
-        /** Stack used to manage the current hierarchy of states */
+        /**
+         * Stack used to manage the current hierarchy of states
+         */
         private StateInfo mStateStack[];
 
-        /** Top of mStateStack */
+        /**
+         * Top of mStateStack
+         */
         private int mStateStackTopIndex = -1;
 
-        /** A temporary stack used to manage the state stack */
+        /**
+         * A temporary stack used to manage the state stack
+         */
         private StateInfo mTempStateStack[];
 
-        /** The top of the mTempStateStack */
+        /**
+         * The top of the mTempStateStack
+         */
         private int mTempStateStackCount;
 
-        /** Reference to the StateMachine */
+        /**
+         * Reference to the StateMachine
+         */
         private StateMachine mSm;
 
         private final IHandler handler;
 
-        /** The map of all of the states in the state machine */
+        /**
+         * The map of all of the states in the state machine
+         */
         private final HashMap<State, StateInfo> mStateInfo = new HashMap<State, StateInfo>();
 
-        /** The initial state that will process the first message */
+        /**
+         * The initial state that will process the first message
+         */
         private State mInitialState;
 
-        /** The destination state when transitionTo has been invoked */
+        /**
+         * The destination state when transitionTo has been invoked
+         */
         private State mDestState;
 
-        /** The list of deferred messages */
+        /**
+         * The list of deferred messages
+         */
         private final ArrayList<Message> mDeferredMessages = new ArrayList<Message>();
 
         private final CopyOnWriteArrayList<IOnStateChangedListener> onStateChangedListeners = new CopyOnWriteArrayList<IOnStateChangedListener>();
@@ -79,13 +101,19 @@ public class StateMachine {
          * Information about a state. Used to maintain the hierarchy.
          */
         private class StateInfo {
-            /** The state */
+            /**
+             * The state
+             */
             public State state;
 
-            /** The parent of this state, null if there is no parent */
+            /**
+             * The parent of this state, null if there is no parent
+             */
             public StateInfo parentStateInfo;
 
-            /** True when the state has been entered and on the stack */
+            /**
+             * True when the state has been entered and on the stack
+             */
             public boolean active;
 
             /**
@@ -239,9 +267,8 @@ public class StateMachine {
          * Invoke the enter method starting at the entering index to top of
          * state stack
          *
-         * @param resume
-         *            true if state machine is resuming from hibernation. In
-         *            this case {@link IState#enter()} will not be invoked
+         * @param resume true if state machine is resuming from hibernation. In
+         *               this case {@link IState#enter()} will not be invoked
          */
         private final void invokeEnterMethods(int stateStackEnteringIndex, boolean resume) {
             for (int i = stateStackEnteringIndex; i <= mStateStackTopIndex; i++) {
@@ -293,14 +320,14 @@ public class StateMachine {
 
         /**
          * Setup the mTempStateStack with the states we are going to enter.
-         *
+         * <p>
          * This is found by searching up the destState's ancestors for a state
          * that is already active i.e. StateInfo.active == true. The destStae
          * and all of its inactive parents will be on the TempStateStack as the
          * list of states to enter.
          *
          * @return StateInfo of the common ancestor for the destState and
-         *         current state or null if there is no common parent.
+         * current state or null if there is no common parent.
          */
         private final StateInfo setupTempStateStackWithStatesToEnter(State destState) {
             /**
@@ -353,10 +380,8 @@ public class StateMachine {
          * Add a new state to the state machine. Bottom up addition of states is
          * allowed but the same state may only exist in one hierarchy.
          *
-         * @param state
-         *            the state to add
-         * @param parent
-         *            the parent of state
+         * @param state  the state to add
+         * @param parent the parent of state
          * @return stateInfo for this state
          */
         private final StateInfo addState(State state, State parent) {
@@ -390,19 +415,25 @@ public class StateMachine {
             this.handler = hf.create(this);
         }
 
-        /** @see StateMachine#setInitialState(State) */
+        /**
+         * @see StateMachine#setInitialState(State)
+         */
         private final void setInitialState(State initialState) {
             mInitialState = initialState;
         }
 
-        /** @see StateMachine#transitionTo(IState) */
+        /**
+         * @see StateMachine#transitionTo(IState)
+         */
         private final void transitionTo(IState destState) {
             mDestState = (State) destState;
             log.d("[" + mSm.getName() + "] " + mStateStack[mStateStackTopIndex].state.getName() + " -> "
                     + mDestState.getName());
         }
 
-        /** @see StateMachine#deferMessage(Message) */
+        /**
+         * @see StateMachine#deferMessage(Message)
+         */
         private final void deferMessage(Message msg) {
             log.d(msg + " in " + mSm.getName());
             mDeferredMessages.add(msg);
@@ -431,8 +462,7 @@ public class StateMachine {
     /**
      * Constructor creates a StateMachine using the looper.
      *
-     * @param name
-     *            of the state machine
+     * @param name of the state machine
      */
     public StateMachine(String name, HandlerFactory handlerFactory, Logger log) {
         mName = name;
@@ -443,10 +473,8 @@ public class StateMachine {
     /**
      * Add a new state to the state machine
      *
-     * @param state
-     *            the state to add
-     * @param parent
-     *            the parent of state
+     * @param state  the state to add
+     * @param parent the parent of state
      */
     protected final void addState(State state, State parent) {
         mSmHandler.addState(state, parent);
@@ -473,8 +501,7 @@ public class StateMachine {
     /**
      * Add a new state to the state machine, parent will be null
      *
-     * @param state
-     *            to add
+     * @param state to add
      */
     protected final void addState(State state) {
         mSmHandler.addState(state, null);
@@ -484,8 +511,7 @@ public class StateMachine {
      * Set the initial state. This must be invoked before and messages are sent
      * to the state machine.
      *
-     * @param initialState
-     *            is the state which will receive the first message.
+     * @param initialState is the state which will receive the first message.
      */
     protected final void setInitialState(State initialState) {
         mSmHandler.setInitialState(initialState);
@@ -495,15 +521,14 @@ public class StateMachine {
      * transition to destination state. Upon returning from processMessage the
      * current state's exit will be executed and upon the next message arriving
      * destState.enter will be invoked.
-     *
+     * <p>
      * this function can also be called inside the enter function of the
      * previous transition target, but the behavior is undefined when it is
      * called mid-way through a previous transition (for example, calling this
      * in the enter() routine of a intermediate node when the current transition
      * target is one of the nodes descendants).
      *
-     * @param destState
-     *            will be the state that receives the next message.
+     * @param destState will be the state that receives the next message.
      */
     protected final void transitionTo(IState destState) {
         mSmHandler.transitionTo(destState);
@@ -513,15 +538,14 @@ public class StateMachine {
      * transition to destination state. Upon returning from processMessage the
      * current state's exit will be executed and upon the next message arriving
      * destState.enter will be invoked.
-     *
+     * <p>
      * this function can also be called inside the enter function of the
      * previous transition target, but the behavior is undefined when it is
      * called mid-way through a previous transition (for example, calling this
      * in the enter() routine of a intermediate node when the current transition
      * target is one of the nodes descendants).
      *
-     * @param destState
-     *            will be the state that receives the next message.
+     * @param destState will be the state that receives the next message.
      */
     protected final void transitionTo(Class<? extends IState> destState) {
         for (IState state : getStates()) {
@@ -539,8 +563,7 @@ public class StateMachine {
      * original order. (i.e. The next state the oldest messages will be
      * processed first)
      *
-     * @param msg
-     *            is deferred until the next transition.
+     * @param msg is deferred until the next transition.
      */
     protected final void deferMessage(Message msg) {
         mSmHandler.deferMessage(msg);

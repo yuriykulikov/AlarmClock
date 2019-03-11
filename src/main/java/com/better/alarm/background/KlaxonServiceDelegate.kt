@@ -79,8 +79,7 @@ class KlaxonServiceDelegate(
                         .map { it != TelephonyManager.CALL_STATE_IDLE }
                         .distinctUntilChanged()
                         .skip(1)//ignore the first one
-                        .subscribe {
-                            callActive ->
+                        .subscribe { callActive ->
                             if (callActive) {
                                 log.d("Call has started. Mute.")
                                 volume.mute()

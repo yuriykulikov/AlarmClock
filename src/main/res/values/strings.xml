@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
      Copyright (C) 2007 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
@@ -96,7 +95,7 @@
     <string name="dashclock_message">You will be transferred to Google Play to install DashClock. Dashclock is a widget which perfectly integrates with Simple Alarm!</string>
     <string name="mp3cutter">Get MP3 cutter</string>
     <string name="mp3cutter_message">You will be transferred to Google Play to search for an appliaction which will allow you to use MP3 files as alarm sound.</string>
- 
+
     <string name="theme_title">Interface theme</string>
     <string-array name="themes_entries">
         <item>Holo dark</item>
@@ -107,10 +106,10 @@
         <item>light</item>
     </string-array>
     <string name="simple_alarm_clock">Simple Alarm Clock</string>
-        <!--
-         Entries listed in the ListPreference when invoking the snooze duration
-         preference.
-    -->
+    <!--
+     Entries listed in the ListPreference when invoking the snooze duration
+     preference.
+-->
     <string-array name="snooze_duration_with_off_entries">
         <item>Off</item>
         <item>5 minutes</item>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2012 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2012 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -18,6 +17,7 @@
     android:layout_weight="1"
     android:gravity="center"
     android:layout_height="0dip">
+
     <Button
         android:id="@+id/key_left"
         android:layout_width="0dip"
@@ -25,6 +25,7 @@
         style="@style/tablet_dialpad"
         android:background="@drawable/item_background"
         android:layout_height="match_parent" />
+
     <Button
         android:id="@+id/key_middle"
         android:background="@drawable/item_background"
@@ -32,6 +33,7 @@
         android:layout_weight="1"
         style="@style/tablet_dialpad"
         android:layout_height="match_parent" />
+
     <Button
         android:id="@+id/key_right"
         android:background="@drawable/item_background"

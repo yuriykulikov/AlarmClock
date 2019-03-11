@@ -28,8 +28,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.better.alarm.R;
-import com.better.alarm.view.TimePicker;
 import com.better.alarm.util.Optional;
+import com.better.alarm.view.TimePicker;
 
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;

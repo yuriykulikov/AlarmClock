@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2008 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2008 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -33,8 +32,8 @@
     <color name="transparent">#00000000</color>
     <color name="transparent_white">#66ffffff</color>
     <color name="alarm_whiteish">#0cffffff</color>
-    
-        <color name="clock_red">#ff4444</color>
+
+    <color name="clock_red">#ff4444</color>
     <color name="clock_white">#ffffff</color>
     <color name="clock_gray">#80ffffff</color>
     <color name="clock_blue">#ff33b5e5</color>

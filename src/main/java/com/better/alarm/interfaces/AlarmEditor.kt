@@ -1,7 +1,7 @@
 package com.better.alarm.interfaces
 
-import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.AlarmData
+import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.DaysOfWeek
 import io.reactivex.functions.Consumer
 

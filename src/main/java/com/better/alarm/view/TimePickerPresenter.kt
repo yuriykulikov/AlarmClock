@@ -119,13 +119,13 @@ open class TimePickerPresenter(val is24HoursMode: Boolean) {
         private fun enable24Digits(): List<Key> = when {
             leftRightEntered -> none
             input.isEmpty() -> any
-        //After first 0 or 1, second can be any (e.g. 07:15, 19:35, 1:34)
+            //After first 0 or 1, second can be any (e.g. 07:15, 19:35, 1:34)
             input.size == 1 && input.first() <= 1 -> any
-        //After first 2 or more, second can be zeroToFive (e.g. 23:15, 2:58)
+            //After first 2 or more, second can be zeroToFive (e.g. 23:15, 2:58)
             input.size == 1 && input.first() > 1 -> zeroToFive
-        //Third can be any, like in 7:49 or 12:52 or 1:29
+            //Third can be any, like in 7:49 or 12:52 or 1:29
             input.size == 2 -> any
-        //last number can be minutes if front() is less than 24
+            //last number can be minutes if front() is less than 24
             input.size == 3 && front() < 24 && input.get(2) <= 5 -> any
             else -> none
         }
@@ -140,11 +140,11 @@ open class TimePickerPresenter(val is24HoursMode: Boolean) {
         private fun enable12Digits(): List<Key> = when {
             leftRightEntered -> none
             input.isEmpty() -> any
-        //second number can be tens of hours or tens of minutes
+            //second number can be tens of hours or tens of minutes
             input.size == 1 -> zeroToFive
-        //third number can tens of minutes or minutes (any)
+            //third number can tens of minutes or minutes (any)
             input.size == 2 -> any
-        //last number can be minutes if front() is less than 12
+            //last number can be minutes if front() is less than 12
             input.size == 3 && front() <= 12 && input.get(2) <= 5 -> any
             else -> none
         }
