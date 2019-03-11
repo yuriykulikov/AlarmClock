@@ -57,7 +57,7 @@ class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, 
     }
 
     private fun replaceAlarm(newAlarm: ScheduledAlarm, add: Boolean) {
-        val previousHead = queue.peek()
+        val previousHead: ScheduledAlarm? = queue.peek()
 
         // remove if we have already an alarm
         queue.removeAll { it.id == newAlarm.id }
@@ -73,10 +73,11 @@ class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, 
         // TODO should we compare content? Previously this was because of equals implementation
         if (previousHead !== currentHead) {
             if (!queue.isEmpty()) {
+                previousHead?.run { setter.removeRTCAlarm(this) }
                 setter.setUpRTCAlarm(currentHead)
             } else {
                 log.d("no more alarms to schedule, remove pending intent")
-                setter.removeRTCAlarm()
+                previousHead?.run { setter.removeRTCAlarm(this) }
             }
             notifyListeners()
         }

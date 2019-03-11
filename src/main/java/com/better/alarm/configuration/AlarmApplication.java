@@ -25,9 +25,9 @@ import android.preference.PreferenceManager;
 import android.view.ViewConfiguration;
 
 import com.better.alarm.R;
-import com.better.alarm.alert.AlarmAlertReceiver;
-import com.better.alarm.background.ScheduledReceiver;
-import com.better.alarm.background.ToastPresenter;
+import com.better.alarm.alert.BackgroundNotifications;
+import com.better.alarm.background.AlertServicePusher;
+import com.better.alarm.background.Event;
 import com.better.alarm.logger.LogcatLogWriter;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.logger.LoggingExceptionHandler;
@@ -40,18 +40,17 @@ import com.better.alarm.model.AlarmValue;
 import com.better.alarm.model.Alarms;
 import com.better.alarm.model.AlarmsScheduler;
 import com.better.alarm.model.Calendars;
-import com.better.alarm.model.MainLooperHandlerFactory;
+import com.better.alarm.model.ImmediateHandlerFactory;
 import com.better.alarm.persistance.DatabaseQuery;
 import com.better.alarm.persistance.PersistingContainerFactory;
 import com.better.alarm.presenter.DynamicThemeHandler;
+import com.better.alarm.presenter.ScheduledReceiver;
+import com.better.alarm.presenter.ToastPresenter;
 import com.better.alarm.statemachine.HandlerFactory;
 import com.better.alarm.util.Optional;
 import com.f2prateek.rx.preferences2.Preference;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
 
-import org.acra.ACRA;
-import org.acra.ErrorReporter;
-import org.acra.ExceptionHandlerInitializer;
 import org.acra.ReportField;
 import org.acra.annotation.ReportsCrashes;
 
@@ -93,7 +92,7 @@ public class AlarmApplication extends Application {
     @Override
     public void onCreate() {
         // The following line triggers the initialization of ACRA
-        ACRA.init(this);
+        // ACRA.init(this);
         sThemeHandler = new DynamicThemeHandler(this);
         setTheme(sThemeHandler.defaultTheme());
 
@@ -155,7 +154,8 @@ public class AlarmApplication extends Application {
                 // next
                 BehaviorSubject.createDefault(Optional.<Store.Next>absent()),
                 // sets
-                PublishSubject.<Store.AlarmSet>create());
+                PublishSubject.<Store.AlarmSet>create(),
+                PublishSubject.<Event>create());
 
         store.alarms().subscribe(new Consumer<List<AlarmValue>>() {
             @Override
@@ -174,12 +174,12 @@ public class AlarmApplication extends Application {
             }
         });
 
-        ACRA.getErrorReporter().setExceptionHandlerInitializer(new ExceptionHandlerInitializer() {
-            @Override
-            public void initializeExceptionHandler(ErrorReporter reporter) {
-                reporter.putCustomData("STARTUP_LOG", startupLogWriter.getMessagesAsString());
-            }
-        });
+        // ACRA.getErrorReporter().setExceptionHandlerInitializer(new ExceptionHandlerInitializer() {
+        //     @Override
+        //     public void initializeExceptionHandler(ErrorReporter reporter) {
+        //         reporter.putCustomData("STARTUP_LOG", startupLogWriter.getMessagesAsString());
+        //     }
+        // });
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
@@ -208,8 +208,8 @@ public class AlarmApplication extends Application {
         };
 
         AlarmsScheduler alarmsScheduler = new AlarmsScheduler(setter, logger, store, prefs, calendars);
-        AlarmCore.IStateNotifier broadcaster = new AlarmStateNotifier(getApplicationContext());
-        HandlerFactory handlerFactory = new MainLooperHandlerFactory();
+        AlarmCore.IStateNotifier broadcaster = new AlarmStateNotifier(getApplicationContext(), store);
+        HandlerFactory handlerFactory = new ImmediateHandlerFactory();
         PersistingContainerFactory containerFactory = new PersistingContainerFactory(calendars, getApplicationContext());
         Alarms alarms = new Alarms(alarmsScheduler, new DatabaseQuery(getContentResolver(), containerFactory), new AlarmCoreFactory(logger,
                 alarmsScheduler,
@@ -218,7 +218,6 @@ public class AlarmApplication extends Application {
                 prefs,
                 store,
                 calendars
-
         ), containerFactory);
 
         alarms.start();
@@ -234,9 +233,11 @@ public class AlarmApplication extends Application {
 
         new ScheduledReceiver(store, getApplicationContext(), prefs, alarmManager).start();
         new ToastPresenter(store, getApplicationContext()).start();
-        AlarmAlertReceiver.createNotificationChannel(this);
+        new AlertServicePusher(store, getApplicationContext());
+        new BackgroundNotifications();
 
         logger.d("onCreate done");
+
         super.onCreate();
     }
 

@@ -59,22 +59,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <!-- Forwards intents to the AlarmAlertFullScreen -->
-        <receiver
-            android:name=".alert.AlarmAlertReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="${applicationId}.ALARM_ALERT" />
-                <action android:name="${applicationId}.ALARM_PREALARM_ACTION" />
-                <action android:name="${applicationId}.ALARM_SNOOZE" />
-                <action android:name="${applicationId}.ACTION_CANCEL_SNOOZE" />
-                <action android:name="${applicationId}.ALARM_DISMISS" />
-                <action android:name="${applicationId}.ACTION_SOUND_EXPIRED" />
-            </intent-filter>
-        </receiver>
-
-        <!-- Alarm alert with snooze and dismiss buttons -->
-
         <!-- This activity is basically the same as AlarmAlert
              but full-screen so that it can turn the display on. -->
         <activity
@@ -90,12 +74,12 @@
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
-            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar"
-            android:taskAffinity="" />
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar" />
 
         <!-- KlaxonPresenter plays sound -->
         <receiver
-            android:name=".background.KlaxonService$Receiver"
+            android:name=".background.AlertServiceWrapper$Receiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="${applicationId}.ALARM_ALERT" />
@@ -103,45 +87,24 @@
                 <action android:name="${applicationId}.ALARM_SNOOZE" />
                 <action android:name="${applicationId}.ALARM_DISMISS" />
                 <action android:name="${applicationId}.ACTION_SOUND_EXPIRED" />
-                <action android:name="${applicationId}.ACTION_START_PREALARM_SAMPLE" />
-                <action android:name="${applicationId}.ACTION_STOP_PREALARM_SAMPLE" />
-                <action android:name="${applicationId}.ACTION_START_ALARM_SAMPLE" />
-                <action android:name="${applicationId}.ACTION_STOP_ALARM_SAMPLE" />
                 <action android:name="${applicationId}.ACTION_MUTE" />
                 <action android:name="${applicationId}.ACTION_DEMUTE" />
             </intent-filter>
         </receiver>
         <service
-            android:name=".background.KlaxonService"
-            android:description="@string/alarm_klaxon_service_desc"
-            android:exported="false"></service>
-
-        <!-- VibrationPresenter vibrates -->
-        <receiver
-            android:name=".background.VibrationService$Receiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="${applicationId}.ALARM_ALERT" />
-                <action android:name="${applicationId}.ALARM_SNOOZE" />
-                <action android:name="${applicationId}.ALARM_DISMISS" />
-                <action android:name="${applicationId}.ACTION_SOUND_EXPIRED" />
-                <action android:name="${applicationId}.ACTION_MUTE" />
-                <action android:name="${applicationId}.ACTION_DEMUTE" />
-            </intent-filter>
-        </receiver>
-        <service
-            android:name=".background.VibrationService"
+            android:name=".background.AlertServiceWrapper"
             android:description="@string/alarm_klaxon_service_desc"
             android:exported="false"></service>
 
         <!-- Model -->
         <receiver
-            android:name=".services.AlarmsService$Receiver"
+            android:name=".model.AlarmsReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="${applicationId}.ACTION_FIRED" />
                 <action android:name="${applicationId}.ACTION_SNOOZED_FIRED" />
                 <action android:name="${applicationId}.ACTION_SOUND_EXPIRED" />
+                <action android:name="${applicationId}.ACTION_CANCEL_NOTIFICATION" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.TIME_SET" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
@@ -149,9 +112,6 @@
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
-        <service
-            android:name=".services.AlarmsService"
-            android:exported="false"></service>
         <!-- Persistence -->
         <provider
             android:name=".persistance.AlarmProvider"

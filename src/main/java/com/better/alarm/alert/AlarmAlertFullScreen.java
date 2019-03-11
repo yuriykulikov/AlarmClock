@@ -18,8 +18,6 @@
 package com.better.alarm.alert;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -34,8 +32,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.better.alarm.Broadcasts;
 import com.better.alarm.R;
+import com.better.alarm.background.Event;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
@@ -48,6 +46,7 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Predicate;
 
 import static com.better.alarm.configuration.AlarmApplication.container;
 import static com.better.alarm.configuration.AlarmApplication.themeHandler;
@@ -70,23 +69,7 @@ public class AlarmAlertFullScreen extends Activity {
     private boolean longClickToDismiss;
 
     private Disposable disposableDialog = Disposables.disposed();
-    /**
-     * Receives Intents from the model
-     * Intents.ALARM_SNOOZE_ACTION
-     * Intents.ALARM_DISMISS_ACTION
-     * Intents.ACTION_SOUND_EXPIRED
-     */
-    private final BroadcastReceiver mReceiver = new Receiver();
-
-    public class Receiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
-            if (mAlarm.getId() == id) {
-                finish();
-            }
-        }
-    }
+    private Disposable subscription;
 
     @Override
     protected void onCreate(Bundle icicle) {
@@ -104,7 +87,7 @@ public class AlarmAlertFullScreen extends Activity {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
-        int id = getIntent().getIntExtra(Intents.EXTRA_ID, -1);
+        final int id = getIntent().getIntExtra(Intents.EXTRA_ID, -1);
         try {
             mAlarm = alarmsManager.getAlarm(id);
 
@@ -122,11 +105,21 @@ public class AlarmAlertFullScreen extends Activity {
             updateLayout();
 
             // Register to get the alarm killed/snooze/dismiss intent.
-            IntentFilter filter = new IntentFilter();
-            filter.addAction(Intents.ALARM_SNOOZE_ACTION);
-            filter.addAction(Intents.ALARM_DISMISS_ACTION);
-            filter.addAction(Intents.ACTION_SOUND_EXPIRED);
-            Broadcasts.registerLocal(this, mReceiver, filter);
+            subscription = container().store()
+                    .getEvents()
+                    .filter(new Predicate<Event>() {
+                        @Override
+                        public boolean test(Event event) throws Exception {
+                            return (event instanceof Event.SnoozedEvent && ((Event.SnoozedEvent) event).getId() == id)
+                                    || (event instanceof Event.DismissEvent && ((Event.DismissEvent) event).getId() == id)
+                                    || (event instanceof Event.Autosilenced && ((Event.Autosilenced) event).getId() == id);
+                        }
+                    }).subscribe(new Consumer<Event>() {
+                        @Override
+                        public void accept(Event event) throws Exception {
+                            finish();
+                        }
+                    });
         } catch (Exception e) {
             Logger.getDefaultLogger().d("Alarm not found");
         }
@@ -179,12 +172,12 @@ public class AlarmAlertFullScreen extends Activity {
                                     }
                                 }
                             });
-                    Broadcasts.sendExplicit(AlarmAlertFullScreen.this, new Intent(Intents.ACTION_MUTE));
+                    container().store().getEvents().onNext(new Event.MuteEvent());
                     new android.os.Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             //TODO think about removing this or whatevar
-                            Broadcasts.sendExplicit(AlarmAlertFullScreen.this, new Intent(Intents.ACTION_DEMUTE));
+                            container().store().getEvents().onNext(new Event.DemuteEvent());
                         }
                     }, 10000);
                 }
@@ -260,7 +253,7 @@ public class AlarmAlertFullScreen extends Activity {
         longClickToDismiss = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(LONGCLICK_DISMISS_KEY,
                 LONGCLICK_DISMISS_DEFAULT);
 
-        Button snooze = (Button) findViewById(R.id.alert_button_snooze);
+        Button snooze = findViewById(R.id.alert_button_snooze);
         View snoozeText = findViewById(R.id.alert_text_snooze);
         snooze.setEnabled(isSnoozeEnabled());
         snoozeText.setEnabled(isSnoozeEnabled());
@@ -277,7 +270,7 @@ public class AlarmAlertFullScreen extends Activity {
         super.onDestroy();
         Logger.getDefaultLogger().d("AlarmAlert.onDestroy()");
         // No longer care about the alarm being killed.
-        Broadcasts.unregisterLocal(this, mReceiver);
+        subscription.dispose();
     }
 
     @Override

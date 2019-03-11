@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.better.alarm.background;
+package com.better.alarm.presenter;
 
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
@@ -24,11 +24,9 @@ import android.os.Build;
 import android.provider.Settings;
 import android.text.format.DateFormat;
 
-import com.better.alarm.Broadcasts;
 import com.better.alarm.configuration.Prefs;
 import com.better.alarm.configuration.Store;
 import com.better.alarm.interfaces.Intents;
-import com.better.alarm.presenter.AlarmsListActivity;
 import com.better.alarm.util.Optional;
 
 import java.util.Calendar;
@@ -76,7 +74,7 @@ public class ScheduledReceiver {
             // Broadcast intent for the notification bar
             Intent alarmChanged = new Intent("android.intent.action.ALARM_CHANGED");
             alarmChanged.putExtra("alarmSet", true);
-            Broadcasts.sendSystemBroadcast(context, alarmChanged);
+            context.sendBroadcast(alarmChanged);
 
             // Update systems settings, so that interested Apps (like
             // KeyGuard)
@@ -91,7 +89,7 @@ public class ScheduledReceiver {
             // Broadcast intent for the notification bar
             Intent alarmChanged = new Intent("android.intent.action.ALARM_CHANGED");
             alarmChanged.putExtra("alarmSet", false);
-            Broadcasts.sendSystemBroadcast(context, alarmChanged);
+            context.sendBroadcast(alarmChanged);
             // Update systems settings, so that interested Apps (like KeyGuard)
             // will react accordingly
             Settings.System.putString(context.getContentResolver(), Settings.System.NEXT_ALARM_FORMATTED, "");

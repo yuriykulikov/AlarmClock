@@ -8,8 +8,6 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.PowerManager
 import android.telephony.TelephonyManager
-import com.better.alarm.background.KlaxonServiceCallback
-import com.better.alarm.background.KlaxonServiceDelegate
 import com.better.alarm.interfaces.Alarm
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
