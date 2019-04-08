@@ -24,6 +24,7 @@ import android.content.Intent
 import android.preference.PreferenceManager
 import android.text.format.DateFormat
 import com.better.alarm.BuildConfig
+import com.better.alarm.NotificationImportance
 import com.better.alarm.R
 import com.better.alarm.background.Event
 import com.better.alarm.configuration.AlarmApplication.container
@@ -33,6 +34,7 @@ import com.better.alarm.interfaces.Intents
 import com.better.alarm.interfaces.Intents.ACTION_CANCEL_NOTIFICATION
 import com.better.alarm.interfaces.PresentationToModelIntents
 import com.better.alarm.logger.Logger
+import com.better.alarm.notificationBuilder
 import com.better.alarm.presenter.TransparentActivity
 import java.util.*
 

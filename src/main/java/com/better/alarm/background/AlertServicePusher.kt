@@ -2,8 +2,8 @@ package com.better.alarm.background
 
 import android.content.Context
 import android.content.Intent
-import com.better.alarm.alert.oreo
-import com.better.alarm.alert.preOreo
+import com.better.alarm.oreo
+import com.better.alarm.preOreo
 import com.better.alarm.configuration.Store
 import com.better.alarm.interfaces.Intents
 

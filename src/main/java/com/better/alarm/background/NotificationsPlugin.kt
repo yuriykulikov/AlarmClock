@@ -23,8 +23,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import com.better.alarm.BuildConfig
-import com.better.alarm.R
+import com.better.alarm.*
 import com.better.alarm.alert.*
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.Prefs

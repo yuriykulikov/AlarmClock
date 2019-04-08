@@ -17,12 +17,10 @@
 
 package com.better.alarm.presenter
 
-import android.annotation.TargetApi
 import android.app.Activity
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.preference.CheckBoxPreference
 import android.preference.Preference
@@ -40,6 +38,7 @@ import com.better.alarm.interfaces.AlarmEditor
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
+import com.better.alarm.lollipop
 import com.better.alarm.model.DaysOfWeek
 import com.better.alarm.util.Optional
 import com.better.alarm.view.RepeatPreference
@@ -55,7 +54,6 @@ import java.util.*
  * Details activity allowing for fine-grained alarm modification
  */
 class AlarmDetailsFragment : PreferenceFragment {
-    private val IS_LOLLI = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
     private val alarms: IAlarmsManager
     private val logger: Logger
     private val rxSharedPreferences: RxSharedPreferences
@@ -91,7 +89,6 @@ class AlarmDetailsFragment : PreferenceFragment {
         editor.onNext(alarms.getAlarm(alarmId).edit())
     }
 
-    @TargetApi(21)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
         logger.d("Inflating layout")
         val view = inflater.inflate(R.layout.details_activity, container, false)
@@ -109,7 +106,10 @@ class AlarmDetailsFragment : PreferenceFragment {
         rowHolder.daysOfWeek().visibility = View.INVISIBLE
         rowHolder.label().visibility = View.INVISIBLE
 
-        setTransitionNames()
+        rowHolder.lollipop {
+            digitalClock().transitionName = "clock$alarmId"
+            container().transitionName = "onOff$alarmId"
+        }
 
         editor.subscribe { logger.d("---- $it") }
 
@@ -145,15 +145,7 @@ class AlarmDetailsFragment : PreferenceFragment {
         return view
     }
 
-    @TargetApi(21)
-    private fun setTransitionNames() {
-        if (IS_LOLLI) {
-            rowHolder.digitalClock().transitionName = "clock" + alarmId
-            rowHolder.container().transitionName = "onOff" + alarmId
-        }
-    }
-
-    fun bindToPreferences() {
+    private fun bindToPreferences() {
         //init preferences with editor$ values
         editor.firstOrError()
                 .subscribe { editor ->
@@ -235,7 +227,7 @@ class AlarmDetailsFragment : PreferenceFragment {
         }
     }
 
-    val pickerConsumer = { picked: Optional<PickedTime> ->
+    private val pickerConsumer = { picked: Optional<PickedTime> ->
         if (picked.isPresent()) {
             modify("Picker") { editor: AlarmEditor ->
                 editor.with(hour = picked.get().hour,
