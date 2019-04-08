@@ -3,6 +3,7 @@ package com.better.alarm.presenter;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.Intents;
@@ -15,7 +16,7 @@ import io.reactivex.functions.Consumer;
 
 import static com.better.alarm.configuration.AlarmApplication.container;
 
-public class TransparentActivity extends Activity {
+public class TransparentActivity extends FragmentActivity {
 
     private Alarm alarm;
     private Disposable dialog = Disposables.disposed();
@@ -31,7 +32,7 @@ public class TransparentActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        dialog = TimePickerDialogFragment.showTimePicker(getFragmentManager()).subscribe(new Consumer<Optional<PickedTime>>() {
+        dialog = TimePickerDialogFragment.showTimePicker(getSupportFragmentManager()).subscribe(new Consumer<Optional<PickedTime>>() {
             @Override
             public void accept(@NonNull Optional<PickedTime> picked) {
                 if (picked.isPresent()) {

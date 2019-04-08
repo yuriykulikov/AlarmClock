@@ -16,12 +16,12 @@
 
 package com.better.alarm.presenter;
 
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,7 +83,7 @@ public class TimePickerDialogFragment extends DialogFragment {
             @Override
             public void onClick(View view) {
                 PickedTime picked = new PickedTime(mPicker.getHours(), mPicker.getMinutes());
-                emitter.onSuccess(Optional.of(picked));
+                emitter.onSuccess(Optional.<PickedTime>of(picked));
                 dismiss();
             }
         });
@@ -131,3 +131,4 @@ public class TimePickerDialogFragment extends DialogFragment {
         });
     }
 }
+

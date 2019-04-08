@@ -1,11 +1,10 @@
 package com.better.alarm.presenter
 
-import android.annotation.TargetApi
 import android.app.AlertDialog
-import android.app.Fragment
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
 import android.widget.AbsListView
@@ -15,6 +14,7 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import com.better.alarm.R
 import com.better.alarm.configuration.AlarmApplication.container
+import com.better.alarm.lollipop
 import com.better.alarm.model.AlarmValue
 import com.melnykov.fab.FloatingActionButton
 import io.reactivex.Observable
@@ -31,11 +31,9 @@ import java.util.*
  * @author Yuriy
  */
 class AlarmsListFragment : Fragment() {
-    val MATERIAL_DESIGN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-
     private val alarms = container().alarms()
     private val store = container().store()
-    private val uiStore: UiStore by lazy { AlarmsListActivity.uiStore(this) }
+    private val uiStore: UiStore by lazy { AlarmsListActivity.uiStore(activity as AlarmsListActivity) }
     private val prefs = container().prefs()
     private val logger = container().logger()
 
@@ -52,16 +50,8 @@ class AlarmsListFragment : Fragment() {
 
             val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val rowView = inflater.inflate(R.layout.list_row, parent, false)
-            val rowHolder = RowHolder(rowView, id)
-            rowHolder.digitalClock.setLive(false)
-            return rowHolder
-        }
-
-        @TargetApi(21)
-        private fun setTranstionNames(row: RowHolder, alarm: AlarmValue) {
-            if (MATERIAL_DESIGN) {
-                row.digitalClock().transitionName = "clock" + alarm.id
-                row.container().transitionName = "onOff" + alarm.id
+            return RowHolder(rowView, id).apply {
+                digitalClock.setLive(false)
             }
         }
 
@@ -73,12 +63,16 @@ class AlarmsListFragment : Fragment() {
 
             row.onOff().isChecked = alarm.isEnabled
 
-            setTranstionNames(row, alarm)
+            lollipop {
+                row.digitalClock().transitionName = "clock" + alarm.id
+                row.container().transitionName = "onOff" + alarm.id
+                row.detailsButton().transitionName = "detailsButton" + alarm.id
+            }
 
             //Delete add, skip animation
             if (row.idHasChanged()) {
                 logger.d("Jump to current state")
-                //row.onOff().jumpDrawablesToCurrentState();
+                row.onOff().jumpDrawablesToCurrentState()
             }
 
             row.container()
@@ -115,7 +109,7 @@ class AlarmsListFragment : Fragment() {
                 row.daysOfWeek().text = daysOfWeekStr
                 row.daysOfWeek().visibility = View.VISIBLE
             } else {
-                row.daysOfWeek().visibility = if (MATERIAL_DESIGN) View.INVISIBLE else View.GONE
+                row.daysOfWeek().visibility = if (lollipop()) View.INVISIBLE else View.GONE
             }
 
             // Set the repeat text or leave it blank if it does not repeat.
@@ -123,7 +117,7 @@ class AlarmsListFragment : Fragment() {
                 row.label().text = alarm.label
                 row.label().visibility = View.VISIBLE
             } else {
-                row.label().visibility = if (MATERIAL_DESIGN) View.INVISIBLE else View.GONE
+                row.label().visibility = if (lollipop()) View.INVISIBLE else View.GONE
             }
 
             return row.rowView()

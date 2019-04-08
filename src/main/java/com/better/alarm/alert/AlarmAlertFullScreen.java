@@ -25,6 +25,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -58,7 +59,7 @@ import static com.better.alarm.configuration.Prefs.LONGCLICK_DISMISS_KEY;
  * activity is the full screen version which shows over the lock screen with the
  * wallpaper as the background.
  */
-public class AlarmAlertFullScreen extends Activity {
+public class AlarmAlertFullScreen extends FragmentActivity {
     protected static final String SCREEN_OFF = "screen_off";
 
     protected Alarm mAlarm;
@@ -161,7 +162,7 @@ public class AlarmAlertFullScreen extends Activity {
             @Override
             public boolean onLongClick(View v) {
                 if (isSnoozeEnabled()) {
-                    disposableDialog = TimePickerDialogFragment.showTimePicker(getFragmentManager())
+                    disposableDialog = TimePickerDialogFragment.showTimePicker(getSupportFragmentManager())
                             .subscribe(new Consumer<Optional<PickedTime>>() {
                                 @Override
                                 public void accept(@NonNull Optional<PickedTime> picked) {

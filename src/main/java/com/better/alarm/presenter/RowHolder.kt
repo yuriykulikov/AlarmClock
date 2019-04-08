@@ -1,7 +1,5 @@
 package com.better.alarm.presenter
 
-import android.graphics.Rect
-import android.transition.Transition
 import android.view.View
 import android.widget.CompoundButton
 import android.widget.TextView
@@ -49,11 +47,4 @@ class RowHolder {
     fun label(): TextView = label
     fun detailsButton(): View = detailsButton
     fun idHasChanged(): Boolean = idHasChanged
-
-    fun epicenter(): Transition.EpicenterCallback =
-            object : Transition.EpicenterCallback() {
-                override fun onGetEpicenter(transition: Transition): Rect {
-                    return Rect(rowView.left, rowView.top, rowView.right, rowView.bottom)
-                }
-            }
 }
