@@ -1,10 +1,10 @@
 package com.better.alarm.presenter
 
 import android.app.AlertDialog
-import android.app.Fragment
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
 import android.widget.AbsListView
@@ -33,7 +33,7 @@ import java.util.*
 class AlarmsListFragment : Fragment() {
     private val alarms = container().alarms()
     private val store = container().store()
-    private val uiStore: UiStore by lazy { AlarmsListActivity.uiStore(this) }
+    private val uiStore: UiStore by lazy { AlarmsListActivity.uiStore(activity as AlarmsListActivity) }
     private val prefs = container().prefs()
     private val logger = container().logger()
 

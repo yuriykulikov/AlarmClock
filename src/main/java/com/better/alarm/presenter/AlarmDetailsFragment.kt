@@ -22,10 +22,8 @@ import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Bundle
-import android.preference.CheckBoxPreference
-import android.preference.Preference
-import android.preference.PreferenceFragment
 import android.preference.RingtonePreference
+import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,9 +37,7 @@ import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
 import com.better.alarm.lollipop
-import com.better.alarm.model.DaysOfWeek
 import com.better.alarm.util.Optional
-import com.better.alarm.view.RepeatPreference
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -53,7 +49,7 @@ import java.util.*
 /**
  * Details activity allowing for fine-grained alarm modification
  */
-class AlarmDetailsFragment : PreferenceFragment {
+class AlarmDetailsFragment : Fragment {
     private val alarms: IAlarmsManager
     private val logger: Logger
     private val rxSharedPreferences: RxSharedPreferences
@@ -63,12 +59,13 @@ class AlarmDetailsFragment : PreferenceFragment {
     private var backButtonSub: Disposable = Disposables.disposed()
     private var disposableDialog = Disposables.disposed()
 
-    private val store: UiStore by lazy { AlarmsListActivity.uiStore(this) }
+    private val alarmsListActivity by lazy { activity as AlarmsListActivity }
+    private val store: UiStore by lazy { AlarmsListActivity.uiStore(alarmsListActivity) }
     private val mLabel: EditText by lazy { fragmentView.findViewById(R.id.details_label) as EditText }
     private val rowHolder: RowHolder by lazy { RowHolder(fragmentView, alarmId) }
-    private val mAlarmPref: RingtonePreference by lazy { findPreference("alarm_ringtone") as RingtonePreference }
-    private val mRepeatPref: RepeatPreference by lazy { findPreference("setRepeat") as RepeatPreference }
-    private val mPreAlarmPref: CheckBoxPreference by lazy { findPreference("prealarm") as CheckBoxPreference }
+    // private val mAlarmPref: RingtonePreference by lazy { findPreference("alarm_ringtone") as RingtonePreference }
+    // private val mRepeatPref: RepeatPreference by lazy { findPreference("setRepeat") as RepeatPreference }
+    // private val mPreAlarmPref: CheckBoxPreference by lazy { findPreference("prealarm") as CheckBoxPreference }
 
     private val editor: Subject<AlarmEditor> = BehaviorSubject.create()
 
@@ -85,13 +82,16 @@ class AlarmDetailsFragment : PreferenceFragment {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        addPreferencesFromResource(R.xml.alarm_details)
         editor.onNext(alarms.getAlarm(alarmId).edit())
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
+    // override fun onCreatePreferences(p0: Bundle?, p1: String?) {
+    //     addPreferencesFromResource(R.xml.alarm_details)
+    // }
+
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         logger.d("Inflating layout")
-        val view = inflater.inflate(R.layout.details_activity, container, false)
+        val view = inflater!!.inflate(R.layout.details_activity, container, false)
         (view.findViewById(android.R.id.list) as ListView).addFooterView(inflater.inflate(R.layout.details_label, null))
 
         this.fragmentView = view
@@ -115,7 +115,7 @@ class AlarmDetailsFragment : PreferenceFragment {
 
         rowHolder.digitalClock().setLive(false)
         rowHolder.digitalClock().setOnClickListener {
-            disposableDialog = TimePickerDialogFragment.showTimePicker(fragmentManager).subscribe(pickerConsumer)
+            disposableDialog = TimePickerDialogFragment.showTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
         }
 
         editor.firstOrError().subscribe { editor -> mLabel.setText(editor.label) }
@@ -134,7 +134,7 @@ class AlarmDetailsFragment : PreferenceFragment {
         view.findViewById<View>(R.id.details_activity_button_revert).setOnClickListener { revert() }
 
         if (isNewAlarm) {
-            disposableDialog = TimePickerDialogFragment.showTimePicker(fragmentManager)
+            disposableDialog = TimePickerDialogFragment.showTimePicker(alarmsListActivity.supportFragmentManager)
                     .subscribe(pickerConsumer)
         }
 
@@ -149,9 +149,9 @@ class AlarmDetailsFragment : PreferenceFragment {
         //init preferences with editor$ values
         editor.firstOrError()
                 .subscribe { editor ->
-                    mRepeatPref.daysOfWeek = editor.daysOfWeek
-                    mPreAlarmPref.isChecked = editor.isPrealarm
-                    rxSharedPreferences.getString(mAlarmPref.key).set(editor.alertString)
+                    // mRepeatPref.daysOfWeek = editor.daysOfWeek
+                    // mPreAlarmPref.isChecked = editor.isPrealarm
+                    // rxSharedPreferences.getString(mAlarmPref.key).set(editor.alertString)
                 }
 
         //pre-alarm duration
@@ -159,35 +159,35 @@ class AlarmDetailsFragment : PreferenceFragment {
                 .asObservable()
                 .subscribe { value ->
                     val duration = Integer.parseInt(value)
-                    if (duration == -1) {
-                        preferenceScreen.removePreference(mPreAlarmPref)
-                    } else {
-                        preferenceScreen.addPreference(mPreAlarmPref)
-                        mPreAlarmPref.setSummaryOff(R.string.prealarm_off_summary)
-                        mPreAlarmPref.summaryOn = resources.getString(R.string.prealarm_summary, duration)
-                    }
+                    // if (duration == -1) {
+                    //     preferenceScreen.removePreference(mPreAlarmPref)
+                    // } else {
+                    //     preferenceScreen.addPreference(mPreAlarmPref)
+                    //     mPreAlarmPref.setSummaryOff(R.string.prealarm_off_summary)
+                    //     mPreAlarmPref.summaryOn = resources.getString(R.string.prealarm_summary, duration)
+                    // }
                 })
         //pre-alarm
-        disposables.add(rxSharedPreferences.getBoolean(mPreAlarmPref.key)
-                .asObservable()
-                .skip(1)
-                .subscribe { preAlarmEnabled ->
-                    modify("Pre-alarm") { editor -> editor.with(isPrealarm = preAlarmEnabled, enabled = true) }
-                })
-
+        //disposables.add(rxSharedPreferences.getBoolean(mPreAlarmPref.key)
+        //        .asObservable()
+        //        .skip(1)
+        //        .subscribe { preAlarmEnabled ->
+        //            modify("Pre-alarm") { editor -> editor.with(isPrealarm = preAlarmEnabled, enabled = true) }
+        //        })
+//
         //Alert summary
-        mAlarmPref.bindPreferenceSummary().let { disposables.add(it) }
-        //Alert
-        mAlarmPref.setOnPreferenceChangeListener { _, alert ->
-            modify("Alert") { editor -> editor.with(alertString = alert as String, enabled = true) }
-            true
-        }
+        // mAlarmPref.bindPreferenceSummary().let { disposables.add(it) }
+        // //Alert
+        // mAlarmPref.setOnPreferenceChangeListener { _, alert ->
+        //     modify("Alert") { editor -> editor.with(alertString = alert as String, enabled = true) }
+        //     true
+        // }
 
         //repeat
-        mRepeatPref.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, daysOfWeek ->
-            modify("Repeat") { editor -> editor.with(daysOfWeek = daysOfWeek as DaysOfWeek, enabled = true) }
-            true
-        }
+        // mRepeatPref.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, daysOfWeek ->
+        //     modify("Repeat") { editor -> editor.with(daysOfWeek = daysOfWeek as DaysOfWeek, enabled = true) }
+        //     true
+        // }
     }
 
     override fun onResume() {

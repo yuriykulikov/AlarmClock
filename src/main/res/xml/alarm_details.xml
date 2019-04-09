@@ -15,7 +15,7 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="@string/set_alarm">
-    <com.better.alarm.view.RepeatPreference
+    <!-- <com.better.alarm.view.RepeatPreference
         android:key="setRepeat"
         android:title="@string/alarm_repeat" />
     <RingtonePreference
@@ -23,7 +23,7 @@
         android:title="@string/alert"
         android:ringtoneType="alarm"
         android:showDefault="false"
-        android:showSilent="true" />
+        android:showSilent="true" />-->
     <CheckBoxPreference
         android:key="prealarm"
         android:title="@string/alarm_prealarm" />

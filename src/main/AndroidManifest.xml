@@ -26,6 +26,7 @@
         <!-- Activity to set a new or modify existing alarm -->
         <activity
             android:name=".presenter.AlarmsListActivity"
+            android:theme="@style/DefaultDarkTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
             android:exported="true"
             android:label="@string/alarm_list_title"

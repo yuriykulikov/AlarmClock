@@ -18,12 +18,10 @@
 package com.better.alarm.presenter
 
 import android.annotation.TargetApi
-import android.app.Activity
-import android.app.Fragment
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentActivity
 import android.transition.*
 import android.view.Gravity
 import android.view.Menu
@@ -46,7 +44,7 @@ import io.reactivex.subjects.Subject
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */
-class AlarmsListActivity : Activity() {
+class AlarmsListActivity : FragmentActivity() {
     private var mActionBarHandler: ActionBarHandler? = null
     private val logger = container().logger()
     private val alarms = container().alarms()
@@ -171,18 +169,16 @@ class AlarmsListActivity : Activity() {
     }
 
     private fun showList(@NonNull edited: EditedAlarm) {
-        fragmentManager.findFragmentById(R.id.main_fragment_container)?.lollipop {
+        supportFragmentManager.findFragmentById(R.id.main_fragment_container)?.lollipop {
             exitTransition = Fade()
         }
 
         val listFragment = AlarmsListFragment().lollipop {
-            val move = moveTransition()
-            sharedElementEnterTransition = move
-            sharedElementReturnTransition = move
+            sharedElementEnterTransition = moveTransition()
             enterTransition = Fade()
         }
 
-        fragmentManager.beginTransaction()
+        supportFragmentManager.beginTransaction()
                 .lollipop {
                     if (edited.holder.isPresent()) {
                         val viewHolder = edited.holder.get()
@@ -191,11 +187,11 @@ class AlarmsListActivity : Activity() {
                     }
                 }
                 .replace(R.id.main_fragment_container, listFragment)
-                .commitAllowingStateLoss()
+                .commit()
     }
 
     private fun showDetails(@NonNull edited: EditedAlarm) {
-        fragmentManager.findFragmentById(R.id.main_fragment_container)?.lollipop {
+        supportFragmentManager.findFragmentById(R.id.main_fragment_container)?.lollipop {
             exitTransition = Fade()
         }
 
@@ -208,28 +204,23 @@ class AlarmsListActivity : Activity() {
 
             if (edited.holder.isPresent()) {
                 val viewHolder = edited.holder.get()
-                enterSlide.epicenterCallback = viewHolder.epicenter()
-                enterSlide.slideEdge = Gravity.TOP
+                // enterSlide.epicenterCallback = viewHolder.epicenter()
+                enterSlide.slideEdge = Gravity.BOTTOM
             }
 
             enterTransition = TransitionSet().addTransition(enterSlide).addTransition(Fade())
-            reenterTransition = TransitionSet().addTransition(enterSlide).addTransition(Fade())
-
-            val move = moveTransition()
-
-            sharedElementEnterTransition = move
-            sharedElementReturnTransition = move
-            allowEnterTransitionOverlap = true
+            sharedElementEnterTransition = moveTransition()
+            allowEnterTransitionOverlap = false
         }
 
-        fragmentManager.beginTransaction()
+        supportFragmentManager.beginTransaction()
                 .lollipop {
                     val viewHolder = edited.holder.get()
                     addSharedElement(viewHolder.digitalClock(), viewHolder.digitalClock.transitionName)
                     addSharedElement(viewHolder.container(), viewHolder.container().transitionName)
                 }
                 .replace(R.id.main_fragment_container, detailsFragment)
-                .commitAllowingStateLoss()
+                .commit()
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -238,14 +229,12 @@ class AlarmsListActivity : Activity() {
             ordering = TransitionSet.ORDERING_TOGETHER
             addTransition(ChangeBounds())
             addTransition(ChangeTransform())
-            addTransition(ChangeImageTransform())
-            duration = 1500
         }
     }
 
     companion object {
-        fun uiStore(fragment: Fragment): UiStore {
-            return (fragment.activity as AlarmsListActivity).store
+        fun uiStore(activity: AlarmsListActivity): UiStore {
+            return activity.store
         }
     }
 }
