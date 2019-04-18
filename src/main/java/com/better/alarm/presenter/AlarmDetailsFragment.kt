@@ -17,18 +17,20 @@
 
 package com.better.alarm.presenter
 
-import android.app.Activity
-import android.media.Ringtone
+import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Bundle
-import android.preference.RingtonePreference
 import android.support.v4.app.Fragment
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.EditText
-import android.widget.ListView
+import android.widget.LinearLayout
+import android.widget.TextView
 import com.better.alarm.R
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.Store
@@ -38,6 +40,8 @@ import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
 import com.better.alarm.lollipop
 import com.better.alarm.util.Optional
+import com.better.alarm.view.showDialog
+import com.better.alarm.view.summary
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -48,13 +52,14 @@ import java.util.*
 
 /**
  * Details activity allowing for fine-grained alarm modification
+ *
+ * TODO create - unknown ringtone
  */
-class AlarmDetailsFragment : Fragment {
-    private val alarms: IAlarmsManager
-    private val logger: Logger
-    private val rxSharedPreferences: RxSharedPreferences
-
-    private val disposables = CompositeDisposable()
+class AlarmDetailsFragment : Fragment() {
+    private val alarms: IAlarmsManager = container().alarms()
+    private val logger: Logger = container().logger()
+    private val rxSharedPreferences: RxSharedPreferences = container().rxPrefs()
+    private var disposables = CompositeDisposable()
 
     private var backButtonSub: Disposable = Disposables.disposed()
     private var disposableDialog = Disposables.disposed()
@@ -63,9 +68,16 @@ class AlarmDetailsFragment : Fragment {
     private val store: UiStore by lazy { AlarmsListActivity.uiStore(alarmsListActivity) }
     private val mLabel: EditText by lazy { fragmentView.findViewById(R.id.details_label) as EditText }
     private val rowHolder: RowHolder by lazy { RowHolder(fragmentView, alarmId) }
-    // private val mAlarmPref: RingtonePreference by lazy { findPreference("alarm_ringtone") as RingtonePreference }
-    // private val mRepeatPref: RepeatPreference by lazy { findPreference("setRepeat") as RepeatPreference }
-    // private val mPreAlarmPref: CheckBoxPreference by lazy { findPreference("prealarm") as CheckBoxPreference }
+    private val mRingtoneRow by lazy { fragmentView.findViewById(R.id.details_ringtone_row) as LinearLayout }
+    private val mRingtoneSummary by lazy { fragmentView.findViewById(R.id.details_ringtone_summary) as TextView }
+    private val mRepeatRow by lazy { fragmentView.findViewById(R.id.details_repeat_row) as LinearLayout }
+    private val mRepeatSummary by lazy { fragmentView.findViewById(R.id.details_repeat_summary) as TextView }
+    private val mPreAlarmRow by lazy {
+        fragmentView.findViewById(R.id.details_prealarm_row) as LinearLayout
+    }
+    private val mPreAlarmCheckBox by lazy {
+        fragmentView.findViewById(R.id.details_prealarm_checkbox) as CheckBox
+    }
 
     private val editor: Subject<AlarmEditor> = BehaviorSubject.create()
 
@@ -74,61 +86,44 @@ class AlarmDetailsFragment : Fragment {
 
     lateinit var fragmentView: View
 
-    constructor() : super() {
-        alarms = container().alarms()
-        logger = container().logger()
-        rxSharedPreferences = container().rxPrefs()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         editor.onNext(alarms.getAlarm(alarmId).edit())
     }
 
-    // override fun onCreatePreferences(p0: Bundle?, p1: String?) {
-    //     addPreferencesFromResource(R.xml.alarm_details)
-    // }
-
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         logger.d("Inflating layout")
-        val view = inflater!!.inflate(R.layout.details_activity, container, false)
-        (view.findViewById(android.R.id.list) as ListView).addFooterView(inflater.inflate(R.layout.details_label, null))
-
-        this.fragmentView = view
-
-        rowHolder.onOff().setOnClickListener {
-            modify("onOff") { editor ->
-                editor.withIsEnabled(!editor.isEnabled)
-            }
-        }
-
-        rowHolder.detailsButton().visibility = View.INVISIBLE
-        rowHolder.daysOfWeek().visibility = View.INVISIBLE
-        rowHolder.label().visibility = View.INVISIBLE
-
-        rowHolder.lollipop {
-            digitalClock().transitionName = "clock$alarmId"
-            container().transitionName = "onOff$alarmId"
-        }
-
         editor.subscribe { logger.d("---- $it") }
 
-        rowHolder.digitalClock().setLive(false)
-        rowHolder.digitalClock().setOnClickListener {
-            disposableDialog = TimePickerDialogFragment.showTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
-        }
+        val view = inflater!!.inflate(R.layout.details_activity, container, false)
+        this.fragmentView = view
 
-        editor.firstOrError().subscribe { editor -> mLabel.setText(editor.label) }
-
-        editor.distinctUntilChanged()
-                .subscribe { editor ->
-                    rowHolder.digitalClock().updateTime(Calendar.getInstance().apply {
-                        set(Calendar.HOUR_OF_DAY, editor.hour)
-                        set(Calendar.MINUTE, editor.minutes)
-                    })
-
-                    rowHolder.onOff().isChecked = editor.isEnabled
+        rowHolder.run {
+            onOff().setOnClickListener {
+                modify("onOff") { editor ->
+                    editor.withIsEnabled(!editor.isEnabled)
                 }
+            }
+
+            // detailsButton().visibility = View.INVISIBLE
+            daysOfWeek().visibility = View.INVISIBLE
+            label().visibility = View.INVISIBLE
+
+            lollipop {
+                digitalClock().transitionName = "clock$alarmId"
+                container().transitionName = "onOff$alarmId"
+                detailsButton().transitionName = "detailsButton$alarmId"
+            }
+
+            digitalClock().setLive(false)
+            digitalClock().setOnClickListener {
+                disposableDialog = TimePickerDialogFragment.showTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
+            }
+
+            rowView().setOnClickListener {
+                saveAlarm()
+            }
+        }
 
         view.findViewById<View>(R.id.details_activity_button_save).setOnClickListener { saveAlarm() }
         view.findViewById<View>(R.id.details_activity_button_revert).setOnClickListener { revert() }
@@ -138,60 +133,98 @@ class AlarmDetailsFragment : Fragment {
                     .subscribe(pickerConsumer)
         }
 
-        rowHolder.rowView().setOnClickListener { saveAlarm() }
+        //pre-alarm
+        mPreAlarmRow.setOnClickListener {
+            modify("Pre-alarm") { editor -> editor.with(isPrealarm = !editor.isPrealarm, enabled = true) }
+        }
 
-        bindToPreferences()
+        mRepeatRow.setOnClickListener {
+            editor.firstOrError()
+                    .flatMap { editor -> editor.daysOfWeek.showDialog(context) }
+                    .subscribe { daysOfWeek ->
+                        modify("Repeat dialog") { prev -> prev.withDaysOfWeek(daysOfWeek).withIsEnabled(true) }
+                    }
+        }
+
+        mRingtoneRow.setOnClickListener {
+            editor.firstOrError().subscribe { editor ->
+                startActivityForResult(Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+                    // TODO corner cases: silent, undef
+                    putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Uri.parse(editor.alertString))
+
+                    putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
+                    putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
+
+                    putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true)
+                    putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
+                }, 42)
+            }
+        }
+
+        mLabel.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                editor.take(1)
+                        .filter { it.label != s.toString() }
+                        .subscribe {
+                            modify("Label") { prev -> prev.withLabel(s.toString()).withIsEnabled(true) }
+                        }
+            }
+        })
 
         return view
     }
 
-    private fun bindToPreferences() {
-        //init preferences with editor$ values
-        editor.firstOrError()
-                .subscribe { editor ->
-                    // mRepeatPref.daysOfWeek = editor.daysOfWeek
-                    // mPreAlarmPref.isChecked = editor.isPrealarm
-                    // rxSharedPreferences.getString(mAlarmPref.key).set(editor.alertString)
-                }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (data != null && requestCode == 42) {
+            // TODO proper silent alarms
+            val alert = data.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)?.toString()
+                    ?: "silent"
 
-        //pre-alarm duration
-        disposables.add(rxSharedPreferences.getString("prealarm_duration", "-1")
-                .asObservable()
-                .subscribe { value ->
-                    val duration = Integer.parseInt(value)
-                    // if (duration == -1) {
-                    //     preferenceScreen.removePreference(mPreAlarmPref)
-                    // } else {
-                    //     preferenceScreen.addPreference(mPreAlarmPref)
-                    //     mPreAlarmPref.setSummaryOff(R.string.prealarm_off_summary)
-                    //     mPreAlarmPref.summaryOn = resources.getString(R.string.prealarm_summary, duration)
-                    // }
-                })
-        //pre-alarm
-        //disposables.add(rxSharedPreferences.getBoolean(mPreAlarmPref.key)
-        //        .asObservable()
-        //        .skip(1)
-        //        .subscribe { preAlarmEnabled ->
-        //            modify("Pre-alarm") { editor -> editor.with(isPrealarm = preAlarmEnabled, enabled = true) }
-        //        })
-//
-        //Alert summary
-        // mAlarmPref.bindPreferenceSummary().let { disposables.add(it) }
-        // //Alert
-        // mAlarmPref.setOnPreferenceChangeListener { _, alert ->
-        //     modify("Alert") { editor -> editor.with(alertString = alert as String, enabled = true) }
-        //     true
-        // }
+            logger.d("onActivityResult $alert")
 
-        //repeat
-        // mRepeatPref.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, daysOfWeek ->
-        //     modify("Repeat") { editor -> editor.with(daysOfWeek = daysOfWeek as DaysOfWeek, enabled = true) }
-        //     true
-        // }
+            modify("Ringtone picker") { prev ->
+                prev.with(alertString = alert, enabled = true)
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
+        disposables = CompositeDisposable()
+
+        // TODO split bindings
+        disposables.add(editor
+                .distinctUntilChanged()
+                .subscribe { editor ->
+                    rowHolder.digitalClock().updateTime(Calendar.getInstance().apply {
+                        set(Calendar.HOUR_OF_DAY, editor.hour)
+                        set(Calendar.MINUTE, editor.minutes)
+                    })
+
+                    rowHolder.onOff().isChecked = editor.isEnabled
+                    mPreAlarmCheckBox.isChecked = editor.isPrealarm
+
+                    mRepeatSummary.text = editor.daysOfWeek.summary(context)
+                    mRingtoneSummary.text = RingtoneManager.getRingtone(context, Uri.parse(editor.alertString)).getTitle(context)
+
+                    if (editor.label != mLabel.text.toString()) {
+                        mLabel.setText(editor.label)
+                    }
+                })
+
+        //pre-alarm duration, if set to "none", remove the option
+        disposables.add(rxSharedPreferences.getString("prealarm_duration", "-1")
+                .asObservable()
+                .subscribe { value ->
+                    mPreAlarmRow.visibility = if (value.toInt() == -1) View.GONE else View.VISIBLE
+                })
+
         backButtonSub = store.onBackPressed().subscribe { saveAlarm() }
         store.transitioningToNewAlarmDetails().onNext(false)
     }
@@ -200,18 +233,12 @@ class AlarmDetailsFragment : Fragment {
         super.onPause()
         disposableDialog.dispose()
         backButtonSub.dispose()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
         disposables.dispose()
     }
 
     private fun saveAlarm() {
         editor.firstOrError().subscribe { editorToSave ->
-            editorToSave
-                    .withLabel(mLabel.text.toString())
-                    .commit()
+            editorToSave.commit()
             store.hideDetails(rowHolder)
         }
     }
@@ -241,18 +268,4 @@ class AlarmDetailsFragment : Fragment {
         logger.d("Performing modification because of $reason")
         editor.firstOrError().subscribe { ed -> editor.onNext(function.invoke(ed)) }
     }
-
-    private fun RingtonePreference.bindPreferenceSummary(): Disposable {
-        return this.bindPreferenceSummary(rxSharedPreferences, activity)
-    }
-}
-
-fun RingtonePreference.bindPreferenceSummary(rxSharedPreferences: RxSharedPreferences, activity: Activity): Disposable {
-    return rxSharedPreferences.getString(this.key, "")
-            .asObservable()
-            .subscribe { uriString ->
-                val uri: Uri = Uri.parse(uriString)
-                val ringtone: Ringtone? = RingtoneManager.getRingtone(activity, uri)
-                this.summary = ringtone?.getTitle(activity) ?: "..."
-            }
 }

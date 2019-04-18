@@ -22,8 +22,8 @@ import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
+import android.support.v4.app.FragmentTransaction
 import android.transition.*
-import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import com.better.alarm.R
@@ -176,15 +176,12 @@ class AlarmsListActivity : FragmentActivity() {
         val listFragment = AlarmsListFragment().lollipop {
             sharedElementEnterTransition = moveTransition()
             enterTransition = Fade()
+            allowEnterTransitionOverlap = true
         }
 
         supportFragmentManager.beginTransaction()
                 .lollipop {
-                    if (edited.holder.isPresent()) {
-                        val viewHolder = edited.holder.get()
-                        addSharedElement(viewHolder.digitalClock(), "clock" + viewHolder.alarmId())
-                        addSharedElement(viewHolder.container(), "onOff" + viewHolder.alarmId())
-                    }
+                    edited.holder.getOrNull()?.addSharedElementsToTransition(this)
                 }
                 .replace(R.id.main_fragment_container, listFragment)
                 .commit()
@@ -200,24 +197,14 @@ class AlarmsListActivity : FragmentActivity() {
             arguments.putInt(Intents.EXTRA_ID, edited.id())
             arguments.putBoolean(Store.IS_NEW_ALARM, edited.isNew)
         }.lollipop {
-            val enterSlide = Slide()
-
-            if (edited.holder.isPresent()) {
-                val viewHolder = edited.holder.get()
-                // enterSlide.epicenterCallback = viewHolder.epicenter()
-                enterSlide.slideEdge = Gravity.BOTTOM
-            }
-
-            enterTransition = TransitionSet().addTransition(enterSlide).addTransition(Fade())
+            enterTransition = TransitionSet().addTransition(Slide()).addTransition(Fade())
             sharedElementEnterTransition = moveTransition()
-            allowEnterTransitionOverlap = false
+            allowEnterTransitionOverlap = true
         }
 
         supportFragmentManager.beginTransaction()
                 .lollipop {
-                    val viewHolder = edited.holder.get()
-                    addSharedElement(viewHolder.digitalClock(), viewHolder.digitalClock.transitionName)
-                    addSharedElement(viewHolder.container(), viewHolder.container().transitionName)
+                    edited.holder.getOrNull()?.addSharedElementsToTransition(this)
                 }
                 .replace(R.id.main_fragment_container, detailsFragment)
                 .commit()
@@ -232,9 +219,16 @@ class AlarmsListActivity : FragmentActivity() {
         }
     }
 
+    private fun RowHolder.addSharedElementsToTransition(fragmentTransaction: FragmentTransaction) {
+        fragmentTransaction.addSharedElement(digitalClock(), "clock" + alarmId())
+        fragmentTransaction.addSharedElement(container(), "onOff" + alarmId())
+        fragmentTransaction.addSharedElement(detailsButton(), "detailsButton" + alarmId())
+    }
+
     companion object {
         fun uiStore(activity: AlarmsListActivity): UiStore {
             return activity.store
         }
     }
 }
+

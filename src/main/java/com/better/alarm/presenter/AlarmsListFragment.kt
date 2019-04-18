@@ -66,12 +66,13 @@ class AlarmsListFragment : Fragment() {
             lollipop {
                 row.digitalClock().transitionName = "clock" + alarm.id
                 row.container().transitionName = "onOff" + alarm.id
+                row.detailsButton().transitionName = "detailsButton" + alarm.id
             }
 
             //Delete add, skip animation
             if (row.idHasChanged()) {
                 logger.d("Jump to current state")
-                //row.onOff().jumpDrawablesToCurrentState();
+                row.onOff().jumpDrawablesToCurrentState()
             }
 
             row.container()
