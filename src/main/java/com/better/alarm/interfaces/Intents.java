@@ -53,10 +53,6 @@ public interface Intents {
      */
     public static final String EXTRA_ID = "intent.extra.alarm";
 
-    public static final String ACTION_STOP_PREALARM_SAMPLE = BuildConfig.APPLICATION_ID + ".ACTION_STOP_PREALARM_SAMPLE";
-
-    public static final String ACTION_START_PREALARM_SAMPLE = BuildConfig.APPLICATION_ID + ".ACTION_START_PREALARM_SAMPLE";
-
     public static final String ACTION_MUTE = BuildConfig.APPLICATION_ID + ".ACTION_MUTE";
 
     public static final String ACTION_DEMUTE = BuildConfig.APPLICATION_ID + ".ACTION_DEMUTE";

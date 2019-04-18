@@ -7,8 +7,8 @@ import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.net.Uri
 import com.better.alarm.R
-import com.better.alarm.interfaces.Alarm
 import com.better.alarm.logger.Logger
+import com.better.alarm.model.AlarmValue
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -23,7 +23,7 @@ class KlaxonPlugin(
 ) : AlertPlugin {
     private var player: MediaPlayer? = null
 
-    override fun go(alarm: Alarm, inCall: Observable<Boolean>, volume: Observable<Float>): Disposable {
+    override fun go(alarm: AlarmValue, inCall: Observable<Boolean>, volume: Observable<Float>): Disposable {
 
         player = MediaPlayer().apply {
             setOnErrorListener { mp, what, extra ->
@@ -44,16 +44,18 @@ class KlaxonPlugin(
             }
         }
 
-        val volumeSub = volume.subscribe { currentVolume ->
-            player?.setPerceivedVolume(currentVolume)
-        }
+        val volumeSub = volume
+                .doOnNext { log.d("[KlaxonPlugin] volume $it") }
+                .subscribe { currentVolume ->
+                    player?.setPerceivedVolume(currentVolume)
+                }
 
         return CompositeDisposable(callSub, volumeSub, Disposables.fromAction {
             player?.stopAndCleanup()
         })
     }
 
-    private fun playAlarm(alarm: Alarm) {
+    private fun playAlarm(alarm: AlarmValue) {
         player?.run {
             try {
                 setVolume(0f, 0f)
@@ -77,16 +79,16 @@ class KlaxonPlugin(
         player?.startAlarm()
     }
 
-    private fun Alarm.getAlertOrDefault(): Uri {
+    private fun AlarmValue.getAlertOrDefault(): Uri {
         // Fall back on the default alarm if the database does not have an
         // alarm stored.
-        return if (alert == null) {
+        return if (alertString == null) {
             val default: Uri? = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
             log.d("Using default alarm: " + default.toString())
             //TODO("Check this")
             default!!
         } else {
-            alert
+            Uri.parse(alertString)
         }
     }
 
