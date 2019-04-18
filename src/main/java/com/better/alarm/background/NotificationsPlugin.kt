@@ -27,9 +27,9 @@ import com.better.alarm.*
 import com.better.alarm.alert.*
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.Prefs
-import com.better.alarm.interfaces.Alarm
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.interfaces.PresentationToModelIntents
+import com.better.alarm.model.AlarmValue
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
@@ -45,7 +45,7 @@ class NotificationsPlugin(
         val wrapper: Service
 ) : AlertPlugin {
 
-    override fun go(alarm: Alarm, inCall: Observable<Boolean>, volume: Observable<Float>): Disposable {
+    override fun go(alarm: AlarmValue, inCall: Observable<Boolean>, volume: Observable<Float>): Disposable {
         // our alarm fired again, remove snooze notification
         nm.cancel(alarm.id)
 
@@ -64,7 +64,7 @@ class NotificationsPlugin(
                 PresentationToModelIntents.ACTION_REQUEST_DISMISS, alarm.id)
 
         val notification = mContext.notificationBuilder(CHANNEL_ID, NotificationImportance.HIGH) {
-            setContentTitle(alarm.labelOrDefault)
+            setContentTitle(alarm.label)
             setContentText(mContext!!.getString(R.string.alarm_notify_text))
             setSmallIcon(R.drawable.stat_notify_alarm)
             // setFullScreenIntent to show the user AlarmAlert dialog at the same time

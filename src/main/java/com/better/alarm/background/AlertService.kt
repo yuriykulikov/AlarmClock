@@ -2,10 +2,10 @@ package com.better.alarm.background
 
 import android.os.PowerManager
 import android.telephony.TelephonyManager
-import com.better.alarm.interfaces.Alarm
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
+import com.better.alarm.model.AlarmValue
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
@@ -16,7 +16,7 @@ import io.reactivex.subjects.BehaviorSubject
 import java.util.concurrent.TimeUnit
 
 interface AlertPlugin {
-    fun go(alarm: Alarm, inCall: Observable<Boolean>, volume: Observable<Float>): Disposable
+    fun go(alarm: AlarmValue, inCall: Observable<Boolean>, volume: Observable<Float>): Disposable
 }
 
 sealed class Event {
@@ -60,7 +60,6 @@ class AlertService(
     private enum class Type { NORMAL, PREALARM }
     private data class CallState(val initial: Boolean, val inCall: Boolean)
 
-    private var type = Type.NORMAL
     private var disposable: Disposable = Disposables.empty()
 
     init {
@@ -103,7 +102,6 @@ class AlertService(
         disposable.dispose()
         initilized = true
 
-        this.type = type
         val alarm = alarms.getAlarm(id)
 
         val inCall = callState
@@ -119,10 +117,10 @@ class AlertService(
                 }, BiFunction { volume, state ->
             when {
                 !state.initial && state.inCall -> Observable.just(SILENT)
-                !state.initial && !state.inCall -> fadeIn(FAST_FADE_IN_TIME)
+                !state.initial && !state.inCall -> fadeIn(FAST_FADE_IN_TIME, type)
                 volume == TargetVolume.MUTED -> Observable.just(SILENT)
-                volume == TargetVolume.FADED_IN -> fadeInSlow()
-                volume == TargetVolume.FADED_IN_FAST -> fadeIn(FAST_FADE_IN_TIME)
+                volume == TargetVolume.FADED_IN -> fadeInSlow(type)
+                volume == TargetVolume.FADED_IN_FAST -> fadeIn(FAST_FADE_IN_TIME, type)
                 else -> Observable.just(SILENT)
             }
         })
@@ -133,15 +131,15 @@ class AlertService(
         val disposables = plugins
                 .map {
                     log.d("[AlertService] go $it")
-                    it.go(alarm, inCall, volume)
+                    it.go(alarm.edit(), inCall, volume)
                 }
 
         disposable = CompositeDisposable(disposables)
     }
 
-    private fun fadeInSlow() = fadeInTimeInSeconds.firstOrError().flatMapObservable { fadeIn(it) }
+    private fun fadeInSlow(type: Type) = fadeInTimeInSeconds.firstOrError().flatMapObservable { fadeIn(it, type) }
 
-    private fun fadeIn(time: Int): Observable<Float> {
+    private fun fadeIn(time: Int, type: Type): Observable<Float> {
         val fadeInTime: Long = time.toLong()
 
         val fadeInStep: Long = fadeInTime / FADE_IN_STEPS
@@ -156,7 +154,7 @@ class AlertService(
         return Observable.combineLatest(
                 observeVolume(type),
                 fadeIn,
-                BiFunction<Float, Float, Float> { targetVolume, frqs -> frqs * targetVolume })
+                BiFunction<Float, Float, Float> { targetVolume, fadePercentage -> fadePercentage * targetVolume })
     }
 
     /**
@@ -172,7 +170,7 @@ class AlertService(
                     .toFloat()
                     .div(maxVolume)
                     .div(2)
-                    .apply { log.d("targetVolume=$this") }
+                    .apply { log.d("targetPrealarmVolume=$this") }
         }
     }
 
