@@ -181,8 +181,6 @@ public class AlarmApplication extends Application {
         //     }
         // });
 
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-
         final Preference<String> defaultAlert = rxPreferences.getString(Prefs.KEY_DEFAULT_RINGTONE, "");
         defaultAlert
                 .asObservable()
@@ -230,6 +228,9 @@ public class AlarmApplication extends Application {
                 prefs,
                 store,
                 alarms);
+
+        // must be after sContainer
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         new ScheduledReceiver(store, getApplicationContext(), prefs, alarmManager).start();
         new ToastPresenter(store, getApplicationContext()).start();

@@ -183,6 +183,11 @@ class AlarmsListActivity : FragmentActivity() {
                 .lollipop {
                     edited.holder.getOrNull()?.addSharedElementsToTransition(this)
                 }
+                .apply {
+                    if (!lollipop()) {
+                        this.setCustomAnimations(R.anim.push_down_in, android.R.anim.fade_out)
+                    }
+                }
                 .replace(R.id.main_fragment_container, listFragment)
                 .commit()
     }
@@ -203,6 +208,11 @@ class AlarmsListActivity : FragmentActivity() {
         }
 
         supportFragmentManager.beginTransaction()
+                .apply {
+                    if (!lollipop()) {
+                        this.setCustomAnimations(R.anim.push_down_in, android.R.anim.fade_out)
+                    }
+                }
                 .lollipop {
                     edited.holder.getOrNull()?.addSharedElementsToTransition(this)
                 }
