@@ -56,7 +56,9 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
         layoutResource = R.layout.seekbar_dialog
 
         this.ringtone =
-                container().rxPrefs.getString("default_ringtone")
+                container()
+                        .rxPrefs
+                        .getString("default_ringtone")
                         .get()
                         .let {
                             val fallback = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
