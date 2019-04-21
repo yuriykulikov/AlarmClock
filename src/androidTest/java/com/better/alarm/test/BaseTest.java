@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.anything;
  * Created by Yuriy on 11.07.2017.
  */
 
-class BaseTest {
+public class BaseTest {
     private static final boolean DBG = true;
 
     protected static void sleep(int howLong) {
