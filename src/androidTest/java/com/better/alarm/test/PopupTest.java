@@ -13,6 +13,7 @@ import com.better.alarm.configuration.Store;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.model.AlarmSetter;
 import com.better.alarm.model.AlarmValue;
+import com.better.alarm.model.AlarmsReceiver;
 import com.better.alarm.model.CalendarType;
 import com.better.alarm.presenter.AlarmsListActivity;
 import com.better.alarm.presenter.HandleSetAlarm;
@@ -82,6 +83,7 @@ public class PopupTest extends BaseTest {
 
         //simulate alarm fired
         Intent intent = new Intent(AlarmSetter.ACTION_FIRED);
+        intent.setClass(listActivity.getActivity(), AlarmsReceiver.class);
         intent.putExtra(AlarmSetter.EXTRA_ID, id);
         intent.putExtra(AlarmSetter.EXTRA_TYPE, CalendarType.NORMAL.name());
 
@@ -106,7 +108,7 @@ public class PopupTest extends BaseTest {
         deleteAlarm();
     }
 
-    private void snoozeAlarmChechAndDelete() {
+    private void afterLongClickSnoozeAlarmCheckAndDelete() {
         assertTimerView("--:--");
         Cortado.onView().withText("2").perform().click();
         assertTimerView("--:-2");
@@ -150,7 +152,7 @@ public class PopupTest extends BaseTest {
     }
 
     @Test
-    public void snoozeViaLonglick() {
+    public void snoozeViaClick() {
         int id = createAlarmAndFire();
 
         Intent startIntent = new Intent();
@@ -158,9 +160,9 @@ public class PopupTest extends BaseTest {
         alertActivity.launchActivity(startIntent);
 
         sleep();
-        Cortado.onView().withText("Snooze").perform().longClick();
+        Cortado.onView().withText("Snooze").perform().click();
 
-        snoozeAlarmChechAndDelete();
+        deleteAlarm();
     }
 
     @Test
@@ -171,7 +173,7 @@ public class PopupTest extends BaseTest {
         startIntent.putExtra(Intents.EXTRA_ID, id);
         transparentActivity.launchActivity(startIntent);
 
-        snoozeAlarmChechAndDelete();
+        deleteAlarm();
     }
 
     @Test
@@ -184,6 +186,7 @@ public class PopupTest extends BaseTest {
 
         //simulate timed out
         Intent intent = new Intent(AlarmSetter.ACTION_FIRED);
+        intent.setClass(alertActivity.getActivity(), AlarmsReceiver.class);
         intent.putExtra(AlarmSetter.EXTRA_ID, id);
         intent.putExtra(AlarmSetter.EXTRA_TYPE, CalendarType.AUTOSILENCE.name());
 

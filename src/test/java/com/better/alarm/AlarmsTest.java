@@ -2,6 +2,7 @@ package com.better.alarm;
 
 import android.content.ContentResolver;
 
+import com.better.alarm.background.Event;
 import com.better.alarm.configuration.Prefs;
 import com.better.alarm.configuration.Store;
 import com.better.alarm.interfaces.Alarm;
@@ -80,7 +81,8 @@ public class AlarmsTest {
         store = new Store(
                 /* alarmsSubject */ BehaviorSubject.<List<AlarmValue>>createDefault(new ArrayList<AlarmValue>()),
                 /* next */ BehaviorSubject.createDefault(Optional.<Store.Next>absent()),
-                /* sets */ PublishSubject.<Store.AlarmSet>create());
+                /* sets */ PublishSubject.<Store.AlarmSet>create(),
+                /* events */ PublishSubject.<Event>create());
 
         stateNotifierMock = mock(AlarmCore.IStateNotifier.class);
         alarmSetterMock = mock(AlarmSetter.class);

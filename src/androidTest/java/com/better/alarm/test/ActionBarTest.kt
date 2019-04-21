@@ -1,9 +1,13 @@
 package com.better.alarm.test
 
+import android.support.test.InstrumentationRegistry
+import android.support.test.rule.ActivityTestRule
+import android.support.test.runner.AndroidJUnit4
 import android.test.suitebuilder.annotation.LargeTest
 import com.better.alarm.logger.Logger
 import com.better.alarm.persistance.AlarmDatabaseHelper
 import com.better.alarm.presenter.AlarmsListActivity
+import com.robotium.solo.Solo
 import junit.framework.Assert
 import org.junit.*
 import org.junit.rules.RuleChain
@@ -58,16 +62,6 @@ class ActionBarTest {
         solo.sendKey(Solo.MENU)
         solo.clickOnText("Rate the app")
         Assert.assertTrue(solo.searchText("Would you like to proceed?"))
-        solo.clickOnButton("Cancel")
-    }
-
-    @Test
-    fun dashClock() {
-        val solo = solo!!
-        solo.sendKey(Solo.MENU)
-        solo.clickOnText("Extensions")
-        solo.clickOnText("DashClock")
-        Assert.assertTrue(solo.searchText("transferred"))
         solo.clickOnButton("Cancel")
     }
 
