@@ -21,6 +21,7 @@ import com.better.alarm.presenter.TransparentActivity;
 import com.better.alarm.util.Optional;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -40,7 +41,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Created by Yuriy on 12.07.2017.
  */
 @RunWith(AndroidJUnit4.class)
-@LargeTest
 public class PopupTest extends BaseTest {
     public ActivityTestRule<AlarmAlertFullScreen> alertActivity = new ActivityTestRule<AlarmAlertFullScreen>(
             AlarmAlertFullScreen.class, false, /* autostart*/ false);
@@ -165,6 +165,7 @@ public class PopupTest extends BaseTest {
         deleteAlarm();
     }
 
+    @Ignore
     @Test
     public void snoozeViaNotificationPicker() {
         int id = createAlarmAndFire();
