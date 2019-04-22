@@ -27,15 +27,15 @@ tasks.create("jacocoTestReport", JacocoReport::class.java) {
 
     val fileFilter = listOf("**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*", "**/*Test*.*", "android/**/*.*")
 
-    val flavorAndBuildType = "developDebug"
+    val developDebug = "developDebug"
 
     sourceDirectories.setFrom(files(listOf(
             "$projectDir/src/main/java",
             "$projectDir/src/main/kotlin"
     )))
     classDirectories.setFrom(files(listOf(
-            fileTree("dir" to "$buildDir/intermediates/javac/$flavorAndBuildType", "excludes" to fileFilter),
-            fileTree("dir" to "$buildDir/tmp/kotlin-classes/$flavorAndBuildType", "excludes" to fileFilter)
+            fileTree("dir" to "$buildDir/intermediates/javac/$developDebug", "excludes" to fileFilter),
+            fileTree("dir" to "$buildDir/tmp/kotlin-classes/$developDebug", "excludes" to fileFilter)
     )))
 
     // execution data from both unit and instrumentation tests
@@ -43,14 +43,14 @@ tasks.create("jacocoTestReport", JacocoReport::class.java) {
             "dir" to project.buildDir,
             "includes" to listOf(
                     // unit tests
-                    "jacoco/test${flavorAndBuildType.capitalize()}UnitTest.exec",
+                    "jacoco/test${"developDebug".capitalize()}UnitTest.exec",
                     // instrumentation tests
-                    "outputs/code_coverage/${flavorAndBuildType}AndroidTest/connected/**/*.ec"
+                    "outputs/code_coverage/${developDebug}AndroidTest/connected/**/*.ec"
             )
     ))
 
-    dependsOn("test")
-    dependsOn("connected${flavorAndBuildType.capitalize()}AndroidTest")
+    dependsOn("test${"developDebug".capitalize()}UnitTest")
+    dependsOn("connected${"developDebug".capitalize()}AndroidTest")
 }
 
 tasks.withType(Test::class.java) {
@@ -92,6 +92,10 @@ android {
     adbOptions {
         timeOutInMs = 20 * 60 * 1000  // 20 minutes
         installOptions("-d", "-t")
+    }
+
+    dexOptions{
+        preDexLibraries = System.getenv("TRAVIS") != "true"
     }
 }
 
