@@ -202,6 +202,7 @@ public class ActionBarHandler {
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                ACRA.getErrorReporter().putCustomData("USER_COMMENT", report.getText().toString());
                 ACRA.getErrorReporter().handleSilentException(new Exception(report.getText().toString()));
             }
         });

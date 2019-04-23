@@ -57,6 +57,13 @@ tasks.withType(Test::class.java) {
     (this.extensions.getByName("jacoco") as JacocoTaskExtension).isIncludeNoLocationClasses = true
 }
 
+val acraEmail = project.rootProject.file("local.properties")
+        .let { if (it.exists()) it.readLines() else emptyList() }
+        .filterNot { it.startsWith("#") }
+        .map { line -> line.substringBefore("=") to line.substringAfter("=") }
+        .toMap()
+        .getOrDefault("acra.email", "")
+
 android {
     compileSdkVersion(26)
     defaultConfig {
@@ -69,10 +76,12 @@ android {
     buildTypes {
         getByName("debug") {
             isTestCoverageEnabled = true
+            buildConfigField("String", "ACRA_EMAIL", "\"$acraEmail\"")
         }
         getByName("release") {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.txt")
+            buildConfigField("String", "ACRA_EMAIL", "\"$acraEmail\"")
         }
     }
     flavorDimensions("default")
@@ -94,7 +103,7 @@ android {
         installOptions("-d", "-t")
     }
 
-    dexOptions{
+    dexOptions {
         preDexLibraries = System.getenv("TRAVIS") != "true"
     }
 }

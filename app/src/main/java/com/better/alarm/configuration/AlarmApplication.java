@@ -17,13 +17,13 @@ package com.better.alarm.configuration;
 
 import android.app.AlarmManager;
 import android.app.Application;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.view.ViewConfiguration;
 
+import com.better.alarm.BuildConfig;
 import com.better.alarm.R;
 import com.better.alarm.alert.BackgroundNotifications;
 import com.better.alarm.background.AlertServicePusher;
@@ -51,10 +51,12 @@ import com.better.alarm.util.Optional;
 import com.f2prateek.rx.preferences2.Preference;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
 
+import org.acra.ACRA;
+import org.acra.ErrorReporter;
+import org.acra.ExceptionHandlerInitializer;
 import org.acra.ReportField;
 import org.acra.annotation.ReportsCrashes;
 
-import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -71,7 +73,7 @@ import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 
 @ReportsCrashes(
-        mailTo = "yuriy.kulikov.87@gmail.com",
+        mailTo = BuildConfig.ACRA_EMAIL,
         applicationLogFileLines = 150,
         customReportContent = {
                 ReportField.IS_SILENT,
@@ -92,7 +94,11 @@ public class AlarmApplication extends Application {
     @Override
     public void onCreate() {
         // The following line triggers the initialization of ACRA
-        // ACRA.init(this);
+
+        if (!BuildConfig.ACRA_EMAIL.isEmpty()) {
+            ACRA.init(this);
+        }
+
         sThemeHandler = new DynamicThemeHandler(this);
         setTheme(sThemeHandler.defaultTheme());
 
@@ -174,12 +180,14 @@ public class AlarmApplication extends Application {
             }
         });
 
-        // ACRA.getErrorReporter().setExceptionHandlerInitializer(new ExceptionHandlerInitializer() {
-        //     @Override
-        //     public void initializeExceptionHandler(ErrorReporter reporter) {
-        //         reporter.putCustomData("STARTUP_LOG", startupLogWriter.getMessagesAsString());
-        //     }
-        // });
+        if (!BuildConfig.ACRA_EMAIL.isEmpty()) {
+            ACRA.getErrorReporter().setExceptionHandlerInitializer(new ExceptionHandlerInitializer() {
+                @Override
+                public void initializeExceptionHandler(ErrorReporter reporter) {
+                    reporter.putCustomData("STARTUP_LOG", startupLogWriter.getMessagesAsString());
+                }
+            });
+        }
 
         final Preference<String> defaultAlert = rxPreferences.getString(Prefs.KEY_DEFAULT_RINGTONE, "");
         defaultAlert
@@ -195,7 +203,6 @@ public class AlarmApplication extends Application {
                     }
                 });
 
-        deleteLogs(getApplicationContext());
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         AlarmSetter.AlarmSetterImpl setter = new AlarmSetter.AlarmSetterImpl(logger, alarmManager, getApplicationContext());
         Calendars calendars = new Calendars() {
@@ -240,13 +247,6 @@ public class AlarmApplication extends Application {
         logger.d("onCreate done");
 
         super.onCreate();
-    }
-
-    private void deleteLogs(Context context) {
-        final File logFile = new File(context.getFilesDir(), "applog.log");
-        if (logFile.exists()) {
-            logFile.delete();
-        }
     }
 
     @android.support.annotation.NonNull
