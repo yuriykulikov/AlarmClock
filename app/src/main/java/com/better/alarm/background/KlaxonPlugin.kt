@@ -9,6 +9,7 @@ import android.net.Uri
 import com.better.alarm.R
 import com.better.alarm.logger.Logger
 import com.better.alarm.model.AlarmValue
+import com.better.alarm.model.Alarmtone
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -56,19 +57,21 @@ class KlaxonPlugin(
     }
 
     private fun playAlarm(alarm: AlarmValue) {
-        player?.run {
-            try {
-                setVolume(0f, 0f)
-                setDataSource(context, alarm.getAlertOrDefault())
-                startAlarm()
-            } catch (ex: Exception) {
-                log.w("Using the fallback ringtone")
-                // The alert may be on the sd card which could be busy right
-                // now. Use the fallback ringtone.
-                // Must reset the media player to clear the error state.
-                reset()
-                setDataSourceFromResource(resources, R.raw.fallbackring)
-                startAlarm()
+        if (alarm.alarmtone !is Alarmtone.Silent) {
+            player?.run {
+                try {
+                    setVolume(0f, 0f)
+                    setDataSource(context, alarm.getAlertOrDefault())
+                    startAlarm()
+                } catch (ex: Exception) {
+                    log.w("Using the fallback ringtone")
+                    // The alert may be on the sd card which could be busy right
+                    // now. Use the fallback ringtone.
+                    // Must reset the media player to clear the error state.
+                    reset()
+                    setDataSourceFromResource(resources, R.raw.fallbackring)
+                    startAlarm()
+                }
             }
         }
     }
@@ -82,13 +85,11 @@ class KlaxonPlugin(
     private fun AlarmValue.getAlertOrDefault(): Uri {
         // Fall back on the default alarm if the database does not have an
         // alarm stored.
-        return if (alertString == null) {
-            val default: Uri? = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-            log.d("Using default alarm: " + default.toString())
-            //TODO("Check this")
-            default!!
-        } else {
-            Uri.parse(alertString)
+        val toPlay = alarmtone
+        return when (toPlay) {
+            is Alarmtone.Silent -> throw RuntimeException("alarm is silent")
+            is Alarmtone.Default -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+            is Alarmtone.Sound ->  Uri.parse(toPlay.uriString)
         }
     }
 

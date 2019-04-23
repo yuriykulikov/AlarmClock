@@ -34,12 +34,6 @@
             android:defaultValue="true"
             android:key="vibrate"
             android:title="@string/alarm_vibrate" />
-
-        <RingtonePreference
-            android:key="default_ringtone"
-            android:ringtoneType="alarm"
-            android:showDefault="true"
-            android:title="@string/default_ringtone_setting_title" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/preference_category_ui">
         <ListPreference

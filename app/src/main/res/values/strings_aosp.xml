@@ -330,7 +330,7 @@
     <string name="alarm_klaxon_service_desc">Sound playback service for alarms set in Clock.</string>
 
     <!--
-         String displayed as the alert summary while loading the alert name from
+         String displayed as the alert summary while loading the alert persistedString from
          the media player. [CHAR LIMIT=NONE]
     -->
     <string name="loading_ringtone">Loading ringtone\u2026</string>

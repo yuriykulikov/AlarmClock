@@ -1,12 +1,8 @@
 package com.better.alarm.presenter
 
-import android.app.Activity
 import android.content.ContentResolver
 import android.content.Intent
 import android.media.AudioManager
-import android.media.Ringtone
-import android.media.RingtoneManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -15,9 +11,7 @@ import android.provider.Settings
 import com.better.alarm.R
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.Prefs
-import com.f2prateek.rx.preferences2.RxSharedPreferences
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 
 /**
  * Created by Yuriy on 24.07.2017.
@@ -136,11 +130,6 @@ class SettingsFragment : PreferenceFragment() {
                 }
                 .let { disposables.add(it) }
 
-
-        (findPreference(Prefs.KEY_DEFAULT_RINGTONE) as RingtonePreference)
-                .bindPreferenceSummary(rxSharedPreferences, activity)
-                .let { disposables.add(it) }
-
         val theme = findListPreference("theme")
         theme.summary = theme.entry
     }
@@ -156,16 +145,5 @@ class SettingsFragment : PreferenceFragment() {
         return Settings.System.getInt(contentResolver,
                 Settings.System.MODE_RINGER_STREAMS_AFFECTED,
                 0)
-    }
-
-
-    private fun RingtonePreference.bindPreferenceSummary(rxSharedPreferences: RxSharedPreferences, activity: Activity): Disposable {
-        return rxSharedPreferences.getString(this.key, "")
-                .asObservable()
-                .subscribe { uriString ->
-                    val uri: Uri = Uri.parse(uriString)
-                    val ringtone: Ringtone? = RingtoneManager.getRingtone(activity, uri)
-                    this.summary = ringtone?.getTitle(activity) ?: "..."
-                }
     }
 }

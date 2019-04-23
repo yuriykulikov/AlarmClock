@@ -61,11 +61,11 @@ public class State implements IState {
     /**
      * Name of State for debugging purposes.
      * <p>
-     * This default implementation returns the class name, returning the
-     * instance name would better in cases where a State class is used for
+     * This default implementation returns the class persistedString, returning the
+     * instance persistedString would better in cases where a State class is used for
      * multiple states. But normally there is one class per state and the class
-     * name is sufficient and easy to get. You may want to provide a setName or
-     * some other mechanism for setting another name if the class name is not
+     * persistedString is sufficient and easy to get. You may want to provide a setName or
+     * some other mechanism for setting another persistedString if the class persistedString is not
      * appropriate.
      *
      * @see com.android.internal.util.IState#processMessage(android.os.Message)

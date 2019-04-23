@@ -66,7 +66,7 @@ public interface IState {
     /**
      * Name of State for debugging purposes.
      *
-     * @return name of state.
+     * @return persistedString of state.
      */
     String getName();
 }

@@ -2,6 +2,7 @@ package com.better.alarm.interfaces
 
 import com.better.alarm.model.AlarmData
 import com.better.alarm.model.AlarmValue
+import com.better.alarm.model.Alarmtone
 import com.better.alarm.model.DaysOfWeek
 import io.reactivex.functions.Consumer
 
@@ -25,14 +26,14 @@ data class AlarmEditor(val callback: Consumer<AlarmValue>,
              minutes: Int = alarmValue.minutes,
              enabled: Boolean = alarmValue.isEnabled,
              daysOfWeek: DaysOfWeek = alarmValue.daysOfWeek,
-             alertString: String = alarmValue.alertString,
+             alarmtone: Alarmtone = alarmValue.alarmtone,
              isPrealarm: Boolean = alarmValue.isPrealarm): AlarmEditor {
         return copy(callback = callback, alarmValue = alarmValue.let { it as AlarmData }.copy(
                 hour = hour,
                 minutes = minutes,
                 isEnabled = enabled,
                 daysOfWeek = daysOfWeek,
-                alertString = alertString,
+                alarmtone = alarmtone,
                 isPrealarm = isPrealarm
         ))
     }

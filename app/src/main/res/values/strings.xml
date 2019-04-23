@@ -139,4 +139,5 @@
     <string name="preference_category_sound">Volumes and sound</string>
     <string name="preference_category_ui">User interface</string>
     <string name="preference_category_durations">Durations</string>
+    <string name="details_no_ringtone_picker">No Ringtone provider found...</string>
 </resources>

@@ -33,6 +33,7 @@ import com.better.alarm.configuration.Prefs.Companion.DEFAULT_PREALARM_VOLUME
 import com.better.alarm.configuration.Prefs.Companion.KEY_PREALARM_VOLUME
 import com.better.alarm.configuration.Prefs.Companion.MAX_PREALARM_VOLUME
 import com.better.alarm.model.AlarmData
+import com.better.alarm.model.Alarmtone
 import com.better.alarm.model.DaysOfWeek
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -145,7 +146,7 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
                             label = "",
                             isPrealarm = true,
                             isVibrate = true,
-                            alertString = container().rxPrefs.getString("default_ringtone").get()
+                            alarmtone = Alarmtone.Default()
                     ), Observable.just(false), Observable.just(integer.toFloat() / 11 / 2))
                 }
 

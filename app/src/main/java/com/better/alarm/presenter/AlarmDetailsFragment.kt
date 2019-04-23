@@ -27,10 +27,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import com.better.alarm.R
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.Store
@@ -39,6 +36,7 @@ import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
 import com.better.alarm.lollipop
+import com.better.alarm.model.Alarmtone
 import com.better.alarm.util.Optional
 import com.better.alarm.view.showDialog
 import com.better.alarm.view.summary
@@ -52,8 +50,6 @@ import java.util.*
 
 /**
  * Details activity allowing for fine-grained alarm modification
- *
- * TODO create - unknown ringtone
  */
 class AlarmDetailsFragment : Fragment() {
     private val alarms: IAlarmsManager = container().alarms()
@@ -148,16 +144,20 @@ class AlarmDetailsFragment : Fragment() {
 
         mRingtoneRow.setOnClickListener {
             editor.firstOrError().subscribe { editor ->
-                startActivityForResult(Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
-                    // TODO corner cases: silent, undef
-                    putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Uri.parse(editor.alertString))
+                try {
+                    startActivityForResult(Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+                        putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, editor.alarmtone.ringtoneManagerString())
 
-                    putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
-                    putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
+                        putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
+                        putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
 
-                    putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true)
-                    putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
-                }, 42)
+                        putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true)
+                        putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
+                    }, 42)
+                } catch (e: Exception) {
+                    Toast.makeText(context, context.getString(R.string.details_no_ringtone_picker), Toast.LENGTH_LONG)
+                            .show()
+                }
             }
         }
 
@@ -182,14 +182,18 @@ class AlarmDetailsFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data != null && requestCode == 42) {
-            // TODO proper silent alarms
-            val alert = data.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)?.toString()
-                    ?: "silent"
+            val alert: String? = data.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)?.toString()
 
-            logger.d("onActivityResult $alert")
+            val alarmtone = when (alert) {
+                null -> Alarmtone.Silent()
+                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString() -> Alarmtone.Default()
+                else -> Alarmtone.Sound(alert)
+            }
+
+            logger.d("onActivityResult $alert -> $alarmtone")
 
             modify("Ringtone picker") { prev ->
-                prev.with(alertString = alert, enabled = true)
+                prev.with(alarmtone = alarmtone, enabled = true)
             }
         }
     }
@@ -198,7 +202,6 @@ class AlarmDetailsFragment : Fragment() {
         super.onResume()
         disposables = CompositeDisposable()
 
-        // TODO split bindings
         disposables.add(editor
                 .distinctUntilChanged()
                 .subscribe { editor ->
@@ -211,7 +214,11 @@ class AlarmDetailsFragment : Fragment() {
                     mPreAlarmCheckBox.isChecked = editor.isPrealarm
 
                     mRepeatSummary.text = editor.daysOfWeek.summary(context)
-                    mRingtoneSummary.text = RingtoneManager.getRingtone(context, Uri.parse(editor.alertString)).getTitle(context)
+                    mRingtoneSummary.text = when (editor.alarmtone) {
+                        is Alarmtone.Silent -> context.getText(R.string.silent_alarm_summary)
+                        is Alarmtone.Default -> RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)).getTitle(context)
+                        is Alarmtone.Sound -> RingtoneManager.getRingtone(context, Uri.parse(editor.alarmtone.uriString)).getTitle(context)
+                    }
 
                     if (editor.label != mLabel.text.toString()) {
                         mLabel.setText(editor.label)

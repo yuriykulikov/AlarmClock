@@ -4,7 +4,6 @@ import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
-import android.media.RingtoneManager
 import com.better.alarm.model.*
 import java.util.*
 
@@ -48,7 +47,7 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
                 isVibrate = c.getInt(Columns.ALARM_VIBRATE_INDEX) == 1,
                 isPrealarm = c.getInt(Columns.ALARM_PREALARM_INDEX) == 1,
                 label = c.getString(Columns.ALARM_MESSAGE_INDEX) ?: "",
-                alertString = c.getString(Columns.ALARM_ALERT_INDEX).correctDefault()
+                alarmtone = Alarmtone.fromString(c.getString(Columns.ALARM_ALERT_INDEX))
         ),
                 state = c.getString(Columns.ALARM_STATE_INDEX),
                 nextTime = calendars.now().apply { timeInMillis = c.getLong(Columns.ALARM_TIME_INDEX) },
@@ -80,7 +79,7 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
                     isVibrate = true,
                     isPrealarm = false,
                     label = "",
-                    alertString = ""
+                    alarmtone = Alarmtone.Default()
             ),
                     state = "",
                     nextTime = now,
@@ -95,20 +94,6 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
         }
     }
 
-    private fun String?.correctDefault(): String {
-        return when (this) {
-            null, "" -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString()
-            else -> this
-        }
-    }
-
-    private fun String.defaultAsEmpty(): String {
-        return when (this) {
-            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString() -> ""
-            else -> this
-        }
-    }
-
     fun AlarmActiveRecord.createContentValues(): ContentValues {
         return ContentValues(12).apply {
             // id
@@ -118,8 +103,7 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
             put(Columns.DAYS_OF_WEEK, daysOfWeek.coded)
             put(Columns.VIBRATE, isVibrate)
             put(Columns.MESSAGE, label)
-            // A null alert Uri indicates a silent
-            put(Columns.ALERT, alertString.defaultAsEmpty())
+            put(Columns.ALERT, alarmtone.persistedString)
             put(Columns.PREALARM, isPrealarm)
             put(Columns.ALARM_TIME, nextTime.timeInMillis)
             put(Columns.STATE, state)

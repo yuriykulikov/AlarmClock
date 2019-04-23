@@ -10,33 +10,27 @@ class AlarmActiveRecord(
         val persistence: Persistence,
         val alarmValue: AlarmData
 ) : AlarmValue by alarmValue {
-    // This string is used to indicate a silent alarm in the db.
-    private val ALARM_ALERT_SILENT = "silent"
-
     val isSilent: Boolean
-        get() = ALARM_ALERT_SILENT == alarmValue.alertString
+        get() = alarmtone is Alarmtone.Silent
 
-    // @Value.Lazy
     // If the database alert is null or it failed to parse, use the
     // default alert.
     @Deprecated("TODO move to where it is used")
     val alert: Uri by lazy {
-        val alertString = alertString
-        if (alertString.isNotEmpty()) {
-            try {
-                Uri.parse(alertString)
+        when (alarmtone) {
+            is Alarmtone.Silent -> throw RuntimeException("Alarm is silent")
+            is Alarmtone.Default -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+            is Alarmtone.Sound -> try {
+                Uri.parse(alarmtone.uriString)
             } catch (e: Exception) {
                 RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
             }
-        } else {
-            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
         }
     }
 
     interface Persistence {
         fun persist(activeRecord: AlarmActiveRecord)
         fun delete(activeRecord: AlarmActiveRecord)
-
     }
 
     fun delete() {
@@ -58,7 +52,7 @@ class AlarmActiveRecord(
             hour = data.hour,
             minutes = data.minutes,
             isPrealarm = data.isPrealarm,
-            alertString = data.alertString,
+            alarmtone = data.alarmtone,
             isVibrate = data.isVibrate,
             label = data.label,
             daysOfWeek = data.daysOfWeek
@@ -82,7 +76,7 @@ data class AlarmData(
         override val hour: Int,
         override val minutes: Int,
         override val isPrealarm: Boolean,
-        override val alertString: String,
+        override val alarmtone: Alarmtone,
         override val isVibrate: Boolean,
         override val label: String,
         override val daysOfWeek: DaysOfWeek

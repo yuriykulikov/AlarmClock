@@ -577,7 +577,7 @@ public class StateMachine {
     }
 
     /**
-     * @return the name
+     * @return the persistedString
      */
     public final String getName() {
         return mName;
