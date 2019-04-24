@@ -80,12 +80,10 @@
     <string-array name="themes_entries">
         <item>Holo oscuro</item>
         <item>Clásico</item>
-        <item>Verde</item>
     </string-array>
     <string-array name="themes_values">
         <item>dark</item>
         <item>light</item>
-        <item>green</item>
     </string-array>
     <string name="simple_alarm_clock">Sencilla-despertador</string>
     <!--
