@@ -56,6 +56,4 @@ public interface Intents {
     public static final String ACTION_MUTE = BuildConfig.APPLICATION_ID + ".ACTION_MUTE";
 
     public static final String ACTION_DEMUTE = BuildConfig.APPLICATION_ID + ".ACTION_DEMUTE";
-
-    public static final String ACTION_CANCEL_NOTIFICATION = BuildConfig.APPLICATION_ID + ".ACTION_CANCEL_NOTIFICATION";
 }

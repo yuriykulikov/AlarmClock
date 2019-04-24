@@ -5,12 +5,17 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import android.support.v4.app.NotificationCompat
 
 enum class NotificationImportance {
     HIGH, NORMAL, LOW;
 }
 
-fun Context.notificationBuilder(channelId: String, importance: NotificationImportance = NotificationImportance.NORMAL, notificationBuilder: Notification.Builder.() -> Unit): Notification {
+fun Context.notificationBuilder(
+        channelId: String,
+        importance: NotificationImportance = NotificationImportance.NORMAL,
+        notificationBuilder: NotificationCompat.Builder.() -> Unit
+): Notification {
     oreo {
         val name = getString(R.string.app_label)
         val channel = NotificationChannel(channelId, name, when (importance) {
@@ -27,8 +32,8 @@ fun Context.notificationBuilder(channelId: String, importance: NotificationImpor
     }
 
     val builder = when {
-        Build.VERSION.SDK_INT >= 26 -> Notification.Builder(this, channelId)
-        else -> Notification.Builder(this)
+        Build.VERSION.SDK_INT >= 26 -> NotificationCompat.Builder(this, channelId)
+        else -> NotificationCompat.Builder(this, channelId)
     }
 
     notificationBuilder(builder)
@@ -44,12 +49,6 @@ fun oreo(action: () -> Unit) {
 
 fun preOreo(action: () -> Unit) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-        action()
-    }
-}
-
-fun lollipop(action: () -> Unit) {
-    if (lollipop()) {
         action()
     }
 }

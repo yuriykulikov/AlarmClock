@@ -65,7 +65,7 @@ class NotificationsPlugin(
 
         val notification = mContext.notificationBuilder(CHANNEL_ID, NotificationImportance.HIGH) {
             setContentTitle(alarm.label)
-            setContentText(mContext!!.getString(R.string.alarm_notify_text))
+            setContentText(getString(R.string.alarm_notify_text))
             setSmallIcon(R.drawable.stat_notify_alarm)
             // setFullScreenIntent to show the user AlarmAlert dialog at the same time
             // when the Notification Bar was created.
@@ -74,8 +74,8 @@ class NotificationsPlugin(
             // when he will click on the Notification Bar.
             setContentIntent(pendingNotify)
             setOngoing(true)
-            addAction(R.drawable.ic_action_snooze, mContext!!.getString(R.string.alarm_alert_snooze_text), pendingSnooze)
-            addAction(R.drawable.ic_action_dismiss, mContext!!.getString(R.string.alarm_alert_dismiss_text), pendingDismiss)
+            addAction(R.drawable.ic_action_snooze, getString(R.string.alarm_alert_snooze_text), pendingSnooze)
+            addAction(R.drawable.ic_action_dismiss, getString(R.string.alarm_alert_dismiss_text), pendingDismiss)
             setDefaults(Notification.DEFAULT_LIGHTS)
         }
 
@@ -101,6 +101,8 @@ class NotificationsPlugin(
             wrapper.stopSelf()
         }
     }
+
+    private fun getString(id: Int) = mContext.getString(id)
 
     companion object {
         private const val CHANNEL_ID = "${BuildConfig.APPLICATION_ID}.NotificationsPlugin"

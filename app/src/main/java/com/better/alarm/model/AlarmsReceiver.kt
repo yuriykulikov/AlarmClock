@@ -39,10 +39,6 @@ class AlarmsReceiver : BroadcastReceiver() {
                     alarms.onAlarmFired(alarm, CalendarType.valueOf(intent.extras!!.getString(AlarmsScheduler.EXTRA_TYPE)))
                     log.d("AlarmCore fired $id")
                 }
-                Intents.ACTION_CANCEL_NOTIFICATION -> {
-                    val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
-                    alarms.getAlarm(id).dismiss()
-                }
                 Intent.ACTION_BOOT_COMPLETED,
                 Intent.ACTION_TIMEZONE_CHANGED,
                 Intent.ACTION_LOCALE_CHANGED,

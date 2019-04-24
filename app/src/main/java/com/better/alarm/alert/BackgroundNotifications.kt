@@ -31,7 +31,6 @@ import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.interfaces.Alarm
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
-import com.better.alarm.interfaces.Intents.ACTION_CANCEL_NOTIFICATION
 import com.better.alarm.interfaces.PresentationToModelIntents
 import com.better.alarm.logger.Logger
 import com.better.alarm.notificationBuilder
@@ -62,17 +61,14 @@ class BackgroundNotifications {
     }
 
     private fun onSnoozed(id: Int) {
-        // What to do, when a user clicks on the notification bar
-        val cancelSnooze = Intent(mContext, BackgroundNotifications::class.java)
-        cancelSnooze.action = ACTION_CANCEL_NOTIFICATION
-        cancelSnooze.putExtra(Intents.EXTRA_ID, id)
-        val pCancelSnooze = PendingIntent.getBroadcast(mContext, id, cancelSnooze, 0)
-
         // When button Reschedule is clicked, the TransparentActivity with
         // TimePickerFragment to set new alarm time is launched
-        val reschedule = Intent(mContext, TransparentActivity::class.java)
-        reschedule.putExtra(Intents.EXTRA_ID, id)
-        val pendingReschedule = PendingIntent.getActivity(mContext, id, reschedule, 0)
+        val pendingReschedule = Intent().apply {
+            setClass(mContext, TransparentActivity::class.java)
+            putExtra(Intents.EXTRA_ID, id)
+        }.let {
+            PendingIntent.getActivity(mContext, id, it, 0)
+        }
 
         val pendingDismiss = PresentationToModelIntents.createPendingIntent(mContext,
                 PresentationToModelIntents.ACTION_REQUEST_DISMISS, id)
@@ -86,13 +82,13 @@ class BackgroundNotifications {
 
         val status = mContext.notificationBuilder(CHANNEL_ID, NotificationImportance.NORMAL) {
             // Get the display time for the snooze and update the notification.
-            setContentTitle(mContext!!.getString(R.string.alarm_notify_snooze_label, label))
+            setContentTitle(getString(R.string.alarm_notify_snooze_label, label))
             setContentText(contentText)
             setSmallIcon(R.drawable.stat_notify_alarm)
-            setContentIntent(pCancelSnooze)
+            setContentIntent(pendingDismiss)
             setOngoing(true)
-            addAction(R.drawable.ic_action_reschedule_snooze, mContext!!.getString(R.string.alarm_alert_reschedule_text), pendingReschedule)
-            addAction(R.drawable.ic_action_dismiss, mContext!!.getString(R.string.alarm_alert_dismiss_text), pendingDismiss)
+            addAction(R.drawable.ic_action_reschedule_snooze, getString(R.string.alarm_alert_reschedule_text), pendingReschedule)
+            addAction(R.drawable.ic_action_dismiss, getString(R.string.alarm_alert_dismiss_text), pendingDismiss)
             setDefaults(Notification.DEFAULT_LIGHTS)
         }
         //@formatter:on
@@ -102,6 +98,9 @@ class BackgroundNotifications {
         nm.notify(id + BACKGROUND_NOTIFICATION_OFFSET, status)
     }
 
+    private fun getString(id: Int, vararg args: String) = mContext.getString(id, *args)
+    private fun getString(id: Int) = mContext.getString(id)
+
     private fun Alarm.formatTimeString(): String {
         val format = if (prefs.is24HoutFormat().blockingGet()) DM24 else DM12
         val calendar = snoozedTime
@@ -109,10 +108,8 @@ class BackgroundNotifications {
     }
 
     private fun onSoundExpired(id: Int) {
-        val dismissAlarm = Intent(mContext, BackgroundNotifications::class.java)
-        dismissAlarm.action = ACTION_CANCEL_NOTIFICATION
-        dismissAlarm.putExtra(Intents.EXTRA_ID, id)
-        val intent = PendingIntent.getBroadcast(mContext, id, dismissAlarm, 0)
+        val pendingDismiss = PresentationToModelIntents.createPendingIntent(mContext,
+                PresentationToModelIntents.ACTION_REQUEST_DISMISS, id)
         // Update the notification to indicate that the alert has been
         // silenced.
         val alarm = alarmsManager.getAlarm(id)
@@ -125,7 +122,7 @@ class BackgroundNotifications {
             setAutoCancel(true)
             setSmallIcon(R.drawable.stat_notify_alarm)
             setWhen(Calendar.getInstance().timeInMillis)
-            setContentIntent(intent)
+            setContentIntent(pendingDismiss)
             setContentTitle(label)
             setContentText(text)
             setTicker(text)
