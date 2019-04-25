@@ -81,10 +81,6 @@
         <item>Holo oscuro</item>
         <item>Clásico</item>
     </string-array>
-    <string-array name="themes_values">
-        <item>dark</item>
-        <item>light</item>
-    </string-array>
     <string name="simple_alarm_clock">Sencilla-despertador</string>
     <!--
      Entries listed in the ListPreference when invoking the snooze duration

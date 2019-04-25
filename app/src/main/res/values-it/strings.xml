@@ -76,7 +76,6 @@
     <string-array name="themes_entries">
         <item>Buio</item>
         <item>Chiaro</item>
-        <item>Verde</item>
     </string-array>
     <string name="simple_alarm_clock">La Sveglia Semplice</string>
     <string-array name="snooze_duration_with_off_entries">

@@ -68,7 +68,6 @@
     <string-array name="themes_entries">
         <item>Темный Holo</item>
         <item>Классический светлый</item>
-        <item>Смелый зеленый</item>
     </string-array>
     <string name="simple_alarm_clock">Простой будильник</string>
     <string-array name="snooze_duration_with_off_entries">
