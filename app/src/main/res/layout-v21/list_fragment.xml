@@ -75,6 +75,7 @@
             android:layout_marginBottom="28dp"
             android:layout_marginEnd="28dp"
             android:elevation="175dp"
+            android:backgroundTint="?android:attr/colorAccent"
             android:src="@drawable/ic_menu_add" />
     </RelativeLayout>
 </RelativeLayout>
