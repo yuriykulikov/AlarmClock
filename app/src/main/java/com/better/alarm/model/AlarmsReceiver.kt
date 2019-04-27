@@ -18,9 +18,7 @@ package com.better.alarm.model
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.better.alarm.alert.BackgroundNotifications
 import com.better.alarm.configuration.AlarmApplication.container
-import com.better.alarm.interfaces.Intents
 import com.better.alarm.interfaces.PresentationToModelIntents
 import com.better.alarm.logger.Logger
 

@@ -2,10 +2,10 @@ package com.better.alarm.background
 
 import android.content.Context
 import android.content.Intent
-import com.better.alarm.oreo
-import com.better.alarm.preOreo
 import com.better.alarm.configuration.Store
 import com.better.alarm.interfaces.Intents
+import com.better.alarm.oreo
+import com.better.alarm.preOreo
 
 class AlertServicePusher(store: Store, context: Context) {
     init {

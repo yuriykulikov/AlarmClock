@@ -6,7 +6,6 @@ import com.better.alarm.model.AlarmValue
 import com.better.alarm.util.Optional
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
-import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 
 /**

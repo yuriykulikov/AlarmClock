@@ -24,7 +24,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import com.better.alarm.*
-import com.better.alarm.alert.*
+import com.better.alarm.alert.AlarmAlertFullScreen
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.interfaces.Intents

@@ -6,12 +6,12 @@ import android.content.Intent
 import android.os.Build
 import android.telephony.PhoneStateListener
 import com.better.alarm.BuildConfig
-import com.better.alarm.R
 import com.better.alarm.NotificationImportance
-import com.better.alarm.notificationBuilder
+import com.better.alarm.R
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.interfaces.Intents
+import com.better.alarm.notificationBuilder
 import com.better.alarm.util.Service
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
