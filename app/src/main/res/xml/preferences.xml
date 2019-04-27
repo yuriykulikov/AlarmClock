@@ -37,7 +37,7 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/preference_category_ui">
         <ListPreference
-            android:defaultValue="light"
+            android:defaultValue="dark"
             android:dialogTitle="@string/theme_title"
             android:entries="@array/themes_entries"
             android:entryValues="@array/themes_values"

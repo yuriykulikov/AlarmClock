@@ -7,15 +7,15 @@ import com.better.alarm.R
 import com.better.alarm.alert.AlarmAlertFullScreen
 
 class DynamicThemeHandler(context: Context) {
+    private val themeKey = "theme"
     private val sp: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-    private val KEY_THEME = "theme"
 
     init {
-        when (sp.getString(KEY_THEME, "light")) {
+        when (sp.getString(themeKey, "dark")) {
             "light", "dark" -> {
             }
             else -> {
-                sp.edit().putString(KEY_THEME, "dark").apply()
+                sp.edit().putString(themeKey, "dark").apply()
             }
         }
     }
@@ -26,7 +26,7 @@ class DynamicThemeHandler(context: Context) {
         else -> R.style.DefaultDarkTheme
     }
 
-    private fun preference(): String = sp.getString(KEY_THEME, "dark")
+    private fun preference(): String = sp.getString(themeKey, "dark")
 
     fun getIdForName(name: String): Int = when {
         preference() == "light" && name.equals(AlarmAlertFullScreen::class.java.name) -> R.style.AlarmAlertFullScreenLightTheme
