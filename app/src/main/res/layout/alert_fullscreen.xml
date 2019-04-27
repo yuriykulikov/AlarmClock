@@ -21,6 +21,7 @@
     android:orientation="vertical">
 
     <RelativeLayout
+
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3">
@@ -33,13 +34,14 @@
 
             <TextView
                 android:id="@+id/alarm_alert_label"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="0px"
                 android:layout_weight="1"
-                style="?android:attr/buttonBarButtonStyle"
+                android:clickable="false"
                 android:gravity="center|center_horizontal"
-                android:paddingBottom="8dip"
                 android:paddingTop="8dip"
+                android:paddingBottom="8dip"
                 android:text="Label"
                 android:textSize="18sp" />
 
@@ -69,19 +71,24 @@
 
             <TextView
                 android:id="@+id/alert_text_snooze"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="0px"
                 android:layout_weight="1"
-                android:textSize="24sp"
+                android:clickable="false"
                 android:text="@string/alarm_alert_snooze_text"
-                style="?android:attr/buttonBarButtonStyle" />
+                android:textSize="24sp" />
         </LinearLayout>
 
         <Button
             android:id="@+id/alert_button_snooze"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginBottom="10dp" />
     </RelativeLayout>
 
     <View
@@ -97,6 +104,10 @@
         style="?android:attr/buttonBarButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="0px"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginBottom="10dp"
         android:layout_weight="1"
         android:text="@string/alarm_alert_dismiss_text"
         android:textSize="24sp" />
