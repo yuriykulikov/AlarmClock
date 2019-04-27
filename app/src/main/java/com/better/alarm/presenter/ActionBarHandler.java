@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ShareActionProvider;
 
+import com.better.alarm.BuildConfig;
 import com.better.alarm.R;
 import com.better.alarm.configuration.EditedAlarm;
 import com.better.alarm.interfaces.IAlarmsManager;
@@ -62,8 +63,8 @@ public class ActionBarHandler {
 
         // Add data to the intent, the receiving app will decide what to do with
         // it.
-        intent.putExtra(Intent.EXTRA_SUBJECT, "https://play.google.com/uiStore/apps/details?id=com.better.alarm");
-        intent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/uiStore/apps/details?id=com.better.alarm");
+        intent.putExtra(Intent.EXTRA_SUBJECT, "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID);
+        intent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID);
 
         MenuItem menuItem = menu.findItem(R.id.menu_share);
         ShareActionProvider sp = (ShareActionProvider) menuItem.getActionProvider();
@@ -151,8 +152,7 @@ public class ActionBarHandler {
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="
-                        + mContext.getApplicationContext().getPackageName()));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + BuildConfig.APPLICATION_ID));
                 mContext.startActivity(intent);
             }
         });
@@ -168,7 +168,7 @@ public class ActionBarHandler {
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=dash+clock&c=app"));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=dash+clock&c=apps"));
                 mContext.startActivity(intent);
             }
         });
@@ -184,7 +184,7 @@ public class ActionBarHandler {
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=mp3+cutter&c=app"));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=mp3+cutter&c=apps"));
                 mContext.startActivity(intent);
             }
         });
