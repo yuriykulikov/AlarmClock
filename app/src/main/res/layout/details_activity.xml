@@ -21,13 +21,13 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/details_list_row_container"
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:gravity="center"
         android:orientation="vertical">
-
         <include layout="@layout/list_row"></include>
     </LinearLayout>
 

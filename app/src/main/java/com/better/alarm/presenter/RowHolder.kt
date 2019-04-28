@@ -30,10 +30,10 @@ class RowHolder {
         label = find(R.id.list_row_label) as TextView
         detailsButton = find(R.id.details_button_container)
 
-        val prev: RowHolder? = rowView.tag as RowHolder?;
+        val prev: RowHolder? = rowView.tag as RowHolder?
         idHasChanged = prev?.alarmId != id
 
-        rowView.setTag(this)
+        rowView.tag = this
     }
 
     fun find(id: Int): View = rowView.findViewById(id)

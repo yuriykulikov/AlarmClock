@@ -17,13 +17,17 @@
 
 package com.better.alarm.presenter
 
+import android.annotation.TargetApi
 import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.text.Editable
 import android.text.TextWatcher
+import android.transition.Transition
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,7 +67,7 @@ class AlarmDetailsFragment : Fragment() {
     private val alarmsListActivity by lazy { activity as AlarmsListActivity }
     private val store: UiStore by lazy { AlarmsListActivity.uiStore(alarmsListActivity) }
     private val mLabel: EditText by lazy { fragmentView.findViewById(R.id.details_label) as EditText }
-    private val rowHolder: RowHolder by lazy { RowHolder(fragmentView, alarmId) }
+    private val rowHolder: RowHolder by lazy { RowHolder(fragmentView.findViewById(R.id.details_list_row_container), alarmId) }
     private val mRingtoneRow by lazy { fragmentView.findViewById(R.id.details_ringtone_row) as LinearLayout }
     private val mRingtoneSummary by lazy { fragmentView.findViewById(R.id.details_ringtone_summary) as TextView }
     private val mRepeatRow by lazy { fragmentView.findViewById(R.id.details_repeat_row) as LinearLayout }
@@ -85,6 +89,9 @@ class AlarmDetailsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         editor.onNext(alarms.getAlarm(alarmId).edit())
+        lollipop {
+            hackRippleAndAnimation()
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -95,7 +102,7 @@ class AlarmDetailsFragment : Fragment() {
         this.fragmentView = view
 
         rowHolder.run {
-            onOff().setOnClickListener {
+            container().setOnClickListener {
                 modify("onOff") { editor ->
                     editor.withIsEnabled(!editor.isEnabled)
                 }
@@ -274,5 +281,35 @@ class AlarmDetailsFragment : Fragment() {
     private fun modify(reason: String, function: (AlarmEditor) -> AlarmEditor) {
         logger.d("Performing modification because of $reason")
         editor.firstOrError().subscribe { ed -> editor.onNext(function.invoke(ed)) }
+    }
+
+    /**
+     * his nice hack here is required, because if you do this in XML it will break transitions of the first list row
+     */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun hackRippleAndAnimation() {
+        if (enterTransition is Transition) {
+            (enterTransition as Transition).addListener(object : Transition.TransitionListener {
+                override fun onTransitionEnd(transition: Transition?) {
+                    val selectableItemBackground = TypedValue().let {
+                        activity.theme.resolveAttribute(android.R.attr.selectableItemBackground, it, true)
+                        it.resourceId
+                    }
+                    rowHolder.rowView().setBackgroundResource(selectableItemBackground)
+                }
+
+                override fun onTransitionResume(transition: Transition?) {
+                }
+
+                override fun onTransitionPause(transition: Transition?) {
+                }
+
+                override fun onTransitionCancel(transition: Transition?) {
+                }
+
+                override fun onTransitionStart(transition: Transition?) {
+                }
+            })
+        }
     }
 }

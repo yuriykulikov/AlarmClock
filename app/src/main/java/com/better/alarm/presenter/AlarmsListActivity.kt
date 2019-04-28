@@ -220,7 +220,7 @@ class AlarmsListActivity : FragmentActivity() {
                 .commit()
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun moveTransition(): TransitionSet {
         return TransitionSet().lollipop {
             ordering = TransitionSet.ORDERING_TOGETHER
