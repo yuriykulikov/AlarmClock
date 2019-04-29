@@ -2,7 +2,6 @@ package com.better.alarm.presenter
 
 import android.app.AlertDialog
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.*
@@ -14,6 +13,7 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import com.better.alarm.R
 import com.better.alarm.configuration.AlarmApplication.container
+import com.better.alarm.configuration.Prefs
 import com.better.alarm.lollipop
 import com.better.alarm.model.AlarmValue
 import com.melnykov.fab.FloatingActionButton
@@ -21,7 +21,6 @@ import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import java.util.*
-
 
 /**
  * Shows a list of alarms. To react on user interaction, requires a strategy. An
@@ -34,7 +33,7 @@ class AlarmsListFragment : Fragment() {
     private val alarms = container().alarms()
     private val store = container().store()
     private val uiStore: UiStore by lazy { AlarmsListActivity.uiStore(activity as AlarmsListActivity) }
-    private val prefs = container().prefs()
+    private val prefs: Prefs = container().prefs()
     private val logger = container().logger()
 
     private val mAdapter: AlarmListAdapter by lazy { AlarmListAdapter(R.layout.list_row, R.string.alarm_list_title, ArrayList()) }
@@ -43,13 +42,16 @@ class AlarmsListFragment : Fragment() {
     private var backSub: Disposable = Disposables.disposed()
     private var timePickerDialogDisposable = Disposables.disposed()
 
+    /** changed by [Prefs.listRowLayout]*/
+    private var listRowLayout = R.layout.list_row
+
     inner class AlarmListAdapter(alarmTime: Int, label: Int, private val values: List<AlarmValue>) : ArrayAdapter<AlarmValue>(activity, alarmTime, label, values) {
 
         private fun recycleView(convertView: View?, parent: ViewGroup, id: Int): RowHolder {
             if (convertView != null) return RowHolder(convertView, id)
 
             val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            val rowView = inflater.inflate(R.layout.list_row, parent, false)
+            val rowView = inflater.inflate(listRowLayout, parent, false)
             return RowHolder(rowView, id).apply {
                 digitalClock.setLive(false)
             }
@@ -103,22 +105,31 @@ class AlarmsListFragment : Fragment() {
             c.set(Calendar.MINUTE, alarm.minutes)
             row.digitalClock().updateTime(c)
 
+            val removeEmptyView = listRowLayout == R.layout.list_row_compact || !lollipop()
             // Set the repeat text or leave it blank if it does not repeat.
-            val daysOfWeekStr = alarm.daysOfWeek.toString(getContext(), false)
-            if (daysOfWeekStr.length != 0) {
-                row.daysOfWeek().text = daysOfWeekStr
-                row.daysOfWeek().visibility = View.VISIBLE
-            } else {
-                row.daysOfWeek().visibility = if (lollipop()) View.INVISIBLE else View.GONE
+            val daysOfWeekStr = alarm.daysOfWeek.toString(context, false)
+
+            row.daysOfWeek().text = daysOfWeekStr
+
+            row.daysOfWeek().visibility = when {
+                daysOfWeekStr.isNotEmpty() -> View.VISIBLE
+                removeEmptyView -> View.GONE
+                else -> View.INVISIBLE
             }
 
             // Set the repeat text or leave it blank if it does not repeat.
-            if (alarm.label != null && !alarm.label.isEmpty()) {
-                row.label().text = alarm.label
-                row.label().visibility = View.VISIBLE
-            } else {
-                row.label().visibility = if (lollipop()) View.INVISIBLE else View.GONE
+            row.label().text = alarm.label
+
+            row.label().visibility = when {
+                alarm.label.isNotBlank() -> View.VISIBLE
+                removeEmptyView -> View.GONE
+                else -> View.INVISIBLE
             }
+
+            // row.labelsContainer.visibility = when {
+            //     row.label().visibility == View.GONE && row.daysOfWeek().visibility == View.GONE -> GONE
+            //     else -> View.VISIBLE
+            // }
 
             return row.rowView()
         }
@@ -164,10 +175,6 @@ class AlarmsListFragment : Fragment() {
         listView.choiceMode = AbsListView.CHOICE_MODE_SINGLE
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { _, listRow, position, _ ->
-            // We can display everything in-place with fragments, so update
-            // the list to highlight the selected item and show the data.
-            //TODO what does this do? listView.setSelection(position);
-
             val id = mAdapter.getItem(position).id
             uiStore.edit(id, listRow.tag as RowHolder)
         }
@@ -179,7 +186,7 @@ class AlarmsListFragment : Fragment() {
         val fab: View = view.findViewById(R.id.fab)
         fab.setOnClickListener { uiStore.createNewAlarm() }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        lollipop {
             (fab as FloatingActionButton).attachToListView(listView)
         }
 
@@ -200,6 +207,7 @@ class AlarmsListFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         backSub = uiStore.onBackPressed().subscribe { activity.finish() }
+        listRowLayout = if (prefs.isCompact()) R.layout.list_row_compact else R.layout.list_row
     }
 
     override fun onPause() {

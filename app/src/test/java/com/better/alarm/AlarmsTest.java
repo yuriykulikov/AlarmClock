@@ -76,6 +76,7 @@ public class AlarmsTest {
                 /* is24HoutFormat */ Single.just(true),
                 /* preAlarmDuration */ BehaviorSubject.createDefault(10),
                 /* snoozeDuration */ BehaviorSubject.createDefault(10),
+                /* listRowLayout */ BehaviorSubject.createDefault("bold"),
                 /* autoSilence */ BehaviorSubject.createDefault(10));
 
         store = new Store(

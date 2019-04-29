@@ -152,6 +152,7 @@ public class AlarmApplication extends Application {
         final Prefs prefs = new Prefs(dateFormat,
                 rxPreferences.getString("prealarm_duration", "30").asObservable().map(parseInt),
                 rxPreferences.getString("snooze_duration", "10").asObservable().map(parseInt),
+                rxPreferences.getString(Prefs.LIST_ROW_LAYOUT, Prefs.LIST_ROW_LAYOUT_COMPACT).asObservable(),
                 rxPreferences.getString("auto_silence", "10").asObservable().map(parseInt));
 
         final Store store = new Store(

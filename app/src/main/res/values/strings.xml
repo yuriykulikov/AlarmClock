@@ -105,6 +105,17 @@
         <item>dark</item>
         <item>light</item>
     </string-array>
+
+    <string name="preference_list_row_layout_title">Layout style</string>
+    <string-array name="preference_list_row_layout_entries">
+        <item>Compact</item>
+        <item>Bold</item>
+    </string-array>
+    <string-array name="preference_list_row_layout_values">
+        <item>compact</item>
+        <item>bold</item>
+    </string-array>
+
     <string name="simple_alarm_clock">Simple Alarm Clock</string>
     <!--
      Entries listed in the ListPreference when invoking the snooze duration

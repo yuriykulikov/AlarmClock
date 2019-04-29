@@ -35,7 +35,9 @@
             android:key="vibrate"
             android:title="@string/alarm_vibrate" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/preference_category_ui">
+    <PreferenceCategory
+        android:key="preference_category_ui"
+        android:title="@string/preference_category_ui">
         <ListPreference
             android:defaultValue="dark"
             android:dialogTitle="@string/theme_title"
@@ -43,6 +45,14 @@
             android:entryValues="@array/themes_values"
             android:key="theme"
             android:title="@string/theme_title" />
+
+        <ListPreference
+            android:defaultValue="bold"
+            android:dialogTitle="@string/preference_list_row_layout_title"
+            android:entries="@array/preference_list_row_layout_entries"
+            android:entryValues="@array/preference_list_row_layout_values"
+            android:key="list_row_layout"
+            android:title="@string/preference_list_row_layout_title" />
 
         <CheckBoxPreference
             android:defaultValue="true"

@@ -28,7 +28,7 @@
         android:layout_marginRight="15dp"
         android:gravity="center"
         android:orientation="vertical">
-        <include layout="@layout/list_row"></include>
+        <include layout="@layout/list_row_compact"></include>
     </LinearLayout>
 
     <include layout="@layout/details_fragment_lower"></include>

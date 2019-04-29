@@ -1,5 +1,6 @@
 package com.better.alarm.configuration
 
+import com.better.alarm.lollipop
 import io.reactivex.Observable
 import io.reactivex.Single
 
@@ -11,12 +12,25 @@ data class Prefs(
         val _is24HoutFormat: Single<Boolean>,
         val preAlarmDuration: Observable<Int>,
         val snoozeDuration: Observable<Int>,
+        val listRowLayout: Observable<String>,
         val autoSilence: Observable<Int>) {
 
     fun is24HoutFormat(): Single<Boolean> = _is24HoutFormat
     fun preAlarmDuration(): Observable<Int> = preAlarmDuration
     fun snoozeDuration(): Observable<Int> = snoozeDuration
+    fun listRowLayout(): Observable<String> = listRowLayout
     fun autoSilence(): Observable<Int> = autoSilence
+    fun isCompact(): Boolean {
+        return listRowLayout
+                .take(1)
+                .map {
+                    when {
+                        !lollipop() -> false
+                        it == LIST_ROW_LAYOUT_COMPACT -> true
+                        else -> false
+                    }
+                }.blockingFirst()
+    }
 
     companion object {
         @JvmField
@@ -41,5 +55,9 @@ data class Prefs(
         val DEFAULT_PREALARM_VOLUME = 5
         @JvmField
         val KEY_PREALARM_VOLUME = "key_prealarm_volume"
+        @JvmField
+        val LIST_ROW_LAYOUT = "list_row_layout"
+        @JvmField
+        val LIST_ROW_LAYOUT_COMPACT = "compact"
     }
 }

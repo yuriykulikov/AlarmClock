@@ -11,6 +11,7 @@ import android.provider.Settings
 import com.better.alarm.R
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.Prefs
+import com.better.alarm.lollipop
 import io.reactivex.disposables.CompositeDisposable
 
 /**
@@ -39,6 +40,11 @@ class SettingsFragment : PreferenceFragment() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             category.removePreference(findPreference(Prefs.KEY_ALARM_IN_SILENT_MODE))
+        }
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            (findPreference("preference_category_ui") as PreferenceCategory)
+                    .removePreference(findPreference(Prefs.LIST_ROW_LAYOUT))
         }
 
         findPreference("theme").onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
@@ -132,6 +138,17 @@ class SettingsFragment : PreferenceFragment() {
 
         val theme = findListPreference("theme")
         theme.summary = theme.entry
+
+        lollipop {
+            rxSharedPreferences.getString(Prefs.LIST_ROW_LAYOUT)
+                    .asObservable()
+                    .subscribe {
+                        findListPreference(Prefs.LIST_ROW_LAYOUT).run {
+                            summary = entry
+                        }
+                    }
+                    .let { disposables.add(it) }
+        }
     }
 
     override fun onPause() {

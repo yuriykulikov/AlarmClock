@@ -34,6 +34,7 @@ import android.view.ViewGroup
 import android.widget.*
 import com.better.alarm.R
 import com.better.alarm.configuration.AlarmApplication.container
+import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.Store
 import com.better.alarm.interfaces.AlarmEditor
 import com.better.alarm.interfaces.IAlarmsManager
@@ -59,6 +60,7 @@ class AlarmDetailsFragment : Fragment() {
     private val alarms: IAlarmsManager = container().alarms()
     private val logger: Logger = container().logger()
     private val rxSharedPreferences: RxSharedPreferences = container().rxPrefs()
+    private val prefs: Prefs = container().prefs()
     private var disposables = CompositeDisposable()
 
     private var backButtonSub: Disposable = Disposables.disposed()
@@ -98,7 +100,11 @@ class AlarmDetailsFragment : Fragment() {
         logger.d("Inflating layout")
         editor.subscribe { logger.d("---- $it") }
 
-        val view = inflater!!.inflate(R.layout.details_activity, container, false)
+        val view = inflater!!.inflate(
+                if (prefs.isCompact()) R.layout.details_fragment_compact else R.layout.details_activity,
+                container,
+                false
+        )
         this.fragmentView = view
 
         rowHolder.run {
