@@ -68,7 +68,7 @@ android {
     compileSdkVersion(26)
     defaultConfig {
         applicationId = "com.better.alarm"
-        minSdkVersion(16)
+        minSdkVersion(15)
         targetSdkVersion(26)
         testApplicationId = "com.better.alarm.test"
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
