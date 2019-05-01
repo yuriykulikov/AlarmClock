@@ -297,11 +297,13 @@ class AlarmDetailsFragment : Fragment() {
         if (enterTransition is Transition) {
             (enterTransition as Transition).addListener(object : Transition.TransitionListener {
                 override fun onTransitionEnd(transition: Transition?) {
-                    val selectableItemBackground = TypedValue().let {
-                        activity.theme.resolveAttribute(android.R.attr.selectableItemBackground, it, true)
-                        it.resourceId
+                    activity?.let { parentActivity ->
+                        val selectableItemBackground = TypedValue().apply {
+                            parentActivity.theme.resolveAttribute(android.R.attr.selectableItemBackground, this, true)
+                        }.resourceId
+                        rowHolder.rowView().setBackgroundResource(selectableItemBackground)
                     }
-                    rowHolder.rowView().setBackgroundResource(selectableItemBackground)
+                    (enterTransition as Transition).removeListener(this)
                 }
 
                 override fun onTransitionResume(transition: Transition?) {
