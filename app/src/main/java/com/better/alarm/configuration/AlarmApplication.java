@@ -18,8 +18,6 @@ package com.better.alarm.configuration;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.view.ViewConfiguration;
 
@@ -189,20 +187,6 @@ public class AlarmApplication extends Application {
                 }
             });
         }
-
-        final Preference<String> defaultAlert = rxPreferences.getString(Prefs.KEY_DEFAULT_RINGTONE, "");
-        defaultAlert
-                .asObservable()
-                .firstOrError()
-                .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(@NonNull String s) throws Exception {
-                        if (s.isEmpty()) {
-                            Uri alert = RingtoneManager.getActualDefaultRingtoneUri(getApplicationContext(), RingtoneManager.TYPE_ALARM);
-                            defaultAlert.set(alert.toString());
-                        }
-                    }
-                });
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         AlarmSetter.AlarmSetterImpl setter = new AlarmSetter.AlarmSetterImpl(logger, alarmManager, getApplicationContext());

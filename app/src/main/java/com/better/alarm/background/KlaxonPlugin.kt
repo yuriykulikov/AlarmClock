@@ -1,40 +1,55 @@
 package com.better.alarm.background
 
-import android.content.Context
-import android.content.res.Resources
-import android.media.AudioManager
-import android.media.MediaPlayer
-import android.media.RingtoneManager
-import android.net.Uri
 import com.better.alarm.R
 import com.better.alarm.logger.Logger
-import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.Alarmtone
 import io.reactivex.Observable
+import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
+import io.reactivex.functions.BiFunction
+import java.util.concurrent.TimeUnit
 
+interface Player {
+    fun startAlarm()
+    fun setDataSourceFromResource(res: Int)
+    fun setPerceivedVolume(perceived: Float)
+    /**
+     * Stops alarm audio
+     */
+    fun stop()
+
+    fun reset()
+    fun setDataSource(alarmtone: Alarmtone)
+}
+
+/**
+ * Plays sound when told to. Performs a fade-in.
+ */
 class KlaxonPlugin(
         private val log: Logger,
-        private val context: Context,
-        private val resources: Resources
-        // TODO rename to PlayerFactory
-        // private val callback: KlaxonServiceCallback
+        private val playerFactory: () -> Player,
+        private val prealarmVolume: Observable<Int>,
+        private val fadeInTimeInMillis: Observable<Int>,
+        private val inCall: Observable<Boolean>,
+        private val scheduler: Scheduler
 ) : AlertPlugin {
-    private var player: MediaPlayer? = null
+    companion object {
+        private const val FAST_FADE_IN_TIME = 5000
+        private const val FADE_IN_STEPS = 100
+        private const val IN_CALL_VOLUME = 0.125f
+        private const val SILENT = 0f
+    }
 
-    override fun go(alarm: AlarmValue, inCall: Observable<Boolean>, volume: Observable<Float>): Disposable {
+    private var player: Player? = null
+    private var disposable = Disposables.empty()
 
-        player = MediaPlayer().apply {
-            setOnErrorListener { mp, what, extra ->
-                log.e("Error occurred while playing audio.")
-                mp.stop()
-                mp.release()
-                player = null
-                true
-            }
-        }
+    private fun fadeInSlow(prealarm: Boolean) = fadeInTimeInMillis.firstOrError().flatMapObservable { fadeIn(it, prealarm) }
+
+    override fun go(alarm: PluginAlarmData, prealarm: Boolean, targetVolume: Observable<TargetVolume>): Disposable {
+        disposable.dispose()
+        player = playerFactory()
 
         val callSub = inCall.subscribe { inCall ->
             // Check if we are in a call. If we are, use the in-call alarm
@@ -45,23 +60,32 @@ class KlaxonPlugin(
             }
         }
 
+        val volume: Observable<Float> = targetVolume.switchMap { vol ->
+            when (vol) {
+                TargetVolume.MUTED -> Observable.just(SILENT)
+                TargetVolume.FADED_IN -> fadeInSlow(prealarm)
+                TargetVolume.FADED_IN_FAST -> fadeIn(FAST_FADE_IN_TIME, prealarm)
+            }
+        }
+
         val volumeSub = volume
                 .doOnNext { log.d("[KlaxonPlugin] volume $it") }
                 .subscribe { currentVolume ->
                     player?.setPerceivedVolume(currentVolume)
                 }
 
-        return CompositeDisposable(callSub, volumeSub, Disposables.fromAction {
+        disposable = CompositeDisposable(callSub, volumeSub, Disposables.fromAction {
             player?.stopAndCleanup()
         })
+        return disposable
     }
 
-    private fun playAlarm(alarm: AlarmValue) {
+    private fun playAlarm(alarm: PluginAlarmData) {
         if (alarm.alarmtone !is Alarmtone.Silent) {
             player?.run {
                 try {
-                    setVolume(0f, 0f)
-                    setDataSource(context, alarm.getAlertOrDefault())
+                    setPerceivedVolume(0f)
+                    setDataSource(alarm.alarmtone)
                     startAlarm()
                 } catch (ex: Exception) {
                     log.w("Using the fallback ringtone")
@@ -69,7 +93,7 @@ class KlaxonPlugin(
                     // now. Use the fallback ringtone.
                     // Must reset the media player to clear the error state.
                     reset()
-                    setDataSourceFromResource(resources, R.raw.fallbackring)
+                    setDataSourceFromResource(R.raw.fallbackring)
                     startAlarm()
                 }
             }
@@ -78,48 +102,53 @@ class KlaxonPlugin(
 
     private fun playInCallAlarm() {
         log.d("Using the in-call alarm")
-        player?.setDataSourceFromResource(resources, R.raw.in_call_alarm)
+        player?.setDataSourceFromResource(R.raw.in_call_alarm)
         player?.startAlarm()
     }
 
-    private fun AlarmValue.getAlertOrDefault(): Uri {
-        // Fall back on the default alarm if the database does not have an
-        // alarm stored.
-        val toPlay = alarmtone
-        return when (toPlay) {
-            is Alarmtone.Silent -> throw RuntimeException("alarm is silent")
-            is Alarmtone.Default -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-            is Alarmtone.Sound ->  Uri.parse(toPlay.uriString)
+    /**
+     * Gets 1f doe NORMAL and a fraction of 0.5f for PREALARM
+     */
+    private fun observeVolume(prealarm: Boolean): Observable<Float> {
+        val maxVolume = 11
+        return if (!prealarm) Observable.just(1f)
+        else prealarmVolume.map {
+            it
+                    .plus(1)//0 is 1
+                    .coerceAtMost(maxVolume)
+                    .toFloat()
+                    .div(maxVolume)
+                    .div(2)
+                    .apply { log.d("targetPrealarmVolume=$this") }
         }
     }
 
-    private fun MediaPlayer.startAlarm() {
-        setAudioStreamType(AudioManager.STREAM_ALARM)
-        isLooping = true
-        prepare()
-        start()
-    }
 
-    private fun MediaPlayer.setDataSourceFromResource(resources: Resources, res: Int) {
-        resources.openRawResourceFd(res)?.run {
-            setDataSource(fileDescriptor, startOffset, length)
-            close()
-        }
-    }
+    private fun fadeIn(time: Int, prealarm: Boolean): Observable<Float> {
+        val fadeInTime: Long = time.toLong()
 
-    private fun MediaPlayer.setPerceivedVolume(perceived: Float) {
-        val volume = perceived.squared()
-        setVolume(volume, volume)
+        val fadeInStep: Long = fadeInTime / FADE_IN_STEPS
+
+        val fadeIn = Observable.interval(fadeInStep, TimeUnit.MILLISECONDS, scheduler)
+                .map { it * fadeInStep }
+                .takeWhile { it <= fadeInTime }
+                .map { elapsed -> elapsed.toFloat() / fadeInTime }
+                .map { fraction -> fraction.squared() }
+                .doOnComplete { log.d("Completed fade-in in $time milliseconds") }
+
+        return Observable.combineLatest(
+                observeVolume(prealarm),
+                fadeIn,
+                BiFunction<Float, Float, Float> { targetVolume, fadePercentage -> fadePercentage * targetVolume })
     }
 
     /**
      * Stops alarm audio
      */
-    private fun MediaPlayer.stopAndCleanup() {
+    private fun Player.stopAndCleanup() {
         log.d("stopping media player")
         try {
-            if (isPlaying) stop()
-            release()
+            stop()
         } finally {
             player = null
         }

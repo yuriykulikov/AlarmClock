@@ -2,6 +2,8 @@ package com.better.alarm.interfaces;
 
 import android.net.Uri;
 
+import com.better.alarm.model.Alarmtone;
+
 import java.util.Calendar;
 
 public interface Alarm {
@@ -24,6 +26,8 @@ public interface Alarm {
     int getId();
 
     String getLabelOrDefault();
+
+    Alarmtone getAlarmtone();
 
     /**
      * @return

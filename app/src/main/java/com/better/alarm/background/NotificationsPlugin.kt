@@ -20,7 +20,6 @@ package com.better.alarm.background
 import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.Service
 import android.content.Context
 import android.content.Intent
 import com.better.alarm.*
@@ -29,7 +28,6 @@ import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.interfaces.PresentationToModelIntents
-import com.better.alarm.model.AlarmValue
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
@@ -41,11 +39,12 @@ import io.reactivex.disposables.Disposables
 class NotificationsPlugin(
         val mContext: Context,
         val nm: NotificationManager = container().notificationManager(),
-        val prefs: Prefs = container().prefs(),
-        val wrapper: Service
+        val startForeground: (Int, Notification) -> Unit,
+        val prefs: Prefs = container().prefs()
 ) : AlertPlugin {
+    private var currentAlarm: PluginAlarmData? = null
 
-    override fun go(alarm: AlarmValue, inCall: Observable<Boolean>, volume: Observable<Float>): Disposable {
+    override fun go(alarm: PluginAlarmData, prealarm: Boolean, targetVolume: Observable<TargetVolume>): Disposable {
         // our alarm fired again, remove snooze notification
         nm.cancel(alarm.id)
 
@@ -82,7 +81,7 @@ class NotificationsPlugin(
         // Send the notification using the alarm id to easily identify the
         // correct notification.
         oreo {
-            wrapper.startForeground(alarm.id, notification)
+            startForeground(alarm.id, notification)
         }
 
         preOreo {
@@ -97,8 +96,6 @@ class NotificationsPlugin(
             preOreo {
                 nm.cancel(alarm.id)
             }
-
-            wrapper.stopSelf()
         }
     }
 

@@ -6,6 +6,7 @@ import com.better.alarm.configuration.Store
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.oreo
 import com.better.alarm.preOreo
+import java.lang.RuntimeException
 
 class AlertServicePusher(store: Store, context: Context) {
     init {
@@ -20,6 +21,7 @@ class AlertServicePusher(store: Store, context: Context) {
                         is Event.MuteEvent -> Intent(Intents.ACTION_MUTE)
                         is Event.DemuteEvent -> Intent(Intents.ACTION_DEMUTE)
                         is Event.CancelSnoozedEvent -> Intent(Intents.ACTION_CANCEL_SNOOZE)
+                        is Event.NullEvent -> throw RuntimeException("NullEvent")
                     }.apply {
                         setClass(context, AlertServiceWrapper::class.java)
                     }

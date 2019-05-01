@@ -2,43 +2,47 @@ package com.better.alarm.background
 
 import android.os.Vibrator
 import com.better.alarm.logger.Logger
-import com.better.alarm.model.AlarmValue
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
-import io.reactivex.functions.Function3
+import io.reactivex.functions.BiFunction
 
+/**
+ * Vibrates when told to.
+ */
 class VibrationPlugin(
         private val log: Logger,
-        private val mVibrator: Vibrator,
-        private val vibrate: Observable<Boolean>
+        private val vibrator: Vibrator,
+        private val vibratePreference: Observable<Boolean>
 ) : AlertPlugin {
-    private val sVibratePattern: LongArray = longArrayOf(500, 500)
-    private var subscription = Disposables.disposed()
+    private val vibratePattern: LongArray = longArrayOf(500, 500)
+    private var disposable = Disposables.empty()
 
-    override fun go(alarm: AlarmValue, inCall: Observable<Boolean>, volume: Observable<Float>): Disposable {
-        subscription = Observable
-                .combineLatest<Boolean, Boolean, Float, Boolean>(
-                        vibrate,
-                        inCall,
-                        volume.doOnNext { println("Volmue: $it") },
-                        Function3 { isEnabled, isInCall, currentVolume ->
-                            isEnabled && !isInCall && currentVolume > 0.75f
-                        })
-                .distinctUntilChanged()
-                .subscribe { vibrate ->
-                    if (vibrate) {
+    override fun go(alarm: PluginAlarmData, prealarm: Boolean, targetVolume: Observable<TargetVolume>): Disposable {
+        disposable.dispose()
+        // TODO fade in vibration
+
+        val subscription = Observable
+                .combineLatest(vibratePreference, targetVolume, BiFunction<Boolean, TargetVolume, Boolean> { isEnabled, volume ->
+                    val shouldVibrate = volume == TargetVolume.FADED_IN || volume == TargetVolume.FADED_IN_FAST
+
+                    isEnabled && shouldVibrate
+                })
+                .subscribe { isEnabled ->
+                    if (isEnabled) {
                         log.d("Starting vibration")
-                        mVibrator.vibrate(sVibratePattern, 0)
+                        vibrator.vibrate(vibratePattern, 0)
                     } else {
                         log.d("Canceling vibration")
-                        mVibrator.cancel()
+                        vibrator.cancel()
                     }
                 }
 
-        return CompositeDisposable(subscription, Disposables.fromAction {
-            mVibrator.cancel()
+        disposable = CompositeDisposable(subscription, Disposables.fromAction {
+            vibrator.cancel()
         })
+
+        return disposable
     }
 }

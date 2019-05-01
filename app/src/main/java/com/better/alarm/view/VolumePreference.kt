@@ -20,7 +20,6 @@ import android.content.Context
 import android.media.AudioManager
 import android.media.Ringtone
 import android.media.RingtoneManager
-import android.net.Uri
 import android.preference.Preference
 import android.util.AttributeSet
 import android.view.View
@@ -28,13 +27,15 @@ import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import com.better.alarm.R
 import com.better.alarm.background.KlaxonPlugin
+import com.better.alarm.background.PlayerWrapper
+import com.better.alarm.background.PluginAlarmData
+import com.better.alarm.background.TargetVolume
 import com.better.alarm.configuration.AlarmApplication.container
+import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.Prefs.Companion.DEFAULT_PREALARM_VOLUME
 import com.better.alarm.configuration.Prefs.Companion.KEY_PREALARM_VOLUME
 import com.better.alarm.configuration.Prefs.Companion.MAX_PREALARM_VOLUME
-import com.better.alarm.model.AlarmData
 import com.better.alarm.model.Alarmtone
-import com.better.alarm.model.DaysOfWeek
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposables
@@ -47,34 +48,24 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
 
     private val klaxon: KlaxonPlugin by lazy {
         KlaxonPlugin(
-                log = container().logger,
-                resources = mContext.resources,
-                context = mContext
+                log = container().logger(),
+                playerFactory = {
+                    PlayerWrapper(
+                            context = container().context(),
+                            resources = container().context.resources,
+                            log = container().logger()
+                    )
+                },
+                prealarmVolume = container().rxPrefs().getInteger(Prefs.KEY_PREALARM_VOLUME, Prefs.DEFAULT_PREALARM_VOLUME).asObservable(),
+                fadeInTimeInMillis = Observable.just(100),
+                inCall = Observable.just(false),
+                scheduler = AndroidSchedulers.mainThread()
         )
     }
 
     init {
         layoutResource = R.layout.seekbar_dialog
-
-        this.ringtone =
-                container()
-                        .rxPrefs
-                        .getString("default_ringtone")
-                        .get()
-                        .let {
-                            val fallback = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-                            when {
-                                it == null || it == "silent" || it.isEmpty() -> {
-                                    fallback
-                                }
-                                else -> try {
-                                    Uri.parse(it)
-                                } catch (e: Exception) {
-                                    fallback
-                                }
-                            }
-                        }
-                        .let { RingtoneManager.getRingtone(context, it) }
+        this.ringtone = RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
         ringtone.streamType = AudioManager.STREAM_ALARM
     }
 
@@ -135,19 +126,13 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
                     prealarmPreference.set(integer)
                     ringtone.stop()
                 }
-                .subscribe { integer ->
+                .subscribe {
                     prealarmSampleDisposable.dispose()
-                    prealarmSampleDisposable = klaxon.go(AlarmData(
+                    prealarmSampleDisposable = klaxon.go(PluginAlarmData(
                             id = -1,
-                            isEnabled = true,
-                            hour = 1,
-                            minutes = 1,
-                            daysOfWeek = DaysOfWeek(0),
                             label = "",
-                            isPrealarm = true,
-                            isVibrate = true,
                             alarmtone = Alarmtone.Default()
-                    ), Observable.just(false), Observable.just(integer.toFloat() / 11 / 2))
+                    ), prealarm = true, targetVolume = Observable.just(TargetVolume.FADED_IN))
                 }
 
         prealarmListener

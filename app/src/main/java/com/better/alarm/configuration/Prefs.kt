@@ -38,8 +38,6 @@ data class Prefs(
         @JvmField
         val KEY_ALARM_SNOOZE = "snooze_duration"
         @JvmField
-        val KEY_DEFAULT_RINGTONE = "default_ringtone"
-        @JvmField
         val KEY_AUTO_SILENCE = "auto_silence"
         @JvmField
         val KEY_PREALARM_DURATION = "prealarm_duration"

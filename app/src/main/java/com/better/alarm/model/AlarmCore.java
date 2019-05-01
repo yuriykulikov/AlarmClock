@@ -816,6 +816,11 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
     }
 
     @Override
+    public Alarmtone getAlarmtone() {
+        return container.getAlarmtone();
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("AlarmCore ").append(container.getId());

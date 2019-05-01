@@ -175,7 +175,6 @@ public class AlarmAlertFullScreen extends FragmentActivity {
                     new android.os.Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            //TODO think about removing this or whatevar
                             container().store().getEvents().onNext(new Event.DemuteEvent());
                         }
                     }, 10000);
