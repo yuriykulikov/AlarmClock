@@ -124,6 +124,52 @@ class TimePickerPresenterTest {
     }
 
     @Test
+    fun when1239pm() {
+        val presenter = TimePickerPresenter(false)
+
+        presenter.onClick(Key.ONE)
+        presenter.onClick(Key.TWO)
+        presenter.onClick(Key.THREE)
+        presenter.onClick(Key.FIVE)
+        presenter.onClick(Key.RIGHT)
+
+        val last = presenter.state.test().values().last()
+
+        System.out.println(last)
+
+        assertThat(last.hoursTensDigit).isEqualTo(1)
+        assertThat(last.hoursOnesDigit).isEqualTo(2)
+        assertThat(last.minutesTensDigit).isEqualTo(3)
+        assertThat(last.minutesOnesDigit).isEqualTo(5)
+        assertThat(last.amPm).isEqualTo(TimePickerPresenter.AmPm.PM)
+        assertThat(last.hours).isEqualTo(0)
+        assertThat(last.minutes).isEqualTo(35)
+    }
+
+    @Test
+    fun when1239am() {
+        val presenter = TimePickerPresenter(false)
+
+        presenter.onClick(Key.ONE)
+        presenter.onClick(Key.TWO)
+        presenter.onClick(Key.THREE)
+        presenter.onClick(Key.FIVE)
+        presenter.onClick(Key.LEFT)
+
+        val last = presenter.state.test().values().last()
+
+        System.out.println(last)
+
+        assertThat(last.hoursTensDigit).isEqualTo(1)
+        assertThat(last.hoursOnesDigit).isEqualTo(2)
+        assertThat(last.minutesTensDigit).isEqualTo(3)
+        assertThat(last.minutesOnesDigit).isEqualTo(5)
+        assertThat(last.amPm).isEqualTo(TimePickerPresenter.AmPm.AM)
+        assertThat(last.hours).isEqualTo(12)
+        assertThat(last.minutes).isEqualTo(35)
+    }
+
+    @Test
     fun ok() {
         val presenter = TimePickerPresenter(false)
 

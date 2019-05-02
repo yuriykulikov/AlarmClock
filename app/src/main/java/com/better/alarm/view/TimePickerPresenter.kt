@@ -2,6 +2,7 @@ package com.better.alarm.view
 
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
+import java.util.*
 
 /**
  * Created by Yuriy on 17.08.2017.
@@ -90,15 +91,19 @@ open class TimePickerPresenter(val is24HoursMode: Boolean) {
         val minutesTensDigit: Int by lazy { inverted.getOrElse(1, { -1 }) }
         val minutesOnesDigit: Int by lazy { inverted.getOrElse(0, { -1 }) }
 
-        val hours: Int by lazy {
-            inverted.getOrElse(3, { 0 }) * 10 + hoursOnesDigit + if (amPm == AmPm.PM) 12 else 0
-        }
-
         val minutes: Int  by lazy { minutesTensDigit * 10 + minutesOnesDigit }
+        val hours: Int by lazy {
+            Calendar.getInstance().apply {
+                set(Calendar.HOUR, inverted.getOrElse(3, { 0 }) * 10 + hoursOnesDigit)
+                set(Calendar.MINUTE, minutes)
+                if (amPm == AmPm.PM) set(Calendar.AM_PM, Calendar.PM)
+                if (amPm == AmPm.AM) set(Calendar.AM_PM, Calendar.AM)
+            }.get(Calendar.HOUR_OF_DAY)
+        }
 
         fun isTimeValid(): Boolean = when {
             is24HoursMode -> inverted.size >= 3 && hours <= 23 && minutes <= 60
-            else -> inverted.size >= 3 && hours <= 23 && minutes <= 60 && leftRightEntered
+            else -> inverted.size >= 3 && minutes <= 60 && leftRightEntered
         }
 
         private fun front(): Int = input.getOrElse(0, { 0 }) * 10 + input.getOrElse(1, { 0 })
@@ -139,7 +144,7 @@ open class TimePickerPresenter(val is24HoursMode: Boolean) {
 
         private fun enable12Digits(): List<Key> = when {
             leftRightEntered -> none
-            input.isEmpty() -> any
+            input.isEmpty() -> any.minus(Key.ZERO)
             //second number can be tens of hours or tens of minutes
             input.size == 1 -> zeroToFive
             //third number can tens of minutes or minutes (any)
