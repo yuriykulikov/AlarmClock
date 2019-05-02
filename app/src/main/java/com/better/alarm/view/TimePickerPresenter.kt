@@ -2,7 +2,6 @@ package com.better.alarm.view
 
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
-import java.util.*
 
 /**
  * Created by Yuriy on 17.08.2017.
@@ -93,12 +92,14 @@ open class TimePickerPresenter(val is24HoursMode: Boolean) {
 
         val minutes: Int  by lazy { minutesTensDigit * 10 + minutesOnesDigit }
         val hours: Int by lazy {
-            Calendar.getInstance().apply {
-                set(Calendar.HOUR, inverted.getOrElse(3, { 0 }) * 10 + hoursOnesDigit)
-                set(Calendar.MINUTE, minutes)
-                if (amPm == AmPm.PM) set(Calendar.AM_PM, Calendar.PM)
-                if (amPm == AmPm.AM) set(Calendar.AM_PM, Calendar.AM)
-            }.get(Calendar.HOUR_OF_DAY)
+            val hours = inverted.getOrElse(3, { 0 }) * 10 + hoursOnesDigit
+            when {
+                is24HoursMode -> hours
+                hours == 12 && amPm == AmPm.AM -> 0
+                hours == 12 && amPm == AmPm.PM -> 12
+                amPm == AmPm.PM -> hours + 12
+                else -> hours
+            }
         }
 
         fun isTimeValid(): Boolean = when {
