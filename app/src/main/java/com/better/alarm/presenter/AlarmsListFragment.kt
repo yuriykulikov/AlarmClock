@@ -73,7 +73,6 @@ class AlarmsListFragment : Fragment() {
 
             //Delete add, skip animation
             if (row.idHasChanged()) {
-                logger.d("Jump to current state")
                 row.onOff().jumpDrawablesToCurrentState()
             }
 
