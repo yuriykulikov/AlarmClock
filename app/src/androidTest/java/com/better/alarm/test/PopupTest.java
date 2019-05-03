@@ -150,6 +150,7 @@ public class PopupTest extends BaseTest {
         deleteAlarm();
     }
 
+    @Ignore("Flakey")
     @Test
     public void snoozeViaClick() {
         int id = createAlarmAndFire();
