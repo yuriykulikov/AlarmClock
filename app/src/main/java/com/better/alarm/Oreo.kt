@@ -1,5 +1,6 @@
 package com.better.alarm
 
+import android.annotation.TargetApi
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -53,11 +54,16 @@ fun preOreo(action: () -> Unit) {
     }
 }
 
-fun <T> T.lollipop(action: T.() -> Unit): T {
+fun lollipop(action: () -> Unit) {
     if (lollipop()) {
-        this.action()
+        action()
     }
-    return this
+}
+
+fun preLollipop(action: () -> Unit) {
+    if (!lollipop()) {
+        action()
+    }
 }
 
 fun lollipop(): Boolean {

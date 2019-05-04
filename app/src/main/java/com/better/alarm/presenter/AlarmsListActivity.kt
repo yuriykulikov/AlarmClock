@@ -169,19 +169,25 @@ class AlarmsListActivity : FragmentActivity() {
     }
 
     private fun showList(@NonNull edited: EditedAlarm) {
-        supportFragmentManager.findFragmentById(R.id.main_fragment_container)?.lollipop {
-            exitTransition = Fade()
+        supportFragmentManager.findFragmentById(R.id.main_fragment_container)?.apply {
+            lollipop {
+                exitTransition = Fade()
+            }
         }
 
-        val listFragment = AlarmsListFragment().lollipop {
-            sharedElementEnterTransition = moveTransition()
-            enterTransition = Fade()
-            allowEnterTransitionOverlap = true
+        val listFragment = AlarmsListFragment().apply {
+            lollipop {
+                sharedElementEnterTransition = moveTransition()
+                enterTransition = Fade()
+                allowEnterTransitionOverlap = true
+            }
         }
 
         supportFragmentManager.beginTransaction()
-                .lollipop {
-                    edited.holder.getOrNull()?.addSharedElementsToTransition(this)
+                .apply {
+                    lollipop {
+                        edited.holder.getOrNull()?.addSharedElementsToTransition(this)
+                    }
                 }
                 .apply {
                     if (!lollipop()) {
@@ -193,18 +199,22 @@ class AlarmsListActivity : FragmentActivity() {
     }
 
     private fun showDetails(@NonNull edited: EditedAlarm) {
-        supportFragmentManager.findFragmentById(R.id.main_fragment_container)?.lollipop {
-            exitTransition = Fade()
+        supportFragmentManager.findFragmentById(R.id.main_fragment_container)?.apply {
+            lollipop {
+                exitTransition = Fade()
+            }
         }
 
         val detailsFragment = AlarmDetailsFragment().apply {
             arguments = Bundle()
             arguments.putInt(Intents.EXTRA_ID, edited.id())
             arguments.putBoolean(Store.IS_NEW_ALARM, edited.isNew)
-        }.lollipop {
-            enterTransition = TransitionSet().addTransition(Slide()).addTransition(Fade())
-            sharedElementEnterTransition = moveTransition()
-            allowEnterTransitionOverlap = true
+        }.apply {
+            lollipop {
+                enterTransition = TransitionSet().addTransition(Slide()).addTransition(Fade())
+                sharedElementEnterTransition = moveTransition()
+                allowEnterTransitionOverlap = true
+            }
         }
 
         supportFragmentManager.beginTransaction()
@@ -213,8 +223,10 @@ class AlarmsListActivity : FragmentActivity() {
                         this.setCustomAnimations(R.anim.push_down_in, android.R.anim.fade_out)
                     }
                 }
-                .lollipop {
-                    edited.holder.getOrNull()?.addSharedElementsToTransition(this)
+                .apply {
+                    lollipop {
+                        edited.holder.getOrNull()?.addSharedElementsToTransition(this)
+                    }
                 }
                 .replace(R.id.main_fragment_container, detailsFragment)
                 .commit()
@@ -222,7 +234,7 @@ class AlarmsListActivity : FragmentActivity() {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun moveTransition(): TransitionSet {
-        return TransitionSet().lollipop {
+        return TransitionSet().apply {
             ordering = TransitionSet.ORDERING_TOGETHER
             addTransition(ChangeBounds())
             addTransition(ChangeTransform())
