@@ -19,6 +19,7 @@ package com.better.alarm.presenter
 
 import android.annotation.TargetApi
 import android.content.Intent
+import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
@@ -229,8 +230,8 @@ class AlarmDetailsFragment : Fragment() {
                     mRepeatSummary.text = editor.daysOfWeek.summary(context)
                     mRingtoneSummary.text = when (editor.alarmtone) {
                         is Alarmtone.Silent -> context.getText(R.string.silent_alarm_summary)
-                        is Alarmtone.Default -> RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)).getTitle(context)
-                        is Alarmtone.Sound -> RingtoneManager.getRingtone(context, Uri.parse(editor.alarmtone.uriString)).getTitle(context)
+                        is Alarmtone.Default -> RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)).title()
+                        is Alarmtone.Sound -> RingtoneManager.getRingtone(context, Uri.parse(editor.alarmtone.uriString)).title()
                     }
 
                     if (editor.label != mLabel.text.toString()) {
@@ -247,6 +248,10 @@ class AlarmDetailsFragment : Fragment() {
 
         backButtonSub = store.onBackPressed().subscribe { saveAlarm() }
         store.transitioningToNewAlarmDetails().onNext(false)
+    }
+
+    fun Ringtone?.title(): CharSequence {
+        return this?.getTitle(context) ?: context.getText(R.string.silent_alarm_summary)
     }
 
     override fun onPause() {
