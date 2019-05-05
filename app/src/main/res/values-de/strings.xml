@@ -82,4 +82,5 @@
     <string name="alarm_alert_reschedule_text">Neu planen</string>
     <string name="alarm_alert_hold_the_button_text">Halten Sie die Taste!</string>
     <string name="menu_extensions">"Erweiterungen"</string>
+    <string name="permissions_external_storage_text">Sieht so aus das %s kann nicht ohne Berechtigungen gespielt werden. Sie können gerne den Zugriff erlauben. Wenn Sie es nicht wollen, selektieren Sie bitte andren Ringtone. Diese Entscheidung kann in System Einstellungen rückgängig gemacht werden.</string>
 </resources>

@@ -9,9 +9,11 @@ import android.os.Handler
 import android.preference.*
 import android.provider.Settings
 import com.better.alarm.R
+import com.better.alarm.checkPermissions
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.lollipop
+import com.better.alarm.model.Alarmtone
 import com.better.alarm.view.VolumePreference
 import io.reactivex.disposables.CompositeDisposable
 
@@ -87,6 +89,8 @@ class SettingsFragment : PreferenceFragment() {
         }
 
         (findPreference("volume_preference") as VolumePreference).onResume()
+
+        checkPermissions(activity, listOf(Alarmtone.Default()))
 
         findListPreference(Prefs.KEY_ALARM_SNOOZE)
                 .let { snoozePref ->

@@ -34,6 +34,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.better.alarm.R
+import com.better.alarm.checkPermissions
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.Store
@@ -198,6 +199,8 @@ class AlarmDetailsFragment : Fragment() {
         if (data != null && requestCode == 42) {
             val alert: String? = data.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)?.toString()
 
+            logger.d("Got ringtone: $alert")
+
             val alarmtone = when (alert) {
                 null -> Alarmtone.Silent()
                 RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString() -> Alarmtone.Default()
@@ -205,6 +208,8 @@ class AlarmDetailsFragment : Fragment() {
             }
 
             logger.d("onActivityResult $alert -> $alarmtone")
+
+            checkPermissions(activity, listOf(alarmtone))
 
             modify("Ringtone picker") { prev ->
                 prev.with(alarmtone = alarmtone, enabled = true)

@@ -26,7 +26,9 @@ import android.support.v4.app.FragmentTransaction
 import android.transition.*
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import com.better.alarm.R
+import com.better.alarm.checkPermissions
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.AlarmApplication.themeHandler
 import com.better.alarm.configuration.EditedAlarm
@@ -124,6 +126,14 @@ class AlarmsListActivity : FragmentActivity() {
             //jump directly to editor
             store.edit(intent.getIntExtra(Intents.EXTRA_ID, -1))
         }
+
+        container()
+                .store
+                .alarms()
+                .take(1)
+                .subscribe { alarms ->
+                    checkPermissions(this, alarms.map { it.alarmtone })
+                }.apply { }
     }
 
     override fun onStart() {
