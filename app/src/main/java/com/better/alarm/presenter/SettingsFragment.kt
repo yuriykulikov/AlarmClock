@@ -12,6 +12,7 @@ import com.better.alarm.R
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.lollipop
+import com.better.alarm.view.VolumePreference
 import io.reactivex.disposables.CompositeDisposable
 
 /**
@@ -85,6 +86,8 @@ class SettingsFragment : PreferenceFragment() {
             alarmInSilentModePref.isChecked = (systemModeRingerStreamsAffected() and ALARM_STREAM_TYPE_BIT) == 0
         }
 
+        (findPreference("volume_preference") as VolumePreference).onResume()
+
         findListPreference(Prefs.KEY_ALARM_SNOOZE)
                 .let { snoozePref ->
                     rxSharedPreferences.getString(Prefs.KEY_ALARM_SNOOZE)
@@ -153,6 +156,7 @@ class SettingsFragment : PreferenceFragment() {
 
     override fun onPause() {
         disposables.dispose()
+        (findPreference("volume_preference") as VolumePreference).onPause()
         super.onPause()
     }
 

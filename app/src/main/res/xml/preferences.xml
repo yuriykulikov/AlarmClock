@@ -20,6 +20,7 @@
         android:title="@string/preference_category_sound">
         <com.better.alarm.view.VolumePreference
             android:dialogTitle="@string/alarm_volume_title"
+            android:key="volume_preference"
             android:persistent="false"
             android:summary="@string/alarm_volume_summary"
             android:title="@string/alarm_volume_title" />

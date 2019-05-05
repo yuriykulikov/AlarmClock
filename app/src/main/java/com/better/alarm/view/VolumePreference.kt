@@ -17,14 +17,17 @@
 package com.better.alarm.view
 
 import android.content.Context
+import android.content.Intent
 import android.media.AudioManager
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.preference.Preference
+import android.provider.Settings
 import android.util.AttributeSet
 import android.view.View
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.TextView
 import com.better.alarm.R
 import com.better.alarm.background.KlaxonPlugin
 import com.better.alarm.background.PlayerWrapper
@@ -45,6 +48,7 @@ import kotlin.properties.Delegates
 
 class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mContext, attrs) {
     private var ringtone: Ringtone by Delegates.notNull()
+    private var ringtoneSummary: TextView? = null
 
     private val klaxon: KlaxonPlugin by lazy {
         KlaxonPlugin(
@@ -74,11 +78,27 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
 
         bindPrealarmSeekBar(view.findViewById<View>(R.id.seekbar_dialog_seekbar_prealarm_volume) as SeekBar)
         bindAudioManagerVolume(view.findViewById<View>(R.id.seekbar_dialog_seekbar_master_volume) as SeekBar)
+
+        view.findViewById<View>(R.id.settings_ringtone).setOnClickListener {
+            context.startActivity(Intent(Settings.ACTION_SOUND_SETTINGS))
+        }
+        ringtoneSummary = view.findViewById(R.id.settings_ringtone_summary)
+        onResume()
+    }
+
+    fun onResume() {
+        ringtoneSummary?.text = RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
+                ?.getTitle(context)
+                ?: context.getText(R.string.silent_alarm_summary)
     }
 
     override fun onPrepareForRemoval() {
         super.onPrepareForRemoval()
         ringtone.stop()
+    }
+
+    fun onPause() {
+
     }
 
     /**

@@ -12,7 +12,11 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Percentage
 import org.junit.Test
 import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito
 import org.mockito.Mockito.*
+import java.io.IOException
+import java.lang.NullPointerException
 import java.util.concurrent.TimeUnit
 
 class KlaxonPluginTest {
@@ -102,5 +106,34 @@ class KlaxonPluginTest {
             println(value)
             assertThat(value).isCloseTo(0.5f.squared(), closeEnough)
         }
+    }
+
+
+    @Test
+    fun `fallback should be used if failed to play default`() {
+        any(Alarmtone::class.java)
+        `when`(playerMock.setDataSource(Alarmtone.Default())).thenThrow(NullPointerException("Test IOE"))
+
+        klaxonPlugin.go(
+                PluginAlarmData(1, Alarmtone.Default(), ""),
+                true,
+                Observable.just(TargetVolume.FADED_IN)
+        )
+
+        verify(playerMock).setDataSourceFromResource(R.raw.fallbackring)
+    }
+
+    @Test
+    fun `fallback should be used if failed to play`() {
+        any(Alarmtone::class.java)
+        `when`(playerMock.setDataSource(Alarmtone.Sound(""))).thenThrow(NullPointerException("Test IOE"))
+
+        klaxonPlugin.go(
+                PluginAlarmData(1, Alarmtone.Sound(""), ""),
+                true,
+                Observable.just(TargetVolume.FADED_IN)
+        )
+
+        verify(playerMock).setDataSourceFromResource(R.raw.fallbackring)
     }
 }

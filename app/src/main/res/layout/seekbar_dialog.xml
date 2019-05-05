@@ -20,6 +20,38 @@
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:id="@+id/settings_ringtone"
+        android:layout_width="match_parent"
+        android:layout_height="68dip"
+        android:layout_marginTop="12dp"
+        android:orientation="vertical">
+
+        <TextView
+            style="?android:attr/settingsActivity"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center|left"
+            android:layout_marginLeft="16dp"
+            android:layout_weight="1"
+            android:text="@string/alert"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/settings_ringtone_summary"
+            style="?android:attr/settingsActivity"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="16dp"
+            android:layout_weight="1"
+            android:text="Super Mario" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:background="?android:attr/dividerHorizontal" />
+
     <TextView
         style="?android:attr/settingsActivity"
         android:layout_width="wrap_content"
