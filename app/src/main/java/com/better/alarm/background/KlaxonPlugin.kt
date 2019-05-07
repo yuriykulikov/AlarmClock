@@ -102,8 +102,11 @@ class KlaxonPlugin(
 
     private fun playInCallAlarm() {
         log.d("Using the in-call alarm")
-        player?.setDataSourceFromResource(R.raw.in_call_alarm)
-        player?.startAlarm()
+        player?.run {
+            reset()
+            setDataSourceFromResource(R.raw.in_call_alarm)
+            startAlarm()
+        }
     }
 
     /**

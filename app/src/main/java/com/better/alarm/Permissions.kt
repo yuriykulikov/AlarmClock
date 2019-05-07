@@ -9,7 +9,6 @@ import android.os.Build
 import com.better.alarm.background.PlayerWrapper
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.model.Alarmtone
-import java.io.IOException
 
 /**
  * Checks if all ringtones can be played, and requests permissions if it is not the case
@@ -24,7 +23,7 @@ fun checkPermissions(activity: Activity, tones: List<Alarmtone>) {
                         PlayerWrapper(context = activity, resources = activity.resources, log = logger)
                                 .setDataSource(alarmtone)
                         false
-                    } catch (e: IOException) {
+                    } catch (e: Exception) {
                         true
                     }
                 }
