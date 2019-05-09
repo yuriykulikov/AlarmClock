@@ -35,7 +35,6 @@
 <xliff:g id="minutes">%d</xliff:g>minuti prima della sveglia principale</string>
     <string name="info_fragment_prealarm_summary"><xliff:g id="minutes">%d</xliff:g> minuti Pre-allarme</string>
     <string name="prealarm_off_summary">Il Pre-allarme è off</string>
-    <string name="main_alarm">Sveglia principale</string>
     <string name="master_volume">Volume principale</string>
     <string name="menu_share">Condividi</string>
     <string name="menu_bugreport">Invia un bugreport</string>
@@ -65,8 +64,6 @@
         <item><xliff:g id="HOURS" example="2 ore">%2$s</xliff:g> e <xliff:g id="MINUTES" example="2 minuti">%3$s</xliff:g></item>
         <item><xliff:g id="DAYS" example="2 days">%1$s</xliff:g>, <xliff:g id="HOURS" example="2 ore">%2$s</xliff:g>, e <xliff:g id="MINUTES" example="2 minuti">%3$s</xliff:g></item>
     </string-array>
-    <string name="show_info_fragment_title">Intervallo di tempo fino alla prossima sveglia</string>
-    <string name="show_info_fragment_summary">Mostra in fondo alla lista uno spazio indicante il tempo rimasto fino alla prossima sveglia</string>
     <string name="dashclock">Ottieni DashClock</string>
     <string name="dashclock_message">Verrai trasferito a Google Play per installare DashClock. Dashclock è un widget che si integra perfettamente con Simple Alarm!</string>
     <string name="mp3cutter">Ottieni MP3 cutter</string>

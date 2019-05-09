@@ -28,7 +28,6 @@
     <string name="prealarm_summary">Предварительный сигнал зазвонит за <xliff:g id="minutes">%d</xliff:g> минут перед основным</string>
     <string name="info_fragment_prealarm_summary">Предварительный сигнал <xliff:g id="minutes">%d</xliff:g> минут</string>
     <string name="prealarm_off_summary">Предварительный сигнал выключен</string>
-    <string name="main_alarm">Основной сигнал</string>
     <string name="master_volume">Общая громкость</string>
     <string name="menu_share">Поделиться</string>
     <string name="menu_bugreport">Отчет об ошибке</string>
@@ -58,8 +57,6 @@
         <item>"<xliff:g id="HOURS">%2$s</xliff:g> и <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
         <item>"<xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> и <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
     </string-array>
-    <string name="show_info_fragment_title">Время след. сигнала</string>
-    <string name="show_info_fragment_summary">Показывать время до следующего сигнала в нижней части списка будильников</string>
     <string name="dashclock">Установить DashClock</string>
     <string name="dashclock_message">Перейти на Google Play чтобы установить Dashclock. Это виджет для экрана блокировки и рабочего стола, который прекрасно интегрируется с Простым будильником!</string>
     <string name="mp3cutter">Установить MP3 cutter</string>

@@ -28,7 +28,6 @@
     <string name="prealarm_summary">Der Vorwecker klingelt in <xliff:g id="minutes">%d</xliff:g> Minuten vor dem Wecker</string>
     <string name="info_fragment_prealarm_summary"><xliff:g id="minutes">%d</xliff:g> Minuten Vorwecker</string>
     <string name="prealarm_off_summary">Der Vorwecker ist ausgeschaltet</string>
-    <string name="main_alarm">Wecker</string>
     <string name="master_volume">Gesamtlautstärke</string>
     <string name="menu_share">Teilen</string>
     <string name="menu_bugreport">Fehlerbericht senden</string>
@@ -58,8 +57,6 @@
         <item msgid="9115697840826129603">"<xliff:g id="HOURS">%2$s</xliff:g> und <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
         <item msgid="2332583385137381060">"<xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> und <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
     </string-array>
-    <string name="show_info_fragment_title">Zeit bis zum nächsten Alarm</string>
-    <string name="show_info_fragment_summary">Zeit bis zum nächsten Alarm unter der Liste der Wecker anzeigen</string>
     <string name="dashclock">DashClock herunterladen</string>
     <string name="dashclock_message">Herunterladen DashClock von Google Play. Dashclock ist ein Widget, der funktioniert sehr gut zusammen mit dem Einfacher Wecker!</string>
     <string name="mp3cutter">MP3 cutter herunterladen</string>

@@ -58,7 +58,6 @@
 <xliff:g id="minutes">%d</xliff:g> minutes before the main alarm</string>
     <string name="info_fragment_prealarm_summary"><xliff:g id="minutes">%d</xliff:g> minutes pre-alarm</string>
     <string name="prealarm_off_summary">Pre-alarm is switched off</string>
-    <string name="main_alarm">Main alarm</string>
     <string name="master_volume">Master volume</string>
     <string name="menu_share">Share</string>
     <string name="menu_bugreport">Send a bugreport</string>
@@ -88,8 +87,6 @@
         <item><xliff:g example="2 hours" id="HOURS">%2$s</xliff:g> and <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
         <item><xliff:g example="2 days" id="DAYS">%1$s</xliff:g>, <xliff:g example="2 hours" id="HOURS">%2$s</xliff:g>, and <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
     </string-array>
-    <string name="show_info_fragment_title">Time until next alarm</string>
-    <string name="show_info_fragment_summary">Show a fragment which shows how many time until the next alarm is left in the bottom of the list</string>
     <string name="dashclock">Get DashClock</string>
     <string name="dashclock_message">You will be transferred to Google Play to install DashClock. Dashclock is a widget which perfectly integrates with Simple Alarm!</string>
     <string name="mp3cutter">Get MP3 cutter</string>
