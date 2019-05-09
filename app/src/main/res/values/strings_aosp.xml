@@ -320,48 +320,15 @@
          respond. This is a sign of an error; if the weather widget is not
          present on the device, we show nothing at all.
     -->
-    <string name="weather_fetch_failure">Weather information isn\'t available right now.</string>
     <string name="menu_item_dock_settings" msgid="9161438664257429372">Dock settings</string>
-
-    <!--
-         A description for the DeskClock alarm sound playback service.
-         [CHAR LIMIT=NONE]
-    -->
     <string name="alarm_klaxon_service_desc">Sound playback service for alarms set in Clock.</string>
-
-    <!--
-         String displayed as the alert summary while loading the alert persistedString from
-         the media player. [CHAR LIMIT=NONE]
-    -->
-    <string name="loading_ringtone">Loading ringtone\u2026</string>
-
-    <!-- Label on the main screen control used to set alarm [CHAR LIMIT=30] -->
-    <string name="control_set_alarm">Set alarm</string>
-
-    <!-- Label on the main screen control used to set alarm when there is already an existing alarm [CHAR LIMIT=30] -->
-    <string name="control_set_alarm_with_existing" tools:ignore="MissingTranslation">Alarm set: <xliff:g id="time">%s</xliff:g></string>
-
     <!-- Textual content of the button to discard the current dialog values and close the dialog -->
-    <string name="time_picker_cancel">Cancel</string>
     <!-- Textual content of the button to update an alarm with the current dialog values -->
-    <string name="time_picker_set" tools:ignore="MissingTranslation">OK</string>
-    <string name="time_picker_time_seperator">:</string>
+    <string name="time_picker_time_seperator" translatable="false">:</string>
     <!-- place holder for am/pm label when it is not set -->
-    <string name="time_picker_ampm_label">--</string>
+    <string name="time_picker_ampm_label" translatable="false">--</string>
     <!-- add 00 as minutes to the time when pressing this button -->
-    <string name="time_picker_00_label" tools:ignore="MissingTranslation">:00</string>
+    <string name="time_picker_00_label" tools:ignore="MissingTranslation" translatable="false">:00</string>
     <!-- add 30 as minutes to the time when pressing this button -->
-    <string name="time_picker_30_label" tools:ignore="MissingTranslation">:30</string>
-    <!-- Describes the purpose of the button to delete a timer. -->
-    <string name="timer_delete" tools:ignore="MissingTranslation">Delete</string>
-    <!-- Abbreviation for temporal hours -->
-    <string name="hours_label">h</string>
-    <!-- Abbreviation for temporal minutes -->
-    <string name="minutes_label">m</string>
-    <!-- Abbreviation for temporal seconds -->
-    <string name="seconds_label">s</string>
-    <!-- Accessibility strings -->
-    <string name="hours_label_description">hours</string>
-    <string name="minutes_label_description">minutes</string>
-    <string name="seconds_label_description">seconds</string>
+    <string name="time_picker_30_label" tools:ignore="MissingTranslation" translatable="false">:30</string>
 </resources>

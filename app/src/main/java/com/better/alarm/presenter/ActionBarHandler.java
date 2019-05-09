@@ -156,8 +156,8 @@ public class ActionBarHandler {
                 mContext.startActivity(intent);
             }
         });
-        builder.setTitle(R.string.review);
-        builder.setMessage(R.string.review_message);
+        builder.setTitle(R.string.menu_review);
+        builder.setMessage(R.string.menu_review_message);
         builder.setCancelable(true);
         builder.setNegativeButton(android.R.string.cancel, new EmptyClickListener());
         builder.create().show();
@@ -197,7 +197,7 @@ public class ActionBarHandler {
 
     private void showBugreport() {
         final EditText report = new EditText(mContext);
-        report.setHint(R.string.bugreport_hint);
+        report.setHint(R.string.menu_bugreport_hint);
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
@@ -206,7 +206,7 @@ public class ActionBarHandler {
                 ACRA.getErrorReporter().handleSilentException(new Exception(report.getText().toString()));
             }
         });
-        builder.setTitle(R.string.bugreport);
+        builder.setTitle(R.string.menu_bugreport);
         builder.setCancelable(true);
         builder.setNegativeButton(android.R.string.cancel, new EmptyClickListener());
         builder.setView(report);

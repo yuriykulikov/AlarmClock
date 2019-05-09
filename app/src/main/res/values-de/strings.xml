@@ -30,11 +30,11 @@
     <string name="prealarm_off_summary">Der Vorwecker ist ausgeschaltet</string>
     <string name="main_alarm">Wecker</string>
     <string name="master_volume">Gesamtlautstärke</string>
-    <string name="share">Teilen</string>
-    <string name="bugreport">Fehlerbericht senden</string>
-    <string name="review">Bewerten</string>
-    <string name="bugreport_hint">Bitte beschreiben Sie das Problem</string>
-    <string name="review_message">Vielen Dank! Positive Bewertungen bringen mehr Benutzer. Es ist für uns wichtig um Qualität zu verbessern. Möchten Sie fortfahren?</string>
+    <string name="menu_share">Teilen</string>
+    <string name="menu_bugreport">Fehlerbericht senden</string>
+    <string name="menu_review">Bewerten</string>
+    <string name="menu_bugreport_hint">Bitte beschreiben Sie das Problem</string>
+    <string name="menu_review_message">Vielen Dank! Positive Bewertungen bringen mehr Benutzer. Es ist für uns wichtig um Qualität zu verbessern. Möchten Sie fortfahren?</string>
     <string name="longclick_dismiss_title">Lange drücken zum Ausschalten</string>
     <string name="longclick_dismiss_summary">Lange drücken, um den Wecker auszuschalten</string>
     <string name="fade_in_time_sec_title">Fade-in Dauer</string>

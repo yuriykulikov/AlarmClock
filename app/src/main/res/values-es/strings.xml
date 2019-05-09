@@ -40,12 +40,11 @@
     <string name="prealarm_off_summary">La Pre-Alarma está apagada</string>
     <string name="main_alarm">Alarma principal</string>
     <string name="master_volume">Volumen maestro</string>
-    <string name="bug_report_toast">Lo sentimos, la aplicación se ha estrellado y un informe ha sido enviado al desarrollador para evitar esto en el futuro</string>
-    <string name="share">Cuota</string>
-    <string name="bugreport">Enviar un informe de error</string>
-    <string name="review">Valorar la aplicación</string>
-    <string name="bugreport_hint">Describa su queja aquí</string>
-    <string name="review_message">Muchas gracias por tomarse el tiempo para revisar la aplicación! Opiniones positivas ayudan a atraer a más usuarios, lo que ayuda a mejorar la aplicación mediante la recopilación de retroalimentación. ¿Desea continuar?</string>
+    <string name="menu_share">Cuota</string>
+    <string name="menu_bugreport">Enviar un informe de error</string>
+    <string name="menu_review">Valorar la aplicación</string>
+    <string name="menu_bugreport_hint">Describa su queja aquí</string>
+    <string name="menu_review_message">Muchas gracias por tomarse el tiempo para revisar la aplicación! Opiniones positivas ayudan a atraer a más usuarios, lo que ayuda a mejorar la aplicación mediante la recopilación de retroalimentación. ¿Desea continuar?</string>
     <string name="longclick_dismiss_title">Descartar con click largo</string>
     <string name="longclick_dismiss_summary">Manten el botón descartar presionado para descartar la alarma</string>
     <string name="fade_in_time_sec_title">Duración de aumento gradual de volumen</string>

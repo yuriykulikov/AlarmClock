@@ -30,15 +30,15 @@
         android:id="@+id/menu_bugreport"
         android:icon="@android:drawable/ic_menu_send"
         android:showAsAction="never"
-        android:title="@string/bugreport" />
+        android:title="@string/menu_bugreport" />
     <item
         android:id="@+id/menu_review"
         android:icon="@android:drawable/ic_menu_edit"
         android:showAsAction="never"
-        android:title="@string/review" />
+        android:title="@string/menu_review" />
     <item
         android:id="@+id/menu_share"
-        android:title="@string/share"
+        android:title="@string/menu_share"
         android:showAsAction="never"
         android:actionProviderClass="android.widget.ShareActionProvider" />
     <item android:title="@string/menu_extensions">

@@ -14,7 +14,7 @@
      limitations under the License.
 -->
 
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2" xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2" tools:ignore="MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation">
     <!--      Here come strings which are not contained in the AOSP -->
 
     <string-array name="fade_in_time_sec_values" tools:ignore="MissingTranslation">
@@ -60,12 +60,11 @@
     <string name="prealarm_off_summary">Pre-alarm is switched off</string>
     <string name="main_alarm">Main alarm</string>
     <string name="master_volume">Master volume</string>
-    <string name="bug_report_toast">Sorry, the app has crashed and a report has been sent to developer to prevent this in future</string>
-    <string name="share">Share</string>
-    <string name="bugreport">Send a bugreport</string>
-    <string name="review">Rate the app</string>
-    <string name="bugreport_hint">Describe your complaint here</string>
-    <string name="review_message">Thanks a lot for taking your time to review the application! Positive reviews help to attract more users, which helps to improve the application by collecting feedback. Would you like to proceed?</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_bugreport">Send a bugreport</string>
+    <string name="menu_review">Rate the app</string>
+    <string name="menu_bugreport_hint">Describe your complaint here</string>
+    <string name="menu_review_message">Thanks a lot for taking your time to review the application! Positive reviews help to attract more users, which helps to improve the application by collecting feedback. Would you like to proceed?</string>
     <string name="longclick_dismiss_title">Longclick dismiss</string>
     <string name="longclick_dismiss_summary">Hold the dismiss button to dismiss the alarm</string>
     <string name="fade_in_time_sec_title" tools:ignore="MissingTranslation">Fade-in duration</string>
@@ -81,13 +80,13 @@
     <string name="fade_in_off_summary">Fade-in is switched off</string>
     <string-array name="alarm_set_short">
         <item>Less than a minute from now</item>
-        <item><xliff:g id="DAYS" example="2 days">%1$s</xliff:g></item>
-        <item><xliff:g id="HOURS" example="2 hours">%2$s</xliff:g></item>
-        <item><xliff:g id="DAYS" example="2 days">%1$s</xliff:g> and <xliff:g id="HOURS" example="2 hours">%2$s</xliff:g></item>
-        <item><xliff:g id="MINUTES" example="2 minutes">%3$s</xliff:g></item>
-        <item><xliff:g id="DAYS" example="2 days">%1$s</xliff:g> and <xliff:g id="MINUTES" example="2 minutes">%3$s</xliff:g></item>
-        <item><xliff:g id="HOURS" example="2 hours">%2$s</xliff:g> and <xliff:g id="MINUTES" example="2 minutes">%3$s</xliff:g></item>
-        <item><xliff:g id="DAYS" example="2 days">%1$s</xliff:g>, <xliff:g id="HOURS" example="2 hours">%2$s</xliff:g>, and <xliff:g id="MINUTES" example="2 minutes">%3$s</xliff:g></item>
+        <item><xliff:g example="2 days" id="DAYS">%1$s</xliff:g></item>
+        <item><xliff:g example="2 hours" id="HOURS">%2$s</xliff:g></item>
+        <item><xliff:g example="2 days" id="DAYS">%1$s</xliff:g> and <xliff:g example="2 hours" id="HOURS">%2$s</xliff:g></item>
+        <item><xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
+        <item><xliff:g example="2 days" id="DAYS">%1$s</xliff:g> and <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
+        <item><xliff:g example="2 hours" id="HOURS">%2$s</xliff:g> and <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
+        <item><xliff:g example="2 days" id="DAYS">%1$s</xliff:g>, <xliff:g example="2 hours" id="HOURS">%2$s</xliff:g>, and <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
     </string-array>
     <string name="show_info_fragment_title">Time until next alarm</string>
     <string name="show_info_fragment_summary">Show a fragment which shows how many time until the next alarm is left in the bottom of the list</string>
