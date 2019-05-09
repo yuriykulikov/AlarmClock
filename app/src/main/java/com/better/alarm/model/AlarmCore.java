@@ -42,6 +42,7 @@ import java.util.Locale;
 import io.reactivex.Observable;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
+import kotlin.jvm.functions.Function1;
 
 /**
  * Alarm is a class which models a real word alarm. It is a simple state
@@ -149,6 +150,35 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
         void broadcastAlarmState(int id, String action);
     }
 
+    private static Function1<Integer, String> whatToString = new Function1<Integer, String>() {
+        @Override
+        public String invoke(Integer what) {
+            switch (what) {
+                case AlarmStateMachine.ENABLE:
+                    return "ENABLE";
+                case AlarmStateMachine.DISABLE:
+                    return "DISABLE";
+                case AlarmStateMachine.SNOOZE:
+                    return "SNOOZE";
+                case AlarmStateMachine.DISMISS:
+                    return "DISMISS";
+                case AlarmStateMachine.CHANGE:
+                    return "CHANGE";
+                case AlarmStateMachine.FIRED:
+                    return "FIRED";
+                case AlarmStateMachine.PREALARM_DURATION_CHANGED:
+                    return "PREALARM_DURATION_CHANGED";
+                case AlarmStateMachine.REFRESH:
+                    return "REFRESH";
+                case AlarmStateMachine.DELETE:
+                    return "DELETE";
+                case AlarmStateMachine.TIME_SET:
+                    return "TIME_SET";
+            }
+            return "" + what;
+        }
+    };
+
     /**
      * SM to handle Alarm states
      */
@@ -177,7 +207,7 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
         public final EnabledState.FiredState fired;
 
         public AlarmStateMachine(String initialState, String name, HandlerFactory handlerFactory) {
-            super(name, handlerFactory, log);
+            super(name, handlerFactory, log, whatToString);
             disabledState = new DisabledState();
             rescheduleTransition = new RescheduleTransition();
             enableTransition = new EnableTransition();

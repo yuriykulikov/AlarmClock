@@ -34,7 +34,11 @@ data class Message
     }
 
     override fun toString(): String {
-        return "Message[$what $arg1 $arg2 $obj]"
+        return "Message[$what]{${listOfNotNull(arg1, arg2, obj).joinToString(separator = ", ")}}]"
+    }
+
+    fun formatToString(converter: (Int) -> String): String {
+        return "Message[${converter.invoke(what)}]{${listOfNotNull(arg1, arg2, obj).joinToString(separator = ", ")}}"
     }
 
     fun withObj(obj: Any) = copy(obj = obj)

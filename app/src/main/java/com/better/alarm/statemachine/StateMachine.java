@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import kotlin.jvm.functions.Function1;
+
 public class StateMachine {
     private final String mName;
 
@@ -96,6 +98,7 @@ public class StateMachine {
         private final ArrayList<Message> mDeferredMessages = new ArrayList<Message>();
 
         private final CopyOnWriteArrayList<IOnStateChangedListener> onStateChangedListeners = new CopyOnWriteArrayList<IOnStateChangedListener>();
+        private final Function1<Integer, String> converter;
 
         /**
          * Information about a state. Used to maintain the hierarchy.
@@ -232,7 +235,7 @@ public class StateMachine {
         private final void processMsg(Message msg) {
             StateInfo curStateInfo = mStateStack[mStateStackTopIndex];
             // TODO handled/not handled
-            log.d('[' + mSm.getName() + "] " + curStateInfo.state.getName() + " <- " + msg);
+            log.d('[' + mSm.getName() + "] " + curStateInfo.state.getName() + " <- " + msg.formatToString(converter));
 
             while (!curStateInfo.state.processMessage(msg)) {
                 /**
@@ -243,7 +246,7 @@ public class StateMachine {
                     /**
                      * No parents left so it's not handled
                      */
-                    mSm.log.e(mSm.mName + " was not able to handle " + msg);
+                    mSm.log.e(mSm.mName + " was not able to handle " + msg.formatToString(converter));
                     break;
                 }
                 log.d('[' + mSm.getName() + "] \\" + curStateInfo.state.getName());
@@ -409,10 +412,11 @@ public class StateMachine {
             return stateInfo;
         }
 
-        private SmHandler(HandlerFactory hf, StateMachine sm, Logger log) {
+        private SmHandler(HandlerFactory hf, StateMachine sm, Logger log, Function1<Integer, String> converter) {
             mSm = sm;
             this.log = log;
             this.handler = hf.create(this);
+            this.converter = converter;
         }
 
         /**
@@ -464,10 +468,10 @@ public class StateMachine {
      *
      * @param name of the state machine
      */
-    public StateMachine(String name, HandlerFactory handlerFactory, Logger log) {
+    public StateMachine(String name, HandlerFactory handlerFactory, Logger log, Function1<Integer, String> converter) {
         mName = name;
         this.log = log;
-        mSmHandler = new SmHandler(handlerFactory, this, log);
+        mSmHandler = new SmHandler(handlerFactory, this, log, converter);
     }
 
     /**
