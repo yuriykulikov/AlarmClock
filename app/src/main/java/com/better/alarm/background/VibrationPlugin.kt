@@ -1,12 +1,18 @@
 package com.better.alarm.background
 
+import android.os.Build
+import android.os.VibrationEffect
 import android.os.Vibrator
 import com.better.alarm.logger.Logger
+import com.better.alarm.oreo
+import com.better.alarm.preOreo
 import io.reactivex.Observable
+import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.functions.BiFunction
+import java.util.concurrent.TimeUnit
 
 /**
  * Vibrates when told to.
@@ -14,6 +20,8 @@ import io.reactivex.functions.BiFunction
 class VibrationPlugin(
         private val log: Logger,
         private val vibrator: Vibrator,
+        private val fadeInTimeInMillis: Observable<Int>,
+        private val scheduler: Scheduler,
         private val vibratePreference: Observable<Boolean>
 ) : AlertPlugin {
     private val vibratePattern: LongArray = longArrayOf(500, 500)
@@ -21,18 +29,34 @@ class VibrationPlugin(
 
     override fun go(alarm: PluginAlarmData, prealarm: Boolean, targetVolume: Observable<TargetVolume>): Disposable {
         disposable.dispose()
-        // TODO fade in vibration
-
         val subscription = Observable
-                .combineLatest(vibratePreference, targetVolume, BiFunction<Boolean, TargetVolume, Boolean> { isEnabled, volume ->
-                    val shouldVibrate = volume == TargetVolume.FADED_IN || volume == TargetVolume.FADED_IN_FAST
-
-                    isEnabled && shouldVibrate
+                .combineLatest(vibratePreference, targetVolume, BiFunction<Boolean, TargetVolume, TargetVolume> { isEnabled, volume ->
+                    if (isEnabled) volume else TargetVolume.MUTED
                 })
-                .subscribe { isEnabled ->
-                    if (isEnabled) {
-                        log.d("Starting vibration")
-                        vibrator.vibrate(vibratePattern, 0)
+                .distinctUntilChanged()
+                .switchMap { volume ->
+                    when (volume) {
+                        TargetVolume.MUTED -> Observable.just(0)
+                        TargetVolume.FADED_IN -> fadeInSlow(prealarm)
+                        TargetVolume.FADED_IN_FAST -> Observable.just(255)
+                    }
+                }
+                .distinctUntilChanged()
+                .subscribe { amplitude ->
+                    if (amplitude != 0) {
+                        oreo {
+                            log.d("Starting vibration with amplitude $amplitude")
+                            vibrator.vibrate(VibrationEffect.createWaveform(
+                                    vibratePattern,
+                                    intArrayOf(0, amplitude),
+                                    0
+                            ))
+                        }
+
+                        preOreo {
+                            log.d("Starting vibration")
+                            vibrator.vibrate(vibratePattern, 0)
+                        }
                     } else {
                         log.d("Canceling vibration")
                         vibrator.cancel()
@@ -44,5 +68,33 @@ class VibrationPlugin(
         })
 
         return disposable
+    }
+
+    private val defaultAmplidute: Int
+        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            VibrationEffect.DEFAULT_AMPLITUDE
+        } else {
+            -1
+        }
+
+    /**
+     * TODO try this
+     * val amplitudes = when {
+     *   prealarm -> listOf(5, 20, 45, 80, 128)
+     *   else -> listOf(10, 40, 90, 160, 255)
+     * }
+     */
+    private fun fadeInSlow(prealarm: Boolean): Observable<Int> {
+
+        return when {
+            prealarm -> Observable.just(0)
+            else -> fadeInTimeInMillis.firstOrError()
+                    .flatMapObservable { fadeInTimeInMillis ->
+                        Observable.just(defaultAmplidute)
+                                .delay(fadeInTimeInMillis.toLong() / 2, TimeUnit.MILLISECONDS, scheduler)
+                                .startWith(0)
+                                .doOnComplete { log.d("Completed vibration fade-in") }
+                    }
+        }
     }
 }

@@ -60,6 +60,10 @@ class AlertServiceWrapper : Service() {
     }
 
     override fun onCreate() {
+        val fadeInTimeInMillis = container().rxPrefs()
+                .getString(Prefs.KEY_FADE_IN_TIME_SEC, "30")
+                .asObservable()
+                .map { s -> Integer.parseInt(s) * 1000 }
         alertService = AlertService(
                 log = container().logger(),
                 wakelocks = wakelocks,
@@ -76,18 +80,19 @@ class AlertServiceWrapper : Service() {
                                     )
                                 },
                                 prealarmVolume = container().rxPrefs().getInteger(Prefs.KEY_PREALARM_VOLUME, Prefs.DEFAULT_PREALARM_VOLUME).asObservable(),
-                                fadeInTimeInMillis = container().rxPrefs()
-                                        .getString(Prefs.KEY_FADE_IN_TIME_SEC, "30")
-                                        .asObservable()
-                                        .map { s -> Integer.parseInt(s) * 1000 },
+                                fadeInTimeInMillis = fadeInTimeInMillis,
                                 inCall = inCall,
                                 scheduler = AndroidSchedulers.mainThread()
                         ),
                         VibrationPlugin(
                                 log = container().logger(),
                                 vibrator = container().vibrator(),
-                                vibratePreference =
-                                container().rxPrefs().getBoolean("vibrate").asObservable()
+                                fadeInTimeInMillis = container().rxPrefs()
+                                        .getString(Prefs.KEY_FADE_IN_TIME_SEC, "30")
+                                        .asObservable()
+                                        .map { s -> Integer.parseInt(s) * 1000 },
+                                scheduler = AndroidSchedulers.mainThread(),
+                                vibratePreference = container().rxPrefs().getBoolean("vibrate").asObservable()
                         ),
                         NotificationsPlugin(
                                 mContext = this,
