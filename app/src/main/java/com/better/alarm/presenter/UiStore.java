@@ -2,6 +2,7 @@ package com.better.alarm.presenter;
 
 import com.better.alarm.configuration.EditedAlarm;
 
+import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
@@ -10,7 +11,7 @@ import io.reactivex.subjects.Subject;
  */
 
 public interface UiStore {
-    Subject<EditedAlarm> editing();
+    BehaviorSubject<EditedAlarm> editing();
 
     PublishSubject<String> onBackPressed();
 

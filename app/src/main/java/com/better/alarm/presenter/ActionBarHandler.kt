@@ -68,12 +68,12 @@ class ActionBarHandler(context: Activity, private val store: UiStore, private va
             menuItemDashclock.isVisible = false
         }
 
-        sub = store.editing().subscribe { (isNew, isEdited) ->
-            val showDelete = isEdited && !isNew
+        sub = store.editing().subscribe { edited ->
+            val showDelete = edited.isEdited && !edited.isNew
 
             menu.findItem(R.id.set_alarm_menu_delete_alarm).isVisible = showDelete
 
-            actionBar.setDisplayHomeAsUpEnabled(isEdited)
+            actionBar.setDisplayHomeAsUpEnabled(edited.isEdited)
         }
 
         return true

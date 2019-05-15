@@ -24,11 +24,11 @@
         <!-- Activity to set a new or modify existing alarm -->
         <activity
             android:name=".presenter.AlarmsListActivity"
-            android:theme="@style/DefaultDarkTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
             android:exported="true"
             android:label="@string/alarm_list_title"
-            android:taskAffinity="">
+            android:launchMode="singleTask"
+            android:theme="@style/DefaultDarkTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -41,8 +41,7 @@
         <activity
             android:name=".presenter.SettingsActivity"
             android:excludeFromRecents="true"
-            android:label="@string/settings"
-            android:taskAffinity="">
+            android:label="@string/settings">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>

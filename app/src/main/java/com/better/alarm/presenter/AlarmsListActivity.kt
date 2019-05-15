@@ -26,14 +26,17 @@ import android.support.v4.app.FragmentTransaction
 import android.transition.*
 import android.view.Menu
 import android.view.MenuItem
+import android.view.WindowManager
+import com.better.alarm.BuildConfig
 import com.better.alarm.R
 import com.better.alarm.checkPermissions
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.AlarmApplication.themeHandler
 import com.better.alarm.configuration.EditedAlarm
-import com.better.alarm.configuration.Store
-import com.better.alarm.interfaces.Intents
 import com.better.alarm.lollipop
+import com.better.alarm.model.AlarmData
+import com.better.alarm.model.Alarmtone
+import com.better.alarm.model.DaysOfWeek
 import com.better.alarm.util.Optional
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposables
@@ -52,66 +55,93 @@ class AlarmsListActivity : FragmentActivity() {
 
     private var sub = Disposables.disposed()
 
-    private val store = object : UiStore {
-        var onBackPressed = PublishSubject.create<String>()
-        var editing: Subject<EditedAlarm> = BehaviorSubject.createDefault(EditedAlarm())
-        var transitioningToNewAlarmDetails: Subject<Boolean> = BehaviorSubject.createDefault(false)
+    private lateinit var store: UiStore
 
-        override fun editing(): Subject<EditedAlarm> {
-            return editing
-        }
+    private fun createStore(edited: EditedAlarm): UiStore {
+        return object : UiStore {
+            var onBackPressed = PublishSubject.create<String>()
+            var editing: BehaviorSubject<EditedAlarm> = BehaviorSubject.createDefault(edited)
+            var transitioningToNewAlarmDetails: Subject<Boolean> = BehaviorSubject.createDefault(false)
 
-        override fun onBackPressed(): PublishSubject<String> {
-            return onBackPressed
-        }
+            override fun editing(): BehaviorSubject<EditedAlarm> {
+                return editing
+            }
 
-        override fun createNewAlarm() {
-            transitioningToNewAlarmDetails.onNext(true)
-            val newAlarm = alarms.createNewAlarm().edit()
-            editing().onNext(EditedAlarm(
-                    /* new */ true,
-                    /* edited */true,
-                    /* id */ newAlarm.id,
-                    Optional.absent()))
-        }
+            override fun onBackPressed(): PublishSubject<String> {
+                return onBackPressed
+            }
 
-        override fun transitioningToNewAlarmDetails(): Subject<Boolean> {
-            return transitioningToNewAlarmDetails
-        }
+            override fun createNewAlarm() {
+                transitioningToNewAlarmDetails.onNext(true)
+                val newAlarm = alarms.createNewAlarm().edit()
+                editing.onNext(EditedAlarm(
+                        isNew = true,
+                        value = Optional.of(AlarmData.from(alarms.getAlarm(newAlarm.id).edit())),
+                        id = newAlarm.id,
+                        holder = Optional.absent()))
+            }
 
-        override fun edit(id: Int) {
-            editing().onNext(EditedAlarm(
-                    /* new */ false,
-                    /* edited */true,
-                    /* id */ id,
-                    Optional.absent()))
-        }
+            override fun transitioningToNewAlarmDetails(): Subject<Boolean> {
+                return transitioningToNewAlarmDetails
+            }
 
-        override fun edit(id: Int, holder: RowHolder) {
-            editing().onNext(EditedAlarm(
-                    /* new */ false,
-                    /* edited */true,
-                    /* id */ id,
-                    Optional.of(holder)))
-        }
+            override fun edit(id: Int) {
+                editing.onNext(EditedAlarm(
+                        isNew = false,
+                        value = Optional.of(AlarmData.from(alarms.getAlarm(id).edit())),
+                        id = id,
+                        holder = Optional.absent()))
+            }
 
-        override fun hideDetails() {
-            editing().onNext(EditedAlarm())
-        }
+            override fun edit(id: Int, holder: RowHolder) {
+                editing.onNext(EditedAlarm(
+                        isNew = false,
+                        value = Optional.of(AlarmData.from(alarms.getAlarm(id).edit())),
+                        id = id,
+                        holder = Optional.of(holder)))
+            }
 
-        override fun hideDetails(holder: RowHolder) {
-            editing().onNext(EditedAlarm(
-                    /* new */ false,
-                    /* edited */false,
-                    /* id */ holder.alarmId(),
-                    Optional.of(holder)))
+            override fun hideDetails() {
+                editing.onNext(EditedAlarm())
+            }
+
+            override fun hideDetails(holder: RowHolder) {
+                editing.onNext(EditedAlarm(
+                        isNew = false,
+                        value = Optional.absent(),
+                        id = holder.alarmId(),
+                        holder = Optional.of(holder)))
+            }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putInt("version", BuildConfig.VERSION_CODE)
+        store.editing().value?.writeInto(outState)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(themeHandler().getIdForName(AlarmsListActivity::class.java.name))
         super.onCreate(savedInstanceState)
-        logger.d(this@AlarmsListActivity)
+
+        store = when {
+            savedInstanceState != null && savedInstanceState.getInt("version", BuildConfig.VERSION_CODE) == BuildConfig.VERSION_CODE -> {
+                val restored = editedAlarmFromSavedInstanceState(savedInstanceState)
+                logger.d("Restored ${this@AlarmsListActivity} with $restored")
+                createStore(restored)
+            }
+            else -> {
+                val initialState = EditedAlarm()
+                logger.d("Created ${this@AlarmsListActivity} with $initialState")
+                createStore(initialState)
+            }
+            // if (intent != null && intent.hasExtra(Intents.EXTRA_ID)) {
+            //     //jump directly to editor
+            //     store.edit(intent.getIntExtra(Intents.EXTRA_ID, -1))
+            // }
+        }
+
         this.mActionBarHandler = ActionBarHandler(this, store, alarms)
 
         val isTablet = !resources.getBoolean(R.bool.isTablet)
@@ -120,11 +150,6 @@ class AlarmsListActivity : FragmentActivity() {
         }
 
         setContentView(R.layout.list_activity)
-
-        if (intent != null && intent.hasExtra(Intents.EXTRA_ID)) {
-            //jump directly to editor
-            store.edit(intent.getIntExtra(Intents.EXTRA_ID, -1))
-        }
 
         container()
                 .store
@@ -136,13 +161,16 @@ class AlarmsListActivity : FragmentActivity() {
     }
 
     override fun onStart() {
-        logger.d(this@AlarmsListActivity)
         super.onStart()
         configureTransactions()
     }
 
+    override fun onResume() {
+        super.onResume()
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
+    }
+
     override fun onStop() {
-        logger.d(this@AlarmsListActivity)
         super.onStop()
         this.sub.dispose()
     }
@@ -167,7 +195,7 @@ class AlarmsListActivity : FragmentActivity() {
 
     private fun configureTransactions() {
         sub = store.editing()
-                .distinctUntilChanged { (_, isEdited) -> isEdited }
+                .distinctUntilChanged { edited -> edited.isEdited }
                 .subscribe(Consumer { edited ->
                     when {
                         lollipop() && isDestroyed -> return@Consumer
@@ -178,67 +206,79 @@ class AlarmsListActivity : FragmentActivity() {
     }
 
     private fun showList(@NonNull edited: EditedAlarm) {
-        supportFragmentManager.findFragmentById(R.id.main_fragment_container)?.apply {
-            lollipop {
-                exitTransition = Fade()
-            }
-        }
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
 
-        val listFragment = AlarmsListFragment().apply {
-            lollipop {
-                sharedElementEnterTransition = moveTransition()
-                enterTransition = Fade()
-                allowEnterTransitionOverlap = true
+        if (currentFragment is AlarmsListFragment) {
+            logger.d("skipping fragment transition, because already showing $currentFragment")
+        } else {
+            logger.d("transition from: $currentFragment to show list, edited: $edited")
+            supportFragmentManager.findFragmentById(R.id.main_fragment_container)?.apply {
+                lollipop {
+                    exitTransition = Fade()
+                }
             }
-        }
 
-        supportFragmentManager.beginTransaction()
-                .apply {
-                    lollipop {
-                        edited.holder.getOrNull()?.addSharedElementsToTransition(this)
-                    }
+            val listFragment = AlarmsListFragment().apply {
+                lollipop {
+                    sharedElementEnterTransition = moveTransition()
+                    enterTransition = Fade()
+                    allowEnterTransitionOverlap = true
                 }
-                .apply {
-                    if (!lollipop()) {
-                        this.setCustomAnimations(R.anim.push_down_in, android.R.anim.fade_out)
+            }
+
+            supportFragmentManager.beginTransaction()
+                    .apply {
+                        lollipop {
+                            edited.holder.getOrNull()?.addSharedElementsToTransition(this)
+                        }
                     }
-                }
-                .replace(R.id.main_fragment_container, listFragment)
-                .commit()
+                    .apply {
+                        if (!lollipop()) {
+                            this.setCustomAnimations(R.anim.push_down_in, android.R.anim.fade_out)
+                        }
+                    }
+                    .replace(R.id.main_fragment_container, listFragment)
+                    .commit()
+        }
     }
 
     private fun showDetails(@NonNull edited: EditedAlarm) {
-        supportFragmentManager.findFragmentById(R.id.main_fragment_container)?.apply {
-            lollipop {
-                exitTransition = Fade()
-            }
-        }
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
 
-        val detailsFragment = AlarmDetailsFragment().apply {
-            arguments = Bundle()
-            arguments.putInt(Intents.EXTRA_ID, edited.id())
-            arguments.putBoolean(Store.IS_NEW_ALARM, edited.isNew)
-        }.apply {
-            lollipop {
-                enterTransition = TransitionSet().addTransition(Slide()).addTransition(Fade())
-                sharedElementEnterTransition = moveTransition()
-                allowEnterTransitionOverlap = true
+        if (currentFragment is AlarmDetailsFragment) {
+            logger.d("skipping fragment transition, because already showing $currentFragment")
+        } else {
+            logger.d("transition from: $currentFragment to show details, edited: $edited")
+            currentFragment?.apply {
+                lollipop {
+                    exitTransition = Fade()
+                }
             }
-        }
 
-        supportFragmentManager.beginTransaction()
-                .apply {
-                    if (!lollipop()) {
-                        this.setCustomAnimations(R.anim.push_down_in, android.R.anim.fade_out)
-                    }
+            val detailsFragment = AlarmDetailsFragment().apply {
+                arguments = Bundle()
+            }.apply {
+                lollipop {
+                    enterTransition = TransitionSet().addTransition(Slide()).addTransition(Fade())
+                    sharedElementEnterTransition = moveTransition()
+                    allowEnterTransitionOverlap = true
                 }
-                .apply {
-                    lollipop {
-                        edited.holder.getOrNull()?.addSharedElementsToTransition(this)
+            }
+
+            supportFragmentManager.beginTransaction()
+                    .apply {
+                        if (!lollipop()) {
+                            this.setCustomAnimations(R.anim.push_down_in, android.R.anim.fade_out)
+                        }
                     }
-                }
-                .replace(R.id.main_fragment_container, detailsFragment)
-                .commit()
+                    .apply {
+                        lollipop {
+                            edited.holder.getOrNull()?.addSharedElementsToTransition(this)
+                        }
+                    }
+                    .replace(R.id.main_fragment_container, detailsFragment)
+                    .commit()
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -256,10 +296,62 @@ class AlarmsListActivity : FragmentActivity() {
         fragmentTransaction.addSharedElement(detailsButton(), "detailsButton" + alarmId())
     }
 
+    /**
+     * restores an [EditedAlarm] from SavedInstanceState. Counterpart of [EditedAlarm.writeInto].
+     */
+    private fun editedAlarmFromSavedInstanceState(savedInstanceState: Bundle): EditedAlarm {
+        return EditedAlarm(
+                isNew = savedInstanceState.getBoolean("isNew"),
+                id = savedInstanceState.getInt("id"),
+                value = if (savedInstanceState.getBoolean("isEdited")) {
+                    Optional.of(
+                            AlarmData(
+                                    id = savedInstanceState.getInt("id"),
+                                    isEnabled = savedInstanceState.getBoolean("isEnabled"),
+                                    hour = savedInstanceState.getInt("hour"),
+                                    minutes = savedInstanceState.getInt("minutes"),
+                                    daysOfWeek = DaysOfWeek(savedInstanceState.getInt("daysOfWeek")),
+                                    isPrealarm = savedInstanceState.getBoolean("isPrealarm"),
+                                    alarmtone = Alarmtone.fromString(savedInstanceState.getString("alarmtone")),
+                                    label = savedInstanceState.getString("label"),
+                                    isVibrate = true
+                            )
+                    )
+                } else {
+                    Optional.absent()
+                }
+        )
+    }
+
+    /**
+     * Saves EditedAlarm into SavedInstanceState. Counterpart of [editedAlarmFromSavedInstanceState]
+     */
+    private fun EditedAlarm.writeInto(outState: Bundle?) {
+        val toWrite: EditedAlarm = this
+        outState?.run {
+            putBoolean("isNew", isNew)
+            putInt("id", id)
+            putBoolean("isEdited", isEdited)
+
+            value.getOrNull()?.let { edited ->
+                putInt("id", edited.id)
+                putBoolean("isEnabled", edited.isEnabled)
+                putInt("hour", edited.hour)
+                putInt("minutes", edited.minutes)
+                putInt("daysOfWeek", edited.daysOfWeek.coded)
+                putString("label", edited.label)
+                putBoolean("isPrealarm", edited.isPrealarm)
+                putBoolean("isVibrate", edited.isVibrate)
+                putString("alarmtone", edited.alarmtone.persistedString)
+            }
+
+            logger.d("Saved state $toWrite")
+        }
+    }
+
     companion object {
         fun uiStore(activity: AlarmsListActivity): UiStore {
             return activity.store
         }
     }
 }
-

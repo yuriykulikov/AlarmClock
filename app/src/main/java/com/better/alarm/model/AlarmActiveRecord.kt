@@ -80,4 +80,12 @@ data class AlarmData(
         override val isVibrate: Boolean,
         override val label: String,
         override val daysOfWeek: DaysOfWeek
-) : AlarmValue
+) : AlarmValue {
+    companion object {
+        fun from(value: AlarmValue): AlarmData {
+            return value.run {
+                AlarmData(id, isEnabled, hour, minutes, isPrealarm, alarmtone, isVibrate, label, daysOfWeek)
+            }
+        }
+    }
+}

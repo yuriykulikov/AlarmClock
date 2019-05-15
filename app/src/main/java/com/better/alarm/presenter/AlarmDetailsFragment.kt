@@ -37,22 +37,19 @@ import com.better.alarm.R
 import com.better.alarm.checkPermissions
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.Prefs
-import com.better.alarm.configuration.Store
-import com.better.alarm.interfaces.AlarmEditor
 import com.better.alarm.interfaces.IAlarmsManager
-import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
 import com.better.alarm.lollipop
+import com.better.alarm.model.AlarmData
 import com.better.alarm.model.Alarmtone
 import com.better.alarm.util.Optional
 import com.better.alarm.view.showDialog
 import com.better.alarm.view.summary
 import com.f2prateek.rx.preferences2.RxSharedPreferences
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
-import io.reactivex.subjects.BehaviorSubject
-import io.reactivex.subjects.Subject
 import java.util.*
 
 /**
@@ -83,24 +80,22 @@ class AlarmDetailsFragment : Fragment() {
         fragmentView.findViewById(R.id.details_prealarm_checkbox) as CheckBox
     }
 
-    private val editor: Subject<AlarmEditor> = BehaviorSubject.create()
+    private val editor: Observable<AlarmData> by lazy { store.editing().filter { it.value.isPresent() }.map { it.value.get() } }
 
-    private val isNewAlarm: Boolean by lazy { arguments.getBoolean(Store.IS_NEW_ALARM) }
-    private val alarmId: Int by lazy { arguments.getInt(Intents.EXTRA_ID) }
+    private val alarmId: Int by lazy { store.editing().value!!.id }
 
-    lateinit var fragmentView: View
+    private lateinit var fragmentView: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        editor.onNext(alarms.getAlarm(alarmId).edit())
+
         lollipop {
             hackRippleAndAnimation()
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        logger.d("Inflating layout")
-        editor.subscribe { logger.d("---- $it") }
+        logger.d("$this with ${store.editing().value}")
 
         val view = inflater!!.inflate(
                 if (prefs.isCompact()) R.layout.details_fragment_compact else R.layout.details_activity,
@@ -112,7 +107,7 @@ class AlarmDetailsFragment : Fragment() {
         rowHolder.run {
             container().setOnClickListener {
                 modify("onOff") { editor ->
-                    editor.withIsEnabled(!editor.isEnabled)
+                    editor.copy(isEnabled = !editor.isEnabled)
                 }
             }
 
@@ -139,21 +134,27 @@ class AlarmDetailsFragment : Fragment() {
         view.findViewById<View>(R.id.details_activity_button_save).setOnClickListener { saveAlarm() }
         view.findViewById<View>(R.id.details_activity_button_revert).setOnClickListener { revert() }
 
-        if (isNewAlarm) {
-            disposableDialog = TimePickerDialogFragment.showTimePicker(alarmsListActivity.supportFragmentManager)
-                    .subscribe(pickerConsumer)
-        }
+        store.transitioningToNewAlarmDetails()
+                .firstOrError()
+                .subscribe { isNewAlarm ->
+                    if (isNewAlarm) {
+                        store.transitioningToNewAlarmDetails().onNext(false)
+                        disposableDialog = TimePickerDialogFragment.showTimePicker(alarmsListActivity.supportFragmentManager)
+                                .subscribe(pickerConsumer)
+                    }
+                }
+                .addToDisposables()
 
         //pre-alarm
         mPreAlarmRow.setOnClickListener {
-            modify("Pre-alarm") { editor -> editor.with(isPrealarm = !editor.isPrealarm, enabled = true) }
+            modify("Pre-alarm") { editor -> editor.copy(isPrealarm = !editor.isPrealarm, isEnabled = true) }
         }
 
         mRepeatRow.setOnClickListener {
             editor.firstOrError()
                     .flatMap { editor -> editor.daysOfWeek.showDialog(context) }
                     .subscribe { daysOfWeek ->
-                        modify("Repeat dialog") { prev -> prev.withDaysOfWeek(daysOfWeek).withIsEnabled(true) }
+                        modify("Repeat dialog") { prev -> prev.copy(daysOfWeek = daysOfWeek, isEnabled = true) }
                     }
         }
 
@@ -187,8 +188,9 @@ class AlarmDetailsFragment : Fragment() {
                 editor.take(1)
                         .filter { it.label != s.toString() }
                         .subscribe {
-                            modify("Label") { prev -> prev.withLabel(s.toString()).withIsEnabled(true) }
+                            modify("Label") { prev -> prev.copy(label = s.toString(), isEnabled = true) }
                         }
+                        .addToDisposables()
             }
         })
 
@@ -212,7 +214,7 @@ class AlarmDetailsFragment : Fragment() {
             checkPermissions(activity, listOf(alarmtone))
 
             modify("Ringtone picker") { prev ->
-                prev.with(alarmtone = alarmtone, enabled = true)
+                prev.copy(alarmtone = alarmtone, isEnabled = true)
             }
         }
     }
@@ -268,16 +270,16 @@ class AlarmDetailsFragment : Fragment() {
 
     private fun saveAlarm() {
         editor.firstOrError().subscribe { editorToSave ->
-            editorToSave.commit()
+            alarms.getAlarm(alarmId).edit().copy(alarmValue = editorToSave).commit()
             store.hideDetails(rowHolder)
-        }
+        }.addToDisposables()
     }
 
     private fun revert() {
-        editor.firstOrError().subscribe { edited ->
+        store.editing().value?.let { edited ->
             // "Revert" on a newly created alarm should delete it.
-            if (isNewAlarm) {
-                alarms.delete(edited)
+            if (edited.isNew) {
+                alarms.getAlarm(edited.id).delete()
             }
             // else do not save changes
             store.hideDetails(rowHolder)
@@ -286,17 +288,27 @@ class AlarmDetailsFragment : Fragment() {
 
     private val pickerConsumer = { picked: Optional<PickedTime> ->
         if (picked.isPresent()) {
-            modify("Picker") { editor: AlarmEditor ->
-                editor.with(hour = picked.get().hour,
+            modify("Picker") { editor: AlarmData ->
+                editor.copy(hour = picked.get().hour,
                         minutes = picked.get().minute,
-                        enabled = true)
+                        isEnabled = true)
             }
         }
     }
 
-    private fun modify(reason: String, function: (AlarmEditor) -> AlarmEditor) {
+    private fun modify(reason: String, function: (AlarmData) -> AlarmData) {
         logger.d("Performing modification because of $reason")
-        editor.firstOrError().subscribe { ed -> editor.onNext(function.invoke(ed)) }
+        store.editing().value?.let { editedAlarm ->
+            val modified: Optional<AlarmData> = editedAlarm.value.of
+                    ?.let(function)
+                    .let { Optional.fromNullable(it) }
+
+            store.editing().onNext(editedAlarm.copy(value = modified))
+        }
+    }
+
+    private fun Disposable.addToDisposables() {
+        disposables.add(this)
     }
 
     /**
