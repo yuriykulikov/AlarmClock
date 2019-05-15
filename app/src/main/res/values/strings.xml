@@ -94,22 +94,23 @@
 
     <string name="theme_title">Interface theme</string>
     <string-array name="themes_entries">
-        <item>Holo dark</item>
-        <item>Classic light</item>
+        <item>Dark</item>
+        <item>Light</item>
     </string-array>
     <string-array name="themes_values">
         <item>dark</item>
         <item>light</item>
     </string-array>
-
     <string name="preference_list_row_layout_title">Layout style</string>
     <string-array name="preference_list_row_layout_entries">
         <item>Compact</item>
         <item>Bold</item>
+        <item>Classic</item>
     </string-array>
     <string-array name="preference_list_row_layout_values">
         <item>compact</item>
         <item>bold</item>
+        <item>classic</item>
     </string-array>
 
     <string name="simple_alarm_clock">Simple Alarm Clock</string>

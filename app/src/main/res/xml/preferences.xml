@@ -48,7 +48,7 @@
             android:title="@string/theme_title" />
 
         <ListPreference
-            android:defaultValue="bold"
+            android:defaultValue="classic"
             android:dialogTitle="@string/preference_list_row_layout_title"
             android:entries="@array/preference_list_row_layout_entries"
             android:entryValues="@array/preference_list_row_layout_values"

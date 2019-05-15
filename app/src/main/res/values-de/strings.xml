@@ -66,6 +66,12 @@
         <item>Dunkel</item>
         <item>Hell</item>
     </string-array>
+    <string name="preference_list_row_layout_title">Zeilengröße</string>
+    <string-array name="preference_list_row_layout_entries">
+        <item>Kompakt</item>
+        <item>Groß</item>
+        <item>Klassisch</item>
+    </string-array>
     <string name="simple_alarm_clock">Einfacher Wecker</string>
     <string-array name="snooze_duration_with_off_entries">
         <item>"Aus"</item>
@@ -83,7 +89,6 @@
     <string name="preference_category_durations">Dauer</string>
     <string name="preference_category_sound">Lautstärke und Sound</string>
     <string name="preference_category_ui">Benutzeroberfläche</string>
-    <string name="preference_list_row_layout_title">Zeilengröße</string>
     <string name="details_no_ringtone_picker">Kein Ringtone Manager ist vorhanden...</string>
     <string name="menu_about_title">About</string>
     <string name="menu_about_content">Einfacher Wecker ist ein Open Source Projekt der bringt euch alle nötige Features in minimalister Form.

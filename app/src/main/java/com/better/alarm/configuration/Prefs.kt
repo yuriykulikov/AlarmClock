@@ -8,6 +8,10 @@ import io.reactivex.Single
  * Created by Yuriy on 10.06.2017.
  */
 
+enum class Layout {
+    CLASSIC, COMPACT, BOLD;
+}
+
 data class Prefs(
         val _is24HoutFormat: Single<Boolean>,
         val preAlarmDuration: Observable<Int>,
@@ -20,14 +24,15 @@ data class Prefs(
     fun snoozeDuration(): Observable<Int> = snoozeDuration
     fun listRowLayout(): Observable<String> = listRowLayout
     fun autoSilence(): Observable<Int> = autoSilence
-    fun isCompact(): Boolean {
+    fun layout(): Layout {
         return listRowLayout
                 .take(1)
                 .map {
                     when {
-                        !lollipop() -> false
-                        it == LIST_ROW_LAYOUT_COMPACT -> true
-                        else -> false
+                        !lollipop() -> Layout.CLASSIC
+                        it == LIST_ROW_LAYOUT_CLASSIC -> Layout.CLASSIC
+                        it == LIST_ROW_LAYOUT_COMPACT -> Layout.COMPACT
+                        else -> Layout.BOLD
                     }
                 }.blockingFirst()
     }
@@ -57,5 +62,7 @@ data class Prefs(
         val LIST_ROW_LAYOUT = "list_row_layout"
         @JvmField
         val LIST_ROW_LAYOUT_COMPACT = "compact"
+        @JvmField
+        val LIST_ROW_LAYOUT_CLASSIC = "classic"
     }
 }

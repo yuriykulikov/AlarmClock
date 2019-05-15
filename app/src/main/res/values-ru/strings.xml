@@ -63,12 +63,13 @@
     <string name="mp3cutter_message">Найти и установить MP3 Cutter на Google Play. MP3 cutter позволяет вырезать участки MP3 мелодий и конвертировать их в мелодии будильника.</string>
     <string name="theme_title">Цветовая гамма</string>
     <string-array name="themes_entries">
-        <item>Темный Holo</item>
-        <item>Классический светлый</item>
+        <item>Темный</item>
+        <item>Светлый</item>
     </string-array>
     <string-array name="preference_list_row_layout_entries">
         <item>Компактный</item>
         <item>Нормальный</item>
+        <item>Классический</item>
     </string-array>
     <string name="simple_alarm_clock">Простой будильник</string>
     <string-array name="snooze_duration_with_off_entries">

@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import com.better.alarm.R
 import com.better.alarm.configuration.AlarmApplication.container
+import com.better.alarm.configuration.Layout
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.lollipop
 import com.better.alarm.model.AlarmValue
@@ -36,24 +37,31 @@ class AlarmsListFragment : Fragment() {
     private val prefs: Prefs = container().prefs()
     private val logger = container().logger()
 
-    private val mAdapter: AlarmListAdapter by lazy { AlarmListAdapter(R.layout.list_row, R.string.alarm_list_title, ArrayList()) }
+    private val mAdapter: AlarmListAdapter by lazy { AlarmListAdapter(R.layout.list_row_classic, R.string.alarm_list_title, ArrayList()) }
+    private val inflater: LayoutInflater by lazy { activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater }
 
     private var alarmsSub: Disposable = Disposables.disposed()
     private var backSub: Disposable = Disposables.disposed()
     private var timePickerDialogDisposable = Disposables.disposed()
 
-    /** changed by [Prefs.listRowLayout]*/
-    private var listRowLayout = R.layout.list_row
+    /** changed by [Prefs.listRowLayout] in [onResume]*/
+    private var listRowLayoutId = R.layout.list_row_classic
+    /** changed by [Prefs.listRowLayout] in [onResume]*/
+    private var listRowLayout = prefs.layout()
 
     inner class AlarmListAdapter(alarmTime: Int, label: Int, private val values: List<AlarmValue>) : ArrayAdapter<AlarmValue>(activity, alarmTime, label, values) {
 
         private fun recycleView(convertView: View?, parent: ViewGroup, id: Int): RowHolder {
-            if (convertView != null) return RowHolder(convertView, id)
+            val tag = convertView?.tag
 
-            val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            val rowView = inflater.inflate(listRowLayout, parent, false)
-            return RowHolder(rowView, id).apply {
-                digitalClock.setLive(false)
+            return when {
+                tag is RowHolder && tag.layout == listRowLayout -> RowHolder(convertView, id, listRowLayout)
+                else -> {
+                    val rowView = inflater.inflate(listRowLayoutId, parent, false)
+                    RowHolder(rowView, id, listRowLayout).apply {
+                        digitalClock.setLive(false)
+                    }
+                }
             }
         }
 
@@ -104,7 +112,7 @@ class AlarmsListFragment : Fragment() {
             c.set(Calendar.MINUTE, alarm.minutes)
             row.digitalClock().updateTime(c)
 
-            val removeEmptyView = listRowLayout == R.layout.list_row_compact || !lollipop()
+            val removeEmptyView = listRowLayout == Layout.CLASSIC || listRowLayout == Layout.COMPACT
             // Set the repeat text or leave it blank if it does not repeat.
             val daysOfWeekStr = alarm.daysOfWeek.toString(context, false)
 
@@ -191,16 +199,18 @@ class AlarmsListFragment : Fragment() {
             (fab as FloatingActionButton).attachToListView(listView)
         }
 
-        alarmsSub = uiStore.transitioningToNewAlarmDetails()
-                .switchMap { transitioning -> if (transitioning) Observable.never() else store.alarms() }
-                .subscribe { alarms ->
-                    val sorted = alarms
-                            .sortedWith(Comparators.MinuteComparator())
-                            .sortedWith(Comparators.HourComparator())
-                            .sortedWith(Comparators.RepeatComparator())
-                    mAdapter.clear()
-                    mAdapter.addAll(sorted)
-                }
+        alarmsSub =
+                prefs.listRowLayout()
+                        .switchMap { uiStore.transitioningToNewAlarmDetails() }
+                        .switchMap { transitioning -> if (transitioning) Observable.never() else store.alarms() }
+                        .subscribe { alarms ->
+                            val sorted = alarms
+                                    .sortedWith(Comparators.MinuteComparator())
+                                    .sortedWith(Comparators.HourComparator())
+                                    .sortedWith(Comparators.RepeatComparator())
+                            mAdapter.clear()
+                            mAdapter.addAll(sorted)
+                        }
 
         return view
     }
@@ -208,7 +218,12 @@ class AlarmsListFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         backSub = uiStore.onBackPressed().subscribe { activity.finish() }
-        listRowLayout = if (prefs.isCompact()) R.layout.list_row_compact else R.layout.list_row
+        listRowLayout = prefs.layout()
+        listRowLayoutId = when (listRowLayout) {
+            Layout.COMPACT -> R.layout.list_row_compact
+            Layout.CLASSIC -> R.layout.list_row_classic
+            else -> R.layout.list_row_bold
+        }
     }
 
     override fun onPause() {

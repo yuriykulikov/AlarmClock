@@ -40,14 +40,15 @@
         android:layout_width="0dip"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:gravity="center"
+        android:longClickable="false"
         android:orientation="vertical">
 
         <com.better.alarm.view.DigitalClock
             android:id="@+id/list_row_digital_clock"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:focusable="false"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -55,32 +56,37 @@
                 android:id="@+id/digital_clock_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingRight="6dip"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:fontFamily="sans-serif-thin"
+                android:textSize="30sp" />
 
             <TextView
                 android:id="@+id/digital_clock_am_pm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="bold" />
+                android:layout_gravity="bottom" />
         </com.better.alarm.view.DigitalClock>
 
-        <TextView
-            android:id="@+id/list_row_daysOfWeek"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="2dip"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="?android:attr/textColorTertiary" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/list_row_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="2dip"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="?android:attr/textColorTertiary" />
+            <TextView
+                android:id="@+id/list_row_daysOfWeek"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:text="Weekdays"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <TextView
+                android:id="@+id/list_row_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="label" />
+        </LinearLayout>
     </LinearLayout>
 
     <com.better.alarm.view.DontPressWithParentLayout

@@ -64,7 +64,7 @@ public class SettingsTest extends BaseTest {
         Cortado.onView().withText("Interface theme").perform(click());
 
         sleep();
-        Cortado.onView().withText("Classic light").perform(click());
+        Cortado.onView().withText("Light").perform(click());
     }
 
     @Test
@@ -73,6 +73,6 @@ public class SettingsTest extends BaseTest {
         Cortado.onView().withText("Interface theme").perform(click());
 
         sleep();
-        Cortado.onView().withText("Holo dark").perform(click());
+        Cortado.onView().withText("Dark").perform(click());
     }
 }

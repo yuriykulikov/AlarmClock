@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.CompoundButton
 import android.widget.TextView
 import com.better.alarm.R
+import com.better.alarm.configuration.Layout
 import com.better.alarm.view.DigitalClock
 
 /**
@@ -11,6 +12,7 @@ import com.better.alarm.view.DigitalClock
  */
 class RowHolder {
     val digitalClock: DigitalClock
+    val layout: Layout
     private val rowView: View
     private val onOff: CompoundButton
     private val container: View
@@ -20,7 +22,7 @@ class RowHolder {
     private val detailsButton: View
     private val idHasChanged: Boolean
 
-    constructor(view: View, id: Int) {
+    constructor(view: View, id: Int, _layout: Layout) {
         rowView = view
         alarmId = id
         digitalClock = find(R.id.list_row_digital_clock) as DigitalClock
@@ -32,7 +34,7 @@ class RowHolder {
 
         val prev: RowHolder? = rowView.tag as RowHolder?
         idHasChanged = prev?.alarmId != id
-
+        layout = _layout
         rowView.tag = this
     }
 

@@ -36,6 +36,7 @@ import android.widget.*
 import com.better.alarm.R
 import com.better.alarm.checkPermissions
 import com.better.alarm.configuration.AlarmApplication.container
+import com.better.alarm.configuration.Layout
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.logger.Logger
@@ -68,7 +69,7 @@ class AlarmDetailsFragment : Fragment() {
     private val alarmsListActivity by lazy { activity as AlarmsListActivity }
     private val store: UiStore by lazy { AlarmsListActivity.uiStore(alarmsListActivity) }
     private val mLabel: EditText by lazy { fragmentView.findViewById(R.id.details_label) as EditText }
-    private val rowHolder: RowHolder by lazy { RowHolder(fragmentView.findViewById(R.id.details_list_row_container), alarmId) }
+    private val rowHolder: RowHolder by lazy { RowHolder(fragmentView.findViewById(R.id.details_list_row_container), alarmId, prefs.layout()) }
     private val mRingtoneRow by lazy { fragmentView.findViewById(R.id.details_ringtone_row) as LinearLayout }
     private val mRingtoneSummary by lazy { fragmentView.findViewById(R.id.details_ringtone_summary) as TextView }
     private val mRepeatRow by lazy { fragmentView.findViewById(R.id.details_repeat_row) as LinearLayout }
@@ -98,7 +99,11 @@ class AlarmDetailsFragment : Fragment() {
         logger.d("$this with ${store.editing().value}")
 
         val view = inflater!!.inflate(
-                if (prefs.isCompact()) R.layout.details_fragment_compact else R.layout.details_activity,
+                when (prefs.layout()) {
+                    Layout.CLASSIC -> R.layout.details_fragment_classic
+                    Layout.COMPACT -> R.layout.details_fragment_compact
+                    else -> R.layout.details_fragment_bold
+                },
                 container,
                 false
         )
