@@ -85,4 +85,19 @@
     <string name="preference_category_ui">Benutzeroberfläche</string>
     <string name="preference_list_row_layout_title">Zeilengröße</string>
     <string name="details_no_ringtone_picker">Kein Ringtone Manager ist vorhanden...</string>
+    <string name="menu_about_title">About</string>
+    <string name="menu_about_content">Einfacher Wecker ist ein Open Source Projekt der bringt euch alle nötige Features in minimalister Form.
+
+        \n\nHinweiß:
+        \n· Die Größe kann eingestellt werden (in die Einstllungen)
+        \n· Die Farbe kann eingestellt werden (in die Einstllungen)
+
+        \n\Neu in dieser Version:
+        \n· Umbauten für Android 9
+        \n· Neues Design
+
+        \n\nTrinkgeld:
+        \n· <a href="https://www.paypal.me/YuriyKulikov">PayPal</a>
+        \n· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Premium version (donate)</a>
+    </string>
 </resources>

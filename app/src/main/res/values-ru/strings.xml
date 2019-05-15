@@ -89,4 +89,19 @@
     <string name="preference_category_sound">Громкость и звук</string>
     <string name="preference_category_ui">Интерфейс</string>
     <string name="preference_list_row_layout_title">Размер</string>
+    <string name="menu_about_title">О программе</string>
+    <string name="menu_about_content">Простой будильник это программа с открытым исходным кодом, которая сочетает простой интерфейс и необходимые фичи
+
+        \n\nСовет:
+        \n· Размер будильников можно менять в настройках
+        \n· Цвет можно менять в настройках
+
+        \n\nНовое в этой версии:
+        \n· Поддержка Android 9
+        \n· Новый дизайн
+
+        \n\nПоддержать разработку
+        \n\· <a href="https://www.paypal.me/YuriyKulikov">PayPal</a>
+        \n\· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Премиум версия (донейт)</a>
+    </string>
 </resources>

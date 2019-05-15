@@ -26,7 +26,6 @@ import android.support.v4.app.FragmentTransaction
 import android.transition.*
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import com.better.alarm.R
 import com.better.alarm.checkPermissions
 import com.better.alarm.configuration.AlarmApplication.container

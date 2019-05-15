@@ -148,4 +148,20 @@
     <string name="preference_category_durations">Durations</string>
     <string name="details_no_ringtone_picker">No Ringtone provider found...</string>
     <string name="permissions_external_storage_text">It seems that we cannot play %s, probably because a permission is required. If you want, you can grant the permission. Alternatively, select a different sound. This decision can be changed in System Settings.</string>
+    <string name="menu_about_title">About</string>
+    <string name="menu_about_content">Simple Alarm Clock is an open source project which brings pure alarm experience to you by combining essential features and clean interface.
+
+        \n\nTip:
+        \n· Select layout size in settings
+        \n· Select color theme in settings
+
+        \n\nNew in this version:
+        \n· Fixes for Android 9
+        \n· New Design
+        \n· Select row size in settings
+
+        \n\nSupport the app:
+        \n· <a href="https://www.paypal.me/YuriyKulikov">PayPal</a>
+        \n· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Go premium</a>
+    </string>
 </resources>

@@ -57,6 +57,15 @@ class ActionBarTest {
     }
 
     @Test
+    fun testAboutButton() {
+        val solo = solo!!
+        solo.sendKey(Solo.MENU)
+        solo.clickOnText("About")
+        Assert.assertTrue(solo.searchText("version"))
+        solo.clickOnButton("OK")
+    }
+
+    @Test
     fun rateTheApp() {
         val solo = solo!!
         solo.sendKey(Solo.MENU)

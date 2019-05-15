@@ -38,9 +38,9 @@
         android:title="@string/menu_review" />
     <item
         android:id="@+id/menu_share"
-        android:title="@string/menu_share"
+        android:actionProviderClass="android.widget.ShareActionProvider"
         android:showAsAction="never"
-        android:actionProviderClass="android.widget.ShareActionProvider" />
+        android:title="@string/menu_share" />
     <item android:title="@string/menu_extensions">
         <menu>
             <item
@@ -53,4 +53,8 @@
                 android:title="@string/mp3cutter" />
         </menu>
     </item>
+    <item
+        android:id="@+id/menu_about"
+        android:showAsAction="never"
+        android:title="@string/menu_about_title" />
 </menu>
