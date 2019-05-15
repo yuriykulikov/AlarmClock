@@ -210,8 +210,6 @@ public class AlarmApplication extends Application {
                 calendars
         ), containerFactory);
 
-        alarms.start();
-
         sContainer = new Container(
                 getApplicationContext(),
                 logger,
@@ -229,8 +227,10 @@ public class AlarmApplication extends Application {
         new AlertServicePusher(store, getApplicationContext());
         new BackgroundNotifications();
 
-        logger.d("onCreate done");
-
+        // must be started the last, because otherwise we may loose intents from it.
+        logger.d("Starting alarms");
+        alarms.start();
+        logger.d("Done");
         super.onCreate();
     }
 

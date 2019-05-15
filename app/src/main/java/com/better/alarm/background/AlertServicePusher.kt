@@ -2,6 +2,8 @@ package com.better.alarm.background
 
 import android.content.Context
 import android.content.Intent
+import com.better.alarm.configuration.AlarmApplication
+import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.Store
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.oreo
@@ -28,6 +30,7 @@ class AlertServicePusher(store: Store, context: Context) {
                 }
                 .filter { it.action != Intents.ACTION_CANCEL_SNOOZE }
                 .subscribe { intent ->
+                    container().logger.d("pushing intent ${intent.action} to AlertServiceWrapper")
                     oreo { context.startForegroundService(intent) }
                     preOreo { context.startService(intent) }
                 }
