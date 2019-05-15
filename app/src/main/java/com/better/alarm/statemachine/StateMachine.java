@@ -223,8 +223,6 @@ public class StateMachine {
             handler.obtainMessage(SM_INIT_CMD)
                     .withArg1(resume ? 1 : 0)
                     .sendAtFront();
-
-            log.d("completed construction of " + mSm.getName());
         }
 
         /**

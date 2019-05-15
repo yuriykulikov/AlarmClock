@@ -26,13 +26,11 @@ interface AlarmSetter {
 
         init {
             this.setAlarmStrategy = initSetStrategyForVersion()
-            log.d("Using $setAlarmStrategy")
         }
 
         private val requestCode = 42
 
         override fun removeRTCAlarm(alarm: AlarmsScheduler.ScheduledAlarm) {
-            log.d("Clear " + alarm.toString())
             val pendingIntent = Intent(ACTION_FIRED)
                     .apply {
                         setClass(mContext, AlarmsReceiver::class.java)
@@ -45,7 +43,7 @@ interface AlarmSetter {
         }
 
         override fun setUpRTCAlarm(alarm: AlarmsScheduler.ScheduledAlarm) {
-            log.d("Set " + alarm.toString())
+            log.d("Set $alarm")
             val pendingIntent = Intent(ACTION_FIRED)
                     .apply {
                         setClass(mContext, AlarmsReceiver::class.java)

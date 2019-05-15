@@ -59,7 +59,7 @@ class AlertService(
         wakelocks.acquire()
     }
 
-    var playingAlarm = false
+    private var playingAlarm = false
     fun onStartCommand(event: Event) {
         log.d("[AlertService] onStartCommand $event")
         if (!playingAlarm) {

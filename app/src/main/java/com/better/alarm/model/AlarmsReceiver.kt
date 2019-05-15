@@ -20,7 +20,6 @@ import android.content.Context
 import android.content.Intent
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.interfaces.PresentationToModelIntents
-import com.better.alarm.logger.Logger
 
 class AlarmsReceiver : BroadcastReceiver() {
     private val alarms = container().rawAlarms()
@@ -32,10 +31,10 @@ class AlarmsReceiver : BroadcastReceiver() {
             when (action) {
                 AlarmsScheduler.ACTION_FIRED -> {
                     val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
-
                     val alarm = alarms.getAlarm(id)
-                    alarms.onAlarmFired(alarm, CalendarType.valueOf(intent.extras!!.getString(AlarmsScheduler.EXTRA_TYPE)))
-                    log.d("AlarmCore fired $id")
+                    val calendarType = CalendarType.valueOf(intent.extras!!.getString(AlarmsScheduler.EXTRA_TYPE))
+                    log.d("Fired $id $calendarType")
+                    alarms.onAlarmFired(alarm, calendarType)
                 }
                 Intent.ACTION_BOOT_COMPLETED,
                 Intent.ACTION_TIMEZONE_CHANGED,
@@ -48,16 +47,18 @@ class AlarmsReceiver : BroadcastReceiver() {
 
                 PresentationToModelIntents.ACTION_REQUEST_SNOOZE -> {
                     val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
+                    log.d("Snooze $id")
                     alarms.getAlarm(id).snooze()
                 }
 
                 PresentationToModelIntents.ACTION_REQUEST_DISMISS -> {
                     val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
+                    log.d("Dismiss $id")
                     alarms.getAlarm(id).dismiss()
                 }
             }
         } catch (e: Exception) {
-            Logger.getDefaultLogger().d("Alarm not found")
+            log.d("Alarm not found")
         }
     }
 }

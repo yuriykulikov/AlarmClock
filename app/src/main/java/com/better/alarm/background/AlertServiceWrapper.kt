@@ -97,13 +97,15 @@ class AlertServiceWrapper : Service() {
                         )
                 ),
                 handleUnwantedEvent = {
-                    val notification = notificationBuilder("${BuildConfig.APPLICATION_ID}.AlertServiceWrapper", NotificationImportance.LOW) {
-                        setContentTitle("Background")
-                        setContentText("Background")
-                        setSmallIcon(R.drawable.stat_notify_alarm)
-                        setOngoing(true)
+                    oreo {
+                        val notification = notificationBuilder("${BuildConfig.APPLICATION_ID}.AlertServiceWrapper", NotificationImportance.LOW) {
+                            setContentTitle("Background")
+                            setContentText("Background")
+                            setSmallIcon(R.drawable.stat_notify_alarm)
+                            setOngoing(true)
+                        }
+                        this.startForeground(42, notification)
                     }
-                    startForeground(hashCode(), notification)
                     stopSelf()
                 },
                 stopSelf = {

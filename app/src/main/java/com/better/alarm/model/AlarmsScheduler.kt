@@ -76,7 +76,6 @@ class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, 
                 previousHead?.run { setter.removeRTCAlarm(this) }
                 setter.setUpRTCAlarm(currentHead)
             } else {
-                log.d("no more alarms to schedule, remove pending intent")
                 previousHead?.run { setter.removeRTCAlarm(this) }
             }
             notifyListeners()

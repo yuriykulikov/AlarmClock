@@ -68,8 +68,8 @@ class KlaxonPlugin(
             }
         }
 
+        log.d("[KlaxonPlugin] go (prealarm: $prealarm)")
         val volumeSub = volume
-                .doOnNext { log.d("[KlaxonPlugin] volume $it") }
                 .subscribe { currentVolume ->
                     player?.setPerceivedVolume(currentVolume)
                 }

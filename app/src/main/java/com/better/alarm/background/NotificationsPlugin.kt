@@ -42,8 +42,6 @@ class NotificationsPlugin(
         val startForeground: (Int, Notification) -> Unit,
         val prefs: Prefs = container().prefs()
 ) : AlertPlugin {
-    private var currentAlarm: PluginAlarmData? = null
-
     override fun go(alarm: PluginAlarmData, prealarm: Boolean, targetVolume: Observable<TargetVolume>): Disposable {
         // our alarm fired again, remove snooze notification
         nm.cancel(alarm.id)
@@ -81,10 +79,12 @@ class NotificationsPlugin(
         // Send the notification using the alarm id to easily identify the
         // correct notification.
         oreo {
+            container().logger.d("startForeground() for ${alarm.id}")
             startForeground(alarm.id, notification)
         }
 
         preOreo {
+            container().logger.d("nm.notify() for ${alarm.id}")
             nm.notify(alarm.id, notification)
         }
 

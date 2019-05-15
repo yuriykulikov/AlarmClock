@@ -165,9 +165,8 @@ public class AlarmApplication extends Application {
         store.alarms().subscribe(new Consumer<List<AlarmValue>>() {
             @Override
             public void accept(@NonNull List<AlarmValue> alarmValues) throws Exception {
-                logger.d("###########################");
                 for (AlarmValue alarmValue : alarmValues) {
-                    logger.d("Store: " + alarmValue);
+                    logger.d("## " + alarmValue);
                 }
             }
         });

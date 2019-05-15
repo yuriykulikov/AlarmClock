@@ -241,7 +241,6 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
                 @Override
                 public void onStateChanged(IState state) {
                     if (state != enabledState && !(state instanceof ComplexTransition)) {
-                        log.d("saving state " + state.getName());
                         container = container.withState(state.getName());
                     }
                 }
