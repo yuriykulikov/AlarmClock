@@ -343,7 +343,9 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
                 updateListInStore();
                 if (container.isEnabled()) {
                     transitionTo(enableTransition);
-                } // else nothing to do
+                } else {
+                    transitionTo(disabledState);
+                }
             }
 
             @Override
