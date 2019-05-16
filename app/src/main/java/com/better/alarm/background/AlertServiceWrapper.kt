@@ -1,9 +1,6 @@
 package com.better.alarm.background
 
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.os.PowerManager
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import com.better.alarm.*
@@ -44,21 +41,6 @@ class AlertServiceWrapper : Service() {
             .replay(1)
             .refCount()
 
-    private val wakelocks: Wakelocks = object : Wakelocks {
-        val pm = container().powerManager()
-        val wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SimpleAlarmClock:AlertService")
-
-        override fun acquire() {
-            wakeLock.acquire(60 * 60_000)
-        }
-
-        override fun release() {
-            if (wakeLock.isHeld) {
-                wakeLock.release()
-            }
-        }
-    }
-
     override fun onCreate() {
         val fadeInTimeInMillis = container().rxPrefs()
                 .getString(Prefs.KEY_FADE_IN_TIME_SEC, "30")
@@ -66,7 +48,7 @@ class AlertServiceWrapper : Service() {
                 .map { s -> Integer.parseInt(s) * 1000 }
         alertService = AlertService(
                 log = container().logger(),
-                wakelocks = wakelocks,
+                wakelocks = container().wakeLocks(),
                 alarms = container().alarms(),
                 inCall = inCall,
                 plugins = arrayOf(
@@ -121,7 +103,7 @@ class AlertServiceWrapper : Service() {
 
     override fun onDestroy() {
         log.d("destroyed")
-        wakelocks.release()
+        container().wakeLocks().releaseServiceLock()
         oreo {
             stopForeground(true)
         }
@@ -134,7 +116,6 @@ class AlertServiceWrapper : Service() {
             alertService.onStartCommand(Event.NullEvent())
             START_NOT_STICKY
         } else {
-            container().wakeLocks().releasePartialWakeLock(intent)
             alertService.onStartCommand(when (intent.action) {
                 Intents.ALARM_ALERT_ACTION -> Event.AlarmEvent(intent.getIntExtra(Intents.EXTRA_ID, -1))
                 Intents.ALARM_PREALARM_ACTION -> Event.PrealarmEvent(intent.getIntExtra(Intents.EXTRA_ID, -1))
@@ -156,19 +137,9 @@ class AlertServiceWrapper : Service() {
                 Intents.ACTION_SOUND_EXPIRED -> START_NOT_STICKY
                 else -> throw RuntimeException("Unknown action ${intent.action}")
             }
-            ret
-        }
-    }
 
-    /**
-     * Dispatches intents to the [AlertService]
-     */
-    class Receiver : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            intent.setClass(context, AlertServiceWrapper::class.java)
-            container().wakeLocks().acquirePartialWakeLock(intent, "ForAlertServiceWrapper")
-            oreo { context.startForegroundService(intent) }
-            preOreo { context.startService(intent) }
+            container().wakeLocks().releaseTransitionWakeLock(intent)
+            ret
         }
     }
 }

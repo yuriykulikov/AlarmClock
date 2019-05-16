@@ -4,6 +4,7 @@ import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
 import com.better.alarm.model.Alarmtone
+import com.better.alarm.wakelock.Wakelocks
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -12,12 +13,6 @@ import io.reactivex.subjects.BehaviorSubject
 
 interface AlertPlugin {
     fun go(alarm: PluginAlarmData, prealarm: Boolean, targetVolume: Observable<TargetVolume>): Disposable
-}
-
-interface Wakelocks {
-    fun acquire()
-
-    fun release()
 }
 
 data class PluginAlarmData(val id: Int, val alarmtone: Alarmtone, val label: String)
@@ -56,7 +51,7 @@ class AlertService(
     private var soundAlarmDisposable: CompositeDisposable = CompositeDisposable()
 
     init {
-        wakelocks.acquire()
+        wakelocks.acquireServiceLock()
     }
 
     private var playingAlarm = false
@@ -85,7 +80,7 @@ class AlertService(
                     playingAlarm = false
                     wantedVolume.onNext(TargetVolume.MUTED)
                     soundAlarmDisposable.dispose()
-                    wakelocks.release()
+                    wakelocks.releaseServiceLock()
                     stopSelf()
                 }
             }

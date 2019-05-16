@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.better.alarm"
-    android:versionCode="30414"
-    android:versionName="3.04.14">
+    android:versionCode="30415"
+    android:versionName="3.04.15">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -76,19 +76,6 @@
             android:theme="@android:style/Theme.Holo.Dialog.NoActionBar" />
 
         <!-- KlaxonPresenter plays sound -->
-        <receiver
-            android:name=".background.AlertServiceWrapper$Receiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="${applicationId}.ALARM_ALERT" />
-                <action android:name="${applicationId}.ALARM_PREALARM_ACTION" />
-                <action android:name="${applicationId}.ALARM_SNOOZE" />
-                <action android:name="${applicationId}.ALARM_DISMISS" />
-                <action android:name="${applicationId}.ACTION_SOUND_EXPIRED" />
-                <action android:name="${applicationId}.ACTION_MUTE" />
-                <action android:name="${applicationId}.ACTION_DEMUTE" />
-            </intent-filter>
-        </receiver>
         <service
             android:name=".background.AlertServiceWrapper"
             android:description="@string/alarm_klaxon_service_desc"
