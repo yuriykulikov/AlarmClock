@@ -84,7 +84,9 @@ public class TimePickerDialogFragment extends DialogFragment {
             @Override
             public void onClick(View view) {
                 PickedTime picked = new PickedTime(mPicker.getHours(), mPicker.getMinutes());
-                emitter.onSuccess(Optional.<PickedTime>of(picked));
+                if (emitter != null) {
+                    emitter.onSuccess(Optional.<PickedTime>of(picked));
+                }
                 dismiss();
             }
         });
@@ -98,7 +100,9 @@ public class TimePickerDialogFragment extends DialogFragment {
     }
 
     private void notifyOnCancelListener() {
-        emitter.onSuccess(Optional.<PickedTime>absent());
+        if (emitter != null) {
+            emitter.onSuccess(Optional.<PickedTime>absent());
+        }
     }
 
     private void setEmitter(SingleEmitter<Optional<PickedTime>> emitter) {
