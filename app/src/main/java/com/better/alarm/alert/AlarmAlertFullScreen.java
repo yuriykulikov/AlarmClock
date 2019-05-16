@@ -253,8 +253,8 @@ public class AlarmAlertFullScreen extends FragmentActivity {
 
         Button snooze = findViewById(R.id.alert_button_snooze);
         View snoozeText = findViewById(R.id.alert_text_snooze);
-        snooze.setEnabled(isSnoozeEnabled());
-        snoozeText.setEnabled(isSnoozeEnabled());
+        if (snooze != null) snooze.setEnabled(isSnoozeEnabled());
+        if (snoozeText != null) snoozeText.setEnabled(isSnoozeEnabled());
     }
 
     @Override
