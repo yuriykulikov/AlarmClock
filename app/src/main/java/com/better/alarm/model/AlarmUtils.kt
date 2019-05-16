@@ -4,8 +4,11 @@ fun removeWithId(alarmValues: List<AlarmValue>, id: Int): List<AlarmValue> {
     return alarmValues.filter { it.id != id }
 }
 
+/**
+ * Replaces the [AlarmValue] if the list contains this ID and appends to the back if it does not contain such id.
+ */
 fun addOrReplace(alarmValues: List<AlarmValue>, activeRecord: AlarmActiveRecord): List<AlarmValue> {
-    var replaced: Boolean = false
+    var replaced = false
     val withReplacedById = alarmValues.map { alarmValue ->
         if (activeRecord.id == alarmValue.id) {
             replaced = true

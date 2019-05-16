@@ -90,6 +90,7 @@ public class Alarms implements IAlarmsManager {
     }
 
     @Override
+    @NonNull
     public Alarm createNewAlarm() {
         AlarmCore alarm = factory.create(containerFactory.create());
         alarms.put(alarm.getId(), alarm);

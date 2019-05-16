@@ -60,7 +60,7 @@ class AlarmsListActivity : FragmentActivity() {
 
     companion object {
         fun uiStore(activity: AlarmsListActivity, alarms: IAlarmsManager): UiStore {
-            return if ((activity::store).isInitialized) {
+            return if (activity::store.isInitialized) {
                 activity.store
             } else {
                 container().logger.e("AlarmsListActivity.store is not initialized!")

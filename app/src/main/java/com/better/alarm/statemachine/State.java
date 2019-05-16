@@ -67,8 +67,6 @@ public class State implements IState {
      * persistedString is sufficient and easy to get. You may want to provide a setName or
      * some other mechanism for setting another persistedString if the class persistedString is not
      * appropriate.
-     *
-     * @see com.android.internal.util.IState#processMessage(android.os.Message)
      */
     @Override
     public String getName() {

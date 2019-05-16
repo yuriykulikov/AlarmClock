@@ -853,11 +853,9 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("AlarmCore ").append(container.getId());
-        sb.append(" in ").append(stateMachine.getCurrentState().getName());
-        sb.append(" on ").append(df.format(container.getNextTime().getTime()));
-        return sb.toString();
+        return "AlarmCore " + container.getId() +
+                " in " + stateMachine.getCurrentState().getName() +
+                " on " + df.format(container.getNextTime().getTime());
     }
 
     @Override

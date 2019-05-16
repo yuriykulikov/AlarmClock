@@ -64,11 +64,11 @@ interface AlarmSetter {
         }
 
         private fun initSetStrategyForVersion(): ISetAlarmStrategy {
-            log.d("SDK is " + android.os.Build.VERSION.SDK_INT)
+            log.d("SDK is " + Build.VERSION.SDK_INT)
             return when {
-                android.os.Build.VERSION.SDK_INT >= 26 -> OreoSetter()
-                android.os.Build.VERSION.SDK_INT >= 23 -> MarshmallowSetter()
-                android.os.Build.VERSION.SDK_INT >= 19 -> KitKatSetter()
+                Build.VERSION.SDK_INT >= 26 -> OreoSetter()
+                Build.VERSION.SDK_INT >= 23 -> MarshmallowSetter()
+                Build.VERSION.SDK_INT >= 19 -> KitKatSetter()
                 else -> IceCreamSetter()
             }
         }

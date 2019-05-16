@@ -29,10 +29,10 @@ class DynamicThemeHandler(context: Context) {
     private fun preference(): String = sp.getString(themeKey, "dark")
 
     fun getIdForName(name: String): Int = when {
-        preference() == "light" && name.equals(AlarmAlertFullScreen::class.java.name) -> R.style.AlarmAlertFullScreenLightTheme
-        preference() == "light" && name.equals(TimePickerDialogFragment::class.java.name) -> R.style.TimePickerDialogFragmentLight
-        preference() == "dark" && name.equals(AlarmAlertFullScreen::class.java.name) -> R.style.AlarmAlertFullScreenDarkTheme
-        preference() == "dark" && name.equals(TimePickerDialogFragment::class.java.name) -> R.style.TimePickerDialogFragmentDark
+        preference() == "light" && name == AlarmAlertFullScreen::class.java.name -> R.style.AlarmAlertFullScreenLightTheme
+        preference() == "light" && name == TimePickerDialogFragment::class.java.name -> R.style.TimePickerDialogFragmentLight
+        preference() == "dark" && name == AlarmAlertFullScreen::class.java.name -> R.style.AlarmAlertFullScreenDarkTheme
+        preference() == "dark" && name == TimePickerDialogFragment::class.java.name -> R.style.TimePickerDialogFragmentDark
         else -> defaultTheme()
     }
 }

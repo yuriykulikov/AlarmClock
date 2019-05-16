@@ -22,7 +22,7 @@ import io.reactivex.disposables.CompositeDisposable
  */
 
 class SettingsFragment : PreferenceFragment() {
-    private val ALARM_STREAM_TYPE_BIT = 1 shl AudioManager.STREAM_ALARM
+    private val alarmStreamTypeBit = 1 shl AudioManager.STREAM_ALARM
     private val vibrator = container().vibrator()
     private val rxSharedPreferences = container().rxPrefs()
     private val disposables = CompositeDisposable()
@@ -67,8 +67,8 @@ class SettingsFragment : PreferenceFragment() {
                 val pref = preference as CheckBoxPreference
 
                 val ringerModeStreamTypes = when {
-                    pref.isChecked -> systemModeRingerStreamsAffected() and ALARM_STREAM_TYPE_BIT.inv()
-                    else -> systemModeRingerStreamsAffected() or ALARM_STREAM_TYPE_BIT
+                    pref.isChecked -> systemModeRingerStreamsAffected() and alarmStreamTypeBit.inv()
+                    else -> systemModeRingerStreamsAffected() or alarmStreamTypeBit
                 }
 
                 Settings.System.putInt(contentResolver,
@@ -85,7 +85,7 @@ class SettingsFragment : PreferenceFragment() {
         super.onResume()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             val alarmInSilentModePref = findPreference(Prefs.KEY_ALARM_IN_SILENT_MODE) as CheckBoxPreference
-            alarmInSilentModePref.isChecked = (systemModeRingerStreamsAffected() and ALARM_STREAM_TYPE_BIT) == 0
+            alarmInSilentModePref.isChecked = (systemModeRingerStreamsAffected() and alarmStreamTypeBit) == 0
         }
 
         (findPreference("volume_preference") as VolumePreference).onResume()

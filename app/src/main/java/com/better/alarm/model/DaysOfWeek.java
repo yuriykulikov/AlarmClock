@@ -117,15 +117,13 @@ public class DaysOfWeek {
 
     @Override
     public String toString() {
-        return new StringBuilder(8)
-                .append(ifSet(0, 'm'))
-                .append(ifSet(1, 't'))
-                .append(ifSet(2, 'w'))
-                .append(ifSet(3, 't'))
-                .append(ifSet(4, 'f'))
-                .append(ifSet(5, 's'))
-                .append(ifSet(6, 's'))
-                .toString();
+        return String.valueOf(ifSet(0, 'm')) +
+                ifSet(1, 't') +
+                ifSet(2, 'w') +
+                ifSet(3, 't') +
+                ifSet(4, 'f') +
+                ifSet(5, 's') +
+                ifSet(6, 's');
     }
 
     private char ifSet(int day, char letter) {

@@ -17,7 +17,7 @@ data class Message
     fun what(): Int = what
 
     /** aux  */
-    fun handler(): IHandler = handler
+    private fun handler(): IHandler = handler
 
     fun arg1(): Optional<Int> = Optional.fromNullable(arg1)
 

@@ -196,7 +196,7 @@ public class AlarmApplication extends Application {
         };
 
         AlarmsScheduler alarmsScheduler = new AlarmsScheduler(setter, logger, store, prefs, calendars);
-        AlarmCore.IStateNotifier broadcaster = new AlarmStateNotifier(getApplicationContext(), store);
+        AlarmCore.IStateNotifier broadcaster = new AlarmStateNotifier(store);
         HandlerFactory handlerFactory = new ImmediateHandlerFactory();
         PersistingContainerFactory containerFactory = new PersistingContainerFactory(calendars, getApplicationContext());
         Alarms alarms = new Alarms(alarmsScheduler, new DatabaseQuery(getContentResolver(), containerFactory), new AlarmCoreFactory(logger,

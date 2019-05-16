@@ -57,7 +57,7 @@ class WakeLockManager(private val log: Logger, val pm: PowerManager) : Wakelocks
         transitionWakelock.acquire(60 * 1000)
         wakelockCounter.incrementAndGet().also { count ->
             wakeLockIds.add(count)
-            intent.putExtra(WakeLockManager.COUNT, count)
+            intent.putExtra(COUNT, count)
             log.d("Acquired $transitionWakelock #$count")
         }
     }
@@ -69,7 +69,7 @@ class WakeLockManager(private val log: Logger, val pm: PowerManager) : Wakelocks
      * @param intent
      */
     fun releaseTransitionWakeLock(intent: Intent) {
-        val count = intent.getIntExtra(WakeLockManager.COUNT, -1)
+        val count = intent.getIntExtra(COUNT, -1)
         val wasRemoved = wakeLockIds.remove(count)
         if (wasRemoved && transitionWakelock.isHeld) {
             transitionWakelock.release()

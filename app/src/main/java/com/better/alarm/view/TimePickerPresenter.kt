@@ -6,7 +6,7 @@ import io.reactivex.subjects.BehaviorSubject
 /**
  * Created by Yuriy on 17.08.2017.
  */
-open class TimePickerPresenter(val is24HoursMode: Boolean) {
+open class TimePickerPresenter(private val is24HoursMode: Boolean) {
     enum class Key {
         ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, ZERO, OK, LEFT, RIGHT, DELETE
     }
@@ -16,12 +16,12 @@ open class TimePickerPresenter(val is24HoursMode: Boolean) {
     }
 
     //TODO visibility
-    val subject: BehaviorSubject<State> = BehaviorSubject.createDefault(State(is24HoursMode = is24HoursMode))
+    private val subject: BehaviorSubject<State> = BehaviorSubject.createDefault(State(is24HoursMode = is24HoursMode))
     val state: Observable<State> = subject
 
-    var input: List<Int> = arrayListOf()
-    var amPm: AmPm = AmPm.NONE
-    var leftRightEntered: Boolean = false
+    private var input: List<Int> = arrayListOf()
+    private var amPm: AmPm = AmPm.NONE
+    private var leftRightEntered: Boolean = false
 
     fun onClick(key: Key) {
         when (key) {
@@ -81,14 +81,14 @@ open class TimePickerPresenter(val is24HoursMode: Boolean) {
             val leftRightEntered: Boolean = false
     ) {
         val any: List<Key> = arrayListOf(Key.ZERO, Key.ONE, Key.TWO, Key.THREE, Key.FOUR, Key.FIVE, Key.SIX, Key.SEVEN, Key.EIGHT, Key.NINE)
-        val zeroToFive: List<Key> = arrayListOf(Key.ZERO, Key.ONE, Key.TWO, Key.THREE, Key.FOUR, Key.FIVE)
-        val none: List<Key> = arrayListOf()
+        private val zeroToFive: List<Key> = arrayListOf(Key.ZERO, Key.ONE, Key.TWO, Key.THREE, Key.FOUR, Key.FIVE)
+        private val none: List<Key> = arrayListOf()
 
-        val inverted = input.asReversed()
-        val hoursTensDigit: Int by lazy { inverted.getOrElse(3, { -1 }) }
-        val hoursOnesDigit: Int by lazy { inverted.getOrElse(2, { -1 }) }
-        val minutesTensDigit: Int by lazy { inverted.getOrElse(1, { -1 }) }
-        val minutesOnesDigit: Int by lazy { inverted.getOrElse(0, { -1 }) }
+        private val inverted = input.asReversed()
+        val hoursTensDigit: Int by lazy { inverted.getOrElse(3) { -1 } }
+        val hoursOnesDigit: Int by lazy { inverted.getOrElse(2) { -1 } }
+        val minutesTensDigit: Int by lazy { inverted.getOrElse(1) { -1 } }
+        val minutesOnesDigit: Int by lazy { inverted.getOrElse(0) { -1 } }
 
         val minutes: Int  by lazy { minutesTensDigit * 10 + minutesOnesDigit }
         val hours: Int by lazy {
@@ -102,12 +102,12 @@ open class TimePickerPresenter(val is24HoursMode: Boolean) {
             }
         }
 
-        fun isTimeValid(): Boolean = when {
+        private fun isTimeValid(): Boolean = when {
             is24HoursMode -> inverted.size >= 3 && hours <= 23 && minutes <= 60
             else -> inverted.size >= 3 && minutes <= 60 && leftRightEntered
         }
 
-        private fun front(): Int = input.getOrElse(0, { 0 }) * 10 + input.getOrElse(1, { 0 })
+        private fun front(): Int = input.getOrElse(0) { 0 } * 10 + input.getOrElse(1) { 0 }
 
         val enabled: List<Key> by lazy {
 
@@ -116,7 +116,7 @@ open class TimePickerPresenter(val is24HoursMode: Boolean) {
                 else -> enable12Digits().plus(amPm())
             }
 
-            if (input.size > 0) enabled = enabled.plus(Key.DELETE)
+            if (input.isNotEmpty()) enabled = enabled.plus(Key.DELETE)
             if (isTimeValid()) enabled = enabled.plus(Key.OK)
 
             enabled
@@ -132,7 +132,7 @@ open class TimePickerPresenter(val is24HoursMode: Boolean) {
             //Third can be any, like in 7:49 or 12:52 or 1:29
             input.size == 2 -> any
             //last number can be minutes if front() is less than 24
-            input.size == 3 && front() < 24 && input.get(2) <= 5 -> any
+            input.size == 3 && front() < 24 && input[2] <= 5 -> any
             else -> none
         }
 
@@ -151,7 +151,7 @@ open class TimePickerPresenter(val is24HoursMode: Boolean) {
             //third number can tens of minutes or minutes (any)
             input.size == 2 -> any
             //last number can be minutes if front() is less than 12
-            input.size == 3 && front() <= 12 && input.get(2) <= 5 -> any
+            input.size == 3 && front() <= 12 && input[2] <= 5 -> any
             else -> none
         }
 

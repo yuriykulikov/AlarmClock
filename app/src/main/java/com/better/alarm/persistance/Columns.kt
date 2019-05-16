@@ -13,7 +13,7 @@ class Columns : BaseColumns {
         /**
          * The content:// style URL for this table
          */
-        val CONTENT_URI by lazy { Uri.parse("content://" + BuildConfig.APPLICATION_ID + ".model/alarm") }
+        private val CONTENT_URI: Uri by lazy { Uri.parse("content://" + BuildConfig.APPLICATION_ID + ".model/alarm") }
 
         @JvmStatic
         fun contentUri() = CONTENT_URI
@@ -25,8 +25,7 @@ class Columns : BaseColumns {
          * Type: INTEGER
          *
          */
-        @JvmField
-        val HOUR = "hour"
+        const val HOUR = "hour"
 
         /**
          * Minutes in localtime 0 - 59
@@ -35,8 +34,7 @@ class Columns : BaseColumns {
          * Type: INTEGER
          *
          */
-        @JvmField
-        val MINUTES = "minutes"
+        const val MINUTES = "minutes"
 
         /**
          * Days of week coded as integer
@@ -45,8 +43,7 @@ class Columns : BaseColumns {
          * Type: INTEGER
          *
          */
-        @JvmField
-        val DAYS_OF_WEEK = "daysofweek"
+        const val DAYS_OF_WEEK = "daysofweek"
 
         /**
          * AlarmCore time in UTC milliseconds from the epoch.
@@ -55,8 +52,7 @@ class Columns : BaseColumns {
          * Type: INTEGER
          *
          */
-        @JvmField
-        val ALARM_TIME = "alarmtime"
+        const val ALARM_TIME = "alarmtime"
 
         /**
          * True if alarm is active
@@ -65,8 +61,7 @@ class Columns : BaseColumns {
          * Type: BOOLEAN
          *
          */
-        @JvmField
-        val ENABLED = "enabled"
+        const val ENABLED = "enabled"
 
         /**
          * True if alarm should vibrate
@@ -75,8 +70,7 @@ class Columns : BaseColumns {
          * Type: BOOLEAN
          *
          */
-        @JvmField
-        val VIBRATE = "vibrate"
+        const val VIBRATE = "vibrate"
 
         /**
          * Message to show when alarm triggers Note: not currently used
@@ -85,8 +79,7 @@ class Columns : BaseColumns {
          * Type: STRING
          *
          */
-        @JvmField
-        val MESSAGE = "message"
+        const val MESSAGE = "message"
 
         /**
          * Audio alert to play when alarm triggers
@@ -95,8 +88,7 @@ class Columns : BaseColumns {
          * Type: STRING
          *
          */
-        @JvmField
-        val ALERT = "alert"
+        const val ALERT = "alert"
 
         /**
          * Use prealarm
@@ -105,8 +97,7 @@ class Columns : BaseColumns {
          * Type: STRING
          *
          */
-        @JvmField
-        val PREALARM = "prealarm"
+        const val PREALARM = "prealarm"
 
         /**
          * State machine state
@@ -115,14 +106,12 @@ class Columns : BaseColumns {
          * Type: STRING
          *
          */
-        @JvmField
-        val STATE = "state"
+        const val STATE = "state"
 
         /**
          * The default sort order for this table
          */
-        @JvmField
-        val DEFAULT_SORT_ORDER = "$HOUR, $MINUTES ASC"
+        const val DEFAULT_SORT_ORDER = "$HOUR, $MINUTES ASC"
         @JvmField
         val ALARM_QUERY_COLUMNS = arrayOf(BaseColumns._ID, HOUR, MINUTES, DAYS_OF_WEEK, ALARM_TIME, ENABLED, VIBRATE, MESSAGE, ALERT, PREALARM, STATE)
 
@@ -130,27 +119,16 @@ class Columns : BaseColumns {
          * These save calls to cursor.getColumnIndexOrThrow() THEY MUST BE KEPT
          * IN SYNC WITH ABOVE QUERY COLUMNS
          */
-        @JvmField
-        val ALARM_ID_INDEX = 0
-        @JvmField
-        val ALARM_HOUR_INDEX = 1
-        @JvmField
-        val ALARM_MINUTES_INDEX = 2
-        @JvmField
-        val ALARM_DAYS_OF_WEEK_INDEX = 3
-        @JvmField
-        val ALARM_TIME_INDEX = 4
-        @JvmField
-        val ALARM_ENABLED_INDEX = 5
-        @JvmField
-        val ALARM_VIBRATE_INDEX = 6
-        @JvmField
-        val ALARM_MESSAGE_INDEX = 7
-        @JvmField
-        val ALARM_ALERT_INDEX = 8
-        @JvmField
-        val ALARM_PREALARM_INDEX = 9
-        @JvmField
-        val ALARM_STATE_INDEX = 10
+        const val ALARM_ID_INDEX = 0
+        const val ALARM_HOUR_INDEX = 1
+        const val ALARM_MINUTES_INDEX = 2
+        const val ALARM_DAYS_OF_WEEK_INDEX = 3
+        const val ALARM_TIME_INDEX = 4
+        const val ALARM_ENABLED_INDEX = 5
+        const val ALARM_VIBRATE_INDEX = 6
+        const val ALARM_MESSAGE_INDEX = 7
+        const val ALARM_ALERT_INDEX = 8
+        const val ALARM_PREALARM_INDEX = 9
+        const val ALARM_STATE_INDEX = 10
     }
 }

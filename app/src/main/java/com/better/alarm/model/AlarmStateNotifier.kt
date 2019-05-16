@@ -1,6 +1,5 @@
 package com.better.alarm.model
 
-import android.content.Context
 import com.better.alarm.background.Event
 import com.better.alarm.configuration.Store
 import com.better.alarm.interfaces.Intents
@@ -11,7 +10,7 @@ import com.better.alarm.model.AlarmCore.IStateNotifier
  *
  * @author Yuriy
  */
-class AlarmStateNotifier(private val mContext: Context, private val store: Store) : IStateNotifier {
+class AlarmStateNotifier(private val store: Store) : IStateNotifier {
     override fun broadcastAlarmState(id: Int, action: String) {
         val event = when (action) {
             Intents.ALARM_ALERT_ACTION -> Event.AlarmEvent(id)

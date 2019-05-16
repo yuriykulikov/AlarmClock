@@ -28,10 +28,6 @@ data class Store(
 
     fun sets(): Subject<AlarmSet> = sets
 
-    companion object {
-        val IS_NEW_ALARM = "isNewAlarm"
-    }
-
     data class Next(
             val isPrealarm: Boolean,
 

@@ -93,7 +93,7 @@ class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, 
         while (!queue.isEmpty() && queue.peek().calendar!!.before(now)) {
             // remove happens in fire
             val firedInThePastAlarm = queue.poll()
-            log.d("In the past - " + firedInThePastAlarm.toString())
+            log.d("In the past - $firedInThePastAlarm")
             setter.fireNow(firedInThePastAlarm)
         }
     }

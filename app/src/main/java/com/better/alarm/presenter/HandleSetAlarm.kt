@@ -70,7 +70,7 @@ class HandleSetAlarm : Activity() {
         val sameAlarm = alarms.find {
             val hoursMatch = it.hour == hours
             val minutesMatch = it.minutes == minutes
-            val labelsMatch = it.label != null && it.label == label
+            val labelsMatch = it.label == label
             val noRepeating = !it.daysOfWeek.isRepeatSet
             hoursMatch && minutesMatch && labelsMatch && noRepeating
         }

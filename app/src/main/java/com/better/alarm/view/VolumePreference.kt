@@ -34,7 +34,6 @@ import com.better.alarm.background.PlayerWrapper
 import com.better.alarm.background.PluginAlarmData
 import com.better.alarm.background.TargetVolume
 import com.better.alarm.configuration.AlarmApplication.container
-import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.Prefs.Companion.DEFAULT_PREALARM_VOLUME
 import com.better.alarm.configuration.Prefs.Companion.KEY_PREALARM_VOLUME
 import com.better.alarm.configuration.Prefs.Companion.MAX_PREALARM_VOLUME
@@ -60,7 +59,7 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
                             log = container().logger()
                     )
                 },
-                prealarmVolume = container().rxPrefs().getInteger(Prefs.KEY_PREALARM_VOLUME, Prefs.DEFAULT_PREALARM_VOLUME).asObservable(),
+                prealarmVolume = container().rxPrefs().getInteger(KEY_PREALARM_VOLUME, DEFAULT_PREALARM_VOLUME).asObservable(),
                 fadeInTimeInMillis = Observable.just(100),
                 inCall = Observable.just(false),
                 scheduler = AndroidSchedulers.mainThread()

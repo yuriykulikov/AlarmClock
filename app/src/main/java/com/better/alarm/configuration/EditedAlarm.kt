@@ -1,7 +1,6 @@
 package com.better.alarm.configuration
 
 import com.better.alarm.model.AlarmData
-import com.better.alarm.model.AlarmValue
 import com.better.alarm.presenter.RowHolder
 import com.better.alarm.util.Optional
 

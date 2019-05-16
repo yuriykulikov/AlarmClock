@@ -37,7 +37,7 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
         mContext.contentResolver.delete(uri, "", null)
     }
 
-    fun fromCursor(c: Cursor, calendars: Calendars, persistence: AlarmActiveRecord.Persistence): AlarmActiveRecord {
+    private fun fromCursor(c: Cursor, calendars: Calendars, persistence: AlarmActiveRecord.Persistence): AlarmActiveRecord {
         return AlarmActiveRecord(alarmValue = AlarmData(
                 id = c.getInt(Columns.ALARM_ID_INDEX),
                 isEnabled = c.getInt(Columns.ALARM_ENABLED_INDEX) == 1,
@@ -94,7 +94,7 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
         }
     }
 
-    fun AlarmActiveRecord.createContentValues(): ContentValues {
+    private fun AlarmActiveRecord.createContentValues(): ContentValues {
         return ContentValues(12).apply {
             // id
             put(Columns.ENABLED, isEnabled)

@@ -52,7 +52,7 @@ data class Container(
         return context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     }
 
-    fun powerManager(): PowerManager {
+    private fun powerManager(): PowerManager {
         return context.getSystemService(Context.POWER_SERVICE) as PowerManager
     }
 
