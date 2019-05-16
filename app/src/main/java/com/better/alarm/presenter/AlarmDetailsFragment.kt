@@ -263,7 +263,11 @@ class AlarmDetailsFragment : Fragment() {
     }
 
     fun Ringtone?.title(): CharSequence {
-        return this?.getTitle(context) ?: context.getText(R.string.silent_alarm_summary)
+        return try {
+            this?.getTitle(context) ?: context.getText(R.string.silent_alarm_summary)
+        } catch (e: Exception) {
+            context.getText(R.string.silent_alarm_summary)
+        }
     }
 
     override fun onPause() {
