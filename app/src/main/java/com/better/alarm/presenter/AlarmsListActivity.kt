@@ -242,7 +242,7 @@ class AlarmsListActivity : FragmentActivity() {
                         }
                     }
                     .replace(R.id.main_fragment_container, listFragment)
-                    .commit()
+                    .commitAllowingStateLoss()
         }
     }
 
@@ -281,7 +281,7 @@ class AlarmsListActivity : FragmentActivity() {
                         }
                     }
                     .replace(R.id.main_fragment_container, detailsFragment)
-                    .commit()
+                    .commitAllowingStateLoss()
         }
     }
 

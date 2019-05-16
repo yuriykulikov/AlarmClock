@@ -37,6 +37,7 @@ import io.reactivex.SingleOnSubscribe;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Cancellable;
 
+import static com.better.alarm.configuration.AlarmApplication.container;
 import static com.better.alarm.configuration.AlarmApplication.themeHandler;
 
 /**
@@ -116,17 +117,22 @@ public class TimePickerDialogFragment extends DialogFragment {
                 }
 
                 final TimePickerDialogFragment fragment = TimePickerDialogFragment.newInstance();
-                fragment.show(ft, "time_dialog");
 
-                fragment.setEmitter(emitter);
-                emitter.setCancellable(new Cancellable() {
-                    @Override
-                    public void cancel() throws Exception {
-                        if (fragment.isAdded()) {
-                            fragment.dismiss();
+                try {
+                    fragment.show(ft, "time_dialog");
+                    fragment.setEmitter(emitter);
+                    emitter.setCancellable(new Cancellable() {
+                        @Override
+                        public void cancel() throws Exception {
+                            if (fragment.isAdded()) {
+                                fragment.dismiss();
+                            }
                         }
-                    }
-                });
+                    });
+                } catch (IllegalStateException e) {
+                    container().logger().e("Failed to show picker", e);
+                    emitter.onSuccess(Optional.<PickedTime>absent());
+                }
             }
         });
     }
