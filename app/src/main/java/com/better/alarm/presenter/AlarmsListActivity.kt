@@ -33,6 +33,7 @@ import com.better.alarm.checkPermissions
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.AlarmApplication.themeHandler
 import com.better.alarm.configuration.EditedAlarm
+import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.lollipop
 import com.better.alarm.model.AlarmData
 import com.better.alarm.model.Alarmtone
@@ -49,7 +50,7 @@ import io.reactivex.subjects.Subject
  * This activity displays a list of alarms and optionally a details fragment.
  */
 class AlarmsListActivity : FragmentActivity() {
-    private var mActionBarHandler: ActionBarHandler? = null
+    private lateinit var mActionBarHandler: ActionBarHandler
     private val logger = container().logger()
     private val alarms = container().alarms()
 
@@ -57,64 +58,75 @@ class AlarmsListActivity : FragmentActivity() {
 
     private lateinit var store: UiStore
 
-    private fun createStore(edited: EditedAlarm): UiStore {
-        return object : UiStore {
-            var onBackPressed = PublishSubject.create<String>()
-            var editing: BehaviorSubject<EditedAlarm> = BehaviorSubject.createDefault(edited)
-            var transitioningToNewAlarmDetails: Subject<Boolean> = BehaviorSubject.createDefault(false)
-
-            override fun editing(): BehaviorSubject<EditedAlarm> {
-                return editing
+    companion object {
+        fun uiStore(activity: AlarmsListActivity, alarms: IAlarmsManager): UiStore {
+            return if ((activity::store).isInitialized) {
+                activity.store
+            } else {
+                container().logger.e("AlarmsListActivity.store is not initialized!")
+                createStore(EditedAlarm(), alarms)
             }
+        }
 
-            override fun onBackPressed(): PublishSubject<String> {
-                return onBackPressed
-            }
+        private fun createStore(edited: EditedAlarm, alarms: IAlarmsManager): UiStore {
+            return object : UiStore {
+                var onBackPressed = PublishSubject.create<String>()
+                var editing: BehaviorSubject<EditedAlarm> = BehaviorSubject.createDefault(edited)
+                var transitioningToNewAlarmDetails: Subject<Boolean> = BehaviorSubject.createDefault(false)
 
-            override fun createNewAlarm() {
-                transitioningToNewAlarmDetails.onNext(true)
-                val newAlarm = alarms.createNewAlarm()
-                editing.onNext(EditedAlarm(
-                        isNew = true,
-                        value = Optional.of(AlarmData.from(newAlarm.edit())),
-                        id = newAlarm.id,
-                        holder = Optional.absent()))
-            }
+                override fun editing(): BehaviorSubject<EditedAlarm> {
+                    return editing
+                }
 
-            override fun transitioningToNewAlarmDetails(): Subject<Boolean> {
-                return transitioningToNewAlarmDetails
-            }
+                override fun onBackPressed(): PublishSubject<String> {
+                    return onBackPressed
+                }
 
-            override fun edit(id: Int) {
-                alarms.getAlarm(id)?.let { alarm ->
+                override fun createNewAlarm() {
+                    transitioningToNewAlarmDetails.onNext(true)
+                    val newAlarm = alarms.createNewAlarm()
                     editing.onNext(EditedAlarm(
-                            isNew = false,
-                            value = Optional.of(AlarmData.from(alarm.edit())),
-                            id = id,
+                            isNew = true,
+                            value = Optional.of(AlarmData.from(newAlarm.edit())),
+                            id = newAlarm.id,
                             holder = Optional.absent()))
                 }
-            }
 
-            override fun edit(id: Int, holder: RowHolder) {
-                alarms.getAlarm(id)?.let { alarm ->
+                override fun transitioningToNewAlarmDetails(): Subject<Boolean> {
+                    return transitioningToNewAlarmDetails
+                }
+
+                override fun edit(id: Int) {
+                    alarms.getAlarm(id)?.let { alarm ->
+                        editing.onNext(EditedAlarm(
+                                isNew = false,
+                                value = Optional.of(AlarmData.from(alarm.edit())),
+                                id = id,
+                                holder = Optional.absent()))
+                    }
+                }
+
+                override fun edit(id: Int, holder: RowHolder) {
+                    alarms.getAlarm(id)?.let { alarm ->
+                        editing.onNext(EditedAlarm(
+                                isNew = false,
+                                value = Optional.of(AlarmData.from(alarm.edit())),
+                                id = id,
+                                holder = Optional.of(holder)))
+                    }
+                }
+
+                override fun hideDetails() {
+                    editing.onNext(EditedAlarm())
+                }
+
+                override fun hideDetails(holder: RowHolder) {
                     editing.onNext(EditedAlarm(
                             isNew = false,
-                            value = Optional.of(AlarmData.from(alarm.edit())),
-                            id = id,
+                            value = Optional.absent(),
+                            id = holder.alarmId(),
                             holder = Optional.of(holder)))
                 }
-            }
-
-            override fun hideDetails() {
-                editing.onNext(EditedAlarm())
-            }
-
-            override fun hideDetails(holder: RowHolder) {
-                editing.onNext(EditedAlarm(
-                        isNew = false,
-                        value = Optional.absent(),
-                        id = holder.alarmId(),
-                        holder = Optional.of(holder)))
             }
         }
     }
@@ -133,12 +145,12 @@ class AlarmsListActivity : FragmentActivity() {
             savedInstanceState != null && savedInstanceState.getInt("version", BuildConfig.VERSION_CODE) == BuildConfig.VERSION_CODE -> {
                 val restored = editedAlarmFromSavedInstanceState(savedInstanceState)
                 logger.d("Restored ${this@AlarmsListActivity} with $restored")
-                createStore(restored)
+                createStore(restored, alarms)
             }
             else -> {
                 val initialState = EditedAlarm()
                 logger.d("Created ${this@AlarmsListActivity} with $initialState")
-                createStore(initialState)
+                createStore(initialState, alarms)
             }
             // if (intent != null && intent.hasExtra(Intents.EXTRA_ID)) {
             //     //jump directly to editor
@@ -182,15 +194,15 @@ class AlarmsListActivity : FragmentActivity() {
     override fun onDestroy() {
         logger.d(this@AlarmsListActivity)
         super.onDestroy()
-        this.mActionBarHandler!!.onDestroy()
+        this.mActionBarHandler.onDestroy()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        return mActionBarHandler!!.onCreateOptionsMenu(menu, menuInflater, actionBar)
+        return mActionBarHandler.onCreateOptionsMenu(menu, menuInflater, actionBar)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return mActionBarHandler!!.onOptionsItemSelected(item)
+        return mActionBarHandler.onOptionsItemSelected(item)
     }
 
     override fun onBackPressed() {
@@ -350,12 +362,6 @@ class AlarmsListActivity : FragmentActivity() {
             }
 
             logger.d("Saved state $toWrite")
-        }
-    }
-
-    companion object {
-        fun uiStore(activity: AlarmsListActivity): UiStore {
-            return activity.store
         }
     }
 }

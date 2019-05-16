@@ -33,7 +33,7 @@ import java.util.*
 class AlarmsListFragment : Fragment() {
     private val alarms = container().alarms()
     private val store = container().store()
-    private val uiStore: UiStore by lazy { AlarmsListActivity.uiStore(activity as AlarmsListActivity) }
+    private val uiStore: UiStore by lazy { AlarmsListActivity.uiStore(activity as AlarmsListActivity, alarms) }
     private val prefs: Prefs = container().prefs()
     private val logger = container().logger()
 

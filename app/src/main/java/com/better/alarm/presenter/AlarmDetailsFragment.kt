@@ -67,7 +67,7 @@ class AlarmDetailsFragment : Fragment() {
     private var disposableDialog = Disposables.disposed()
 
     private val alarmsListActivity by lazy { activity as AlarmsListActivity }
-    private val store: UiStore by lazy { AlarmsListActivity.uiStore(alarmsListActivity) }
+    private val store: UiStore by lazy { AlarmsListActivity.uiStore(alarmsListActivity, alarms) }
     private val mLabel: EditText by lazy { fragmentView.findViewById(R.id.details_label) as EditText }
     private val rowHolder: RowHolder by lazy { RowHolder(fragmentView.findViewById(R.id.details_list_row_container), alarmId, prefs.layout()) }
     private val mRingtoneRow by lazy { fragmentView.findViewById(R.id.details_ringtone_row) as LinearLayout }
