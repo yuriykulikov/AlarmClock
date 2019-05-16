@@ -13,23 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.better.alarm.interfaces;
+package com.better.alarm.interfaces
 
-import android.support.annotation.NonNull;
-
-import com.better.alarm.model.AlarmValue;
+import com.better.alarm.model.AlarmValue
 
 /**
  * @author Yuriy
  */
-public interface IAlarmsManager {
+interface IAlarmsManager {
     /**
      * Tell the model that a certain alarm has to be snoozed because of the user
      * interaction
      *
      * @param alarm
      */
-    void snooze(Alarm alarm);
+    fun snooze(alarm: Alarm)
 
     /**
      * Tell the model that a certain alarm has to be dismissed because of the
@@ -37,14 +35,14 @@ public interface IAlarmsManager {
      *
      * @param alarm
      */
-    void dismiss(Alarm alarm);
+    fun dismiss(alarm: Alarm)
 
     /**
      * Delete an AlarmCore from the database
      *
      * @param alarm
      */
-    void delete(Alarm alarm);
+    fun delete(alarm: Alarm)
 
     /**
      * Enable of disable an alarm
@@ -52,22 +50,20 @@ public interface IAlarmsManager {
      * @param alarm
      * @param enable
      */
-    void enable(AlarmValue alarm, boolean enable);
+    fun enable(alarm: AlarmValue, enable: Boolean)
 
     /**
      * Return an AlarmCore object representing the alarm id in the database.
      * Returns null if no alarm exists.
      */
-    @NonNull
-    Alarm getAlarm(int alarmId);
+    fun getAlarm(alarmId: Int): Alarm?
 
     /**
      * Create new AlarmCore with default settings
      *
      * @return Alarm
      */
-    @NonNull
-    Alarm createNewAlarm();
+    fun createNewAlarm(): Alarm
 
-    void delete(@NonNull AlarmValue alarm);
+    fun delete(alarm: AlarmValue)
 }

@@ -16,16 +16,18 @@
 package com.better.alarm.model;
 
 import android.annotation.SuppressLint;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
+import com.better.alarm.logger.Logger;
 import com.better.alarm.persistance.DatabaseQuery;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 
 /**
@@ -39,12 +41,14 @@ public class Alarms implements IAlarmsManager {
     private DatabaseQuery query;
     private final AlarmCoreFactory factory;
     private final ContainerFactory containerFactory;
+    private final Logger logger;
 
-    public Alarms(IAlarmsScheduler alarmsScheduler, DatabaseQuery query, final AlarmCoreFactory factory, ContainerFactory containerFactory) {
+    public Alarms(IAlarmsScheduler alarmsScheduler, DatabaseQuery query, final AlarmCoreFactory factory, ContainerFactory containerFactory, Logger logger) {
         this.mAlarmsScheduler = alarmsScheduler;
         this.query = query;
         this.factory = factory;
         this.containerFactory = containerFactory;
+        this.logger = logger;
         this.alarms = new HashMap<Integer, AlarmCore>();
     }
 
@@ -74,10 +78,15 @@ public class Alarms implements IAlarmsManager {
     }
 
     @Override
+    @Nullable
     public AlarmCore getAlarm(int alarmId) {
-        AlarmCore alarm = alarms.get(alarmId);
-        if (alarm != null) return alarm;
-        else throw new IllegalStateException("AlarmID " + alarmId + " could not be resolved");
+        AlarmCore alarmCore = alarms.get(alarmId);
+        if (alarmCore == null) {
+            RuntimeException exception = new RuntimeException("Alarm with id " + alarmId + " not found!");
+            exception.fillInStackTrace();
+            logger.e("Alarm with id " + alarmId + " not found!", exception);
+        }
+        return alarmCore;
     }
 
     @Override
@@ -99,7 +108,7 @@ public class Alarms implements IAlarmsManager {
         alarms.remove(alarm.getId());
     }
 
-    public void onAlarmFired(AlarmCore alarm, CalendarType calendarType) {
+    public void onAlarmFired(@NonNull AlarmCore alarm, CalendarType calendarType) {
         //TODO this should not be needed
         mAlarmsScheduler.onAlarmFired(alarm.getId());
         alarm.onAlarmFired(calendarType);

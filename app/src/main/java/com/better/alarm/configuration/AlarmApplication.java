@@ -46,7 +46,6 @@ import com.better.alarm.presenter.ScheduledReceiver;
 import com.better.alarm.presenter.ToastPresenter;
 import com.better.alarm.statemachine.HandlerFactory;
 import com.better.alarm.util.Optional;
-import com.f2prateek.rx.preferences2.Preference;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
 
 import org.acra.ACRA;
@@ -207,7 +206,9 @@ public class AlarmApplication extends Application {
                 prefs,
                 store,
                 calendars
-        ), containerFactory);
+        ),
+                containerFactory,
+                logger);
 
         sContainer = new Container(
                 getApplicationContext(),

@@ -105,8 +105,9 @@ public class AlarmsTest {
                 prefs,
                 store,
                 calendars
-
-        ), new TestContainerFactory(calendars));
+        ),
+                new TestContainerFactory(calendars),
+                logger);
         return alarms;
     }
 

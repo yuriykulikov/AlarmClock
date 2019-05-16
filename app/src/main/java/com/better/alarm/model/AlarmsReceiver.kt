@@ -27,20 +27,20 @@ class AlarmsReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         try {
-            val action = intent.action
-            when (action) {
+            when (intent.action) {
                 AlarmsScheduler.ACTION_FIRED -> {
                     val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
-                    val alarm = alarms.getAlarm(id)
                     val calendarType = CalendarType.valueOf(intent.extras!!.getString(AlarmsScheduler.EXTRA_TYPE))
                     log.d("Fired $id $calendarType")
-                    alarms.onAlarmFired(alarm, calendarType)
+                    alarms.getAlarm(id)?.let {
+                        alarms.onAlarmFired(it, calendarType)
+                    }
                 }
                 Intent.ACTION_BOOT_COMPLETED,
                 Intent.ACTION_TIMEZONE_CHANGED,
                 Intent.ACTION_LOCALE_CHANGED,
                 Intent.ACTION_MY_PACKAGE_REPLACED -> {
-                    log.d("Refreshing alarms because of $action")
+                    log.d("Refreshing alarms because of ${intent.action}")
                     alarms.refresh()
                 }
                 Intent.ACTION_TIME_CHANGED -> alarms.onTimeSet()
@@ -48,13 +48,13 @@ class AlarmsReceiver : BroadcastReceiver() {
                 PresentationToModelIntents.ACTION_REQUEST_SNOOZE -> {
                     val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
                     log.d("Snooze $id")
-                    alarms.getAlarm(id).snooze()
+                    alarms.getAlarm(id)?.snooze()
                 }
 
                 PresentationToModelIntents.ACTION_REQUEST_DISMISS -> {
                     val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
                     log.d("Dismiss $id")
-                    alarms.getAlarm(id).dismiss()
+                    alarms.getAlarm(id)?.dismiss()
                 }
             }
         } catch (e: Exception) {

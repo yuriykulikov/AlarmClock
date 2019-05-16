@@ -125,7 +125,7 @@ class ActionBarHandler(context: Activity, private val store: UiStore, private va
             setTitle(mContext.getString(R.string.delete_alarm))
             setMessage(mContext.getString(R.string.delete_alarm_confirm))
             setPositiveButton(android.R.string.ok) { _, _ ->
-                alarms.getAlarm(store.editing().blockingFirst().id()).delete()
+                alarms.getAlarm(store.editing().blockingFirst().id())?.delete()
                 store.hideDetails()
             }
             setNegativeButton(android.R.string.cancel, null)

@@ -92,7 +92,6 @@ class AlertService(
         soundAlarmDisposable.dispose()
         playingAlarm = true
 
-        val alarm = alarms.getAlarm(id)
         wantedVolume.onNext(TargetVolume.FADED_IN)
 
         val targetVolumeAccountingForInCallState: Observable<TargetVolume> = Observable.combineLatest<TargetVolume, CallState, TargetVolume>(
@@ -107,9 +106,12 @@ class AlertService(
             }
         })
 
+        val alarm = alarms.getAlarm(id)
+        val alarmtone = alarm?.alarmtone ?: Alarmtone.Default()
+        val label = alarm?.labelOrDefault ?: ""
         soundAlarmDisposable = CompositeDisposable(
                 plugins.map {
-                    it.go(PluginAlarmData(alarm.id, alarm.alarmtone, alarm.labelOrDefault), prealarm = type == Type.PREALARM, targetVolume = targetVolumeAccountingForInCallState)
+                    it.go(PluginAlarmData(id, alarmtone, label), prealarm = type == Type.PREALARM, targetVolume = targetVolumeAccountingForInCallState)
                 }
         )
     }

@@ -24,7 +24,6 @@ import android.provider.AlarmClock
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.interfaces.Alarm
 import com.better.alarm.interfaces.Intents
-import com.better.alarm.logger.Logger
 
 
 class HandleSetAlarm : Activity() {
@@ -68,7 +67,7 @@ class HandleSetAlarm : Activity() {
         val label = msg ?: ""
 
         val alarms = container().store().alarms().blockingFirst()
-        val sameAlarms = alarms.filter {
+        val sameAlarm = alarms.find {
             val hoursMatch = it.hour == hours
             val minutesMatch = it.minutes == minutes
             val labelsMatch = it.label != null && it.label == label
@@ -76,19 +75,28 @@ class HandleSetAlarm : Activity() {
             hoursMatch && minutesMatch && labelsMatch && noRepeating
         }
 
-        val alarm: Alarm
-        if (sameAlarms.isEmpty()) {
-            Logger.getDefaultLogger().d("No alarm found, creating a new one")
-            alarm = container().alarms().createNewAlarm()
-            alarm.edit()
+        return if (sameAlarm == null) {
+            createNewAlarm(hours, minutes, label)
+        } else {
+            val edited = container().alarms()
+                    .getAlarm(sameAlarm.id)
+
+            if (edited != null) {
+                container().logger().d("Editing existing alarm ${sameAlarm.id}")
+                edited.apply { enable(true) }
+            } else {
+                createNewAlarm(hours, minutes, label)
+            }
+        }
+    }
+
+    private fun createNewAlarm(hours: Int, minutes: Int, label: String): Alarm {
+        container().logger().d("No alarm found, creating a new one")
+        return container().alarms().createNewAlarm().apply {
+            edit()
                     .with(hour = hours, minutes = minutes, enabled = true)
                     .withLabel(label)
                     .commit()
-        } else {
-            Logger.getDefaultLogger().d("Enable existing alarm")
-            alarm = container().alarms().getAlarm(sameAlarms.iterator().next().id)
-            alarm.enable(true)
         }
-        return alarm
     }
 }

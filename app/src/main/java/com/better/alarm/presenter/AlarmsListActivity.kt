@@ -73,10 +73,10 @@ class AlarmsListActivity : FragmentActivity() {
 
             override fun createNewAlarm() {
                 transitioningToNewAlarmDetails.onNext(true)
-                val newAlarm = alarms.createNewAlarm().edit()
+                val newAlarm = alarms.createNewAlarm()
                 editing.onNext(EditedAlarm(
                         isNew = true,
-                        value = Optional.of(AlarmData.from(alarms.getAlarm(newAlarm.id).edit())),
+                        value = Optional.of(AlarmData.from(newAlarm.edit())),
                         id = newAlarm.id,
                         holder = Optional.absent()))
             }
@@ -86,19 +86,23 @@ class AlarmsListActivity : FragmentActivity() {
             }
 
             override fun edit(id: Int) {
-                editing.onNext(EditedAlarm(
-                        isNew = false,
-                        value = Optional.of(AlarmData.from(alarms.getAlarm(id).edit())),
-                        id = id,
-                        holder = Optional.absent()))
+                alarms.getAlarm(id)?.let { alarm ->
+                    editing.onNext(EditedAlarm(
+                            isNew = false,
+                            value = Optional.of(AlarmData.from(alarm.edit())),
+                            id = id,
+                            holder = Optional.absent()))
+                }
             }
 
             override fun edit(id: Int, holder: RowHolder) {
-                editing.onNext(EditedAlarm(
-                        isNew = false,
-                        value = Optional.of(AlarmData.from(alarms.getAlarm(id).edit())),
-                        id = id,
-                        holder = Optional.of(holder)))
+                alarms.getAlarm(id)?.let { alarm ->
+                    editing.onNext(EditedAlarm(
+                            isNew = false,
+                            value = Optional.of(AlarmData.from(alarm.edit())),
+                            id = id,
+                            holder = Optional.of(holder)))
+                }
             }
 
             override fun hideDetails() {

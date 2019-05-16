@@ -275,7 +275,9 @@ class AlarmDetailsFragment : Fragment() {
 
     private fun saveAlarm() {
         editor.firstOrError().subscribe { editorToSave ->
-            alarms.getAlarm(alarmId).edit().copy(alarmValue = editorToSave).commit()
+            alarms.getAlarm(alarmId)?.run {
+                edit().copy(alarmValue = editorToSave).commit()
+            }
             store.hideDetails(rowHolder)
         }.addToDisposables()
     }
@@ -284,7 +286,7 @@ class AlarmDetailsFragment : Fragment() {
         store.editing().value?.let { edited ->
             // "Revert" on a newly created alarm should delete it.
             if (edited.isNew) {
-                alarms.getAlarm(edited.id).delete()
+                alarms.getAlarm(edited.id)?.delete()
             }
             // else do not save changes
             store.hideDetails(rowHolder)

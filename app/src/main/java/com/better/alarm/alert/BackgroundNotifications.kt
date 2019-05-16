@@ -29,10 +29,8 @@ import com.better.alarm.R
 import com.better.alarm.background.Event
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.interfaces.Alarm
-import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.interfaces.PresentationToModelIntents
-import com.better.alarm.logger.Logger
 import com.better.alarm.notificationBuilder
 import com.better.alarm.presenter.TransparentActivity
 import java.util.*
@@ -73,10 +71,10 @@ class BackgroundNotifications {
         val pendingDismiss = PresentationToModelIntents.createPendingIntent(mContext,
                 PresentationToModelIntents.ACTION_REQUEST_DISMISS, id)
 
-        val label = alarmsManager.alarmOrNull(id)?.labelOrDefault ?: ""
+        val label = alarmsManager.getAlarm(id)?.labelOrDefault ?: ""
 
         //@formatter:off
-        val contentText: String = alarmsManager.alarmOrNull(id)
+        val contentText: String = alarmsManager.getAlarm(id)
                 ?.let { mContext.getString(R.string.alarm_notify_snooze_text, it.formatTimeString()) }
                 ?: ""
 
@@ -113,10 +111,10 @@ class BackgroundNotifications {
         // Update the notification to indicate that the alert has been
         // silenced.
         val alarm = alarmsManager.getAlarm(id)
-        val label = alarm.labelOrDefault
+        val label: String = alarm?.labelOrDefault ?: ""
         val autoSilenceMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext).getString(
                 "auto_silence", "10"))
-        val text = mContext!!.getString(R.string.alarm_alert_alert_silenced, autoSilenceMinutes)
+        val text = mContext.getString(R.string.alarm_alert_alert_silenced, autoSilenceMinutes)
 
         val notification = mContext.notificationBuilder(CHANNEL_ID, NotificationImportance.NORMAL) {
             setAutoCancel(true)
@@ -129,15 +127,6 @@ class BackgroundNotifications {
         }
 
         nm.notify(BACKGROUND_NOTIFICATION_OFFSET + id, notification)
-    }
-
-    fun IAlarmsManager.alarmOrNull(id: Int): Alarm? {
-        return try {
-            getAlarm(id)
-        } catch (e: Exception) {
-            Logger.getDefaultLogger().e("Alarm not found")
-            null
-        }
     }
 
     companion object {

@@ -96,12 +96,13 @@ class AlarmsListFragment : Fragment() {
                 timePickerDialogDisposable = TimePickerDialogFragment.showTimePicker(fragmentManager)
                         .subscribe { picked ->
                             if (picked.isPresent()) {
-                                alarms.getAlarm(alarm.id)
-                                        .edit()
-                                        .withIsEnabled(true)
-                                        .withHour(picked.get().hour)
-                                        .withMinutes(picked.get().minute)
-                                        .commit()
+                                alarms.getAlarm(alarm.id)?.let { alarm ->
+                                    alarm.edit()
+                                            .withIsEnabled(true)
+                                            .withHour(picked.get().hour)
+                                            .withMinutes(picked.get().minute)
+                                            .commit()
+                                }
                             }
                         }
             }
