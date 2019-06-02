@@ -91,7 +91,7 @@ class VibrationPlugin(
             else -> fadeInTimeInMillis.firstOrError()
                     .flatMapObservable { fadeInTimeInMillis ->
                         Observable.just(defaultAmplidute)
-                                .delay(fadeInTimeInMillis.toLong() / 2, TimeUnit.MILLISECONDS, scheduler)
+                                .delay(fadeInTimeInMillis.toLong(), TimeUnit.MILLISECONDS, scheduler)
                                 .startWith(0)
                                 .doOnComplete { log.d("Completed vibration fade-in") }
                     }
