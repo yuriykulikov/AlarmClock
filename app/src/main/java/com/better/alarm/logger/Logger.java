@@ -1,5 +1,7 @@
 package com.better.alarm.logger;
 
+import android.support.annotation.Nullable;
+
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Logger {
@@ -89,6 +91,6 @@ public class Logger {
      * @author Yuriy
      */
     public interface LogWriter {
-        void write(LogLevel level, String tag, String message, Throwable e);
+        void write(LogLevel level, String tag, String message, @Nullable Throwable e);
     }
 }
