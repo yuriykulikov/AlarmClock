@@ -62,7 +62,7 @@
     <string name="menu_share">Share</string>
     <string name="menu_bugreport">Send a bugreport</string>
     <string name="menu_review">Rate the app</string>
-    <string name="menu_bugreport_hint">Describe your complaint here</string>
+    <string name="dialog_bugreport_hint">Describe your complaint here</string>
     <string name="menu_review_message">Thanks a lot for taking your time to review the application! Positive reviews help to attract more users, which helps to improve the application by collecting feedback. Would you like to proceed?</string>
     <string name="longclick_dismiss_title">Longclick dismiss</string>
     <string name="longclick_dismiss_summary">Hold the dismiss button to dismiss the alarm</string>
@@ -164,5 +164,14 @@
         \n\nSupport the app:
         \n· <a href="https://www.paypal.me/YuriyKulikov">PayPal</a>
         \n· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Go premium</a>
+    </string>
+    <string name="dialog_bugreport_faq"><b>Common issues and how to fix them</b>
+        \n\nIf something was working and then suddenly broke, it is very likely that Android has messed up the application cache. This happens from time to time to all apps. <b>Uninstalling and reinstalling usually resolves the issue.</b>
+
+        \n\nIf there is no sound, please check your device settings. You must use at least Alarms Only on Android 8 and you should not use Do not disturb on Android 9. Read more on <a href="https://support.google.com/android/answer/9069335">Google support page</a>
+
+        \n\nIf alarm did not go off, please make sure that you did not accidentally switched it off. We get a number of complaints regarding this and we see that users are simply switching the alarm after a while <b>in their sleep</b>. If you experience that, move the phone further away when you go to bed.
+
+        \n\nIf nothing helps, write us a message in the field below. We will do our best to try to help you.
     </string>
 </resources>

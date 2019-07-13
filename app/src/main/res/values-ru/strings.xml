@@ -32,7 +32,7 @@
     <string name="menu_share">Поделиться</string>
     <string name="menu_bugreport">Отчет об ошибке</string>
     <string name="menu_review">Оставить отзыв</string>
-    <string name="menu_bugreport_hint">Опишите проблему здесь</string>
+    <string name="dialog_bugreport_hint">Опишите проблему здесь</string>
     <string name="menu_review_message">Большое спасибо! Положительные отзывы привлекают больше пользователей, что позволяет нам получать больше предложоний по улучшениям и отчетов об ошибках.Вы хотите продолжить?</string>
     <string name="longclick_dismiss_title">Longclick Отключить</string>
     <string name="longclick_dismiss_summary">Держать кнопку "Отключить" чтобы выключить будильник</string>

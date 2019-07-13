@@ -9,11 +9,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.text.method.LinkMovementMethod
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.widget.EditText
+import android.view.*
 import android.widget.ShareActionProvider
 import android.widget.TextView
 import com.better.alarm.BuildConfig
@@ -179,8 +175,13 @@ class ActionBarHandler(context: Activity, private val store: UiStore, private va
     }
 
     private fun showBugreport() {
-        val report = EditText(mContext)
-        report.setHint(R.string.menu_bugreport_hint)
+        val inflator = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+
+        val dialogView = inflator.inflate(R.layout.dialog_bugreport, null)
+        val report = dialogView.findViewById<TextView>(R.id.dialog_bugreport_edittext)
+
+        dialogView.findViewById<TextView>(R.id.dialog_bugreport_textview).movementMethod = LinkMovementMethod.getInstance()
+
         AlertDialog.Builder(mContext).apply {
             setPositiveButton(android.R.string.ok) { _, _ ->
                 ACRA.getErrorReporter().putCustomData("USER_COMMENT", report.text.toString())
@@ -189,7 +190,7 @@ class ActionBarHandler(context: Activity, private val store: UiStore, private va
             setTitle(R.string.menu_bugreport)
             setCancelable(true)
             setNegativeButton(android.R.string.cancel, EmptyClickListener())
-            setView(report)
+            setView(dialogView)
         }
                 .create()
                 .show()
