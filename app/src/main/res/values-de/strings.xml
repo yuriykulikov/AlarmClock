@@ -31,9 +31,10 @@
     <string name="master_volume">Gesamtlautstärke</string>
     <string name="menu_share">Teilen</string>
     <string name="menu_bugreport">Fehlerbericht senden</string>
-    <string name="menu_review">Bewerten</string>
+    <string name="dialog_say_thanks_title">Danke sagen</string>
+    <string name="dialog_say_thanks_review_button">Bewerten</string>
     <string name="dialog_bugreport_hint">Bitte beschreiben Sie das Problem</string>
-    <string name="menu_review_message">Vielen Dank! Positive Bewertungen bringen mehr Benutzer. Es ist für uns wichtig um Qualität zu verbessern. Möchten Sie fortfahren?</string>
+    <string name="dialog_say_thanks_review_message">Vielen Dank! Positive Bewertungen bringen mehr Benutzer. Es ist für uns wichtig um Qualität zu verbessern. Möchten Sie fortfahren?</string>
     <string name="longclick_dismiss_title">Lange drücken zum Ausschalten</string>
     <string name="longclick_dismiss_summary">Lange drücken, um den Wecker auszuschalten</string>
     <string name="fade_in_time_sec_title">Fade-in Dauer</string>
@@ -86,7 +87,7 @@
     <string name="preference_category_ui">Benutzeroberfläche</string>
     <string name="details_no_ringtone_picker">Kein Ringtone Manager ist vorhanden...</string>
     <string name="menu_about_title">About</string>
-    <string name="menu_about_content">Einfacher Wecker ist ein Open Source Projekt der bringt euch alle nötige Features in minimalister Form.
+    <string name="dialog_about_content">Einfacher Wecker ist ein Open Source Projekt der bringt euch alle nötige Features in minimalister Form.
 
         \n\nHinweiß:
         \n· Die Größe kann eingestellt werden (in die Einstllungen)

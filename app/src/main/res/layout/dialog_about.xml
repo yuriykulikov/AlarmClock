@@ -5,9 +5,9 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/about_text"
+        android:id="@+id/dialog_about_text"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="20dp"
-        android:text="About" />
+        android:text="@string/dialog_about_content" />
 </LinearLayout>

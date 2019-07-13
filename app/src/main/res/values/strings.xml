@@ -61,9 +61,9 @@
     <string name="master_volume">Master volume</string>
     <string name="menu_share">Share</string>
     <string name="menu_bugreport">Send a bugreport</string>
-    <string name="menu_review">Rate the app</string>
+    <string name="dialog_say_thanks_title">Say thanks</string>
+    <string name="dialog_say_thanks_review_button">Rate the app</string>
     <string name="dialog_bugreport_hint">Describe your complaint here</string>
-    <string name="menu_review_message">Thanks a lot for taking your time to review the application! Positive reviews help to attract more users, which helps to improve the application by collecting feedback. Would you like to proceed?</string>
     <string name="longclick_dismiss_title">Longclick dismiss</string>
     <string name="longclick_dismiss_summary">Hold the dismiss button to dismiss the alarm</string>
     <string name="fade_in_time_sec_title" tools:ignore="MissingTranslation">Fade-in duration</string>
@@ -145,7 +145,7 @@
     <string name="details_no_ringtone_picker">No Ringtone provider found...</string>
     <string name="permissions_external_storage_text">It seems that we cannot play %s, probably because a permission is required. If you want, you can grant the permission. Alternatively, select a different sound. This decision can be changed in System Settings.</string>
     <string name="menu_about_title">About</string>
-    <string name="menu_about_content">Simple Alarm Clock is an open source project which brings pure alarm experience to you by combining essential features and clean interface.
+    <string name="dialog_about_content">Simple Alarm Clock is an open source project which brings pure alarm experience to you by combining essential features and clean interface.
 
         \n\nTip:
         \n· Select layout size in settings
@@ -171,4 +171,10 @@
 
         \n\nIf nothing helps, write us a message in the field below. We will do our best to try to help you.
     </string>
+    <string name="dialog_say_thanks_review_message">Thanks a lot for taking your time to say thanks! Simple alarm clock is an open source non-profit project. We will never use ads or gather user data to earn money. However, we are extremely happy if you appreciate our work. One of the best ways to say thanks is to write a positive review. You can also ask a question or leave your feature request.</string>
+    <string name="dialog_say_thanks_premium_text">If you really like the app, consider upgrading to the premium version! Premium sounds great, does it not?</string>
+    <string name="dialog_say_thanks_donate_message">Another great way to support the app is to buy me a coffee! You can do this using one of the following options</string>
+    <string name="dialog_say_thanks_premium_text_as_button"><a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Go premium</a></string>
+    <string name="dialog_say_thanks_donate_paypal"><a href="https://www.paypal.me/YuriyKulikov">PayPal</a></string>
+    <string name="dialog_say_thanks_donate_yandex"><a href="https://money.yandex.ru/to/410019676183865">Yandex</a></string>
 </resources>

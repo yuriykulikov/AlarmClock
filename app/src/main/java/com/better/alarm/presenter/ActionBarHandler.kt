@@ -7,9 +7,9 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.text.method.LinkMovementMethod
 import android.view.*
+import android.widget.Button
 import android.widget.ShareActionProvider
 import android.widget.TextView
 import com.better.alarm.BuildConfig
@@ -84,7 +84,7 @@ class ActionBarHandler(context: Activity, private val store: UiStore, private va
     fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_item_settings -> mContext.startActivity(Intent(mContext, SettingsActivity::class.java))
-            R.id.menu_review -> showReview()
+            R.id.menu_review -> showSayThanks()
             R.id.menu_bugreport -> showBugreport()
             R.id.set_alarm_menu_delete_alarm -> deleteAlarm()
             R.id.menu_about -> showAbout()
@@ -96,9 +96,9 @@ class ActionBarHandler(context: Activity, private val store: UiStore, private va
     private fun showAbout() {
         AlertDialog.Builder(mContext).apply {
             setTitle(mContext.getString(R.string.menu_about_title))
-            setView(View.inflate(mContext, R.layout.about, null).apply {
-                findViewById<TextView>(R.id.about_text).run {
-                    setText(R.string.menu_about_content)
+            setView(View.inflate(mContext, R.layout.dialog_about, null).apply {
+                findViewById<TextView>(R.id.dialog_about_text).run {
+                    setText(R.string.dialog_about_content)
                     movementMethod = LinkMovementMethod.getInstance()
                 }
             })
@@ -121,16 +121,25 @@ class ActionBarHandler(context: Activity, private val store: UiStore, private va
         }.show()
     }
 
-    private fun showReview() {
-        AlertDialog.Builder(mContext).apply {
-            setPositiveButton(android.R.string.ok) { _, _ ->
+    private fun showSayThanks() {
+        val inflator = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+
+        val dialogView = inflator.inflate(R.layout.dialog_say_thanks, null).apply {
+            findViewById<Button>(R.id.dialog_say_thanks_button_review).setOnClickListener {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + BuildConfig.APPLICATION_ID))
                 mContext.startActivity(intent)
             }
-            setTitle(R.string.menu_review)
-            setMessage(R.string.menu_review_message)
+
+            findViewById<TextView>(R.id.dialog_say_thanks_text_as_button_donate_premium).movementMethod = LinkMovementMethod.getInstance()
+            findViewById<TextView>(R.id.dialog_say_thanks_text_as_button_donate_paypal).movementMethod = LinkMovementMethod.getInstance()
+            findViewById<TextView>(R.id.dialog_say_thanks_text_as_button_donate_yandex).movementMethod = LinkMovementMethod.getInstance()
+        }
+
+        AlertDialog.Builder(mContext).apply {
+            setPositiveButton(android.R.string.ok) { _, _ -> }
+            setTitle(R.string.dialog_say_thanks_title)
+            setView(dialogView)
             setCancelable(true)
-            setNegativeButton(android.R.string.cancel, EmptyClickListener())
         }
                 .create()
                 .show()

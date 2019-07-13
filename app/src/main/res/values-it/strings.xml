@@ -38,9 +38,10 @@
     <string name="master_volume">Volume principale</string>
     <string name="menu_share">Condividi</string>
     <string name="menu_bugreport">Invia un bugreport</string>
-    <string name="menu_review">Valuta l’app</string>
+    <string name="dialog_say_thanks_title">Dii grazie</string>
+    <string name="dialog_say_thanks_review_button">Valuta l’app</string>
     <string name="dialog_bugreport_hint">Descrivi le tue lamentele qui</string>
-    <string name="menu_review_message">Grazie per esserti preso del tempo per valutare l’app. Le valutazioni positive aiutano ad attrarre più utenti, e ciò contribuisce a migliorare l’app attraverso la raccolta di feedbacks. Vuoi procedere?</string>
+    <string name="dialog_say_thanks_review_message">Grazie per esserti preso del tempo per valutare l’app. Le valutazioni positive aiutano ad attrarre più utenti, e ciò contribuisce a migliorare l’app attraverso la raccolta di feedbacks. Vuoi procedere?</string>
     <string name="longclick_dismiss_title">Click prolungato per disattivare l’allarme</string>
     <string name="longclick_dismiss_summary">Tener premuto il tasto dismiss per far terminare la sveglia</string>
     <string name="fade_in_time_sec_title">Dissolvenza con una maggior durata</string>

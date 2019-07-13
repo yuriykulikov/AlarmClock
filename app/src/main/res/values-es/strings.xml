@@ -41,9 +41,10 @@
     <string name="master_volume">Volumen maestro</string>
     <string name="menu_share">Cuota</string>
     <string name="menu_bugreport">Enviar un informe de error</string>
-    <string name="menu_review">Valorar la aplicación</string>
+    <string name="dialog_say_thanks_title">Di gracias</string>
+    <string name="dialog_say_thanks_review_button">Valorar la aplicación</string>
     <string name="dialog_bugreport_hint">Describa su queja aquí</string>
-    <string name="menu_review_message">Muchas gracias por tomarse el tiempo para revisar la aplicación! Opiniones positivas ayudan a atraer a más usuarios, lo que ayuda a mejorar la aplicación mediante la recopilación de retroalimentación. ¿Desea continuar?</string>
+    <string name="dialog_say_thanks_review_message">Muchas gracias por tomarse el tiempo para revisar la aplicación! Opiniones positivas ayudan a atraer a más usuarios, lo que ayuda a mejorar la aplicación mediante la recopilación de retroalimentación. ¿Desea continuar?</string>
     <string name="longclick_dismiss_title">Descartar con click largo</string>
     <string name="longclick_dismiss_summary">Manten el botón descartar presionado para descartar la alarma</string>
     <string name="fade_in_time_sec_title">Duración de aumento gradual de volumen</string>

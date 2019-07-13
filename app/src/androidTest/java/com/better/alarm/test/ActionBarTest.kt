@@ -66,11 +66,11 @@ class ActionBarTest {
     }
 
     @Test
-    fun rateTheApp() {
+    fun sayThanks() {
         val solo = solo!!
         solo.sendKey(Solo.MENU)
-        solo.clickOnText("Rate the app")
-        Assert.assertTrue(solo.searchText("Would you like to proceed?"))
-        solo.clickOnButton("Cancel")
+        solo.clickOnText(solo.getString(com.better.alarm.R.string.dialog_say_thanks_title))
+        Assert.assertTrue(solo.searchText(solo.getString(com.better.alarm.R.string.dialog_say_thanks_title)))
+        solo.clickOnButton("OK")
     }
 }
