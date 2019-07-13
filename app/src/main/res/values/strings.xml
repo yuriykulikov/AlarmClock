@@ -87,10 +87,6 @@
         <item><xliff:g example="2 hours" id="HOURS">%2$s</xliff:g> and <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
         <item><xliff:g example="2 days" id="DAYS">%1$s</xliff:g>, <xliff:g example="2 hours" id="HOURS">%2$s</xliff:g>, and <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
     </string-array>
-    <string name="dashclock">Get DashClock</string>
-    <string name="dashclock_message">You will be transferred to Google Play to install DashClock. Dashclock is a widget which perfectly integrates with Simple Alarm!</string>
-    <string name="mp3cutter">Get MP3 cutter</string>
-    <string name="mp3cutter_message">You will be transferred to Google Play to search for an appliaction which will allow you to use MP3 files as alarm sound.</string>
 
     <string name="theme_title">Interface theme</string>
     <string-array name="themes_entries">
@@ -142,7 +138,6 @@
     </string-array>
     <string name="alarm_alert_reschedule_text">Reschedule</string>
     <string name="alarm_alert_hold_the_button_text">Hold the button!</string>
-    <string name="menu_extensions">Extensions</string>
 
     <string name="preference_category_sound">Volumes and sound</string>
     <string name="preference_category_ui">User interface</string>

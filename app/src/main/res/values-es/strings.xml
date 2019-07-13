@@ -67,10 +67,6 @@
         <item><xliff:g id="HOURS" example="2 hours">%2$s</xliff:g> and <xliff:g id="MINUTES" example="2 minutes">%3$s</xliff:g></item>
         <item><xliff:g id="DAYS" example="2 days">%1$s</xliff:g>, <xliff:g id="HOURS" example="2 hours">%2$s</xliff:g>, and <xliff:g id="MINUTES" example="2 minutes">%3$s</xliff:g></item>
     </string-array>
-    <string name="dashclock">DashClock</string>
-    <string name="dashclock_message">Usted será trasladado a Google Play para instalar DashClock. Dashclock es un widget que se integra perfectamente con Sencilla-despertador!</string>
-    <string name="mp3cutter">MP3 cutter</string>
-    <string name="mp3cutter_message">Usted será trasladado a Google Play para buscar una aplicación que te permitirá utilizar archivos MP3 como sonido de la alarma.</string>
 
     <string name="theme_title">Tema de la interfaz</string>
     <string-array name="themes_entries">
@@ -106,5 +102,4 @@
     </string-array>
     <string name="alarm_alert_reschedule_text">Reprogramar</string>
     <string name="alarm_alert_hold_the_button_text">Mantenga pulsado el botón!</string>
-    <string name="menu_extensions">"Extensiones"</string>
 </resources>

@@ -43,7 +43,7 @@ class ActionBarHandler(context: Activity, private val store: UiStore, private va
      * @return
      */
     fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater, actionBar: ActionBar): Boolean {
-        inflater.inflate(R.menu.settings_menu, menu)
+        inflater.inflate(R.menu.menu_action_bar, menu)
 
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
@@ -58,11 +58,6 @@ class ActionBarHandler(context: Activity, private val store: UiStore, private va
         val menuItem = menu.findItem(R.id.menu_share)
         val sp = menuItem.actionProvider as ShareActionProvider
         sp.setShareIntent(intent)
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1 || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val menuItemDashclock = menu.findItem(R.id.menu_dashclock)
-            menuItemDashclock.isVisible = false
-        }
 
         sub = store.editing().subscribe { edited ->
             val showDelete = edited.isEdited && !edited.isNew
@@ -91,8 +86,6 @@ class ActionBarHandler(context: Activity, private val store: UiStore, private va
             R.id.menu_item_settings -> mContext.startActivity(Intent(mContext, SettingsActivity::class.java))
             R.id.menu_review -> showReview()
             R.id.menu_bugreport -> showBugreport()
-            R.id.menu_dashclock -> showDashClock()
-            R.id.menu_mp3cutter -> showMp3()
             R.id.set_alarm_menu_delete_alarm -> deleteAlarm()
             R.id.menu_about -> showAbout()
             android.R.id.home -> store.onBackPressed().onNext("ActionBar")
@@ -136,37 +129,6 @@ class ActionBarHandler(context: Activity, private val store: UiStore, private va
             }
             setTitle(R.string.menu_review)
             setMessage(R.string.menu_review_message)
-            setCancelable(true)
-            setNegativeButton(android.R.string.cancel, EmptyClickListener())
-        }
-                .create()
-                .show()
-    }
-
-    private fun showDashClock() {
-        AlertDialog.Builder(mContext).apply {
-            setPositiveButton(android.R.string.ok) { _, _ ->
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=dash+clock&c=apps"))
-                mContext.startActivity(intent)
-            }
-            setTitle(R.string.dashclock)
-            setMessage(R.string.dashclock_message)
-            setCancelable(true)
-            setNegativeButton(android.R.string.cancel, EmptyClickListener())
-        }
-                .create()
-                .show()
-    }
-
-    private fun showMp3() {
-        AlertDialog.Builder(mContext).apply {
-
-            setPositiveButton(android.R.string.ok) { _, _ ->
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=mp3+cutter&c=apps"))
-                mContext.startActivity(intent)
-            }
-            setTitle(R.string.mp3cutter)
-            setMessage(R.string.mp3cutter_message)
             setCancelable(true)
             setNegativeButton(android.R.string.cancel, EmptyClickListener())
         }

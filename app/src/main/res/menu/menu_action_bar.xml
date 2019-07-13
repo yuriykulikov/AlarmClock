@@ -41,18 +41,6 @@
         android:actionProviderClass="android.widget.ShareActionProvider"
         android:showAsAction="never"
         android:title="@string/menu_share" />
-    <item android:title="@string/menu_extensions">
-        <menu>
-            <item
-                android:id="@+id/menu_dashclock"
-                android:showAsAction="never"
-                android:title="@string/dashclock" />
-            <item
-                android:id="@+id/menu_mp3cutter"
-                android:showAsAction="never"
-                android:title="@string/mp3cutter" />
-        </menu>
-    </item>
     <item
         android:id="@+id/menu_about"
         android:showAsAction="never"

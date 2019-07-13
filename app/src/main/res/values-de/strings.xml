@@ -57,10 +57,6 @@
         <item msgid="9115697840826129603">"<xliff:g id="HOURS">%2$s</xliff:g> und <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
         <item msgid="2332583385137381060">"<xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> und <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
     </string-array>
-    <string name="dashclock">DashClock herunterladen</string>
-    <string name="dashclock_message">Herunterladen DashClock von Google Play. Dashclock ist ein Widget, der funktioniert sehr gut zusammen mit dem Einfacher Wecker!</string>
-    <string name="mp3cutter">MP3 cutter herunterladen</string>
-    <string name="mp3cutter_message">Einen MP3 Cutter suchen und herunterladen von Google Play. Mit MP3 cutter kann man MP3 File zum Wecker Signal konvertieren.</string>
     <string name="theme_title">Oberfläche</string>
     <string-array name="themes_entries">
         <item>Dunkel</item>
@@ -84,7 +80,6 @@
     </string-array>
     <string name="alarm_alert_reschedule_text">Neu planen</string>
     <string name="alarm_alert_hold_the_button_text">Halten Sie die Taste!</string>
-    <string name="menu_extensions">"Erweiterungen"</string>
     <string name="permissions_external_storage_text">Sieht so aus das %s kann nicht ohne Berechtigungen gespielt werden. Sie können gerne den Zugriff erlauben. Wenn Sie es nicht wollen, selektieren Sie bitte andren Ringtone. Diese Entscheidung kann in System Einstellungen rückgängig gemacht werden.</string>
     <string name="preference_category_durations">Dauer</string>
     <string name="preference_category_sound">Lautstärke und Sound</string>

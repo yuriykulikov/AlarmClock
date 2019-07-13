@@ -64,10 +64,6 @@
         <item><xliff:g id="HOURS" example="2 ore">%2$s</xliff:g> e <xliff:g id="MINUTES" example="2 minuti">%3$s</xliff:g></item>
         <item><xliff:g id="DAYS" example="2 days">%1$s</xliff:g>, <xliff:g id="HOURS" example="2 ore">%2$s</xliff:g>, e <xliff:g id="MINUTES" example="2 minuti">%3$s</xliff:g></item>
     </string-array>
-    <string name="dashclock">Ottieni DashClock</string>
-    <string name="dashclock_message">Verrai trasferito a Google Play per installare DashClock. Dashclock è un widget che si integra perfettamente con Simple Alarm!</string>
-    <string name="mp3cutter">Ottieni MP3 cutter</string>
-    <string name="mp3cutter_message">Verrai trasferito a Google Play per cercare un’app che ti consentirà di utilizzare file MP3 come suoneria per la sveglia.</string>
     <string name="theme_title">Interfaccia</string>
     <string-array name="themes_entries">
         <item>Buio</item>
@@ -85,5 +81,4 @@
     </string-array>
     <string name="alarm_alert_reschedule_text">Ripianificare</string>
     <string name="alarm_alert_hold_the_button_text">Tenere premuto il tasto!</string>
-    <string name="menu_extensions">"Estensioni"</string>
 </resources>

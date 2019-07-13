@@ -57,10 +57,6 @@
         <item>"<xliff:g id="HOURS">%2$s</xliff:g> и <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
         <item>"<xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> и <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
     </string-array>
-    <string name="dashclock">Установить DashClock</string>
-    <string name="dashclock_message">Перейти на Google Play чтобы установить Dashclock. Это виджет для экрана блокировки и рабочего стола, который прекрасно интегрируется с Простым будильником!</string>
-    <string name="mp3cutter">Установить MP3 cutter</string>
-    <string name="mp3cutter_message">Найти и установить MP3 Cutter на Google Play. MP3 cutter позволяет вырезать участки MP3 мелодий и конвертировать их в мелодии будильника.</string>
     <string name="theme_title">Цветовая гамма</string>
     <string-array name="themes_entries">
         <item>Темный</item>
@@ -83,7 +79,6 @@
     </string-array>
     <string name="alarm_alert_reschedule_text">Перенести</string>
     <string name="alarm_alert_hold_the_button_text">Удерживайте кнопку!</string>
-    <string name="menu_extensions">"Дополнения"</string>
     <string name="permissions_external_storage_text">Для того, чтобы проигрывать %s, необходимо специальное разрешение. Нажмите ОК для подтверждения. Если вы не хотите этого, выбирите, пожалуйста, другой рингтон. Это решение может быть в любое время изменено в настройках системы.</string>
     <string name="details_no_ringtone_picker">Не найдено провайдера Рингтонов. Пожалуйста, установите провайдер из Маркета</string>
     <string name="preference_category_durations">Длительности</string>
