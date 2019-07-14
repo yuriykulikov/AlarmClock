@@ -111,7 +111,7 @@ public class Alarms implements IAlarmsManager {
 
     public void onAlarmFired(@NonNull AlarmCore alarm, CalendarType calendarType) {
         //TODO this should not be needed
-        mAlarmsScheduler.onAlarmFired(alarm.getId());
+        mAlarmsScheduler.removeAlarm(alarm.getId());
         alarm.onAlarmFired(calendarType);
     }
 

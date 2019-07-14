@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Build
 import com.better.alarm.logger.Logger
 import com.better.alarm.presenter.AlarmsListActivity
+import java.util.*
 
 /**
  * Created by Yuriy on 24.06.2017.
@@ -15,11 +16,11 @@ import com.better.alarm.presenter.AlarmsListActivity
 
 interface AlarmSetter {
 
-    fun removeRTCAlarm(previousHead: AlarmsScheduler.ScheduledAlarm)
+    fun removeRTCAlarm()
 
-    fun setUpRTCAlarm(alarm: AlarmsScheduler.ScheduledAlarm)
+    fun setUpRTCAlarm(id: Int, typeName: String, calendar: Calendar)
 
-    fun fireNow(firedInThePastAlarm: AlarmsScheduler.ScheduledAlarm)
+    fun fireNow(id: Int, typeName: String)
 
     class AlarmSetterImpl(private val log: Logger, private val am: AlarmManager, private val mContext: Context) : AlarmSetter {
         private val setAlarmStrategy: ISetAlarmStrategy
@@ -28,37 +29,37 @@ interface AlarmSetter {
             this.setAlarmStrategy = initSetStrategyForVersion()
         }
 
-        private val requestCode = 42
-
-        override fun removeRTCAlarm(alarm: AlarmsScheduler.ScheduledAlarm) {
-            val pendingIntent = Intent(ACTION_FIRED)
-                    .apply {
+        override fun removeRTCAlarm() {
+            log.d("Removed all alarms")
+            val pendingAlarm = PendingIntent.getBroadcast(
+                    mContext,
+                    pendingAlarmRequestCode,
+                    Intent(ACTION_FIRED).apply {
+                        // must be here, otherwise replace does not work
                         setClass(mContext, AlarmsReceiver::class.java)
-                        putExtra(EXTRA_ID, alarm.id)
-                        putExtra(EXTRA_TYPE, alarm.type!!.name)
-                    }
-                    .let { PendingIntent.getBroadcast(mContext, requestCode, it, PendingIntent.FLAG_UPDATE_CURRENT) }
-
-            am.cancel(pendingIntent)
+                    },
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            am.cancel(pendingAlarm)
         }
 
-        override fun setUpRTCAlarm(alarm: AlarmsScheduler.ScheduledAlarm) {
-            log.d("Set $alarm")
-            val pendingIntent = Intent(ACTION_FIRED)
+        override fun setUpRTCAlarm(id: Int, typeName: String, calendar: Calendar) {
+            log.d("Set $id ($typeName) on ${AlarmsScheduler.DATE_FORMAT.format(calendar.time)}")
+            val pendingAlarm = Intent(ACTION_FIRED)
                     .apply {
                         setClass(mContext, AlarmsReceiver::class.java)
-                        putExtra(EXTRA_ID, alarm.id)
-                        putExtra(EXTRA_TYPE, alarm.type!!.name)
+                        putExtra(EXTRA_ID, id)
+                        putExtra(EXTRA_TYPE, typeName)
                     }
-                    .let { PendingIntent.getBroadcast(mContext, requestCode, it, PendingIntent.FLAG_UPDATE_CURRENT) }
+                    .let { PendingIntent.getBroadcast(mContext, pendingAlarmRequestCode, it, PendingIntent.FLAG_UPDATE_CURRENT) }
 
-            setAlarmStrategy.setRTCAlarm(alarm, pendingIntent)
+            setAlarmStrategy.setRTCAlarm(calendar, pendingAlarm)
         }
 
-        override fun fireNow(firedInThePastAlarm: AlarmsScheduler.ScheduledAlarm) {
+        override fun fireNow(id: Int, typeName: String) {
             val intent = Intent(ACTION_FIRED).apply {
-                putExtra(EXTRA_ID, firedInThePastAlarm.id)
-                putExtra(EXTRA_TYPE, firedInThePastAlarm.type!!.name)
+                putExtra(EXTRA_ID, id)
+                putExtra(EXTRA_TYPE, typeName)
             }
             mContext.sendBroadcast(intent)
         }
@@ -74,40 +75,45 @@ interface AlarmSetter {
         }
 
         private inner class IceCreamSetter : ISetAlarmStrategy {
-            override fun setRTCAlarm(alarm: AlarmsScheduler.ScheduledAlarm, pendingIntent: PendingIntent) {
-                am.set(AlarmManager.RTC_WAKEUP, alarm.calendar!!.timeInMillis, pendingIntent)
+            override fun setRTCAlarm(calendar: Calendar, pendingIntent: PendingIntent) {
+                am.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
             }
         }
 
         @TargetApi(Build.VERSION_CODES.KITKAT)
         private inner class KitKatSetter : ISetAlarmStrategy {
-            override fun setRTCAlarm(alarm: AlarmsScheduler.ScheduledAlarm, pendingIntent: PendingIntent) {
-                am.setExact(AlarmManager.RTC_WAKEUP, alarm.calendar!!.timeInMillis, pendingIntent)
+            override fun setRTCAlarm(calendar: Calendar, pendingIntent: PendingIntent) {
+                am.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
             }
         }
 
         @TargetApi(23)
         private inner class MarshmallowSetter : ISetAlarmStrategy {
-            override fun setRTCAlarm(alarm: AlarmsScheduler.ScheduledAlarm, pendingIntent: PendingIntent) {
-                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarm.calendar!!.timeInMillis, pendingIntent)
+            override fun setRTCAlarm(calendar: Calendar, pendingIntent: PendingIntent) {
+                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
             }
         }
 
         /** 8.0  */
         @TargetApi(Build.VERSION_CODES.O)
         private inner class OreoSetter : ISetAlarmStrategy {
-            override fun setRTCAlarm(alarm: AlarmsScheduler.ScheduledAlarm, sender: PendingIntent) {
-                val showList = Intent(mContext, AlarmsListActivity::class.java)
-                        .apply {
-                            putExtra(EXTRA_ID, alarm.id)
-                        }
-                val showIntent = PendingIntent.getActivity(mContext, hashCode(), showList, PendingIntent.FLAG_UPDATE_CURRENT)
-                am.setAlarmClock(AlarmManager.AlarmClockInfo(alarm.calendar!!.timeInMillis, showIntent), sender)
+            override fun setRTCAlarm(calendar: Calendar, pendingAlarm: PendingIntent) {
+                val pendingShowList = PendingIntent.getActivity(
+                        mContext,
+                        100500,
+                        Intent(mContext, AlarmsListActivity::class.java),
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                )
+                am.setAlarmClock(AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingShowList), pendingAlarm)
             }
         }
 
         private interface ISetAlarmStrategy {
-            fun setRTCAlarm(alarm: AlarmsScheduler.ScheduledAlarm, pendingIntent: PendingIntent)
+            fun setRTCAlarm(calendar: Calendar, pendingIntent: PendingIntent)
+        }
+
+        companion object {
+            private val pendingAlarmRequestCode = 0
         }
     }
 

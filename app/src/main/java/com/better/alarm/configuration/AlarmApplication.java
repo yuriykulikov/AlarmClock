@@ -161,22 +161,6 @@ public class AlarmApplication extends Application {
                 PublishSubject.<Store.AlarmSet>create(),
                 PublishSubject.<Event>create());
 
-        store.alarms().subscribe(new Consumer<List<AlarmValue>>() {
-            @Override
-            public void accept(@NonNull List<AlarmValue> alarmValues) throws Exception {
-                for (AlarmValue alarmValue : alarmValues) {
-                    logger.d("## " + alarmValue);
-                }
-            }
-        });
-
-        store.next().subscribe(new Consumer<Optional<Store.Next>>() {
-            @Override
-            public void accept(@NonNull Optional<Store.Next> next) throws Exception {
-                logger.d("## Next: " + next);
-            }
-        });
-
         if (!BuildConfig.ACRA_EMAIL.isEmpty()) {
             ACRA.getErrorReporter().setExceptionHandlerInitializer(new ExceptionHandlerInitializer() {
                 @Override
@@ -230,6 +214,23 @@ public class AlarmApplication extends Application {
         // must be started the last, because otherwise we may loose intents from it.
         logger.d("Starting alarms");
         alarms.start();
+        // register logging after startup has finished to avoid logging( O(n) instead of O(n log n) )
+        store.alarms().subscribe(new Consumer<List<AlarmValue>>() {
+            @Override
+            public void accept(@NonNull List<AlarmValue> alarmValues) throws Exception {
+                for (AlarmValue alarmValue : alarmValues) {
+                    logger.d("## " + alarmValue);
+                }
+            }
+        });
+
+        store.next().subscribe(new Consumer<Optional<Store.Next>>() {
+            @Override
+            public void accept(@NonNull Optional<Store.Next> next) throws Exception {
+                logger.d("## Next: " + next);
+            }
+        });
+
         logger.d("Done");
         super.onCreate();
     }

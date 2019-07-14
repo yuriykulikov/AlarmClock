@@ -29,7 +29,4 @@ public interface IAlarmsScheduler {
      * @param id
      */
     public void setAlarm(int id, CalendarType calendarType, Calendar calendar, AlarmValue alarmValue);
-
-    @Deprecated
-    public void onAlarmFired(int id);
 }

@@ -30,7 +30,6 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
-import org.mockito.ArgumentCaptor;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,7 +43,7 @@ import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 import kotlin.collections.CollectionsKt;
 
-import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
@@ -339,10 +338,7 @@ public class AlarmsTest {
             }
         });
 
-        ArgumentCaptor<AlarmsScheduler.ScheduledAlarm> captor = ArgumentCaptor.forClass(AlarmsScheduler.ScheduledAlarm.class);
-        verify(alarmSetterMock, atLeastOnce()).setUpRTCAlarm(captor.capture());
-
-        assertEquals(newAlarm.getId(), captor.getValue().getId());
+        verify(alarmSetterMock, atLeastOnce()).setUpRTCAlarm(eq(newAlarm.getId()), eq("NORMAL"), any(Calendar.class));
     }
 
 

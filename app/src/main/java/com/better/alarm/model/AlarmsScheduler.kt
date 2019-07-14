@@ -24,62 +24,53 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, private val store: Store, private val prefs: Prefs, private val calendars: Calendars) : IAlarmsScheduler {
-    private val queue: PriorityQueue<ScheduledAlarm> = PriorityQueue()
 
     data class ScheduledAlarm(
             val id: Int,
-            val calendar: Calendar? = null,
-            val type: CalendarType? = null,
-            val alarmValue: AlarmValue? = null)
+            val calendar: Calendar,
+            val type: CalendarType,
+            val alarmValue: AlarmValue)
         : Comparable<ScheduledAlarm> {
 
-        override fun compareTo(another: ScheduledAlarm): Int {
-            return this.calendar!!.compareTo(another.calendar)
+        override fun compareTo(other: ScheduledAlarm): Int {
+            return this.calendar.compareTo(other.calendar)
         }
 
         override fun toString(): String {
-            val formattedTime: String? = calendar?.let { DATE_FORMAT.format(it.time) }
-            return "$id $type on $formattedTime"
+            return "$id $type on ${DATE_FORMAT.format(calendar.time)}"
         }
     }
 
+    private val queue: PriorityQueue<ScheduledAlarm> = PriorityQueue()
+
     override fun setAlarm(id: Int, type: CalendarType, calendar: Calendar, alarmValue: AlarmValue) {
         val scheduledAlarm = ScheduledAlarm(id, calendar, type, alarmValue)
-        replaceAlarm(scheduledAlarm, true)
+        replaceAlarm(id, scheduledAlarm)
     }
 
     override fun removeAlarm(id: Int) {
-        replaceAlarm(ScheduledAlarm(id), false)
+        replaceAlarm(id, null)
     }
 
-    override fun onAlarmFired(id: Int) {
-        replaceAlarm(ScheduledAlarm(id), false)
-    }
-
-    private fun replaceAlarm(newAlarm: ScheduledAlarm, add: Boolean) {
-        val previousHead: ScheduledAlarm? = queue.peek()
-
+    private fun replaceAlarm(id: Int, newAlarm: ScheduledAlarm?) {
         // remove if we have already an alarm
-        queue.removeAll { it.id == newAlarm.id }
-
-        if (add) {
+        queue.removeAll { it.id == id }
+        if (newAlarm != null) {
             queue.add(newAlarm)
         }
 
         fireAlarmsInThePast()
 
-        val currentHead = queue.peek()
-        // compare by reference!
-        // TODO should we compare content? Previously this was because of equals implementation
-        if (previousHead !== currentHead) {
-            if (!queue.isEmpty()) {
-                previousHead?.run { setter.removeRTCAlarm(this) }
-                setter.setUpRTCAlarm(currentHead)
-            } else {
-                previousHead?.run { setter.removeRTCAlarm(this) }
-            }
-            notifyListeners()
+        val currentHead: ScheduledAlarm? = queue.peek()
+        if (currentHead != null) {
+            // update current RTC, id will be used as the request code
+            setter.setUpRTCAlarm(currentHead.id, currentHead.type.name, currentHead.calendar)
+        } else {
+            // no alarms, remove
+            setter.removeRTCAlarm()
         }
+
+        notifyListeners()
     }
 
     /**
@@ -90,11 +81,11 @@ class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, 
 
     private fun fireAlarmsInThePast() {
         val now = calendars.now()
-        while (!queue.isEmpty() && queue.peek().calendar!!.before(now)) {
+        while (!queue.isEmpty() && queue.peek().calendar.before(now)) {
             // remove happens in fire
             val firedInThePastAlarm = queue.poll()
             log.d("In the past - $firedInThePastAlarm")
-            setter.fireNow(firedInThePastAlarm)
+            setter.fireNow(firedInThePastAlarm.id, firedInThePastAlarm.type.name)
         }
     }
 
@@ -112,14 +103,14 @@ class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, 
                         // we can only assume that the real one will be a little later,
                         // namely:
                         val prealarmOffsetInMillis = prefs.preAlarmDuration().blockingFirst() * 60 * 1000
-                        return scheduledAlarm.calendar!!.timeInMillis + prealarmOffsetInMillis
+                        return scheduledAlarm.calendar.timeInMillis + prealarmOffsetInMillis
                     }
 
                     val isPrealarm = scheduledAlarm.type == CalendarType.PREALARM
                     Store.Next(
                             /* isPrealarm */ isPrealarm,
-                            /* alarm */ scheduledAlarm.alarmValue!!,
-                            /* nextNonPrealarmTime */ if (isPrealarm) findNormalTime(scheduledAlarm) else scheduledAlarm.calendar!!.timeInMillis)
+                            /* alarm */ scheduledAlarm.alarmValue,
+                            /* nextNonPrealarmTime */ if (isPrealarm) findNormalTime(scheduledAlarm) else scheduledAlarm.calendar.timeInMillis)
 
 
                 }
