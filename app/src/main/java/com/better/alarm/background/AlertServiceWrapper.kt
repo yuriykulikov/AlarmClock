@@ -82,6 +82,10 @@ class AlertServiceWrapper : Service() {
                 )
             }
 
+            factory<AlertPlugin>(named("RollosPlugin")) {
+                RollosPlugin(logger = get())
+            }
+
             single<NotificationsPlugin> {
                 NotificationsPlugin(
                         logger = logger("AlertService"),

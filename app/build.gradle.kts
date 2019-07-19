@@ -126,6 +126,7 @@ dependencies {
     implementation("io.reactivex.rxjava2:rxjava:2.2.0")
     implementation("io.reactivex.rxjava2:rxandroid:2.1.0")
     implementation("com.android.support:support-v4:26.1.0") {}
+    implementation("com.squareup.okhttp3:okhttp:4.0.1")
 
     implementation("org.koin:koin-core:2.0.1")
     implementation("org.koin:koin-core-ext:2.0.1")
