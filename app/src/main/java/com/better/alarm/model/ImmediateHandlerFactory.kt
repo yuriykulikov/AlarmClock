@@ -1,6 +1,5 @@
 package com.better.alarm.model
 
-import com.better.alarm.logger.Logger
 import com.better.alarm.statemachine.HandlerFactory
 import com.better.alarm.statemachine.IHandler
 import com.better.alarm.statemachine.Message
@@ -22,20 +21,16 @@ class ImmediateHandlerFactory : HandlerFactory {
             private fun sendMessage(message: Message, front: Boolean) {
                 when {
                     messages.isEmpty() -> {
-                        Logger.getDefaultLogger().d("Immediate $message")
                         messageHandler.handleMessage(message)
                     }
                     front -> {
-                        Logger.getDefaultLogger().d("Queue at front $message")
                         messages.add(0, message)
                     }
                     else -> {
-                        Logger.getDefaultLogger().d("Queue $message")
                         messages.add(message)
                     }
                 }
                 while (messages.isNotEmpty()) {
-                    Logger.getDefaultLogger().d("Queued $messages")
                     messageHandler.handleMessage(messages.removeAt(0))
                 }
             }
