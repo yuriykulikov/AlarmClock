@@ -31,10 +31,8 @@
     <string name="master_volume">Gesamtlautstärke</string>
     <string name="menu_share">Teilen</string>
     <string name="menu_bugreport">Fehlerbericht senden</string>
-    <string name="dialog_say_thanks_title">Danke sagen</string>
     <string name="dialog_say_thanks_review_button">Bewerten</string>
     <string name="dialog_bugreport_hint">Bitte beschreiben Sie das Problem</string>
-    <string name="dialog_say_thanks_review_message">Vielen Dank! Positive Bewertungen bringen mehr Benutzer. Es ist für uns wichtig um Qualität zu verbessern. Möchten Sie fortfahren?</string>
     <string name="longclick_dismiss_title">Lange drücken zum Ausschalten</string>
     <string name="longclick_dismiss_summary">Lange drücken, um den Wecker auszuschalten</string>
     <string name="fade_in_time_sec_title">Fade-in Dauer</string>
@@ -103,4 +101,20 @@
         \n· <a href="https://www.paypal.me/YuriyKulikov">PayPal</a>
         \n· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Premium version (donate)</a>
     </string>
+    <string name="dialog_bugreport_faq"><b>Wie Sie die häufigsten Fehler richtig beheben</b>
+        \n\nWenn etwas hat funktioniert und dann plötzlich kaputt ging, ist es sehr wahrscheinlich, dass Android den Application Cache durcheinander gebracht hat. Dies geschieht von Zeit zu Zeit bei alle Apps. Durch Leeren des Caches (App-Info -> Speicher -> Cache leeren) oder im schlimmsten Fall Deinstallieren und erneutes Installieren wird das Problem normalerweise behoben.
+
+        \n\nWenn kein Ton zu hören ist, überprüfen Sie bitte Ihre Geräteeinstellungen. Sie müssen mindestens "Nur Wecker" für Android 8 und kein "Bitte nicht stören" Modus für Android 9 verwenden. Weitere Informationen finden Sie auf der <a href="https://support.google.com/android/answer/9069335?hl=de"> Google Android-Hilfe Seite </a>
+
+        \n\nWenn der Alarm nicht ausgelöst wurde, stellen Sie bitte sicher, dass Sie ihn nicht versehentlich ausgeschaltet haben. Wir bekommen diesbezüglich eine Reihe von Beschwerden und stellen fest, dass Benutzer den Alarm nach einer Weile im Schlaf einfach ausschalten (mittels Button “Ausschalten”). Wenn Sie dies bemerken, bewegen Sie das Telefon weiter weg, wenn Sie ins Bett gehen.
+
+        \n\nWenn nichts hilft, schreiben Sie uns bitte eine Nachricht in das unten stehende Feld. Wir werden unser Bestes tun, um Ihnen zu helfen.
+    </string>
+    <string name="dialog_say_thanks_title">Sagen Danke</string>
+    <string name="dialog_say_thanks_review_message">Vielen Dank, dass Sie sich die Zeit genommen haben, sich zu bedanken! "Wecker ohne Schnickschnack" ist ein Open-Source Nonprofit-Projekt. Wir werden niemals Werbung verwenden oder Benutzerdaten sammeln, um Geld zu verdienen. Wir freuen uns jedoch sehr, wenn Ihnen unsere Arbeit gefällt. Eine der besten Möglichkeiten, sich zu bedanken, ist eine positive Bewertung zu schreiben. Sie können auch eine Frage stellen oder Ihre Featureanfrage hinterlassen.</string>
+    <string name="dialog_say_thanks_premium_text">Wenn die App Ihnen wirklich gefällt, Sie können ein Upgrade auf die Premium-Version überlegen. Premium hört sich toll an, oder?</string>
+    <string name="dialog_say_thanks_donate_message">Eine andere hervorragende Möglichkeit, die App zu unterstützen, besteht darin, mir einen Kaffee oder einen Krapfen zu kaufen! Sie können dies mit einer der folgenden Optionen tun</string>
+    <string name="dialog_say_thanks_premium_text_as_button"><a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Premium Version</a></string>
+    <string name="dialog_say_thanks_donate_paypal"><a href="https://www.paypal.me/YuriyKulikov">PayPal</a></string>
+    <string name="dialog_say_thanks_donate_yandex"><a href="https://money.yandex.ru/to/410019676183865">Yandex</a></string>
 </resources>
