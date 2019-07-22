@@ -135,7 +135,9 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
 
         updateListInStore();
 
-        preAlarmDuration.subscribe(new Consumer() {
+        preAlarmDuration
+                .skip(1)// not interested in the first update on startup
+                .subscribe(new Consumer() {
             @Override
             public void accept(Object o) throws Exception {
                 stateMachine.sendMessage(AlarmStateMachine.PREALARM_DURATION_CHANGED);
