@@ -217,21 +217,25 @@ public class AlarmApplication extends Application {
         // start scheduling alarms after all alarms have been started
         alarmsScheduler.start();
         // register logging after startup has finished to avoid logging( O(n) instead of O(n log n) )
-        store.alarms().subscribe(new Consumer<List<AlarmValue>>() {
-            @Override
-            public void accept(@NonNull List<AlarmValue> alarmValues) throws Exception {
-                for (AlarmValue alarmValue : alarmValues) {
-                    logger.d("## " + alarmValue);
-                }
-            }
-        });
+        store.alarms()
+                .distinctUntilChanged()
+                .subscribe(new Consumer<List<AlarmValue>>() {
+                    @Override
+                    public void accept(@NonNull List<AlarmValue> alarmValues) throws Exception {
+                        for (AlarmValue alarmValue : alarmValues) {
+                            logger.d("## " + alarmValue);
+                        }
+                    }
+                });
 
-        store.next().subscribe(new Consumer<Optional<Store.Next>>() {
-            @Override
-            public void accept(@NonNull Optional<Store.Next> next) throws Exception {
-                logger.d("## Next: " + next);
-            }
-        });
+        store.next()
+                .distinctUntilChanged()
+                .subscribe(new Consumer<Optional<Store.Next>>() {
+                    @Override
+                    public void accept(@NonNull Optional<Store.Next> next) throws Exception {
+                        logger.d("## Next: " + next);
+                    }
+                });
 
         logger.d("Done");
         super.onCreate();
