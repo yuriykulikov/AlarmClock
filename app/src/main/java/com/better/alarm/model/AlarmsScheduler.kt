@@ -43,6 +43,20 @@ class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, 
 
     private val queue: PriorityQueue<ScheduledAlarm> = PriorityQueue()
 
+    private var isStarted = false
+
+    /** Actually start scheduling alarms */
+    fun start() {
+        isStarted = true
+        fireAlarmsInThePast()
+        if (queue.isNotEmpty()) {
+            // do not use iterator, order is not defined
+            val currentHead = queue.peek()
+            setter.setUpRTCAlarm(currentHead.id, currentHead.type.name, currentHead.calendar)
+        }
+        notifyListeners()
+    }
+
     override fun setAlarm(id: Int, type: CalendarType, calendar: Calendar, alarmValue: AlarmValue) {
         val scheduledAlarm = ScheduledAlarm(id, calendar, type, alarmValue)
         replaceAlarm(id, scheduledAlarm)
@@ -61,19 +75,29 @@ class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, 
             queue.add(newAlarm)
         }
 
-        fireAlarmsInThePast()
+        if (isStarted) {
+            fireAlarmsInThePast()
+        }
 
         val currentHead: ScheduledAlarm? = queue.peek()
         when {
+            !isStarted -> {
+                log.d("skip setting $currentHead (not started yet)")
+            }
             // no alarms, remove
-            currentHead == null -> setter.removeRTCAlarm()
+            currentHead == null -> {
+                setter.removeRTCAlarm()
+                notifyListeners()
+            }
             // update current RTC, id will be used as the request code
-            currentHead != prevHead -> setter.setUpRTCAlarm(currentHead.id, currentHead.type.name, currentHead.calendar)
+            currentHead != prevHead -> {
+                setter.setUpRTCAlarm(currentHead.id, currentHead.type.name, currentHead.calendar)
+                notifyListeners()
+            }
             // if head remains the same, do nothing
             else -> log.d("skip setting $currentHead (already set)")
         }
 
-        notifyListeners()
     }
 
     /**

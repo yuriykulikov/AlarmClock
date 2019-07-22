@@ -214,6 +214,8 @@ public class AlarmApplication extends Application {
         // must be started the last, because otherwise we may loose intents from it.
         logger.d("Starting alarms");
         alarms.start();
+        // start scheduling alarms after all alarms have been started
+        alarmsScheduler.start();
         // register logging after startup has finished to avoid logging( O(n) instead of O(n log n) )
         store.alarms().subscribe(new Consumer<List<AlarmValue>>() {
             @Override

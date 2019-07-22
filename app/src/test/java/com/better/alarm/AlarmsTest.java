@@ -107,6 +107,7 @@ public class AlarmsTest {
         ),
                 new TestContainerFactory(calendars),
                 logger);
+        alarmsScheduler.start();
         return alarms;
     }
 

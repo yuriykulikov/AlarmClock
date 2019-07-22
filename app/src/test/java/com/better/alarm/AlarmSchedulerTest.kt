@@ -12,11 +12,7 @@ import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TestRule
-import org.junit.rules.TestWatcher
-import org.junit.runner.Description
 import org.mockito.Mockito.mock
 import java.util.*
 
@@ -76,6 +72,7 @@ class AlarmSchedulerTest {
 
     @Test
     fun `Only closest alarm is set by the scheduler`() {
+        alarmsScheduler.start()
         alarmsScheduler.setAlarm(
                 1,
                 CalendarType.NORMAL,
@@ -88,6 +85,7 @@ class AlarmSchedulerTest {
 
     @Test
     fun `Only closest alarm is set by the scheduler if more alarms are present`() {
+        alarmsScheduler.start()
         alarmsScheduler.setAlarm(
                 1,
                 CalendarType.NORMAL,
@@ -107,6 +105,7 @@ class AlarmSchedulerTest {
 
     @Test
     fun `Only closest alarm is set by the scheduler if more alarms are present scheduled before current`() {
+        alarmsScheduler.start()
         alarmsScheduler.setAlarm(
                 2,
                 CalendarType.NORMAL,
@@ -121,6 +120,27 @@ class AlarmSchedulerTest {
                 createTestAlarmValue(1)
         )
 
+        assertThat(alarmSetterMock.id).isEqualTo(1)
+    }
+
+    @Test
+    fun `Scheduler must wait until it has been started to set alarms`() {
+        alarmsScheduler.setAlarm(
+                2,
+                CalendarType.NORMAL,
+                Calendar.getInstance().apply { add(Calendar.HOUR_OF_DAY, 2) },
+                createTestAlarmValue(2)
+        )
+
+        alarmsScheduler.setAlarm(
+                1,
+                CalendarType.NORMAL,
+                Calendar.getInstance().apply { add(Calendar.HOUR_OF_DAY, 1) },
+                createTestAlarmValue(1)
+        )
+
+        assertThat(alarmSetterMock.id).isNull()
+        alarmsScheduler.start()
         assertThat(alarmSetterMock.id).isEqualTo(1)
     }
 
