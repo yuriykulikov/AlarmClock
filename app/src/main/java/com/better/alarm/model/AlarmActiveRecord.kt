@@ -2,6 +2,7 @@ package com.better.alarm.model
 
 import android.media.RingtoneManager
 import android.net.Uri
+import com.better.alarm.configuration.AlarmApplication
 import java.util.*
 
 class AlarmActiveRecord(
@@ -65,8 +66,15 @@ class AlarmActiveRecord(
                        nextTime: Calendar = this.nextTime,
                        state: String = this.state
     ): AlarmActiveRecord {
-        return AlarmActiveRecord(nextTime, state, persistence, alarmValue)
-                .apply { persistence.persist(this) }
+        val copy = AlarmActiveRecord(nextTime, state, persistence, alarmValue)
+        if (valuesDiffer(copy)) {
+            persistence.persist(copy)
+        }
+        return copy
+    }
+
+    fun valuesDiffer(other: AlarmActiveRecord): Boolean {
+        return alarmValue != other.alarmValue || nextTime != other.nextTime || state != other.state
     }
 }
 
