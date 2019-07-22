@@ -53,6 +53,8 @@ class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, 
     }
 
     private fun replaceAlarm(id: Int, newAlarm: ScheduledAlarm?) {
+        val prevHead: ScheduledAlarm? = queue.peek()
+
         // remove if we have already an alarm
         queue.removeAll { it.id == id }
         if (newAlarm != null) {
@@ -62,12 +64,13 @@ class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, 
         fireAlarmsInThePast()
 
         val currentHead: ScheduledAlarm? = queue.peek()
-        if (currentHead != null) {
-            // update current RTC, id will be used as the request code
-            setter.setUpRTCAlarm(currentHead.id, currentHead.type.name, currentHead.calendar)
-        } else {
+        when {
             // no alarms, remove
-            setter.removeRTCAlarm()
+            currentHead == null -> setter.removeRTCAlarm()
+            // update current RTC, id will be used as the request code
+            currentHead != prevHead -> setter.setUpRTCAlarm(currentHead.id, currentHead.type.name, currentHead.calendar)
+            // if head remains the same, do nothing
+            else -> log.d("skip setting $currentHead (already set)")
         }
 
         notifyListeners()
