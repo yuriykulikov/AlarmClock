@@ -68,6 +68,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
+import kotlin.collections.CollectionsKt;
 
 @ReportsCrashes(
         mailTo = BuildConfig.ACRA_EMAIL,
@@ -222,9 +223,7 @@ public class AlarmApplication extends Application {
                 .subscribe(new Consumer<List<AlarmValue>>() {
                     @Override
                     public void accept(@NonNull List<AlarmValue> alarmValues) throws Exception {
-                        for (AlarmValue alarmValue : alarmValues) {
-                            logger.d("## " + alarmValue);
-                        }
+                        logger.d(CollectionsKt.joinToString(alarmValues, "\n##", "Store: \n##", "", -1, "...", null));
                     }
                 });
 
