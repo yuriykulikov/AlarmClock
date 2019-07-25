@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.better.alarm"
-    android:versionCode="30416"
-    android:versionName="3.04.16">
+    android:versionCode="30501"
+    android:versionName="3.05.01">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -19,6 +19,7 @@
     <application
         android:name=".configuration.AlarmApplication"
         android:icon="@mipmap/ic_launcher"
+        android:installLocation="internalOnly"
         android:label="@string/simple_alarm_clock">
 
         <!-- Activity to set a new or modify existing alarm -->
