@@ -46,7 +46,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
 class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mContext, attrs) {
-    private var ringtone: Ringtone by Delegates.notNull()
+    private var ringtone: Ringtone? = null
     private var ringtoneSummary: TextView? = null
 
     private val klaxon: KlaxonPlugin by lazy {
@@ -68,8 +68,9 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
 
     init {
         layoutResource = R.layout.seekbar_dialog
+        // this actually can return null
         this.ringtone = RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
-        ringtone.streamType = AudioManager.STREAM_ALARM
+        ringtone?.streamType = AudioManager.STREAM_ALARM
     }
 
     override fun onBindView(view: View) {
@@ -93,7 +94,7 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
 
     override fun onPrepareForRemoval() {
         super.onPrepareForRemoval()
-        ringtone.stop()
+        ringtone?.stop()
     }
 
     fun onPause() {
@@ -117,15 +118,15 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
                     //stop prealarm sample if there is one
                     stopPrealarmSample()
                     am.setStreamVolume(AudioManager.STREAM_ALARM, progress!!, 0)
-                    if (!ringtone.isPlaying) {
-                        ringtone.play()
+                    if (ringtone?.isPlaying == false) {
+                        ringtone?.play()
                     }
                 }
 
         masterListener
                 .progressObservable()
                 .debounce(3, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
-                .subscribe { ringtone.stop() }
+                .subscribe { ringtone?.stop() }
     }
 
     private fun bindPrealarmSeekBar(preAlarmSeekBar: SeekBar) {
@@ -143,7 +144,7 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
                 .doOnNext { integer ->
                     log.d("Pre-alarm " + integer!!)
                     prealarmPreference.set(integer)
-                    ringtone.stop()
+                    ringtone?.stop()
                 }
                 .subscribe {
                     prealarmSampleDisposable.dispose()

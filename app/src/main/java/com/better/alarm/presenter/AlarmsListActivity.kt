@@ -51,8 +51,10 @@ import io.reactivex.subjects.Subject
  */
 class AlarmsListActivity : FragmentActivity() {
     private lateinit var mActionBarHandler: ActionBarHandler
-    private val logger = container().logger()
-    private val alarms = container().alarms()
+
+    // lazy because it seems that AlarmsListActivity.<init> can be called before Application.onCreate()
+    private val logger by lazy { container().logger() }
+    private val alarms by lazy { container().alarms() }
 
     private var sub = Disposables.disposed()
 

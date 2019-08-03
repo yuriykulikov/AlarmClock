@@ -19,16 +19,16 @@ fun checkPermissions(activity: Activity, tones: List<Alarmtone>) {
 
         val unplayable = tones
                 .filter { alarmtone ->
-                    try {
-                        PlayerWrapper(context = activity, resources = activity.resources, log = logger)
-                                .setDataSource(alarmtone)
-                        false
-                    } catch (e: Exception) {
-                        true
-                    }
+                    runCatching {
+                        PlayerWrapper(context = activity, resources = activity.resources, log = logger).setDataSource(alarmtone)
+                    }.isFailure
                 }
                 .mapNotNull { tone -> RingtoneManager.getRingtone(activity, tone.ringtoneManagerString()) }
-                .mapNotNull { ringtone -> ringtone.getTitle(activity) }
+                .map { ringtone ->
+                    runCatching {
+                        ringtone.getTitle(activity) ?: "null"
+                    }.getOrDefault("null")
+                }
 
         if (unplayable.isNotEmpty()) {
             try {

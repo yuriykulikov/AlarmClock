@@ -37,7 +37,7 @@ class PlayerWrapper(
     }
 
     override fun startAlarm() {
-        player?.run {
+        player?.runCatching {
             setAudioStreamType(AudioManager.STREAM_ALARM)
             isLooping = true
             prepare()
