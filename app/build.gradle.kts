@@ -77,6 +77,7 @@ android {
         getByName("debug") {
             isTestCoverageEnabled = true
             buildConfigField("String", "ACRA_EMAIL", "\"$acraEmail\"")
+            applicationIdSuffix = ".debug"
         }
         getByName("release") {
             isMinifyEnabled = false
