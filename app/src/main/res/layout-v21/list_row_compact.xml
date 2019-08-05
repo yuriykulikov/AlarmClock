@@ -16,6 +16,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="80dp"
+    xmlns:tools="http://schemas.android.com/tools"
     android:baselineAligned="true"
     android:orientation="horizontal">
 
@@ -42,7 +43,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-thin"
-                android:textSize="40dp" />
+                tools:text="12:45"
+                android:textSize="40sp" />
 
             <TextView
                 android:id="@+id/digital_clock_am_pm"
@@ -62,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="5dp"
                 android:paddingTop="2dip"
-                android:text="Weekdays"
+                tools:text="Weekdays"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="?android:attr/colorAccent" />
 
@@ -71,7 +73,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:text="label"
+                tools:text="label"
                 android:textColor="?android:attr/colorAccent" />
         </LinearLayout>
     </LinearLayout>
@@ -125,7 +127,7 @@
                 android:clickable="false"
                 android:focusable="false"
                 android:text="···"
-                android:textSize="40dp"
+                android:textSize="40sp"
                 android:textStyle="normal" />
 
             <View

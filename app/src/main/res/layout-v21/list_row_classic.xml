@@ -16,6 +16,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="68dp"
+    xmlns:tools="http://schemas.android.com/tools"
     android:baselineAligned="true"
     android:orientation="horizontal">
 
@@ -63,7 +64,8 @@
                 android:id="@+id/digital_clock_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-thin"
+                tools:text="12:45"
+                android:fontFamily="sans-serif"
                 android:textSize="30sp" />
 
             <TextView
@@ -120,7 +122,7 @@
                 android:clickable="false"
                 android:focusable="false"
                 android:text="···"
-                android:textSize="40dp"
+                android:textSize="40sp"
                 android:textStyle="normal" />
 
             <View

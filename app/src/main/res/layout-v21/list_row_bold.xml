@@ -14,6 +14,7 @@
      limitations under the License.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="120dp"
     android:baselineAligned="true"
@@ -32,7 +33,7 @@
             android:id="@+id/list_row_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="label"
+            tools:text="label"
             android:textColor="?android:attr/colorAccent" />
 
         <com.better.alarm.view.DigitalClock
@@ -49,7 +50,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-thin"
-                android:textSize="50dp" />
+                android:textSize="50sp"
+                tools:text="12:45" />
 
             <TextView
                 android:id="@+id/digital_clock_am_pm"
@@ -62,7 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="2dip"
-            android:text="Weekdays"
+            tools:text="Weekdays"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="?android:attr/colorAccent" />
     </LinearLayout>
@@ -116,7 +118,7 @@
                 android:clickable="false"
                 android:focusable="false"
                 android:text="···"
-                android:textSize="40dp"
+                android:textSize="40sp"
                 android:textStyle="normal" />
 
             <View
