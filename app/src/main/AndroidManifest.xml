@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.better.alarm"
-    android:versionCode="30503"
-    android:versionName="3.05.03">
+    android:versionCode="30504"
+    android:versionName="3.05.04">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
