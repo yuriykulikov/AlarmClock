@@ -1,6 +1,6 @@
 buildscript {
     dependencies {
-        classpath(kotlin("gradle-plugin", version = "1.3.31"))
+        classpath(kotlin("gradle-plugin", version = "1.3.30"))
     }
 }
 
@@ -65,11 +65,11 @@ val acraEmail = project.rootProject.file("local.properties")
         .getOrDefault("acra.email", "")
 
 android {
-    compileSdkVersion(28)
+    compileSdkVersion(26)
     defaultConfig {
         applicationId = "com.better.alarm"
         minSdkVersion(15)
-        targetSdkVersion(28)
+        targetSdkVersion(26)
         testApplicationId = "com.better.alarm.test"
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
     }
