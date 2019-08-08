@@ -126,7 +126,7 @@ class AlarmsListActivity : FragmentActivity() {
                     editing.onNext(EditedAlarm(
                             isNew = false,
                             value = Optional.absent(),
-                            id = holder.alarmId(),
+                            id = holder.alarmId,
                             holder = Optional.of(holder)))
                 }
             }
@@ -309,9 +309,9 @@ class AlarmsListActivity : FragmentActivity() {
     }
 
     private fun RowHolder.addSharedElementsToTransition(fragmentTransaction: FragmentTransaction) {
-        fragmentTransaction.addSharedElement(digitalClock(), "clock" + alarmId())
-        fragmentTransaction.addSharedElement(container(), "onOff" + alarmId())
-        fragmentTransaction.addSharedElement(detailsButton(), "detailsButton" + alarmId())
+        fragmentTransaction.addSharedElement(digitalClock, "clock" + alarmId)
+        fragmentTransaction.addSharedElement(container, "onOff" + alarmId)
+        fragmentTransaction.addSharedElement(detailsButton, "detailsButton" + alarmId)
     }
 
     /**

@@ -71,20 +71,20 @@ class AlarmsListFragment : Fragment() {
 
             val row = recycleView(convertView, parent, alarm.id)
 
-            row.onOff().isChecked = alarm.isEnabled
+            row.onOff.isChecked = alarm.isEnabled
 
             lollipop {
-                row.digitalClock().transitionName = "clock" + alarm.id
-                row.container().transitionName = "onOff" + alarm.id
-                row.detailsButton().transitionName = "detailsButton" + alarm.id
+                row.digitalClock.transitionName = "clock" + alarm.id
+                row.container.transitionName = "onOff" + alarm.id
+                row.detailsButton.transitionName = "detailsButton" + alarm.id
             }
 
             //Delete add, skip animation
-            if (row.idHasChanged()) {
-                row.onOff().jumpDrawablesToCurrentState()
+            if (row.idHasChanged) {
+                row.onOff.jumpDrawablesToCurrentState()
             }
 
-            row.container()
+            row.container
                     //onOff
                     .setOnClickListener {
                         val enable = !alarm.isEnabled
@@ -92,7 +92,7 @@ class AlarmsListFragment : Fragment() {
                         alarms.enable(alarm, enable)
                     }
 
-            row.digitalClock().setOnClickListener {
+            row.digitalClock.setOnClickListener {
                 timePickerDialogDisposable = TimePickerDialogFragment.showTimePicker(fragmentManager)
                         .subscribe { picked ->
                             if (picked.isPresent()) {
@@ -111,24 +111,24 @@ class AlarmsListFragment : Fragment() {
             val c = Calendar.getInstance()
             c.set(Calendar.HOUR_OF_DAY, alarm.hour)
             c.set(Calendar.MINUTE, alarm.minutes)
-            row.digitalClock().updateTime(c)
+            row.digitalClock.updateTime(c)
 
             val removeEmptyView = listRowLayout == Layout.CLASSIC || listRowLayout == Layout.COMPACT
             // Set the repeat text or leave it blank if it does not repeat.
             val daysOfWeekStr = alarm.daysOfWeek.toString(context, false)
 
-            row.daysOfWeek().text = daysOfWeekStr
+            row.daysOfWeek.text = daysOfWeekStr
 
-            row.daysOfWeek().visibility = when {
+            row.daysOfWeek.visibility = when {
                 daysOfWeekStr.isNotEmpty() -> View.VISIBLE
                 removeEmptyView -> View.GONE
                 else -> View.INVISIBLE
             }
 
             // Set the repeat text or leave it blank if it does not repeat.
-            row.label().text = alarm.label
+            row.label.text = alarm.label
 
-            row.label().visibility = when {
+            row.label.visibility = when {
                 alarm.label.isNotBlank() -> View.VISIBLE
                 removeEmptyView -> View.GONE
                 else -> View.INVISIBLE
@@ -139,7 +139,7 @@ class AlarmsListFragment : Fragment() {
             //     else -> View.VISIBLE
             // }
 
-            return row.rowView()
+            return row.rowView
         }
     }
 

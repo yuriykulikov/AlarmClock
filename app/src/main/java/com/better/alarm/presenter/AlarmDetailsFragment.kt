@@ -110,28 +110,28 @@ class AlarmDetailsFragment : Fragment() {
         this.fragmentView = view
 
         rowHolder.run {
-            container().setOnClickListener {
+            this.container.setOnClickListener {
                 modify("onOff") { editor ->
                     editor.copy(isEnabled = !editor.isEnabled)
                 }
             }
 
             // detailsButton().visibility = View.INVISIBLE
-            daysOfWeek().visibility = View.INVISIBLE
-            label().visibility = View.INVISIBLE
+            daysOfWeek.visibility = View.INVISIBLE
+            label.visibility = View.INVISIBLE
 
             lollipop {
-                digitalClock().transitionName = "clock$alarmId"
-                container().transitionName = "onOff$alarmId"
-                detailsButton().transitionName = "detailsButton$alarmId"
+                this.digitalClock.transitionName = "clock$alarmId"
+                this.container.transitionName = "onOff$alarmId"
+                this.detailsButton.transitionName = "detailsButton$alarmId"
             }
 
-            digitalClock().setLive(false)
-            digitalClock().setOnClickListener {
+            digitalClock.setLive(false)
+            digitalClock.setOnClickListener {
                 disposableDialog = TimePickerDialogFragment.showTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
             }
 
-            rowView().setOnClickListener {
+            rowView.setOnClickListener {
                 saveAlarm()
             }
         }
@@ -231,12 +231,12 @@ class AlarmDetailsFragment : Fragment() {
         disposables.add(editor
                 .distinctUntilChanged()
                 .subscribe { editor ->
-                    rowHolder.digitalClock().updateTime(Calendar.getInstance().apply {
+                    rowHolder.digitalClock.updateTime(Calendar.getInstance().apply {
                         set(Calendar.HOUR_OF_DAY, editor.hour)
                         set(Calendar.MINUTE, editor.minutes)
                     })
 
-                    rowHolder.onOff().isChecked = editor.isEnabled
+                    rowHolder.onOff.isChecked = editor.isEnabled
                     mPreAlarmCheckBox.isChecked = editor.isPrealarm
 
                     mRepeatSummary.text = editor.daysOfWeek.summary(context)
@@ -334,7 +334,7 @@ class AlarmDetailsFragment : Fragment() {
                         val selectableItemBackground = TypedValue().apply {
                             parentActivity.theme.resolveAttribute(android.R.attr.selectableItemBackground, this, true)
                         }.resourceId
-                        rowHolder.rowView().setBackgroundResource(selectableItemBackground)
+                        rowHolder.rowView.setBackgroundResource(selectableItemBackground)
                     }
                     (enterTransition as Transition).removeListener(this)
                 }

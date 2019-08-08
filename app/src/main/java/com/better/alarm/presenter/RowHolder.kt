@@ -12,17 +12,19 @@ import com.better.alarm.view.DigitalClock
  */
 class RowHolder(view: View, id: Int, val layout: Layout) {
     val digitalClock: DigitalClock
-    private val rowView: View = view
-    private val onOff: CompoundButton
-    private val container: View
-    private val alarmId: Int = id
-    private val daysOfWeek: TextView
-    private val label: TextView
-    private val detailsButton: View
-    private val idHasChanged: Boolean
+    val digitalClockContainer: View
+    val rowView: View = view
+    val onOff: CompoundButton
+    val container: View
+    val alarmId: Int = id
+    val daysOfWeek: TextView
+    val label: TextView
+    val detailsButton: View
+    val idHasChanged: Boolean
 
     init {
         digitalClock = find(R.id.list_row_digital_clock) as DigitalClock
+        digitalClockContainer = find(R.id.list_row_digital_clock_container)
         onOff = find(R.id.list_row_on_off_switch) as CompoundButton
         container = find(R.id.list_row_on_off_checkbox_container)
         daysOfWeek = find(R.id.list_row_daysOfWeek) as TextView
@@ -34,14 +36,4 @@ class RowHolder(view: View, id: Int, val layout: Layout) {
     }
 
     private fun find(id: Int): View = rowView.findViewById(id)
-
-    fun digitalClock(): DigitalClock = digitalClock
-    fun rowView(): View = rowView
-    fun onOff(): CompoundButton = onOff
-    fun alarmId(): Int = alarmId
-    fun container() = container
-    fun daysOfWeek(): TextView = daysOfWeek
-    fun label(): TextView = label
-    fun detailsButton(): View = detailsButton
-    fun idHasChanged(): Boolean = idHasChanged
 }
