@@ -127,7 +127,7 @@ class AlarmDetailsFragment : Fragment() {
             }
 
             digitalClock.setLive(false)
-            digitalClock.setOnClickListener {
+            digitalClockContainer.setOnClickListener {
                 disposableDialog = TimePickerDialogFragment.showTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
             }
 

@@ -92,7 +92,7 @@ class AlarmsListFragment : Fragment() {
                         alarms.enable(alarm, enable)
                     }
 
-            row.digitalClock.setOnClickListener {
+            row.digitalClockContainer.setOnClickListener {
                 timePickerDialogDisposable = TimePickerDialogFragment.showTimePicker(fragmentManager)
                         .subscribe { picked ->
                             if (picked.isPresent()) {
