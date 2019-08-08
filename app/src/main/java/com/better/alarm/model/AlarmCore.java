@@ -129,20 +129,22 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
         this.store = store;
 
         stateMachine = new AlarmStateMachine(container.getState(), "Alarm " + container.getId(), handlerFactory);
-        // we always resume SM. This means that initial state will not receive
-        // enter(), only resume()
-        stateMachine.resume();
-
-        updateListInStore();
 
         preAlarmDuration
                 .skip(1)// not interested in the first update on startup
                 .subscribe(new Consumer() {
-            @Override
-            public void accept(Object o) throws Exception {
-                stateMachine.sendMessage(AlarmStateMachine.PREALARM_DURATION_CHANGED);
-            }
-        });
+                    @Override
+                    public void accept(Object o) throws Exception {
+                        stateMachine.sendMessage(AlarmStateMachine.PREALARM_DURATION_CHANGED);
+                    }
+                });
+    }
+
+    public void start() {
+        // we always resume SM. This means that initial state will not receive
+        // enter(), only resume()
+        stateMachine.resume();
+        updateListInStore();
     }
 
     /**
@@ -521,9 +523,10 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
             }
 
             private class SnoozedState extends AlarmState {
+                Calendar nextTime;
+
                 @Override
                 public void enter() {
-                    Calendar nextTime;
                     Calendar now = calendars.now();
                     Message reason = getCurrentMessage();
                     if (reason.obj().isPresent()) {
@@ -537,6 +540,14 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
                             nextTime = getNextRegualarSnoozeCalendar();
                         }
                     } else {
+                        nextTime = getNextRegualarSnoozeCalendar();
+                    }
+                }
+
+                @Override
+                public void resume() {
+                    // alarm was started again while snoozed alarm was hanging in there
+                    if (nextTime == null) {
                         nextTime = getNextRegualarSnoozeCalendar();
                     }
 
@@ -560,6 +571,7 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
                 protected void onSnooze() {
                     //reschedule from notification
                     enter();
+                    resume();
                 }
 
                 @Override

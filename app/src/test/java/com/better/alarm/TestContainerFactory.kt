@@ -11,9 +11,21 @@ import com.better.alarm.persistance.PersistingContainerFactory
  */
 class TestContainerFactory(private val calendars: Calendars) : ContainerFactory {
     private var idCounter: Int = 0
+    val createdRecords = mutableListOf<AlarmActiveRecord>()
 
     override fun create(): AlarmActiveRecord {
-        return PersistingContainerFactory.create(calendars, PersistingContainerFactory.PERSISTENCE_STUB, { _ -> idCounter++ })
+        return PersistingContainerFactory.create(calendars, object : AlarmActiveRecord.Persistence {
+            override fun delete(activeRecord: AlarmActiveRecord) {
+                createdRecords.removeIf { it.id == activeRecord.id }
+            }
+
+            override fun persist(activeRecord: AlarmActiveRecord) {
+                createdRecords.removeIf { it.id == activeRecord.id }
+                createdRecords.add(activeRecord)
+            }
+        }, { _ -> idCounter++ }).also {
+            createdRecords.add(it)
+        }
     }
 
     override fun create(cursor: Cursor): AlarmActiveRecord {

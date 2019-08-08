@@ -59,6 +59,7 @@ public class Alarms implements IAlarmsManager {
                 for (AlarmActiveRecord container : alarmRecords) {
                     final AlarmCore a = factory.create(container);
                     alarms.put(a.getId(), a);
+                    a.start();
                     //TODO a.refresh();, but with a delay or something. We do not want to refresh the alarms that have just fired, right?
                 }
             }
@@ -94,6 +95,7 @@ public class Alarms implements IAlarmsManager {
     public Alarm createNewAlarm() {
         AlarmCore alarm = factory.create(containerFactory.create());
         alarms.put(alarm.getId(), alarm);
+        alarm.start();
         return alarm;
     }
 
