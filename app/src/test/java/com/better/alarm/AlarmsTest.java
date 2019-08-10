@@ -57,10 +57,15 @@ public class AlarmsTest {
     private Store store;
     private Prefs prefs;
     private Logger logger;
+    private int currentHour = 0;
+    private int currentMinute = 0;
     private final Calendars calendars = new Calendars() {
         @Override
         public Calendar now() {
-            return Calendar.getInstance();
+            Calendar instance = Calendar.getInstance();
+            instance.set(Calendar.HOUR_OF_DAY, currentHour);
+            instance.set(Calendar.MINUTE, currentMinute);
+            return instance;
         }
     };
     private final TestContainerFactory containerFactory = new TestContainerFactory(calendars);
@@ -480,18 +485,19 @@ public class AlarmsTest {
         assertThat(alarmSetterMock.getId()).isEqualTo(record.getId());
     }
 
-
     @Test
     public void snoozedAlarmsMustCanBeRescheduled() {
         //given
         Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
-        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(new DaysOfWeek(0)).withIsPrealarm(false).commit();
+        newAlarm.edit().withIsEnabled(true).withHour(7).withDaysOfWeek(new DaysOfWeek(0)).withIsPrealarm(false).commit();
         testScheduler.triggerActions();
 
         //when alarm fired
+        currentHour = 7;
         instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
         testScheduler.triggerActions();
+
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
 
         instance.snooze(newAlarm);
@@ -499,10 +505,31 @@ public class AlarmsTest {
 
         System.out.println("------------");
 
-        newAlarm.snooze(1, 42);
+        newAlarm.snooze(7, 42);
         testScheduler.triggerActions();
 
         assertThat(alarmSetterMock.getId()).isEqualTo(newAlarm.getId());
         assertThat(alarmSetterMock.getCalendar().get(Calendar.MINUTE)).isEqualTo(42);
+    }
+
+    @Test
+    public void snoozedAlarmsMustGoOutOfHibernationIfItWasRescheduled() {
+        snoozedAlarmsMustCanBeRescheduled();
+
+        AlarmActiveRecord record = containerFactory.getCreatedRecords().get(0);
+
+        System.out.println("------------");
+        // now we simulate it started all over again
+        alarmSetterMock.removeRTCAlarm();
+
+        final DatabaseQuery query = mock(DatabaseQuery.class);
+        when(query.query()).thenReturn(Single.just(containerFactory.getCreatedRecords()));
+        Alarms newAlarms = createAlarms(query);
+        newAlarms.start();
+        testScheduler.triggerActions();
+
+        assertThat(alarmSetterMock.getId()).isEqualTo(record.getId());
+        // TODO
+        //  assertThat(alarmSetterMock.getCalendar().get(Calendar.MINUTE)).isEqualTo(42);
     }
 }
