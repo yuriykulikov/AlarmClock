@@ -15,4 +15,14 @@
         <item name="android:windowNoTitle">true</item>
         <item name="timePickerDeleteButtonStyle">@style/DarkTimePickerDeleteButtonStyle</item>
     </style>
+
+    <style name="DarkAlarmDetailsButtonStyle">
+        <item name="android:src">@android:drawable/ic_menu_more</item>
+        <item name="android:tint">@color/grey</item>
+    </style>
+
+    <style name="DarkTimePickerDeleteButtonStyle">
+        <item name="android:src">@drawable/ic_backspace</item>
+        <item name="android:tint">@color/grey</item>
+    </style>
 </resources>

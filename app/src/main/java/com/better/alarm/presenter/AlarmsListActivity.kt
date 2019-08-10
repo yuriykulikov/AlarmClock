@@ -18,6 +18,7 @@
 package com.better.alarm.presenter
 
 import android.annotation.TargetApi
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
@@ -130,6 +131,14 @@ class AlarmsListActivity : FragmentActivity() {
                             holder = Optional.of(holder)))
                 }
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent?.getStringExtra("reason") == SettingsFragment.themeChangeReason) {
+            finish()
+            startActivity(Intent(this, AlarmsListActivity::class.java))
         }
     }
 

@@ -30,6 +30,10 @@ class SettingsFragment : PreferenceFragment() {
     private val contentResolver: ContentResolver
         get() = activity.contentResolver
 
+    companion object {
+        const val themeChangeReason = "theme change"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -52,8 +56,9 @@ class SettingsFragment : PreferenceFragment() {
 
         findPreference("theme").onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
             Handler().post {
-                val intent = activity.packageManager.getLaunchIntentForPackage(activity.packageName).apply {
+                val intent = activity.packageManager.getLaunchIntentForPackage(activity.packageName)?.apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    putExtra("reason", themeChangeReason)
                 }
                 startActivity(intent)
             }

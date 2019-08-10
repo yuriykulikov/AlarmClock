@@ -13,4 +13,10 @@
         <item name="android:windowNoTitle">true</item>
         <item name="timePickerDeleteButtonStyle">@style/LightTimePickerDeleteButtonStyle</item>
     </style>
+
+    <style name="LightTimePickerDeleteButtonStyle">
+        <item name="android:src">@drawable/ic_backspace</item>
+        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
+        <item name="android:tint">@color/blackish</item>
+    </style>
 </resources>
