@@ -98,7 +98,6 @@ public class AlarmApplication extends Application {
         }
 
         sThemeHandler = new DynamicThemeHandler(this);
-        setTheme(sThemeHandler.defaultTheme());
 
         try {
             ViewConfiguration config = ViewConfiguration.get(this);

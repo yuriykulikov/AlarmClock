@@ -44,4 +44,13 @@
     <drawable name="notification_template_icon_low_bg">#0cffffff</drawable>
 
     <color name="pressed_greenactionbar">#CC99CC00</color>
+    <color name="mat_blue">#4285F4</color>
+    <color name="mat_red">#DB4437</color>
+    <color name="mat_yellow">#F4B400</color>
+    <color name="mat_green_g">#0F9D58</color>
+    <color name="mat_green">#4CAF50</color>
+    <color name="mat_dark_grey">#121212</color>
+    <color name="mat_dark_grey_purple_overlay">#332940</color>
+    <color name="mat_dark_grey_purple_overlay_original">#5D4B70</color>
+    <color name="mat_purple">#BB86FC</color>
 </resources>

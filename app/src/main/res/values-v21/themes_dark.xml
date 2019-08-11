@@ -2,7 +2,6 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Dark Themes -->
     <style name="DefaultDarkTheme" parent="android:Theme.Material">
-        <item name="alarmDetailsButtonStyle">@style/DarkAlarmDetailsButtonStyle</item>
     </style>
 
     <style name="AlarmAlertFullScreenDarkTheme" parent="android:Theme.Material.NoActionBar">

@@ -66,10 +66,6 @@
         <item><xliff:g id="DAYS" example="2 days">%1$s</xliff:g>, <xliff:g id="HOURS" example="2 ore">%2$s</xliff:g>, e <xliff:g id="MINUTES" example="2 minuti">%3$s</xliff:g></item>
     </string-array>
     <string name="theme_title">Interfaccia</string>
-    <string-array name="themes_entries">
-        <item>Buio</item>
-        <item>Chiaro</item>
-    </string-array>
     <string name="simple_alarm_clock">La Sveglia Semplice</string>
     <string-array name="snooze_duration_with_off_entries">
         <item>Off</item>

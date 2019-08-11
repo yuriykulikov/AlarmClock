@@ -57,10 +57,6 @@
         <item>"<xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> и <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
     </string-array>
     <string name="theme_title">Цветовая гамма</string>
-    <string-array name="themes_entries">
-        <item>Темный</item>
-        <item>Светлый</item>
-    </string-array>
     <string-array name="preference_list_row_layout_entries">
         <item>Компактный</item>
         <item>Нормальный</item>

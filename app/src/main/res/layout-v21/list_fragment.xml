@@ -71,6 +71,7 @@
             app:fab_colorNormal="?android:attr/colorAccent"
             app:fab_colorPressed="?android:attr/colorAccent"
             android:backgroundTint="?android:attr/colorAccent"
+            android:backgroundTintMode="src_atop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"

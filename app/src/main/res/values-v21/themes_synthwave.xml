@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Light Themes -->
+    <style name="DefaultSynthwaveTheme" parent="android:Theme.Material">
+        <item name="android:colorAccent">@color/mat_purple</item>
+        <item name="android:backgroundTint">@color/mat_dark_grey</item>
+        <item name="android:actionBarStyle">@style/SynthwaveActionBarStyle</item>
+        <item name="android:dialogTheme">@style/SynthwaveDialogTheme</item>
+        <item name="android:alertDialogTheme">@style/SynthwaveDialogTheme</item>
+    </style>
+
+    <style name="SynthwaveActionBarStyle" parent="android:Widget.Material.ActionBar">
+        <item name="android:background">@color/mat_dark_grey_purple_overlay</item>
+    </style>
+
+    <style name="SynthwaveDialogTheme" parent="android:Theme.Material.Dialog">
+        <item name="android:colorAccent">@color/mat_purple</item>
+        <item name="android:backgroundTint">@color/mat_dark_grey_purple_overlay</item>
+        <item name="android:windowBackground">@color/mat_dark_grey_purple_overlay</item>
+    </style>
+
+    <style name="AlarmAlertFullScreenSynthwaveTheme" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:colorAccent">@color/mat_purple</item>
+    </style>
+
+    <style name="TimePickerDialogFragmentSynthwave" parent="android:style/Theme.Material.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="timePickerDeleteButtonStyle">@style/DarkTimePickerDeleteButtonStyle</item>
+        <item name="android:colorAccent">@color/mat_purple</item>
+        <item name="android:backgroundTint">@color/mat_dark_grey_purple_overlay</item>
+    </style>
+</resources>
