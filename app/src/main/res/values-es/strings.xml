@@ -70,10 +70,6 @@
     </string-array>
 
     <string name="theme_title">Tema de la interfaz</string>
-    <string-array name="themes_entries">
-        <item>Holo oscuro</item>
-        <item>Clásico</item>
-    </string-array>
     <string name="simple_alarm_clock">Sencilla-despertador</string>
     <!--
      Entries listed in the ListPreference when invoking the snooze duration

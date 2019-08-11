@@ -57,10 +57,6 @@
         <item msgid="2332583385137381060">"<xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> und <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
     </string-array>
     <string name="theme_title">Oberfläche</string>
-    <string-array name="themes_entries">
-        <item>Dunkel</item>
-        <item>Hell</item>
-    </string-array>
     <string name="preference_list_row_layout_title">Zeilengröße</string>
     <string-array name="preference_list_row_layout_entries">
         <item>Kompakt</item>
