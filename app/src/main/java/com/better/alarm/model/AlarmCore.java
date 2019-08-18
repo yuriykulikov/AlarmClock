@@ -553,7 +553,7 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
                     }
 
                     setAlarm(nextTime, CalendarType.NORMAL);
-                    broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION);
+                    //broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION); Yar_18.08-2038: nafig broadcast iz resume
                 }
 
                 private Calendar getNextRegualarSnoozeCalendar() {
