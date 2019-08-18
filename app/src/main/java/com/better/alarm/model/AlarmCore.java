@@ -542,6 +542,7 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
                     } else {
                         nextTime = getNextRegualarSnoozeCalendar();
                     }
+                    broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION); // Yar. 18.08
                 }
 
                 @Override
@@ -584,7 +585,7 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
             private class PreAlarmSnoozedState extends AlarmState {
                 @Override
                 public void enter() {
-                    setAlarm(calculateNextTime(), CalendarType.NORMAL);
+                    //Yar 18.08: setAlarm -> resume; setAlarm(calculateNextTime(), CalendarType.NORMAL);
                     broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION);
                 }
 
@@ -603,6 +604,12 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
                 public void exit() {
                     removeAlarm();
                     broadcastAlarmState(Intents.ACTION_CANCEL_SNOOZE);
+                }
+
+                @Override
+                public void resume() {
+                    setAlarm(calculateNextTime(), CalendarType.NORMAL);
+                    super.resume();
                 }
             }
         }
