@@ -6,7 +6,6 @@ import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Tap;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.suitebuilder.annotation.LargeTest;
 
 import com.better.alarm.R;
 import com.better.alarm.presenter.SettingsActivity;
@@ -27,7 +26,6 @@ import static android.support.test.espresso.action.ViewActions.click;
  * Created by Yuriy on 11.07.2017.
  */
 @RunWith(AndroidJUnit4.class)
-@LargeTest
 public class SettingsTest extends BaseTest {
     public ActivityTestRule<SettingsActivity> settings = new ActivityTestRule<SettingsActivity>(
             SettingsActivity.class, false, /* autostart*/ true);

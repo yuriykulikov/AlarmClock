@@ -3,7 +3,6 @@ package com.better.alarm.test
 import android.support.test.InstrumentationRegistry
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
-import android.test.suitebuilder.annotation.LargeTest
 import com.better.alarm.logger.Logger
 import com.better.alarm.persistance.AlarmDatabaseHelper
 import com.better.alarm.presenter.AlarmsListActivity
@@ -16,7 +15,6 @@ import org.junit.runner.RunWith
 import java.util.*
 
 @RunWith(AndroidJUnit4::class)
-@LargeTest
 class ActionBarTest {
     var listActivity = ActivityTestRule(
             AlarmsListActivity::class.java, false, /* autostart*/ true)
