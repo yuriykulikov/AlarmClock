@@ -89,6 +89,16 @@ class PickerAmTest : BaseTest() {
         one().click()
         arrayOf(zero(), one(), two()).forEach { it.assertEnabled() }
         ok().assertDisabled()
+        pm().assertEnabled()
+    }
+
+    @Test
+    fun test1pm() {
+        one().click()
+        arrayOf(zero(), one(), two()).forEach { it.assertEnabled() }
+        am().click()
+        arrayOf(zero(), one(), two(), three(), four(), five()).forEach { it.assertDisabled() }
+        ok().assertEnabled()
         pm().assertDisabled()
     }
 
@@ -98,7 +108,7 @@ class PickerAmTest : BaseTest() {
         arrayOf(zero(), one(), two(), three(), four(), five()).forEach { it.assertEnabled() }
         arrayOf(six(), seven(), eight(), nine()).forEach { it.assertDisabled() }
         ok().assertDisabled()
-        pm().assertDisabled()
+        pm().assertEnabled()
     }
 
     @Test
@@ -107,7 +117,7 @@ class PickerAmTest : BaseTest() {
         arrayOf(zero(), one(), two(), three(), four(), five()).forEach { it.assertEnabled() }
         arrayOf(six(), seven(), eight(), nine()).forEach { it.assertDisabled() }
         ok().assertDisabled()
-        pm().assertDisabled()
+        pm().assertEnabled()
     }
 
     @Test
@@ -116,7 +126,7 @@ class PickerAmTest : BaseTest() {
         arrayOf(zero(), one(), two(), three(), four(), five()).forEach { it.assertEnabled() }
         arrayOf(six(), seven(), eight(), nine()).forEach { it.assertDisabled() }
         ok().assertDisabled()
-        pm().assertDisabled()
+        pm().assertEnabled()
     }
 
     @Test
@@ -125,7 +135,7 @@ class PickerAmTest : BaseTest() {
         arrayOf(zero(), one(), two(), three(), four(), five()).forEach { it.assertEnabled() }
         arrayOf(six(), seven(), eight(), nine()).forEach { it.assertDisabled() }
         ok().assertDisabled()
-        pm().assertDisabled()
+        pm().assertEnabled()
     }
 
     @Test
@@ -134,7 +144,7 @@ class PickerAmTest : BaseTest() {
         arrayOf(zero(), one(), two(), three(), four(), five()).forEach { it.assertEnabled() }
         arrayOf(six(), seven(), eight(), nine()).forEach { it.assertDisabled() }
         ok().assertDisabled()
-        pm().assertDisabled()
+        pm().assertEnabled()
     }
 
     @Test
@@ -143,7 +153,7 @@ class PickerAmTest : BaseTest() {
         arrayOf(zero(), one(), two(), three(), four(), five()).forEach { it.assertEnabled() }
         arrayOf(six(), seven(), eight(), nine()).forEach { it.assertDisabled() }
         ok().assertDisabled()
-        pm().assertDisabled()
+        pm().assertEnabled()
     }
 
     @Test
@@ -152,7 +162,7 @@ class PickerAmTest : BaseTest() {
         arrayOf(zero(), one(), two(), three(), four(), five()).forEach { it.assertEnabled() }
         arrayOf(six(), seven(), eight(), nine()).forEach { it.assertDisabled() }
         ok().assertDisabled()
-        pm().assertDisabled()
+        pm().assertEnabled()
     }
 
     @Test
@@ -161,7 +171,7 @@ class PickerAmTest : BaseTest() {
         arrayOf(zero(), one(), two(), three(), four(), five()).forEach { it.assertEnabled() }
         arrayOf(six(), seven(), eight(), nine()).forEach { it.assertDisabled() }
         ok().assertDisabled()
-        pm().assertDisabled()
+        pm().assertEnabled()
     }
 
     @Test

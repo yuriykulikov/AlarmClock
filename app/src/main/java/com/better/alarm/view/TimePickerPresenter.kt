@@ -43,7 +43,15 @@ open class TimePickerPresenter(private val is24HoursMode: Boolean) {
         when {
             key == Key.LEFT && is24HoursMode -> input = input.plus(0).plus(0)
             key == Key.RIGHT && is24HoursMode -> input = input.plus(3).plus(0)
+            key == Key.LEFT && input.hoursForAmPmEntered() -> {
+                amPm = AmPm.AM
+                input = input.plus(0).plus(0)
+            }
             key == Key.LEFT -> amPm = AmPm.AM
+            key == Key.RIGHT && input.hoursForAmPmEntered() -> {
+                amPm = AmPm.PM
+                input = input.plus(0).plus(0)
+            }
             key == Key.RIGHT -> amPm = AmPm.PM
         }
 
@@ -157,8 +165,21 @@ open class TimePickerPresenter(private val is24HoursMode: Boolean) {
 
         private fun amPm(): List<Key> = when {
             leftRightEntered -> none
+            // enable am pm keys if only hours are entered
+            input.size == 1 -> arrayListOf(Key.RIGHT, Key.LEFT)
+            // 10, 11, 12 am/pm
+            input.hoursForAmPmEntered() -> arrayListOf(Key.RIGHT, Key.LEFT)
+            input.size == 2 && input[0] == 1 && input[1] in (0..2) -> arrayListOf(Key.RIGHT, Key.LEFT)
             input.size >= 3 -> arrayListOf(Key.RIGHT, Key.LEFT)
             else -> none
         }
+    }
+}
+
+private fun List<Int>.hoursForAmPmEntered(): Boolean {
+    return when {
+        size == 1 -> true
+        size == 2 && first() == 1 && this[1] in (0..2) -> true
+        else -> false
     }
 }
