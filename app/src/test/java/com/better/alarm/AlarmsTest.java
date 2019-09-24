@@ -46,6 +46,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -531,5 +532,28 @@ public class AlarmsTest {
         assertThat(alarmSetterMock.getId()).isEqualTo(record.getId());
         // TODO
         //  assertThat(alarmSetterMock.getCalendar().get(Calendar.MINUTE)).isEqualTo(42);
+    }
+
+    @Test
+    public void prealarmFiredAlarmTransitioningToFiredShouldNotDismissTheService() {
+        //given
+        Alarms instance = createAlarms();
+        Alarm newAlarm = instance.createNewAlarm();
+        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(new DaysOfWeek(0)).withIsPrealarm(true).commit();
+        testScheduler.triggerActions();
+
+        //when alarm fired
+        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.PREALARM);
+        testScheduler.triggerActions();
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_PREALARM_ACTION));
+
+        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
+        testScheduler.triggerActions();
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
+        verify(stateNotifierMock, never()).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
+
+        instance.snooze(newAlarm);
+        testScheduler.triggerActions();
+        verify(stateNotifierMock, times(1)).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
     }
 }

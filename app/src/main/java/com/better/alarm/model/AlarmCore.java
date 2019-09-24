@@ -518,7 +518,10 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
                 @Override
                 public void exit() {
                     removeAlarm();
-                    broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
+                    if (getCurrentMessage().what() != FIRED) {
+                        // do not dismiss because we will immediately fire another event at the service
+                        broadcastAlarmState(Intents.ALARM_DISMISS_ACTION);
+                    }
                 }
             }
 
