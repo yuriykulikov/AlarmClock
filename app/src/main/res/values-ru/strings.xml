@@ -117,4 +117,28 @@
     <string name="dialog_say_thanks_donate_paypal"><a href="https://www.paypal.me/YuriyKulikov">PayPal</a></string>
     <string name="dialog_say_thanks_donate_yandex"><a href="https://money.yandex.ru/to/410019676183865">Yandex</a></string>
 
+    <string name="notification_channel_high_prio">Большое окно с кнопками "выключить" и "отложить"</string>
+    <string name="notification_channel_default_prio">Уведомление об отложенном будильнике</string>
+    <string name="notification_channel_low_prio">Уведомление об истёкшем будильнике</string>
+    <string name="alert_notifications_title">Большая проблема!</string>
+    <string name="alert_notifications_turned_off">
+        Все уведомления выключены, включая большое окно с кнопками "выключить" и "отложить"!
+
+        \n\nНажмите OK чтобы перейти в настнойки и включить уведомления!</string>
+    <string name="alert_notifications_high_prio_text">
+        Приоритет большого окна с кнопками "выключить" и "отложить" слишком низок для разблокировки экрана!
+
+        \n\nВозможно, вы случайно выключили или изменили настройки уведомлений.
+
+        \n\nНажмите OK чтобы перейти в настнойки и выберите самое верхнее действие (Звук и всплывающее уведомлние).
+
+        \n\nЗабавно, но как раз звук надо выключить в дополнительных настройках.</string>
+    <string name="alert_notifications_default_prio_text">
+        Второстепенный уведомления выключены.
+
+        \n\nВозможно, вы случайно выключили или изменили настройки уведомлений.
+
+        \n\nНажмите OK чтобы перейти в настнойки и выберите второе верхнее действие (Звук).
+
+        \n\nЗабавно, но как раз звук надо выключить в дополнительных настройках.</string>
 </resources>

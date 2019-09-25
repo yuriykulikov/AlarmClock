@@ -181,4 +181,29 @@
     <string name="dialog_say_thanks_premium_text_as_button"><a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Go premium</a></string>
     <string name="dialog_say_thanks_donate_paypal"><a href="https://www.paypal.me/YuriyKulikov">PayPal</a></string>
     <string name="dialog_say_thanks_donate_yandex"><a href="https://money.yandex.ru/to/410019676183865">Yandex</a></string>
+
+    <string name="notification_channel_high_prio">Big popup with snooze and dismiss buttons</string>
+    <string name="notification_channel_default_prio">Notification for a snoozed alarm</string>
+    <string name="notification_channel_low_prio">Expired alarm notification</string>
+    <string name="alert_notifications_title">Oh no! Big problem!</string>
+    <string name="alert_notifications_turned_off">
+        All notifications are turned off, including the big popup with snooze and dismiss buttons!
+
+        \n\nClick OK to jump to settings and enable the notifications!</string>
+    <string name="alert_notifications_high_prio_text">
+        Priority of for the big popup with snooze and dismiss buttons is too low to unlock the screen!
+
+        \n\nIt happens if you have disabled and enabled notifications again or changed settings manually.
+
+        \n\nClick OK to jump to system settings and select the highest priority for this notification (Make sound and pop up on screen).
+
+        \n\nIronically, you should set the sound to "none" in advanced settings.</string>
+    <string name="alert_notifications_default_prio_text">
+        Secondary notifications are disabled.
+
+        \n\nIt happens if you have disabled and enabled notifications again or changed settings manually.
+
+        \n\nClick OK to jump to system settings and select the second highest priority for this notification (Make sound).
+
+        \n\nIronically, you should set the sound to "none" in advanced settings.</string>
 </resources>

@@ -23,15 +23,12 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.preference.PreferenceManager
 import android.text.format.DateFormat
-import com.better.alarm.BuildConfig
-import com.better.alarm.NotificationImportance
-import com.better.alarm.R
+import com.better.alarm.*
 import com.better.alarm.background.Event
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.interfaces.Alarm
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.interfaces.PresentationToModelIntents
-import com.better.alarm.notificationBuilder
 import com.better.alarm.presenter.TransparentActivity
 import java.util.*
 
@@ -78,7 +75,7 @@ class BackgroundNotifications {
                 ?.let { mContext.getString(R.string.alarm_notify_snooze_text, it.formatTimeString()) }
                 ?: ""
 
-        val status = mContext.notificationBuilder(CHANNEL_ID, NotificationImportance.NORMAL) {
+        val status = mContext.notificationBuilder(CHANNEL_ID) {
             // Get the display time for the snooze and update the notification.
             setContentTitle(getString(R.string.alarm_notify_snooze_label, label))
             setContentText(contentText)
@@ -116,7 +113,7 @@ class BackgroundNotifications {
                 "auto_silence", "10"))
         val text = mContext.getString(R.string.alarm_alert_alert_silenced, autoSilenceMinutes)
 
-        val notification = mContext.notificationBuilder(CHANNEL_ID, NotificationImportance.NORMAL) {
+        val notification = mContext.notificationBuilder(CHANNEL_ID) {
             setAutoCancel(true)
             setSmallIcon(R.drawable.stat_notify_alarm)
             setWhen(Calendar.getInstance().timeInMillis)
@@ -133,6 +130,5 @@ class BackgroundNotifications {
         private const val DM12 = "E h:mm aa"
         private const val DM24 = "E kk:mm"
         private const val BACKGROUND_NOTIFICATION_OFFSET = 1000
-        private const val CHANNEL_ID = "${BuildConfig.APPLICATION_ID}.BackgroundNotifications"
     }
 }
