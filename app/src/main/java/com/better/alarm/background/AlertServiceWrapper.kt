@@ -85,7 +85,7 @@ class AlertServiceWrapper : Service() {
                 ),
                 handleUnwantedEvent = {
                     oreo {
-                        val notification = notificationBuilder("${BuildConfig.APPLICATION_ID}.AlertServiceWrapper", NotificationImportance.LOW) {
+                        val notification = notificationBuilder(CHANNEL_ID) {
                             setContentTitle("Background")
                             setContentText("Background")
                             setSmallIcon(R.drawable.stat_notify_alarm)

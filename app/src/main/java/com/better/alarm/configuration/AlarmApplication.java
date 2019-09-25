@@ -22,6 +22,7 @@ import android.preference.PreferenceManager;
 import android.view.ViewConfiguration;
 
 import com.better.alarm.BuildConfig;
+import com.better.alarm.OreoKt;
 import com.better.alarm.R;
 import com.better.alarm.alert.BackgroundNotifications;
 import com.better.alarm.background.AlertServicePusher;
@@ -210,6 +211,8 @@ public class AlarmApplication extends Application {
         new ToastPresenter(store, getApplicationContext()).start();
         new AlertServicePusher(store, getApplicationContext());
         new BackgroundNotifications();
+
+        OreoKt.createNotificationChannels(this);
 
         // must be started the last, because otherwise we may loose intents from it.
         logger.d("Starting alarms");

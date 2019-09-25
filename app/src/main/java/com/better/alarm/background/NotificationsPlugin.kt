@@ -60,7 +60,7 @@ class NotificationsPlugin(
         val pendingDismiss = PresentationToModelIntents.createPendingIntent(mContext,
                 PresentationToModelIntents.ACTION_REQUEST_DISMISS, alarm.id)
 
-        val notification = mContext.notificationBuilder(CHANNEL_ID, NotificationImportance.HIGH) {
+        val notification = mContext.notificationBuilder(CHANNEL_ID_HIGH_PRIO, NotificationImportance.HIGH) {
             setContentTitle(alarm.label)
             setContentText(getString(R.string.alarm_notify_text))
             setSmallIcon(R.drawable.stat_notify_alarm)
@@ -100,8 +100,4 @@ class NotificationsPlugin(
     }
 
     private fun getString(id: Int) = mContext.getString(id)
-
-    companion object {
-        private const val CHANNEL_ID = "${BuildConfig.APPLICATION_ID}.NotificationsPlugin"
-    }
 }

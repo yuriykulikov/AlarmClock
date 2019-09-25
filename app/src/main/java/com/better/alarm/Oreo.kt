@@ -7,30 +7,20 @@ import android.content.Context
 import android.os.Build
 import android.support.v4.app.NotificationCompat
 
+
 enum class NotificationImportance {
     HIGH, NORMAL, LOW;
 }
+
+const val CHANNEL_ID_HIGH_PRIO = "${BuildConfig.APPLICATION_ID}.NotificationsPlugin"
+const val CHANNEL_ID = "${BuildConfig.APPLICATION_ID}.BackgroundNotifications"
+const val CHANNEL_RESERVED = "${BuildConfig.APPLICATION_ID}.AlertServiceWrapper"
 
 fun Context.notificationBuilder(
         channelId: String,
         importance: NotificationImportance = NotificationImportance.NORMAL,
         notificationBuilder: NotificationCompat.Builder.() -> Unit
 ): Notification {
-    oreo {
-        val name = getString(R.string.app_label)
-        val channel = NotificationChannel(channelId, name, when (importance) {
-            NotificationImportance.HIGH -> NotificationManager.IMPORTANCE_HIGH
-            NotificationImportance.NORMAL -> NotificationManager.IMPORTANCE_DEFAULT
-            NotificationImportance.LOW -> NotificationManager.IMPORTANCE_LOW
-        })
-        channel.setSound(null, null)
-
-        // Register the channel with the system; you can't change the importance
-        // or other notification behaviors after this
-        val notificationManager = getSystemService(NotificationManager::class.java)
-        notificationManager!!.createNotificationChannel(channel)
-    }
-
     val builder = when {
         Build.VERSION.SDK_INT >= 26 -> NotificationCompat.Builder(this, channelId)
         else -> NotificationCompat.Builder(this, channelId)
@@ -39,6 +29,36 @@ fun Context.notificationBuilder(
     notificationBuilder(builder)
 
     return builder.build()
+}
+
+fun Context.createNotificationChannels() {
+    oreo {
+        // Register the channel with the system; you can't change the importance
+        // or other notification behaviors after this
+        getSystemService(NotificationManager::class.java)?.run {
+            createNotificationChannel(NotificationChannel(
+                    CHANNEL_ID,
+                    getString(R.string.notification_channel_default_prio),
+                    NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
+                setSound(null, null)
+            })
+            createNotificationChannel(NotificationChannel(
+                    CHANNEL_ID_HIGH_PRIO,
+                    getString(R.string.notification_channel_high_prio),
+                    NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                setSound(null, null)
+            })
+            createNotificationChannel(NotificationChannel(
+                    CHANNEL_RESERVED,
+                    getString(R.string.notification_channel_low_prio),
+                    NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                setSound(null, null)
+            })
+        }
+    }
 }
 
 fun oreo(action: () -> Unit) {
