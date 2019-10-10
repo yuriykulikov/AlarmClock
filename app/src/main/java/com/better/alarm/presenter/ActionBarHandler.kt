@@ -131,8 +131,6 @@ class ActionBarHandler(context: Activity, private val store: UiStore, private va
             }
 
             findViewById<TextView>(R.id.dialog_say_thanks_text_as_button_donate_premium).movementMethod = LinkMovementMethod.getInstance()
-            findViewById<TextView>(R.id.dialog_say_thanks_text_as_button_donate_paypal).movementMethod = LinkMovementMethod.getInstance()
-            findViewById<TextView>(R.id.dialog_say_thanks_text_as_button_donate_yandex).movementMethod = LinkMovementMethod.getInstance()
         }
 
         AlertDialog.Builder(mContext).apply {
