@@ -545,6 +545,8 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
                     } else {
                         nextTime = getNextRegualarSnoozeCalendar();
                     }
+                    // change the next time to show notification properly
+                    container = container.withNextTime(nextTime);
                     broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION); // Yar. 18.08
                 }
 
