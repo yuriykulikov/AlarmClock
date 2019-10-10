@@ -38,6 +38,7 @@ import com.better.alarm.model.AlarmValue;
 import com.better.alarm.model.Alarms;
 import com.better.alarm.model.AlarmsScheduler;
 import com.better.alarm.model.Calendars;
+import com.better.alarm.model.IStateNotifier;
 import com.better.alarm.model.ImmediateHandlerFactory;
 import com.better.alarm.persistance.DatabaseQuery;
 import com.better.alarm.persistance.PersistingContainerFactory;
@@ -181,7 +182,7 @@ public class AlarmApplication extends Application {
         };
 
         AlarmsScheduler alarmsScheduler = new AlarmsScheduler(setter, logger, store, prefs, calendars);
-        AlarmCore.IStateNotifier broadcaster = new AlarmStateNotifier(store);
+        IStateNotifier broadcaster = new AlarmStateNotifier(store);
         HandlerFactory handlerFactory = new ImmediateHandlerFactory();
         PersistingContainerFactory containerFactory = new PersistingContainerFactory(calendars, getApplicationContext());
         Alarms alarms = new Alarms(alarmsScheduler, new DatabaseQuery(getContentResolver(), containerFactory), new AlarmCoreFactory(logger,

@@ -10,6 +10,7 @@ import com.better.alarm.interfaces.Intents
 import com.better.alarm.util.Service
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import java.util.Calendar
 
 /**
  * This wraps [AlertService], does dependency injection and delegates everything to it.
@@ -122,7 +123,10 @@ class AlertServiceWrapper : Service() {
                 Intents.ACTION_MUTE -> Event.MuteEvent()
                 Intents.ACTION_DEMUTE -> Event.DemuteEvent()
                 Intents.ACTION_SOUND_EXPIRED -> Event.Autosilenced(intent.getIntExtra(Intents.EXTRA_ID, -1))
-                Intents.ALARM_SNOOZE_ACTION -> Event.SnoozedEvent(intent.getIntExtra(Intents.EXTRA_ID, -1))
+                Intents.ALARM_SNOOZE_ACTION -> Event.SnoozedEvent(
+                        id = intent.getIntExtra(Intents.EXTRA_ID, -1),
+                        calendar = Calendar.getInstance().apply { timeInMillis = intent.getLongExtra("calendar", 0L) }
+                )
                 Intents.ALARM_DISMISS_ACTION -> Event.DismissEvent(intent.getIntExtra(Intents.EXTRA_ID, -1))
                 else -> throw RuntimeException("Unknown action ${intent.action}")
             })

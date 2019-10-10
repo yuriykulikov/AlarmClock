@@ -7,7 +7,6 @@ import com.better.alarm.configuration.Store
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.oreo
 import com.better.alarm.preOreo
-import java.lang.RuntimeException
 
 class AlertServicePusher(store: Store, context: Context) {
     init {
@@ -17,7 +16,10 @@ class AlertServicePusher(store: Store, context: Context) {
                         is Event.AlarmEvent -> Intent(Intents.ALARM_ALERT_ACTION).apply { putExtra(Intents.EXTRA_ID, it.id) }
                         is Event.PrealarmEvent -> Intent(Intents.ALARM_PREALARM_ACTION).apply { putExtra(Intents.EXTRA_ID, it.id) }
                         is Event.DismissEvent -> Intent(Intents.ALARM_DISMISS_ACTION).apply { putExtra(Intents.EXTRA_ID, it.id) }
-                        is Event.SnoozedEvent -> Intent(Intents.ALARM_SNOOZE_ACTION).apply { putExtra(Intents.EXTRA_ID, it.id) }
+                        is Event.SnoozedEvent -> Intent(Intents.ALARM_SNOOZE_ACTION).apply {
+                            putExtra(Intents.EXTRA_ID, it.id)
+                            putExtra("calendar", it.calendar.timeInMillis)
+                        }
                         is Event.Autosilenced -> Intent(Intents.ACTION_SOUND_EXPIRED).apply { putExtra(Intents.EXTRA_ID, it.id) }
                         is Event.MuteEvent -> Intent(Intents.ACTION_MUTE)
                         is Event.DemuteEvent -> Intent(Intents.ACTION_DEMUTE)
