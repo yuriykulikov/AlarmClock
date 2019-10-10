@@ -12,7 +12,7 @@ import com.better.alarm.statemachine.HandlerFactory
 class AlarmCoreFactory(
         private val logger: Logger,
         private val alarmsScheduler: IAlarmsScheduler,
-        private val broadcaster: IStateNotifier,
+        private val broadcaster: AlarmCore.IStateNotifier,
         private val handlerFactory: HandlerFactory,
         private val prefs: Prefs,
         private val store: Store,

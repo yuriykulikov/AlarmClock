@@ -10,7 +10,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.BiFunction
 import io.reactivex.subjects.BehaviorSubject
-import java.util.Calendar
 
 interface AlertPlugin {
     fun go(alarm: PluginAlarmData, prealarm: Boolean, targetVolume: Observable<TargetVolume>): Disposable
@@ -25,7 +24,7 @@ sealed class Event {
     data class AlarmEvent(val id: Int, val actions: String = Intents.ALARM_ALERT_ACTION) : Event()
     data class PrealarmEvent(val id: Int, val actions: String = Intents.ALARM_PREALARM_ACTION) : Event()
     data class DismissEvent(val id: Int, val actions: String = Intents.ALARM_DISMISS_ACTION) : Event()
-    data class SnoozedEvent(val id: Int, val actions: String = Intents.ALARM_SNOOZE_ACTION, val calendar: Calendar) : Event()
+    data class SnoozedEvent(val id: Int, val actions: String = Intents.ALARM_SNOOZE_ACTION) : Event()
     data class CancelSnoozedEvent(val id: Int, val actions: String = Intents.ACTION_CANCEL_SNOOZE) : Event()
     data class Autosilenced(val id: Int, val actions: String = Intents.ACTION_SOUND_EXPIRED) : Event()
     data class MuteEvent(val actions: String = Intents.ACTION_MUTE) : Event()

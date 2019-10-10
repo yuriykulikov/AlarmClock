@@ -28,6 +28,7 @@ import com.better.alarm.NotificationImportance
 import com.better.alarm.R
 import com.better.alarm.background.Event
 import com.better.alarm.configuration.AlarmApplication.container
+import com.better.alarm.interfaces.Alarm
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.interfaces.PresentationToModelIntents
 import com.better.alarm.notificationBuilder
@@ -51,13 +52,13 @@ class BackgroundNotifications {
                 is Event.PrealarmEvent -> nm.cancel(event.id + BACKGROUND_NOTIFICATION_OFFSET)
                 is Event.DismissEvent -> nm.cancel(event.id + BACKGROUND_NOTIFICATION_OFFSET)
                 is Event.CancelSnoozedEvent -> nm.cancel(event.id + BACKGROUND_NOTIFICATION_OFFSET)
-                is Event.SnoozedEvent -> onSnoozed(event.id, event.calendar)
+                is Event.SnoozedEvent -> onSnoozed(event.id)
                 is Event.Autosilenced -> onSoundExpired(event.id)
             }
         }
     }
 
-    private fun onSnoozed(id: Int, calendar: Calendar) {
+    private fun onSnoozed(id: Int) {
         // When button Reschedule is clicked, the TransparentActivity with
         // TimePickerFragment to set new alarm time is launched
         val pendingReschedule = Intent().apply {
@@ -72,10 +73,15 @@ class BackgroundNotifications {
 
         val label = alarmsManager.getAlarm(id)?.labelOrDefault ?: ""
 
+        //@formatter:off
+        val contentText: String = alarmsManager.getAlarm(id)
+                ?.let { mContext.getString(R.string.alarm_notify_snooze_text, it.formatTimeString()) }
+                ?: ""
+
         val status = mContext.notificationBuilder(CHANNEL_ID, NotificationImportance.NORMAL) {
             // Get the display time for the snooze and update the notification.
             setContentTitle(getString(R.string.alarm_notify_snooze_label, label))
-            setContentText(getString(R.string.alarm_notify_snooze_text, calendar.formatTimeString()))
+            setContentText(contentText)
             setSmallIcon(R.drawable.stat_notify_alarm)
             setContentIntent(pendingDismiss)
             setOngoing(true)
@@ -83,6 +89,7 @@ class BackgroundNotifications {
             addAction(R.drawable.ic_action_dismiss, getString(R.string.alarm_alert_dismiss_text), pendingDismiss)
             setDefaults(Notification.DEFAULT_LIGHTS)
         }
+        //@formatter:on
 
         // Send the notification using the alarm id to easily identify the
         // correct notification.
@@ -92,9 +99,10 @@ class BackgroundNotifications {
     private fun getString(id: Int, vararg args: String) = mContext.getString(id, *args)
     private fun getString(id: Int) = mContext.getString(id)
 
-    private fun Calendar.formatTimeString(): String {
+    private fun Alarm.formatTimeString(): String {
         val format = if (prefs.is24HoutFormat().blockingGet()) DM24 else DM12
-        return DateFormat.format(format, this) as String
+        val calendar = snoozedTime
+        return DateFormat.format(format, calendar) as String
     }
 
     private fun onSoundExpired(id: Int) {

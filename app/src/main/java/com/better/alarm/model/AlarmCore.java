@@ -147,6 +147,13 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
         updateListInStore();
     }
 
+    /**
+     * Strategy used to notify other components about alarm state.
+     */
+    public interface IStateNotifier {
+        void broadcastAlarmState(int id, String action);
+    }
+
     private static Function1<Integer, String> whatToString = new Function1<Integer, String>() {
         @Override
         public String invoke(Integer what) {
@@ -538,7 +545,7 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
                     } else {
                         nextTime = getNextRegualarSnoozeCalendar();
                     }
-                    broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION, nextTime); // Yar. 18.08
+                    broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION); // Yar. 18.08
                 }
 
                 @Override
@@ -612,13 +619,7 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
 
         private void broadcastAlarmState(String action) {
             log.d(container.getId() + " - " + action);
-            broadcaster.broadcastAlarmState(container.getId(), action, null);
-            updateListInStore();
-        }
-
-        private void broadcastAlarmState(String action, Calendar calendar) {
-            log.d(container.getId() + " - " + action);
-            broadcaster.broadcastAlarmState(container.getId(), action, calendar);
+            broadcaster.broadcastAlarmState(container.getId(), action);
             updateListInStore();
         }
 
