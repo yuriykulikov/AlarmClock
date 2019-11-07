@@ -11,6 +11,8 @@ class AlarmActiveRecord(
         val persistence: Persistence,
         val alarmValue: AlarmData
 ) : AlarmValue by alarmValue {
+    override val skipping = state.contentEquals("SkippingSetState")
+
     val isSilent: Boolean
         get() = alarmtone is Alarmtone.Silent
 
@@ -56,7 +58,8 @@ class AlarmActiveRecord(
             alarmtone = data.alarmtone,
             isVibrate = data.isVibrate,
             label = data.label,
-            daysOfWeek = data.daysOfWeek
+            daysOfWeek = data.daysOfWeek,
+            skipping = data.skipping
     ))
 
     fun withLabel(label: String) = copyAndPersist(alarmValue = alarmValue.copy(label = label))
@@ -87,12 +90,13 @@ data class AlarmData(
         override val alarmtone: Alarmtone,
         override val isVibrate: Boolean,
         override val label: String,
-        override val daysOfWeek: DaysOfWeek
+        override val daysOfWeek: DaysOfWeek,
+        override val skipping: Boolean = false
 ) : AlarmValue {
     companion object {
         fun from(value: AlarmValue): AlarmData {
             return value.run {
-                AlarmData(id, isEnabled, hour, minutes, isPrealarm, alarmtone, isVibrate, label, daysOfWeek)
+                AlarmData(id, isEnabled, hour, minutes, isPrealarm, alarmtone, isVibrate, label, daysOfWeek, skipping)
             }
         }
     }

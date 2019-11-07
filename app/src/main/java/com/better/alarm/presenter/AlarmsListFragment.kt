@@ -21,7 +21,8 @@ import com.melnykov.fab.FloatingActionButton
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
-import java.util.*
+import java.util.ArrayList
+import java.util.Calendar
 
 /**
  * Shows a list of alarms. To react on user interaction, requires a strategy. An
@@ -107,6 +108,10 @@ class AlarmsListFragment : Fragment() {
                         }
             }
 
+            row.digitalClockContainer.setOnLongClickListener {
+                false
+            }
+
             // set the alarm text
             val c = Calendar.getInstance()
             c.set(Calendar.HOUR_OF_DAY, alarm.hour)
@@ -115,14 +120,14 @@ class AlarmsListFragment : Fragment() {
 
             val removeEmptyView = listRowLayout == Layout.CLASSIC || listRowLayout == Layout.COMPACT
             // Set the repeat text or leave it blank if it does not repeat.
-            val daysOfWeekStr = alarm.daysOfWeek.toString(context, false)
 
-            row.daysOfWeek.text = daysOfWeekStr
-
-            row.daysOfWeek.visibility = when {
-                daysOfWeekStr.isNotEmpty() -> View.VISIBLE
-                removeEmptyView -> View.GONE
-                else -> View.INVISIBLE
+            row.daysOfWeek.run {
+                text = daysOfWeekStringWithSkip(alarm)
+                visibility = when {
+                    text.isNotEmpty() -> View.VISIBLE
+                    removeEmptyView -> View.GONE
+                    else -> View.INVISIBLE
+                }
             }
 
             // Set the repeat text or leave it blank if it does not repeat.
@@ -141,6 +146,11 @@ class AlarmsListFragment : Fragment() {
 
             return row.rowView
         }
+
+        private fun daysOfWeekStringWithSkip(alarm: AlarmValue): String {
+            val daysOfWeekStr = alarm.daysOfWeek.toString(context, false)
+            return if (alarm.skipping) "$daysOfWeekStr (skipping)" else daysOfWeekStr
+        }
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
@@ -152,23 +162,29 @@ class AlarmsListFragment : Fragment() {
                 AlertDialog.Builder(activity).setTitle(getString(R.string.delete_alarm))
                         .setMessage(getString(R.string.delete_alarm_confirm))
                         .setPositiveButton(android.R.string.ok) { d, w -> alarms.delete(alarm) }.setNegativeButton(android.R.string.cancel, null).show()
-                return true
             }
-
-            R.id.enable_alarm -> {
-                alarms.enable(alarm, !alarm.isEnabled)
-                return true
+            R.id.list_context_enable -> {
+                alarms.getAlarm(alarmId = alarm.id)?.run {
+                    edit().withIsEnabled(true).commit()
+                }
             }
-
-            R.id.edit_alarm -> {
-                uiStore.edit(alarm.id)
-                return true
+            R.id.list_context_menu_disable -> {
+                alarms.getAlarm(alarmId = alarm.id)?.run {
+                    edit().withIsEnabled(false).commit()
+                }
             }
-
-            else -> {
-                return super.onContextItemSelected(item)
+            R.id.skip_alarm -> {
+                alarms.getAlarm(alarmId = alarm.id)?.run {
+                    if (isSkipping) {
+                        // removes the skip
+                        edit().commit()
+                    } else {
+                        requestSkip()
+                    }
+                }
             }
         }
+        return true
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -252,9 +268,18 @@ class AlarmsListFragment : Fragment() {
         cal.set(Calendar.HOUR_OF_DAY, alarm!!.hour)
         cal.set(Calendar.MINUTE, alarm.minutes)
 
-        // Change the text based on the state of the alarm.
-        if (alarm.isEnabled) {
-            menu.findItem(R.id.enable_alarm).setTitle(R.string.disable_alarm)
+        val visible = when {
+            alarm.isEnabled -> when {
+                alarm.skipping -> listOf(R.id.list_context_enable)
+                alarm.daysOfWeek.isRepeatSet -> listOf(R.id.skip_alarm)
+                else -> listOf(R.id.list_context_menu_disable)
+            }
+            // disabled
+            else -> listOf(R.id.list_context_enable)
         }
+
+        listOf(R.id.list_context_enable, R.id.list_context_menu_disable, R.id.skip_alarm)
+                .minus(visible)
+                .forEach { menu.removeItem(it) }
     }
 }

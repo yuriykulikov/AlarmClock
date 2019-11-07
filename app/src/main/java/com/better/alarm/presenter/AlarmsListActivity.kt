@@ -18,7 +18,6 @@
 package com.better.alarm.presenter
 
 import android.annotation.TargetApi
-import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
@@ -340,7 +339,8 @@ class AlarmsListActivity : FragmentActivity() {
                                     isPrealarm = savedInstanceState.getBoolean("isPrealarm"),
                                     alarmtone = Alarmtone.fromString(savedInstanceState.getString("alarmtone")),
                                     label = savedInstanceState.getString("label"),
-                                    isVibrate = true
+                                    isVibrate = true,
+                                    skipping = savedInstanceState.getBoolean("skipping")
                             )
                     )
                 } else {
@@ -369,6 +369,7 @@ class AlarmsListActivity : FragmentActivity() {
                 putBoolean("isPrealarm", edited.isPrealarm)
                 putBoolean("isVibrate", edited.isVibrate)
                 putString("alarmtone", edited.alarmtone.persistedString)
+                putBoolean("skipping", edited.skipping)
             }
 
             logger.d("Saved state $toWrite")

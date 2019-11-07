@@ -36,6 +36,13 @@ class AlarmsReceiver : BroadcastReceiver() {
                         alarms.onAlarmFired(it, calendarType)
                     }
                 }
+                AlarmsScheduler.ACTION_INEXACT_FIRED -> {
+                    val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
+                    log.d("Fired  ACTION_INEXACT_FIRED $id")
+                    alarms.getAlarm(id)?.let {
+                        it.onInexactAlarmFired()
+                    }
+                }
                 Intent.ACTION_BOOT_COMPLETED,
                 Intent.ACTION_TIMEZONE_CHANGED,
                 Intent.ACTION_LOCALE_CHANGED,
@@ -56,9 +63,15 @@ class AlarmsReceiver : BroadcastReceiver() {
                     log.d("Dismiss $id")
                     alarms.getAlarm(id)?.dismiss()
                 }
+
+                PresentationToModelIntents.ACTION_REQUEST_SKIP -> {
+                    val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
+                    log.d("Skip $id")
+                    alarms.getAlarm(id)?.requestSkip()
+                }
             }
         } catch (e: Exception) {
-            log.d("Alarm not found")
+            log.d("Alarm not found $e")
         }
     }
 }

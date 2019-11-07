@@ -5,7 +5,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import com.better.alarm.model.*
-import java.util.*
+import java.util.Calendar
 
 /**
  * Active record container for all alarm data.
@@ -47,7 +47,8 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
                 isVibrate = c.getInt(Columns.ALARM_VIBRATE_INDEX) == 1,
                 isPrealarm = c.getInt(Columns.ALARM_PREALARM_INDEX) == 1,
                 label = c.getString(Columns.ALARM_MESSAGE_INDEX) ?: "",
-                alarmtone = Alarmtone.fromString(c.getString(Columns.ALARM_ALERT_INDEX))
+                alarmtone = Alarmtone.fromString(c.getString(Columns.ALARM_ALERT_INDEX)),
+                skipping = false
         ),
                 state = c.getString(Columns.ALARM_STATE_INDEX),
                 nextTime = calendars.now().apply { timeInMillis = c.getLong(Columns.ALARM_TIME_INDEX) },
@@ -79,7 +80,8 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
                     isVibrate = true,
                     isPrealarm = false,
                     label = "",
-                    alarmtone = Alarmtone.Default()
+                    alarmtone = Alarmtone.Default(),
+                    skipping = false
             ),
                     state = "",
                     nextTime = now,

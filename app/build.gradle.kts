@@ -124,6 +124,7 @@ dependencies {
     testImplementation("net.wuerl.kotlin:assertj-core-kotlin:0.1.1")
     testImplementation("junit:junit:4.12")
     testImplementation("org.mockito:mockito-core:2.23.4")
+    testImplementation("io.mockk:mockk:1.9.3")
 
     androidTestImplementation("com.squareup.assertj:assertj-android:1.1.1")
     // Force usage of support annotations in the test app, since it is internally used by the runner module.

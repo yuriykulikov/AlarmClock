@@ -25,6 +25,8 @@ sealed class Event {
     data class PrealarmEvent(val id: Int, val actions: String = Intents.ALARM_PREALARM_ACTION) : Event()
     data class DismissEvent(val id: Int, val actions: String = Intents.ALARM_DISMISS_ACTION) : Event()
     data class SnoozedEvent(val id: Int, val actions: String = Intents.ALARM_SNOOZE_ACTION) : Event()
+    data class ShowSkip(val id: Int, val actions: String = Intents.ALARM_SHOW_SKIP) : Event()
+    data class HideSkip(val id: Int, val actions: String = Intents.ALARM_REMOVE_SKIP) : Event()
     data class CancelSnoozedEvent(val id: Int, val actions: String = Intents.ACTION_CANCEL_SNOOZE) : Event()
     data class Autosilenced(val id: Int, val actions: String = Intents.ACTION_SOUND_EXPIRED) : Event()
     data class MuteEvent(val actions: String = Intents.ACTION_MUTE) : Event()

@@ -23,14 +23,16 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.preference.PreferenceManager
 import android.text.format.DateFormat
-import com.better.alarm.*
+import com.better.alarm.CHANNEL_ID
+import com.better.alarm.R
 import com.better.alarm.background.Event
 import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.interfaces.Alarm
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.interfaces.PresentationToModelIntents
+import com.better.alarm.notificationBuilder
 import com.better.alarm.presenter.TransparentActivity
-import java.util.*
+import java.util.Calendar
 
 /**
  * Glue class: connects AlarmAlert IntentReceiver to AlarmAlert activity. Passes
@@ -51,6 +53,8 @@ class BackgroundNotifications {
                 is Event.CancelSnoozedEvent -> nm.cancel(event.id + BACKGROUND_NOTIFICATION_OFFSET)
                 is Event.SnoozedEvent -> onSnoozed(event.id)
                 is Event.Autosilenced -> onSoundExpired(event.id)
+                is Event.ShowSkip -> onShowSkip(event.id)
+                is Event.HideSkip -> onHideSkip(event.id)
             }
         }
     }
@@ -124,6 +128,33 @@ class BackgroundNotifications {
         }
 
         nm.notify(BACKGROUND_NOTIFICATION_OFFSET + id, notification)
+    }
+
+    private fun onShowSkip(id: Int) {
+        val pendingSkip = PresentationToModelIntents.createPendingIntent(mContext, PresentationToModelIntents.ACTION_REQUEST_SKIP, id)
+
+        alarmsManager.getAlarm(id)?.run {
+            val label: String = labelOrDefault
+
+            val notification = mContext.notificationBuilder(CHANNEL_ID) {
+                setAutoCancel(true)
+                addAction(R.drawable.ic_action_dismiss, when {
+                    edit().daysOfWeek.isRepeatSet -> getString(R.string.skip)
+                    else -> getString(R.string.disable_alarm)
+                }, pendingSkip)
+                setSmallIcon(R.drawable.stat_notify_alarm)
+                setWhen(Calendar.getInstance().timeInMillis)
+                setContentTitle(label)
+                setContentText("${getString(R.string.notification_alarm_is_about_to_go_off)} ${formatTimeString()}")
+                setTicker("${getString(R.string.notification_alarm_is_about_to_go_off)} ${formatTimeString()}")
+            }
+
+            nm.notify(BACKGROUND_NOTIFICATION_OFFSET + id, notification)
+        }
+    }
+
+    private fun onHideSkip(id: Int) {
+        nm.cancel(BACKGROUND_NOTIFICATION_OFFSET + id)
     }
 
     companion object {

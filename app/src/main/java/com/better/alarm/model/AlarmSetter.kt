@@ -8,7 +8,7 @@ import android.content.Intent
 import android.os.Build
 import com.better.alarm.logger.Logger
 import com.better.alarm.presenter.AlarmsListActivity
-import java.util.*
+import java.util.Calendar
 
 /**
  * Created by Yuriy on 24.06.2017.
@@ -21,6 +21,10 @@ interface AlarmSetter {
     fun setUpRTCAlarm(id: Int, typeName: String, calendar: Calendar)
 
     fun fireNow(id: Int, typeName: String)
+
+    fun removeInexactAlarm(id: Int)
+
+    fun setInexactAlarm(id: Int, cal: Calendar)
 
     class AlarmSetterImpl(private val log: Logger, private val am: AlarmManager, private val mContext: Context) : AlarmSetter {
         private val setAlarmStrategy: ISetAlarmStrategy
@@ -64,6 +68,32 @@ interface AlarmSetter {
             mContext.sendBroadcast(intent)
         }
 
+        override fun setInexactAlarm(id: Int, calendar: Calendar) {
+            log.d("[AlarmSetter.setInexactAlarm] id: $id on ${AlarmsScheduler.DATE_FORMAT.format(calendar.time)}")
+            val pendingAlarm = Intent(ACTION_INEXACT_FIRED)
+                    .apply {
+                        setClass(mContext, AlarmsReceiver::class.java)
+                        putExtra(EXTRA_ID, id)
+                    }
+                    .let { PendingIntent.getBroadcast(mContext, id, it, PendingIntent.FLAG_UPDATE_CURRENT) }
+
+            setAlarmStrategy.setInexactAlarm(calendar, pendingAlarm)
+        }
+
+        override fun removeInexactAlarm(id: Int) {
+            log.d("[AlarmSetter.removeInexactAlarm] id: $id")
+            val pendingAlarm = PendingIntent.getBroadcast(
+                    mContext,
+                    id,
+                    Intent(ACTION_INEXACT_FIRED).apply {
+                        // must be here, otherwise replace does not work
+                        setClass(mContext, AlarmsReceiver::class.java)
+                    },
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            am.cancel(pendingAlarm)
+        }
+
         private fun initSetStrategyForVersion(): ISetAlarmStrategy {
             log.d("SDK is " + Build.VERSION.SDK_INT)
             return when {
@@ -78,11 +108,19 @@ interface AlarmSetter {
             override fun setRTCAlarm(calendar: Calendar, pendingIntent: PendingIntent) {
                 am.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
             }
+
+            override fun setInexactAlarm(calendar: Calendar, pendingIntent: PendingIntent) {
+                am.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+            }
         }
 
         @TargetApi(Build.VERSION_CODES.KITKAT)
         private inner class KitKatSetter : ISetAlarmStrategy {
             override fun setRTCAlarm(calendar: Calendar, pendingIntent: PendingIntent) {
+                am.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+            }
+
+            override fun setInexactAlarm(calendar: Calendar, pendingIntent: PendingIntent) {
                 am.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
             }
         }
@@ -106,10 +144,17 @@ interface AlarmSetter {
                 )
                 am.setAlarmClock(AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingShowList), pendingAlarm)
             }
+
+            override fun setInexactAlarm(calendar: Calendar, pendingIntent: PendingIntent) {
+                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+            }
         }
 
         private interface ISetAlarmStrategy {
             fun setRTCAlarm(calendar: Calendar, pendingIntent: PendingIntent)
+            fun setInexactAlarm(calendar: Calendar, pendingIntent: PendingIntent) {
+                setRTCAlarm(calendar, pendingIntent)
+            }
         }
 
         companion object {
@@ -119,6 +164,7 @@ interface AlarmSetter {
 
     companion object {
         const val ACTION_FIRED = AlarmsScheduler.ACTION_FIRED
+        const val ACTION_INEXACT_FIRED = AlarmsScheduler.ACTION_INEXACT_FIRED
         const val EXTRA_ID = AlarmsScheduler.EXTRA_ID
         const val EXTRA_TYPE = AlarmsScheduler.EXTRA_TYPE
     }

@@ -14,7 +14,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.mock
-import java.util.*
+import java.util.ArrayList
+import java.util.Calendar
 
 class AlarmSchedulerTest {
     private lateinit var stateNotifierMock: AlarmCore.IStateNotifier
@@ -53,6 +54,7 @@ class AlarmSchedulerTest {
         var id: Int? = null
         var typeName: String? = null
         var calendar: Calendar? = null
+        val inexactAlarms = mutableMapOf<Int, Calendar>()
 
         override fun setUpRTCAlarm(id: Int, typeName: String, calendar: Calendar) {
             this.id = id
@@ -67,6 +69,14 @@ class AlarmSchedulerTest {
         }
 
         override fun fireNow(id: Int, typeName: String) {
+        }
+
+        override fun removeInexactAlarm(id: Int) {
+            inexactAlarms.remove(id)
+        }
+
+        override fun setInexactAlarm(id: Int, cal: Calendar) {
+            inexactAlarms[id] = cal
         }
     }
 
