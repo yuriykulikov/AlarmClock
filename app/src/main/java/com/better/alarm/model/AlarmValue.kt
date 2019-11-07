@@ -24,6 +24,9 @@ interface AlarmValue {
     val isVibrate: Boolean
 
     val alarmtone: Alarmtone
+
+    /** Whether alarm is skipping one occurrence at the moment*/
+    val skipping: Boolean
 }
 
 private val defaultAlarmAlertUri = Settings.System.DEFAULT_ALARM_ALERT_URI.toString()

@@ -21,6 +21,8 @@ class AlarmStateNotifier(private val store: Store) : IStateNotifier {
             Intents.ALARM_SNOOZE_ACTION -> Event.SnoozedEvent(id)
             Intents.ACTION_CANCEL_SNOOZE -> Event.CancelSnoozedEvent(id)
             Intents.ALARM_DISMISS_ACTION -> Event.DismissEvent(id)
+            Intents.ALARM_SHOW_SKIP -> Event.ShowSkip(id)
+            Intents.ALARM_REMOVE_SKIP -> Event.HideSkip(id)
             else -> throw RuntimeException("Unknown action $action")
         }
         store.events.onNext(event)

@@ -29,4 +29,8 @@ public interface IAlarmsScheduler {
      * @param id
      */
     public void setAlarm(int id, CalendarType calendarType, Calendar calendar, AlarmValue alarmValue);
+
+    void setInexactAlarm(int id, Calendar calendar);
+
+    void removeInexactAlarm(int id);
 }

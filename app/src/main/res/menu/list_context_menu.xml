@@ -15,15 +15,16 @@
 -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <item
-        android:id="@+id/enable_alarm"
+        android:id="@+id/skip_alarm"
+        android:title="@string/skip" />
+    <item
+        android:id="@+id/list_context_menu_disable"
+        android:title="@string/disable_alarm" />
+    <item
+        android:id="@+id/list_context_enable"
         android:title="@string/enable_alarm" />
-    <item
-        android:id="@+id/edit_alarm"
-        android:title="@string/menu_edit_alarm" />
     <item
         android:id="@+id/delete_alarm"
         android:title="@string/delete_alarm" />
-
 </menu>

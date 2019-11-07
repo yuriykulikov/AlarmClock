@@ -21,7 +21,9 @@ import com.better.alarm.configuration.Store
 import com.better.alarm.logger.Logger
 import com.better.alarm.util.Optional
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
+import java.util.PriorityQueue
 
 class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, private val store: Store, private val prefs: Prefs, private val calendars: Calendars) : IAlarmsScheduler {
 
@@ -62,6 +64,14 @@ class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, 
         replaceAlarm(id, scheduledAlarm)
     }
 
+    override fun setInexactAlarm(id: Int, cal: Calendar) {
+        setter.setInexactAlarm(id, cal)
+    }
+
+    override fun removeInexactAlarm(id: Int) {
+        setter.removeInexactAlarm(id)
+    }
+
     override fun removeAlarm(id: Int) {
         replaceAlarm(id, null)
     }
@@ -97,7 +107,6 @@ class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, 
             // if head remains the same, do nothing
             else -> log.d("skip setting $currentHead (already set)")
         }
-
     }
 
     /**
@@ -154,6 +163,7 @@ class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, 
     companion object {
         val DATE_FORMAT: SimpleDateFormat = SimpleDateFormat("dd-MM-yy HH:mm:ss", Locale.GERMANY)
         const val ACTION_FIRED = BuildConfig.APPLICATION_ID + ".ACTION_FIRED"
+        const val ACTION_INEXACT_FIRED = BuildConfig.APPLICATION_ID + ".ACTION_INEXACT_FIRED"
         const val EXTRA_ID = "intent.extra.alarm"
         const val EXTRA_TYPE = "intent.extra.type"
     }

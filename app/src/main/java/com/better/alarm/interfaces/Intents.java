@@ -56,4 +56,8 @@ public interface Intents {
     public static final String ACTION_MUTE = BuildConfig.APPLICATION_ID + ".ACTION_MUTE";
 
     public static final String ACTION_DEMUTE = BuildConfig.APPLICATION_ID + ".ACTION_DEMUTE";
+
+    public static final String ALARM_SHOW_SKIP = BuildConfig.APPLICATION_ID + ".ALARM_SHOW_SKIP";
+
+    public static final String ALARM_REMOVE_SKIP = BuildConfig.APPLICATION_ID + ".ALARM_REMOVE_SKIP";
 }

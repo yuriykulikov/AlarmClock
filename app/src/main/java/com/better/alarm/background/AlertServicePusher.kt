@@ -7,12 +7,12 @@ import com.better.alarm.configuration.Store
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.oreo
 import com.better.alarm.preOreo
-import java.lang.RuntimeException
+import com.better.alarm.util.mapNotNull
 
 class AlertServicePusher(store: Store, context: Context) {
     init {
         val disposable = store.events
-                .map {
+                .mapNotNull {
                     when (it) {
                         is Event.AlarmEvent -> Intent(Intents.ALARM_ALERT_ACTION).apply { putExtra(Intents.EXTRA_ID, it.id) }
                         is Event.PrealarmEvent -> Intent(Intents.ALARM_PREALARM_ACTION).apply { putExtra(Intents.EXTRA_ID, it.id) }
@@ -21,13 +21,14 @@ class AlertServicePusher(store: Store, context: Context) {
                         is Event.Autosilenced -> Intent(Intents.ACTION_SOUND_EXPIRED).apply { putExtra(Intents.EXTRA_ID, it.id) }
                         is Event.MuteEvent -> Intent(Intents.ACTION_MUTE)
                         is Event.DemuteEvent -> Intent(Intents.ACTION_DEMUTE)
-                        is Event.CancelSnoozedEvent -> Intent(Intents.ACTION_CANCEL_SNOOZE)
+                        is Event.CancelSnoozedEvent -> null
+                        is Event.ShowSkip -> null
+                        is Event.HideSkip -> null
                         is Event.NullEvent -> throw RuntimeException("NullEvent")
-                    }.apply {
+                    }?.apply {
                         setClass(context, AlertServiceWrapper::class.java)
                     }
                 }
-                .filter { it.action != Intents.ACTION_CANCEL_SNOOZE }
                 .subscribe { intent ->
                     container().wakeLocks().acquireTransitionWakeLock(intent)
                     oreo { context.startForegroundService(intent) }

@@ -15,6 +15,10 @@ public interface Alarm {
 
     void dismiss();
 
+    void requestSkip();
+
+    boolean isSkipping();
+
     void delete();
 
     AlarmEditor edit();
@@ -29,11 +33,11 @@ public interface Alarm {
 
     Alarmtone getAlarmtone();
 
+
     /**
      * @return
      * @deprecated
      */
     @Deprecated
     public Calendar getSnoozedTime();
-
 }
