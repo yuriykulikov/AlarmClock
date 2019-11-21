@@ -33,6 +33,8 @@ import com.better.alarm.statemachine.Message;
 import com.better.alarm.statemachine.State;
 import com.better.alarm.statemachine.StateMachine;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -422,7 +424,7 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
                     public void enter() {
                         int what = getCurrentMessage().what();
                         if (what == DISMISS || what == SNOOZE || what == CHANGE) {
-                            broadcastAlarmSetWithNormalTime(calculateNextTime().getTimeInMillis());
+                            broadcastAlarmSetWithNormalTime(calculateNextPrealarmTime().getTimeInMillis());
                         }
 
                         updateListInStore();
@@ -430,19 +432,25 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
 
                     @Override
                     public void resume() {
-                        Calendar c = calculateNextTime();
-                        c.add(Calendar.MINUTE, -1 * preAlarmDuration.blockingFirst());
-                        // since prealarm is before main alarm, it can be already in the
-                        // past, so it has to be adjusted.
-                        advanceCalendar(c);
-                        if (c.after(calendars.now())) {
-                            setAlarm(c, CalendarType.PREALARM);
-                            showSkipNotification(c);
+                        Calendar nextPrealarmTime = calculateNextPrealarmTime();
+                        if (nextPrealarmTime.after(calendars.now())) {
+                            setAlarm(nextPrealarmTime, CalendarType.PREALARM);
+                            showSkipNotification(nextPrealarmTime);
                         } else {
                             // TODO this should never happen
                             log.e("PreAlarm is still in the past!");
                             transitionTo(container.isEnabled() ? enableTransition : disabledState);
                         }
+                    }
+
+                    @NotNull
+                    private Calendar calculateNextPrealarmTime() {
+                        Calendar c = calculateNextTime();
+                        c.add(Calendar.MINUTE, -1 * preAlarmDuration.blockingFirst());
+                        // since prealarm is before main alarm, it can be already in the
+                        // past, so it has to be adjusted.
+                        advanceCalendar(c);
+                        return c;
                     }
 
                     @Override
