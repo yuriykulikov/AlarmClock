@@ -11,6 +11,7 @@ import android.support.test.runner.AndroidJUnit4
 import android.view.View
 import com.better.alarm.R
 import com.better.alarm.configuration.AlarmApplication
+import com.better.alarm.configuration.overrideIs24hoursFormatOverride
 import com.better.alarm.presenter.AlarmsListActivity
 import com.better.alarm.util.Optional
 import org.hamcrest.Matchers
@@ -62,7 +63,7 @@ class PickerAmTest : BaseTest() {
 
     @Before
     fun setUp() {
-        AlarmApplication.is24hoursFormatOverride = Optional.of(false)
+        overrideIs24hoursFormatOverride(false)
         onView().with(id = R.id.fab).click()
         //sleep();
     }

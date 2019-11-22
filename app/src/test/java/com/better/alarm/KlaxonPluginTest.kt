@@ -12,11 +12,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Percentage
 import org.junit.Test
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers
-import org.mockito.Mockito
 import org.mockito.Mockito.*
-import java.io.IOException
-import java.lang.NullPointerException
 import java.util.concurrent.TimeUnit
 
 class KlaxonPluginTest {

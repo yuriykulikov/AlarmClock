@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.ViewSwitcher.ViewFactory;
 
 import com.better.alarm.R;
+import com.better.alarm.configuration.InjectKt;
 import com.better.alarm.configuration.Prefs;
 import com.better.alarm.configuration.Store;
 import com.better.alarm.model.AlarmValue;
@@ -28,8 +29,6 @@ import java.util.Calendar;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-
-import static com.better.alarm.configuration.AlarmApplication.container;
 
 /**
  * @author Yuriy
@@ -49,8 +48,8 @@ public class InfoFragment extends Fragment implements ViewFactory {
 
     private boolean isPrealarm;
 
-    private final Prefs prefs = container().prefs();
-    private final Store store = container().store();
+    private final Prefs prefs = InjectKt.globalInject(Prefs.class).getValue();
+    private final Store store = InjectKt.globalInject(Store.class).getValue();
 
     private Disposable nextDisposable;
 

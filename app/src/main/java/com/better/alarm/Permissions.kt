@@ -7,7 +7,8 @@ import android.content.pm.PackageManager
 import android.media.RingtoneManager
 import android.os.Build
 import com.better.alarm.background.PlayerWrapper
-import com.better.alarm.configuration.AlarmApplication.container
+import com.better.alarm.configuration.globalLogger
+import com.better.alarm.logger.Logger
 import com.better.alarm.model.Alarmtone
 
 /**
@@ -15,7 +16,7 @@ import com.better.alarm.model.Alarmtone
  */
 fun checkPermissions(activity: Activity, tones: List<Alarmtone>) {
     if (Build.VERSION.SDK_INT >= 23 && activity.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-        val logger = container().createLogger("checkPermissions")
+        val logger: Logger by globalLogger("checkPermissions")
 
         val unplayable = tones
                 .filter { alarmtone ->

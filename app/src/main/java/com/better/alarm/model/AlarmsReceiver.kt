@@ -18,19 +18,21 @@ package com.better.alarm.model
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.better.alarm.configuration.AlarmApplication.container
+import com.better.alarm.configuration.globalInject
+import com.better.alarm.configuration.globalLogger
 import com.better.alarm.interfaces.PresentationToModelIntents
+import com.better.alarm.logger.Logger
 
 class AlarmsReceiver : BroadcastReceiver() {
-    private val alarms = container().rawAlarms()
-    private val log = container().logger()
+    private val alarms: Alarms by globalInject()
+    private val log: Logger by globalLogger("AlarmsReceiver")
 
     override fun onReceive(context: Context, intent: Intent) {
         try {
             when (intent.action) {
                 AlarmsScheduler.ACTION_FIRED -> {
                     val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
-                    val calendarType = CalendarType.valueOf(intent.extras!!.getString(AlarmsScheduler.EXTRA_TYPE))
+                    val calendarType = CalendarType.valueOf(intent.extras?.getString(AlarmsScheduler.EXTRA_TYPE)!!)
                     log.d("Fired $id $calendarType")
                     alarms.getAlarm(id)?.let {
                         alarms.onAlarmFired(it, calendarType)

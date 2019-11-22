@@ -3,9 +3,9 @@ package com.better.alarm.logger
 import com.better.alarm.logger.Logger.LogLevel
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.locks.ReentrantLock
-import kotlin.collections.ArrayList
 
 class StartupLogWriter private constructor() : LogWriter {
     private val bufferSize = 500

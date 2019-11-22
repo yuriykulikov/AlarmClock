@@ -10,6 +10,7 @@ import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import com.better.alarm.R
 import com.better.alarm.configuration.AlarmApplication
+import com.better.alarm.configuration.overrideIs24hoursFormatOverride
 import com.better.alarm.interfaces.PresentationToModelIntents
 import com.better.alarm.model.AlarmSetter
 import com.better.alarm.model.AlarmValue
@@ -61,14 +62,14 @@ class ListTest : BaseTest() {
     @Test
     @Throws(Exception::class)
     fun newAlarmShouldBeEnabledIfEdited12() {
-        AlarmApplication.is24hoursFormatOverride = Optional.of(false)
+        overrideIs24hoursFormatOverride(false)
         newAlarmShouldBeEnabledIfEdited()
     }
 
     @Test
     @Throws(Exception::class)
     fun newAlarmShouldBeEnabledIfEdited24() {
-        AlarmApplication.is24hoursFormatOverride = Optional.of(true)
+        overrideIs24hoursFormatOverride(true)
         newAlarmShouldBeEnabledIfEdited()
     }
 

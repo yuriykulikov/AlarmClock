@@ -21,7 +21,7 @@ import android.content.Context
 import com.better.alarm.model.DaysOfWeek
 import io.reactivex.Single
 import java.text.DateFormatSymbols
-import java.util.*
+import java.util.Calendar
 
 fun DaysOfWeek.summary(context: Context): String {
     return toString(context, true)

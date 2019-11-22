@@ -30,40 +30,30 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import com.better.alarm.R
 import com.better.alarm.background.KlaxonPlugin
-import com.better.alarm.background.PlayerWrapper
 import com.better.alarm.background.PluginAlarmData
 import com.better.alarm.background.TargetVolume
-import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.Prefs.Companion.DEFAULT_PREALARM_VOLUME
 import com.better.alarm.configuration.Prefs.Companion.KEY_PREALARM_VOLUME
 import com.better.alarm.configuration.Prefs.Companion.MAX_PREALARM_VOLUME
+import com.better.alarm.configuration.globalInject
+import com.better.alarm.configuration.globalLogger
 import com.better.alarm.model.Alarmtone
+import com.f2prateek.rx.preferences2.RxSharedPreferences
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposables
 import io.reactivex.subjects.PublishSubject
+import org.koin.core.context.GlobalContext.get
+import org.koin.core.parameter.parametersOf
+import org.koin.core.qualifier.named
 import java.util.concurrent.TimeUnit
-import kotlin.properties.Delegates
 
 class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mContext, attrs) {
     private var ringtone: Ringtone? = null
     private var ringtoneSummary: TextView? = null
 
     private val klaxon: KlaxonPlugin by lazy {
-        KlaxonPlugin(
-                log = container().logger(),
-                playerFactory = {
-                    PlayerWrapper(
-                            context = container().context(),
-                            resources = container().context.resources,
-                            log = container().logger()
-                    )
-                },
-                prealarmVolume = container().rxPrefs().getInteger(KEY_PREALARM_VOLUME, DEFAULT_PREALARM_VOLUME).asObservable(),
-                fadeInTimeInMillis = Observable.just(100),
-                inCall = Observable.just(false),
-                scheduler = AndroidSchedulers.mainThread()
-        )
+        get().koin.rootScope.get<KlaxonPlugin>(named("volumePreferenceDemo"))
     }
 
     init {
@@ -105,7 +95,7 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
      * This class is controls playback using AudioManager
      */
     private fun bindAudioManagerVolume(seekBar: SeekBar) {
-        val am = container().audioManager()
+        val am: AudioManager by globalInject()
         val masterListener = SeekBarListener()
         seekBar.setOnSeekBarChangeListener(masterListener)
 
@@ -132,8 +122,8 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
     private fun bindPrealarmSeekBar(preAlarmSeekBar: SeekBar) {
         val prealarmListener = SeekBarListener()
         preAlarmSeekBar.setOnSeekBarChangeListener(prealarmListener)
-        val rxPrefs = container().rxPrefs()
-        val log = container().logger()
+        val rxPrefs: RxSharedPreferences by globalInject()
+        val log by globalLogger("VolumePreference")
         val prealarmPreference = rxPrefs.getInteger(KEY_PREALARM_VOLUME, DEFAULT_PREALARM_VOLUME)
         preAlarmSeekBar.max = MAX_PREALARM_VOLUME
 

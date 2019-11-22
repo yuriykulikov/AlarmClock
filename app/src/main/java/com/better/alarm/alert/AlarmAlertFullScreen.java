@@ -33,9 +33,13 @@ import android.widget.TextView;
 
 import com.better.alarm.R;
 import com.better.alarm.background.Event;
+import com.better.alarm.configuration.InjectKt;
+import com.better.alarm.configuration.Store;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
+import com.better.alarm.logger.Logger;
+import com.better.alarm.presenter.DynamicThemeHandler;
 import com.better.alarm.presenter.PickedTime;
 import com.better.alarm.presenter.TimePickerDialogFragment;
 import com.better.alarm.util.Optional;
@@ -46,8 +50,6 @@ import io.reactivex.disposables.Disposables;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Predicate;
 
-import static com.better.alarm.configuration.AlarmApplication.container;
-import static com.better.alarm.configuration.AlarmApplication.themeHandler;
 import static com.better.alarm.configuration.Prefs.LONGCLICK_DISMISS_DEFAULT;
 import static com.better.alarm.configuration.Prefs.LONGCLICK_DISMISS_KEY;
 
@@ -58,11 +60,13 @@ import static com.better.alarm.configuration.Prefs.LONGCLICK_DISMISS_KEY;
  */
 public class AlarmAlertFullScreen extends FragmentActivity {
     protected static final String SCREEN_OFF = "screen_off";
+    private final Store store = InjectKt.globalInject(Store.class).getValue();
+    private final IAlarmsManager alarmsManager = InjectKt.globalInject(IAlarmsManager.class).getValue();
+    private final SharedPreferences sp = InjectKt.globalInject(SharedPreferences.class).getValue();
+    private final Logger logger = InjectKt.globalLogger("AlarmAlertFullScreen").getValue();
+    private final DynamicThemeHandler dynamicThemeHandler = InjectKt.globalInject(DynamicThemeHandler.class).getValue();
 
     protected Alarm mAlarm;
-
-    private final IAlarmsManager alarmsManager = container().alarms();
-    private final SharedPreferences sp = container().sharedPreferences();
 
     private boolean longClickToDismiss;
 
@@ -71,7 +75,7 @@ public class AlarmAlertFullScreen extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle icicle) {
-        setTheme(themeHandler().getIdForName(getClassName()));
+        setTheme(dynamicThemeHandler.getIdForName(getClassName()));
         super.onCreate(icicle);
 
         if (getResources().getBoolean(R.bool.isTablet)) {
@@ -103,8 +107,7 @@ public class AlarmAlertFullScreen extends FragmentActivity {
             updateLayout();
 
             // Register to get the alarm killed/snooze/dismiss intent.
-            subscription = container().store()
-                    .getEvents()
+            subscription = store.getEvents()
                     .filter(new Predicate<Event>() {
                         @Override
                         public boolean test(Event event) throws Exception {
@@ -119,7 +122,7 @@ public class AlarmAlertFullScreen extends FragmentActivity {
                         }
                     });
         } catch (Exception e) {
-            container().logger().e("Alarm not found", e);
+            logger.e("Alarm not found", e);
         }
     }
 
@@ -170,11 +173,11 @@ public class AlarmAlertFullScreen extends FragmentActivity {
                                     }
                                 }
                             });
-                    container().store().getEvents().onNext(new Event.MuteEvent());
+                    store.getEvents().onNext(new Event.MuteEvent());
                     new android.os.Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            container().store().getEvents().onNext(new Event.DemuteEvent());
+                            store.getEvents().onNext(new Event.DemuteEvent());
                         }
                     }, 10000);
                 }
@@ -232,14 +235,14 @@ public class AlarmAlertFullScreen extends FragmentActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        container().logger().d("AlarmAlert.OnNewIntent()");
+        logger.d("AlarmAlert.OnNewIntent()");
 
         int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
         try {
             mAlarm = alarmsManager.getAlarm(id);
             setTitle();
         } catch (Exception e) {
-            container().logger().d("Alarm not found");
+            logger.d("Alarm not found");
         }
 
     }

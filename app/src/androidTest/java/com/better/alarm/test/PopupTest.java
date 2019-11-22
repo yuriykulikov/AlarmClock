@@ -7,7 +7,8 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.better.alarm.R;
 import com.better.alarm.alert.AlarmAlertFullScreen;
-import com.better.alarm.configuration.AlarmApplication;
+import com.better.alarm.configuration.ContainerKt;
+import com.better.alarm.configuration.InjectKt;
 import com.better.alarm.configuration.Store;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.model.AlarmSetter;
@@ -33,7 +34,6 @@ import java.util.Locale;
 import cortado.Cortado;
 
 import static android.provider.AlarmClock.ACTION_SET_ALARM;
-import static com.better.alarm.configuration.AlarmApplication.container;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -57,7 +57,7 @@ public class PopupTest extends BaseTest {
 
     @Before
     public void set24HourMode() {
-        AlarmApplication.is24hoursFormatOverride = Optional.of(true);
+        ContainerKt.overrideIs24hoursFormatOverride(true);
     }
 
     public int createAlarmAndFire() {
@@ -123,7 +123,7 @@ public class PopupTest extends BaseTest {
 
         sleep();
 
-        Optional<Store.Next> next = container().store()
+        Optional<Store.Next> next = InjectKt.globalInject(Store.class).getValue()
                 .next()
                 .blockingFirst();
 

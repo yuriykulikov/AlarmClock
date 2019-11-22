@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.better.alarm.R;
+import com.better.alarm.configuration.InjectKt;
 import com.better.alarm.util.Optional;
 import com.better.alarm.view.TimePicker;
 
@@ -37,13 +38,11 @@ import io.reactivex.SingleOnSubscribe;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Cancellable;
 
-import static com.better.alarm.configuration.AlarmApplication.container;
-import static com.better.alarm.configuration.AlarmApplication.themeHandler;
-
 /**
  * Dialog to set alarm time.
  */
 public class TimePickerDialogFragment extends DialogFragment {
+    private final DynamicThemeHandler dynamicThemeHandler = InjectKt.globalInject(DynamicThemeHandler.class).getValue();
     private TimePicker mPicker;
     private SingleEmitter<Optional<PickedTime>> emitter;
 
@@ -61,7 +60,7 @@ public class TimePickerDialogFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setStyle(DialogFragment.STYLE_NO_TITLE, themeHandler().getIdForName(TimePickerDialogFragment.class.getName()));
+        setStyle(DialogFragment.STYLE_NO_TITLE, dynamicThemeHandler.getIdForName(TimePickerDialogFragment.class.getName()));
     }
 
     @Override
@@ -134,7 +133,6 @@ public class TimePickerDialogFragment extends DialogFragment {
                         }
                     });
                 } catch (IllegalStateException e) {
-                    container().logger().e("Failed to show picker", e);
                     emitter.onSuccess(Optional.<PickedTime>absent());
                 }
             }

@@ -24,10 +24,9 @@ import android.content.Context
 import android.content.Intent
 import com.better.alarm.*
 import com.better.alarm.alert.AlarmAlertFullScreen
-import com.better.alarm.configuration.AlarmApplication.container
-import com.better.alarm.configuration.Prefs
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.interfaces.PresentationToModelIntents
+import com.better.alarm.logger.Logger
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
@@ -37,10 +36,10 @@ import io.reactivex.disposables.Disposables
  * through Alarm ID.
  */
 class NotificationsPlugin(
-        val mContext: Context,
-        val nm: NotificationManager = container().notificationManager(),
-        val startForeground: (Int, Notification) -> Unit,
-        val prefs: Prefs = container().prefs()
+        private val logger: Logger,
+        private val mContext: Context,
+        private val nm: NotificationManager,
+        private val startForeground: (Int, Notification) -> Unit
 ) : AlertPlugin {
     override fun go(alarm: PluginAlarmData, prealarm: Boolean, targetVolume: Observable<TargetVolume>): Disposable {
         // our alarm fired again, remove snooze notification
@@ -79,12 +78,12 @@ class NotificationsPlugin(
         // Send the notification using the alarm id to easily identify the
         // correct notification.
         oreo {
-            container().logger.d("startForeground() for ${alarm.id}")
+            logger.d("startForeground() for ${alarm.id}")
             startForeground(alarm.id, notification)
         }
 
         preOreo {
-            container().logger.d("nm.notify() for ${alarm.id}")
+            logger.d("nm.notify() for ${alarm.id}")
             nm.notify(alarm.id, notification)
         }
 

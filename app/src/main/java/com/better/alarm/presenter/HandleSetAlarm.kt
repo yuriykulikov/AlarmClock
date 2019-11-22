@@ -21,12 +21,20 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.provider.AlarmClock
-import com.better.alarm.configuration.AlarmApplication.container
+import com.better.alarm.configuration.Store
+import com.better.alarm.configuration.globalInject
+import com.better.alarm.configuration.globalLogger
 import com.better.alarm.interfaces.Alarm
+import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
+import com.better.alarm.logger.Logger
 
 
 class HandleSetAlarm : Activity() {
+    private val store: Store by globalInject()
+    private val alarmsManager: IAlarmsManager by globalInject()
+    private val logger: Logger by globalLogger("HandleSetAlarm")
+
     override fun onCreate(icicle: Bundle?) {
         super.onCreate(icicle)
         val intent = intent
@@ -66,7 +74,8 @@ class HandleSetAlarm : Activity() {
         val msg = intent.getStringExtra(AlarmClock.EXTRA_MESSAGE)
         val label = msg ?: ""
 
-        val alarms = container().store().alarms().blockingFirst()
+
+        val alarms = store.alarms().blockingFirst()
         val sameAlarm = alarms.find {
             val hoursMatch = it.hour == hours
             val minutesMatch = it.minutes == minutes
@@ -78,11 +87,9 @@ class HandleSetAlarm : Activity() {
         return if (sameAlarm == null) {
             createNewAlarm(hours, minutes, label)
         } else {
-            val edited = container().alarms()
-                    .getAlarm(sameAlarm.id)
-
+            val edited = alarmsManager.getAlarm(sameAlarm.id)
             if (edited != null) {
-                container().logger().d("Editing existing alarm ${sameAlarm.id}")
+                logger.debug { "Editing existing alarm ${sameAlarm.id}" }
                 edited.apply { enable(true) }
             } else {
                 createNewAlarm(hours, minutes, label)
@@ -91,8 +98,8 @@ class HandleSetAlarm : Activity() {
     }
 
     private fun createNewAlarm(hours: Int, minutes: Int, label: String): Alarm {
-        container().logger().d("No alarm found, creating a new one")
-        return container().alarms().createNewAlarm().apply {
+        logger.debug { "No alarm found, creating a new one" }
+        return alarmsManager.createNewAlarm().apply {
             edit()
                     .with(hour = hours, minutes = minutes, enabled = true)
                     .withLabel(label)
