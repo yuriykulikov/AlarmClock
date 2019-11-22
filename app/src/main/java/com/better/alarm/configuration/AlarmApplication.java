@@ -69,7 +69,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
-import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function1;
 
 @ReportsCrashes(
         mailTo = BuildConfig.ACRA_EMAIL,
@@ -112,11 +112,12 @@ public class AlarmApplication extends Application {
         }
 
         final StartupLogWriter startupLogWriter = StartupLogWriter.create();
-        final Logger logger = Logger.create();
-        logger.addLogWriter(LogcatLogWriter.create());
-        logger.addLogWriter(startupLogWriter);
+        Function1<String, Logger> loggerFactory = Logger.factory(
+                LogcatLogWriter.create(),
+                startupLogWriter
+        );
 
-        LoggingExceptionHandler.addLoggingExceptionHandlerToAllThreads(logger);
+        LoggingExceptionHandler.addLoggingExceptionHandlerToAllThreads(loggerFactory.invoke("default"));
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         rxPreferences = RxSharedPreferences.create(preferences);
@@ -172,7 +173,7 @@ public class AlarmApplication extends Application {
         }
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        AlarmSetter.AlarmSetterImpl setter = new AlarmSetter.AlarmSetterImpl(logger, alarmManager, getApplicationContext());
+        AlarmSetter.AlarmSetterImpl setter = new AlarmSetter.AlarmSetterImpl(loggerFactory.invoke("AlarmSetter"), alarmManager, getApplicationContext());
         Calendars calendars = new Calendars() {
             @Override
             public Calendar now() {
@@ -180,11 +181,11 @@ public class AlarmApplication extends Application {
             }
         };
 
-        AlarmsScheduler alarmsScheduler = new AlarmsScheduler(setter, logger, store, prefs, calendars);
+        AlarmsScheduler alarmsScheduler = new AlarmsScheduler(setter, loggerFactory.invoke("AlarmsScheduler"), store, prefs, calendars);
         AlarmCore.IStateNotifier broadcaster = new AlarmStateNotifier(store);
         HandlerFactory handlerFactory = new ImmediateHandlerFactory();
         PersistingContainerFactory containerFactory = new PersistingContainerFactory(calendars, getApplicationContext());
-        Alarms alarms = new Alarms(alarmsScheduler, new DatabaseQuery(getContentResolver(), containerFactory), new AlarmCoreFactory(logger,
+        Alarms alarms = new Alarms(alarmsScheduler, new DatabaseQuery(getContentResolver(), containerFactory), new AlarmCoreFactory(loggerFactory.invoke("AlarmCore"),
                 alarmsScheduler,
                 broadcaster,
                 handlerFactory,
@@ -193,11 +194,12 @@ public class AlarmApplication extends Application {
                 calendars
         ),
                 containerFactory,
-                logger);
+                loggerFactory.invoke("Alarms")
+        );
 
         sContainer = new Container(
                 getApplicationContext(),
-                logger,
+                loggerFactory,
                 preferences,
                 rxPreferences,
                 prefs,
@@ -215,7 +217,8 @@ public class AlarmApplication extends Application {
         OreoKt.createNotificationChannels(this);
 
         // must be started the last, because otherwise we may loose intents from it.
-        logger.d("Starting alarms");
+        final Logger alarmsLogger = loggerFactory.invoke("Alarms");
+        alarmsLogger.d("Starting alarms");
         alarms.start();
         // start scheduling alarms after all alarms have been started
         alarmsScheduler.start();
@@ -225,7 +228,9 @@ public class AlarmApplication extends Application {
                 .subscribe(new Consumer<List<AlarmValue>>() {
                     @Override
                     public void accept(@NonNull List<AlarmValue> alarmValues) throws Exception {
-                        logger.d(CollectionsKt.joinToString(alarmValues, "\n##", "Store: \n##", "", -1, "...", null));
+                        for (AlarmValue alarmValue : alarmValues) {
+                            alarmsLogger.d(alarmValue);
+                        }
                     }
                 });
 
@@ -234,11 +239,11 @@ public class AlarmApplication extends Application {
                 .subscribe(new Consumer<Optional<Store.Next>>() {
                     @Override
                     public void accept(@NonNull Optional<Store.Next> next) throws Exception {
-                        logger.d("## Next: " + next);
+                        alarmsLogger.d("## Next: " + next);
                     }
                 });
 
-        logger.d("Done");
+        alarmsLogger.d("Done");
         super.onCreate();
     }
 

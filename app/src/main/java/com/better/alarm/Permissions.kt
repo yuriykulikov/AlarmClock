@@ -15,7 +15,7 @@ import com.better.alarm.model.Alarmtone
  */
 fun checkPermissions(activity: Activity, tones: List<Alarmtone>) {
     if (Build.VERSION.SDK_INT >= 23 && activity.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-        val logger = container().logger
+        val logger = container().createLogger("checkPermissions")
 
         val unplayable = tones
                 .filter { alarmtone ->

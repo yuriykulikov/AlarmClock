@@ -1,7 +1,6 @@
 package com.better.alarm.logger
 
 import com.better.alarm.logger.Logger.LogLevel
-import com.better.alarm.logger.Logger.LogWriter
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*

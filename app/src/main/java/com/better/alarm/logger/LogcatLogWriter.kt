@@ -4,7 +4,7 @@ import android.util.Log
 
 import com.better.alarm.logger.Logger.LogLevel
 
-class LogcatLogWriter private constructor() : Logger.LogWriter {
+class LogcatLogWriter private constructor() : LogWriter {
     override fun write(level: LogLevel, tag: String, message: String, e: Throwable?) {
         when (level) {
             LogLevel.INF -> Log.i(tag, message, e)

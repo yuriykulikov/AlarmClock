@@ -36,7 +36,6 @@ import com.better.alarm.background.Event;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
-import com.better.alarm.logger.Logger;
 import com.better.alarm.presenter.PickedTime;
 import com.better.alarm.presenter.TimePickerDialogFragment;
 import com.better.alarm.util.Optional;
@@ -120,7 +119,7 @@ public class AlarmAlertFullScreen extends FragmentActivity {
                         }
                     });
         } catch (Exception e) {
-            Logger.getDefaultLogger().d("Alarm not found");
+            container().logger().e("Alarm not found", e);
         }
     }
 
@@ -233,14 +232,14 @@ public class AlarmAlertFullScreen extends FragmentActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        Logger.getDefaultLogger().d("AlarmAlert.OnNewIntent()");
+        container().logger().d("AlarmAlert.OnNewIntent()");
 
         int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
         try {
             mAlarm = alarmsManager.getAlarm(id);
             setTitle();
         } catch (Exception e) {
-            Logger.getDefaultLogger().d("Alarm not found");
+            container().logger().d("Alarm not found");
         }
 
     }
@@ -266,7 +265,6 @@ public class AlarmAlertFullScreen extends FragmentActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Logger.getDefaultLogger().d("AlarmAlert.onDestroy()");
         // No longer care about the alarm being killed.
         subscription.dispose();
     }
