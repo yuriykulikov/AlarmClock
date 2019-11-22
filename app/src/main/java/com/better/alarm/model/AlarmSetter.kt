@@ -69,7 +69,7 @@ interface AlarmSetter {
         }
 
         override fun setInexactAlarm(id: Int, calendar: Calendar) {
-            log.d("[AlarmSetter.setInexactAlarm] id: $id on ${AlarmsScheduler.DATE_FORMAT.format(calendar.time)}")
+            log.d("setInexactAlarm id: $id on ${AlarmsScheduler.DATE_FORMAT.format(calendar.time)}")
             val pendingAlarm = Intent(ACTION_INEXACT_FIRED)
                     .apply {
                         setClass(mContext, AlarmsReceiver::class.java)
@@ -81,7 +81,7 @@ interface AlarmSetter {
         }
 
         override fun removeInexactAlarm(id: Int) {
-            log.d("[AlarmSetter.removeInexactAlarm] id: $id")
+            log.d("removeInexactAlarm id: $id")
             val pendingAlarm = PendingIntent.getBroadcast(
                     mContext,
                     id,

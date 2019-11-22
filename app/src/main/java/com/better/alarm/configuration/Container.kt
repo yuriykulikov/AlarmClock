@@ -18,7 +18,7 @@ import com.f2prateek.rx.preferences2.RxSharedPreferences
  */
 data class Container(
         val context: Context,
-        val logger: Logger,
+        val loggerFactory: (String) -> Logger,
         val sharedPreferences: SharedPreferences,
         val rxPrefs: RxSharedPreferences,
         val prefs: Prefs,
@@ -28,7 +28,13 @@ data class Container(
 
     fun context(): Context = context
 
-    fun logger(): Logger = logger
+    @Deprecated("Use the factory or createLogger", ReplaceWith("createLogger(\"TODO\")"))
+    fun logger(): Logger = loggerFactory("default")
+
+    @Deprecated("Use the factory or createLogger", ReplaceWith("createLogger(\"TODO\")"))
+    val logger: Logger = loggerFactory("default")
+
+    fun createLogger(tag: String) = loggerFactory(tag)
 
     fun sharedPreferences(): SharedPreferences = sharedPreferences
 
