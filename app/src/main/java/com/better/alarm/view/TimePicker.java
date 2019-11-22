@@ -28,13 +28,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.better.alarm.R;
+import com.better.alarm.configuration.InjectKt;
+import com.better.alarm.configuration.Prefs;
 
 import java.text.DateFormatSymbols;
 
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
-
-import static com.better.alarm.configuration.AlarmApplication.container;
 
 public class TimePicker extends LinearLayout implements Button.OnClickListener {
     private final Context mContext;
@@ -64,7 +64,7 @@ public class TimePicker extends LinearLayout implements Button.OnClickListener {
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         layoutInflater.inflate(R.layout.time_picker_view, this);
         mInputSize = 4;
-        mIs24HoursMode = isInEditMode() ? true : container().prefs().is24HoutFormat().blockingGet();
+        mIs24HoursMode = isInEditMode() ? true : InjectKt.globalInject(Prefs.class).getValue().is24HoutFormat().blockingGet();
         presenter = new TimePickerPresenter(mIs24HoursMode);
     }
 

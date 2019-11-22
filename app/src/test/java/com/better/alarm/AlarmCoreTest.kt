@@ -38,7 +38,7 @@ class AlarmCoreTest {
             snoozeDuration = BehaviorSubject.createDefault(10),
             listRowLayout = BehaviorSubject.createDefault("bold"),
             autoSilence = BehaviorSubject.createDefault(10))
-    private var logger: Logger = Logger.create().addLogWriter(SysoutLogWriter())
+    private var logger: Logger = Logger.create(SysoutLogWriter())
     private var currentHour = 0
     private var currentMinute = 5
     private var currentDay = 1

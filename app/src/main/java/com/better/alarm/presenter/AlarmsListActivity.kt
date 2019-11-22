@@ -29,10 +29,12 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import com.better.alarm.*
-import com.better.alarm.configuration.AlarmApplication.container
-import com.better.alarm.configuration.AlarmApplication.themeHandler
 import com.better.alarm.configuration.EditedAlarm
+import com.better.alarm.configuration.Store
+import com.better.alarm.configuration.globalInject
+import com.better.alarm.configuration.globalLogger
 import com.better.alarm.interfaces.IAlarmsManager
+import com.better.alarm.logger.Logger
 import com.better.alarm.model.AlarmData
 import com.better.alarm.model.Alarmtone
 import com.better.alarm.model.DaysOfWeek
@@ -43,6 +45,8 @@ import io.reactivex.functions.Consumer
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
+import org.koin.core.module.Module
+import org.koin.dsl.module
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.
@@ -51,21 +55,18 @@ class AlarmsListActivity : FragmentActivity() {
     private lateinit var mActionBarHandler: ActionBarHandler
 
     // lazy because it seems that AlarmsListActivity.<init> can be called before Application.onCreate()
-    private val logger by lazy { container().logger() }
-    private val alarms by lazy { container().alarms() }
+    private val logger: Logger by globalLogger("AlarmsListActivity")
+    private val alarms: IAlarmsManager by globalInject()
+    private val store: Store by globalInject()
 
     private var sub = Disposables.disposed()
 
-    private lateinit var store: UiStore
+    private val uiStore: UiStore by globalInject()
+    private val dynamicThemeHandler: DynamicThemeHandler by globalInject()
 
     companion object {
-        fun uiStore(activity: AlarmsListActivity, alarms: IAlarmsManager): UiStore {
-            return if (activity::store.isInitialized) {
-                activity.store
-            } else {
-                container().logger.e("AlarmsListActivity.store is not initialized!")
-                createStore(EditedAlarm(), alarms)
-            }
+        val uiStoreModule: Module = module {
+            single<UiStore> { createStore(EditedAlarm(), get()) }
         }
 
         private fun createStore(edited: EditedAlarm, alarms: IAlarmsManager): UiStore {
@@ -142,31 +143,30 @@ class AlarmsListActivity : FragmentActivity() {
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
         outState?.putInt("version", BuildConfig.VERSION_CODE)
-        store.editing().value?.writeInto(outState)
+        uiStore.editing().value?.writeInto(outState)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(themeHandler().getIdForName(AlarmsListActivity::class.java.name))
+        setTheme(dynamicThemeHandler.getIdForName(AlarmsListActivity::class.java.name))
         super.onCreate(savedInstanceState)
 
-        store = when {
+        when {
             savedInstanceState != null && savedInstanceState.getInt("version", BuildConfig.VERSION_CODE) == BuildConfig.VERSION_CODE -> {
                 val restored = editedAlarmFromSavedInstanceState(savedInstanceState)
                 logger.d("Restored ${this@AlarmsListActivity} with $restored")
-                createStore(restored, alarms)
+                uiStore.editing().onNext(restored)
             }
             else -> {
                 val initialState = EditedAlarm()
                 logger.d("Created ${this@AlarmsListActivity} with $initialState")
-                createStore(initialState, alarms)
             }
             // if (intent != null && intent.hasExtra(Intents.EXTRA_ID)) {
             //     //jump directly to editor
-            //     store.edit(intent.getIntExtra(Intents.EXTRA_ID, -1))
+            //     uiStore.edit(intent.getIntExtra(Intents.EXTRA_ID, -1))
             // }
         }
 
-        this.mActionBarHandler = ActionBarHandler(this, store, alarms)
+        this.mActionBarHandler = ActionBarHandler(this, uiStore, alarms)
 
         val isTablet = !resources.getBoolean(R.bool.isTablet)
         if (isTablet) {
@@ -175,8 +175,7 @@ class AlarmsListActivity : FragmentActivity() {
 
         setContentView(R.layout.list_activity)
 
-        container()
-                .store
+        store
                 .alarms()
                 .take(1)
                 .subscribe { alarms ->
@@ -215,11 +214,11 @@ class AlarmsListActivity : FragmentActivity() {
     }
 
     override fun onBackPressed() {
-        store.onBackPressed().onNext(AlarmsListActivity::class.java.simpleName)
+        uiStore.onBackPressed().onNext(AlarmsListActivity::class.java.simpleName)
     }
 
     private fun configureTransactions() {
-        sub = store.editing()
+        sub = uiStore.editing()
                 .distinctUntilChanged { edited -> edited.isEdited }
                 .subscribe(Consumer { edited ->
                     when {

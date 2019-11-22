@@ -35,15 +35,17 @@ import android.view.ViewGroup
 import android.widget.*
 import com.better.alarm.R
 import com.better.alarm.checkPermissions
-import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.Layout
 import com.better.alarm.configuration.Prefs
+import com.better.alarm.configuration.globalInject
+import com.better.alarm.configuration.globalLogger
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.logger.Logger
 import com.better.alarm.lollipop
 import com.better.alarm.model.AlarmData
 import com.better.alarm.model.Alarmtone
 import com.better.alarm.util.Optional
+import com.better.alarm.util.modify
 import com.better.alarm.view.showDialog
 import com.better.alarm.view.summary
 import com.f2prateek.rx.preferences2.RxSharedPreferences
@@ -57,17 +59,17 @@ import java.util.*
  * Details activity allowing for fine-grained alarm modification
  */
 class AlarmDetailsFragment : Fragment() {
-    private val alarms: IAlarmsManager = container().alarms()
-    private val logger: Logger = container().logger()
-    private val rxSharedPreferences: RxSharedPreferences = container().rxPrefs()
-    private val prefs: Prefs = container().prefs()
+    private val alarms: IAlarmsManager by globalInject()
+    private val logger: Logger by globalLogger("AlarmDetailsFragment")
+    private val rxSharedPreferences: RxSharedPreferences by globalInject()
+    private val prefs: Prefs by globalInject()
     private var disposables = CompositeDisposable()
 
     private var backButtonSub: Disposable = Disposables.disposed()
     private var disposableDialog = Disposables.disposed()
 
     private val alarmsListActivity by lazy { activity as AlarmsListActivity }
-    private val store: UiStore by lazy { AlarmsListActivity.uiStore(alarmsListActivity, alarms) }
+    private val store: UiStore by globalInject()
     private val mLabel: EditText by lazy { fragmentView.findViewById(R.id.details_label) as EditText }
     private val rowHolder: RowHolder by lazy { RowHolder(fragmentView.findViewById(R.id.details_list_row_container), alarmId, prefs.layout()) }
     private val mRingtoneRow by lazy { fragmentView.findViewById(R.id.details_ringtone_row) as LinearLayout }
@@ -309,12 +311,8 @@ class AlarmDetailsFragment : Fragment() {
 
     private fun modify(reason: String, function: (AlarmData) -> AlarmData) {
         logger.d("Performing modification because of $reason")
-        store.editing().value?.let { editedAlarm ->
-            val modified: Optional<AlarmData> = editedAlarm.value.of
-                    ?.let(function)
-                    .let { Optional.fromNullable(it) }
-
-            store.editing().onNext(editedAlarm.copy(value = modified))
+        store.editing().modify {
+            copy(value = value.map { function(it) })
         }
     }
 

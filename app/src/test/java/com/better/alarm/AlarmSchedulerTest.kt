@@ -29,7 +29,7 @@ class AlarmSchedulerTest {
     @Before
     fun setUp() {
         testScheduler = TestScheduler()
-        logger = Logger.create().addLogWriter(SysoutLogWriter())
+        logger = Logger.create(SysoutLogWriter())
 
         prefs = Prefs(
                 _is24HoutFormat = Single.just(true),

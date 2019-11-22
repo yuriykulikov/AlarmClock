@@ -2,14 +2,15 @@ package com.better.alarm.background
 
 import android.content.Context
 import android.content.Intent
-import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.Store
 import com.better.alarm.interfaces.Intents
+import com.better.alarm.logger.Logger
 import com.better.alarm.oreo
 import com.better.alarm.preOreo
 import com.better.alarm.util.mapNotNull
+import com.better.alarm.wakelock.WakeLockManager
 
-class AlertServicePusher(store: Store, context: Context) {
+class AlertServicePusher(store: Store, context: Context, wm: WakeLockManager, logger: Logger) {
     init {
         val disposable = store.events
                 .mapNotNull {
@@ -30,10 +31,10 @@ class AlertServicePusher(store: Store, context: Context) {
                     }
                 }
                 .subscribe { intent ->
-                    container().wakeLocks().acquireTransitionWakeLock(intent)
+                    wm.acquireTransitionWakeLock(intent)
                     oreo { context.startForegroundService(intent) }
                     preOreo { context.startService(intent) }
-                    container().logger.d("pushed intent ${intent.action} to AlertServiceWrapper")
+                    logger.d("pushed intent ${intent.action} to AlertServiceWrapper")
                 }
     }
 }

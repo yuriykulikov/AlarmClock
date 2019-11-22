@@ -1,76 +1,130 @@
 package com.better.alarm.configuration
 
+import android.app.AlarmManager
 import android.app.NotificationManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.media.AudioManager
 import android.os.PowerManager
 import android.os.Vibrator
+import android.preference.PreferenceManager
 import android.telephony.TelephonyManager
+import com.better.alarm.alert.BackgroundNotifications
+import com.better.alarm.background.AlertServicePusher
+import com.better.alarm.background.AlertServiceWrapper
 import com.better.alarm.interfaces.IAlarmsManager
+import com.better.alarm.logger.LogcatLogWriter
 import com.better.alarm.logger.Logger
-import com.better.alarm.model.Alarms
+import com.better.alarm.logger.LoggerFactory
+import com.better.alarm.logger.StartupLogWriter
+import com.better.alarm.model.*
+import com.better.alarm.persistance.DatabaseQuery
+import com.better.alarm.persistance.PersistingContainerFactory
+import com.better.alarm.presenter.AlarmsListActivity
+import com.better.alarm.presenter.DynamicThemeHandler
+import com.better.alarm.presenter.ScheduledReceiver
+import com.better.alarm.presenter.ToastPresenter
+import com.better.alarm.statemachine.HandlerFactory
+import com.better.alarm.util.Optional
 import com.better.alarm.wakelock.WakeLockManager
+import com.better.alarm.wakelock.Wakelocks
 import com.f2prateek.rx.preferences2.RxSharedPreferences
+import io.reactivex.Scheduler
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
+import org.koin.core.Koin
+import org.koin.core.context.loadKoinModules
+import org.koin.core.context.startKoin
+import org.koin.core.qualifier.named
+import org.koin.core.scope.Scope
+import org.koin.dsl.module
+import java.util.ArrayList
+import java.util.Calendar
 
-/**
- * Created by Yuriy on 09.08.2017.
- */
-data class Container(
-        val context: Context,
-        val loggerFactory: (String) -> Logger,
-        val sharedPreferences: SharedPreferences,
-        val rxPrefs: RxSharedPreferences,
-        val prefs: Prefs,
-        val store: Store,
-        val rawAlarms: Alarms) {
-    private val wlm: WakeLockManager = WakeLockManager(logger(), powerManager())
+fun Scope.logger(tag: String): Logger {
+    return get<LoggerFactory>().createLogger(tag)
+}
 
-    fun context(): Context = context
+fun startKoin(context: Context): Koin {
+    // The following line triggers the initialization of ACRA
 
-    @Deprecated("Use the factory or createLogger", ReplaceWith("createLogger(\"TODO\")"))
-    fun logger(): Logger = loggerFactory("default")
+    val module = module {
+        single<DynamicThemeHandler> { DynamicThemeHandler(get()) }
+        single<StartupLogWriter> { StartupLogWriter.create() }
+        single<LoggerFactory> {
+            Logger.factory(
+                    LogcatLogWriter.create(),
+                    get<StartupLogWriter>()
+            )
+        }
 
-    @Deprecated("Use the factory or createLogger", ReplaceWith("createLogger(\"TODO\")"))
-    val logger: Logger = loggerFactory("default")
+        factory<Context> { context }
+        factory(named("dateFormatOverride")) { "none" }
+        factory<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
+        single<RxSharedPreferences> { RxSharedPreferences.create(get()) }
+        factory<Single<Boolean>>(named("dateFormat")) {
+            Single.fromCallable {
+                get<String>(named("dateFormatOverride")).let { if (it == "none") null else it.toBoolean() }
+                        ?: android.text.format.DateFormat.is24HourFormat(context)
+            }
+        }
 
-    fun createLogger(tag: String) = loggerFactory(tag)
+        single {
+            val prefs = get<RxSharedPreferences>()
+            Prefs(get(named("dateFormat")),
+                    prefs.getString("prealarm_duration", "30").asObservable().map { it.toInt() },
+                    prefs.getString("snooze_duration", "10").asObservable().map { it.toInt() },
+                    prefs.getString(Prefs.LIST_ROW_LAYOUT, Prefs.LIST_ROW_LAYOUT_COMPACT).asObservable(),
+                    prefs.getString("auto_silence", "10").asObservable().map { it.toInt() })
+        }
 
-    fun sharedPreferences(): SharedPreferences = sharedPreferences
+        single<Store> {
+            Store(
+                    alarmsSubject = BehaviorSubject.createDefault(ArrayList()),
+                    next = BehaviorSubject.createDefault<Optional<Store.Next>>(Optional.absent()),
+                    sets = PublishSubject.create(),
+                    events = PublishSubject.create())
+        }
 
-    fun rxPrefs(): RxSharedPreferences = rxPrefs
-
-    fun prefs(): Prefs = prefs
-
-    fun store(): Store = store
-
-    fun rawAlarms(): Alarms = rawAlarms
-
-    fun alarms(): IAlarmsManager {
-        return rawAlarms()
+        factory { get<Context>().getSystemService(Context.ALARM_SERVICE) as AlarmManager }
+        single<AlarmSetter> { AlarmSetter.AlarmSetterImpl(logger("AlarmSetter"), get(), get()) }
+        factory { Calendars { Calendar.getInstance() } }
+        single<AlarmsScheduler> { AlarmsScheduler(get(), logger("AlarmsScheduler"), get(), get(), get()) }
+        factory<IAlarmsScheduler> { get<AlarmsScheduler>() }
+        single<AlarmCore.IStateNotifier> { AlarmStateNotifier(get()) }
+        single<HandlerFactory> { ImmediateHandlerFactory() }
+        single<ContainerFactory> { PersistingContainerFactory(get(), get()) }
+        factory { get<Context>().contentResolver }
+        single<DatabaseQuery> { DatabaseQuery(get(), get()) }
+        single<AlarmCoreFactory> { AlarmCoreFactory(logger("AlarmCore"), get(), get(), get(), get(), get(), get()) }
+        single<Alarms> { Alarms(get(), get(), get(), get(), logger("Alarms")) }
+        factory<IAlarmsManager> { get<Alarms>() }
+        single { ScheduledReceiver(get(), get(), get(), get()) }
+        single { ToastPresenter(get(), get()) }
+        single { AlertServicePusher(get(), get(), get(), logger("AlertServicePusher")) }
+        single { BackgroundNotifications(get(), get(), get(), get(), get()) }
+        factory<Wakelocks> { get<WakeLockManager>() }
+        factory<Scheduler> { AndroidSchedulers.mainThread() }
+        single<WakeLockManager> { WakeLockManager(logger("WakeLockManager"), get()) }
+        factory { get<Context>().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator }
+        factory { get<Context>().getSystemService(Context.POWER_SERVICE) as PowerManager }
+        factory { get<Context>().getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager }
+        factory { get<Context>().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
+        factory { get<Context>().getSystemService(Context.AUDIO_SERVICE) as AudioManager }
+        factory { get<Context>().resources }
     }
 
-    fun wakeLocks(): WakeLockManager {
-        return wlm
-    }
+    return startKoin {
+        modules(module)
+        modules(AlertServiceWrapper.module())
+        modules(AlarmsListActivity.uiStoreModule)
+    }.koin
+}
 
-    fun vibrator(): Vibrator {
-        return context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-    }
-
-    private fun powerManager(): PowerManager {
-        return context.getSystemService(Context.POWER_SERVICE) as PowerManager
-    }
-
-    fun telephonyManager(): TelephonyManager {
-        return context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-    }
-
-    fun notificationManager(): NotificationManager {
-        return context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    }
-
-    fun audioManager(): AudioManager {
-        return context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-    }
+fun overrideIs24hoursFormatOverride(is24hours: Boolean) {
+    loadKoinModules(module = module(override = true) {
+        factory(named("dateFormatOverride")) { is24hours.toString() }
+    })
 }

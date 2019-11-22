@@ -6,15 +6,17 @@ import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.Vibrator
 import android.preference.*
 import android.provider.Settings
 import com.better.alarm.R
 import com.better.alarm.checkPermissions
-import com.better.alarm.configuration.AlarmApplication.container
 import com.better.alarm.configuration.Prefs
+import com.better.alarm.configuration.globalInject
 import com.better.alarm.lollipop
 import com.better.alarm.model.Alarmtone
 import com.better.alarm.view.VolumePreference
+import com.f2prateek.rx.preferences2.RxSharedPreferences
 import io.reactivex.disposables.CompositeDisposable
 
 /**
@@ -23,8 +25,8 @@ import io.reactivex.disposables.CompositeDisposable
 
 class SettingsFragment : PreferenceFragment() {
     private val alarmStreamTypeBit = 1 shl AudioManager.STREAM_ALARM
-    private val vibrator = container().vibrator()
-    private val rxSharedPreferences = container().rxPrefs()
+    private val vibrator: Vibrator by globalInject()
+    private val rxSharedPreferences: RxSharedPreferences by globalInject()
     private val disposables = CompositeDisposable()
 
     private val contentResolver: ContentResolver

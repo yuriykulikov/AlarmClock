@@ -12,9 +12,9 @@ import android.widget.AdapterView.AdapterContextMenuInfo
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import com.better.alarm.R
-import com.better.alarm.configuration.AlarmApplication.container
-import com.better.alarm.configuration.Layout
-import com.better.alarm.configuration.Prefs
+import com.better.alarm.configuration.*
+import com.better.alarm.interfaces.IAlarmsManager
+import com.better.alarm.logger.Logger
 import com.better.alarm.lollipop
 import com.better.alarm.model.AlarmValue
 import com.melnykov.fab.FloatingActionButton
@@ -32,11 +32,11 @@ import java.util.Calendar
  * @author Yuriy
  */
 class AlarmsListFragment : Fragment() {
-    private val alarms = container().alarms()
-    private val store = container().store()
-    private val uiStore: UiStore by lazy { AlarmsListActivity.uiStore(activity as AlarmsListActivity, alarms) }
-    private val prefs: Prefs = container().prefs()
-    private val logger = container().logger()
+    private val alarms: IAlarmsManager by globalInject()
+    private val store: Store by globalInject()
+    private val uiStore: UiStore by globalInject()
+    private val prefs: Prefs by globalInject()
+    private val logger: Logger by globalLogger("AlarmsListFragment")
 
     private val mAdapter: AlarmListAdapter by lazy { AlarmListAdapter(R.layout.list_row_classic, R.string.alarm_list_title, ArrayList()) }
     private val inflater: LayoutInflater by lazy { activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater }

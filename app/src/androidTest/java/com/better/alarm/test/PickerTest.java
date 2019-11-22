@@ -4,9 +4,8 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.better.alarm.R;
-import com.better.alarm.configuration.AlarmApplication;
+import com.better.alarm.configuration.ContainerKt;
 import com.better.alarm.presenter.AlarmsListActivity;
-import com.better.alarm.util.Optional;
 
 import org.junit.After;
 import org.junit.Before;
@@ -34,7 +33,7 @@ public class PickerTest extends BaseTest {
 
     @Before
     public void setUp() {
-        AlarmApplication.is24hoursFormatOverride = Optional.of(true);
+        ContainerKt.overrideIs24hoursFormatOverride(true);
         onView().withId(R.id.fab).perform().click();
         //sleep();
     }

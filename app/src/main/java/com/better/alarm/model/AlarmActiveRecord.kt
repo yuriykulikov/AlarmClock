@@ -2,8 +2,7 @@ package com.better.alarm.model
 
 import android.media.RingtoneManager
 import android.net.Uri
-import com.better.alarm.configuration.AlarmApplication
-import java.util.*
+import java.util.Calendar
 
 class AlarmActiveRecord(
         val nextTime: Calendar,

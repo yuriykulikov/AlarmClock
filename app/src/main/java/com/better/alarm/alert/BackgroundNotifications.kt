@@ -19,15 +19,19 @@
 package com.better.alarm.alert
 
 import android.app.Notification
+import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.preference.PreferenceManager
 import android.text.format.DateFormat
 import com.better.alarm.CHANNEL_ID
 import com.better.alarm.R
 import com.better.alarm.background.Event
-import com.better.alarm.configuration.AlarmApplication.container
+import com.better.alarm.configuration.Prefs
+import com.better.alarm.configuration.Store
 import com.better.alarm.interfaces.Alarm
+import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.interfaces.PresentationToModelIntents
 import com.better.alarm.notificationBuilder
@@ -38,14 +42,15 @@ import java.util.Calendar
  * Glue class: connects AlarmAlert IntentReceiver to AlarmAlert activity. Passes
  * through Alarm ID.
  */
-class BackgroundNotifications {
-    private var mContext = container().context()
-    private val nm = container().notificationManager()
-    private val alarmsManager = container().alarms()
-    private val prefs = container().prefs()
-
+class BackgroundNotifications(
+        private var mContext: Context,
+        private val nm: NotificationManager,
+        private val alarmsManager: IAlarmsManager,
+        private val prefs: Prefs,
+        private val store: Store
+) {
     init {
-        val subscribe = container().store.events.subscribe { event ->
+        val subscribe = store.events.subscribe { event ->
             when (event) {
                 is Event.AlarmEvent -> nm.cancel(event.id + BACKGROUND_NOTIFICATION_OFFSET)
                 is Event.PrealarmEvent -> nm.cancel(event.id + BACKGROUND_NOTIFICATION_OFFSET)

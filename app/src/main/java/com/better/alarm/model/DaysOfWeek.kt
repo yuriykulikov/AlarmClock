@@ -3,7 +3,7 @@ package com.better.alarm.model
 import android.content.Context
 import com.better.alarm.R
 import java.text.DateFormatSymbols
-import java.util.*
+import java.util.Calendar
 
 /*
  * Days of week code as a single int. 0x00: no day 0x01: Monday 0x02:

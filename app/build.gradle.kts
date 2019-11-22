@@ -120,6 +120,10 @@ dependencies {
     implementation("com.f2prateek.rx.preferences2:rx-preferences:2.0.0")
     implementation("com.android.support:support-v4:26.1.0") {}
 
+    implementation("org.koin:koin-core:2.0.1")
+    implementation("org.koin:koin-core-ext:2.0.1")
+    testImplementation("org.koin:koin-test:2.0.1")
+
     // Testing-only dependencies
     testImplementation("net.wuerl.kotlin:assertj-core-kotlin:0.1.1")
     testImplementation("junit:junit:4.12")

@@ -80,7 +80,7 @@ public class AlarmsTest {
     @Before
     public void setUp() {
         testScheduler = new TestScheduler();
-        logger = Logger.create().addLogWriter(new SysoutLogWriter());
+        logger = Logger.create(new SysoutLogWriter());
 
         prefs = new Prefs(
                 /* is24HoutFormat */ Single.just(true),

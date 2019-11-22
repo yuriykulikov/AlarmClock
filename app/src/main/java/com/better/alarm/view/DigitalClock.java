@@ -30,13 +30,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.better.alarm.R;
+import com.better.alarm.configuration.InjectKt;
+import com.better.alarm.configuration.Prefs;
 
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 
 import io.reactivex.Single;
-
-import static com.better.alarm.configuration.AlarmApplication.container;
 
 /**
  * Displays the time
@@ -120,7 +120,7 @@ public class DigitalClock extends LinearLayout {
         if (isInEditMode()) {
             is24HoutFormat = Single.just(true);
         } else {
-            is24HoutFormat = container().prefs().is24HoutFormat();
+            is24HoutFormat = InjectKt.globalInject(Prefs.class).getValue().is24HoutFormat();
         }
     }
 

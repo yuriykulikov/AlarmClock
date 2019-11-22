@@ -9,6 +9,10 @@ interface LogWriter {
     fun write(level: Logger.LogLevel, tag: String, message: String, e: Throwable?)
 }
 
+interface LoggerFactory {
+    fun createLogger(tag: String): Logger
+}
+
 class Logger private constructor(
         private val writers: List<LogWriter> = emptyList(),
         val logLevel: LogLevel = LogLevel.DBG,
@@ -95,9 +99,11 @@ class Logger private constructor(
         }
 
         @JvmStatic
-        fun factory(vararg writer: LogWriter): (String) -> Logger {
-            return { tag ->
-                Logger(writers = writer.toList(), tag = tag)
+        fun factory(vararg writer: LogWriter): LoggerFactory {
+            return object : LoggerFactory {
+                override fun createLogger(tag: String): Logger {
+                    return Logger(writers = writer.toList(), tag = tag)
+                }
             }
         }
     }
