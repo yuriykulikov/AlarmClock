@@ -50,10 +50,12 @@ import com.better.alarm.view.showDialog
 import com.better.alarm.view.summary
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
-import java.util.*
+import io.reactivex.schedulers.Schedulers
+import java.util.Calendar
 
 /**
  * Details activity allowing for fine-grained alarm modification
@@ -242,15 +244,24 @@ class AlarmDetailsFragment : Fragment() {
                     mPreAlarmCheckBox.isChecked = editor.isPrealarm
 
                     mRepeatSummary.text = editor.daysOfWeek.summary(context)
-                    mRingtoneSummary.text = when (editor.alarmtone) {
-                        is Alarmtone.Silent -> context.getText(R.string.silent_alarm_summary)
-                        is Alarmtone.Default -> RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)).title()
-                        is Alarmtone.Sound -> RingtoneManager.getRingtone(context, Uri.parse(editor.alarmtone.uriString)).title()
-                    }
 
                     if (editor.label != mLabel.text.toString()) {
                         mLabel.setText(editor.label)
                     }
+                })
+
+        disposables.add(editor
+                .distinctUntilChanged()
+                .observeOn(Schedulers.computation())
+                .map { editor ->
+                    when (editor.alarmtone) {
+                        is Alarmtone.Silent -> context.getText(R.string.silent_alarm_summary)
+                        is Alarmtone.Default -> RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)).title()
+                        is Alarmtone.Sound -> RingtoneManager.getRingtone(context, Uri.parse(editor.alarmtone.uriString)).title()
+                    }
+                }.observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    mRingtoneSummary.text = it
                 })
 
         //pre-alarm duration, if set to "none", remove the option
