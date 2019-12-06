@@ -978,16 +978,6 @@ public final class AlarmCore implements Alarm, Consumer<AlarmValue> {
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     @Override
-    public boolean isSilent() {
-        return container.isSilent();
-    }
-
-    @Override
-    public Uri getAlert() {
-        return container.getAlert();
-    }
-
-    @Override
     public int getId() {
         return container.getId();
     }
