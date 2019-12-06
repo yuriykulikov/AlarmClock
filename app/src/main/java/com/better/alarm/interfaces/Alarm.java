@@ -23,10 +23,6 @@ public interface Alarm {
 
     AlarmEditor edit();
 
-    boolean isSilent();
-
-    Uri getAlert();
-
     int getId();
 
     String getLabelOrDefault();

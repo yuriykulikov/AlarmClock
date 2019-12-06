@@ -31,14 +31,15 @@ interface AlarmValue {
 
 private val defaultAlarmAlertUri = Settings.System.DEFAULT_ALARM_ALERT_URI.toString()
 
-sealed class Alarmtone(open val persistedString: String?) {
-    fun ringtoneManagerString(): Uri? {
-        return when (this) {
-            is Silent -> null
-            is Default -> Uri.parse(defaultAlarmAlertUri)
-            is Sound -> Uri.parse(this.uriString)
-        }
+fun Alarmtone.ringtoneManagerString(): Uri? {
+    return when (this) {
+        is Alarmtone.Silent -> null
+        is Alarmtone.Default -> Uri.parse(defaultAlarmAlertUri)
+        is Alarmtone.Sound -> Uri.parse(this.uriString)
     }
+}
+
+sealed class Alarmtone(open val persistedString: String?) {
 
     data class Silent(override val persistedString: String? = null) : Alarmtone(persistedString)
     data class Default(override val persistedString: String? = "") : Alarmtone(persistedString)

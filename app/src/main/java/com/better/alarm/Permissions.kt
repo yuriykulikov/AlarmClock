@@ -10,6 +10,7 @@ import com.better.alarm.background.PlayerWrapper
 import com.better.alarm.configuration.globalLogger
 import com.better.alarm.logger.Logger
 import com.better.alarm.model.Alarmtone
+import com.better.alarm.model.ringtoneManagerString
 
 /**
  * Checks if all ringtones can be played, and requests permissions if it is not the case

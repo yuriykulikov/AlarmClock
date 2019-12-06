@@ -52,20 +52,22 @@ class AlertService(
 
     private var soundAlarmDisposable: CompositeDisposable = CompositeDisposable()
 
+    private var currentAlarmId: Int? = null
+
     init {
         wakelocks.acquireServiceLock()
     }
 
     private var playingAlarm = false
     fun onStartCommand(event: Event) {
-        log.d("[AlertService] onStartCommand $event")
+        log.d("onStartCommand $event")
         if (!playingAlarm) {
             when (event) {
                 // we will start playing now
                 is Event.AlarmEvent, is Event.PrealarmEvent -> {
                 }
                 else -> {
-                    log.w("[AlertService] not playingAlarm, ignore $event")
+                    log.w("not playingAlarm, ignore $event")
                     handleUnwantedEvent()
                 }
             }
@@ -78,7 +80,8 @@ class AlertService(
             is Event.DemuteEvent -> wantedVolume.onNext(TargetVolume.FADED_IN_FAST)
             is Event.DismissEvent, is Event.SnoozedEvent, is Event.Autosilenced -> {
                 if (playingAlarm) {
-                    log.d("[AlertService] Cleaning up after $event")
+                    log.d("Cleaning up after $event")
+                    currentAlarmId = null
                     playingAlarm = false
                     wantedVolume.onNext(TargetVolume.MUTED)
                     soundAlarmDisposable.dispose()
@@ -92,6 +95,12 @@ class AlertService(
     private fun soundAlarm(id: Int, type: Type) {
         // new alarm - dispose all current signals
         soundAlarmDisposable.dispose()
+        currentAlarmId?.let {
+            log.debug { "dismissing currently playing $it" }
+            alarms.getAlarm(it)?.dismiss()
+        }
+        currentAlarmId = id
+
         playingAlarm = true
 
         wantedVolume.onNext(TargetVolume.FADED_IN)
