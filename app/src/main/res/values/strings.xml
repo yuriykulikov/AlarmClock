@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-     Copyright (C) 2007 The Android Open Source Project
+    Copyright (C) 2007 The Android Open Source Project
 
-     Licensed under the Apache License, Version 2.0 (the "License");
-     you may not use this file except in compliance with the License.
-     You may obtain a copy of the License at
-  
-          http://www.apache.org/licenses/LICENSE-2.0
-  
-     Unless required by applicable law or agreed to in writing, software
-     distributed under the License is distributed on an "AS IS" BASIS,
-     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     See the License for the specific language governing permissions and
-     limitations under the License.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 -->
 
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2" tools:ignore="MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation">
@@ -114,7 +114,7 @@
     <!--
      Entries listed in the ListPreference when invoking the snooze duration
      preference.
--->
+ -->
     <string-array name="snooze_duration_with_off_entries">
         <item>Off</item>
         <item>5 minutes</item>
@@ -148,32 +148,32 @@
     <string name="menu_about_title">About</string>
     <string name="dialog_about_content">Simple Alarm Clock is an open source project which brings pure alarm experience to you by combining essential features and clean interface.
 
-        \n\nTip:
-        \n· Select layout size in settings
-        \n· Select color theme in settings
+       \n\nTip:
+       \n· Select layout size in settings
+       \n· Select color theme in settings
 
-        \n\nNew in this version:
-        \n· Fixes for Android 9
-        \n· New Design
-        \n· Select row size in settings
+       \n\nNew in this version:
+       \n· Fixes for Android 9
+       \n· New Design
+       \n· Select row size in settings
 
-        \n· <a href="https://github.com/yuriykulikov/AlarmClock">Learn more on GitHub</a>
+       \n· <a href="https://github.com/yuriykulikov/AlarmClock">Learn more on GitHub</a>
 
-        \n\nSupport the app:
-        \n· <a href="https://www.paypal.me/YuriyKulikov">PayPal</a>
-        \n· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Go premium</a>
-    </string>
+       \n\nSupport the app:
+       \n· <a href="https://www.paypal.me/YuriyKulikov">PayPal</a>
+       \n· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Go premium</a>
+   </string>
     <string name="dialog_bugreport_faq"><b>Common issues and how to fix them</b>
-        \n\n<b><font color="#FF0000">If after the update all alarms disappeared and are not saved anymore</font></b>, it means that during the update Android has locked our database. It is a bug in Android OS and the only way to resolve this is to reinstall!
+       \n\n<b><font color="#FF0000">If after the update all alarms disappeared and are not saved anymore</font></b>, it means that during the update Android has locked our database. It is a bug in Android OS and the only way to resolve this is to reinstall!
 
-        \n\n<font color="#FF0000">If something was working and then suddenly broke</font>, it is very likely that Android has messed up the application cache. This happens from time to time to all apps. <b>Clearing the cache (App info -> Storage -> Clear cache) or in the worst case uninstalling and reinstalling the app usually resolves the issue.</b>
+       \n\n<font color="#FF0000">If something was working and then suddenly broke</font>, it is very likely that Android has messed up the application cache. This happens from time to time to all apps. <b>Clearing the cache (App info -> Storage -> Clear cache) or in the worst case uninstalling and reinstalling the app usually resolves the issue.</b>
 
-        \n\n<font color="#FF0000">If there is no sound</font>, please check your device settings. You must use at least Alarms Only on Android 8 and you should not use Do not disturb on Android 9. Read more on <a href="https://support.google.com/android/answer/9069335">Google support page</a>
+       \n\n<font color="#FF0000">If there is no sound</font>, please check your device settings. You must use at least Alarms Only on Android 8 and you should not use Do not disturb on Android 9. Read more on <a href="https://support.google.com/android/answer/9069335">Google support page</a>
 
-        \n\n<font color="#FF0000">If alarm did not go off</font>, please make sure that you did not accidentally switched it off. We get a number of complaints regarding this and we see that users are simply switching the alarm off after a while <b>in their sleep</b> using “Dismiss” button. If you experience that, move the phone further away when you go to bed.
+       \n\n<font color="#FF0000">If alarm did not go off</font>, please make sure that you did not accidentally switched it off. We get a number of complaints regarding this and we see that users are simply switching the alarm off after a while <b>in their sleep</b> using “Dismiss” button. If you experience that, move the phone further away when you go to bed.
 
-        \n\n<font color="#FF0000">If nothing from the above list helps</font>, please write us a message in the field below. We will do our best to try to help you.
-    </string>
+       \n\n<font color="#FF0000">If nothing from the above list helps</font>, please write us a message in the field below. We will do our best to try to help you.
+   </string>
     <string name="dialog_say_thanks_title">Say thanks</string>
     <string name="dialog_say_thanks_review_message">Thanks a lot for taking your time to say thanks! “Simple Alarm Clock” is an open source non-profit project. We will never use ads or gather user data to earn money. However, we are extremely happy if you like our work. One of the best ways to say thanks is to write a positive review. You can also ask a question or leave your feature request.</string>
     <string name="dialog_say_thanks_premium_text">If you really like the app, you could consider upgrading to the premium version! Premium sounds great, does it not?</string>
@@ -187,25 +187,25 @@
     <string name="notification_channel_low_prio">Expired alarm notification</string>
     <string name="alert_notifications_title">Oh no! Big problem!</string>
     <string name="alert_notifications_turned_off">
-        All notifications are turned off, including the big popup with snooze and dismiss buttons!
+       All notifications are turned off, including the big popup with snooze and dismiss buttons!
 
-        \n\nClick OK to jump to settings and enable the notifications!</string>
+       \n\nClick OK to jump to settings and enable the notifications!</string>
     <string name="alert_notifications_high_prio_text">
-        Priority of for the big popup with snooze and dismiss buttons is too low to unlock the screen!
+       Priority of for the big popup with snooze and dismiss buttons is too low to unlock the screen!
 
-        \n\nIt happens if you have disabled and enabled notifications again or changed settings manually.
+       \n\nIt happens if you have disabled and enabled notifications again or changed settings manually.
 
-        \n\nClick OK to jump to system settings and select the highest priority for this notification (Make sound and pop up on screen).
+       \n\nClick OK to jump to system settings and select the highest priority for this notification (Make sound and pop up on screen).
 
-        \n\nIronically, you should set the sound to "none" in advanced settings.</string>
+       \n\nIronically, you should set the sound to "none" in advanced settings.</string>
     <string name="alert_notifications_default_prio_text">
-        Secondary notifications are disabled.
+       Secondary notifications are disabled.
 
-        \n\nIt happens if you have disabled and enabled notifications again or changed settings manually.
+       \n\nIt happens if you have disabled and enabled notifications again or changed settings manually.
 
-        \n\nClick OK to jump to system settings and select the second highest priority for this notification (Make sound).
+       \n\nClick OK to jump to system settings and select the second highest priority for this notification (Make sound).
 
-        \n\nIronically, you should set the sound to "none" in advanced settings.</string>
+       \n\nIronically, you should set the sound to "none" in advanced settings.</string>
     <string name="skip">Skip</string>
     <string name="notification_alarm_is_about_to_go_off">Alarm is about to go off on</string>
 </resources>

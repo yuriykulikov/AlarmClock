@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-     Copyright (C) 2007 The Android Open Source Project
+    Copyright (C) 2007 The Android Open Source Project
 
-     Licensed under the Apache License, Version 2.0 (the "License");
-     you may not use this file except in compliance with the License.
-     You may obtain a copy of the License at
-  
-          http://www.apache.org/licenses/LICENSE-2.0
-  
-     Unless required by applicable law or agreed to in writing, software
-     distributed under the License is distributed on an "AS IS" BASIS,
-     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     See the License for the specific language governing permissions and
-     limitations under the License.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2" xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation">
@@ -69,34 +69,91 @@
         <item><xliff:g id="DAYS" example="2 days">%1$s</xliff:g>, <xliff:g id="HOURS" example="2 hours">%2$s</xliff:g>, and <xliff:g id="MINUTES" example="2 minutes">%3$s</xliff:g></item>
     </string-array>
 
-    <string name="theme_title">Tema de la interfaz</string>
-    <string name="simple_alarm_clock">Sencilla-despertador</string>
-    <!--
-     Entries listed in the ListPreference when invoking the snooze duration
-     preference.
--->
+    <string name="theme_title">Gama de colores</string>
+    <string-array name="preference_list_row_layout_entries">
+        <item>Compacto</item>
+        <item>Normal</item>
+        <item>Clásico</item>
+    </string-array>
+    <string name="simple_alarm_clock">Despertador simple</string>
     <string-array name="snooze_duration_with_off_entries">
-        <item>Off</item>
-        <item>5 minutos</item>
-        <item>10 minutos</item>
-        <item>15 minutos</item>
-        <item>20 minutos</item>
-        <item>25 minutos</item>
-        <item>30 minutos</item>
+        <item>"está apagada"</item>
+        <item>"5 minutos"</item>
+        <item>"10 minutos"</item>
+        <item>"15 minutos"</item>
+        <item>"20 minutos"</item>
+        <item>"25 minutos"</item>
+        <item>"30 minutos"</item>
     </string-array>
-    <!--
-         Values that are retrieved from the ListPreference. These must match
-         the snooze_duration_entries above.
-    -->
-    <string-array name="snooze_duration_with_off_values">
-        <item>-1</item>
-        <item>5</item>
-        <item>10</item>
-        <item>15</item>
-        <item>20</item>
-        <item>25</item>
-        <item>30</item>
-    </string-array>
-    <string name="alarm_alert_reschedule_text">Reprogramar</string>
-    <string name="alarm_alert_hold_the_button_text">Mantenga pulsado el botón!</string>
+    <string name="alarm_alert_reschedule_text">Рosponer</string>
+    <string name="alarm_alert_hold_the_button_text">Botón de retención!</string>
+    <string name="permissions_external_storage_text">Lo sentimos %s, se requiere un permiso especial. Haga clic en Aceptar para confirmar. Si no está de acuerdo, seleccione un tono de llamada diferente. Esta decisión se puede cambiar en cualquier momento en la configuración del sistema.</string>
+    <string name="details_no_ringtone_picker">No se ha encontrado ningún proveedor de tonos de llamada. Por favor instale un proveedor.</string>
+    <string name="preference_category_durations">Duración</string>
+    <string name="preference_category_sound">Volumen y sonido</string>
+    <string name="preference_category_ui">Interfaz</string>
+    <string name="preference_list_row_layout_title">Tamaño</string>
+    <string name="menu_about_title">Sobre el programa</string>
+    <string name="dialog_about_content">Simple alarm clock es un programa de código abierto que combina una interfaz simple y las características necesarias
+
+       \n\nConsejo:
+       \n· Puede cambiar el cambio de tamaño de la alarma en la configuración.
+       \n· Puede cambiar el color de la alarma en la configuración.
+
+       \n\nNuevo en esta versión:
+       \n· Soporte de Android 9
+       \n· Nuevo diseño
+
+       \n· <a href="https://github.com/yuriykulikov/AlarmClock">Lea sobre el proyecto en GitHub</a>
+
+       \n\nApoyar el desarrollo
+       \n\· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Versión premium (donar)</a>
+       \n\· <a href="https://money.yandex.ru/to/410019676183865">Yandex</a>
+       \n\· <a href="https://www.paypal.me/YuriyKulikov">PayPal</a>
+   </string>
+    <string name="dialog_bugreport_faq"><b>Problemas comunes y cómo solucionarlos</b>
+       \n\n<b><font color="#FF0000">Si después de la actualización todas las alarmas desaparecieron y ya no se guardan</font></b>, significa que durante la actualización, Android ha bloqueado nuestra base de datos. Este error es causado por un error en Android, ocurre muy raramente, pero si esto sucede, la única forma de solucionarlo es desinstalar y reinstalar la aplicación.
+
+       \n\n<font color="#FF0000">Si algo se rompió de repente, aunque anteriormente funcionó sin problemas</font>, es muy probable que Android haya desordenado el caché de la aplicación.
+Esto sucede de vez en cuando con todas las aplicaciones. Normalmente, borrar el caché o desinstalar y reinstalar la aplicación ayuda a resolver el problema.
+
+       \n\n<font color="#FF0000">Si no oyes el sonido de la alarma</font>, por favor verifique la configuración de su dispositivo. En Android 8, se debe seleccionar al menos "Solo alarma". ¡También es necesario tener en cuenta que en Android 9 en el modo No molestar no se escucha la alarma! Puede encontrar más información en <a href="https://support.google.com/android/answer/9069335?hl=ru">Página de Android-referencias </a>
+       \n\n<font color="#FF0000">Si nota que la alarma no sonó</font>, Compruebe si apagó la alarma por accidente.
+A menudo recibimos tales quejas, y generalmente resulta que un tiempo después de que suena la alarma, el usuario la apaga en un sueño por error (en el botón "Apagar") y luego no recuerda esto. Si nota un problema similar, intente colocar el teléfono un poco más lejos de la cama antes de acostarse.
+
+       \n\n<font color="#FF0000">Si probaste todos los métodos anteriores, pero nada ayuda</font>, escríbanos un mensaje en el siguiente campo. Haremos todo lo posible para ayudarlo.
+   </string>
+    <string name="dialog_say_thanks_title">Para agradecer</string>
+    <string name="dialog_say_thanks_review_message">¡Gracias por tomarse el tiempo de agradecernos! "Simple Alarm Clock" es un proyecto de código abierto sin fines de lucro.
+Nunca utilizaremos publicidad ni recopilaremos datos de usuarios con fines de lucro. Sin embargo, estaremos felices si aprecia nuestro trabajo. Una de las mejores maneras de hacer esto es escribir una crítica positiva. También puede hacernos una pregunta o enviar una solicitud para la implementación de una nueva función.</string>
+    <string name="dialog_say_thanks_premium_text">Si realmente te gusta nuestra aplicación, puedes considerar comprar una versión premium. Suena genial, ¿verdad? :)</string>
+    <string name="dialog_say_thanks_donate_message">¡Otra excelente manera de apoyar la aplicación es comprarme una taza de café o una galleta! :) Puede hacerlo utilizando una de las siguientes opciones.</string>
+    <string name="dialog_say_thanks_premium_text_as_button"><a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Versión premium
+</a></string>
+    <string name="dialog_say_thanks_donate_paypal"><a href="https://www.paypal.me/YuriyKulikov">PayPal</a></string>
+    <string name="dialog_say_thanks_donate_yandex"><a href="https://money.yandex.ru/to/410019676183865">Yandex</a></string>
+
+    <string name="notification_channel_high_prio">Gran ventana emergente con botones para posponer y descartar</string>
+    <string name="notification_channel_default_prio">Notificación de una alarma pospuesta</string>
+    <string name="notification_channel_low_prio">Notificación de alarma caducada</string>
+    <string name="alert_notifications_title">Oh no, tenemos un problema!</string>
+    <string name="alert_notifications_turned_off">
+
+Todas las notificaciones están desactivadas, ¡incluida la gran ventana emergente con botones de repetición y cierre!
+
+       \n\nHaga clic en Aceptar para ir a la configuración y habilitar las notificaciones.</string>
+    <string name="alert_notifications_high_prio_text">¡La prioridad de la ventana grande con los botones "apagar" y "dejar de lado" es demasiado baja para desbloquear la pantalla!
+
+       \n\nEs posible que haya apagado o cambiado accidentalmente la configuración de notificaciones.
+       \n\nHaga clic en Aceptar para ir a la configuración y seleccionar la acción superior (Sonido y notificación emergente).
+
+       \n\nEsto puede parecer extraño, pero simplemente apague el sonido en la configuración avanzada.</string>
+    <string name="alert_notifications_default_prio_text">
+       Las notificaciones menores están desactivadas.
+
+       \n\nEs posible que haya apagado o cambiado accidentalmente la configuración de notificaciones.
+       \n\nHaga clic en Aceptar para ir a la configuración y luego seleccione la segunda acción superior (Sonido).
+       \n\nEsto puede parecer extraño, pero simplemente apague el sonido en la configuración avanzada.</string>
+    <string name="skip">Saltar</string>
+    <string name="notification_alarm_is_about_to_go_off">La alarma está a punto de sonar.</string>
 </resources>

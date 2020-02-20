@@ -3,9 +3,9 @@
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
      You may obtain a copy of the License at
-  
+
           http://www.apache.org/licenses/LICENSE-2.0
-  
+
      Unless required by applicable law or agreed to in writing, software
      distributed under the License is distributed on an "AS IS" BASIS,
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -66,12 +66,12 @@
     <string name="simple_alarm_clock">Einfacher Wecker</string>
     <string-array name="snooze_duration_with_off_entries">
         <item>"Aus"</item>
-        <item>"5 Minuten"</item>
-        <item>"10 Minuten"</item>
-        <item>"15 Minuten"</item>
-        <item>"20 Minuten"</item>
-        <item>"25 Minuten"</item>
-        <item>"30 Minuten"</item>
+        <item>"5 Minuten"</item>
+        <item>"10 Minuten"</item>
+        <item>"15 Minuten"</item>
+        <item>"20 Minuten"</item>
+        <item>"25 Minuten"</item>
+        <item>"30 Minuten"</item>
     </string-array>
     <string name="alarm_alert_reschedule_text">Neu planen</string>
     <string name="alarm_alert_hold_the_button_text">Halten Sie die Taste!</string>
@@ -83,31 +83,31 @@
     <string name="menu_about_title">About</string>
     <string name="dialog_about_content">Einfacher Wecker ist ein Open Source Projekt der bringt euch alle nötige Features in minimalister Form.
 
-        \n\nHinweiß:
-        \n· Die Größe kann eingestellt werden (in die Einstllungen)
-        \n· Die Farbe kann eingestellt werden (in die Einstllungen)
+       \n\nHinweiß:
+       \n· Die Größe kann eingestellt werden (in die Einstllungen)
+       \n· Die Farbe kann eingestellt werden (in die Einstllungen)
 
-        \n\Neu in dieser Version:
-        \n· Umbauten für Android 9
-        \n· Neues Design
+       \n\Neu in dieser Version:
+       \n· Umbauten für Android 9
+       \n· Neues Design
 
-        \n· <a href="https://github.com/yuriykulikov/AlarmClock">Mehr über das Projekt auf GitHub</a>
+       \n· <a href="https://github.com/yuriykulikov/AlarmClock">Mehr über das Projekt auf GitHub</a>
 
-        \n\nTrinkgeld:
-        \n· <a href="https://www.paypal.me/YuriyKulikov">PayPal</a>
-        \n· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Premium version (donate)</a>
-    </string>
+       \n\nTrinkgeld:
+       \n· <a href="https://www.paypal.me/YuriyKulikov">PayPal</a>
+       \n· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Premium version (donate)</a>
+   </string>
     <string name="dialog_bugreport_faq"><b>Wie Sie die häufigsten Fehler richtig beheben</b>
-        \n\n<b><font color="#FF0000">Wenn nach dem update alle Wecker weg sind und können nicht mehr gespeichert werden</font></b>, dann hat die Android OS unseres Datenbank während update gesperrt. Das ist ein bug in Android und einzelne Möglichkeit das zu reparieren ist App zu deinstallieren und erneut zu installieren.
+       \n\n<b><font color="#FF0000">Wenn nach dem update alle Wecker weg sind und können nicht mehr gespeichert werden</font></b>, dann hat die Android OS unseres Datenbank während update gesperrt. Das ist ein bug in Android und einzelne Möglichkeit das zu reparieren ist App zu deinstallieren und erneut zu installieren.
 
-        \n\n<font color="#FF0000">Wenn etwas hat funktioniert und dann plötzlich kaputt ging</font>, ist es sehr wahrscheinlich, dass Android den Application Cache durcheinander gebracht hat. Dies geschieht von Zeit zu Zeit bei alle Apps. Durch Leeren des Caches (App-Info -> Speicher -> Cache leeren) oder im schlimmsten Fall Deinstallieren und erneutes Installieren wird das Problem normalerweise behoben.
+       \n\n<font color="#FF0000">Wenn etwas hat funktioniert und dann plötzlich kaputt ging</font>, ist es sehr wahrscheinlich, dass Android den Application Cache durcheinander gebracht hat. Dies geschieht von Zeit zu Zeit bei alle Apps. Durch Leeren des Caches (App-Info -> Speicher -> Cache leeren) oder im schlimmsten Fall Deinstallieren und erneutes Installieren wird das Problem normalerweise behoben.
 
-        \n\n<font color="#FF0000">Wenn kein Ton zu hören ist</font>, überprüfen Sie bitte Ihre Geräteeinstellungen. Sie müssen mindestens "Nur Wecker" für Android 8 und kein "Bitte nicht stören" Modus für Android 9 verwenden. Weitere Informationen finden Sie auf der <a href="https://support.google.com/android/answer/9069335?hl=de"> Google Android-Hilfe Seite </a>
+       \n\n<font color="#FF0000">Wenn kein Ton zu hören ist</font>, überprüfen Sie bitte Ihre Geräteeinstellungen. Sie müssen mindestens "Nur Wecker" für Android 8 und kein "Bitte nicht stören" Modus für Android 9 verwenden. Weitere Informationen finden Sie auf der <a href="https://support.google.com/android/answer/9069335?hl=de"> Google Android-Hilfe Seite </a>
 
-        \n\n<font color="#FF0000">Wenn der Alarm nicht ausgelöst wurde</font>, stellen Sie bitte sicher, dass Sie ihn nicht versehentlich ausgeschaltet haben. Wir bekommen diesbezüglich eine Reihe von Beschwerden und stellen fest, dass Benutzer den Alarm nach einer Weile im Schlaf einfach ausschalten (mittels Button “Ausschalten”). Wenn Sie dies bemerken, bewegen Sie das Telefon weiter weg, wenn Sie ins Bett gehen.
+       \n\n<font color="#FF0000">Wenn der Alarm nicht ausgelöst wurde</font>, stellen Sie bitte sicher, dass Sie ihn nicht versehentlich ausgeschaltet haben. Wir bekommen diesbezüglich eine Reihe von Beschwerden und stellen fest, dass Benutzer den Alarm nach einer Weile im Schlaf einfach ausschalten (mittels Button “Ausschalten”). Wenn Sie dies bemerken, bewegen Sie das Telefon weiter weg, wenn Sie ins Bett gehen.
 
-        \n\n<font color="#FF0000">Wenn nichts hilft</font>, schreiben Sie uns bitte eine Nachricht in das unten stehende Feld. Wir werden unser Bestes tun, um Ihnen zu helfen.
-    </string>
+       \n\n<font color="#FF0000">Wenn nichts hilft</font>, schreiben Sie uns bitte eine Nachricht in das unten stehende Feld. Wir werden unser Bestes tun, um Ihnen zu helfen.
+   </string>
     <string name="dialog_say_thanks_title">Sagen Danke</string>
     <string name="dialog_say_thanks_review_message">Vielen Dank, dass Sie sich die Zeit genommen haben, sich zu bedanken! "Wecker ohne Schnickschnack" ist ein Open-Source Nonprofit-Projekt. Wir werden niemals Werbung verwenden oder Benutzerdaten sammeln, um Geld zu verdienen. Wir freuen uns jedoch sehr, wenn Ihnen unsere Arbeit gefällt. Eine der besten Möglichkeiten, sich zu bedanken, ist eine positive Bewertung zu schreiben. Sie können auch eine Frage stellen oder Ihre Featureanfrage hinterlassen.</string>
     <string name="dialog_say_thanks_premium_text">Wenn die App Ihnen wirklich gefällt, Sie können ein Upgrade auf die Premium-Version überlegen. Premium hört sich toll an, oder?</string>
@@ -121,23 +121,25 @@
     <string name="notification_channel_low_prio">Benachrichtigung für einen abgelaufenem Wecker</string>
     <string name="alert_notifications_title">Wir haben ein kleines Problem!</string>
     <string name="alert_notifications_turned_off">
-        All notifications are turned off, including the big popup with snooze and dismiss buttons!
+       Alle Benachrichtigungen sind deaktiviert, einschließlich des großen Popups mit Snooze- und Dismiss-Buttons!
 
-        \n\nClick OK to jump to settings and enable the notifications!</string>
+       \n\Klicken Sie auf OK, um zu den Einstellungen zu springen und die Benachrichtigungen zu aktivieren!</string>
     <string name="alert_notifications_high_prio_text">
-        Priority of for the big popup with snooze and dismiss buttons is too low to unlock the screen!
+       Die Priorität des großen Popups mit Snooze- und Dismiss-Buttons ist zu niedrig, um den Bildschirm zu entsperren!
 
-        \n\nIt happens if you have disabled and enabled notifications again or changed settings manually.
+       \n\nMöglicherweise haben Sie die Benachrichtigungseinstellungen versehentlich deaktiviert oder geändert.
 
-        \n\nClick OK to jump to system settings and select the highest priority for this notification (Make sound and pop up on screen).
+       \n\nKlicken Sie auf OK, um zu den Einstellungen zu gelangen und die oberste Aktion auszuwählen (Ton und Popup-Benachrichtigung).
 
-        \n\nIronically, you should set the sound to "none" in advanced settings.</string>
+       \n\nEs ist lustig, aber schalte einfach den Ton in den erweiterten Einstellungen aus.</string>
     <string name="alert_notifications_default_prio_text">
-        Secondary notifications are disabled.
+       Sekundäre Benachrichtigungen sind deaktiviert.
 
-        \n\nIt happens if you have disabled and enabled notifications again or changed settings manually.
+       \n\nMöglicherweise haben Sie die Benachrichtigungseinstellungen versehentlich deaktiviert oder geändert.
 
-        \n\nClick OK to jump to system settings and select the second highest priority for this notification (Make sound).
+       \n\nKlicken Sie auf OK, um zu den Einstellungen zu gelangen, und wählen Sie dann die zweite obere Aktion (Ton) aus.
 
-        \n\nIronically, you should set the sound to "none" in advanced settings.</string>
+       \n\nEs ist lustig, aber schalte einfach den Ton in den erweiterten Einstellungen aus.</string>
+    <string name="skip">Überspringen</string>
+    <string name="notification_alarm_is_about_to_go_off">Der Alarm geht gleich los</string>
 </resources>

@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?><!--  Copyright (C) 2007 The Android Open Source Project
 
-     Licensed under the Apache License, Version 2.0 (the "License");
-     you may not use this file except in compliance with the License.
-     You may obtain a copy of the License at
-  
-          http://www.apache.org/licenses/LICENSE-2.0
-  
-     Unless required by applicable law or agreed to in writing, software
-     distributed under the License is distributed on an "AS IS" BASIS,
-     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     See the License for the specific language governing permissions and
-     limitations under the License.
- -->
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- Here come strings which are not contained in the AOSP -->
     <string name="alarm_prealarm">Предварительный сигнал</string>
-    <string name="prealarm_duration_title">Длительность предв. сигнала</string>
+    <string name="prealarm_duration_title">Длительность предварительного сигнала</string>
     <string-array name="prealarm_duration_entries">
         <item>Выкл.</item>
         <item>10 минут</item>
@@ -33,7 +33,7 @@
     <string name="menu_bugreport">Отчет об ошибке</string>
     <string name="dialog_say_thanks_review_button">Оставить отзыв</string>
     <string name="dialog_bugreport_hint">Опишите проблему здесь</string>
-    <string name="longclick_dismiss_title">Longclick Отключить</string>
+    <string name="longclick_dismiss_title">Долгое нажатие</string>
     <string name="longclick_dismiss_summary">Держать кнопку "Отключить" чтобы выключить будильник</string>
     <string name="fade_in_time_sec_title">Нарастание громкости</string>
     <string-array name="fade_in_time_sec_entries">
@@ -74,7 +74,7 @@
     </string-array>
     <string name="alarm_alert_reschedule_text">Перенести</string>
     <string name="alarm_alert_hold_the_button_text">Удерживайте кнопку!</string>
-    <string name="permissions_external_storage_text">Для того, чтобы проигрывать %s, необходимо специальное разрешение. Нажмите ОК для подтверждения. Если вы не хотите этого, выбирите, пожалуйста, другой рингтон. Это решение может быть в любое время изменено в настройках системы.</string>
+    <string name="permissions_external_storage_text">Для того, чтобы проигрывать %s, необходимо специальное разрешение. Нажмите ОК для подтверждения. Если вы не хотите этого, выберите, пожалуйста, другой рингтон. Это решение может быть в любое время изменено в настройках системы.</string>
     <string name="details_no_ringtone_picker">Не найдено провайдера Рингтонов. Пожалуйста, установите провайдер из Маркета</string>
     <string name="preference_category_durations">Длительности</string>
     <string name="preference_category_sound">Громкость и звук</string>
@@ -83,62 +83,64 @@
     <string name="menu_about_title">О программе</string>
     <string name="dialog_about_content">Простой будильник это программа с открытым исходным кодом, которая сочетает простой интерфейс и необходимые фичи
 
-        \n\nСовет:
-        \n· Размер будильников можно менять в настройках
-        \n· Цвет можно менять в настройках
+       \n\nСовет:
+       \n· Размер будильников можно менять в настройках
+       \n· Цвет можно менять в настройках
 
-        \n\nНовое в этой версии:
-        \n· Поддержка Android 9
-        \n· Новый дизайн
+       \n\nНовое в этой версии:
+       \n· Поддержка Android 9
+       \n· Новый дизайн
 
-        \n· <a href="https://github.com/yuriykulikov/AlarmClock">Прочитать о проекте на GitHub</a>
+       \n· <a href="https://github.com/yuriykulikov/AlarmClock">Прочитать о проекте на GitHub</a>
 
-        \n\nПоддержать разработку
-        \n\· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Премиум версия (донейт)</a>
-        \n\· <a href="https://money.yandex.ru/to/410019676183865">Yandex</a>
-        \n\· <a href="https://www.paypal.me/YuriyKulikov">PayPal</a>
-    </string>
+       \n\nПоддержать разработку
+       \n\· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Премиум версия (донейт)</a>
+       \n\· <a href="https://money.yandex.ru/to/410019676183865">Yandex</a>
+       \n\· <a href="https://www.paypal.me/YuriyKulikov">PayPal</a>
+   </string>
     <string name="dialog_bugreport_faq"><b>Общие проблемы и как их исправить</b>
-        \n\n<b><font color="#FF0000">Если после обновления в вас пропали все будильники и они больше не сохраняются</font></b>, то, к большому сожалению, в ходу обновления Андроид заблокировал нашу базу данных. Эта ошибка вызвана багом в Андроиде, происходит довольно редко, но если это произошло, то единственный способ починить это деинсталляция и повторная установка приложения.
+       \n\n<b><font color="#FF0000">Если после обновления у вас пропали все будильники и они больше не сохраняются</font></b>, то, к большому сожалению, в ходу обновления Андроид заблокировал нашу базу данных. Эта ошибка вызвана багом в Андроиде, происходит довольно редко, но если это произошло, то единственный способ починить это - деинсталляция и повторная установка приложения.
 
-        \n\n<font color="#FF0000">Если что-то вдруг неожиданно сломалось, хотя раньше работало без проблем</font>, есть большая вероятность того, что Android испортил кэш приложения. Такое случается время от времени со всеми приложениями. Обычно проблему помогает решить очищение кэша или деинсталляция и повторная установка приложения.
+       \n\n<font color="#FF0000">Если что-то вдруг неожиданно сломалось, хотя раньше работало без проблем</font>, есть большая вероятность того, что Android испортил кэш приложения. Такое случается время от времени со всеми приложениями. Обычно проблему помогает решить очищение кэша или деинсталляция и повторная установка приложения.
 
-        \n\n<font color="#FF0000">Если звук будильника не слышен</font>, пожалуйста проверьте настройки Вашего устройства. В Android 8 должен быть как минимум выбран режим “Только будильник”. Также необходимо учитывать, что в Android 9 в режиме “Не беспокоить” будильник не слышен! Дальнейшую информацию Вы можете найти на <a href="https://support.google.com/android/answer/9069335?hl=ru">странице Android-Справки </a>
+       \n\n<font color="#FF0000">Если звук будильника не слышен</font>, пожалуйста проверьте настройки Вашего устройства. В Android 8 должен быть как минимум выбран режим “Только будильник”. Также необходимо учитывать, что в Android 9 в режиме “Не беспокоить” будильник не слышен! Дальнейшую информацию Вы можете найти на <a href="https://support.google.com/android/answer/9069335?hl=ru">странице Android-Справки </a>
 
-        \n\n<font color="#FF0000">Если Вы заметили, что будильник не прозвенел</font>, пожалуйста убедитесь, что Вы его случайно не выключили. Мы часто получаем подобные жалобы, и обычно оказывается, что через некоторое время после того, как будильник срабатывает, пользователь выключает его во сне по ошибке (на кнопку “Выключить”) и потом не помнит этого. Если Вы заметили подобную проблему, попробуйте перед сном класть телефон чуть дальше от кровати.
+       \n\n<font color="#FF0000">Если Вы заметили, что будильник не прозвенел</font>, пожалуйста убедитесь, что Вы его случайно не выключили. Мы часто получаем подобные жалобы, и обычно оказывается, что через некоторое время после того, как будильник срабатывает, пользователь выключает его во сне по ошибке (на кнопку “Выключить”) и потом не помнит этого. Если Вы заметили подобную проблему, попробуйте перед сном класть телефон чуть дальше от кровати.
 
-        \n\n<font color="#FF0000">Если Вы перепробовали все вышеуказанные методы, но ничего не помогает</font>, пожалуйста напишите нам сообщение в следующем поле. Мы сделаем все возможное, чтобы Вам помочь.
-    </string>
+       \n\n<font color="#FF0000">Если Вы перепробовали все вышеуказанные методы, но ничего не помогает</font>, пожалуйста напишите нам сообщение в следующем поле. Мы сделаем все возможное, чтобы Вам помочь.
+   </string>
     <string name="dialog_say_thanks_title">Поблагодарить</string>
-    <string name="dialog_say_thanks_review_message">Благодарим Вас, что уделили время для того, чтобы поблагодарить нас! “Простой будильник” - это неприбыльное приложение с открытым исходным кодом. Мы никогда не будем использовать рекламу или собирать данные пользователей с целью получения прибыли. Однако мы очень радуемся, когда наша работа ценится по достоинству. Одна из лучших возможностей для этого - написать позитивный отзыв. Вы также можете задать нам вопрос или прислать запрос на имплементацию новой функции.</string>
+    <string name="dialog_say_thanks_review_message">Благодарим Вас, что уделили время для того, чтобы поблагодарить нас! “Простой будильник” - это некоммерческое приложение с открытым исходным кодом. Мы никогда не будем использовать рекламу или собирать данные пользователей с целью получения прибыли. Однако мы будем рады, если вы оцените нашу работу по достоинству. Один из лучших способов сделать это - написать позитивный отзыв. Вы также можете задать нам вопрос или прислать запрос на внедрение новой функции.</string>
     <string name="dialog_say_thanks_premium_text">Если наше приложение Вам очень нравится, Вы можете рассмотреть возможность приобретения премиум-версии. Звучит отлично, не так ли? :)</string>
-    <string name="dialog_say_thanks_donate_message">Еще одна отличная возможность поддержать приложение - купить мне чашечку кофе или печеньку! :) Вы можете сделать это при помощи одной из нижеперечисленных опций</string>
+    <string name="dialog_say_thanks_donate_message">Еще один отличный способ поддержать приложение - купить мне чашечку кофе или печеньку! :) Вы можете сделать это при помощи одной из нижеперечисленных опций</string>
     <string name="dialog_say_thanks_premium_text_as_button"><a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Премиум версия</a></string>
     <string name="dialog_say_thanks_donate_paypal"><a href="https://www.paypal.me/YuriyKulikov">PayPal</a></string>
     <string name="dialog_say_thanks_donate_yandex"><a href="https://money.yandex.ru/to/410019676183865">Yandex</a></string>
 
-    <string name="notification_channel_high_prio">Большое окно с кнопками "выключить" и "отложить"</string>
+    <string name="notification_channel_high_prio">Большое всплывающее окно с кнопками "выключить" и "отложить"</string>
     <string name="notification_channel_default_prio">Уведомление об отложенном будильнике</string>
     <string name="notification_channel_low_prio">Уведомление об истёкшем будильнике</string>
-    <string name="alert_notifications_title">Большая проблема!</string>
+    <string name="alert_notifications_title">Кажется, у нас проблемка!</string>
     <string name="alert_notifications_turned_off">
-        Все уведомления выключены, включая большое окно с кнопками "выключить" и "отложить"!
+       Все уведомления выключены, включая большое окно с кнопками "выключить" и "отложить"!
 
-        \n\nНажмите OK чтобы перейти в настнойки и включить уведомления!</string>
+       \n\nНажмите OK чтобы перейти в настройки и включить уведомления!</string>
     <string name="alert_notifications_high_prio_text">
-        Приоритет большого окна с кнопками "выключить" и "отложить" слишком низок для разблокировки экрана!
+       Приоритет большого окна с кнопками "выключить" и "отложить" слишком низок для разблокировки экрана!
 
-        \n\nВозможно, вы случайно выключили или изменили настройки уведомлений.
+       \n\nВозможно, вы случайно выключили или изменили настройки уведомлений.
 
-        \n\nНажмите OK чтобы перейти в настнойки и выберите самое верхнее действие (Звук и всплывающее уведомлние).
+       \n\nНажмите OK чтобы перейти в настройки и выберите самое верхнее действие (Звук и всплывающее уведомление).
 
-        \n\nЗабавно, но как раз звук надо выключить в дополнительных настройках.</string>
+       \n\nЗабавно, но как раз звук надо выключить в дополнительных настройках.</string>
     <string name="alert_notifications_default_prio_text">
-        Второстепенный уведомления выключены.
+       Второстепенные уведомления выключены.
 
-        \n\nВозможно, вы случайно выключили или изменили настройки уведомлений.
+       \n\nВозможно, вы случайно выключили или изменили настройки уведомлений.
 
-        \n\nНажмите OK чтобы перейти в настнойки и выберите второе верхнее действие (Звук).
+       \n\nНажмите OK чтобы перейти в настройки и далее выберите второе действие сверху (Звук).
 
-        \n\nЗабавно, но как раз звук надо выключить в дополнительных настройках.</string>
+       \n\nЗабавно, но как раз звук надо выключить в дополнительных настройках.</string>
+    <string name="skip">Пропустить</string>
+    <string name="notification_alarm_is_about_to_go_off">Будильник вот-вот сработает</string>
 </resources>
