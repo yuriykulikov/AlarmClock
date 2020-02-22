@@ -41,10 +41,8 @@
     <string name="master_volume">Volumen maestro</string>
     <string name="menu_share">Cuota</string>
     <string name="menu_bugreport">Enviar un informe de error</string>
-    <string name="dialog_say_thanks_title">Di gracias</string>
     <string name="dialog_say_thanks_review_button">Valorar la aplicación</string>
     <string name="dialog_bugreport_hint">Describa su queja aquí</string>
-    <string name="dialog_say_thanks_review_message">Muchas gracias por tomarse el tiempo para revisar la aplicación! Opiniones positivas ayudan a atraer a más usuarios, lo que ayuda a mejorar la aplicación mediante la recopilación de retroalimentación. ¿Desea continuar?</string>
     <string name="longclick_dismiss_title">Descartar con click largo</string>
     <string name="longclick_dismiss_summary">Manten el botón descartar presionado para descartar la alarma</string>
     <string name="fade_in_time_sec_title">Duración de aumento gradual de volumen</string>
@@ -108,8 +106,6 @@
 
        \n\nApoyar el desarrollo
        \n\· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Versión premium (donar)</a>
-       \n\· <a href="https://money.yandex.ru/to/410019676183865">Yandex</a>
-       \n\· <a href="https://www.paypal.me/YuriyKulikov">PayPal</a>
    </string>
     <string name="dialog_bugreport_faq"><b>Problemas comunes y cómo solucionarlos</b>
        \n\n<b><font color="#FF0000">Si después de la actualización todas las alarmas desaparecieron y ya no se guardan</font></b>, significa que durante la actualización, Android ha bloqueado nuestra base de datos. Este error es causado por un error en Android, ocurre muy raramente, pero si esto sucede, la única forma de solucionarlo es desinstalar y reinstalar la aplicación.
@@ -130,9 +126,6 @@ Nunca utilizaremos publicidad ni recopilaremos datos de usuarios con fines de lu
     <string name="dialog_say_thanks_donate_message">¡Otra excelente manera de apoyar la aplicación es comprarme una taza de café o una galleta! :) Puede hacerlo utilizando una de las siguientes opciones.</string>
     <string name="dialog_say_thanks_premium_text_as_button"><a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Versión premium
 </a></string>
-    <string name="dialog_say_thanks_donate_paypal"><a href="https://www.paypal.me/YuriyKulikov">PayPal</a></string>
-    <string name="dialog_say_thanks_donate_yandex"><a href="https://money.yandex.ru/to/410019676183865">Yandex</a></string>
-
     <string name="notification_channel_high_prio">Gran ventana emergente con botones para posponer y descartar</string>
     <string name="notification_channel_default_prio">Notificación de una alarma pospuesta</string>
     <string name="notification_channel_low_prio">Notificación de alarma caducada</string>
