@@ -94,7 +94,6 @@
        \n· <a href="https://github.com/yuriykulikov/AlarmClock">Mehr über das Projekt auf GitHub</a>
 
        \n\nTrinkgeld:
-       \n· <a href="https://www.paypal.me/YuriyKulikov">PayPal</a>
        \n· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Premium version (donate)</a>
    </string>
     <string name="dialog_bugreport_faq"><b>Wie Sie die häufigsten Fehler richtig beheben</b>
@@ -113,8 +112,6 @@
     <string name="dialog_say_thanks_premium_text">Wenn die App Ihnen wirklich gefällt, Sie können ein Upgrade auf die Premium-Version überlegen. Premium hört sich toll an, oder?</string>
     <string name="dialog_say_thanks_donate_message">Eine andere hervorragende Möglichkeit, die App zu unterstützen, besteht darin, mir einen Kaffee oder einen Krapfen zu kaufen! Sie können dies mit einer der folgenden Optionen tun</string>
     <string name="dialog_say_thanks_premium_text_as_button"><a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Premium Version</a></string>
-    <string name="dialog_say_thanks_donate_paypal"><a href="https://www.paypal.me/YuriyKulikov">PayPal</a></string>
-    <string name="dialog_say_thanks_donate_yandex"><a href="https://money.yandex.ru/to/410019676183865">Yandex</a></string>
 
     <string name="notification_channel_high_prio">Großes Popup mit Snooze- und Dismiss-Tasten</string>
     <string name="notification_channel_default_prio">Benachrichtigung für einen geduckten Wecker</string>

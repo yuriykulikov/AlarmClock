@@ -160,7 +160,6 @@
        \n· <a href="https://github.com/yuriykulikov/AlarmClock">Learn more on GitHub</a>
 
        \n\nSupport the app:
-       \n· <a href="https://www.paypal.me/YuriyKulikov">PayPal</a>
        \n· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Go premium</a>
    </string>
     <string name="dialog_bugreport_faq"><b>Common issues and how to fix them</b>
@@ -179,8 +178,6 @@
     <string name="dialog_say_thanks_premium_text">If you really like the app, you could consider upgrading to the premium version! Premium sounds great, does it not?</string>
     <string name="dialog_say_thanks_donate_message">Another great way to support the app is to buy me a coffee or a donut! You can do this using one of the following options</string>
     <string name="dialog_say_thanks_premium_text_as_button"><a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Go premium</a></string>
-    <string name="dialog_say_thanks_donate_paypal"><a href="https://www.paypal.me/YuriyKulikov">PayPal</a></string>
-    <string name="dialog_say_thanks_donate_yandex"><a href="https://money.yandex.ru/to/410019676183865">Yandex</a></string>
 
     <string name="notification_channel_high_prio">Big popup with snooze and dismiss buttons</string>
     <string name="notification_channel_default_prio">Notification for a snoozed alarm</string>

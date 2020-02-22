@@ -96,7 +96,6 @@
        \n\nПоддержать разработку
        \n\· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Премиум версия (донейт)</a>
        \n\· <a href="https://money.yandex.ru/to/410019676183865">Yandex</a>
-       \n\· <a href="https://www.paypal.me/YuriyKulikov">PayPal</a>
    </string>
     <string name="dialog_bugreport_faq"><b>Общие проблемы и как их исправить</b>
        \n\n<b><font color="#FF0000">Если после обновления у вас пропали все будильники и они больше не сохраняются</font></b>, то, к большому сожалению, в ходу обновления Андроид заблокировал нашу базу данных. Эта ошибка вызвана багом в Андроиде, происходит довольно редко, но если это произошло, то единственный способ починить это - деинсталляция и повторная установка приложения.
@@ -114,9 +113,6 @@
     <string name="dialog_say_thanks_premium_text">Если наше приложение Вам очень нравится, Вы можете рассмотреть возможность приобретения премиум-версии. Звучит отлично, не так ли? :)</string>
     <string name="dialog_say_thanks_donate_message">Еще один отличный способ поддержать приложение - купить мне чашечку кофе или печеньку! :) Вы можете сделать это при помощи одной из нижеперечисленных опций</string>
     <string name="dialog_say_thanks_premium_text_as_button"><a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Премиум версия</a></string>
-    <string name="dialog_say_thanks_donate_paypal"><a href="https://www.paypal.me/YuriyKulikov">PayPal</a></string>
-    <string name="dialog_say_thanks_donate_yandex"><a href="https://money.yandex.ru/to/410019676183865">Yandex</a></string>
-
     <string name="notification_channel_high_prio">Большое всплывающее окно с кнопками "выключить" и "отложить"</string>
     <string name="notification_channel_default_prio">Уведомление об отложенном будильнике</string>
     <string name="notification_channel_low_prio">Уведомление об истёкшем будильнике</string>
