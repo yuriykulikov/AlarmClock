@@ -22,12 +22,11 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
-import android.support.v4.app.FragmentTransaction
 import android.transition.*
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
 import com.better.alarm.*
 import com.better.alarm.configuration.EditedAlarm
 import com.better.alarm.configuration.Store
@@ -51,7 +50,7 @@ import org.koin.dsl.module
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */
-class AlarmsListActivity : FragmentActivity() {
+class AlarmsListActivity : AppCompatActivity() {
     private lateinit var mActionBarHandler: ActionBarHandler
 
     // lazy because it seems that AlarmsListActivity.<init> can be called before Application.onCreate()
@@ -140,9 +139,9 @@ class AlarmsListActivity : FragmentActivity() {
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState?.putInt("version", BuildConfig.VERSION_CODE)
+        outState.putInt("version", BuildConfig.VERSION_CODE)
         uiStore.editing().value?.writeInto(outState)
     }
 
@@ -206,7 +205,8 @@ class AlarmsListActivity : FragmentActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        return mActionBarHandler.onCreateOptionsMenu(menu, menuInflater, actionBar)
+        return supportActionBar?.let { mActionBarHandler.onCreateOptionsMenu(menu, menuInflater, it) }
+                ?: false
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -314,7 +314,7 @@ class AlarmsListActivity : FragmentActivity() {
         }
     }
 
-    private fun RowHolder.addSharedElementsToTransition(fragmentTransaction: FragmentTransaction) {
+    private fun RowHolder.addSharedElementsToTransition(fragmentTransaction: androidx.fragment.app.FragmentTransaction) {
         fragmentTransaction.addSharedElement(digitalClock, "clock" + alarmId)
         fragmentTransaction.addSharedElement(container, "onOff" + alarmId)
         fragmentTransaction.addSharedElement(detailsButton, "detailsButton" + alarmId)

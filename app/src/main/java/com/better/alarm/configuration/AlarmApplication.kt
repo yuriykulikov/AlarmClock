@@ -16,8 +16,8 @@
 package com.better.alarm.configuration
 
 import android.app.Application
-import android.preference.PreferenceManager
 import android.view.ViewConfiguration
+import androidx.preference.PreferenceManager
 import com.better.alarm.BuildConfig
 import com.better.alarm.R
 import com.better.alarm.alert.BackgroundNotifications

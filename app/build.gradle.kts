@@ -71,7 +71,7 @@ android {
         minSdkVersion(15)
         targetSdkVersion(28)
         testApplicationId = "com.better.alarm.test"
-        testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         getByName("debug") {
@@ -107,12 +107,15 @@ android {
     dexOptions {
         preDexLibraries = System.getenv("TRAVIS") != "true"
     }
+
+    useLibrary("android.test.runner")
+    useLibrary("android.test.base")
+    useLibrary("android.test.mock")
 }
 
 dependencies {
     // App dependencies
     implementation(kotlin("stdlib", version = "1.3.30"))
-    implementation("com.android.support:support-annotations:28.0.0")
     implementation("ch.acra:acra:4.6.1")
     implementation("com.melnykov:floatingactionbutton:1.2.0")
     implementation("io.reactivex.rxjava2:rxjava:2.2.0")
@@ -124,6 +127,15 @@ dependencies {
     implementation("org.koin:koin-core-ext:2.0.1")
     testImplementation("org.koin:koin-test:2.0.1")
 
+    val fragment_version = "1.2.2"
+    implementation("androidx.fragment:fragment:$fragment_version")
+    implementation("androidx.fragment:fragment-ktx:$fragment_version")
+    implementation("androidx.fragment:fragment-testing:$fragment_version")
+
+    val preference_version = "1.1.0"
+    implementation("androidx.preference:preference:$preference_version")
+    implementation("androidx.preference:preference-ktx:$preference_version")
+
     // Testing-only dependencies
     testImplementation("net.wuerl.kotlin:assertj-core-kotlin:0.1.1")
     testImplementation("junit:junit:4.12")
@@ -131,12 +143,21 @@ dependencies {
     testImplementation("io.mockk:mockk:1.9.3")
 
     androidTestImplementation("com.squareup.assertj:assertj-android:1.1.1")
-    // Force usage of support annotations in the test app, since it is internally used by the runner module.
-    androidTestImplementation("com.android.support:support-annotations:28.0.0")
-    androidTestImplementation("com.android.support.test:runner:1.0.2") {}
-    androidTestImplementation("com.android.support.test:rules:1.0.2") {}
-    androidTestImplementation("com.android.support.test.espresso:espresso-core:3.0.2")
     androidTestImplementation("com.bartoszlipinski:cortado:1.2.0")
     //for some tests which do not work with espresso on travis
     androidTestImplementation("com.jayway.android.robotium:robotium-solo:5.2.1")
+
+    androidTestImplementation ("androidx.test:core:1.2.0")
+    androidTestImplementation ("androidx.test:runner:1.2.0")
+    androidTestImplementation ("androidx.test:rules:1.2.0")
+    androidTestImplementation ("androidx.test.ext:junit:1.1.1")
+    androidTestImplementation ("androidx.test.ext:truth:1.2.0")
+    androidTestImplementation ("com.google.truth:truth:0.44")
+    androidTestImplementation ("androidx.test.espresso:espresso-core:3.2.0")
+    androidTestImplementation ("androidx.test.espresso:espresso-contrib:3.2.0")
+    androidTestImplementation ("androidx.test.espresso:espresso-intents:3.2.0")
+    androidTestImplementation ("androidx.test.espresso:espresso-accessibility:3.2.0")
+    androidTestImplementation ("androidx.test.espresso:espresso-web:3.2.0")
+    androidTestImplementation ("androidx.test.espresso.idling:idling-concurrent:3.2.0")
+    androidTestImplementation ("androidx.test.espresso:espresso-idling-resource:3.2.0")
 }

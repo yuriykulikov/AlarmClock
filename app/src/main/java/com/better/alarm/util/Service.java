@@ -2,7 +2,7 @@ package com.better.alarm.util;
 
 import android.content.Intent;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Created by Yuriy on 15.08.2017.

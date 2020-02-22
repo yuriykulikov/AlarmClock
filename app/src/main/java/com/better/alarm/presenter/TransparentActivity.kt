@@ -1,12 +1,12 @@
 package com.better.alarm.presenter
 
-import android.support.v4.app.FragmentActivity
+import androidx.fragment.app.FragmentActivity
 import com.better.alarm.configuration.globalInject
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
 import io.reactivex.disposables.Disposables
 
-class TransparentActivity : FragmentActivity() {
+class TransparentActivity : androidx.fragment.app.FragmentActivity() {
     private var dialog = Disposables.disposed()
     private val alarms: IAlarmsManager by globalInject()
 

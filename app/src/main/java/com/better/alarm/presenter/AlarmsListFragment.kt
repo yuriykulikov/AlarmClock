@@ -3,7 +3,7 @@ package com.better.alarm.presenter
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
 import android.widget.AbsListView
@@ -39,7 +39,7 @@ class AlarmsListFragment : Fragment() {
     private val logger: Logger by globalLogger("AlarmsListFragment")
 
     private val mAdapter: AlarmListAdapter by lazy { AlarmListAdapter(R.layout.list_row_classic, R.string.alarm_list_title, ArrayList()) }
-    private val inflater: LayoutInflater by lazy { activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater }
+    private val inflater: LayoutInflater by lazy { requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater }
 
     private var alarmsSub: Disposable = Disposables.disposed()
     private var backSub: Disposable = Disposables.disposed()
@@ -234,7 +234,7 @@ class AlarmsListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        backSub = uiStore.onBackPressed().subscribe { activity.finish() }
+        backSub = uiStore.onBackPressed().subscribe { requireActivity().finish() }
         listRowLayout = prefs.layout()
         listRowLayoutId = when (listRowLayout) {
             Layout.COMPACT -> R.layout.list_row_compact
@@ -255,9 +255,9 @@ class AlarmsListFragment : Fragment() {
         alarmsSub.dispose()
     }
 
-    override fun onCreateContextMenu(menu: ContextMenu, view: View, menuInfo: ContextMenuInfo) {
+    override fun onCreateContextMenu(menu: ContextMenu, view: View, menuInfo: ContextMenuInfo?) {
         // Inflate the menu from xml.
-        activity.menuInflater.inflate(R.menu.list_context_menu, menu)
+        requireActivity().menuInflater.inflate(R.menu.list_context_menu, menu)
 
         // Use the current item to create a custom view for the header.
         val info = menuInfo as AdapterContextMenuInfo

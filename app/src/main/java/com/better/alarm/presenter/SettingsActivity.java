@@ -17,13 +17,14 @@
 
 package com.better.alarm.presenter;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.better.alarm.R;
 import com.better.alarm.configuration.InjectKt;
@@ -31,7 +32,7 @@ import com.better.alarm.configuration.InjectKt;
 /**
  * Settings for the Alarm Clock.
  */
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends AppCompatActivity {
     private final DynamicThemeHandler dynamicThemeHandler = InjectKt.globalInject(DynamicThemeHandler.class).getValue();
 
     @Override
@@ -46,7 +47,7 @@ public class SettingsActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         return true;
     }
 

@@ -7,8 +7,8 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Vibrator
-import android.preference.*
 import android.provider.Settings
+import androidx.preference.*
 import com.better.alarm.R
 import com.better.alarm.checkPermissions
 import com.better.alarm.configuration.Prefs
@@ -23,28 +23,26 @@ import io.reactivex.disposables.CompositeDisposable
  * Created by Yuriy on 24.07.2017.
  */
 
-class SettingsFragment : PreferenceFragment() {
+class SettingsFragment : PreferenceFragmentCompat() {
     private val alarmStreamTypeBit = 1 shl AudioManager.STREAM_ALARM
     private val vibrator: Vibrator by globalInject()
     private val rxSharedPreferences: RxSharedPreferences by globalInject()
     private val disposables = CompositeDisposable()
 
     private val contentResolver: ContentResolver
-        get() = activity.contentResolver
+        get() = requireActivity().contentResolver
 
     companion object {
         const val themeChangeReason = "theme change"
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.preferences)
 
-        val category = findPreference("preference_category_sound_key") as PreferenceCategory
+        val category: PreferenceCategory = findPreference("preference_category_sound_key")!!
 
-        if (!vibrator.hasVibrator() && findPreference("vibrate") != null) {
-            category.removePreference(findPreference("vibrate"))
+        if (!vibrator.hasVibrator()) {
+            findPreference<Preference>("vibrate")?.let { category.removePreference(it) }
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -52,24 +50,25 @@ class SettingsFragment : PreferenceFragment() {
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            (findPreference("preference_category_ui") as PreferenceCategory)
-                    .removePreference(findPreference(Prefs.LIST_ROW_LAYOUT))
+            findPreference<PreferenceCategory>("preference_category_ui")
+                    ?.removePreference(findPreference(Prefs.LIST_ROW_LAYOUT))
         }
 
-        findPreference("theme").onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
+        findPreference<Preference>("theme")?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
             Handler().post {
-                val intent = activity.packageManager.getLaunchIntentForPackage(activity.packageName)?.apply {
-                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    putExtra("reason", themeChangeReason)
-                }
+                val intent = requireActivity().packageManager
+                        .getLaunchIntentForPackage(requireActivity().packageName)?.apply {
+                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                            putExtra("reason", themeChangeReason)
+                        }
                 startActivity(intent)
             }
             true
         }
     }
 
-    override fun onPreferenceTreeClick(preferenceScreen: PreferenceScreen, preference: Preference): Boolean {
-        when (preference.key) {
+    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
+        when (preference?.key) {
             Prefs.KEY_ALARM_IN_SILENT_MODE -> {
                 val pref = preference as CheckBoxPreference
 
@@ -84,20 +83,20 @@ class SettingsFragment : PreferenceFragment() {
 
                 return true
             }
-            else -> return super.onPreferenceTreeClick(preferenceScreen, preference)
+            else -> return super.onPreferenceTreeClick(preference)
         }
     }
 
     override fun onResume() {
         super.onResume()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            val alarmInSilentModePref = findPreference(Prefs.KEY_ALARM_IN_SILENT_MODE) as CheckBoxPreference
+            val alarmInSilentModePref = findPreference<CheckBoxPreference>(Prefs.KEY_ALARM_IN_SILENT_MODE)!!
             alarmInSilentModePref.isChecked = (systemModeRingerStreamsAffected() and alarmStreamTypeBit) == 0
         }
 
-        (findPreference("volume_preference") as VolumePreference).onResume()
+        findPreference<VolumePreference>("volume_preference")!!.onResume()
 
-        checkPermissions(activity, listOf(Alarmtone.Default()))
+        checkPermissions(requireActivity(), listOf(Alarmtone.Default()))
 
         findListPreference(Prefs.KEY_ALARM_SNOOZE)
                 .let { snoozePref ->
@@ -167,11 +166,11 @@ class SettingsFragment : PreferenceFragment() {
 
     override fun onPause() {
         disposables.dispose()
-        (findPreference("volume_preference") as VolumePreference).onPause()
+        findPreference<VolumePreference>("volume_preference")?.onPause()
         super.onPause()
     }
 
-    private fun findListPreference(key: String) = findPreference(key) as ListPreference
+    private fun findListPreference(key: String) = findPreference<ListPreference>(key)!!
 
     private fun systemModeRingerStreamsAffected(): Int {
         return Settings.System.getInt(contentResolver,

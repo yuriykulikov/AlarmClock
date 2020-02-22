@@ -1,28 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!-- Generated with http://android-holo-colors.com -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <style name="DefaultLightTheme" parent="android:Theme.Holo.Light.DarkActionBar">
-        <item name="alarmDetailsButtonStyle">@style/LightAlarmDetailsButtonStyle</item>
+    <!-- Light Themes -->
+    <style name="DefaultLightTheme" parent="Theme.AppCompat.Light.DarkActionBar">
     </style>
 
-    <style name="AlarmAlertFullScreenLightTheme" parent="android:Theme.Holo.Light.NoActionBar">
+    <style name="AlarmAlertFullScreenLightTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="TimePickerDialogFragmentLight" parent="android:style/Theme.Holo.Light.Dialog">
+    <style name="TimePickerDialogFragmentLight" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="timePickerDeleteButtonStyle">@style/LightTimePickerDeleteButtonStyle</item>
     </style>
 
-    <style name="LightAlarmDetailsButtonStyle">
-        <item name="android:src">@android:drawable/ic_menu_more</item>
-        <item name="android:tint">@color/blackish</item>
-    </style>
-
     <style name="LightTimePickerDeleteButtonStyle">
         <item name="android:src">@drawable/ic_backspace</item>
+        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
         <item name="android:tint">@color/blackish</item>
     </style>
 </resources>

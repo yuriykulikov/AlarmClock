@@ -16,8 +16,8 @@
 
 package com.better.alarm.view
 
-import android.app.AlertDialog
 import android.content.Context
+import androidx.appcompat.app.AlertDialog
 import com.better.alarm.model.DaysOfWeek
 import io.reactivex.Single
 import java.text.DateFormatSymbols

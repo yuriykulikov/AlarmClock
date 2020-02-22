@@ -1,6 +1,5 @@
 package com.better.alarm.presenter
 
-import android.app.ActionBar
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -10,8 +9,9 @@ import android.net.Uri
 import android.text.method.LinkMovementMethod
 import android.view.*
 import android.widget.Button
-import android.widget.ShareActionProvider
 import android.widget.TextView
+import androidx.appcompat.app.ActionBar
+import androidx.core.view.MenuItemCompat
 import com.better.alarm.BuildConfig
 import com.better.alarm.R
 import com.better.alarm.interfaces.IAlarmsManager
@@ -56,7 +56,7 @@ class ActionBarHandler(context: Activity, private val store: UiStore, private va
         }
 
         val menuItem = menu.findItem(R.id.menu_share)
-        val sp = menuItem.actionProvider as ShareActionProvider
+        val sp = MenuItemCompat.getActionProvider(menuItem) as androidx.appcompat.widget.ShareActionProvider
         sp.setShareIntent(intent)
 
         sub = store.editing().subscribe { edited ->
