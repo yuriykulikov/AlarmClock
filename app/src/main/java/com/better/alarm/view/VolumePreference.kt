@@ -21,13 +21,13 @@ import android.content.Intent
 import android.media.AudioManager
 import android.media.Ringtone
 import android.media.RingtoneManager
-import android.preference.Preference
 import android.provider.Settings
 import android.util.AttributeSet
-import android.view.View
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
+import androidx.preference.Preference
+import androidx.preference.PreferenceViewHolder
 import com.better.alarm.R
 import com.better.alarm.background.KlaxonPlugin
 import com.better.alarm.background.PluginAlarmData
@@ -44,7 +44,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposables
 import io.reactivex.subjects.PublishSubject
 import org.koin.core.context.GlobalContext.get
-import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.named
 import java.util.concurrent.TimeUnit
 
@@ -63,17 +62,18 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
         ringtone?.streamType = AudioManager.STREAM_ALARM
     }
 
-    override fun onBindView(view: View) {
-        super.onBindView(view)
+    override fun onBindViewHolder(holder: PreferenceViewHolder?) {
+        super.onBindViewHolder(holder)
+        holder?.let { view ->
+            bindPrealarmSeekBar(view.findViewById(R.id.seekbar_dialog_seekbar_prealarm_volume) as SeekBar)
+            bindAudioManagerVolume(view.findViewById(R.id.seekbar_dialog_seekbar_master_volume) as SeekBar)
 
-        bindPrealarmSeekBar(view.findViewById<View>(R.id.seekbar_dialog_seekbar_prealarm_volume) as SeekBar)
-        bindAudioManagerVolume(view.findViewById<View>(R.id.seekbar_dialog_seekbar_master_volume) as SeekBar)
-
-        view.findViewById<View>(R.id.settings_ringtone).setOnClickListener {
-            context.startActivity(Intent(Settings.ACTION_SOUND_SETTINGS))
+            view.findViewById(R.id.settings_ringtone).setOnClickListener {
+                context.startActivity(Intent(Settings.ACTION_SOUND_SETTINGS))
+            }
+            ringtoneSummary = view.findViewById(R.id.settings_ringtone_summary) as TextView
+            onResume()
         }
-        ringtoneSummary = view.findViewById(R.id.settings_ringtone_summary)
-        onResume()
     }
 
     fun onResume() {

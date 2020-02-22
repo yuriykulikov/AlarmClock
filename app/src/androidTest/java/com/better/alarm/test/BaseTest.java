@@ -2,7 +2,7 @@ package com.better.alarm.test;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.test.InstrumentationRegistry;
+import androidx.test.InstrumentationRegistry;
 
 import com.better.alarm.R;
 import com.better.alarm.logger.Logger;
@@ -18,11 +18,11 @@ import cortado.Cortado;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Predicate;
 
-import static android.support.test.espresso.Espresso.onData;
-import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static android.support.test.espresso.action.ViewActions.longClick;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.espresso.Espresso.onData;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.longClick;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.anything;
 
 /**
@@ -78,7 +78,7 @@ public class BaseTest {
         Thread.sleep(1000);
     }
 
-    @android.support.annotation.NonNull
+    @androidx.annotation.NonNull
     protected Predicate<AlarmValue> enabled() {
         return new Predicate<AlarmValue>() {
             @Override
@@ -96,7 +96,7 @@ public class BaseTest {
         Cortado.onView().withId(com.better.alarm.R.id.minutes_ones).check().matches(withText("" + s.charAt(4)));
     }
 
-    @android.support.annotation.NonNull
+    @androidx.annotation.NonNull
     protected ListAsserts.ListAssert<AlarmValue> assertThatList() {
         return ListAsserts.assertThatList(R.id.list_fragment_list);
     }

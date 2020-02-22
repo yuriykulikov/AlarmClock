@@ -1,11 +1,11 @@
 package com.better.alarm.test;
 
-import android.support.test.espresso.action.GeneralClickAction;
-import android.support.test.espresso.action.GeneralLocation;
-import android.support.test.espresso.action.Press;
-import android.support.test.espresso.action.Tap;
-import android.support.test.rule.ActivityTestRule;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.espresso.action.GeneralClickAction;
+import androidx.test.espresso.action.GeneralLocation;
+import androidx.test.espresso.action.Press;
+import androidx.test.espresso.action.Tap;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.rule.ActivityTestRule;
 
 import com.better.alarm.R;
 import com.better.alarm.presenter.SettingsActivity;
@@ -20,7 +20,8 @@ import java.util.Locale;
 
 import cortado.Cortado;
 
-import static android.support.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
 
 /**
  * Created by Yuriy on 11.07.2017.
@@ -59,7 +60,10 @@ public class SettingsTest extends BaseTest {
     @Test
     public void changeTheme() {
         sleep();
-        Cortado.onView().withText("Interface theme").perform(click());
+        Cortado.onView()
+                .withText("Interface theme")
+                .perform(scrollTo())
+                .perform(click());
 
         sleep();
         Cortado.onView().withText("Light").perform(click());
@@ -68,7 +72,10 @@ public class SettingsTest extends BaseTest {
     @Test
     public void changeThemeDark() {
         sleep();
-        Cortado.onView().withText("Interface theme").perform(click());
+        Cortado.onView()
+                .withText("Interface theme")
+                .perform(scrollTo())
+                .perform(click());
 
         sleep();
         Cortado.onView().withText("Dark").perform(click());

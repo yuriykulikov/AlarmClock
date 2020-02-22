@@ -1,7 +1,7 @@
 package com.better.alarm.test;
 
-import android.support.test.rule.ActivityTestRule;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.rule.ActivityTestRule;
+import androidx.test.runner.AndroidJUnit4;
 
 import com.better.alarm.R;
 import com.better.alarm.configuration.ContainerKt;
@@ -19,7 +19,7 @@ import java.util.Locale;
 
 import kotlin.collections.CollectionsKt;
 
-import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
+import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static cortado.Cortado.onView;
 import static org.hamcrest.Matchers.not;
 

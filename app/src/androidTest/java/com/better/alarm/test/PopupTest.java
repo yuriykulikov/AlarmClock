@@ -2,8 +2,8 @@ package com.better.alarm.test;
 
 import android.content.Intent;
 import android.provider.AlarmClock;
-import android.support.test.rule.ActivityTestRule;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.rule.ActivityTestRule;
+import androidx.test.runner.AndroidJUnit4;
 
 import com.better.alarm.R;
 import com.better.alarm.alert.AlarmAlertFullScreen;

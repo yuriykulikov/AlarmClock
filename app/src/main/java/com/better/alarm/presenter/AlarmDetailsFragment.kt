@@ -24,7 +24,6 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.text.Editable
 import android.text.TextWatcher
 import android.transition.Transition
@@ -33,6 +32,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.fragment.app.Fragment
 import com.better.alarm.R
 import com.better.alarm.checkPermissions
 import com.better.alarm.configuration.Layout
@@ -100,10 +100,10 @@ class AlarmDetailsFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         logger.d("$this with ${store.editing().value}")
 
-        val view = inflater!!.inflate(
+        val view = inflater.inflate(
                 when (prefs.layout()) {
                     Layout.CLASSIC -> R.layout.details_fragment_classic
                     Layout.COMPACT -> R.layout.details_fragment_compact
@@ -162,7 +162,7 @@ class AlarmDetailsFragment : Fragment() {
 
         mRepeatRow.setOnClickListener {
             editor.firstOrError()
-                    .flatMap { editor -> editor.daysOfWeek.showDialog(context) }
+                    .flatMap { editor -> editor.daysOfWeek.showDialog(requireContext()) }
                     .subscribe { daysOfWeek ->
                         modify("Repeat dialog") { prev -> prev.copy(daysOfWeek = daysOfWeek, isEnabled = true) }
                     }
@@ -181,7 +181,7 @@ class AlarmDetailsFragment : Fragment() {
                         putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
                     }, 42)
                 } catch (e: Exception) {
-                    Toast.makeText(context, context.getString(R.string.details_no_ringtone_picker), Toast.LENGTH_LONG)
+                    Toast.makeText(context, requireContext().getString(R.string.details_no_ringtone_picker), Toast.LENGTH_LONG)
                             .show()
                 }
             }
@@ -221,7 +221,7 @@ class AlarmDetailsFragment : Fragment() {
 
             logger.d("onActivityResult $alert -> $alarmtone")
 
-            checkPermissions(activity, listOf(alarmtone))
+            checkPermissions(requireActivity(), listOf(alarmtone))
 
             modify("Ringtone picker") { prev ->
                 prev.copy(alarmtone = alarmtone, isEnabled = true)
@@ -244,7 +244,7 @@ class AlarmDetailsFragment : Fragment() {
                     rowHolder.onOff.isChecked = editor.isEnabled
                     mPreAlarmCheckBox.isChecked = editor.isPrealarm
 
-                    mRepeatSummary.text = editor.daysOfWeek.summary(context)
+                    mRepeatSummary.text = editor.daysOfWeek.summary(requireContext())
 
                     if (editor.label != mLabel.text.toString()) {
                         mLabel.setText(editor.label)
@@ -256,7 +256,7 @@ class AlarmDetailsFragment : Fragment() {
                 .observeOn(Schedulers.computation())
                 .map { editor ->
                     when (editor.alarmtone) {
-                        is Alarmtone.Silent -> context.getText(R.string.silent_alarm_summary)
+                        is Alarmtone.Silent -> requireContext().getText(R.string.silent_alarm_summary)
                         is Alarmtone.Default -> RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)).title()
                         is Alarmtone.Sound -> RingtoneManager.getRingtone(context, Uri.parse(editor.alarmtone.uriString)).title()
                     }
@@ -278,9 +278,10 @@ class AlarmDetailsFragment : Fragment() {
 
     fun Ringtone?.title(): CharSequence {
         return try {
-            this?.getTitle(context) ?: context.getText(R.string.silent_alarm_summary)
+            this?.getTitle(requireContext())
+                    ?: requireContext().getText(R.string.silent_alarm_summary)
         } catch (e: Exception) {
-            context.getText(R.string.silent_alarm_summary)
+            requireContext().getText(R.string.silent_alarm_summary)
         }
     }
 
