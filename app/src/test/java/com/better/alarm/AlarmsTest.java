@@ -103,7 +103,6 @@ public class AlarmsTest {
         Alarms alarms = new Alarms(alarmsScheduler, query, new AlarmCoreFactory(logger,
                 alarmsScheduler,
                 stateNotifierMock,
-                new TestHandlerFactory(testScheduler),
                 prefs,
                 store,
                 calendars
@@ -371,6 +370,7 @@ public class AlarmsTest {
         //when alarm fired
         instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
         testScheduler.triggerActions();
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ACTION_CANCEL_SNOOZE));
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
 
         //when alarm is snoozed
@@ -379,7 +379,7 @@ public class AlarmsTest {
         verify(stateNotifierMock, times(2)).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
 
         newAlarm.delete();
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ACTION_CANCEL_SNOOZE));
+        verify(stateNotifierMock, times(2)).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ACTION_CANCEL_SNOOZE));
     }
 
 
@@ -504,7 +504,7 @@ public class AlarmsTest {
         instance.snooze(newAlarm);
         testScheduler.triggerActions();
 
-        System.out.println("------------");
+        System.out.println("----- now snooze -------");
 
         newAlarm.snooze(7, 42);
         testScheduler.triggerActions();
