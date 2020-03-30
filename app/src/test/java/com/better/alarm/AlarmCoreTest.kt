@@ -75,7 +75,6 @@ class AlarmCoreTest {
                 logger,
                 alarmsScheduler,
                 stateNotifierMock,
-                TestHandlerFactory(testScheduler),
                 prefs,
                 store,
                 calendars
@@ -199,7 +198,7 @@ class AlarmCoreTest {
         verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_SHOW_SKIP) }
         assertThat(alarmSetterMock.calendar).isNotNull()
 
-        act("Skip") {
+        act("RequestSkip") {
             alarm.requestSkip()
         }
 
@@ -223,7 +222,7 @@ class AlarmCoreTest {
         verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_SHOW_SKIP) }
         assertThat(alarmSetterMock.calendar).isNotNull()
 
-        act("Skip") {
+        act("RequestSkip") {
             alarm.requestSkip()
         }
 
@@ -250,7 +249,7 @@ class AlarmCoreTest {
         verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_SHOW_SKIP) }
         assertThat(alarmSetterMock.calendar).isNotNull()
 
-        act("Skip") {
+        act("RequestSkip") {
             alarm.requestSkip()
         }
 
@@ -275,7 +274,7 @@ class AlarmCoreTest {
         verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_SHOW_SKIP) }
         assertThat(alarmSetterMock.calendar).isNotNull()
 
-        act("Skip") {
+        act("RequestSkip") {
             alarm.requestSkip()
         }
 
@@ -299,7 +298,7 @@ class AlarmCoreTest {
         verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_SHOW_SKIP) }
         assertThat(alarmSetterMock.calendar).isNotNull()
 
-        act("Skip") {
+        act("RequestSkip") {
             alarm.requestSkip()
         }
 
@@ -319,7 +318,7 @@ class AlarmCoreTest {
                     .commit()
         }
 
-        act("Skip") {
+        act("RequestSkip") {
             alarm.requestSkip()
         }
 
@@ -349,7 +348,7 @@ class AlarmCoreTest {
         verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_SHOW_SKIP) }
         assertThat(alarmSetterMock.calendar).isNotNull()
 
-        act("Skip") {
+        act("RequestSkip") {
             alarm.requestSkip()
         }
         act("Disable") {

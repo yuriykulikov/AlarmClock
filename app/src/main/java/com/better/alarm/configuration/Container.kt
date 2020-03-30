@@ -24,7 +24,6 @@ import com.better.alarm.presenter.AlarmsListActivity
 import com.better.alarm.presenter.DynamicThemeHandler
 import com.better.alarm.presenter.ScheduledReceiver
 import com.better.alarm.presenter.ToastPresenter
-import com.better.alarm.statemachine.HandlerFactory
 import com.better.alarm.util.Optional
 import com.better.alarm.wakelock.WakeLockManager
 import com.better.alarm.wakelock.Wakelocks
@@ -94,11 +93,10 @@ fun startKoin(context: Context): Koin {
         single<AlarmsScheduler> { AlarmsScheduler(get(), logger("AlarmsScheduler"), get(), get(), get()) }
         factory<IAlarmsScheduler> { get<AlarmsScheduler>() }
         single<AlarmCore.IStateNotifier> { AlarmStateNotifier(get()) }
-        single<HandlerFactory> { ImmediateHandlerFactory() }
         single<ContainerFactory> { PersistingContainerFactory(get(), get()) }
         factory { get<Context>().contentResolver }
         single<DatabaseQuery> { DatabaseQuery(get(), get()) }
-        single<AlarmCoreFactory> { AlarmCoreFactory(logger("AlarmCore"), get(), get(), get(), get(), get(), get()) }
+        single<AlarmCoreFactory> { AlarmCoreFactory(logger("AlarmCore"), get(), get(), get(), get(), get()) }
         single<Alarms> { Alarms(get(), get(), get(), get(), logger("Alarms")) }
         factory<IAlarmsManager> { get<Alarms>() }
         single { ScheduledReceiver(get(), get(), get(), get()) }

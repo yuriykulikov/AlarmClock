@@ -68,7 +68,7 @@ class AlarmsReceiver : BroadcastReceiver() {
 
                 PresentationToModelIntents.ACTION_REQUEST_SKIP -> {
                     val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
-                    log.d("Skip $id")
+                    log.d("RequestSkip $id")
                     alarms.getAlarm(id)?.requestSkip()
                 }
             }
