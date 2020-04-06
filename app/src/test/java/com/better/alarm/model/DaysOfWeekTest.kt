@@ -6,6 +6,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
+import java.util.Locale
 
 class DaysOfWeekTest {
     private val context = mock(Context::class.java)
@@ -17,6 +18,7 @@ class DaysOfWeekTest {
 
     @Test
     fun `toString property prints`() {
+        Locale.setDefault(Locale.ENGLISH)
         assertThat(DaysOfWeek(1 shl 0).toString(context, false)).isEqualTo("Monday")
         assertThat(DaysOfWeek(1 shl 1).toString(context, false)).isEqualTo("Tuesday")
         assertThat(DaysOfWeek(1 shl 2).toString(context, false)).isEqualTo("Wednesday")
@@ -28,6 +30,7 @@ class DaysOfWeekTest {
 
     @Test
     fun `toString property prints many days`() {
+        Locale.setDefault(Locale.ENGLISH)
         assertThat(DaysOfWeek((1 shl 0) or (1 shl 1)).toString(context, false)).isEqualTo("Mon, Tue")
         assertThat(DaysOfWeek(arrayOf(0, 1, 2, 3, 4).fold(0) { acc, day -> acc or (1 shl day) }).toString(context, false)).isEqualTo("Mon, Tue, Wed, Thu, Fri")
         assertThat(DaysOfWeek(arrayOf(5, 6).fold(0) { acc, day -> acc or (1 shl day) }).toString(context, false)).isEqualTo("Sat, Sun")
