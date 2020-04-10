@@ -28,52 +28,48 @@ class AlarmsReceiver : BroadcastReceiver() {
     private val log: Logger by globalLogger("AlarmsReceiver")
 
     override fun onReceive(context: Context, intent: Intent) {
-        try {
-            when (intent.action) {
-                AlarmsScheduler.ACTION_FIRED -> {
-                    val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
-                    val calendarType = CalendarType.valueOf(intent.extras?.getString(AlarmsScheduler.EXTRA_TYPE)!!)
-                    log.d("Fired $id $calendarType")
-                    alarms.getAlarm(id)?.let {
-                        alarms.onAlarmFired(it, calendarType)
-                    }
-                }
-                AlarmsScheduler.ACTION_INEXACT_FIRED -> {
-                    val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
-                    log.d("Fired  ACTION_INEXACT_FIRED $id")
-                    alarms.getAlarm(id)?.let {
-                        it.onInexactAlarmFired()
-                    }
-                }
-                Intent.ACTION_BOOT_COMPLETED,
-                Intent.ACTION_TIMEZONE_CHANGED,
-                Intent.ACTION_LOCALE_CHANGED,
-                Intent.ACTION_MY_PACKAGE_REPLACED -> {
-                    log.d("Refreshing alarms because of ${intent.action}")
-                    alarms.refresh()
-                }
-                Intent.ACTION_TIME_CHANGED -> alarms.onTimeSet()
-
-                PresentationToModelIntents.ACTION_REQUEST_SNOOZE -> {
-                    val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
-                    log.d("Snooze $id")
-                    alarms.getAlarm(id)?.snooze()
-                }
-
-                PresentationToModelIntents.ACTION_REQUEST_DISMISS -> {
-                    val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
-                    log.d("Dismiss $id")
-                    alarms.getAlarm(id)?.dismiss()
-                }
-
-                PresentationToModelIntents.ACTION_REQUEST_SKIP -> {
-                    val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
-                    log.d("RequestSkip $id")
-                    alarms.getAlarm(id)?.requestSkip()
+        when (intent.action) {
+            AlarmsScheduler.ACTION_FIRED -> {
+                val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
+                val calendarType = CalendarType.valueOf(intent.extras?.getString(AlarmsScheduler.EXTRA_TYPE)!!)
+                log.d("Fired $id $calendarType")
+                alarms.getAlarm(id)?.let {
+                    alarms.onAlarmFired(it, calendarType)
                 }
             }
-        } catch (e: Exception) {
-            log.d("Alarm not found $e")
+            AlarmsScheduler.ACTION_INEXACT_FIRED -> {
+                val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
+                log.d("Fired  ACTION_INEXACT_FIRED $id")
+                alarms.getAlarm(id)?.let {
+                    it.onInexactAlarmFired()
+                }
+            }
+            Intent.ACTION_BOOT_COMPLETED,
+            Intent.ACTION_TIMEZONE_CHANGED,
+            Intent.ACTION_LOCALE_CHANGED,
+            Intent.ACTION_MY_PACKAGE_REPLACED -> {
+                log.d("Refreshing alarms because of ${intent.action}")
+                alarms.refresh()
+            }
+            Intent.ACTION_TIME_CHANGED -> alarms.onTimeSet()
+
+            PresentationToModelIntents.ACTION_REQUEST_SNOOZE -> {
+                val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
+                log.d("Snooze $id")
+                alarms.getAlarm(id)?.snooze()
+            }
+
+            PresentationToModelIntents.ACTION_REQUEST_DISMISS -> {
+                val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
+                log.d("Dismiss $id")
+                alarms.getAlarm(id)?.dismiss()
+            }
+
+            PresentationToModelIntents.ACTION_REQUEST_SKIP -> {
+                val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
+                log.d("RequestSkip $id")
+                alarms.getAlarm(id)?.requestSkip()
+            }
         }
     }
 }

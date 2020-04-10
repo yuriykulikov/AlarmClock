@@ -215,6 +215,10 @@ class AlarmCore(
         override fun onDelete() {
             stateMachine.transitionTo(deletedState)
         }
+
+        override fun onRefresh() {
+            // NOP
+        }
     }
 
 
