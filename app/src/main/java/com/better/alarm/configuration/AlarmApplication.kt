@@ -22,6 +22,7 @@ import com.better.alarm.BuildConfig
 import com.better.alarm.R
 import com.better.alarm.alert.BackgroundNotifications
 import com.better.alarm.background.AlertServicePusher
+import com.better.alarm.background.Event
 import com.better.alarm.createNotificationChannels
 import com.better.alarm.logger.LoggingExceptionHandler
 import com.better.alarm.logger.StartupLogWriter
@@ -103,7 +104,6 @@ class AlarmApplication : Application() {
                     .distinctUntilChanged()
                     .subscribe { next -> alarmsLogger.d("## Next: $next") }
         }
-
         super.onCreate()
     }
 }

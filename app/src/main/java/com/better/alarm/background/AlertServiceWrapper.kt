@@ -1,28 +1,34 @@
 package com.better.alarm.background
 
+import android.app.Notification
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
+import android.os.Vibrator
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import com.better.alarm.CHANNEL_ID
 import com.better.alarm.R
 import com.better.alarm.configuration.Prefs
+import com.better.alarm.configuration.globalGet
 import com.better.alarm.configuration.globalInject
-import com.better.alarm.configuration.globalLogger
 import com.better.alarm.configuration.logger
+import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
-import com.better.alarm.logger.Logger
+import com.better.alarm.logger.LoggerFactory
 import com.better.alarm.notificationBuilder
 import com.better.alarm.oreo
 import com.better.alarm.util.Service
 import com.better.alarm.wakelock.WakeLockManager
+import com.better.alarm.wakelock.Wakelocks
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import io.reactivex.Observable
+import io.reactivex.Scheduler
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
+import org.koin.dsl.koinApplication
 import org.koin.dsl.module
-
-typealias AlertServiceFactory = (Service) -> AlertService
-typealias NotificationsPluginFactory = (Service) -> NotificationsPlugin
 
 /**
  * This wraps [AlertService], does dependency injection and delegates everything to it.
@@ -56,15 +62,7 @@ class AlertServiceWrapper : Service() {
                         .refCount()
             }
 
-            factory(named("fadeInTimeInMillis")) {
-                get<RxSharedPreferences>()
-                        .getString(Prefs.KEY_FADE_IN_TIME_SEC, "30")
-                        .asObservable()
-                        .map { s -> s.toInt() * 1000 }
-            }
-
-
-            factory {
+            factory<AlertPlugin>(named("KlaxonPlugin")) {
                 KlaxonPlugin(
                         log = logger("AlertService"),
                         playerFactory = { PlayerWrapper(get(), get(), logger("AlertService")) },
@@ -75,92 +73,100 @@ class AlertServiceWrapper : Service() {
                 )
             }
 
-            factory(named("volumePreferenceDemo")) {
-                KlaxonPlugin(
-                        log = logger("VolumePreference"),
-                        playerFactory = { PlayerWrapper(get(), get(), logger("VolumePreference")) },
-                        prealarmVolume = get<RxSharedPreferences>().getInteger(Prefs.KEY_PREALARM_VOLUME, Prefs.DEFAULT_PREALARM_VOLUME).asObservable(),
-                        fadeInTimeInMillis = Observable.just(100),
-                        inCall = Observable.just(false),
-                        scheduler = get()
-                )
-            }
-
-            factory { params ->
+            factory<AlertPlugin>(named("VibrationPlugin")) {
                 VibrationPlugin(
                         log = logger("AlertService"),
                         vibrator = get(),
                         //TODO move to container
-                        fadeInTimeInMillis = when {
-                            params.isEmpty() -> get<RxSharedPreferences>()
-                                    .getString(Prefs.KEY_FADE_IN_TIME_SEC, "30")
-                                    .asObservable()
-                                    .map { s -> Integer.parseInt(s) * 1000 }
-                            else -> Observable.just(params[0])
-                        },
+                        fadeInTimeInMillis = get(named("fadeInTimeInMillis")),
                         scheduler = get(),
                         vibratePreference = get<RxSharedPreferences>().getBoolean("vibrate").asObservable()
                 )
             }
 
-            factory<NotificationsPluginFactory>(named("NotificationsPluginFactory")) {
-                { service: Service ->
-                    NotificationsPlugin(
-                            logger = logger("AlertService"),
-                            mContext = get(),
-                            nm = get(),
-                            startForeground = { id, notification -> service.startForeground(id, notification) }
-                    )
-                }
+            factory(named("fadeInTimeInMillis")) {
+                get<RxSharedPreferences>()
+                        .getString(Prefs.KEY_FADE_IN_TIME_SEC, "30")
+                        .asObservable()
+                        .map { s -> Integer.parseInt(s) * 1000 }
             }
 
-            factory<AlertServiceFactory>(named("AlertServiceFactory")) {
-                { service: Service ->
-                    AlertService(
-                            log = logger("AlertService"),
-                            wakelocks = get(),
-                            alarms = get(),
-                            inCall = get(named("inCall")),
-                            plugins = arrayOf(
-                                    get<KlaxonPlugin>(),
-                                    get<VibrationPlugin>(),
-                                    get<NotificationsPluginFactory>(named("NotificationsPluginFactory"))(service)
-                            ),
-                            handleUnwantedEvent = {
-                                oreo {
-                                    val notification = service.notificationBuilder(CHANNEL_ID) {
-                                        setContentTitle("Background")
-                                        setContentText("Background")
-                                        setSmallIcon(R.drawable.stat_notify_alarm)
-                                        setOngoing(true)
-                                    }
-                                    service.startForeground(42, notification)
-                                }
-                                service.stopSelf()
-                            },
-                            stopSelf = {
-                                service.stopSelf()
-                            }
-                    )
-                }
+            single<AlertPlugin>(named("NotificationsPlugin")) {
+                NotificationsPlugin(
+                        logger = logger("AlertService"),
+                        mContext = get(),
+                        nm = get(),
+                        enclosingService = get()
+                )
             }
 
+            single {
+                AlertService(
+                        log = logger("AlertService"),
+                        wakelocks = get(),
+                        alarms = get(),
+                        inCall = get(named("inCall")),
+                        plugins = getAll(),
+                        enclosing = get()
+                )
+            }
         }
     }
 
-    private lateinit var alertService: AlertService
-    private val tm: TelephonyManager by globalInject()
-    private val log: Logger by globalLogger("AlertService")
-    private val prefs: RxSharedPreferences by globalInject()
     private val wakelocks: WakeLockManager by globalInject()
+    private lateinit var alertService: AlertService
 
     override fun onCreate() {
-        alertService = globalInject<AlertServiceFactory>(named("AlertServiceFactory")).value(this)
+        alertService = koinApplication {
+            modules(module())
+            modules(module {
+                factory { globalGet<LoggerFactory>() }
+                factory { globalGet<Wakelocks>() }
+                factory { globalGet<IAlarmsManager>() }
+                factory { globalGet<TelephonyManager>() }
+                factory<Context> { this@AlertServiceWrapper }
+                factory { globalGet<NotificationManager>() }
+                factory { globalGet<RxSharedPreferences>() }
+                factory { globalGet<Scheduler>() }
+                factory { globalGet<Vibrator>() }
+                factory { globalGet<Resources>() }
+            })
+            modules(module {
+                factory<EnclosingService> {
+                    object : EnclosingService {
+                        override fun handleUnwantedEvent() {
+                            oreo {
+                                val notification = notificationBuilder(CHANNEL_ID) {
+                                    setContentTitle("Background")
+                                    setContentText("Background")
+                                    setSmallIcon(R.drawable.stat_notify_alarm)
+                                    setOngoing(true)
+                                }
+                                this@AlertServiceWrapper.startForeground(42, notification)
+                            }
+                            this@AlertServiceWrapper.stopSelf()
+                        }
+
+                        override fun startForeground(id: Int, notification: Notification) {
+                            this@AlertServiceWrapper.startForeground(id, notification)
+                        }
+
+                        override fun stopSelf() {
+                            this@AlertServiceWrapper.stopSelf()
+                        }
+
+                        override fun stopForegroud() {
+                            this@AlertServiceWrapper.stopForeground(true)
+                        }
+                    }
+                }
+            })
+        }.koin.get()
     }
 
     override fun onDestroy() {
-        log.debug { "destroyed" }
-        wakelocks.releaseServiceLock()
+        alertService.onDestroy()
+
         oreo {
             stopForeground(true)
         }
@@ -168,7 +174,6 @@ class AlertServiceWrapper : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return if (intent == null) {
-            log.warning { "null intent" }
             // this also has to be delivered, because someone has to call startForeground()
             alertService.onStartCommand(Event.NullEvent())
             START_NOT_STICKY

@@ -12,6 +12,9 @@ import android.telephony.TelephonyManager
 import com.better.alarm.alert.BackgroundNotifications
 import com.better.alarm.background.AlertServicePusher
 import com.better.alarm.background.AlertServiceWrapper
+import com.better.alarm.background.Event
+import com.better.alarm.background.KlaxonPlugin
+import com.better.alarm.background.PlayerWrapper
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.logger.LogcatLogWriter
 import com.better.alarm.logger.Logger
@@ -28,6 +31,7 @@ import com.better.alarm.util.Optional
 import com.better.alarm.wakelock.WakeLockManager
 import com.better.alarm.wakelock.Wakelocks
 import com.f2prateek.rx.preferences2.RxSharedPreferences
+import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -112,11 +116,21 @@ fun startKoin(context: Context): Koin {
         factory { get<Context>().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
         factory { get<Context>().getSystemService(Context.AUDIO_SERVICE) as AudioManager }
         factory { get<Context>().resources }
+
+        factory(named("volumePreferenceDemo")) {
+            KlaxonPlugin(
+                    log = logger("VolumePreference"),
+                    playerFactory = { PlayerWrapper(get(), get(), logger("VolumePreference")) },
+                    prealarmVolume = get<RxSharedPreferences>().getInteger(Prefs.KEY_PREALARM_VOLUME, Prefs.DEFAULT_PREALARM_VOLUME).asObservable(),
+                    fadeInTimeInMillis = Observable.just(100),
+                    inCall = Observable.just(false),
+                    scheduler = get()
+            )
+        }
     }
 
     return startKoin {
         modules(module)
-        modules(AlertServiceWrapper.module())
         modules(AlarmsListActivity.uiStoreModule)
     }.koin
 }

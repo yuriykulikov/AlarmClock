@@ -16,6 +16,11 @@ inline fun <reified T : Any> globalInject(
         noinline parameters: ParametersDefinition? = null
 ) = lazy { get().koin.rootScope.get<T>(qualifier, parameters) }
 
+inline fun <reified T : Any> globalGet(
+        qualifier: Qualifier? = null,
+        noinline parameters: ParametersDefinition? = null
+) = get().koin.rootScope.get<T>(qualifier, parameters)
+
 inline fun globalLogger(tag: String) = lazy { get().koin.rootScope.get<LoggerFactory>().createLogger(tag) }
 
 /**

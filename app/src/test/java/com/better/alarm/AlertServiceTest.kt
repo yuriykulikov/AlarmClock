@@ -1,6 +1,10 @@
 package com.better.alarm
 
-import com.better.alarm.background.*
+import com.better.alarm.background.AlertPlugin
+import com.better.alarm.background.AlertService
+import com.better.alarm.background.Event
+import com.better.alarm.background.PluginAlarmData
+import com.better.alarm.background.TargetVolume
 import com.better.alarm.interfaces.Alarm
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.logger.Logger
@@ -48,9 +52,8 @@ class AlertServiceTest {
             inCall = Observable.just(false),
             wakelocks = wakelocks,
             alarms = alarmsManager,
-            handleUnwantedEvent = {},
-            stopSelf = {},
-            plugins = arrayOf(plugin)
+            enclosing = mockk(),
+            plugins = listOf(plugin)
     )
 
     @Test

@@ -1,5 +1,6 @@
 package com.better.alarm.background
 
+import android.app.Notification
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
@@ -33,6 +34,13 @@ sealed class Event {
     data class DemuteEvent(val actions: String = Intents.ACTION_DEMUTE) : Event()
 }
 
+interface EnclosingService {
+    fun handleUnwantedEvent()
+    fun stopSelf()
+    fun stopForegroud()
+    fun startForeground(id: Int, notification: Notification)
+}
+
 /**
  * Listens to all kinds of events, vibrates, shows notifications and so on.
  */
@@ -41,9 +49,8 @@ class AlertService(
         private val wakelocks: Wakelocks,
         private val alarms: IAlarmsManager,
         private val inCall: Observable<Boolean>,
-        private val plugins: Array<AlertPlugin>,
-        private val handleUnwantedEvent: () -> Unit,
-        private val stopSelf: () -> Unit
+        private val plugins: List<AlertPlugin>,
+        private val enclosing: EnclosingService
 ) {
     private val wantedVolume: BehaviorSubject<TargetVolume> = BehaviorSubject.createDefault(TargetVolume.MUTED)
 
@@ -60,7 +67,7 @@ class AlertService(
 
     private var playingAlarm = false
     fun onStartCommand(event: Event) {
-        log.d("onStartCommand $event")
+        log.d { "onStartCommand $event" }
         if (!playingAlarm) {
             when (event) {
                 // we will start playing now
@@ -68,7 +75,7 @@ class AlertService(
                 }
                 else -> {
                     log.w("not playingAlarm, ignore $event")
-                    handleUnwantedEvent()
+                    enclosing.handleUnwantedEvent()
                 }
             }
         }
@@ -80,13 +87,13 @@ class AlertService(
             is Event.DemuteEvent -> wantedVolume.onNext(TargetVolume.FADED_IN_FAST)
             is Event.DismissEvent, is Event.SnoozedEvent, is Event.Autosilenced -> {
                 if (playingAlarm) {
-                    log.d("Cleaning up after $event")
+                    log.d { "Cleaning up after $event" }
                     currentAlarmId = null
                     playingAlarm = false
                     wantedVolume.onNext(TargetVolume.MUTED)
                     soundAlarmDisposable.dispose()
                     wakelocks.releaseServiceLock()
-                    stopSelf()
+                    enclosing.stopSelf()
                 }
             }
         }
@@ -129,5 +136,11 @@ class AlertService(
 
     private fun <U, D> Observable<U>.zipWithIndex(function: (U, Int) -> D): Observable<D> {
         return zipWith(generateSequence(0) { it + 1 }.asIterable()) { next, index -> function.invoke(next, index) }
+    }
+
+    fun onDestroy() {
+        log.debug { "destroyed" }
+        wakelocks.releaseServiceLock()
+        enclosing.stopForegroud()
     }
 }

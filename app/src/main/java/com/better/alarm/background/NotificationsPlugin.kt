@@ -39,7 +39,7 @@ class NotificationsPlugin(
         private val logger: Logger,
         private val mContext: Context,
         private val nm: NotificationManager,
-        private val startForeground: (Int, Notification) -> Unit
+        private val enclosingService: EnclosingService
 ) : AlertPlugin {
     override fun go(alarm: PluginAlarmData, prealarm: Boolean, targetVolume: Observable<TargetVolume>): Disposable {
         // our alarm fired again, remove snooze notification
@@ -79,7 +79,7 @@ class NotificationsPlugin(
         // correct notification.
         oreo {
             logger.d("startForeground() for ${alarm.id}")
-            startForeground(alarm.id, notification)
+            enclosingService.startForeground(alarm.id, notification)
         }
 
         preOreo {
