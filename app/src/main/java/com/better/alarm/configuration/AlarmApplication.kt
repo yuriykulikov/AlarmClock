@@ -103,6 +103,9 @@ class AlarmApplication : Application() {
             next()
                     .distinctUntilChanged()
                     .subscribe { next -> alarmsLogger.d("## Next: $next") }
+
+            events.onNext(Event.AlarmEvent(3))
+            // events.onNext(Event.AlarmEvent(2))
         }
         super.onCreate()
     }

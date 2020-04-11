@@ -219,6 +219,18 @@ class AlarmCore(
         override fun onRefresh() {
             // NOP
         }
+
+        override fun onSnooze(msg: Snooze) {
+            log.warning { "$this is in DisabledState" }
+        }
+
+        override fun onDismiss() {
+            log.warning { "$this is in DisabledState" }
+        }
+
+        override fun onDisable() {
+            log.warning { "$this is in DisabledState" }
+        }
     }
 
 
