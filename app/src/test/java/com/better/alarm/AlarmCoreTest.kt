@@ -5,7 +5,11 @@ import com.better.alarm.configuration.Store
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
 import com.better.alarm.logger.SysoutLogWriter
-import com.better.alarm.model.*
+import com.better.alarm.model.AlarmCore
+import com.better.alarm.model.AlarmsScheduler
+import com.better.alarm.model.CalendarType
+import com.better.alarm.model.Calendars
+import com.better.alarm.model.DaysOfWeek
 import com.better.alarm.util.Optional
 import io.mockk.mockk
 import io.mockk.verify
@@ -356,5 +360,30 @@ class AlarmCoreTest {
         }
 
         assertThat(alarmSetterMock.calendar).isNull()
+    }
+
+    @Test
+    fun `autosilence sends an event and then becomes dismissed`() {
+        val alarm = createAlarm()
+        act("Set on 01:00") {
+            alarm
+                    .edit()
+                    .withIsEnabled(true)
+                    .with(hour = 1)
+                    .commit()
+        }
+
+        act("Fired") {
+            alarm.onAlarmFired(CalendarType.NORMAL)
+        }
+
+        verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_ALERT_ACTION) }
+
+        act("Autosilence") {
+            alarm.onAlarmFired(CalendarType.NORMAL)
+        }
+
+        verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ACTION_SOUND_EXPIRED) }
+        verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_DISMISS_ACTION) }
     }
 }

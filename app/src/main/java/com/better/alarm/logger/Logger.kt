@@ -56,6 +56,7 @@ class Logger private constructor(
     }
 
     /** Java */
+    @Deprecated("Use debug", replaceWith = ReplaceWith("this.debug { message }"))
     fun d(message: Any) {
         logIfApplicable(LogLevel.DBG, message, null)
     }

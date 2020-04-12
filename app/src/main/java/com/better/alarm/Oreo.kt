@@ -67,6 +67,8 @@ fun oreo(action: () -> Unit) {
     }
 }
 
+fun isOreo() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+
 fun preOreo(action: () -> Unit) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
         action()

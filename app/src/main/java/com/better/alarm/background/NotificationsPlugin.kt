@@ -22,14 +22,15 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import com.better.alarm.*
+import com.better.alarm.CHANNEL_ID_HIGH_PRIO
+import com.better.alarm.NotificationImportance
+import com.better.alarm.R
 import com.better.alarm.alert.AlarmAlertFullScreen
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.interfaces.PresentationToModelIntents
+import com.better.alarm.isOreo
 import com.better.alarm.logger.Logger
-import io.reactivex.Observable
-import io.reactivex.disposables.Disposable
-import io.reactivex.disposables.Disposables
+import com.better.alarm.notificationBuilder
 
 /**
  * Glue class: connects AlarmAlert IntentReceiver to AlarmAlert activity. Passes
@@ -40,11 +41,8 @@ class NotificationsPlugin(
         private val mContext: Context,
         private val nm: NotificationManager,
         private val enclosingService: EnclosingService
-) : AlertPlugin {
-    override fun go(alarm: PluginAlarmData, prealarm: Boolean, targetVolume: Observable<TargetVolume>): Disposable {
-        // our alarm fired again, remove snooze notification
-        nm.cancel(alarm.id)
-
+) {
+    fun show(alarm: PluginAlarmData, index: Int, startForeground: Boolean) {
         /* Close dialogs and window shade */
         mContext.sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
 
@@ -75,28 +73,22 @@ class NotificationsPlugin(
             setDefaults(Notification.DEFAULT_LIGHTS)
         }
 
-        // Send the notification using the alarm id to easily identify the
-        // correct notification.
-        oreo {
-            logger.d("startForeground() for ${alarm.id}")
-            enclosingService.startForeground(alarm.id, notification)
-        }
-
-        preOreo {
-            logger.d("nm.notify() for ${alarm.id}")
-            nm.notify(alarm.id, notification)
-        }
-
-        return Disposables.fromAction {
-            oreo {
-                // wrapper.stopForeground(true)
-            }
-
-            preOreo {
-                nm.cancel(alarm.id)
-            }
+        if (startForeground && isOreo()) {
+            logger.debug { "startForeground() for ${alarm.id}" }
+            enclosingService.startForeground(index + OFFSET, notification)
+        } else {
+            logger.debug { "nm.notify() for ${alarm.id}" }
+            nm.notify(index + OFFSET, notification)
         }
     }
 
+    fun cancel(index: Int) {
+        nm.cancel(index + OFFSET)
+    }
+
     private fun getString(id: Int) = mContext.getString(id)
+
+    companion object {
+        private const val OFFSET = 100000
+    }
 }

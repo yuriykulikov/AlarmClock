@@ -1,10 +1,15 @@
 package com.better.alarm.background
 
 import android.app.Notification
+import com.better.alarm.BuildConfig
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
+import com.better.alarm.isOreo
 import com.better.alarm.logger.Logger
 import com.better.alarm.model.Alarmtone
+import com.better.alarm.util.modify
+import com.better.alarm.util.requireValue
+import com.better.alarm.util.subscribeWith
 import com.better.alarm.wakelock.Wakelocks
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -37,7 +42,6 @@ sealed class Event {
 interface EnclosingService {
     fun handleUnwantedEvent()
     fun stopSelf()
-    fun stopForegroud()
     fun startForeground(id: Int, notification: Notification)
 }
 
@@ -50,6 +54,7 @@ class AlertService(
         private val alarms: IAlarmsManager,
         private val inCall: Observable<Boolean>,
         private val plugins: List<AlertPlugin>,
+        private val notifications: NotificationsPlugin,
         private val enclosing: EnclosingService
 ) {
     private val wantedVolume: BehaviorSubject<TargetVolume> = BehaviorSubject.createDefault(TargetVolume.MUTED)
@@ -57,58 +62,129 @@ class AlertService(
     private enum class Type { NORMAL, PREALARM }
     private data class CallState(val initial: Boolean, val inCall: Boolean)
 
+    private val disposable: CompositeDisposable = CompositeDisposable()
     private var soundAlarmDisposable: CompositeDisposable = CompositeDisposable()
 
-    private var currentAlarmId: Int? = null
+    private val activeAlarms = BehaviorSubject.createDefault(mapOf<Int, Type>())
+    private var nowShowing = emptyList<Int>()
 
     init {
         wakelocks.acquireServiceLock()
+        activeAlarms
+                .distinctUntilChanged()
+                .skipWhile { it.isEmpty() }
+                .subscribeWith(disposable) { active ->
+                    if (active.isNotEmpty()) {
+                        log.debug { "activeAlarms: $active" }
+                        playSound(active)
+                        showNotifications(active)
+                    } else {
+                        log.debug { "no alarms anymore, stopSelf()" }
+                        soundAlarmDisposable.dispose()
+                        wantedVolume.onNext(TargetVolume.MUTED)
+                        nowShowing
+                                .filter { !isOreo() || it != 0 } // not the foreground notification
+                                .forEach { notifications.cancel(it) }
+                        enclosing.stopSelf()
+                        disposable.dispose()
+                    }
+                }
     }
 
-    private var playingAlarm = false
-    fun onStartCommand(event: Event) {
-        log.d { "onStartCommand $event" }
-        if (!playingAlarm) {
-            when (event) {
-                // we will start playing now
-                is Event.AlarmEvent, is Event.PrealarmEvent -> {
-                }
-                else -> {
-                    log.w("not playingAlarm, ignore $event")
-                    enclosing.handleUnwantedEvent()
-                }
-            }
-        }
+    fun onDestroy() {
+        log.debug { "onDestroy" }
+        wakelocks.releaseServiceLock()
+    }
 
-        when (event) {
-            is Event.AlarmEvent -> soundAlarm(event.id, Type.NORMAL)
-            is Event.PrealarmEvent -> soundAlarm(event.id, Type.PREALARM)
-            is Event.MuteEvent -> wantedVolume.onNext(TargetVolume.MUTED)
-            is Event.DemuteEvent -> wantedVolume.onNext(TargetVolume.FADED_IN_FAST)
-            is Event.DismissEvent, is Event.SnoozedEvent, is Event.Autosilenced -> {
-                if (playingAlarm) {
-                    log.d { "Cleaning up after $event" }
-                    currentAlarmId = null
-                    playingAlarm = false
-                    wantedVolume.onNext(TargetVolume.MUTED)
-                    soundAlarmDisposable.dispose()
-                    wakelocks.releaseServiceLock()
-                    enclosing.stopSelf()
+    fun onStartCommand(event: Event): Boolean {
+        log.debug { "onStartCommand $event" }
+
+        return if (stateValid(event)) {
+            when (event) {
+                is Event.AlarmEvent -> soundAlarm(event.id, Type.NORMAL)
+                is Event.PrealarmEvent -> soundAlarm(event.id, Type.PREALARM)
+                is Event.MuteEvent -> wantedVolume.onNext(TargetVolume.MUTED)
+                is Event.DemuteEvent -> wantedVolume.onNext(TargetVolume.FADED_IN_FAST)
+                is Event.DismissEvent -> remove(event.id)
+                is Event.SnoozedEvent -> remove(event.id)
+                is Event.Autosilenced -> remove(event.id)
+            }
+
+            activeAlarms.requireValue().isNotEmpty()
+        } else {
+            enclosing.handleUnwantedEvent()
+            false
+        }
+    }
+
+    private fun stateValid(event: Event): Boolean {
+        return when {
+            activeAlarms.requireValue().isEmpty() -> {
+                when (event) {
+                    is Event.AlarmEvent -> true
+                    is Event.PrealarmEvent -> true
+                    else -> {
+                        check(!BuildConfig.DEBUG) { "First event must be AlarmEvent or PrealarmEvent" }
+                        false
+                    }
                 }
             }
+            disposable.isDisposed -> {
+                check(!BuildConfig.DEBUG) { "Already disposed!" }
+                false
+            }
+            else -> true
+        }
+    }
+
+    private fun remove(id: Int) {
+        activeAlarms.modify {
+            minus(id)
         }
     }
 
     private fun soundAlarm(id: Int, type: Type) {
+        activeAlarms.modify {
+            plus(id to type)
+        }
+    }
+
+    private fun showNotifications(active: Map<Int, Type>) {
+        require(active.isNotEmpty())
+        val toShow = active.mapNotNull { (id, _) -> alarms.getAlarm(id) }
+                .map { alarm ->
+                    val alarmtone = alarm.alarmtone ?: Alarmtone.Default()
+                    val label = alarm.labelOrDefault ?: ""
+                    PluginAlarmData(alarm.id, alarmtone, label)
+                }
+
+        log.debug { "Show notifications: $toShow" }
+
+        // Send the notification using the alarm id to easily identify the
+        // correct notification.
+        toShow.forEachIndexed { index, alarmData ->
+            val startForeground = nowShowing.isEmpty() && index == 0
+            log.debug { "notifications.show(${alarmData}, $index, $startForeground)" }
+            notifications.show(alarmData, index, startForeground)
+        }
+
+        // cancel what we don't need anymore
+        nowShowing.drop(toShow.size).forEach {
+            notifications.cancel(it)
+        }
+
+        nowShowing = toShow.mapIndexed { index, _ -> index }
+    }
+
+    private fun playSound(active: Map<Int, Type>) {
+        require(active.isNotEmpty())
+        val (id, type) = active.entries.last()
+        play(id, type)
+    }
+
+    private fun play(id: Int, type: Type) {
         // new alarm - dispose all current signals
         soundAlarmDisposable.dispose()
-        currentAlarmId?.let {
-            log.debug { "dismissing currently playing $it" }
-            alarms.getAlarm(it)?.dismiss()
-        }
-        currentAlarmId = id
-
-        playingAlarm = true
 
         wantedVolume.onNext(TargetVolume.FADED_IN)
 
@@ -127,20 +203,13 @@ class AlertService(
         val alarm = alarms.getAlarm(id)
         val alarmtone = alarm?.alarmtone ?: Alarmtone.Default()
         val label = alarm?.labelOrDefault ?: ""
-        soundAlarmDisposable = CompositeDisposable(
-                plugins.map {
-                    it.go(PluginAlarmData(id, alarmtone, label), prealarm = type == Type.PREALARM, targetVolume = targetVolumeAccountingForInCallState)
-                }
-        )
+        val pluginDisposables = plugins.map {
+            it.go(PluginAlarmData(id, alarmtone, label), prealarm = type == Type.PREALARM, targetVolume = targetVolumeAccountingForInCallState)
+        }
+        soundAlarmDisposable = CompositeDisposable(pluginDisposables)
     }
 
     private fun <U, D> Observable<U>.zipWithIndex(function: (U, Int) -> D): Observable<D> {
         return zipWith(generateSequence(0) { it + 1 }.asIterable()) { next, index -> function.invoke(next, index) }
-    }
-
-    fun onDestroy() {
-        log.debug { "destroyed" }
-        wakelocks.releaseServiceLock()
-        enclosing.stopForegroud()
     }
 }

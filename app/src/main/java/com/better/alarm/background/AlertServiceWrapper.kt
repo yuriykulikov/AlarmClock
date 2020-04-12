@@ -91,7 +91,7 @@ class AlertServiceWrapper : Service() {
                         .map { s -> Integer.parseInt(s) * 1000 }
             }
 
-            single<AlertPlugin>(named("NotificationsPlugin")) {
+            single<NotificationsPlugin> {
                 NotificationsPlugin(
                         logger = logger("AlertService"),
                         mContext = get(),
@@ -107,6 +107,7 @@ class AlertServiceWrapper : Service() {
                         alarms = get(),
                         inCall = get(named("inCall")),
                         plugins = getAll(),
+                        notifications = get(),
                         enclosing = get()
                 )
             }
@@ -135,6 +136,7 @@ class AlertServiceWrapper : Service() {
                 factory<EnclosingService> {
                     object : EnclosingService {
                         override fun handleUnwantedEvent() {
+                            logger("SERVICE").warning { "handleUnwantedEvent()" }
                             oreo {
                                 val notification = notificationBuilder(CHANNEL_ID) {
                                     setContentTitle("Background")
@@ -148,15 +150,13 @@ class AlertServiceWrapper : Service() {
                         }
 
                         override fun startForeground(id: Int, notification: Notification) {
+                            logger("SERVICE").debug { "startForeground!!! $id, $notification" }
                             this@AlertServiceWrapper.startForeground(id, notification)
                         }
 
                         override fun stopSelf() {
+                            logger("SERVICE").warning { "stopSelf()" }
                             this@AlertServiceWrapper.stopSelf()
-                        }
-
-                        override fun stopForegroud() {
-                            this@AlertServiceWrapper.stopForeground(true)
                         }
                     }
                 }

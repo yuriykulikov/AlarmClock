@@ -477,9 +477,9 @@ class AlarmCore(
             }
 
             override fun onFired() {
-                // TODO actually we have to create a new state for this
-                // or maybe not :-)
                 broadcastAlarmState(Intents.ACTION_SOUND_EXPIRED)
+                // this is like a dismiss but we show an additional notification
+                stateMachine.transitionTo(rescheduleTransition)
             }
 
             override fun onSnooze(msg: Snooze) {

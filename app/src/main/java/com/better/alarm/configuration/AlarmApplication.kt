@@ -22,12 +22,12 @@ import com.better.alarm.BuildConfig
 import com.better.alarm.R
 import com.better.alarm.alert.BackgroundNotifications
 import com.better.alarm.background.AlertServicePusher
-import com.better.alarm.background.Event
 import com.better.alarm.createNotificationChannels
 import com.better.alarm.logger.LoggingExceptionHandler
 import com.better.alarm.logger.StartupLogWriter
 import com.better.alarm.model.Alarms
 import com.better.alarm.model.AlarmsScheduler
+import com.better.alarm.model.CalendarType
 import com.better.alarm.presenter.ScheduledReceiver
 import com.better.alarm.presenter.ToastPresenter
 import org.acra.ACRA
@@ -103,10 +103,8 @@ class AlarmApplication : Application() {
             next()
                     .distinctUntilChanged()
                     .subscribe { next -> alarmsLogger.d("## Next: $next") }
-
-            events.onNext(Event.AlarmEvent(3))
-            // events.onNext(Event.AlarmEvent(2))
         }
+
         super.onCreate()
     }
 }
