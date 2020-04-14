@@ -3,11 +3,9 @@ package com.better.alarm.configuration
 import android.app.AlarmManager
 import android.app.NotificationManager
 import android.content.Context
-import android.content.SharedPreferences
 import android.media.AudioManager
 import android.os.PowerManager
 import android.os.Vibrator
-import android.preference.PreferenceManager
 import android.telephony.TelephonyManager
 import com.better.alarm.alert.BackgroundNotifications
 import com.better.alarm.background.AlertServicePusher
@@ -30,6 +28,7 @@ import com.better.alarm.model.ContainerFactory
 import com.better.alarm.model.IAlarmsScheduler
 import com.better.alarm.persistance.DatabaseQuery
 import com.better.alarm.persistance.PersistingContainerFactory
+import com.better.alarm.stores.SharedRxDataStoreFactory
 import com.better.alarm.presenter.AlarmsListActivity
 import com.better.alarm.presenter.DynamicThemeHandler
 import com.better.alarm.presenter.ScheduledReceiver
@@ -37,7 +36,6 @@ import com.better.alarm.presenter.ToastPresenter
 import com.better.alarm.util.Optional
 import com.better.alarm.wakelock.WakeLockManager
 import com.better.alarm.wakelock.Wakelocks
-import com.f2prateek.rx.preferences2.RxSharedPreferences
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.Single
@@ -74,11 +72,8 @@ fun startKoin(context: Context): Koin {
             )
         }
         single<BugReporter> { BugReporter(logger("BugReporter"), context, lazy { get<StartupLogWriter>() }) }
-
         factory<Context> { context }
         factory(named("dateFormatOverride")) { "none" }
-        factory<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
-        single<RxSharedPreferences> { RxSharedPreferences.create(get()) }
         factory<Single<Boolean>>(named("dateFormat")) {
             Single.fromCallable {
                 get<String>(named("dateFormatOverride")).let { if (it == "none") null else it.toBoolean() }
@@ -86,13 +81,9 @@ fun startKoin(context: Context): Koin {
             }
         }
 
-        single {
-            val prefs = get<RxSharedPreferences>()
-            Prefs(get(named("dateFormat")),
-                    prefs.getString("prealarm_duration", "30").asObservable().map { it.toInt() },
-                    prefs.getString("snooze_duration", "10").asObservable().map { it.toInt() },
-                    prefs.getString(Prefs.LIST_ROW_LAYOUT, Prefs.LIST_ROW_LAYOUT_COMPACT).asObservable(),
-                    prefs.getString("auto_silence", "10").asObservable().map { it.toInt() })
+        single<Prefs> {
+            val factory = SharedRxDataStoreFactory.create(get(), logger("preferences"))
+            Prefs.create(get(named("dateFormat")), factory)
         }
 
         single<Store> {
@@ -133,7 +124,7 @@ fun startKoin(context: Context): Koin {
             KlaxonPlugin(
                     log = logger("VolumePreference"),
                     playerFactory = { PlayerWrapper(get(), get(), logger("VolumePreference")) },
-                    prealarmVolume = get<RxSharedPreferences>().getInteger(Prefs.KEY_PREALARM_VOLUME, Prefs.DEFAULT_PREALARM_VOLUME).asObservable(),
+                    prealarmVolume = get<Prefs>().preAlarmVolume.observe(),
                     fadeInTimeInMillis = Observable.just(100),
                     inCall = Observable.just(false),
                     scheduler = get()

@@ -79,7 +79,7 @@ public class ScheduledReceiver {
             // Update systems settings, so that interested Apps (like
             // KeyGuard)
             // will react accordingly
-            String format = prefs.is24HoutFormat().blockingGet() ? DM24 : DM12;
+            String format = prefs.is24HourFormat().blockingGet() ? DM24 : DM12;
             Calendar calendar = Calendar.getInstance();
             long milliseconds = nextOptional.get().nextNonPrealarmTime();
             calendar.setTimeInMillis(milliseconds);

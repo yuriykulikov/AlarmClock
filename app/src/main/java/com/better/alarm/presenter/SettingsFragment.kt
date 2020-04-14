@@ -8,7 +8,11 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Vibrator
 import android.provider.Settings
-import androidx.preference.*
+import androidx.preference.CheckBoxPreference
+import androidx.preference.ListPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceCategory
+import androidx.preference.PreferenceFragmentCompat
 import com.better.alarm.R
 import com.better.alarm.checkPermissions
 import com.better.alarm.configuration.Prefs
@@ -16,7 +20,6 @@ import com.better.alarm.configuration.globalInject
 import com.better.alarm.lollipop
 import com.better.alarm.model.Alarmtone
 import com.better.alarm.view.VolumePreference
-import com.f2prateek.rx.preferences2.RxSharedPreferences
 import io.reactivex.disposables.CompositeDisposable
 
 /**
@@ -26,7 +29,7 @@ import io.reactivex.disposables.CompositeDisposable
 class SettingsFragment : PreferenceFragmentCompat() {
     private val alarmStreamTypeBit = 1 shl AudioManager.STREAM_ALARM
     private val vibrator: Vibrator by globalInject()
-    private val rxSharedPreferences: RxSharedPreferences by globalInject()
+    private val prefs: Prefs by globalInject()
     private val disposables = CompositeDisposable()
 
     private val contentResolver: ContentResolver
@@ -100,10 +103,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         findListPreference(Prefs.KEY_ALARM_SNOOZE)
                 .let { snoozePref ->
-                    rxSharedPreferences.getString(Prefs.KEY_ALARM_SNOOZE)
-                            .asObservable()
+                    prefs.snoozeDuration
+                            .observe()
                             .subscribe { newValue ->
-                                val idx = snoozePref.findIndexOfValue(newValue)
+                                val idx = snoozePref.findIndexOfValue(newValue.toString())
                                 snoozePref.summary = snoozePref.entries[idx]
                             }
                 }
@@ -111,11 +114,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         findListPreference(Prefs.KEY_AUTO_SILENCE)
                 .let { autoSilencePref ->
-                    rxSharedPreferences.getString(Prefs.KEY_AUTO_SILENCE)
-                            .asObservable()
+                    prefs.autoSilence
+                            .observe()
                             .subscribe { newValue ->
                                 autoSilencePref.summary = when {
-                                    newValue.toInt() == -1 -> getString(R.string.auto_silence_never)
+                                    newValue == -1 -> getString(R.string.auto_silence_never)
                                     else -> getString(R.string.auto_silence_summary, newValue.toInt())
                                 }
                             }
@@ -124,11 +127,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         findListPreference(Prefs.KEY_PREALARM_DURATION)
                 .let { prealarmDurationPref ->
-                    rxSharedPreferences.getString(Prefs.KEY_PREALARM_DURATION)
-                            .asObservable()
+                    prefs.preAlarmDuration
+                            .observe()
                             .subscribe { newValue ->
                                 prealarmDurationPref.summary = when {
-                                    newValue.toInt() == -1 -> getString(R.string.prealarm_off_summary)
+                                    newValue == -1 -> getString(R.string.prealarm_off_summary)
                                     else -> getString(R.string.prealarm_summary, newValue.toInt())
                                 }
                             }
@@ -138,8 +141,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         findListPreference(Prefs.KEY_FADE_IN_TIME_SEC)
                 .let { fadeInPref ->
-                    rxSharedPreferences.getString(Prefs.KEY_FADE_IN_TIME_SEC)
-                            .asObservable()
+                    prefs.fadeInTimeInSeconds
+                            .observe()
                             .subscribe { newValue ->
                                 when {
                                     newValue.toInt() == 1 -> fadeInPref.summary = getString(R.string.fade_in_off_summary)
@@ -153,8 +156,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         theme.summary = theme.entry
 
         lollipop {
-            rxSharedPreferences.getString(Prefs.LIST_ROW_LAYOUT)
-                    .asObservable()
+            prefs.listRowLayout
+                    .observe()
                     .subscribe {
                         findListPreference(Prefs.LIST_ROW_LAYOUT).run {
                             summary = entry

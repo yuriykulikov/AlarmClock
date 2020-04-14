@@ -22,7 +22,6 @@ import com.better.alarm.oreo
 import com.better.alarm.util.Service
 import com.better.alarm.wakelock.WakeLockManager
 import com.better.alarm.wakelock.Wakelocks
-import com.f2prateek.rx.preferences2.RxSharedPreferences
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import org.koin.core.module.Module
@@ -66,8 +65,8 @@ class AlertServiceWrapper : Service() {
                 KlaxonPlugin(
                         log = logger("AlertService"),
                         playerFactory = { PlayerWrapper(get(), get(), logger("AlertService")) },
-                        prealarmVolume = get<RxSharedPreferences>().getInteger(Prefs.KEY_PREALARM_VOLUME, Prefs.DEFAULT_PREALARM_VOLUME).asObservable(),
-                        fadeInTimeInMillis = get(named("fadeInTimeInMillis")),
+                        prealarmVolume = get<Prefs>().preAlarmVolume.observe(),
+                        fadeInTimeInMillis = get<Prefs>().fadeInTimeInSeconds.observe().map { it * 1000 },
                         inCall = get(named("inCall")),
                         scheduler = get()
                 )
@@ -77,18 +76,10 @@ class AlertServiceWrapper : Service() {
                 VibrationPlugin(
                         log = logger("AlertService"),
                         vibrator = get(),
-                        //TODO move to container
-                        fadeInTimeInMillis = get(named("fadeInTimeInMillis")),
+                        fadeInTimeInMillis = get<Prefs>().fadeInTimeInSeconds.observe().map { it * 1000 },
                         scheduler = get(),
-                        vibratePreference = get<RxSharedPreferences>().getBoolean("vibrate").asObservable()
+                        vibratePreference = get<Prefs>().vibrate.observe()
                 )
-            }
-
-            factory(named("fadeInTimeInMillis")) {
-                get<RxSharedPreferences>()
-                        .getString(Prefs.KEY_FADE_IN_TIME_SEC, "30")
-                        .asObservable()
-                        .map { s -> Integer.parseInt(s) * 1000 }
             }
 
             single<NotificationsPlugin> {
@@ -127,7 +118,7 @@ class AlertServiceWrapper : Service() {
                 factory { globalGet<TelephonyManager>() }
                 factory<Context> { this@AlertServiceWrapper }
                 factory { globalGet<NotificationManager>() }
-                factory { globalGet<RxSharedPreferences>() }
+                factory { globalGet<Prefs>() }
                 factory { globalGet<Scheduler>() }
                 factory { globalGet<Vibrator>() }
                 factory { globalGet<Resources>() }

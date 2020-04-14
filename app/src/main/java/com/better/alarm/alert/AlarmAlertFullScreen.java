@@ -18,12 +18,10 @@
 package com.better.alarm.alert;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.fragment.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -31,9 +29,12 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentActivity;
+
 import com.better.alarm.R;
 import com.better.alarm.background.Event;
 import com.better.alarm.configuration.InjectKt;
+import com.better.alarm.configuration.Prefs;
 import com.better.alarm.configuration.Store;
 import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
@@ -62,7 +63,7 @@ public class AlarmAlertFullScreen extends FragmentActivity {
     protected static final String SCREEN_OFF = "screen_off";
     private final Store store = InjectKt.globalInject(Store.class).getValue();
     private final IAlarmsManager alarmsManager = InjectKt.globalInject(IAlarmsManager.class).getValue();
-    private final SharedPreferences sp = InjectKt.globalInject(SharedPreferences.class).getValue();
+    private final Prefs sp = InjectKt.globalInject(Prefs.class).getValue();
     private final Logger logger = InjectKt.globalLogger("AlarmAlertFullScreen").getValue();
     private final DynamicThemeHandler dynamicThemeHandler = InjectKt.globalInject(DynamicThemeHandler.class).getValue();
 
@@ -224,7 +225,7 @@ public class AlarmAlertFullScreen extends FragmentActivity {
     }
 
     private boolean isSnoozeEnabled() {
-        return Integer.parseInt(sp.getString("snooze_duration", "-1")) != -1;
+        return sp.getSnoozeDuration().getValue() != -1;
     }
 
     /**

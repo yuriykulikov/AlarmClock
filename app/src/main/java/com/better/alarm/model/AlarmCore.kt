@@ -126,9 +126,9 @@ class AlarmCore(
     init {
         this.df = SimpleDateFormat("dd-MM-yy HH:mm:ss", Locale.GERMANY)
 
-        this.preAlarmDuration = prefs.preAlarmDuration()
-        this.snoozeDuration = prefs.snoozeDuration()
-        this.autoSilence = prefs.autoSilence()
+        this.preAlarmDuration = prefs.preAlarmDuration.observe()
+        this.snoozeDuration = prefs.snoozeDuration.observe()
+        this.autoSilence = prefs.autoSilence.observe()
 
         stateMachine = StateMachine("Alarm " + container.id, log)
 

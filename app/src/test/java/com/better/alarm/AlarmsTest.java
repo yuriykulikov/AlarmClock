@@ -21,6 +21,7 @@ import com.better.alarm.model.Calendars;
 import com.better.alarm.model.ContainerFactory;
 import com.better.alarm.model.DaysOfWeek;
 import com.better.alarm.persistance.DatabaseQuery;
+import com.better.alarm.stores.InMemoryRxDataStoreFactory;
 import com.better.alarm.util.Optional;
 
 import org.junit.Before;
@@ -82,12 +83,7 @@ public class AlarmsTest {
         testScheduler = new TestScheduler();
         logger = Logger.create(new SysoutLogWriter());
 
-        prefs = new Prefs(
-                /* is24HoutFormat */ Single.just(true),
-                /* preAlarmDuration */ BehaviorSubject.createDefault(10),
-                /* snoozeDuration */ BehaviorSubject.createDefault(10),
-                /* listRowLayout */ BehaviorSubject.createDefault("bold"),
-                /* autoSilence */ BehaviorSubject.createDefault(10));
+        prefs = Prefs.create(Single.just(true), InMemoryRxDataStoreFactory.create());
 
         store = new Store(
                 /* alarmsSubject */ BehaviorSubject.<List<AlarmValue>>createDefault(new ArrayList<AlarmValue>()),

@@ -31,7 +31,11 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.CheckBox
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.better.alarm.R
 import com.better.alarm.checkPermissions
@@ -49,7 +53,6 @@ import com.better.alarm.util.Optional
 import com.better.alarm.util.modify
 import com.better.alarm.view.showDialog
 import com.better.alarm.view.summary
-import com.f2prateek.rx.preferences2.RxSharedPreferences
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -64,7 +67,6 @@ import java.util.Calendar
 class AlarmDetailsFragment : Fragment() {
     private val alarms: IAlarmsManager by globalInject()
     private val logger: Logger by globalLogger("AlarmDetailsFragment")
-    private val rxSharedPreferences: RxSharedPreferences by globalInject()
     private val prefs: Prefs by globalInject()
     private var disposables = CompositeDisposable()
 
@@ -266,8 +268,8 @@ class AlarmDetailsFragment : Fragment() {
                 })
 
         //pre-alarm duration, if set to "none", remove the option
-        disposables.add(rxSharedPreferences.getString("prealarm_duration", "-1")
-                .asObservable()
+        disposables.add(prefs.preAlarmDuration
+                .observe()
                 .subscribe { value ->
                     mPreAlarmRow.visibility = if (value.toInt() == -1) View.GONE else View.VISIBLE
                 })

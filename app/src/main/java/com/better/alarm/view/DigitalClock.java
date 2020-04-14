@@ -120,7 +120,7 @@ public class DigitalClock extends LinearLayout {
         if (isInEditMode()) {
             is24HoutFormat = Single.just(true);
         } else {
-            is24HoutFormat = InjectKt.globalInject(Prefs.class).getValue().is24HoutFormat();
+            is24HoutFormat = InjectKt.globalInject(Prefs.class).getValue().is24HourFormat();
         }
     }
 

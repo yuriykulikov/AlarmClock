@@ -64,7 +64,7 @@ public class TimePicker extends LinearLayout implements Button.OnClickListener {
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         layoutInflater.inflate(R.layout.time_picker_view, this);
         mInputSize = 4;
-        mIs24HoursMode = isInEditMode() ? true : InjectKt.globalInject(Prefs.class).getValue().is24HoutFormat().blockingGet();
+        mIs24HoursMode = isInEditMode() ? true : InjectKt.globalInject(Prefs.class).getValue().is24HourFormat().blockingGet();
         presenter = new TimePickerPresenter(mIs24HoursMode);
     }
 

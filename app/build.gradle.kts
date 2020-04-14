@@ -125,7 +125,6 @@ dependencies {
     implementation("com.melnykov:floatingactionbutton:1.2.0")
     implementation("io.reactivex.rxjava2:rxjava:2.2.0")
     implementation("io.reactivex.rxjava2:rxandroid:2.1.0")
-    implementation("com.f2prateek.rx.preferences2:rx-preferences:2.0.0")
     implementation("com.android.support:support-v4:26.1.0") {}
 
     implementation("org.koin:koin-core:2.0.1")

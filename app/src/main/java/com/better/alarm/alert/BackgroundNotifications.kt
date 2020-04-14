@@ -106,7 +106,7 @@ class BackgroundNotifications(
     private fun getString(id: Int) = mContext.getString(id)
 
     private fun Alarm.formatTimeString(): String {
-        val format = if (prefs.is24HoutFormat().blockingGet()) DM24 else DM12
+        val format = if (prefs.is24HourFormat.blockingGet()) DM24 else DM12
         val calendar = snoozedTime
         return DateFormat.format(format, calendar) as String
     }

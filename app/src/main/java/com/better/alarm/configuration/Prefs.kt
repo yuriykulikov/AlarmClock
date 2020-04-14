@@ -1,7 +1,9 @@
 package com.better.alarm.configuration
 
 import com.better.alarm.lollipop
-import io.reactivex.Observable
+import com.better.alarm.stores.RxDataStore
+import com.better.alarm.stores.PrimitiveDataStoreFactory
+import com.better.alarm.stores.intStringDataStore
 import io.reactivex.Single
 
 /**
@@ -12,20 +14,20 @@ enum class Layout {
     CLASSIC, COMPACT, BOLD;
 }
 
-data class Prefs(
-        val _is24HoutFormat: Single<Boolean>,
-        val preAlarmDuration: Observable<Int>,
-        val snoozeDuration: Observable<Int>,
-        val listRowLayout: Observable<String>,
-        val autoSilence: Observable<Int>) {
+class Prefs private constructor(
+        val is24HourFormat: Single<Boolean>,
+        val preAlarmDuration: RxDataStore<Int>,
+        val preAlarmVolume: RxDataStore<Int>,
+        val snoozeDuration: RxDataStore<Int>,
+        val listRowLayout: RxDataStore<String>,
+        val autoSilence: RxDataStore<Int>,
+        val fadeInTimeInSeconds: RxDataStore<Int>,
+        val vibrate: RxDataStore<Boolean>
 
-    fun is24HoutFormat(): Single<Boolean> = _is24HoutFormat
-    fun preAlarmDuration(): Observable<Int> = preAlarmDuration
-    fun snoozeDuration(): Observable<Int> = snoozeDuration
-    fun listRowLayout(): Observable<String> = listRowLayout
-    fun autoSilence(): Observable<Int> = autoSilence
+) {
     fun layout(): Layout {
         return listRowLayout
+                .observe()
                 .take(1)
                 .map {
                     when {
@@ -38,6 +40,20 @@ data class Prefs(
     }
 
     companion object {
+        @JvmStatic
+        fun create(is24HourFormat: Single<Boolean>, factory: PrimitiveDataStoreFactory): Prefs {
+            return Prefs(
+                    is24HourFormat = is24HourFormat,
+                    preAlarmDuration = factory.intStringDataStore("prealarm_duration", 30),
+                    preAlarmVolume = factory.intDataStore(KEY_PREALARM_VOLUME, DEFAULT_PREALARM_VOLUME),
+                    snoozeDuration = factory.intStringDataStore("snooze_duration", 10),
+                    listRowLayout = factory.stringDataStore(LIST_ROW_LAYOUT, LIST_ROW_LAYOUT_COMPACT),
+                    autoSilence = factory.intStringDataStore("auto_silence", 10),
+                    fadeInTimeInSeconds = factory.intStringDataStore(Prefs.KEY_FADE_IN_TIME_SEC, 30),
+                    vibrate = factory.booleanDataStore("vibrate", true)
+            )
+        }
+
         const val KEY_ALARM_IN_SILENT_MODE = "alarm_in_silent_mode"
         const val KEY_ALARM_SNOOZE = "snooze_duration"
         const val KEY_AUTO_SILENCE = "auto_silence"

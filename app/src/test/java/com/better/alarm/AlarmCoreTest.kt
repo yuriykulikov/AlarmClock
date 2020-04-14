@@ -10,6 +10,7 @@ import com.better.alarm.model.AlarmsScheduler
 import com.better.alarm.model.CalendarType
 import com.better.alarm.model.Calendars
 import com.better.alarm.model.DaysOfWeek
+import com.better.alarm.stores.InMemoryRxDataStoreFactory
 import com.better.alarm.util.Optional
 import io.mockk.mockk
 import io.mockk.verify
@@ -36,12 +37,7 @@ class AlarmCoreTest {
             sets = PublishSubject.create(),
             events = PublishSubject.create()
     )
-    private var prefs: Prefs = Prefs(
-            _is24HoutFormat = Single.just(true),
-            preAlarmDuration = BehaviorSubject.createDefault(30),
-            snoozeDuration = BehaviorSubject.createDefault(10),
-            listRowLayout = BehaviorSubject.createDefault("bold"),
-            autoSilence = BehaviorSubject.createDefault(10))
+    private var prefs: Prefs = Prefs.create(Single.just(true), InMemoryRxDataStoreFactory.create())
     private var logger: Logger = Logger.create(SysoutLogWriter())
     private var currentHour = 0
     private var currentMinute = 5

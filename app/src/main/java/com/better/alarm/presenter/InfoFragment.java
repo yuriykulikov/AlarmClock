@@ -67,7 +67,7 @@ public class InfoFragment extends Fragment implements ViewFactory {
         public void accept(@NonNull Optional<Store.Next> nextOptional) throws Exception {
             if (nextOptional.isPresent()) {
                 alarm = nextOptional.get().alarm();
-                String format = prefs.is24HoutFormat().blockingGet() ? DM24 : DM12;
+                String format = prefs.is24HourFormat().blockingGet() ? DM24 : DM12;
 
                 milliseconds = nextOptional.get().nextNonPrealarmTime();
                 Calendar calendar = Calendar.getInstance();
@@ -150,7 +150,7 @@ public class InfoFragment extends Fragment implements ViewFactory {
 
     private void formatString() {
         if (isPrealarm) {
-            int duration = prefs.preAlarmDuration().blockingFirst();
+            int duration = prefs.getPreAlarmDuration().getValue();
             remainingTime.setText(formatRemainingTimeString(milliseconds) + "\n"
                     + getResources().getString(R.string.info_fragment_prealarm_summary, duration));
         } else {

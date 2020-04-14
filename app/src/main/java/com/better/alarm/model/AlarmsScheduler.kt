@@ -138,7 +138,7 @@ class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, 
                     fun findNormalTime(scheduledAlarm: ScheduledAlarm): Long {
                         // we can only assume that the real one will be a little later,
                         // namely:
-                        val prealarmOffsetInMillis = prefs.preAlarmDuration().blockingFirst() * 60 * 1000
+                        val prealarmOffsetInMillis = prefs.preAlarmDuration.value * 60 * 1000
                         return scheduledAlarm.calendar.timeInMillis + prealarmOffsetInMillis
                     }
 

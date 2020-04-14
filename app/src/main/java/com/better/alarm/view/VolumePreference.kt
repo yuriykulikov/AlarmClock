@@ -32,15 +32,14 @@ import com.better.alarm.R
 import com.better.alarm.background.KlaxonPlugin
 import com.better.alarm.background.PluginAlarmData
 import com.better.alarm.background.TargetVolume
-import com.better.alarm.configuration.Prefs.Companion.DEFAULT_PREALARM_VOLUME
-import com.better.alarm.configuration.Prefs.Companion.KEY_PREALARM_VOLUME
+import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.Prefs.Companion.MAX_PREALARM_VOLUME
 import com.better.alarm.configuration.globalInject
 import com.better.alarm.configuration.globalLogger
 import com.better.alarm.model.Alarmtone
-import com.f2prateek.rx.preferences2.RxSharedPreferences
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.subjects.PublishSubject
 import org.koin.core.context.GlobalContext.get
@@ -50,6 +49,7 @@ import java.util.concurrent.TimeUnit
 class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mContext, attrs) {
     private var ringtone: Ringtone? = null
     private var ringtoneSummary: TextView? = null
+    private val disposable = CompositeDisposable()
 
     private val klaxon: KlaxonPlugin by lazy {
         get().koin.rootScope.get<KlaxonPlugin>(named("volumePreferenceDemo"))
@@ -76,6 +76,10 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
         }
     }
 
+    override fun onDetached() {
+        super.onDetached()
+        disposable.dispose()
+    }
     fun onResume() {
         ringtoneSummary?.text = RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
                 ?.getTitle(context)
@@ -112,28 +116,30 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
                         ringtone?.play()
                     }
                 }
+                .let { disposable.add(it) }
 
         masterListener
                 .progressObservable()
                 .debounce(3, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
                 .subscribe { ringtone?.stop() }
+                .let { disposable.add(it) }
     }
 
     private fun bindPrealarmSeekBar(preAlarmSeekBar: SeekBar) {
         val prealarmListener = SeekBarListener()
         preAlarmSeekBar.setOnSeekBarChangeListener(prealarmListener)
-        val rxPrefs: RxSharedPreferences by globalInject()
+        val rxPrefs: Prefs by globalInject()
         val log by globalLogger("VolumePreference")
-        val prealarmPreference = rxPrefs.getInteger(KEY_PREALARM_VOLUME, DEFAULT_PREALARM_VOLUME)
+        val prealarmPreference = rxPrefs.preAlarmVolume
         preAlarmSeekBar.max = MAX_PREALARM_VOLUME
 
-        prealarmPreference.asObservable().subscribe { integer -> preAlarmSeekBar.progress = integer!! }
+        prealarmPreference.observe().subscribe { integer -> preAlarmSeekBar.progress = integer }.let { disposable.add(it) }
 
         prealarmListener
                 .progressObservable()
                 .doOnNext { integer ->
-                    log.d("Pre-alarm " + integer!!)
-                    prealarmPreference.set(integer)
+                    log.debug { "Pre-alarm $integer" }
+                    prealarmPreference.value = integer
                     ringtone?.stop()
                 }
                 .subscribe {
@@ -144,11 +150,13 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
                             alarmtone = Alarmtone.Default()
                     ), prealarm = true, targetVolume = Observable.just(TargetVolume.FADED_IN))
                 }
+                .let { disposable.add(it) }
 
         prealarmListener
                 .progressObservable()
                 .debounce(3, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
                 .subscribe { stopPrealarmSample() }
+                .let { disposable.add(it) }
     }
 
     private var prealarmSampleDisposable = Disposables.empty()

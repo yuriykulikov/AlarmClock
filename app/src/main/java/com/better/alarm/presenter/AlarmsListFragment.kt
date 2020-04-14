@@ -217,7 +217,8 @@ class AlarmsListFragment : Fragment() {
         }
 
         alarmsSub =
-                prefs.listRowLayout()
+                prefs.listRowLayout
+                        .observe()
                         .switchMap { uiStore.transitioningToNewAlarmDetails() }
                         .switchMap { transitioning -> if (transitioning) Observable.never() else store.alarms() }
                         .subscribe { alarms ->
