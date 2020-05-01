@@ -108,6 +108,11 @@ android {
         preDexLibraries = System.getenv("TRAVIS") != "true"
     }
 
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
     useLibrary("android.test.runner")
     useLibrary("android.test.base")
     useLibrary("android.test.mock")
@@ -116,7 +121,7 @@ android {
 dependencies {
     // App dependencies
     implementation(kotlin("stdlib", version = "1.3.30"))
-    implementation("ch.acra:acra:4.6.1")
+    implementation("ch.acra:acra-mail:5.5.0")
     implementation("com.melnykov:floatingactionbutton:1.2.0")
     implementation("io.reactivex.rxjava2:rxjava:2.2.0")
     implementation("io.reactivex.rxjava2:rxandroid:2.1.0")
@@ -147,17 +152,17 @@ dependencies {
     //for some tests which do not work with espresso on travis
     androidTestImplementation("com.jayway.android.robotium:robotium-solo:5.2.1")
 
-    androidTestImplementation ("androidx.test:core:1.2.0")
-    androidTestImplementation ("androidx.test:runner:1.2.0")
-    androidTestImplementation ("androidx.test:rules:1.2.0")
-    androidTestImplementation ("androidx.test.ext:junit:1.1.1")
-    androidTestImplementation ("androidx.test.ext:truth:1.2.0")
-    androidTestImplementation ("com.google.truth:truth:0.44")
-    androidTestImplementation ("androidx.test.espresso:espresso-core:3.2.0")
-    androidTestImplementation ("androidx.test.espresso:espresso-contrib:3.2.0")
-    androidTestImplementation ("androidx.test.espresso:espresso-intents:3.2.0")
-    androidTestImplementation ("androidx.test.espresso:espresso-accessibility:3.2.0")
-    androidTestImplementation ("androidx.test.espresso:espresso-web:3.2.0")
-    androidTestImplementation ("androidx.test.espresso.idling:idling-concurrent:3.2.0")
-    androidTestImplementation ("androidx.test.espresso:espresso-idling-resource:3.2.0")
+    androidTestImplementation("androidx.test:core:1.2.0")
+    androidTestImplementation("androidx.test:runner:1.2.0")
+    androidTestImplementation("androidx.test:rules:1.2.0")
+    androidTestImplementation("androidx.test.ext:junit:1.1.1")
+    androidTestImplementation("androidx.test.ext:truth:1.2.0")
+    androidTestImplementation("com.google.truth:truth:0.44")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.2.0")
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.2.0")
+    androidTestImplementation("androidx.test.espresso:espresso-accessibility:3.2.0")
+    androidTestImplementation("androidx.test.espresso:espresso-web:3.2.0")
+    androidTestImplementation("androidx.test.espresso.idling:idling-concurrent:3.2.0")
+    androidTestImplementation("androidx.test.espresso:espresso-idling-resource:3.2.0")
 }

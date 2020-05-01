@@ -49,7 +49,7 @@ class Logger private constructor(
         }
     }
 
-    inline fun info(e: Throwable? = null, supplier: () -> String) {
+    inline fun error(e: Throwable? = null, supplier: () -> String) {
         if (LogLevel.ERR <= logLevel) {
             write(supplier(), e)
         }

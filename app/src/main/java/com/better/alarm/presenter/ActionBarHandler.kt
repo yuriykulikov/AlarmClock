@@ -14,10 +14,9 @@ import androidx.appcompat.app.ActionBar
 import androidx.core.view.MenuItemCompat
 import com.better.alarm.BuildConfig
 import com.better.alarm.R
+import com.better.alarm.bugreports.BugReporter
 import com.better.alarm.interfaces.IAlarmsManager
 import io.reactivex.disposables.Disposables
-import org.acra.ACRA
-import kotlin.jvm.internal.Intrinsics
 
 
 /**
@@ -25,14 +24,13 @@ import kotlin.jvm.internal.Intrinsics
  *
  * @author Kate
  */
-class ActionBarHandler(context: Activity, private val store: UiStore, private val alarms: IAlarmsManager) {
-    private val mContext: Context
+class ActionBarHandler(
+        private val mContext: Activity,
+        private val store: UiStore,
+        private val alarms: IAlarmsManager,
+        private val reporter: BugReporter
+) {
     private var sub = Disposables.disposed()
-
-    init {
-        Intrinsics.checkNotNull(context, "context")
-        this.mContext = context
-    }
 
     /**
      * Delegate [Activity.onCreateOptionsMenu]
@@ -147,14 +145,12 @@ class ActionBarHandler(context: Activity, private val store: UiStore, private va
         val inflator = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
         val dialogView = inflator.inflate(R.layout.dialog_bugreport, null)
-        val report = dialogView.findViewById<TextView>(R.id.dialog_bugreport_edittext)
 
         dialogView.findViewById<TextView>(R.id.dialog_bugreport_textview).movementMethod = LinkMovementMethod.getInstance()
 
         AlertDialog.Builder(mContext).apply {
             setPositiveButton(android.R.string.ok) { _, _ ->
-                ACRA.getErrorReporter().putCustomData("USER_COMMENT", report.text.toString())
-                ACRA.getErrorReporter().handleSilentException(Exception(report.text.toString()))
+                reporter.sendUserReport()
             }
             setTitle(R.string.menu_bugreport)
             setCancelable(true)

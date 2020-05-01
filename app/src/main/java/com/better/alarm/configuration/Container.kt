@@ -11,16 +11,23 @@ import android.preference.PreferenceManager
 import android.telephony.TelephonyManager
 import com.better.alarm.alert.BackgroundNotifications
 import com.better.alarm.background.AlertServicePusher
-import com.better.alarm.background.AlertServiceWrapper
-import com.better.alarm.background.Event
 import com.better.alarm.background.KlaxonPlugin
 import com.better.alarm.background.PlayerWrapper
+import com.better.alarm.bugreports.BugReporter
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.logger.LogcatLogWriter
 import com.better.alarm.logger.Logger
 import com.better.alarm.logger.LoggerFactory
 import com.better.alarm.logger.StartupLogWriter
-import com.better.alarm.model.*
+import com.better.alarm.model.AlarmCore
+import com.better.alarm.model.AlarmCoreFactory
+import com.better.alarm.model.AlarmSetter
+import com.better.alarm.model.AlarmStateNotifier
+import com.better.alarm.model.Alarms
+import com.better.alarm.model.AlarmsScheduler
+import com.better.alarm.model.Calendars
+import com.better.alarm.model.ContainerFactory
+import com.better.alarm.model.IAlarmsScheduler
 import com.better.alarm.persistance.DatabaseQuery
 import com.better.alarm.persistance.PersistingContainerFactory
 import com.better.alarm.presenter.AlarmsListActivity
@@ -50,6 +57,10 @@ fun Scope.logger(tag: String): Logger {
     return get<LoggerFactory>().createLogger(tag)
 }
 
+fun Koin.logger(tag: String): Logger {
+    return get<LoggerFactory>().createLogger(tag)
+}
+
 fun startKoin(context: Context): Koin {
     // The following line triggers the initialization of ACRA
 
@@ -62,6 +73,7 @@ fun startKoin(context: Context): Koin {
                     get<StartupLogWriter>()
             )
         }
+        single<BugReporter> { BugReporter(logger("BugReporter"), context, lazy { get<StartupLogWriter>() }) }
 
         factory<Context> { context }
         factory(named("dateFormatOverride")) { "none" }

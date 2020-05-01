@@ -50,7 +50,7 @@ class ActionBarTest {
         val solo = solo!!
         solo.sendKey(Solo.MENU)
         solo.clickOnText("bugreport")
-        Assert.assertTrue(solo.searchText("Describe"))
+        Assert.assertTrue(solo.searchText("Common issues"))
         solo.clickOnButton("Cancel")
     }
 
@@ -60,7 +60,6 @@ class ActionBarTest {
         solo.sendKey(Solo.MENU)
         solo.clickOnText("About")
         Assert.assertTrue(solo.searchText("version"))
-        solo.clickOnButton("OK")
     }
 
     @Test
@@ -68,7 +67,6 @@ class ActionBarTest {
         val solo = solo!!
         solo.sendKey(Solo.MENU)
         solo.clickOnText(solo.getString(com.better.alarm.R.string.dialog_say_thanks_title))
-        Assert.assertTrue(solo.searchText(solo.getString(com.better.alarm.R.string.dialog_say_thanks_title)))
-        solo.clickOnButton("OK")
+        Assert.assertTrue(solo.searchText("really like the app"))
     }
 }

@@ -13,11 +13,4 @@
         android:padding="20dp"
         android:scrollbars="vertical"
         android:text="@string/dialog_bugreport_faq" />
-
-    <EditText
-        android:id="@+id/dialog_bugreport_edittext"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/dialog_bugreport_hint"
-        android:padding="20dp" />
 </LinearLayout>

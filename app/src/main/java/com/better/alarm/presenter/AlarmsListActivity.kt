@@ -17,6 +17,7 @@
 
 package com.better.alarm.presenter
 
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -30,6 +31,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.better.alarm.*
 import com.better.alarm.configuration.EditedAlarm
 import com.better.alarm.configuration.Store
+import com.better.alarm.configuration.globalGet
 import com.better.alarm.configuration.globalInject
 import com.better.alarm.configuration.globalLogger
 import com.better.alarm.interfaces.IAlarmsManager
@@ -145,6 +147,7 @@ class AlarmsListActivity : AppCompatActivity() {
         uiStore.editing().value?.writeInto(outState)
     }
 
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(dynamicThemeHandler.getIdForName(AlarmsListActivity::class.java.name))
         super.onCreate(savedInstanceState)
@@ -165,7 +168,7 @@ class AlarmsListActivity : AppCompatActivity() {
             // }
         }
 
-        this.mActionBarHandler = ActionBarHandler(this, uiStore, alarms)
+        this.mActionBarHandler = ActionBarHandler(this, uiStore, alarms, globalGet())
 
         val isTablet = !resources.getBoolean(R.bool.isTablet)
         if (isTablet) {
