@@ -26,7 +26,7 @@ package com.better.alarm.stores
 import io.reactivex.Observable
 
 /**
- * Represents a single preference. This an observable and persistent container for a single value.
+ * Represents a single store. This an observable and persistent container for a single value.
  */
 interface RxDataStore<T> {
     var value: T
@@ -56,14 +56,14 @@ interface PrimitiveDataStoreFactory {
 
 /** Creates a new [RxDataStore]<[Int]>. [defaultValue] will be used if the RxDataStore was not initialized yet. */
 fun PrimitiveDataStoreFactory.intStringDataStore(key: String, defaultValue: Int): RxDataStore<Int> {
-    val stringPreference = stringDataStore(key, defaultValue.toString())
+    val stringStore = stringDataStore(key, defaultValue.toString())
     return object : RxDataStore<Int> {
         override var value: Int
-            get() = stringPreference.value.toInt()
+            get() = stringStore.value.toInt()
             set(value) {
-                stringPreference.value = value.toString()
+                stringStore.value = value.toString()
             }
 
-        override fun observe(): Observable<Int> = stringPreference.observe().map { it.toInt() }
+        override fun observe(): Observable<Int> = stringStore.observe().map { it.toInt() }
     }
 }

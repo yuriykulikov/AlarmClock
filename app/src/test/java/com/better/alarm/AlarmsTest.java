@@ -10,9 +10,9 @@ import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
 import com.better.alarm.logger.SysoutLogWriter;
-import com.better.alarm.model.AlarmActiveRecord;
 import com.better.alarm.model.AlarmCore;
 import com.better.alarm.model.AlarmCoreFactory;
+import com.better.alarm.model.AlarmStore;
 import com.better.alarm.model.AlarmValue;
 import com.better.alarm.model.Alarms;
 import com.better.alarm.model.AlarmsScheduler;
@@ -116,7 +116,7 @@ public class AlarmsTest {
     @androidx.annotation.NonNull
     private DatabaseQuery mockQuery() {
         final DatabaseQuery query = mock(DatabaseQuery.class);
-        List<AlarmActiveRecord> list = new ArrayList<>();
+        List<AlarmStore> list = new ArrayList<>();
         when(query.query()).thenReturn(Single.just(list));
         return query;
     }
@@ -205,14 +205,14 @@ public class AlarmsTest {
         }
 
         @Override
-        public Single<List<AlarmActiveRecord>> query() {
-            AlarmActiveRecord container =
-                    factory.create()
-                            .withId(100500)
-                            .withIsEnabled(true)
-                            .withLabel("hello");
-
-            List<AlarmActiveRecord> item = CollectionsKt.arrayListOf(container);
+        public Single<List<AlarmStore>> query() {
+            AlarmStore container = factory.create();
+            container.setValue(container.getValue()
+                    .withId(100500)
+                    .withIsEnabled(true)
+                    .withLabel("hello")
+            );
+            List<AlarmStore> item = CollectionsKt.arrayListOf(container);
             return Single.just(item);
         }
     }
@@ -467,7 +467,7 @@ public class AlarmsTest {
         instance.snooze(newAlarm);
         testScheduler.triggerActions();
 
-        AlarmActiveRecord record = containerFactory.getCreatedRecords().get(0);
+        AlarmStore record = containerFactory.getCreatedRecords().get(0);
 
         System.out.println("------------");
         // now we simulate it started all over again
@@ -479,7 +479,7 @@ public class AlarmsTest {
         newAlarms.start();
         testScheduler.triggerActions();
 
-        assertThat(alarmSetterMock.getId()).isEqualTo(record.getId());
+        assertThat(alarmSetterMock.getId()).isEqualTo(record.getValue().getId());
     }
 
     @Test
@@ -513,7 +513,7 @@ public class AlarmsTest {
     public void snoozedAlarmsMustGoOutOfHibernationIfItWasRescheduled() {
         snoozedAlarmsMustCanBeRescheduled();
 
-        AlarmActiveRecord record = containerFactory.getCreatedRecords().get(0);
+        AlarmStore record = containerFactory.getCreatedRecords().get(0);
 
         System.out.println("------------");
         // now we simulate it started all over again
@@ -525,7 +525,7 @@ public class AlarmsTest {
         newAlarms.start();
         testScheduler.triggerActions();
 
-        assertThat(alarmSetterMock.getId()).isEqualTo(record.getId());
+        assertThat(alarmSetterMock.getId()).isEqualTo(record.getValue().getId());
         // TODO
         //  assertThat(alarmSetterMock.getCalendar().get(Calendar.MINUTE)).isEqualTo(42);
     }

@@ -1,5 +1,6 @@
 package com.better.alarm.interfaces
 
+import com.better.alarm.model.AlarmActiveRecord
 import com.better.alarm.model.AlarmData
 import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.Alarmtone
@@ -28,7 +29,9 @@ data class AlarmEditor(val callback: Consumer<AlarmValue>,
              daysOfWeek: DaysOfWeek = alarmValue.daysOfWeek,
              alarmtone: Alarmtone = alarmValue.alarmtone,
              isPrealarm: Boolean = alarmValue.isPrealarm): AlarmEditor {
-        return copy(callback = callback, alarmValue = alarmValue.let { it as AlarmData }.copy(
+        return copy(callback = callback, alarmValue = alarmValue.let {
+            if (it is AlarmActiveRecord) it.alarmValue else it as AlarmData
+        }.copy(
                 hour = hour,
                 minutes = minutes,
                 isEnabled = enabled,
@@ -37,6 +40,4 @@ data class AlarmEditor(val callback: Consumer<AlarmValue>,
                 isPrealarm = isPrealarm
         ))
     }
-
-
 }

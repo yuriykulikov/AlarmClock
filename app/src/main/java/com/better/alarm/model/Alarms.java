@@ -53,10 +53,10 @@ public class Alarms implements IAlarmsManager {
     }
 
     public void start() {
-        query.query().subscribe(new Consumer<List<AlarmActiveRecord>>() {
+        query.query().subscribe(new Consumer<List<AlarmStore>>() {
             @Override
-            public void accept(@NonNull List<AlarmActiveRecord> alarmRecords) throws Exception {
-                for (AlarmActiveRecord container : alarmRecords) {
+            public void accept(@NonNull List<AlarmStore> alarmRecords) throws Exception {
+                for (AlarmStore container : alarmRecords) {
                     final AlarmCore a = factory.create(container);
                     alarms.put(a.getId(), a);
                     a.start();

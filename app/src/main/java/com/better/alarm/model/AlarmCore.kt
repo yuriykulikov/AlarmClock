@@ -26,6 +26,7 @@ import com.better.alarm.logger.Logger
 import com.better.alarm.statemachine.ComplexTransition
 import com.better.alarm.statemachine.State
 import com.better.alarm.statemachine.StateMachine
+import com.better.alarm.stores.modify
 import io.reactivex.Observable
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.CompositeDisposable
@@ -105,7 +106,7 @@ object Create : Event()
  * @enduml
  */
 class AlarmCore(
-        private var container: AlarmActiveRecord,
+        private val alarmStore: AlarmStore,
         private val log: Logger,
         private val mAlarmsScheduler: IAlarmsScheduler,
         private val broadcaster: IStateNotifier,
@@ -115,13 +116,13 @@ class AlarmCore(
 ) : Alarm, Consumer<AlarmValue> {
     private val stateMachine: StateMachine<Event>
     private val df: DateFormat
-
+    private val container: AlarmActiveRecord get() = alarmStore.value
+            
     private val preAlarmDuration: Observable<Int>
     private val snoozeDuration: Observable<Int>
     private val autoSilence: Observable<Int>
 
     private val disposable = CompositeDisposable()
-
 
     init {
         this.df = SimpleDateFormat("dd-MM-yy HH:mm:ss", Locale.GERMANY)
@@ -178,7 +179,7 @@ class AlarmCore(
             addState(fired, enabledState)
             addState(preAlarmSnoozed, enabledState)
 
-            val initial = mutableTree.keys.firstOrNull { it.name == container.state }
+            val initial = mutableTree.keys.firstOrNull { it.name == alarmStore.value.state }
             setInitialState(initial ?: disabledState)
         }
 
@@ -188,7 +189,7 @@ class AlarmCore(
     private inner class DeletedState : AlarmState() {
         override fun onEnter(reason: Event) {
             removeAlarm()
-            container.delete()
+            alarmStore.delete()
             removeFromStore()
             disposable.dispose()
         }
@@ -208,7 +209,7 @@ class AlarmCore(
         }
 
         override fun onEnable() {
-            container = container.withIsEnabled(true)
+            alarmStore.modify { withIsEnabled(true) }
             stateMachine.transitionTo(enableTransition)
         }
 
@@ -243,8 +244,8 @@ class AlarmCore(
                     stateMachine.transitionTo(normalSet)
                 }
             } else {
-                log.d("Repeating is not set, disabling the alarm")
-                container = container.withIsEnabled(false)
+                log.debug { "Repeating is not set, disabling the alarm" }
+                alarmStore.modify { withIsEnabled(false) }
                 stateMachine.transitionTo(disabledState)
             }
         }
@@ -276,7 +277,7 @@ class AlarmCore(
         override fun onEnter(reason: Event) {
             if (!container.isEnabled) {
                 // if due to an exception during development an alarm is not enabled but the state is
-                container = container.withIsEnabled(true)
+                alarmStore.modify { withIsEnabled(true) }
             }
             updateListInStore()
         }
@@ -296,7 +297,7 @@ class AlarmCore(
         }
 
         override fun onDisable() {
-            container = container.withIsEnabled(false)
+            alarmStore.modify { withIsEnabled(false) }
             stateMachine.transitionTo(disabledState)
         }
 
@@ -547,7 +548,7 @@ class AlarmCore(
                     else -> nextRegualarSnoozeCalendar()
                 }
                 // change the next time to show notification properly
-                container = container.withNextTime(nextTime!!)
+                alarmStore.modify { withNextTime(nextTime) }
                 broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION) // Yar. 18.08
             }
 
@@ -616,7 +617,7 @@ class AlarmCore(
 
     private fun setAlarm(calendar: Calendar, calendarType: CalendarType) {
         mAlarmsScheduler.setAlarm(container.id, calendarType, calendar, container)
-        container = container.withNextTime(calendar)
+        alarmStore.modify { withNextTime(calendar) }
     }
 
     private fun removeAlarm() {
@@ -631,7 +632,7 @@ class AlarmCore(
     }
 
     private fun writeChangeData(data: AlarmValue) {
-        container = container.withChangeData(data)
+        alarmStore.modify { withChangeData(data) }
     }
 
     private fun calculateNextTime(): Calendar {
@@ -668,7 +669,7 @@ class AlarmCore(
                 null -> onResume()
                 else -> {
                     if (this !is EnabledState && this !is ComplexTransition<*>) {
-                        container = container.withState(name)
+                        alarmStore.modify { withState(name) }
                     }
                     onEnter(reason)
                     onResume()
@@ -791,7 +792,7 @@ class AlarmCore(
     }
 
     override fun edit(): AlarmEditor {
-        return AlarmEditor(this as Consumer<AlarmValue>, container.alarmValue)
+        return AlarmEditor(this as Consumer<AlarmValue>, container)
     }
 
     @Deprecated("")

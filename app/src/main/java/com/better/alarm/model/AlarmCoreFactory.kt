@@ -16,7 +16,7 @@ class AlarmCoreFactory(
         private val store: Store,
         private val calendars: Calendars
 ) {
-    fun create(container: AlarmActiveRecord): AlarmCore {
+    fun create(container: AlarmStore): AlarmCore {
         return AlarmCore(container, logger, alarmsScheduler, broadcaster, prefs, store, calendars)
     }
 }

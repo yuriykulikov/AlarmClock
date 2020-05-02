@@ -4,10 +4,9 @@ import android.media.RingtoneManager
 import android.net.Uri
 import java.util.Calendar
 
-class AlarmActiveRecord(
+data class AlarmActiveRecord(
         val nextTime: Calendar,
         val state: String,
-        val persistence: Persistence,
         val alarmValue: AlarmData
 ) : AlarmValue by alarmValue {
     override val skipping = state.contentEquals("SkippingSetState")
@@ -28,15 +27,6 @@ class AlarmActiveRecord(
                 RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
             }
         }
-    }
-
-    interface Persistence {
-        fun persist(activeRecord: AlarmActiveRecord)
-        fun delete(activeRecord: AlarmActiveRecord)
-    }
-
-    fun delete() {
-        persistence.delete(this)
     }
 
     override fun toString(): String {
@@ -63,20 +53,12 @@ class AlarmActiveRecord(
 
     fun withLabel(label: String) = copyAndPersist(alarmValue = alarmValue.copy(label = label))
 
+    @Deprecated("use copy", replaceWith = ReplaceWith( "this.copy"))
     fun copyAndPersist(alarmValue: AlarmData = this.alarmValue,
-                       persistence: Persistence = this.persistence,
                        nextTime: Calendar = this.nextTime,
                        state: String = this.state
     ): AlarmActiveRecord {
-        val copy = AlarmActiveRecord(nextTime, state, persistence, alarmValue)
-        if (valuesDiffer(copy)) {
-            persistence.persist(copy)
-        }
-        return copy
-    }
-
-    fun valuesDiffer(other: AlarmActiveRecord): Boolean {
-        return alarmValue != other.alarmValue || nextTime != other.nextTime || state != other.state
+        return copy(nextTime = nextTime, state = state, alarmValue = alarmValue)
     }
 }
 

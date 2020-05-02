@@ -30,6 +30,17 @@ class InMemoryRxDataStoreFactory : PrimitiveDataStoreFactory {
     companion object {
         @JvmStatic
         fun create(): PrimitiveDataStoreFactory = InMemoryRxDataStoreFactory()
+
+        fun <T : Any> inMemoryRxDataStore(defaultValue: T): RxDataStore<T> {
+            return object : RxDataStore<T> {
+                private val subject: BehaviorSubject<T> = BehaviorSubject.createDefault(defaultValue)
+                override var value: T
+                    get() = requireNotNull(subject.value)
+                    set(value) = subject.onNext(value)
+
+                override fun observe(): Observable<T> = subject.hide()
+            }
+        }
     }
 
     private val booleans = mutableMapOf<String, RxDataStore<Boolean>>()
@@ -38,30 +49,19 @@ class InMemoryRxDataStoreFactory : PrimitiveDataStoreFactory {
 
     override fun booleanDataStore(key: String, defaultValue: Boolean): RxDataStore<Boolean> {
         return booleans.getOrPut(key) {
-            createPreference(defaultValue)
+            inMemoryRxDataStore(defaultValue)
         }
     }
 
     override fun stringDataStore(key: String, defaultValue: String): RxDataStore<String> {
         return strings.getOrPut(key) {
-            createPreference(defaultValue)
+            inMemoryRxDataStore(defaultValue)
         }
     }
 
     override fun intDataStore(key: String, defaultValue: Int): RxDataStore<Int> {
         return ints.getOrPut(key) {
-            createPreference(defaultValue)
-        }
-    }
-
-    private fun <T : Any> createPreference(defaultValue: T): RxDataStore<T> {
-        return object : RxDataStore<T> {
-            private val subject: BehaviorSubject<T> = BehaviorSubject.createDefault(defaultValue)
-            override var value: T
-                get() = requireNotNull(subject.value)
-                set(value) = subject.onNext(value)
-
-            override fun observe(): Observable<T> = subject.hide()
+            inMemoryRxDataStore(defaultValue)
         }
     }
 }

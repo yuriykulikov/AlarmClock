@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 
 import com.better.alarm.model.AlarmActiveRecord;
+import com.better.alarm.model.AlarmStore;
 import com.better.alarm.model.ContainerFactory;
 
 import org.reactivestreams.Publisher;
@@ -33,7 +34,7 @@ public class DatabaseQuery {
         this.factory = factory;
     }
 
-    public Single<List<AlarmActiveRecord>> query() {
+    public Single<List<AlarmStore>> query() {
 
         return Single
                 .create(new SingleOnSubscribe<Cursor>() {
@@ -55,10 +56,10 @@ public class DatabaseQuery {
                                 .delay(500, TimeUnit.MILLISECONDS);
                     }
                 })
-                .map(new Function<Cursor, List<AlarmActiveRecord>>() {
+                .map(new Function<Cursor, List<AlarmStore>>() {
                     @Override
-                    public List<AlarmActiveRecord> apply(@NonNull Cursor cursor) throws Exception {
-                        List<AlarmActiveRecord> alarms = new ArrayList<AlarmActiveRecord>();
+                    public List<AlarmStore> apply(@NonNull Cursor cursor) throws Exception {
+                        List<AlarmStore> alarms = new ArrayList<AlarmStore>();
                         try {
                             if (cursor.moveToFirst()) {
                                 do {
@@ -72,6 +73,6 @@ public class DatabaseQuery {
                     }
                 })
                 //emit an empty list if it all fails
-                .onErrorResumeNext(Single.just(new ArrayList<AlarmActiveRecord>()));
+                .onErrorResumeNext(Single.just(new ArrayList<AlarmStore>()));
     }
 }

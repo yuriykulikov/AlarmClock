@@ -4,7 +4,16 @@ import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
-import com.better.alarm.model.*
+import com.better.alarm.model.AlarmActiveRecord
+import com.better.alarm.model.AlarmData
+import com.better.alarm.model.AlarmStore
+import com.better.alarm.model.Alarmtone
+import com.better.alarm.model.Calendars
+import com.better.alarm.model.ContainerFactory
+import com.better.alarm.model.DaysOfWeek
+import io.reactivex.Observable
+import io.reactivex.disposables.Disposable
+import io.reactivex.subjects.BehaviorSubject
 import java.util.Calendar
 
 /**
@@ -12,32 +21,47 @@ import java.util.Calendar
  *
  * @author Yuriy
  */
-class PersistingContainerFactory(private val calendars: Calendars, private val mContext: Context) : ContainerFactory, AlarmActiveRecord.Persistence {
+class PersistingContainerFactory(private val calendars: Calendars, private val mContext: Context) : ContainerFactory {
+    private val subscriptions = mutableMapOf<Int, Disposable>()
 
-    override fun create(c: Cursor): AlarmActiveRecord {
-        return fromCursor(c, calendars, this)
+    private fun createStore(initial: AlarmActiveRecord): AlarmStore {
+        return object : AlarmStore {
+            private val subject = BehaviorSubject.createDefault(initial)
+            override var value: AlarmActiveRecord
+                get() = requireNotNull(subject.value)
+                set(value) {
+                    val values: ContentValues = value.createContentValues()
+                    val uriWithAppendedId = ContentUris.withAppendedId(Columns.contentUri(), value.id.toLong())
+                    mContext.contentResolver.update(uriWithAppendedId, values, null, null)
+                    subject.onNext(value)
+                }
+
+            override fun observe(): Observable<AlarmActiveRecord> = subject.hide()
+            override fun delete() {
+                subscriptions.remove(value.id)?.dispose()
+                val uri = ContentUris.withAppendedId(Columns.contentUri(), value.id.toLong())
+                mContext.contentResolver.delete(uri, "", null)
+            }
+        }
     }
 
-    /** TODO there is a cheaper way to create an ID */
-    override fun create(): AlarmActiveRecord {
-        return create(calendars, this) { container -> ContentUris.parseId(mContext.contentResolver.insert(Columns.contentUri(), container.createContentValues())).toInt() }
+    override fun create(c: Cursor): AlarmStore {
+        return createStore(fromCursor(c, calendars))
     }
 
-    /**
-     * Persist data in the database
-     */
-    override fun persist(container: AlarmActiveRecord) {
-        val values: ContentValues = container.createContentValues()
-        val uriWithAppendedId = ContentUris.withAppendedId(Columns.contentUri(), container.id.toLong())
-        mContext.contentResolver.update(uriWithAppendedId, values, null, null)
+    override fun create(): AlarmStore {
+        return createStore(create(
+                calendars = calendars,
+                idMapper = { container ->
+                    ContentUris.parseId(mContext.contentResolver.insert(Columns.contentUri(), container.createContentValues())).toInt()
+                }
+        )).also { container ->
+            // persist created container
+            container.value = container.value
+        }
     }
 
-    override fun delete(container: AlarmActiveRecord) {
-        val uri = ContentUris.withAppendedId(Columns.contentUri(), container.id.toLong())
-        mContext.contentResolver.delete(uri, "", null)
-    }
-
-    private fun fromCursor(c: Cursor, calendars: Calendars, persistence: AlarmActiveRecord.Persistence): AlarmActiveRecord {
+    private fun fromCursor(c: Cursor, calendars: Calendars): AlarmActiveRecord {
         return AlarmActiveRecord(alarmValue = AlarmData(
                 id = c.getInt(Columns.ALARM_ID_INDEX),
                 isEnabled = c.getInt(Columns.ALARM_ENABLED_INDEX) == 1,
@@ -51,24 +75,13 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
                 skipping = false
         ),
                 state = c.getString(Columns.ALARM_STATE_INDEX),
-                nextTime = calendars.now().apply { timeInMillis = c.getLong(Columns.ALARM_TIME_INDEX) },
-                persistence = persistence
+                nextTime = calendars.now().apply { timeInMillis = c.getLong(Columns.ALARM_TIME_INDEX) }
         )
     }
 
     companion object {
-        val PERSISTENCE_STUB: AlarmActiveRecord.Persistence = object : AlarmActiveRecord.Persistence {
-            override fun persist(activeRecord: AlarmActiveRecord) {
-                //STUB
-            }
-
-            override fun delete(activeRecord: AlarmActiveRecord) {
-                //STUB
-            }
-        }
-
         @JvmStatic
-        fun create(calendars: Calendars, persistence: AlarmActiveRecord.Persistence, idMapper: (AlarmActiveRecord) -> Int): AlarmActiveRecord {
+        fun create(calendars: Calendars, idMapper: (AlarmActiveRecord) -> Int): AlarmActiveRecord {
             val now = calendars.now()
 
             val defaultActiveRecord = AlarmActiveRecord(alarmValue = AlarmData(
@@ -84,15 +97,13 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
                     skipping = false
             ),
                     state = "",
-                    nextTime = now,
-                    persistence = PERSISTENCE_STUB
+                    nextTime = now
             )
 
             //generate a new id
             val id = idMapper(defaultActiveRecord)
-            //assign the id and return an object with it. TODO here we have an unnecessary DB flush
             val withId = defaultActiveRecord.alarmValue.copy(id = id)
-            return defaultActiveRecord.copyAndPersist(alarmValue = withId, persistence = persistence)
+            return defaultActiveRecord.copy(alarmValue = withId)
         }
     }
 
