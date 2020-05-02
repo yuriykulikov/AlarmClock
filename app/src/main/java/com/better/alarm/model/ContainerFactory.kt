@@ -11,6 +11,6 @@ interface ContainerFactory {
     fun create(cursor: Cursor): AlarmStore
 }
 
-interface AlarmStore : RxDataStore<AlarmActiveRecord> {
+interface AlarmStore : RxDataStore<AlarmValue> {
     fun delete()
 }

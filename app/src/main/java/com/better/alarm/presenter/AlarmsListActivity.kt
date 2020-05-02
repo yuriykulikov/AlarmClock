@@ -23,12 +23,19 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
-import android.transition.*
+import android.transition.ChangeBounds
+import android.transition.ChangeTransform
+import android.transition.Fade
+import android.transition.Slide
+import android.transition.TransitionSet
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import com.better.alarm.*
+import com.better.alarm.BuildConfig
+import com.better.alarm.NotificationSettings
+import com.better.alarm.R
+import com.better.alarm.checkPermissions
 import com.better.alarm.configuration.EditedAlarm
 import com.better.alarm.configuration.Store
 import com.better.alarm.configuration.globalGet
@@ -36,7 +43,8 @@ import com.better.alarm.configuration.globalInject
 import com.better.alarm.configuration.globalLogger
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.logger.Logger
-import com.better.alarm.model.AlarmData
+import com.better.alarm.lollipop
+import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.Alarmtone
 import com.better.alarm.model.DaysOfWeek
 import com.better.alarm.util.Optional
@@ -48,6 +56,7 @@ import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import java.util.Calendar
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.
@@ -89,7 +98,7 @@ class AlarmsListActivity : AppCompatActivity() {
                     val newAlarm = alarms.createNewAlarm()
                     editing.onNext(EditedAlarm(
                             isNew = true,
-                            value = Optional.of(AlarmData.from(newAlarm.edit())),
+                            value = Optional.of(newAlarm.data),
                             id = newAlarm.id,
                             holder = Optional.absent()))
                 }
@@ -102,7 +111,7 @@ class AlarmsListActivity : AppCompatActivity() {
                     alarms.getAlarm(id)?.let { alarm ->
                         editing.onNext(EditedAlarm(
                                 isNew = false,
-                                value = Optional.of(AlarmData.from(alarm.edit())),
+                                value = Optional.of(alarm.data),
                                 id = id,
                                 holder = Optional.absent()))
                     }
@@ -112,7 +121,7 @@ class AlarmsListActivity : AppCompatActivity() {
                     alarms.getAlarm(id)?.let { alarm ->
                         editing.onNext(EditedAlarm(
                                 isNew = false,
-                                value = Optional.of(AlarmData.from(alarm.edit())),
+                                value = Optional.of(alarm.data),
                                 id = id,
                                 holder = Optional.of(holder)))
                     }
@@ -332,7 +341,7 @@ class AlarmsListActivity : AppCompatActivity() {
                 id = savedInstanceState.getInt("id"),
                 value = if (savedInstanceState.getBoolean("isEdited")) {
                     Optional.of(
-                            AlarmData(
+                            AlarmValue(
                                     id = savedInstanceState.getInt("id"),
                                     isEnabled = savedInstanceState.getBoolean("isEnabled"),
                                     hour = savedInstanceState.getInt("hour"),
@@ -342,7 +351,8 @@ class AlarmsListActivity : AppCompatActivity() {
                                     alarmtone = Alarmtone.fromString(savedInstanceState.getString("alarmtone")),
                                     label = savedInstanceState.getString("label"),
                                     isVibrate = true,
-                                    skipping = savedInstanceState.getBoolean("skipping")
+                                    state = savedInstanceState.getString("state"),
+                                    nextTime = Calendar.getInstance()
                             )
                     )
                 } else {
@@ -372,6 +382,7 @@ class AlarmsListActivity : AppCompatActivity() {
                 putBoolean("isVibrate", edited.isVibrate)
                 putString("alarmtone", edited.alarmtone.persistedString)
                 putBoolean("skipping", edited.skipping)
+                putString("state", edited.state)
             }
 
             logger.d("Saved state $toWrite")

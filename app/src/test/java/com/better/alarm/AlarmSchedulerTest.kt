@@ -5,7 +5,7 @@ import com.better.alarm.configuration.Store
 import com.better.alarm.logger.Logger
 import com.better.alarm.logger.SysoutLogWriter
 import com.better.alarm.model.AlarmCore
-import com.better.alarm.model.AlarmData
+import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.AlarmSetter
 import com.better.alarm.model.AlarmsScheduler
 import com.better.alarm.model.Alarmtone
@@ -33,6 +33,7 @@ class AlarmSchedulerTest {
     private lateinit var prefs: Prefs
     private lateinit var logger: Logger
     private lateinit var alarmsScheduler: AlarmsScheduler
+    private val calendars = Calendars { Calendar.getInstance() }
 
     @Before
     fun setUp() {
@@ -49,7 +50,6 @@ class AlarmSchedulerTest {
 
         stateNotifierMock = mock<AlarmCore.IStateNotifier>(AlarmCore.IStateNotifier::class.java)
         alarmSetterMock = SetterMock()
-        val calendars = Calendars { Calendar.getInstance() }
         alarmsScheduler = AlarmsScheduler(alarmSetterMock, logger, store, prefs, calendars)
     }
 
@@ -158,7 +158,7 @@ class AlarmSchedulerTest {
     }
 
     private fun createTestAlarmValue(id: Int, label: String = id.toString()) =
-            AlarmData(
+            AlarmValue(
                     id = id,
                     alarmtone = Alarmtone.Default(),
                     daysOfWeek = DaysOfWeek(0),
@@ -167,6 +167,8 @@ class AlarmSchedulerTest {
                     isPrealarm = false,
                     isVibrate = false,
                     label = label,
-                    minutes = 1
+                    minutes = 1,
+                    nextTime = calendars.now(),
+                    state = ""
             )
 }

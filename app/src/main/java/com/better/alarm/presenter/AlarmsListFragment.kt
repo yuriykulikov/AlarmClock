@@ -3,16 +3,24 @@ package com.better.alarm.presenter
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.*
+import android.view.ContextMenu
 import android.view.ContextMenu.ContextMenuInfo
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.AdapterView
 import android.widget.AdapterView.AdapterContextMenuInfo
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import androidx.fragment.app.Fragment
 import com.better.alarm.R
-import com.better.alarm.configuration.*
+import com.better.alarm.configuration.Layout
+import com.better.alarm.configuration.Prefs
+import com.better.alarm.configuration.Store
+import com.better.alarm.configuration.globalInject
+import com.better.alarm.configuration.globalLogger
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.logger.Logger
 import com.better.alarm.lollipop
@@ -47,6 +55,7 @@ class AlarmsListFragment : Fragment() {
 
     /** changed by [Prefs.listRowLayout] in [onResume]*/
     private var listRowLayoutId = R.layout.list_row_classic
+
     /** changed by [Prefs.listRowLayout] in [onResume]*/
     private var listRowLayout = prefs.layout()
 
@@ -98,11 +107,13 @@ class AlarmsListFragment : Fragment() {
                         .subscribe { picked ->
                             if (picked.isPresent()) {
                                 alarms.getAlarm(alarm.id)?.also { alarm ->
-                                    alarm.edit()
-                                            .withIsEnabled(true)
-                                            .withHour(picked.get().hour)
-                                            .withMinutes(picked.get().minute)
-                                            .commit()
+                                    alarm.edit {
+                                        copy(
+                                                isEnabled = true,
+                                                hour = picked.get().hour,
+                                                minutes = picked.get().minute
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -165,19 +176,23 @@ class AlarmsListFragment : Fragment() {
             }
             R.id.list_context_enable -> {
                 alarms.getAlarm(alarmId = alarm.id)?.run {
-                    edit().withIsEnabled(true).commit()
+                    edit {
+                        copy(isEnabled = true)
+                    }
                 }
             }
             R.id.list_context_menu_disable -> {
                 alarms.getAlarm(alarmId = alarm.id)?.run {
-                    edit().withIsEnabled(false).commit()
+                    edit {
+                        copy(isEnabled = false)
+                    }
                 }
             }
             R.id.skip_alarm -> {
                 alarms.getAlarm(alarmId = alarm.id)?.run {
-                    if (isSkipping) {
+                    if (isSkipping()) {
                         // removes the skip
-                        edit().commit()
+                        edit { this }
                     } else {
                         requestSkip()
                     }

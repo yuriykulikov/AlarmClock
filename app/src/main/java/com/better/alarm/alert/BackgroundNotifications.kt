@@ -144,7 +144,7 @@ class BackgroundNotifications(
             val notification = mContext.notificationBuilder(CHANNEL_ID) {
                 setAutoCancel(true)
                 addAction(R.drawable.ic_action_dismiss, when {
-                    edit().daysOfWeek.isRepeatSet -> getString(R.string.skip)
+                    data.daysOfWeek.isRepeatSet -> getString(R.string.skip)
                     else -> getString(R.string.disable_alarm)
                 }, pendingSkip)
                 setSmallIcon(R.drawable.stat_notify_alarm)

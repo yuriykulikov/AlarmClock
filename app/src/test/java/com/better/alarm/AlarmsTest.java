@@ -12,8 +12,8 @@ import com.better.alarm.logger.Logger;
 import com.better.alarm.logger.SysoutLogWriter;
 import com.better.alarm.model.AlarmCore;
 import com.better.alarm.model.AlarmCoreFactory;
-import com.better.alarm.model.AlarmStore;
 import com.better.alarm.model.AlarmValue;
+import com.better.alarm.model.AlarmStore;
 import com.better.alarm.model.Alarms;
 import com.better.alarm.model.AlarmsScheduler;
 import com.better.alarm.model.CalendarType;
@@ -41,7 +41,10 @@ import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.TestScheduler;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
+import kotlin.Function;
 import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function2;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -247,7 +250,17 @@ public class AlarmsTest {
         //when
         IAlarmsManager instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
-        newAlarm.edit().withIsEnabled(true).withHour(7).commit();
+
+        newAlarm.edit(new Function1<AlarmValue, AlarmValue>() {
+                          @Override
+                          public AlarmValue invoke(AlarmValue alarmValue) {
+                              return alarmValue
+                                      .withIsEnabled(true)
+                                      .withHour(7);
+                          }
+                      }
+        );
+
         testScheduler.triggerActions();
         //verify
         store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
@@ -291,7 +304,16 @@ public class AlarmsTest {
         //when
         Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
-        newAlarm.edit().withIsEnabled(true).withDaysOfWeek(new DaysOfWeek(1)).commit();
+        newAlarm.edit(new Function1<AlarmValue, AlarmValue>() {
+                          @Override
+                          public AlarmValue invoke(AlarmValue alarmValue) {
+                              return alarmValue
+                                      .withIsEnabled(true)
+                                      .withDaysOfWeek(new DaysOfWeek(1));
+                          }
+                      }
+        );
+
         testScheduler.triggerActions();
 
         instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
@@ -326,7 +348,16 @@ public class AlarmsTest {
         testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
 
-        newAlarm.edit().withDaysOfWeek(new DaysOfWeek(1)).withIsPrealarm(true).commit();
+        newAlarm.edit(new Function1<AlarmValue, AlarmValue>() {
+                          @Override
+                          public AlarmValue invoke(AlarmValue alarmValue) {
+                              return alarmValue
+                                      .withDaysOfWeek(new DaysOfWeek(1))
+                                      .withIsPrealarm(true);
+                          }
+                      }
+        );
+
         testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
 
@@ -349,7 +380,17 @@ public class AlarmsTest {
         Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
         //TODO circle the time, otherwise the tests may fail around 0 hours
-        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(new DaysOfWeek(1)).withIsPrealarm(true).commit();
+        newAlarm.edit(new Function1<AlarmValue, AlarmValue>() {
+                          @Override
+                          public AlarmValue invoke(AlarmValue alarmValue) {
+                              return alarmValue
+                                      .withIsEnabled(true)
+                                      .withHour(0)
+                                      .withDaysOfWeek(new DaysOfWeek(1))
+                                      .withIsPrealarm(true);
+                          }
+                      }
+        );
         testScheduler.triggerActions();
         //TODO verify
 
@@ -385,7 +426,16 @@ public class AlarmsTest {
         Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
         //TODO circle the time, otherwise the tests may fail around 0 hours
-        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(new DaysOfWeek(1)).commit();
+        newAlarm.edit(new Function1<AlarmValue, AlarmValue>() {
+                          @Override
+                          public AlarmValue invoke(AlarmValue alarmValue) {
+                              return alarmValue
+                                      .withIsEnabled(true)
+                                      .withHour(0)
+                                      .withDaysOfWeek(new DaysOfWeek(1));
+                          }
+                      }
+        );
         testScheduler.triggerActions();
         //TODO verify
 
@@ -406,7 +456,17 @@ public class AlarmsTest {
         Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
         //TODO circle the time, otherwise the tests may fail around 0 hours
-        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(new DaysOfWeek(1)).withIsPrealarm(true).commit();
+        newAlarm.edit(new Function1<AlarmValue, AlarmValue>() {
+                          @Override
+                          public AlarmValue invoke(AlarmValue alarmValue) {
+                              return alarmValue
+                                      .withIsEnabled(true)
+                                      .withHour(0)
+                                      .withDaysOfWeek(new DaysOfWeek(1))
+                                      .withIsPrealarm(true);
+                          }
+                      }
+        );
         testScheduler.triggerActions();
         //TODO verify
 
@@ -432,7 +492,17 @@ public class AlarmsTest {
         Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
         //TODO circle the time, otherwise the tests may fail around 0 hours
-        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(new DaysOfWeek(1)).withIsPrealarm(true).commit();
+        newAlarm.edit(new Function1<AlarmValue, AlarmValue>() {
+                          @Override
+                          public AlarmValue invoke(AlarmValue alarmValue) {
+                              return alarmValue
+                                      .withIsEnabled(true)
+                                      .withHour(0)
+                                      .withDaysOfWeek(new DaysOfWeek(1))
+                                      .withIsPrealarm(true);
+                          }
+                      }
+        );
         testScheduler.triggerActions();
         //TODO verify
 
@@ -456,7 +526,17 @@ public class AlarmsTest {
         //given
         Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
-        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(new DaysOfWeek(0)).withIsPrealarm(false).commit();
+        newAlarm.edit(new Function1<AlarmValue, AlarmValue>() {
+                          @Override
+                          public AlarmValue invoke(AlarmValue alarmValue) {
+                              return alarmValue
+                                      .withIsEnabled(true)
+                                      .withHour(0)
+                                      .withDaysOfWeek(new DaysOfWeek(0))
+                                      .withIsPrealarm(false);
+                          }
+                      }
+        );
         testScheduler.triggerActions();
 
         //when alarm fired
@@ -487,7 +567,17 @@ public class AlarmsTest {
         //given
         Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
-        newAlarm.edit().withIsEnabled(true).withHour(7).withDaysOfWeek(new DaysOfWeek(0)).withIsPrealarm(false).commit();
+        newAlarm.edit(new Function1<AlarmValue, AlarmValue>() {
+                          @Override
+                          public AlarmValue invoke(AlarmValue alarmValue) {
+                              return alarmValue
+                                      .withIsEnabled(true)
+                                      .withHour(7)
+                                      .withDaysOfWeek(new DaysOfWeek(0))
+                                      .withIsPrealarm(false);
+                          }
+                      }
+        );
         testScheduler.triggerActions();
 
         //when alarm fired
@@ -535,7 +625,16 @@ public class AlarmsTest {
         //given
         Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
-        newAlarm.edit().withIsEnabled(true).withHour(0).withDaysOfWeek(new DaysOfWeek(0)).withIsPrealarm(true).commit();
+        newAlarm.edit(new Function1<AlarmValue, AlarmValue>() {
+                          @Override
+                          public AlarmValue invoke(AlarmValue alarmValue) {
+                              return alarmValue.withIsEnabled(true)
+                                      .withHour(0)
+                                      .withDaysOfWeek(new DaysOfWeek(0))
+                                      .withIsPrealarm(true);
+                          }
+                      }
+        );
         testScheduler.triggerActions();
 
         //when alarm fired

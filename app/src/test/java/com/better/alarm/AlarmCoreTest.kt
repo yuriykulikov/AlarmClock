@@ -90,10 +90,9 @@ class AlarmCoreTest {
         val alarm = createAlarm()
 
         act("Enable on 01:00") {
-            alarm.edit()
-                    .withIsEnabled(true)
-                    .with(hour = 1)
-                    .commit()
+            alarm.edit {
+                copy(isEnabled = true, hour = 1)
+            }
         }
 
         verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_SHOW_SKIP) }
@@ -103,11 +102,11 @@ class AlarmCoreTest {
     fun `skip notification must be not shown if more than 2 hours`() {
         val alarm = createAlarm()
         act("Enable on 03:00") {
-            alarm
-                    .edit()
-                    .withIsEnabled(true)
-                    .with(hour = 3)
-                    .commit()
+            alarm.edit {
+                copy(
+                        isEnabled = true,
+                        hour = 3)
+            }
         }
 
         verify(exactly = 0) { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_SHOW_SKIP) }
@@ -118,11 +117,11 @@ class AlarmCoreTest {
     fun `skip notification must be shown if more than 2 hours and time has passed`() {
         val alarm = createAlarm()
         act("Enable on 03:00") {
-            alarm
-                    .edit()
-                    .withIsEnabled(true)
-                    .with(hour = 3)
-                    .commit()
+            alarm.edit {
+                copy(
+                        isEnabled = true,
+                        hour = 3)
+            }
         }
 
         verify(exactly = 0) { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_SHOW_SKIP) }
@@ -139,11 +138,11 @@ class AlarmCoreTest {
     fun `skip notification must be removed if not used and alarm has actually fired`() {
         val alarm = createAlarm()
         act("Set on 01:00") {
-            alarm
-                    .edit()
-                    .withIsEnabled(true)
-                    .with(hour = 1)
-                    .commit()
+            alarm.edit {
+                copy(
+                        isEnabled = true,
+                        hour = 1)
+            }
         }
         verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_SHOW_SKIP) }
 
@@ -159,13 +158,13 @@ class AlarmCoreTest {
     fun `skip notification must be removed if not used and pre alarm has actually fired`() {
         val alarm = createAlarm()
         act("Set on 01:30") {
-            alarm
-                    .edit()
-                    .withIsEnabled(true)
-                    .withDaysOfWeek(DaysOfWeek(0x7f))
-                    .with(hour = 1, minutes = 30)
-                    .withIsPrealarm(true)
-                    .commit()
+            alarm.edit {
+                copy(
+                        isEnabled = true,
+                        daysOfWeek = DaysOfWeek(0x7f),
+                        hour = 1, minutes = 30)
+                        .withIsPrealarm(true)
+            }
         }
 
         verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_SHOW_SKIP) }
@@ -188,11 +187,11 @@ class AlarmCoreTest {
     fun `non repeating alarm is disabled and cleaned up by skip`() {
         val alarm = createAlarm()
         act("Set on 01:00") {
-            alarm
-                    .edit()
-                    .withIsEnabled(true)
-                    .with(hour = 1)
-                    .commit()
+            alarm.edit {
+                copy(
+                        isEnabled = true,
+                        hour = 1)
+            }
         }
 
         verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_SHOW_SKIP) }
@@ -211,12 +210,12 @@ class AlarmCoreTest {
     fun `Repeating alarm is not disabled by skip`() {
         val alarm = createAlarm()
         act("Set on 1:00") {
-            alarm
-                    .edit()
-                    .withDaysOfWeek(DaysOfWeek(0x7f))
-                    .withIsEnabled(true)
-                    .with(hour = 1)
-                    .commit()
+            alarm.edit {
+                copy(
+                        daysOfWeek = DaysOfWeek(0x7f),
+                        isEnabled = true,
+                        hour = 1)
+            }
         }
 
         verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_SHOW_SKIP) }
@@ -238,12 +237,12 @@ class AlarmCoreTest {
     fun `Repeating alarm is not disabled`() {
         val alarm = createAlarm()
         act("Set on 1:00") {
-            alarm
-                    .edit()
-                    .withDaysOfWeek(DaysOfWeek(0x7f))
-                    .withIsEnabled(true)
-                    .with(hour = 1)
-                    .commit()
+            alarm.edit {
+                copy(
+                        daysOfWeek = DaysOfWeek(0x7f),
+                        isEnabled = true,
+                        hour = 1)
+            }
         }
 
         verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_SHOW_SKIP) }
@@ -263,12 +262,12 @@ class AlarmCoreTest {
     fun `Repeating alarm shows proper next time`() {
         val alarm = createAlarm()
         act("Set on 1:00") {
-            alarm
-                    .edit()
-                    .withDaysOfWeek(DaysOfWeek(0x7f))
-                    .withIsEnabled(true)
-                    .with(hour = 1)
-                    .commit()
+            alarm.edit {
+                copy(
+                        daysOfWeek = DaysOfWeek(0x7f),
+                        isEnabled = true,
+                        hour = 1)
+            }
         }
 
         verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_SHOW_SKIP) }
@@ -287,12 +286,12 @@ class AlarmCoreTest {
     fun `Repeating alarm shows proper next time when repeating is not every day`() {
         val alarm = createAlarm()
         act("Set on 1:00") {
-            alarm
-                    .edit()
-                    .withDaysOfWeek(DaysOfWeek(0x3))
-                    .withIsEnabled(true)
-                    .with(hour = 1)
-                    .commit()
+            alarm.edit {
+                copy(
+                        daysOfWeek = DaysOfWeek(0x3),
+                        isEnabled = true,
+                        hour = 1)
+            }
         }
 
         verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_SHOW_SKIP) }
@@ -310,12 +309,12 @@ class AlarmCoreTest {
     fun `Repeating alarm is back to business after skip has passed`() {
         val alarm = createAlarm()
         act("Set repeating on 01:00") {
-            alarm
-                    .edit()
-                    .withDaysOfWeek(DaysOfWeek(0x7f))
-                    .withIsEnabled(true)
-                    .with(hour = 1)
-                    .commit()
+            alarm.edit {
+                copy(
+                        daysOfWeek = DaysOfWeek(0x7f),
+                        isEnabled = true,
+                        hour = 1)
+            }
         }
 
         act("RequestSkip") {
@@ -337,12 +336,12 @@ class AlarmCoreTest {
     fun `When skipping alarm is disabled it is completely cleaned up`() {
         val alarm = createAlarm()
         act("Set on 1:00") {
-            alarm
-                    .edit()
-                    .withDaysOfWeek(DaysOfWeek(0x7f))
-                    .withIsEnabled(true)
-                    .with(hour = 1)
-                    .commit()
+            alarm.edit {
+                copy(
+                        daysOfWeek = DaysOfWeek(0x7f),
+                        isEnabled = true,
+                        hour = 1)
+            }
         }
 
         verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_SHOW_SKIP) }
@@ -362,11 +361,11 @@ class AlarmCoreTest {
     fun `autosilence sends an event and then becomes dismissed`() {
         val alarm = createAlarm()
         act("Set on 01:00") {
-            alarm
-                    .edit()
-                    .withIsEnabled(true)
-                    .with(hour = 1)
-                    .commit()
+            alarm.edit {
+                copy(
+                        isEnabled = true,
+                        hour = 1)
+            }
         }
 
         act("Fired") {

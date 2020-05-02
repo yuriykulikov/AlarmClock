@@ -1,58 +1,65 @@
 package com.better.alarm.model
 
+import android.media.RingtoneManager
 import android.net.Uri
-import android.provider.Settings
+import java.util.Calendar
 
-/**
- * Created by Yuriy on 11.06.2017.
- */
-interface AlarmValue {
-    val id: Int
+data class AlarmValue(
+        val nextTime: Calendar,
+        val state: String,
+        val id: Int,
+        val isEnabled: Boolean,
+        val hour: Int,
+        val minutes: Int,
+        val isPrealarm: Boolean,
+        val alarmtone: Alarmtone,
+        val isVibrate: Boolean,
+        val label: String,
+        val daysOfWeek: DaysOfWeek
+) {
+    val skipping = state.contentEquals("SkippingSetState")
 
-    val isEnabled: Boolean
+    val isSilent: Boolean
+        get() = alarmtone is Alarmtone.Silent
 
-    val hour: Int
-
-    val minutes: Int
-
-    val daysOfWeek: DaysOfWeek
-
-    val label: String
-
-    val isPrealarm: Boolean
-
-    val isVibrate: Boolean
-
-    val alarmtone: Alarmtone
-
-    /** Whether alarm is skipping one occurrence at the moment*/
-    val skipping: Boolean
-}
-
-private val defaultAlarmAlertUri = Settings.System.DEFAULT_ALARM_ALERT_URI.toString()
-
-fun Alarmtone.ringtoneManagerString(): Uri? {
-    return when (this) {
-        is Alarmtone.Silent -> null
-        is Alarmtone.Default -> Uri.parse(defaultAlarmAlertUri)
-        is Alarmtone.Sound -> Uri.parse(this.uriString)
-    }
-}
-
-sealed class Alarmtone(open val persistedString: String?) {
-
-    data class Silent(override val persistedString: String? = null) : Alarmtone(persistedString)
-    data class Default(override val persistedString: String? = "") : Alarmtone(persistedString)
-    data class Sound(val uriString: String) : Alarmtone(uriString)
-
-    companion object {
-        fun fromString(string: String?): Alarmtone {
-            return when (string) {
-                null -> Silent()
-                "" -> Default()
-                defaultAlarmAlertUri -> Default()
-                else -> Sound(string)
+    // If the database alert is null or it failed to parse, use the
+    // default alert.
+    @Deprecated("TODO move to where it is used")
+    val alert: Uri by lazy {
+        when (alarmtone) {
+            is Alarmtone.Silent -> throw RuntimeException("Alarm is silent")
+            is Alarmtone.Default -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+            is Alarmtone.Sound -> try {
+                Uri.parse(alarmtone.uriString)
+            } catch (e: Exception) {
+                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
             }
         }
     }
+
+    override fun toString(): String {
+        val box = if (isEnabled) "[x]" else "[ ]"
+        return "$id $box $hour:$minutes $daysOfWeek $label"
+    }
+
+    fun withId(id: Int): AlarmValue = copy(id = id)
+    fun withState(name: String): AlarmValue = copy(state = name)
+    fun withIsEnabled(enabled: Boolean): AlarmValue = copy(isEnabled = enabled)
+    fun withNextTime(calendar: Calendar): AlarmValue = copy(nextTime = calendar)
+    fun withChangeData(data: AlarmValue) = copy(
+            id = data.id,
+            isEnabled = data.isEnabled,
+            hour = data.hour,
+            minutes = data.minutes,
+            isPrealarm = data.isPrealarm,
+            alarmtone = data.alarmtone,
+            isVibrate = data.isVibrate,
+            label = data.label,
+            daysOfWeek = data.daysOfWeek
+    )
+
+    fun withLabel(label: String) = copy(label = label)
+    fun withHour(hour: Int)= copy(hour = hour)
+    fun withDaysOfWeek(daysOfWeek: DaysOfWeek) = copy(daysOfWeek = daysOfWeek)
+    fun withIsPrealarm(isPrealarm: Boolean) = copy(isPrealarm = isPrealarm)
 }

@@ -46,7 +46,7 @@ import com.better.alarm.configuration.globalLogger
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.logger.Logger
 import com.better.alarm.lollipop
-import com.better.alarm.model.AlarmData
+import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.Alarmtone
 import com.better.alarm.model.ringtoneManagerString
 import com.better.alarm.util.Optional
@@ -88,7 +88,7 @@ class AlarmDetailsFragment : Fragment() {
         fragmentView.findViewById(R.id.details_prealarm_checkbox) as CheckBox
     }
 
-    private val editor: Observable<AlarmData> by lazy { store.editing().filter { it.value.isPresent() }.map { it.value.get() } }
+    private val editor: Observable<AlarmValue> by lazy { store.editing().filter { it.value.isPresent() }.map { it.value.get() } }
 
     private val alarmId: Int by lazy { store.editing().value!!.id }
 
@@ -297,7 +297,7 @@ class AlarmDetailsFragment : Fragment() {
     private fun saveAlarm() {
         editor.firstOrError().subscribe { editorToSave ->
             alarms.getAlarm(alarmId)?.run {
-                edit().copy(alarmValue = editorToSave).commit()
+                edit { withChangeData(editorToSave) }
             }
             store.hideDetails(rowHolder)
         }.addToDisposables()
@@ -316,7 +316,7 @@ class AlarmDetailsFragment : Fragment() {
 
     private val pickerConsumer = { picked: Optional<PickedTime> ->
         if (picked.isPresent()) {
-            modify("Picker") { editor: AlarmData ->
+            modify("Picker") { editor: AlarmValue ->
                 editor.copy(hour = picked.get().hour,
                         minutes = picked.get().minute,
                         isEnabled = true)
@@ -324,7 +324,7 @@ class AlarmDetailsFragment : Fragment() {
         }
     }
 
-    private fun modify(reason: String, function: (AlarmData) -> AlarmData) {
+    private fun modify(reason: String, function: (AlarmValue) -> AlarmValue) {
         logger.d("Performing modification because of $reason")
         store.editing().modify {
             copy(value = value.map { function(it) })

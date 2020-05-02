@@ -3,7 +3,6 @@ package com.better.alarm.persistance;
 import android.content.ContentResolver;
 import android.database.Cursor;
 
-import com.better.alarm.model.AlarmActiveRecord;
 import com.better.alarm.model.AlarmStore;
 import com.better.alarm.model.ContainerFactory;
 

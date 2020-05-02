@@ -4,8 +4,7 @@ import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
-import com.better.alarm.model.AlarmActiveRecord
-import com.better.alarm.model.AlarmData
+import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.AlarmStore
 import com.better.alarm.model.Alarmtone
 import com.better.alarm.model.Calendars
@@ -24,10 +23,10 @@ import java.util.Calendar
 class PersistingContainerFactory(private val calendars: Calendars, private val mContext: Context) : ContainerFactory {
     private val subscriptions = mutableMapOf<Int, Disposable>()
 
-    private fun createStore(initial: AlarmActiveRecord): AlarmStore {
+    private fun createStore(initial: AlarmValue): AlarmStore {
         return object : AlarmStore {
             private val subject = BehaviorSubject.createDefault(initial)
-            override var value: AlarmActiveRecord
+            override var value: AlarmValue
                 get() = requireNotNull(subject.value)
                 set(value) {
                     val values: ContentValues = value.createContentValues()
@@ -36,7 +35,7 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
                     subject.onNext(value)
                 }
 
-            override fun observe(): Observable<AlarmActiveRecord> = subject.hide()
+            override fun observe(): Observable<AlarmValue> = subject.hide()
             override fun delete() {
                 subscriptions.remove(value.id)?.dispose()
                 val uri = ContentUris.withAppendedId(Columns.contentUri(), value.id.toLong())
@@ -61,8 +60,8 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
         }
     }
 
-    private fun fromCursor(c: Cursor, calendars: Calendars): AlarmActiveRecord {
-        return AlarmActiveRecord(alarmValue = AlarmData(
+    private fun fromCursor(c: Cursor, calendars: Calendars): AlarmValue {
+        return AlarmValue(
                 id = c.getInt(Columns.ALARM_ID_INDEX),
                 isEnabled = c.getInt(Columns.ALARM_ENABLED_INDEX) == 1,
                 hour = c.getInt(Columns.ALARM_HOUR_INDEX),
@@ -72,8 +71,6 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
                 isPrealarm = c.getInt(Columns.ALARM_PREALARM_INDEX) == 1,
                 label = c.getString(Columns.ALARM_MESSAGE_INDEX) ?: "",
                 alarmtone = Alarmtone.fromString(c.getString(Columns.ALARM_ALERT_INDEX)),
-                skipping = false
-        ),
                 state = c.getString(Columns.ALARM_STATE_INDEX),
                 nextTime = calendars.now().apply { timeInMillis = c.getLong(Columns.ALARM_TIME_INDEX) }
         )
@@ -81,10 +78,10 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
 
     companion object {
         @JvmStatic
-        fun create(calendars: Calendars, idMapper: (AlarmActiveRecord) -> Int): AlarmActiveRecord {
+        fun create(calendars: Calendars, idMapper: (AlarmValue) -> Int): AlarmValue {
             val now = calendars.now()
 
-            val defaultActiveRecord = AlarmActiveRecord(alarmValue = AlarmData(
+            val defaultActiveRecord = AlarmValue(
                     id = -1,
                     isEnabled = false,
                     hour = now.get(Calendar.HOUR_OF_DAY),
@@ -94,20 +91,17 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
                     isPrealarm = false,
                     label = "",
                     alarmtone = Alarmtone.Default(),
-                    skipping = false
-            ),
                     state = "",
                     nextTime = now
             )
 
             //generate a new id
             val id = idMapper(defaultActiveRecord)
-            val withId = defaultActiveRecord.alarmValue.copy(id = id)
-            return defaultActiveRecord.copy(alarmValue = withId)
+            return defaultActiveRecord.copy(id = id)
         }
     }
 
-    private fun AlarmActiveRecord.createContentValues(): ContentValues {
+    private fun AlarmValue.createContentValues(): ContentValues {
         return ContentValues(12).apply {
             // id
             put(Columns.ENABLED, isEnabled)

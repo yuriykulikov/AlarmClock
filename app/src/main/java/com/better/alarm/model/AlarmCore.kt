@@ -20,7 +20,6 @@ package com.better.alarm.model
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.Store
 import com.better.alarm.interfaces.Alarm
-import com.better.alarm.interfaces.AlarmEditor
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
 import com.better.alarm.statemachine.ComplexTransition
@@ -28,9 +27,7 @@ import com.better.alarm.statemachine.State
 import com.better.alarm.statemachine.StateMachine
 import com.better.alarm.stores.modify
 import io.reactivex.Observable
-import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.Consumer
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -113,11 +110,11 @@ class AlarmCore(
         prefs: Prefs,
         private val store: Store,
         private val calendars: Calendars
-) : Alarm, Consumer<AlarmValue> {
+) : Alarm {
     private val stateMachine: StateMachine<Event>
     private val df: DateFormat
-    private val container: AlarmActiveRecord get() = alarmStore.value
-            
+    private val container: AlarmValue get() = alarmStore.value
+
     private val preAlarmDuration: Observable<Int>
     private val snoozeDuration: Observable<Int>
     private val autoSilence: Observable<Int>
@@ -725,14 +722,6 @@ class AlarmCore(
         }.let { disposable.add(it) }
     }
 
-    /**
-     * for [edit]
-     */
-    @Throws(Exception::class)
-    override fun accept(@NonNull alarmChangeData: AlarmValue) {
-        change(alarmChangeData)
-    }
-
     fun onAlarmFired(calendarType: CalendarType) {
         stateMachine.sendEvent(Fired)
     }
@@ -783,20 +772,24 @@ class AlarmCore(
     // ++++++ getters for GUI +++++++++++++++++++++++++++++++
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    override fun getId(): Int = container.id
-    override fun getLabelOrDefault(): String = container.label
-    override fun getAlarmtone(): Alarmtone = container.alarmtone
+    override val id: Int get() = container.id
+    override val labelOrDefault: String get() = container.label
+    override val alarmtone: Alarmtone get() = container.alarmtone
 
     override fun toString(): String {
         return "AlarmCore ${container.id} $stateMachine on ${df.format(container.nextTime.time)}"
     }
 
-    override fun edit(): AlarmEditor {
-        return AlarmEditor(this as Consumer<AlarmValue>, container)
+    override fun edit(func: AlarmValue.() -> AlarmValue) {
+        val prev = container
+        change(func(prev).also {
+            assert(prev.state == it.state)
+            assert(prev.nextTime == it.nextTime)
+        })
     }
 
+    override val data: AlarmValue get() = container
+
     @Deprecated("")
-    override fun getSnoozedTime(): Calendar {
-        return container.nextTime
-    }
+    override val snoozedTime: Calendar get() = container.nextTime
 }
