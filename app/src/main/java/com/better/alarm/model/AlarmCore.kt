@@ -17,6 +17,7 @@
 
 package com.better.alarm.model
 
+import com.better.alarm.BuildConfig
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.Store
 import com.better.alarm.interfaces.Alarm
@@ -161,11 +162,13 @@ class AlarmCore(
 
     fun start() {
         stateMachine.start {
-            addState(disabledState)
-            addState(enabledState)
-            addState(deletedState)
-            addState(rescheduleTransition)
-            addState(enableTransition)
+            val root = RootState()
+            addState(root)
+            addState(disabledState, root)
+            addState(enabledState, root)
+            addState(deletedState, root)
+            addState(rescheduleTransition, root)
+            addState(enableTransition, root)
 
             addState(set, enabledState)
             addState(preAlarmSet, set)
@@ -181,6 +184,17 @@ class AlarmCore(
         }
 
         updateListInStore()
+    }
+
+    private inner class RootState : AlarmState() {
+        override fun onEvent(event: Event): Boolean {
+            if (BuildConfig.DEBUG) {
+                throw RuntimeException("Unhandled event: $event")
+            } else {
+                log.warning { "Unhandled event: $event" }
+                return true
+            }
+        }
     }
 
     private inner class DeletedState : AlarmState() {
@@ -215,6 +229,10 @@ class AlarmCore(
         }
 
         override fun onRefresh() {
+            // NOP
+        }
+
+        override fun onTimeSet() {
             // NOP
         }
 
@@ -791,5 +809,6 @@ class AlarmCore(
     override val data: AlarmValue get() = container
 
     @Deprecated("")
-    override val snoozedTime: Calendar get() = container.nextTime
+    override val snoozedTime: Calendar
+        get() = container.nextTime
 }
