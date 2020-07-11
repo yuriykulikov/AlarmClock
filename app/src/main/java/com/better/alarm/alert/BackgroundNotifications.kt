@@ -52,14 +52,14 @@ class BackgroundNotifications(
     init {
         val subscribe = store.events.subscribe { event ->
             when (event) {
-                is Event.AlarmEvent -> nm.cancel(event.id + BACKGROUND_NOTIFICATION_OFFSET)
-                is Event.PrealarmEvent -> nm.cancel(event.id + BACKGROUND_NOTIFICATION_OFFSET)
-                is Event.DismissEvent -> nm.cancel(event.id + BACKGROUND_NOTIFICATION_OFFSET)
-                is Event.CancelSnoozedEvent -> nm.cancel(event.id + BACKGROUND_NOTIFICATION_OFFSET)
+                is Event.AlarmEvent -> nm.cancel(event.id + SNOOZE_NOTIFICATION)
+                is Event.PrealarmEvent -> nm.cancel(event.id + SNOOZE_NOTIFICATION)
+                is Event.DismissEvent -> nm.cancel(event.id + SNOOZE_NOTIFICATION)
+                is Event.CancelSnoozedEvent -> nm.cancel(event.id + SNOOZE_NOTIFICATION)
                 is Event.SnoozedEvent -> onSnoozed(event.id)
                 is Event.Autosilenced -> onSoundExpired(event.id)
                 is Event.ShowSkip -> onShowSkip(event.id)
-                is Event.HideSkip -> onHideSkip(event.id)
+                is Event.HideSkip -> nm.cancel(SKIP_NOTIFICATION + event.id)
             }
         }
     }
@@ -99,7 +99,7 @@ class BackgroundNotifications(
 
         // Send the notification using the alarm id to easily identify the
         // correct notification.
-        nm.notify(id + BACKGROUND_NOTIFICATION_OFFSET, status)
+        nm.notify(id + SNOOZE_NOTIFICATION, status)
     }
 
     private fun getString(id: Int, vararg args: String) = mContext.getString(id, *args)
@@ -112,8 +112,6 @@ class BackgroundNotifications(
     }
 
     private fun onSoundExpired(id: Int) {
-        val pendingDismiss = PresentationToModelIntents.createPendingIntent(mContext,
-                PresentationToModelIntents.ACTION_REQUEST_DISMISS, id)
         // Update the notification to indicate that the alert has been
         // silenced.
         val alarm = alarmsManager.getAlarm(id)
@@ -126,13 +124,12 @@ class BackgroundNotifications(
             setAutoCancel(true)
             setSmallIcon(R.drawable.stat_notify_alarm)
             setWhen(Calendar.getInstance().timeInMillis)
-            setContentIntent(pendingDismiss)
             setContentTitle(label)
             setContentText(text)
             setTicker(text)
         }
 
-        nm.notify(BACKGROUND_NOTIFICATION_OFFSET + id, notification)
+        nm.notify(ONLY_MANUAL_DISMISS_OFFSET + id, notification)
     }
 
     private fun onShowSkip(id: Int) {
@@ -154,17 +151,15 @@ class BackgroundNotifications(
                 setTicker("${getString(R.string.notification_alarm_is_about_to_go_off)} ${formatTimeString()}")
             }
 
-            nm.notify(BACKGROUND_NOTIFICATION_OFFSET + id, notification)
+            nm.notify(SKIP_NOTIFICATION + id, notification)
         }
-    }
-
-    private fun onHideSkip(id: Int) {
-        nm.cancel(BACKGROUND_NOTIFICATION_OFFSET + id)
     }
 
     companion object {
         private const val DM12 = "E h:mm aa"
         private const val DM24 = "E kk:mm"
-        private const val BACKGROUND_NOTIFICATION_OFFSET = 1000
+        private const val SNOOZE_NOTIFICATION = 1000
+        private const val ONLY_MANUAL_DISMISS_OFFSET = 2000
+        private const val SKIP_NOTIFICATION = 3000
     }
 }
