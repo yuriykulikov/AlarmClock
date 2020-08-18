@@ -18,9 +18,9 @@
     <!--      Here come strings which are not contained in the AOSP -->
 
     <!-- Setting labels on Set alarm screen: Prealarm -->
-    <string name="alarm_prealarm">Pre-alarma discreta</string>
+    <string name="alarm_prealarm">Prealarma discreta</string>
     <!-- Pre-alarm duration title -->
-    <string name="prealarm_duration_title">Duración de Pre-Alarma</string>
+    <string name="prealarm_duration_title">Duración de prealarma</string>
     <!--
          Entries listed in the ListPreference when invoking the pre-alarm duration
          preference.
@@ -34,12 +34,12 @@
         <item>60 minutos</item>
     </string-array>
     <!-- Pre-alarm duration summary string set based on the preference value. -->
-    <string name="prealarm_summary">La Pre-alarma comenzará
+    <string name="prealarm_summary">La prealarma comenzará
 <xliff:g id="minutes">%d</xliff:g> minutos antes de la alarma principal</string>
-    <string name="info_fragment_prealarm_summary"><xliff:g id="minutes">%d</xliff:g> minutos Pre-alarma</string>
-    <string name="prealarm_off_summary">La Pre-Alarma está apagada</string>
+    <string name="info_fragment_prealarm_summary"><xliff:g id="minutes">%d</xliff:g> minutos prealarma</string>
+    <string name="prealarm_off_summary">La prealarma está apagada</string>
     <string name="master_volume">Volumen maestro</string>
-    <string name="menu_share">Cuota</string>
+    <string name="menu_share">Compartir</string>
     <string name="menu_bugreport">Enviar un informe de error</string>
     <string name="dialog_say_thanks_review_button">Valorar la aplicación</string>
     <string name="dialog_bugreport_hint">Describa su queja aquí</string>
