@@ -33,3 +33,7 @@ fun <T : Any> Single<T>.subscribeWith(disposable: CompositeDisposable, func: (T)
 fun <T : Any> Observable<T>.firstOrError(predicate: (T) -> Boolean): Single<T> {
     return filter(predicate).firstOrError()
 }
+
+fun <T : Any> Observable<T>.subscribeForever(consumer: (T) -> Unit) {
+    subscribe { consumer(it) }.apply { }
+}

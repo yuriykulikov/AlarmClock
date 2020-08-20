@@ -23,19 +23,18 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.preference.PreferenceManager
 import android.text.format.DateFormat
 import com.better.alarm.CHANNEL_ID
 import com.better.alarm.R
 import com.better.alarm.background.Event
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.Store
-import com.better.alarm.interfaces.Alarm
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.interfaces.PresentationToModelIntents
 import com.better.alarm.notificationBuilder
 import com.better.alarm.presenter.TransparentActivity
+import com.better.alarm.util.subscribeForever
 import java.util.Calendar
 
 /**
@@ -50,7 +49,7 @@ class BackgroundNotifications(
         private val store: Store
 ) {
     init {
-        val subscribe = store.events.subscribe { event ->
+        store.events.subscribeForever { event ->
             when (event) {
                 is Event.AlarmEvent -> nm.cancel(event.id + SNOOZE_NOTIFICATION)
                 is Event.PrealarmEvent -> nm.cancel(event.id + SNOOZE_NOTIFICATION)
@@ -79,7 +78,6 @@ class BackgroundNotifications(
 
         val label = alarmsManager.getAlarm(id)?.labelOrDefault ?: ""
 
-        //@formatter:off
         val contentText: String = alarmsManager.getAlarm(id)
                 ?.let { mContext.getString(R.string.alarm_notify_snooze_text, calendar.formatTimeString()) }
                 ?: ""
@@ -95,7 +93,6 @@ class BackgroundNotifications(
             addAction(R.drawable.ic_action_dismiss, getString(R.string.alarm_alert_dismiss_text), pendingDismiss)
             setDefaults(Notification.DEFAULT_LIGHTS)
         }
-        //@formatter:on
 
         // Send the notification using the alarm id to easily identify the
         // correct notification.
@@ -115,8 +112,7 @@ class BackgroundNotifications(
         // silenced.
         val alarm = alarmsManager.getAlarm(id)
         val label: String = alarm?.labelOrDefault ?: ""
-        val autoSilenceMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext).getString(
-                "auto_silence", "10"))
+        val autoSilenceMinutes = prefs.autoSilence.value
         val text = mContext.getString(R.string.alarm_alert_alert_silenced, autoSilenceMinutes)
 
         val notification = mContext.notificationBuilder(CHANNEL_ID) {
