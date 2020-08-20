@@ -174,8 +174,6 @@ class AlertServiceWrapper : Service() {
                 Intents.ALARM_PREALARM_ACTION -> Event.PrealarmEvent(intent.getIntExtra(Intents.EXTRA_ID, -1))
                 Intents.ACTION_MUTE -> Event.MuteEvent()
                 Intents.ACTION_DEMUTE -> Event.DemuteEvent()
-                Intents.ACTION_SOUND_EXPIRED -> Event.Autosilenced(intent.getIntExtra(Intents.EXTRA_ID, -1))
-                Intents.ALARM_SNOOZE_ACTION -> Event.SnoozedEvent(intent.getIntExtra(Intents.EXTRA_ID, -1))
                 Intents.ALARM_DISMISS_ACTION -> Event.DismissEvent(intent.getIntExtra(Intents.EXTRA_ID, -1))
                 else -> throw RuntimeException("Unknown action ${intent.action}")
             })

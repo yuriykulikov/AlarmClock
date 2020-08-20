@@ -18,11 +18,5 @@ interface Alarm {
     val id: Int
     val labelOrDefault: String
     val alarmtone: Alarmtone
-
-    /**
-     * @return
-     */
-    @Deprecated("")
-    val snoozedTime: Calendar
     val data: AlarmValue
 }

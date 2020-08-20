@@ -143,6 +143,7 @@ class AlarmCore(
      * Strategy used to notify other components about alarm state.
      */
     interface IStateNotifier {
+        fun broadcastAlarmState(id: Int, action: String, calendar: Calendar? = null)
         fun broadcastAlarmState(id: Int, action: String)
     }
 
@@ -564,7 +565,8 @@ class AlarmCore(
                 }
                 // change the next time to show notification properly
                 alarmStore.modify { withNextTime(nextTime) }
-                broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION) // Yar. 18.08
+                // updateListInStore()
+                broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION, nextTime) // Yar. 18.08
             }
 
             override fun onResume() {
@@ -619,9 +621,12 @@ class AlarmCore(
         }
     }
 
-    private fun broadcastAlarmState(action: String) {
-        log.d(container.id.toString() + " - " + action)
-        broadcaster.broadcastAlarmState(container.id, action)
+    private fun broadcastAlarmState(action: String, calendar: Calendar? = null) {
+        log.debug { "${container.id} - $action" }
+        when {
+            calendar != null -> broadcaster.broadcastAlarmState(container.id, action, calendar)
+            else -> broadcaster.broadcastAlarmState(container.id, action)
+        }
         updateListInStore()
     }
 
@@ -807,8 +812,4 @@ class AlarmCore(
     }
 
     override val data: AlarmValue get() = container
-
-    @Deprecated("")
-    override val snoozedTime: Calendar
-        get() = container.nextTime
 }
