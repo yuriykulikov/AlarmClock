@@ -56,7 +56,7 @@ class BackgroundNotifications(
                 is Event.PrealarmEvent -> nm.cancel(event.id + SNOOZE_NOTIFICATION)
                 is Event.DismissEvent -> nm.cancel(event.id + SNOOZE_NOTIFICATION)
                 is Event.CancelSnoozedEvent -> nm.cancel(event.id + SNOOZE_NOTIFICATION)
-                is Event.SnoozedEvent -> onSnoozed(event.id)
+                is Event.SnoozedEvent -> onSnoozed(event.id, event.calendar)
                 is Event.Autosilenced -> onSoundExpired(event.id)
                 is Event.ShowSkip -> onShowSkip(event.id)
                 is Event.HideSkip -> nm.cancel(SKIP_NOTIFICATION + event.id)
@@ -64,7 +64,7 @@ class BackgroundNotifications(
         }
     }
 
-    private fun onSnoozed(id: Int) {
+    private fun onSnoozed(id: Int, calendar: Calendar) {
         // When button Reschedule is clicked, the TransparentActivity with
         // TimePickerFragment to set new alarm time is launched
         val pendingReschedule = Intent().apply {
@@ -81,7 +81,7 @@ class BackgroundNotifications(
 
         //@formatter:off
         val contentText: String = alarmsManager.getAlarm(id)
-                ?.let { mContext.getString(R.string.alarm_notify_snooze_text, it.formatTimeString()) }
+                ?.let { mContext.getString(R.string.alarm_notify_snooze_text, calendar.formatTimeString()) }
                 ?: ""
 
         val status = mContext.notificationBuilder(CHANNEL_ID) {
@@ -105,10 +105,9 @@ class BackgroundNotifications(
     private fun getString(id: Int, vararg args: String) = mContext.getString(id, *args)
     private fun getString(id: Int) = mContext.getString(id)
 
-    private fun Alarm.formatTimeString(): String {
+    private fun Calendar.formatTimeString(): String {
         val format = if (prefs.is24HourFormat.blockingGet()) DM24 else DM12
-        val calendar = snoozedTime
-        return DateFormat.format(format, calendar) as String
+        return DateFormat.format(format, this) as String
     }
 
     private fun onSoundExpired(id: Int) {
@@ -147,8 +146,8 @@ class BackgroundNotifications(
                 setSmallIcon(R.drawable.stat_notify_alarm)
                 setWhen(Calendar.getInstance().timeInMillis)
                 setContentTitle(label)
-                setContentText("${getString(R.string.notification_alarm_is_about_to_go_off)} ${formatTimeString()}")
-                setTicker("${getString(R.string.notification_alarm_is_about_to_go_off)} ${formatTimeString()}")
+                setContentText("${getString(R.string.notification_alarm_is_about_to_go_off)} ${data.nextTime.formatTimeString()}")
+                setTicker("${getString(R.string.notification_alarm_is_about_to_go_off)} ${data.nextTime.formatTimeString()}")
             }
 
             nm.notify(SKIP_NOTIFICATION + id, notification)

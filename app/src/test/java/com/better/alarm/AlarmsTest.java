@@ -47,6 +47,7 @@ import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
@@ -447,7 +448,7 @@ public class AlarmsTest {
         //when pre-alarm-snoozed
         newAlarm.snooze(23, 59);
         testScheduler.triggerActions();
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_SNOOZE_ACTION));
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_SNOOZE_ACTION), any());
     }
 
     @Test
@@ -478,7 +479,7 @@ public class AlarmsTest {
         //when pre-alarm-snoozed
         newAlarm.snooze(23, 59);
         testScheduler.triggerActions();
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_SNOOZE_ACTION));
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_SNOOZE_ACTION), any());
 
         instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.SNOOZE);
         testScheduler.triggerActions();

@@ -12,6 +12,7 @@ import com.better.alarm.model.Calendars
 import com.better.alarm.model.DaysOfWeek
 import com.better.alarm.stores.InMemoryRxDataStoreFactory
 import com.better.alarm.util.Optional
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import io.reactivex.Single
@@ -37,7 +38,9 @@ class AlarmCoreTest {
             sets = PublishSubject.create(),
             events = PublishSubject.create()
     )
-    private var prefs: Prefs = Prefs.create(Single.just(true), InMemoryRxDataStoreFactory.create())
+    private var prefs: Prefs = Prefs.create(Single.just(true), InMemoryRxDataStoreFactory.create()).apply {
+        autoSilence.value = 7
+    }
     private var logger: Logger = Logger.create(SysoutLogWriter())
     private var currentHour = 0
     private var currentMinute = 5
@@ -362,9 +365,7 @@ class AlarmCoreTest {
         val alarm = createAlarm()
         act("Set on 01:00") {
             alarm.edit {
-                copy(
-                        isEnabled = true,
-                        hour = 1)
+                copy(isEnabled = true, hour = 1)
             }
         }
 
@@ -380,5 +381,22 @@ class AlarmCoreTest {
 
         verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ACTION_SOUND_EXPIRED) }
         verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_DISMISS_ACTION) }
+    }
+
+    @Test
+    fun `stores are updated before sending a snooze event`() {
+        var nextTimeInStoreWhenBroadcasting: Calendar? = null
+        every { stateNotifierMock.broadcastAlarmState(any(), any(), any()) } answers {
+            nextTimeInStoreWhenBroadcasting = invocation.args[2] as Calendar?
+        }
+        val alarm = createAlarm()
+        act("Set on 01:00") { alarm.edit { copy(isEnabled = true, minutes = 5, hour = 1) } }
+        currentHour = 1
+        currentMinute = 5
+        act("Fired") { alarm.onAlarmFired(CalendarType.NORMAL) }
+        act("Snooze") { alarm.snooze() }
+
+        verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_SNOOZE_ACTION, any()) }
+        assertThat(nextTimeInStoreWhenBroadcasting?.get(Calendar.MINUTE)).isEqualTo(15)
     }
 }
