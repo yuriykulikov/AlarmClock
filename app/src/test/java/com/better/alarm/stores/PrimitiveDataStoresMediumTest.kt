@@ -115,14 +115,18 @@ class PrimitiveDataStoresMediumTest(val name: String, private val inMemory: Bool
                 object : SharedPreferences.Editor {
                     private val changes = mutableMapOf<String, Any>()
                     override fun clear(): SharedPreferences.Editor = apply { }
+
                     override fun remove(key: String) = apply { }
 
                     override fun putLong(key: String, value: Long) = apply { changes[key] = value }
+
+
                     override fun putInt(key: String, value: Int) = apply { changes[key] = value }
                     override fun putBoolean(key: String, value: Boolean) = apply { changes[key] = value }
-                    override fun putStringSet(key: String, value: Set<String>) = apply { changes[key] = value }
-                    override fun putFloat(key: String, value: Float) = apply { changes[key] = value }
-                    override fun putString(key: String, value: String) = apply { changes[key] = value }
+
+                    override fun putStringSet(key: String?, values: MutableSet<String>?) = apply { changes[key!!] = value }
+                    override fun putFloat(key: String?, value: Float) = apply { changes[key!!] = value }
+                    override fun putString(key: String, value: String?) = apply { changes[key] = value!! }
 
                     override fun commit(): Boolean {
                         apply()

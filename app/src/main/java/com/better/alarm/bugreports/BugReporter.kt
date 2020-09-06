@@ -53,7 +53,7 @@ class BugReporter(
             logger.error(throwable) { "Uncaught exception $throwable" }
             ACRA.getErrorReporter().putCustomData("STARTUP_LOG", "\n${startupLog.value.getMessagesAsString()}")
             ACRA.getErrorReporter().handleException(throwable)
-            prev.uncaughtException(thread, throwable)
+            prev?.uncaughtException(thread, throwable)
         }
     }
 }

@@ -112,6 +112,7 @@ class Columns : BaseColumns {
          * The default sort order for this table
          */
         const val DEFAULT_SORT_ORDER = "$HOUR, $MINUTES ASC"
+
         @JvmField
         val ALARM_QUERY_COLUMNS = arrayOf(BaseColumns._ID, HOUR, MINUTES, DAYS_OF_WEEK, ALARM_TIME, ENABLED, VIBRATE, MESSAGE, ALERT, PREALARM, STATE)
 

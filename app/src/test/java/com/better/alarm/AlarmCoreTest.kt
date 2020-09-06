@@ -7,7 +7,6 @@ import com.better.alarm.logger.Logger
 import com.better.alarm.logger.SysoutLogWriter
 import com.better.alarm.model.AlarmCore
 import com.better.alarm.model.AlarmsScheduler
-import com.better.alarm.model.CalendarType
 import com.better.alarm.model.Calendars
 import com.better.alarm.model.DaysOfWeek
 import com.better.alarm.stores.InMemoryRxDataStoreFactory
@@ -151,7 +150,7 @@ class AlarmCoreTest {
 
         act("Current time changes to on 03:00") {
             currentHour = 3
-            alarm.onAlarmFired(CalendarType.NORMAL)
+            alarm.onAlarmFired()
         }
 
         verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_REMOVE_SKIP) }
@@ -174,7 +173,7 @@ class AlarmCoreTest {
 
         act("Current time changes to on 01:00 and prealarm is fired") {
             currentHour = 1
-            alarm.onAlarmFired(CalendarType.PREALARM)
+            alarm.onAlarmFired()
         }
 
         act("Dismiss") {
@@ -370,13 +369,13 @@ class AlarmCoreTest {
         }
 
         act("Fired") {
-            alarm.onAlarmFired(CalendarType.NORMAL)
+            alarm.onAlarmFired()
         }
 
         verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_ALERT_ACTION) }
 
         act("Autosilence") {
-            alarm.onAlarmFired(CalendarType.NORMAL)
+            alarm.onAlarmFired()
         }
 
         verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ACTION_SOUND_EXPIRED) }
@@ -393,7 +392,7 @@ class AlarmCoreTest {
         act("Set on 01:00") { alarm.edit { copy(isEnabled = true, minutes = 5, hour = 1) } }
         currentHour = 1
         currentMinute = 5
-        act("Fired") { alarm.onAlarmFired(CalendarType.NORMAL) }
+        act("Fired") { alarm.onAlarmFired() }
         act("Snooze") { alarm.snooze() }
 
         verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_SNOOZE_ACTION, any()) }

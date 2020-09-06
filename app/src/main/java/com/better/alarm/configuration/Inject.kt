@@ -1,7 +1,7 @@
 package com.better.alarm.configuration
 
 import com.better.alarm.logger.LoggerFactory
-import org.koin.core.context.GlobalContext.get
+import org.koin.core.context.KoinContextHandler
 import org.koin.core.parameter.ParametersDefinition
 import org.koin.core.qualifier.Qualifier
 
@@ -14,14 +14,14 @@ import org.koin.core.qualifier.Qualifier
 inline fun <reified T : Any> globalInject(
         qualifier: Qualifier? = null,
         noinline parameters: ParametersDefinition? = null
-) = lazy { get().koin.rootScope.get<T>(qualifier, parameters) }
+) = lazy { KoinContextHandler.get().get<T>(qualifier, parameters) }
 
 inline fun <reified T : Any> globalGet(
         qualifier: Qualifier? = null,
         noinline parameters: ParametersDefinition? = null
-) = get().koin.rootScope.get<T>(qualifier, parameters)
+) = KoinContextHandler.get().get<T>(qualifier, parameters)
 
-inline fun globalLogger(tag: String) = lazy { get().koin.rootScope.get<LoggerFactory>().createLogger(tag) }
+fun globalLogger(tag: String) = lazy { KoinContextHandler.get().get<LoggerFactory>().createLogger(tag) }
 
 /**
  * globalInject lazily given dependency for Android koincomponent
@@ -30,4 +30,4 @@ inline fun globalLogger(tag: String) = lazy { get().koin.rootScope.get<LoggerFac
  * @param parameters - injection parameters
  */
 @Deprecated("Java", ReplaceWith("globalInject()"))
-fun <T : Any> globalInject(clazz: Class<T>) = lazy { get().koin.rootScope.get<T>(clazz = clazz) }
+fun <T : Any> globalInject(clazz: Class<T>) = lazy { KoinContextHandler.get().get<T>(clazz = clazz.kotlin) }

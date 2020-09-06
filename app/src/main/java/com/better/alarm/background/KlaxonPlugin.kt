@@ -15,6 +15,7 @@ interface Player {
     fun startAlarm()
     fun setDataSourceFromResource(res: Int)
     fun setPerceivedVolume(perceived: Float)
+
     /**
      * Stops alarm audio
      */
@@ -68,7 +69,7 @@ class KlaxonPlugin(
             }
         }
 
-        log.d("[KlaxonPlugin] go (prealarm: $prealarm)")
+        log.debug { "[KlaxonPlugin] go (prealarm: $prealarm)" }
         val volumeSub = volume
                 .subscribe { currentVolume ->
                     player?.setPerceivedVolume(currentVolume)
@@ -101,7 +102,7 @@ class KlaxonPlugin(
     }
 
     private fun playInCallAlarm() {
-        log.d("Using the in-call alarm")
+        log.debug { "Using the in-call alarm" }
         player?.run {
             reset()
             setDataSourceFromResource(R.raw.in_call_alarm)
@@ -122,7 +123,7 @@ class KlaxonPlugin(
                     .toFloat()
                     .div(maxVolume)
                     .div(2)
-                    .apply { log.d("targetPrealarmVolume=$this") }
+                    .apply { log.debug { "targetPrealarmVolume=$this" } }
         }
     }
 
@@ -137,7 +138,7 @@ class KlaxonPlugin(
                 .takeWhile { it <= fadeInTime }
                 .map { elapsed -> elapsed.toFloat() / fadeInTime }
                 .map { fraction -> fraction.squared() }
-                .doOnComplete { log.d("Completed fade-in in $time milliseconds") }
+                .doOnComplete { log.debug { "Completed fade-in in $time milliseconds" } }
 
         return Observable.combineLatest(
                 observeVolume(prealarm),
@@ -149,7 +150,7 @@ class KlaxonPlugin(
      * Stops alarm audio
      */
     private fun Player.stopAndCleanup() {
-        log.d("stopping media player")
+        log.debug { "stopping media player" }
         try {
             stop()
         } finally {

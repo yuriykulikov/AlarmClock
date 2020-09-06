@@ -59,7 +59,7 @@ data class AlarmValue(
     )
 
     fun withLabel(label: String) = copy(label = label)
-    fun withHour(hour: Int)= copy(hour = hour)
+    fun withHour(hour: Int) = copy(hour = hour)
     fun withDaysOfWeek(daysOfWeek: DaysOfWeek) = copy(daysOfWeek = daysOfWeek)
     fun withIsPrealarm(isPrealarm: Boolean) = copy(isPrealarm = isPrealarm)
 }

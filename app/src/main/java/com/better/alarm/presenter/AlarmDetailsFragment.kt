@@ -103,7 +103,7 @@ class AlarmDetailsFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        logger.d("$this with ${store.editing().value}")
+        logger.debug { "$this with ${store.editing().value}" }
 
         val view = inflater.inflate(
                 when (prefs.layout()) {
@@ -189,7 +189,7 @@ class AlarmDetailsFragment : Fragment() {
             }
         }
 
-        mLabel.addTextChangedListener(object : TextWatcher {
+        class TextWatcherIR : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
             }
 
@@ -204,7 +204,9 @@ class AlarmDetailsFragment : Fragment() {
                         }
                         .addToDisposables()
             }
-        })
+        }
+
+        mLabel.addTextChangedListener(TextWatcherIR())
 
         return view
     }
@@ -213,7 +215,7 @@ class AlarmDetailsFragment : Fragment() {
         if (data != null && requestCode == 42) {
             val alert: String? = data.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)?.toString()
 
-            logger.d("Got ringtone: $alert")
+            logger.debug { "Got ringtone: $alert" }
 
             val alarmtone = when (alert) {
                 null -> Alarmtone.Silent()
@@ -221,7 +223,7 @@ class AlarmDetailsFragment : Fragment() {
                 else -> Alarmtone.Sound(alert)
             }
 
-            logger.d("onActivityResult $alert -> $alarmtone")
+            logger.debug { "onActivityResult $alert -> $alarmtone" }
 
             checkPermissions(requireActivity(), listOf(alarmtone))
 
@@ -325,7 +327,7 @@ class AlarmDetailsFragment : Fragment() {
     }
 
     private fun modify(reason: String, function: (AlarmValue) -> AlarmValue) {
-        logger.d("Performing modification because of $reason")
+        logger.debug { "Performing modification because of $reason" }
         store.editing().modify {
             copy(value = value.map { function(it) })
         }

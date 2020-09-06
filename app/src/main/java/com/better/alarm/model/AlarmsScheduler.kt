@@ -53,8 +53,9 @@ class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, 
         fireAlarmsInThePast()
         if (queue.isNotEmpty()) {
             // do not use iterator, order is not defined
-            val currentHead = queue.peek()
-            setter.setUpRTCAlarm(currentHead.id, currentHead.type.name, currentHead.calendar)
+            queue.peek()?.let { currentHead ->
+                setter.setUpRTCAlarm(currentHead.id, currentHead.type.name, currentHead.calendar)
+            }
         }
         notifyListeners()
     }
@@ -92,7 +93,7 @@ class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, 
         val currentHead: ScheduledAlarm? = queue.peek()
         when {
             !isStarted -> {
-                log.d("skip setting $currentHead (not started yet)")
+                log.debug { "skip setting $currentHead (not started yet)" }
             }
             // no alarms, remove
             currentHead == null -> {
@@ -105,7 +106,7 @@ class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, 
                 notifyListeners()
             }
             // if head remains the same, do nothing
-            else -> log.d("skip setting $currentHead (already set)")
+            else -> log.debug { "skip setting $currentHead (already set)" }
         }
     }
 
@@ -117,11 +118,12 @@ class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, 
 
     private fun fireAlarmsInThePast() {
         val now = calendars.now()
-        while (!queue.isEmpty() && queue.peek().calendar.before(now)) {
+        while (!queue.isEmpty() && queue.peek()?.calendar?.before(now) == true) {
             // remove happens in fire
-            val firedInThePastAlarm = queue.poll()
-            log.d("In the past - $firedInThePastAlarm")
-            setter.fireNow(firedInThePastAlarm.id, firedInThePastAlarm.type.name)
+            queue.poll()?.let { firedInThePastAlarm ->
+                log.debug { "In the past - $firedInThePastAlarm" }
+                setter.fireNow(firedInThePastAlarm.id, firedInThePastAlarm.type.name)
+            }
         }
     }
 

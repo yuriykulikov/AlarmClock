@@ -41,11 +41,13 @@ class AlertServiceWrapper : Service() {
                 val tm: TelephonyManager = get()
                 Observable
                         .create<Int> { emitter ->
-                            val listener = object : PhoneStateListener() {
+                            class PhoneStateListenerIR : PhoneStateListener() {
                                 override fun onCallStateChanged(state: Int, ignored: String) {
                                     emitter.onNext(state)
                                 }
                             }
+
+                            val listener = PhoneStateListenerIR()
 
                             emitter.setCancellable {
                                 // Stop listening for incoming calls.
@@ -125,7 +127,7 @@ class AlertServiceWrapper : Service() {
             })
             modules(module {
                 factory<EnclosingService> {
-                    object : EnclosingService {
+                    class EnclosingServiceIR : EnclosingService {
                         override fun handleUnwantedEvent() {
                             logger("SERVICE").warning { "handleUnwantedEvent()" }
                             oreo {
@@ -150,6 +152,8 @@ class AlertServiceWrapper : Service() {
                             this@AlertServiceWrapper.stopSelf()
                         }
                     }
+
+                    EnclosingServiceIR()
                 }
             })
         }.koin.get()

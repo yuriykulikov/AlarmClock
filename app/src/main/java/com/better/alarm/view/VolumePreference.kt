@@ -23,6 +23,7 @@ import android.media.Ringtone
 import android.media.RingtoneManager
 import android.provider.Settings
 import android.util.AttributeSet
+import android.view.View
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
@@ -42,7 +43,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.subjects.PublishSubject
-import org.koin.core.context.GlobalContext.get
 import org.koin.core.qualifier.named
 import java.util.concurrent.TimeUnit
 
@@ -51,9 +51,7 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
     private var ringtoneSummary: TextView? = null
     private val disposable = CompositeDisposable()
 
-    private val klaxon: KlaxonPlugin by lazy {
-        get().koin.rootScope.get<KlaxonPlugin>(named("volumePreferenceDemo"))
-    }
+    private val klaxon: KlaxonPlugin by globalInject(named("volumePreferenceDemo"))
 
     init {
         layoutResource = R.layout.seekbar_dialog
@@ -65,21 +63,25 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
     override fun onBindViewHolder(holder: PreferenceViewHolder?) {
         super.onBindViewHolder(holder)
         holder?.let { view ->
-            bindPrealarmSeekBar(view.findViewById(R.id.seekbar_dialog_seekbar_prealarm_volume) as SeekBar)
-            bindAudioManagerVolume(view.findViewById(R.id.seekbar_dialog_seekbar_master_volume) as SeekBar)
+            bindPrealarmSeekBar(view.findById(R.id.seekbar_dialog_seekbar_prealarm_volume))
+            bindAudioManagerVolume(view.findById(R.id.seekbar_dialog_seekbar_master_volume))
 
-            view.findViewById(R.id.settings_ringtone).setOnClickListener {
+            view.findById<View>(R.id.settings_ringtone).setOnClickListener {
                 context.startActivity(Intent(Settings.ACTION_SOUND_SETTINGS))
             }
-            ringtoneSummary = view.findViewById(R.id.settings_ringtone_summary) as TextView
+            ringtoneSummary = view.findById(R.id.settings_ringtone_summary)
             onResume()
         }
     }
+
+    /** Extension function to avoid crashes cause by an incorrect cast (see history) */
+    private fun <T> PreferenceViewHolder.findById(id: Int): T = findViewById(id) as T
 
     override fun onDetached() {
         super.onDetached()
         disposable.dispose()
     }
+
     fun onResume() {
         ringtoneSummary?.text = RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
                 ?.getTitle(context)

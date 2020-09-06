@@ -2,6 +2,7 @@ package com.better.alarm.test;
 
 import android.content.Intent;
 import android.provider.AlarmClock;
+
 import androidx.test.rule.ActivityTestRule;
 import androidx.test.runner.AndroidJUnit4;
 
@@ -31,10 +32,15 @@ import org.junit.runner.RunWith;
 import java.util.Calendar;
 import java.util.Locale;
 
-import cortado.Cortado;
-
 import static android.provider.AlarmClock.ACTION_SET_ALARM;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.longClick;
+import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.allOf;
 
 /**
  * Created by Yuriy on 12.07.2017.
@@ -102,24 +108,24 @@ public class PopupTest extends BaseTest {
 
         sleep();
 
-        Cortado.onView().withText("Dismiss").perform().longClick();
+        onView(withText("Dismiss")).perform(longClick());
 
         deleteAlarm();
     }
 
     private void afterLongClickSnoozeAlarmCheckAndDelete() {
         assertTimerView("--:--");
-        Cortado.onView().withText("2").perform().click();
+        onView(withText("2")).perform(click());
         assertTimerView("--:-2");
-        Cortado.onView().withText("3").perform().click();
+        onView(withText("3")).perform(click());
         assertTimerView("--:23");
-        Cortado.onView().withText("5").perform().click();
+        onView(withText("5")).perform(click());
         assertTimerView("-2:35");
-        Cortado.onView().withText("9").perform().click();
+        onView(withText("9")).perform(click());
         assertTimerView("23:59");
         sleep();
 
-        Cortado.onView().withText("OK").perform().click();
+        onView(withText("OK")).perform(click());
 
         sleep();
 
@@ -138,7 +144,7 @@ public class PopupTest extends BaseTest {
         assertThat(next.get().alarm().isEnabled()).isTrue();
 
         //disable the snoozed alarm
-        Cortado.onView().withId(R.id.list_row_on_off_switch).and().isChecked().perform().click();
+        onView(allOf(withId(R.id.list_row_on_off_switch), isChecked())).perform(click());
 
         sleep();
 
@@ -160,7 +166,7 @@ public class PopupTest extends BaseTest {
         alertActivity.launchActivity(startIntent);
 
         sleep();
-        Cortado.onView().withText("Snooze").perform().click();
+        onView(withText("Snooze")).perform(click());
 
         deleteAlarm();
     }
@@ -178,7 +184,7 @@ public class PopupTest extends BaseTest {
     }
 
     @Test
-    public void letAlarmExpireAndDismissIt() {
+    public void letAlarmExpireAndDismissIt() throws InterruptedException {
         int id = createAlarmAndFire();
 
         Intent startIntent = new Intent();
@@ -195,6 +201,7 @@ public class PopupTest extends BaseTest {
         sleep();
 
         //Popup must be closed in order for this to work
+        Thread.sleep(1000);
         deleteAlarm();
     }
 

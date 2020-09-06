@@ -237,7 +237,7 @@ class AlarmCore(
             // NOP
         }
 
-        override fun onSnooze(msg: Snooze) {
+        override fun onSnooze(snooze: Snooze) {
             log.warning { "$this is in DisabledState" }
         }
 
@@ -403,7 +403,7 @@ class AlarmCore(
                 if (calendar.after(calendars.now())) {
                     mAlarmsScheduler.setInexactAlarm(id, calendar)
                 } else {
-                    log.d("Alarm $id is due in less than 2 hours - show notification")
+                    log.debug { "Alarm $id is due in less than 2 hours - show notification" }
                     broadcastAlarmState(Intents.ALARM_SHOW_SKIP)
                 }
             }
@@ -499,7 +499,7 @@ class AlarmCore(
                 stateMachine.transitionTo(rescheduleTransition)
             }
 
-            override fun onSnooze(msg: Snooze) {
+            override fun onSnooze(snooze: Snooze) {
                 stateMachine.transitionTo(snoozed)
             }
 
@@ -519,8 +519,8 @@ class AlarmCore(
                 stateMachine.transitionTo(fired)
             }
 
-            override fun onSnooze(msg: Snooze) {
-                if (msg.minute != null) {
+            override fun onSnooze(snooze: Snooze) {
+                if (snooze.minute != null) {
                     //snooze to time with prealarm -> go to snoozed
                     stateMachine.transitionTo(snoozed)
                 } else {
@@ -605,7 +605,7 @@ class AlarmCore(
                 stateMachine.transitionTo(fired)
             }
 
-            override fun onSnooze(msg: Snooze) {
+            override fun onSnooze(snooze: Snooze) {
                 //reschedule from notification
                 stateMachine.transitionTo(snoozed)
             }
@@ -726,7 +726,7 @@ class AlarmCore(
 
         protected open fun onEnable() = markNotHandled()
         protected open fun onDisable() = markNotHandled()
-        protected open fun onSnooze(msg: Snooze) = markNotHandled()
+        protected open fun onSnooze(snooze: Snooze) = markNotHandled()
         protected open fun onDismiss() = markNotHandled()
         protected open fun onChange(alarmValue: AlarmValue) = markNotHandled()
         protected open fun onFired() = markNotHandled()
@@ -745,7 +745,7 @@ class AlarmCore(
         }.let { disposable.add(it) }
     }
 
-    fun onAlarmFired(calendarType: CalendarType) {
+    fun onAlarmFired() {
         stateMachine.sendEvent(Fired)
     }
 
@@ -806,8 +806,8 @@ class AlarmCore(
     override fun edit(func: AlarmValue.() -> AlarmValue) {
         val prev = container
         change(func(prev).also {
-            assert(prev.state == it.state)
-            assert(prev.nextTime == it.nextTime)
+            require(prev.state == it.state)
+            require(prev.nextTime == it.nextTime)
         })
     }
 

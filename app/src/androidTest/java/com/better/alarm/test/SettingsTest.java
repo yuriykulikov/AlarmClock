@@ -18,10 +18,11 @@ import org.junit.runner.RunWith;
 
 import java.util.Locale;
 
-import cortado.Cortado;
-
+import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 /**
  * Created by Yuriy on 11.07.2017.
@@ -37,47 +38,42 @@ public class SettingsTest extends BaseTest {
     @Test
     public void controlVolume() {
         sleep();
-        Cortado.onView()
-                .withId(R.id.seekbar_dialog_seekbar_master_volume)
+        onView(withId(R.id.seekbar_dialog_seekbar_master_volume))
                 .perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_LEFT, Press.FINGER));
 
         sleep();
-        Cortado.onView()
-                .withId(R.id.seekbar_dialog_seekbar_master_volume)
+        onView(withId(R.id.seekbar_dialog_seekbar_master_volume))
                 .perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_RIGHT, Press.FINGER));
 
         sleep();
-        Cortado.onView()
-                .withId(R.id.seekbar_dialog_seekbar_prealarm_volume)
+        onView(withId(R.id.seekbar_dialog_seekbar_prealarm_volume))
                 .perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_LEFT, Press.FINGER));
 
         sleep();
-        Cortado.onView()
-                .withId(R.id.seekbar_dialog_seekbar_prealarm_volume)
+        onView(withId(R.id.seekbar_dialog_seekbar_prealarm_volume))
                 .perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_RIGHT, Press.FINGER));
     }
 
     @Test
     public void changeTheme() {
         sleep();
-        Cortado.onView()
-                .withText("Interface theme")
+        onView(withText("Interface theme"))
                 .perform(scrollTo())
                 .perform(click());
 
         sleep();
-        Cortado.onView().withText("Light").perform(click());
+        onView(withText("Light")).perform(click());
     }
 
     @Test
     public void changeThemeDark() {
         sleep();
-        Cortado.onView()
-                .withText("Interface theme")
+        onView(
+                withText("Interface theme"))
                 .perform(scrollTo())
                 .perform(click());
 
         sleep();
-        Cortado.onView().withText("Dark").perform(click());
+        onView(withText("Dark")).perform(click());
     }
 }

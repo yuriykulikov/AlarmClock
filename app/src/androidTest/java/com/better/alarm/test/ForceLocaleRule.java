@@ -2,7 +2,8 @@ package com.better.alarm.test;
 
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import androidx.test.InstrumentationRegistry;
+
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -45,7 +46,7 @@ public class ForceLocaleRule implements TestRule {
 
 
     public void setLocale(Locale locale) {
-        Resources resources = InstrumentationRegistry.getTargetContext().getResources();
+        Resources resources = InstrumentationRegistry.getInstrumentation().getTargetContext().getResources();
         Locale.setDefault(locale);
         Configuration config = resources.getConfiguration();
         config.locale = locale;

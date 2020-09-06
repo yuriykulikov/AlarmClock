@@ -1,19 +1,17 @@
 package com.better.alarm.test
 
+import android.view.View
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isEnabled
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
-import androidx.test.runner.AndroidJUnit4
-import android.view.View
 import com.better.alarm.R
-import com.better.alarm.configuration.AlarmApplication
 import com.better.alarm.configuration.overrideIs24hoursFormatOverride
 import com.better.alarm.presenter.AlarmsListActivity
-import com.better.alarm.util.Optional
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.not
 import org.junit.After
@@ -23,7 +21,7 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
-import java.util.*
+import java.util.Locale
 
 @RunWith(AndroidJUnit4::class)
 class PickerAmTest : BaseTest() {

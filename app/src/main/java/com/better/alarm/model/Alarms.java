@@ -16,6 +16,7 @@
 package com.better.alarm.model;
 
 import android.annotation.SuppressLint;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -114,7 +115,7 @@ public class Alarms implements IAlarmsManager {
     public void onAlarmFired(@NonNull AlarmCore alarm, CalendarType calendarType) {
         //TODO this should not be needed
         mAlarmsScheduler.removeAlarm(alarm.getId());
-        alarm.onAlarmFired(calendarType);
+        alarm.onAlarmFired();
     }
 
     @Override

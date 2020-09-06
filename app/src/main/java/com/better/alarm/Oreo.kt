@@ -18,7 +18,6 @@ const val CHANNEL_RESERVED = "${BuildConfig.APPLICATION_ID}.AlertServiceWrapper"
 
 fun Context.notificationBuilder(
         channelId: String,
-        importance: NotificationImportance = NotificationImportance.NORMAL,
         notificationBuilder: NotificationCompat.Builder.() -> Unit
 ): Notification {
     val builder = when {
@@ -77,6 +76,12 @@ fun preOreo(action: () -> Unit) {
 
 fun lollipop(action: () -> Unit) {
     if (lollipop()) {
+        action()
+    }
+}
+
+fun preLollipop(action: () -> Unit) {
+    if (!lollipop()) {
         action()
     }
 }

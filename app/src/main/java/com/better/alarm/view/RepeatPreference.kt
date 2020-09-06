@@ -39,7 +39,7 @@ fun DaysOfWeek.showDialog(context: Context): Single<DaysOfWeek> {
                         else -> mutableDays and (1 shl which).inv()
                     }
                 }
-                .setPositiveButton(android.R.string.ok) { _, which ->
+                .setPositiveButton(android.R.string.ok) { _, _ ->
                     emitter.onSuccess(DaysOfWeek(mutableDays))
                 }
                 .setOnCancelListener {

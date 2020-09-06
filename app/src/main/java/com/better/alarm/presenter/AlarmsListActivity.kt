@@ -80,7 +80,7 @@ class AlarmsListActivity : AppCompatActivity() {
         }
 
         private fun createStore(edited: EditedAlarm, alarms: IAlarmsManager): UiStore {
-            return object : UiStore {
+            class UiStoreIR : UiStore {
                 var onBackPressed = PublishSubject.create<String>()
                 var editing: BehaviorSubject<EditedAlarm> = BehaviorSubject.createDefault(edited)
                 var transitioningToNewAlarmDetails: Subject<Boolean> = BehaviorSubject.createDefault(false)
@@ -139,6 +139,8 @@ class AlarmsListActivity : AppCompatActivity() {
                             holder = Optional.of(holder)))
                 }
             }
+
+            return UiStoreIR()
         }
     }
 
@@ -164,12 +166,12 @@ class AlarmsListActivity : AppCompatActivity() {
         when {
             savedInstanceState != null && savedInstanceState.getInt("version", BuildConfig.VERSION_CODE) == BuildConfig.VERSION_CODE -> {
                 val restored = editedAlarmFromSavedInstanceState(savedInstanceState)
-                logger.d("Restored ${this@AlarmsListActivity} with $restored")
+                logger.debug { "Restored $this with $restored" }
                 uiStore.editing().onNext(restored)
             }
             else -> {
                 val initialState = EditedAlarm()
-                logger.d("Created ${this@AlarmsListActivity} with $initialState")
+                logger.debug { "Created $this with $initialState" }
             }
             // if (intent != null && intent.hasExtra(Intents.EXTRA_ID)) {
             //     //jump directly to editor
@@ -211,7 +213,7 @@ class AlarmsListActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        logger.d(this@AlarmsListActivity)
+        logger.debug { "$this" }
         super.onDestroy()
         this.mActionBarHandler.onDestroy()
     }
@@ -245,9 +247,9 @@ class AlarmsListActivity : AppCompatActivity() {
         val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
 
         if (currentFragment is AlarmsListFragment) {
-            logger.d("skipping fragment transition, because already showing $currentFragment")
+            logger.debug { "skipping fragment transition, because already showing $currentFragment" }
         } else {
-            logger.d("transition from: $currentFragment to show list, edited: $edited")
+            logger.debug { "transition from: $currentFragment to show list, edited: $edited" }
             supportFragmentManager.findFragmentById(R.id.main_fragment_container)?.apply {
                 lollipop {
                     exitTransition = Fade()
@@ -282,9 +284,9 @@ class AlarmsListActivity : AppCompatActivity() {
         val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
 
         if (currentFragment is AlarmDetailsFragment) {
-            logger.d("skipping fragment transition, because already showing $currentFragment")
+            logger.debug { "skipping fragment transition, because already showing $currentFragment" }
         } else {
-            logger.d("transition from: $currentFragment to show details, edited: $edited")
+            logger.debug { "transition from: $currentFragment to show details, edited: $edited" }
             currentFragment?.apply {
                 lollipop {
                     exitTransition = Fade()
@@ -349,9 +351,9 @@ class AlarmsListActivity : AppCompatActivity() {
                                     daysOfWeek = DaysOfWeek(savedInstanceState.getInt("daysOfWeek")),
                                     isPrealarm = savedInstanceState.getBoolean("isPrealarm"),
                                     alarmtone = Alarmtone.fromString(savedInstanceState.getString("alarmtone")),
-                                    label = savedInstanceState.getString("label"),
+                                    label = savedInstanceState.getString("label") ?: "",
                                     isVibrate = true,
-                                    state = savedInstanceState.getString("state"),
+                                    state = savedInstanceState.getString("state") ?: "",
                                     nextTime = Calendar.getInstance()
                             )
                     )
@@ -385,7 +387,7 @@ class AlarmsListActivity : AppCompatActivity() {
                 putString("state", edited.state)
             }
 
-            logger.d("Saved state $toWrite")
+            logger.debug { "Saved state $toWrite" }
         }
     }
 }

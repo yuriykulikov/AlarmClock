@@ -8,11 +8,12 @@ import com.better.alarm.logger.Logger
 import com.better.alarm.oreo
 import com.better.alarm.preOreo
 import com.better.alarm.util.mapNotNull
+import com.better.alarm.util.subscribeForever
 import com.better.alarm.wakelock.WakeLockManager
 
 class AlertServicePusher(store: Store, context: Context, wm: WakeLockManager, logger: Logger) {
     init {
-        val disposable = store.events
+        store.events
                 .mapNotNull {
                     when (it) {
                         is Event.AlarmEvent -> Intent(Intents.ALARM_ALERT_ACTION).apply { putExtra(Intents.EXTRA_ID, it.id) }
@@ -30,11 +31,11 @@ class AlertServicePusher(store: Store, context: Context, wm: WakeLockManager, lo
                         setClass(context, AlertServiceWrapper::class.java)
                     }
                 }
-                .subscribe { intent ->
+                .subscribeForever { intent ->
                     wm.acquireTransitionWakeLock(intent)
                     oreo { context.startForegroundService(intent) }
                     preOreo { context.startService(intent) }
-                    logger.d("pushed intent ${intent.action} to AlertServiceWrapper")
+                    logger.debug { "pushed intent ${intent.action} to AlertServiceWrapper" }
                 }
     }
 }

@@ -28,6 +28,7 @@
         android:layout_marginRight="15dp"
         android:gravity="center"
         android:orientation="vertical">
+
         <include layout="@layout/list_row_bold"></include>
     </LinearLayout>
 

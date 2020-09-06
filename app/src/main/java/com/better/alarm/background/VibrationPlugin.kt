@@ -45,7 +45,7 @@ class VibrationPlugin(
                 .subscribe { amplitude ->
                     if (amplitude != 0) {
                         oreo {
-                            log.d("Starting vibration with amplitude $amplitude")
+                            log.debug { "Starting vibration with amplitude $amplitude" }
                             vibrator.vibrate(VibrationEffect.createWaveform(
                                     vibratePattern,
                                     intArrayOf(0, amplitude),
@@ -54,11 +54,12 @@ class VibrationPlugin(
                         }
 
                         preOreo {
-                            log.d("Starting vibration")
+                            log.debug { "Starting vibration" }
+                            @Suppress("DEPRECATION") // old target API
                             vibrator.vibrate(vibratePattern, 0)
                         }
                     } else {
-                        log.d("Canceling vibration")
+                        log.debug { "Canceling vibration" }
                         vibrator.cancel()
                     }
                 }
@@ -93,7 +94,7 @@ class VibrationPlugin(
                         Observable.just(defaultAmplidute)
                                 .delay(fadeInTimeInMillis.toLong(), TimeUnit.MILLISECONDS, scheduler)
                                 .startWith(0)
-                                .doOnComplete { log.d("Completed vibration fade-in") }
+                                .doOnComplete { log.debug { "Completed vibration fade-in" } }
                     }
         }
     }

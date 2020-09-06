@@ -1,6 +1,5 @@
 package com.better.alarm.presenter
 
-import androidx.fragment.app.FragmentActivity
 import com.better.alarm.configuration.globalInject
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents

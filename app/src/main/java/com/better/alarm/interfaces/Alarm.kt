@@ -2,7 +2,6 @@ package com.better.alarm.interfaces
 
 import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.Alarmtone
-import java.util.Calendar
 
 interface Alarm {
     fun enable(enable: Boolean)

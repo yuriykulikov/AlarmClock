@@ -23,7 +23,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import com.better.alarm.CHANNEL_ID_HIGH_PRIO
-import com.better.alarm.NotificationImportance
 import com.better.alarm.R
 import com.better.alarm.alert.AlarmAlertFullScreen
 import com.better.alarm.interfaces.Intents
@@ -57,7 +56,7 @@ class NotificationsPlugin(
         val pendingDismiss = PresentationToModelIntents.createPendingIntent(mContext,
                 PresentationToModelIntents.ACTION_REQUEST_DISMISS, alarm.id)
 
-        val notification = mContext.notificationBuilder(CHANNEL_ID_HIGH_PRIO, NotificationImportance.HIGH) {
+        val notification = mContext.notificationBuilder(CHANNEL_ID_HIGH_PRIO) {
             setContentTitle(alarm.label)
             setContentText(getString(R.string.alarm_notify_text))
             setSmallIcon(R.drawable.stat_notify_alarm)

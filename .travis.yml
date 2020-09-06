@@ -2,12 +2,12 @@ language: android
 jdk: oraclejdk8
 android:
   components:
-  - tools
-  - platform-tools
-  - build-tools-26.0.2
-  - android-22
-  - android-26
-  - sys-img-armeabi-v7a-android-22
+    - tools
+    - platform-tools
+    - build-tools-26.0.2
+    - android-22
+    - android-26
+    - sys-img-armeabi-v7a-android-22
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/

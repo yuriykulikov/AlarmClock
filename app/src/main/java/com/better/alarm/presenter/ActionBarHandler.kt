@@ -7,7 +7,11 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.text.method.LinkMovementMethod
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.ActionBar
@@ -16,6 +20,7 @@ import com.better.alarm.BuildConfig
 import com.better.alarm.R
 import com.better.alarm.bugreports.BugReporter
 import com.better.alarm.interfaces.IAlarmsManager
+import com.better.alarm.lollipop
 import io.reactivex.disposables.Disposables
 
 
@@ -45,7 +50,11 @@ class ActionBarHandler(
 
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
+
+            addFlags(when {
+                lollipop() -> Intent.FLAG_ACTIVITY_NEW_DOCUMENT
+                else -> @Suppress("DEPRECATION") Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET
+            })
 
             // Add data to the intent, the receiving app will decide what to do with
             // it.

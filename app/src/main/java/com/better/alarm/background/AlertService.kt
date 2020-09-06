@@ -154,8 +154,8 @@ class AlertService(
         require(active.isNotEmpty())
         val toShow = active.mapNotNull { (id, _) -> alarms.getAlarm(id) }
                 .map { alarm ->
-                    val alarmtone = alarm.alarmtone ?: Alarmtone.Default()
-                    val label = alarm.labelOrDefault ?: ""
+                    val alarmtone = alarm.alarmtone
+                    val label = alarm.labelOrDefault
                     PluginAlarmData(alarm.id, alarmtone, label)
                 }
 

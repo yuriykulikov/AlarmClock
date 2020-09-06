@@ -1,8 +1,8 @@
 package com.better.alarm.configuration
 
 import com.better.alarm.lollipop
-import com.better.alarm.stores.RxDataStore
 import com.better.alarm.stores.PrimitiveDataStoreFactory
+import com.better.alarm.stores.RxDataStore
 import com.better.alarm.stores.intStringDataStore
 import io.reactivex.Single
 

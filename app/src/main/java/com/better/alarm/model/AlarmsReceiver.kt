@@ -32,42 +32,40 @@ class AlarmsReceiver : BroadcastReceiver() {
             AlarmsScheduler.ACTION_FIRED -> {
                 val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
                 val calendarType = CalendarType.valueOf(intent.extras?.getString(AlarmsScheduler.EXTRA_TYPE)!!)
-                log.d("Fired $id $calendarType")
+                log.debug { "Fired $id $calendarType" }
                 alarms.getAlarm(id)?.let {
                     alarms.onAlarmFired(it, calendarType)
                 }
             }
             AlarmsScheduler.ACTION_INEXACT_FIRED -> {
                 val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
-                log.d("Fired  ACTION_INEXACT_FIRED $id")
-                alarms.getAlarm(id)?.let {
-                    it.onInexactAlarmFired()
-                }
+                log.debug { "Fired  ACTION_INEXACT_FIRED $id" }
+                alarms.getAlarm(id)?.onInexactAlarmFired()
             }
             Intent.ACTION_BOOT_COMPLETED,
             Intent.ACTION_TIMEZONE_CHANGED,
             Intent.ACTION_LOCALE_CHANGED,
             Intent.ACTION_MY_PACKAGE_REPLACED -> {
-                log.d("Refreshing alarms because of ${intent.action}")
+                log.debug { "Refreshing alarms because of ${intent.action}" }
                 alarms.refresh()
             }
             Intent.ACTION_TIME_CHANGED -> alarms.onTimeSet()
 
             PresentationToModelIntents.ACTION_REQUEST_SNOOZE -> {
                 val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
-                log.d("Snooze $id")
+                log.debug { "Snooze $id" }
                 alarms.getAlarm(id)?.snooze()
             }
 
             PresentationToModelIntents.ACTION_REQUEST_DISMISS -> {
                 val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
-                log.d("Dismiss $id")
+                log.debug { "Dismiss $id" }
                 alarms.getAlarm(id)?.dismiss()
             }
 
             PresentationToModelIntents.ACTION_REQUEST_SKIP -> {
                 val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
-                log.d("RequestSkip $id")
+                log.debug { "RequestSkip $id" }
                 alarms.getAlarm(id)?.requestSkip()
             }
         }

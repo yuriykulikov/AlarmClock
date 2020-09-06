@@ -28,11 +28,11 @@ import com.better.alarm.model.ContainerFactory
 import com.better.alarm.model.IAlarmsScheduler
 import com.better.alarm.persistance.DatabaseQuery
 import com.better.alarm.persistance.PersistingContainerFactory
-import com.better.alarm.stores.SharedRxDataStoreFactory
 import com.better.alarm.presenter.AlarmsListActivity
 import com.better.alarm.presenter.DynamicThemeHandler
 import com.better.alarm.presenter.ScheduledReceiver
 import com.better.alarm.presenter.ToastPresenter
+import com.better.alarm.stores.SharedRxDataStoreFactory
 import com.better.alarm.util.Optional
 import com.better.alarm.wakelock.WakeLockManager
 import com.better.alarm.wakelock.Wakelocks

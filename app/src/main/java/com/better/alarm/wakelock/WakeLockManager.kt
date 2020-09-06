@@ -37,13 +37,13 @@ class WakeLockManager(private val log: Logger, val pm: PowerManager) : Wakelocks
     private val transitionWakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SimpleAlarmClock:AlertServicePusher")
 
     override fun acquireServiceLock() {
-        log.d("Acquired service wakelock")
+        log.debug { "Acquired service wakelock" }
         serviceWakelock.acquire(60 * 60_000)
     }
 
     override fun releaseServiceLock() {
         if (serviceWakelock.isHeld) {
-            log.d("Released service wakelock")
+            log.debug { "Released service wakelock" }
             serviceWakelock.release()
         }
     }
@@ -58,7 +58,7 @@ class WakeLockManager(private val log: Logger, val pm: PowerManager) : Wakelocks
         wakelockCounter.incrementAndGet().also { count ->
             wakeLockIds.add(count)
             intent.putExtra(COUNT, count)
-            log.d("Acquired $transitionWakelock #$count")
+            log.debug { "Acquired $transitionWakelock #$count" }
         }
     }
 
@@ -73,7 +73,7 @@ class WakeLockManager(private val log: Logger, val pm: PowerManager) : Wakelocks
         val wasRemoved = wakeLockIds.remove(count)
         if (wasRemoved && transitionWakelock.isHeld) {
             transitionWakelock.release()
-            log.d("Released $transitionWakelock #$count")
+            log.debug { "Released $transitionWakelock #$count" }
         }
     }
 

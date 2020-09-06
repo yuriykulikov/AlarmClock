@@ -26,9 +26,9 @@ class StartupLogWriter private constructor() : LogWriter {
         }
     }
 
-    override fun write(level: LogLevel, tag: String, message: String, throwable: Throwable?) {
+    override fun write(level: LogLevel, tag: String, message: String, e: Throwable?) {
         val timeStamp = Date(System.currentTimeMillis())
-        val exceptionMessage = throwable?.message ?: ""
+        val exceptionMessage = e?.message ?: ""
 
         lock.withLock {
             if (messages.size() == bufferSize) {

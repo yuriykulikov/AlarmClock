@@ -59,7 +59,7 @@ class AlarmsListFragment : Fragment() {
     /** changed by [Prefs.listRowLayout] in [onResume]*/
     private var listRowLayout = prefs.layout()
 
-    inner class AlarmListAdapter(alarmTime: Int, label: Int, private val values: List<AlarmValue>) : ArrayAdapter<AlarmValue>(activity, alarmTime, label, values) {
+    inner class AlarmListAdapter(alarmTime: Int, label: Int, private val values: List<AlarmValue>) : ArrayAdapter<AlarmValue>(requireContext(), alarmTime, label, values) {
 
         private fun recycleView(convertView: View?, parent: ViewGroup, id: Int): RowHolder {
             val tag = convertView?.tag
@@ -98,12 +98,12 @@ class AlarmsListFragment : Fragment() {
                     //onOff
                     .setOnClickListener {
                         val enable = !alarm.isEnabled
-                        logger.d("onClick: " + if (enable) "enable" else "disable")
+                        logger.debug { "onClick: ${if (enable) "enable" else "disable"}" }
                         alarms.enable(alarm, enable)
                     }
 
             row.digitalClockContainer.setOnClickListener {
-                timePickerDialogDisposable = TimePickerDialogFragment.showTimePicker(fragmentManager)
+                timePickerDialogDisposable = TimePickerDialogFragment.showTimePicker(parentFragmentManager)
                         .subscribe { picked ->
                             if (picked.isPresent()) {
                                 alarms.getAlarm(alarm.id)?.also { alarm ->
@@ -166,13 +166,13 @@ class AlarmsListFragment : Fragment() {
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         val info = item.menuInfo as AdapterContextMenuInfo
-        val alarm = mAdapter.getItem(info.position)
+        val alarm = mAdapter.getItem(info.position) ?: return false
         when (item.itemId) {
             R.id.delete_alarm -> {
                 // Confirm that the alarm will be deleted.
                 AlertDialog.Builder(activity).setTitle(getString(R.string.delete_alarm))
                         .setMessage(getString(R.string.delete_alarm_confirm))
-                        .setPositiveButton(android.R.string.ok) { d, w -> alarms.delete(alarm) }.setNegativeButton(android.R.string.cancel, null).show()
+                        .setPositiveButton(android.R.string.ok) { _, _ -> alarms.delete(alarm) }.setNegativeButton(android.R.string.cancel, null).show()
             }
             R.id.list_context_enable -> {
                 alarms.getAlarm(alarmId = alarm.id)?.run {
@@ -203,7 +203,7 @@ class AlarmsListFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        logger.d("onCreateView $this")
+        logger.debug { "onCreateView $this" }
 
         val view = inflater.inflate(R.layout.list_fragment, container, false)
 
@@ -216,8 +216,9 @@ class AlarmsListFragment : Fragment() {
         listView.choiceMode = AbsListView.CHOICE_MODE_SINGLE
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { _, listRow, position, _ ->
-            val id = mAdapter.getItem(position).id
-            uiStore.edit(id, listRow.tag as RowHolder)
+            mAdapter.getItem(position)?.id?.let {
+                uiStore.edit(it, listRow.tag as RowHolder)
+            }
         }
 
         registerForContextMenu(listView)

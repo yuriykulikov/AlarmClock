@@ -1,9 +1,3 @@
-buildscript {
-    dependencies {
-        classpath(kotlin("gradle-plugin", version = "1.3.31"))
-    }
-}
-
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -64,14 +58,19 @@ val acraEmail = project.rootProject.file("local.properties")
         .toMap()
         .getOrDefault("acra.email", "")
 
+version = "3.06.01"
+
 android {
-    compileSdkVersion(28)
+    compileSdkVersion(29)
     defaultConfig {
+        versionCode = "$version".replace(".", "").toInt()
+        versionName = "$version"
         applicationId = "com.better.alarm"
         minSdkVersion(15)
-        targetSdkVersion(28)
+        targetSdkVersion(29)
         testApplicationId = "com.better.alarm.test"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled = true
     }
     buildTypes {
         getByName("debug") {
@@ -108,60 +107,46 @@ android {
         preDexLibraries = System.getenv("TRAVIS") != "true"
     }
 
+    useLibrary("android.test.runner")
+    useLibrary("android.test.base")
+    useLibrary("android.test.mock")
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    useLibrary("android.test.runner")
-    useLibrary("android.test.base")
-    useLibrary("android.test.mock")
+    kotlinOptions {
+        jvmTarget = "1.8"
+        useIR = true
+    }
 }
 
 dependencies {
     // App dependencies
-    implementation(kotlin("stdlib", version = "1.3.30"))
+    implementation(kotlin("stdlib", version = project.extra["kotlin"] as String))
     implementation("ch.acra:acra-mail:5.5.0")
     implementation("com.melnykov:floatingactionbutton:1.2.0")
-    implementation("io.reactivex.rxjava2:rxjava:2.2.0")
-    implementation("io.reactivex.rxjava2:rxandroid:2.1.0")
-    implementation("com.android.support:support-v4:26.1.0") {}
+    implementation("io.reactivex.rxjava2:rxjava:2.2.19")
+    implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
+    implementation("org.koin:koin-core:2.1.5")
+    implementation("androidx.fragment:fragment:1.2.5")
+    implementation("androidx.preference:preference:1.1.1")
+}
 
-    implementation("org.koin:koin-core:2.0.1")
-    implementation("org.koin:koin-core-ext:2.0.1")
-    testImplementation("org.koin:koin-test:2.0.1")
-
-    val fragment_version = "1.2.2"
-    implementation("androidx.fragment:fragment:$fragment_version")
-    implementation("androidx.fragment:fragment-ktx:$fragment_version")
-    implementation("androidx.fragment:fragment-testing:$fragment_version")
-
-    val preference_version = "1.1.0"
-    implementation("androidx.preference:preference:$preference_version")
-    implementation("androidx.preference:preference-ktx:$preference_version")
-
-    // Testing-only dependencies
+dependencies {
     testImplementation("net.wuerl.kotlin:assertj-core-kotlin:0.1.1")
-    testImplementation("junit:junit:4.12")
+    testImplementation("junit:junit:4.13")
     testImplementation("org.mockito:mockito-core:2.23.4")
-    testImplementation("io.mockk:mockk:1.9.3")
+    testImplementation("io.mockk:mockk:1.10.0")
+}
 
+dependencies {
     androidTestImplementation("com.squareup.assertj:assertj-android:1.1.1")
-    androidTestImplementation("com.bartoszlipinski:cortado:1.2.0")
-    //for some tests which do not work with espresso on travis
-    androidTestImplementation("com.jayway.android.robotium:robotium-solo:5.2.1")
-
-    androidTestImplementation("androidx.test:core:1.2.0")
-    androidTestImplementation("androidx.test:runner:1.2.0")
-    androidTestImplementation("androidx.test:rules:1.2.0")
-    androidTestImplementation("androidx.test.ext:junit:1.1.1")
-    androidTestImplementation("androidx.test.ext:truth:1.2.0")
-    androidTestImplementation("com.google.truth:truth:0.44")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
-    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.2.0")
-    androidTestImplementation("androidx.test.espresso:espresso-intents:3.2.0")
-    androidTestImplementation("androidx.test.espresso:espresso-accessibility:3.2.0")
-    androidTestImplementation("androidx.test.espresso:espresso-web:3.2.0")
-    androidTestImplementation("androidx.test.espresso.idling:idling-concurrent:3.2.0")
-    androidTestImplementation("androidx.test.espresso:espresso-idling-resource:3.2.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
+    androidTestImplementation("androidx.test:runner:1.3.0")
+    androidTestImplementation("androidx.test:rules:1.3.0")
+    // androidx.test.ext.junit.rules.ActivityScenarioRule
+    // androidx.test.ext.junit.runners.AndroidJUnit4
+    androidTestImplementation("androidx.test.ext:junit:1.1.2")
 }
