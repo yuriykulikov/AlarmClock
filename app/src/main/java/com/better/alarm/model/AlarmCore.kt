@@ -598,7 +598,7 @@ class AlarmCore(
         inner class PreAlarmSnoozedState : AlarmState() {
             override fun onEnter(reason: Event) {
                 //Yar 18.08: setAlarm -> resume; setAlarm(calculateNextTime(), CalendarType.NORMAL);
-                broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION)
+                broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION, calculateNextTime())
             }
 
             override fun onFired() {
