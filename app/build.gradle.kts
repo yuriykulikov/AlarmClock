@@ -58,7 +58,7 @@ val acraEmail = project.rootProject.file("local.properties")
         .toMap()
         .getOrDefault("acra.email", "")
 
-version = "3.06.01"
+version = "3.06.02"
 
 android {
     compileSdkVersion(29)

@@ -22,6 +22,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import androidx.core.app.NotificationCompat
 import com.better.alarm.CHANNEL_ID_HIGH_PRIO
 import com.better.alarm.R
 import com.better.alarm.alert.AlarmAlertFullScreen
@@ -60,6 +61,8 @@ class NotificationsPlugin(
             setContentTitle(alarm.label)
             setContentText(getString(R.string.alarm_notify_text))
             setSmallIcon(R.drawable.stat_notify_alarm)
+            priority = NotificationCompat.PRIORITY_HIGH
+            setCategory(NotificationCompat.CATEGORY_ALARM)
             // setFullScreenIntent to show the user AlarmAlert dialog at the same time
             // when the Notification Bar was created.
             setFullScreenIntent(pendingNotify, true)
