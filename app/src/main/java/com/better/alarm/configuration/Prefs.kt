@@ -22,8 +22,8 @@ class Prefs private constructor(
         val listRowLayout: RxDataStore<String>,
         val autoSilence: RxDataStore<Int>,
         val fadeInTimeInSeconds: RxDataStore<Int>,
-        val vibrate: RxDataStore<Boolean>
-
+        val vibrate: RxDataStore<Boolean>,
+        val skipDuration: RxDataStore<Int>
 ) {
     fun layout(): Layout {
         return listRowLayout
@@ -40,6 +40,7 @@ class Prefs private constructor(
     }
 
     companion object {
+
         @JvmStatic
         fun create(is24HourFormat: Single<Boolean>, factory: PrimitiveDataStoreFactory): Prefs {
             return Prefs(
@@ -50,10 +51,12 @@ class Prefs private constructor(
                     listRowLayout = factory.stringDataStore(LIST_ROW_LAYOUT, LIST_ROW_LAYOUT_COMPACT),
                     autoSilence = factory.intStringDataStore("auto_silence", 10),
                     fadeInTimeInSeconds = factory.intStringDataStore(Prefs.KEY_FADE_IN_TIME_SEC, 30),
-                    vibrate = factory.booleanDataStore("vibrate", true)
+                    vibrate = factory.booleanDataStore("vibrate", true),
+                    skipDuration = factory.intStringDataStore(SKIP_DURATION_KEY, -1)
             )
         }
 
+        const val SKIP_DURATION_KEY = "skip_duration"
         const val KEY_ALARM_IN_SILENT_MODE = "alarm_in_silent_mode"
         const val KEY_ALARM_SNOOZE = "snooze_duration"
         const val KEY_AUTO_SILENCE = "auto_silence"

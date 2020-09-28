@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="skip">Salta</string>
+    <string name="notification_alarm_is_about_to_go_off">La sveglia sta per suonare</string>
+    <string name="skip_duration_title">Notifica "Salta sveglia"</string>
+    <string-array name="skip_duration_entries">
+        <item>Off</item>
+        <item>15 minuti</item>
+        <item>30 minuti</item>
+        <item>1 ora</item>
+        <item>2 ora</item>
+        <item>3 ora</item>
+    </string-array>
+</resources>

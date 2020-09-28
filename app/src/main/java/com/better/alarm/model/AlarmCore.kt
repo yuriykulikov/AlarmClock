@@ -108,7 +108,7 @@ class AlarmCore(
         private val log: Logger,
         private val mAlarmsScheduler: IAlarmsScheduler,
         private val broadcaster: IStateNotifier,
-        prefs: Prefs,
+        private val prefs: Prefs,
         private val store: Store,
         private val calendars: Calendars
 ) : Alarm {
@@ -398,13 +398,21 @@ class AlarmCore(
             }
 
             private fun showSkipNotification(c: Calendar) {
-                val calendar = c.clone() as Calendar
-                calendar.add(Calendar.MINUTE, -120)
-                if (calendar.after(calendars.now())) {
-                    mAlarmsScheduler.setInexactAlarm(id, calendar)
-                } else {
-                    log.debug { "Alarm $id is due in less than 2 hours - show notification" }
-                    broadcastAlarmState(Intents.ALARM_SHOW_SKIP)
+                val skipTime = prefs.skipDuration.value
+                val toShowSkip = (c.clone() as Calendar).apply {
+                    add(Calendar.MINUTE, -skipTime)
+                }
+                when {
+                    skipTime == -1 -> {
+                        // switched off
+                    }
+                    toShowSkip.after(calendars.now()) -> {
+                        mAlarmsScheduler.setInexactAlarm(id, toShowSkip)
+                    }
+                    else -> {
+                        log.debug { "Alarm $id is due in less than $skipTime minutes - show notification" }
+                        broadcastAlarmState(Intents.ALARM_SHOW_SKIP)
+                    }
                 }
             }
 

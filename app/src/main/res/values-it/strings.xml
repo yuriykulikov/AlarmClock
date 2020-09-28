@@ -138,6 +138,4 @@
        \n\nFare clic su OK per accedere alle impostazioni, quindi selezionare la seconda azione superiore (Suono).
 
        \n\nDivertente, ma il suono deve essere disattivato nelle impostazioni avanzate.</string>
-    <string name="skip">Salta</string>
-    <string name="notification_alarm_is_about_to_go_off">La sveglia sta per suonare</string>
 </resources>

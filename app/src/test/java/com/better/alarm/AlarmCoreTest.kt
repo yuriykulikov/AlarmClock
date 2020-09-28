@@ -39,6 +39,7 @@ class AlarmCoreTest {
     )
     private var prefs: Prefs = Prefs.create(Single.just(true), InMemoryRxDataStoreFactory.create()).apply {
         autoSilence.value = 7
+        skipDuration.value = 120
     }
     private var logger: Logger = Logger.create(SysoutLogWriter())
     private var currentHour = 0

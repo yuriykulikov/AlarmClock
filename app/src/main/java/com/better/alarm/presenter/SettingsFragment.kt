@@ -125,6 +125,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 }
                 .let { disposables.add(it) }
 
+        findListPreference(Prefs.SKIP_DURATION_KEY)
+                .let { skipDurationPref ->
+                    prefs.skipDuration
+                            .observe()
+                            .subscribe {
+                                val indexOfValue = skipDurationPref.findIndexOfValue(skipDurationPref.value)
+                                skipDurationPref.summary = skipDurationPref.entries[indexOfValue]
+                            }
+
+                }
+                .let { disposables.add(it) }
+
         findListPreference(Prefs.KEY_PREALARM_DURATION)
                 .let { prealarmDurationPref ->
                     prefs.preAlarmDuration

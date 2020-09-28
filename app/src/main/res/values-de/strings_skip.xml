@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="skip">Überspringen</string>
+    <string name="notification_alarm_is_about_to_go_off">Der Alarm geht gleich los</string>
+    <string name="skip_duration_title">Wecker überspringen Benachrichtigung</string>
+    <string-array name="skip_duration_entries">
+        <item>Aus</item>
+        <item>15 Minuten</item>
+        <item>30 minuten</item>
+        <item>1 Stunde</item>
+        <item>2 Stunden</item>
+        <item>3 Stunden</item>
+    </string-array>
+</resources>

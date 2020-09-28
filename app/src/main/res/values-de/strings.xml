@@ -137,6 +137,4 @@
        \n\nKlicken Sie auf OK, um zu den Einstellungen zu gelangen, und wählen Sie dann die zweite obere Aktion (Ton) aus.
 
        \n\nEs ist lustig, aber schalte einfach den Ton in den erweiterten Einstellungen aus.</string>
-    <string name="skip">Überspringen</string>
-    <string name="notification_alarm_is_about_to_go_off">Der Alarm geht gleich los</string>
 </resources>
