@@ -401,7 +401,7 @@ public class AlarmsTest {
         //when pre-alarm-snoozed
         newAlarm.snooze();
         testScheduler.triggerActions();
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_SNOOZE_ACTION));
+        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_SNOOZE_ACTION), any());
 
         //when alarm fired
         instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
