@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="skip">Saltar</string>
+    <string name="notification_alarm_is_about_to_go_off">La alarma está a punto de sonar.</string>
+    <string name="skip_duration_title">Notificación "Saltar alarma"</string>
+    <string-array name="skip_duration_entries">
+        <item>Apagado</item>
+        <item>15 minutos</item>
+        <item>30 minutos</item>
+        <item>1 hora</item>
+        <item>2 hora</item>
+        <item>3 hora</item>
+    </string-array>
+</resources>
