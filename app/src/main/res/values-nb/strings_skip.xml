@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="skip">Hopp over</string>
+    <string name="notification_alarm_is_about_to_go_off">Alarmen er i ferd med å gå</string>
+    <string name="skip_duration_title">Hopp over alarmvarsel</string>
+    <string-array name="skip_duration_entries">
+        <item>Av</item>
+        <item>15 minutter</item>
+        <item>30 minutter</item>
+        <item>1 time</item>
+        <item>2 timer</item>
+        <item>3 timer</item>
+    </string-array>
+    <string-array name="skip_duration_values">
+        <item>-1</item>
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+        <item>180</item>
+    </string-array>
+</resources>
