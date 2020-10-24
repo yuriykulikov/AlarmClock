@@ -82,7 +82,7 @@
     <string name="preference_category_sound">Volume e suono</string>
     <string name="preference_category_ui">Interfaccia</string>
     <string name="preference_list_row_layout_title">Dimensione</string>
-    <string name="menu_about_title">A proposito dell'applicazione</string>
+    <string name="menu_about_title">A proposito dell’applicazione</string>
     <string name="dialog_about_content">Simple Alarm Clock è un programma open source che combina un’interfaccia semplice e le funzionalità necessarie ad una sveglia comoda.
 
        \n\nSuggerimenti:
@@ -102,7 +102,7 @@
     <string name="dialog_bugreport_faq"><b>Problemi comuni e come risolverli</b>
        \n\n<b><font color="#FF0000">Se hai perso tutte le sveglie dopo un aggiornamento e queste non vengono più riportate</font></b>, vuol dire che durante l’aggiornamento Android ha bloccato il nostro database. Questo errore è causato da un bug in Android, l’unico modo per risolverlo è reinstallare l’applicazione.
 
-       \n\n<font color="#FF0000">Se all’improvviso qualcosa si rompe, nonostante prima funzionasse</font>, probabilmente Android ha avuto dei problemi con la cache dell'applicazione. A volte capita, può succedere a tutte le applicazioni. Di solito svuotare la cache (App e notifiche -> Mostra tutte le app -> Simple Alarm Clock -> Spazio di archiviazione -> Cancella cache) o, nel caso peggiore, disinstallare e reinstallare l'applicazione, risolve il problema.
+       \n\n<font color="#FF0000">Se all’improvviso qualcosa si rompe, nonostante prima funzionasse</font>, probabilmente Android ha avuto dei problemi con la cache dell'applicazione. A volte capita, può succedere a tutte le applicazioni. Di solito svuotare la cache (App e notifiche -> Mostra tutte le app -> Simple Alarm Clock -> Spazio di archiviazione -> Cancella cache) o, nel caso peggiore, disinstallare e reinstallare l’applicazione, risolve il problema.
 
        \n\n<font color="#FF0000">Se le sveglie non si sentono</font>, controlla le impostazioni del tuo dispositivo. È necessario utilizzare almeno "Solo sveglie" su Android 8 e non usare la modalità "Non disturbare" su Android 9. Per maggiori informazioni visitare la pagina apposita <a href="https://support.google.com/android/answer/9069335?hl=ru">del supporto Google</a>
 
@@ -111,15 +111,15 @@
        \n\n<font color="#FF0000">Se niente di tutto ciò ti ha aiutato</font>, per favore scrivici un messaggio nel form successivo. Faremo del nostro meglio per aiutarti.
    </string>
     <string name="dialog_say_thanks_title">Invia un ringraziamento</string>
-    <string name="dialog_say_thanks_review_message">Grazie per aver dedicato del tempo a ringraziarci! "Simple Alarm Clock" è un progetto non profit open source. Non inseriremo mai pubblicità né raccoglieremo dati utente a scopo di lucro. Tuttavia, siamo estremamente felici se ti piace il nostro lavoro. Il modo migliore per valutare il nostro lavoro è scrivere una recensione positiva. Puoi anche porre una domanda o lasciare una richiesta di funzionalità.</string>
-    <string name="dialog_say_thanks_premium_text">Se ti piace davvero la nostra applicazione, puoi prendere in considerazione l\'acquisto di una versione premium. Sembra fantastico, vero? :)</string>
+    <string name="dialog_say_thanks_review_message">Grazie per aver dedicato del tempo a ringraziarci! "Simple Alarm Clock" è un progetto non profit open source. Non inseriremo mai pubblicità né raccoglieremo dati utente a scopo di lucro. Tuttavia, siamo estremamente felici se ti piace il nostro lavoro. Il modo migliore di valutare il nostro lavoro è scrivere una recensione positiva. Puoi anche porre una domanda o una richiesta di funzionalità.</string>
+    <string name="dialog_say_thanks_premium_text">Se ti piace davvero la nostra applicazione, puoi prendere in considerazione l’acquisto di una versione premium. Sembra fantastico, vero? :)</string>
     <string name="dialog_say_thanks_donate_message">Un’altro modo di supportare lo sviluppo della app è quella di offrirmi una tazza di caffè o una ciambella! :) Puoi farlo nei modi seguenti:</string>
     <string name="dialog_say_thanks_premium_text_as_button"><a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Versione premium
 </a></string>
-    <string name="notification_channel_high_prio">Ampio popup con pulsanti di spegnimento e rinvio</string>
-    <string name="notification_channel_default_prio">Notifica per un allarme posticipato</string>
+    <string name="notification_channel_high_prio">Popup con pulsanti di spegnimento e rinvio</string>
+    <string name="notification_channel_default_prio">Notifica di sveglia posticipata</string>
     <string name="notification_channel_low_prio">Notifica di sveglia scaduta</string>
-    <string name="alert_notifications_title">Oh no! C'è un problema!</string>
+    <string name="alert_notifications_title">Oh no! C’è un problema!</string>
     <string name="alert_notifications_turned_off">Tutte le notifiche sono disattivate, inclusa il popup con i pulsanti "Spegni" e "Posticipa"!
 
        \n\nFai clic su OK per accedere alle impostazioni e abilitare le notifiche!</string>
