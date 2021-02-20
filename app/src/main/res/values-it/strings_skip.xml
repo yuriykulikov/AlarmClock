@@ -4,7 +4,7 @@
     <string name="notification_alarm_is_about_to_go_off">La sveglia sta per suonare</string>
     <string name="skip_duration_title">Notifica "Salta sveglia"</string>
     <string-array name="skip_duration_entries">
-        <item>Off</item>
+        <item>Disattivato</item>
         <item>15 minuti</item>
         <item>30 minuti</item>
         <item>1 ora</item>
