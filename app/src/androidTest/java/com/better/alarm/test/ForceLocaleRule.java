@@ -4,6 +4,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 
 import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.InstrumentationRegistry;
 
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;

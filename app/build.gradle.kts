@@ -66,7 +66,7 @@ android {
         versionCode = "$version".replace(".", "").toInt()
         versionName = "$version"
         applicationId = "com.better.alarm"
-        minSdkVersion(15)
+        minSdkVersion(21)
         targetSdkVersion(29)
         testApplicationId = "com.better.alarm.test"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -120,6 +120,24 @@ android {
         jvmTarget = "1.8"
         useIR = true
     }
+
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.0.0-alpha09"
+        kotlinCompilerVersion = "1.4.21"
+    }
+}
+
+// compose
+dependencies {
+    val compose = "1.0.0-alpha09"
+    implementation("androidx.compose.ui:ui:$compose")
+    implementation("androidx.compose.foundation:foundation-layout:$compose")
+    implementation("androidx.compose.material:material:$compose")
+    implementation("androidx.compose.ui:ui-tooling:$compose")
 }
 
 dependencies {

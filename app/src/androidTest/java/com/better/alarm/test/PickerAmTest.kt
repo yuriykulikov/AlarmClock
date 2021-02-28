@@ -9,6 +9,7 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isEnabled
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
+import androidx.test.runner.AndroidJUnit4
 import com.better.alarm.R
 import com.better.alarm.configuration.overrideIs24hoursFormatOverride
 import com.better.alarm.presenter.AlarmsListActivity

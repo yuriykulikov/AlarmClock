@@ -43,6 +43,8 @@ data class DaysOfWeek(val coded: Int) {
         return coded and (1 shl this) > 0
     }
 
+    fun isDaySet(index: Int) = index.isSet()
+
     /**
      * returns number of days from today until next alarm
      */
@@ -66,6 +68,6 @@ data class DaysOfWeek(val coded: Int) {
     }
 
     companion object {
-        private val DAY_MAP = intArrayOf(Calendar.MONDAY, Calendar.TUESDAY, Calendar.WEDNESDAY, Calendar.THURSDAY, Calendar.FRIDAY, Calendar.SATURDAY, Calendar.SUNDAY)
+        val DAY_MAP = intArrayOf(Calendar.MONDAY, Calendar.TUESDAY, Calendar.WEDNESDAY, Calendar.THURSDAY, Calendar.FRIDAY, Calendar.SATURDAY, Calendar.SUNDAY)
     }
 }

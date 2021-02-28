@@ -12,7 +12,9 @@
         <item name="alertDialogTheme">@style/SynthwaveDialogTheme</item>
         <item name="colorControlHighlight">@color/mat_dark_grey_purple_overlay_original</item>
         <item name="android:spotShadowAlpha">1</item>
-        <item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/mat_dark_grey_purple_overlay</item>
+        <item name="android:outlineSpotShadowColor" tools:targetApi="p">
+            @color/mat_dark_grey_purple_overlay
+        </item>
     </style>
 
     <style name="SynthwaveActionBarStyle" parent="ThemeOverlay.AppCompat.ActionBar">

@@ -14,16 +14,6 @@ class DynamicThemeHandler(context: Context) {
     private val light = "light"
     private val dark = "dark"
 
-    init {
-        when (sp.getString(themeKey, dark)) {
-            light, dark, synthwave -> {
-            }
-            else -> {
-                sp.edit().putString(themeKey, dark).apply()
-            }
-        }
-    }
-
     fun defaultTheme(): Int = when (preference()) {
         light -> R.style.DefaultLightTheme
         dark -> R.style.DefaultDarkTheme

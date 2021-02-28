@@ -1,5 +1,6 @@
 package com.better.alarm.view
 
+import com.better.alarm.util.requireValue
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 
@@ -18,6 +19,8 @@ open class TimePickerPresenter(private val is24HoursMode: Boolean) {
     //TODO visibility
     private val subject: BehaviorSubject<State> = BehaviorSubject.createDefault(State(is24HoursMode = is24HoursMode))
     val state: Observable<State> = subject
+    val snapshot: State
+        get() = subject.requireValue()
 
     private var input: List<Int> = arrayListOf()
     private var amPm: AmPm = AmPm.NONE

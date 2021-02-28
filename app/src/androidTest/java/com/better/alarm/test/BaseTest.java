@@ -3,7 +3,11 @@ package com.better.alarm.test;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+<<<<<<< HEAD
 import androidx.test.platform.app.InstrumentationRegistry;
+=======
+import androidx.test.InstrumentationRegistry;
+>>>>>>> 11a9f24e... This is Compose!
 
 import com.better.alarm.R;
 import com.better.alarm.logger.Logger;

@@ -1,0 +1,3 @@
+[src/main/java/com/better/alarm/compose/**/*.kt]
+indent_style = space
+indent_size = 2

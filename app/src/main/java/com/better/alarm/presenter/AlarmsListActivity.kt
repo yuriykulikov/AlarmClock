@@ -32,6 +32,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentTransaction
 import com.better.alarm.BuildConfig
 import com.better.alarm.NotificationSettings
 import com.better.alarm.R
@@ -328,7 +329,7 @@ class AlarmsListActivity : AppCompatActivity() {
         }
     }
 
-    private fun RowHolder.addSharedElementsToTransition(fragmentTransaction: androidx.fragment.app.FragmentTransaction) {
+    private fun RowHolder.addSharedElementsToTransition(fragmentTransaction: FragmentTransaction) {
         fragmentTransaction.addSharedElement(digitalClock, "clock" + alarmId)
         fragmentTransaction.addSharedElement(container, "onOff" + alarmId)
         fragmentTransaction.addSharedElement(detailsButton, "detailsButton" + alarmId)

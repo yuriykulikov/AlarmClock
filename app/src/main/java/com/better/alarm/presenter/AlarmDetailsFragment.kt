@@ -343,7 +343,7 @@ class AlarmDetailsFragment : Fragment() {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun hackRippleAndAnimation() {
         if (enterTransition is Transition) {
-            (enterTransition as Transition).addListener(object : Transition.TransitionListener {
+            class TransitionListenerIR : Transition.TransitionListener {
                 override fun onTransitionEnd(transition: Transition?) {
                     activity?.let { parentActivity ->
                         val selectableItemBackground = TypedValue().apply {
@@ -365,7 +365,9 @@ class AlarmDetailsFragment : Fragment() {
 
                 override fun onTransitionStart(transition: Transition?) {
                 }
-            })
+            }
+
+            (enterTransition as Transition).addListener(TransitionListenerIR())
         }
     }
 }

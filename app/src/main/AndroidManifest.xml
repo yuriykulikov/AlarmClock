@@ -25,6 +25,20 @@
 
         <!-- Activity to set a new or modify existing alarm -->
         <activity
+            android:name=".compose.AlarmsListComposeActivity"
+            android:configChanges="orientation|keyboardHidden|keyboard|navigation"
+            android:exported="true"
+            android:label="Compose"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Activity to set a new or modify existing alarm -->
+        <activity
             android:name=".presenter.AlarmsListActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
             android:exported="true"

@@ -11,6 +11,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.rule.ActivityTestRule
+import androidx.test.runner.AndroidJUnit4
 import com.better.alarm.R
 import com.better.alarm.configuration.overrideIs24hoursFormatOverride
 import com.better.alarm.interfaces.PresentationToModelIntents
@@ -19,6 +21,7 @@ import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.AlarmsReceiver
 import com.better.alarm.model.CalendarType
 import com.better.alarm.presenter.AlarmsListActivity
+import cortado.Cortado
 import org.hamcrest.Matchers.anything
 import org.junit.Rule
 import org.junit.Test
