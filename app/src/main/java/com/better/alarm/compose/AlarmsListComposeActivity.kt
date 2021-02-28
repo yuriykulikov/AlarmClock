@@ -37,7 +37,9 @@ class AlarmsListComposeActivity : AppCompatActivity() {
             isEnabled = alarm.isEnabled,
             label = alarm.label,
             hour = alarm.hour,
-            minutes = alarm.minutes
+            minutes = alarm.minutes,
+            daysOfWeek = alarm.daysOfWeek,
+            alarmtone = alarm.alarmtone,
           )
         }
     }

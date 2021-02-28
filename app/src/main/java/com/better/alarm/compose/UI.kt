@@ -66,15 +66,15 @@ private fun AppContent(
             onSave = { currentScreen.value = Screen.List },
             onCancel = { currentScreen.value = Screen.List },
             alarm = screen.alarmValue,
-            editor = editor,
             layout = layout,
+            editor = editor,
           )
           is Screen.New -> DetailsScreen(
             onSave = { currentScreen.value = Screen.List },
             onCancel = { currentScreen.value = Screen.List },
             alarm = createAlarmData(),
-            editor = editor,
             layout = layout,
+            editor = editor,
           )
         }
       }
