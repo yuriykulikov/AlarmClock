@@ -139,14 +139,14 @@
     <LinearLayout
         style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/button_footer_height"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/details_activity_button_revert"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dip"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:focusable="true"
             android:text="@android:string/cancel" />
@@ -155,7 +155,7 @@
             android:id="@+id/details_activity_button_save"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dip"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:focusable="true"
             android:text="@android:string/ok" />
