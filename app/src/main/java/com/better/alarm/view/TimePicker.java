@@ -46,7 +46,7 @@ public class TimePicker extends LinearLayout implements Button.OnClickListener {
     protected final Button mNumbers[] = new Button[10];
     protected Button mLeft, mRight;
     protected ImageButton mDelete;
-    protected TimerView mEnteredTime;
+    protected TextView timePickerTime;
     private final TimePickerPresenter presenter;
     private int hours;
     private int minutes;
@@ -76,7 +76,7 @@ public class TimePicker extends LinearLayout implements Button.OnClickListener {
         View v2 = findViewById(R.id.second);
         View v3 = findViewById(R.id.third);
         View v4 = findViewById(R.id.fourth);
-        mEnteredTime = (TimerView) findViewById(R.id.timer_time_text);
+        timePickerTime = (TextView) findViewById(R.id.time_picker_time);
         mDelete = (ImageButton) findViewById(R.id.delete);
         mDelete.setOnClickListener(this);
         mDelete.setOnLongClickListener(new OnLongClickListener() {
@@ -126,7 +126,7 @@ public class TimePicker extends LinearLayout implements Button.OnClickListener {
         mRight.setOnClickListener(this);
 
         Resources res = mContext.getResources();
-        mAmPmLabel = (TextView) findViewById(R.id.ampm_label);
+        mAmPmLabel = (TextView) findViewById(R.id.time_picker_ampm_label);
 
         if (mIs24HoursMode) {
             mLeft.setText(res.getString(R.string.time_picker_00_label));
@@ -169,8 +169,7 @@ public class TimePicker extends LinearLayout implements Button.OnClickListener {
         presenter.getState().subscribe(new Consumer<TimePickerPresenter.State>() {
             @Override
             public void accept(@NonNull TimePickerPresenter.State state) throws Exception {
-
-                mEnteredTime.setTime(state.getHoursTensDigit(), state.getHoursOnesDigit(), state.getMinutesTensDigit(), state.getMinutesOnesDigit(), 0);
+                timePickerTime.setText(state.getAsText());
                 hours = state.getHours();
                 minutes = state.getMinutes();
 
