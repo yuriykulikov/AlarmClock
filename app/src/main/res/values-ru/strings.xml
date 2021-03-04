@@ -28,7 +28,6 @@
     <string name="prealarm_summary">Предварительный сигнал зазвонит за <xliff:g id="minutes">%d</xliff:g> минут перед основным</string>
     <string name="info_fragment_prealarm_summary">Предварительный сигнал <xliff:g id="minutes">%d</xliff:g> минут</string>
     <string name="prealarm_off_summary">Предварительный сигнал выключен</string>
-    <string name="master_volume">Общая громкость</string>
     <string name="menu_share">Поделиться</string>
     <string name="menu_bugreport">Отчет об ошибке</string>
     <string name="dialog_say_thanks_review_button">Оставить отзыв</string>
@@ -111,7 +110,6 @@
     <string name="dialog_say_thanks_title">Поблагодарить</string>
     <string name="dialog_say_thanks_review_message">Благодарим Вас, что уделили время для того, чтобы поблагодарить нас! “Простой будильник” - это некоммерческое приложение с открытым исходным кодом. Мы никогда не будем использовать рекламу или собирать данные пользователей с целью получения прибыли. Однако мы будем рады, если вы оцените нашу работу по достоинству. Один из лучших способов сделать это - написать позитивный отзыв. Вы также можете задать нам вопрос или прислать запрос на внедрение новой функции.</string>
     <string name="dialog_say_thanks_premium_text">Если наше приложение Вам очень нравится, Вы можете рассмотреть возможность приобретения премиум-версии. Звучит отлично, не так ли? :)</string>
-    <string name="dialog_say_thanks_donate_message">Еще один отличный способ поддержать приложение - купить мне чашечку кофе или печеньку! :) Вы можете сделать это при помощи одной из нижеперечисленных опций</string>
     <string name="dialog_say_thanks_premium_text_as_button"><a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Премиум версия</a></string>
     <string name="notification_channel_high_prio">Большое всплывающее окно с кнопками "выключить" и "отложить"</string>
     <string name="notification_channel_default_prio">Уведомление об отложенном будильнике</string>

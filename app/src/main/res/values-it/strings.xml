@@ -35,7 +35,6 @@
 <xliff:g id="minutes">%d</xliff:g> minuti prima della sveglia principale</string>
     <string name="info_fragment_prealarm_summary"><xliff:g id="minutes">%d</xliff:g> minuti pre-sveglia</string>
     <string name="prealarm_off_summary">La pre-sveglia è disattivata</string>
-    <string name="master_volume">Volume principale</string>
     <string name="menu_share">Condividi</string>
     <string name="menu_bugreport">Segnala un bug</string>
     <string name="dialog_say_thanks_review_button">Valuta l’applicazione</string>
@@ -113,7 +112,6 @@
     <string name="dialog_say_thanks_title">Invia un ringraziamento</string>
     <string name="dialog_say_thanks_review_message">Grazie per aver dedicato del tempo a ringraziarci! "Simple Alarm Clock" è un progetto non profit open source. Non inseriremo mai pubblicità né raccoglieremo dati utente a scopo di lucro. Tuttavia, siamo estremamente felici se ti piace il nostro lavoro. Il modo migliore di valutare il nostro lavoro è scrivere una recensione positiva. Puoi anche porre una domanda o una richiesta di funzionalità.</string>
     <string name="dialog_say_thanks_premium_text">Se ti piace davvero la nostra applicazione, puoi prendere in considerazione l’acquisto di una versione premium. Sembra fantastico, vero? :)</string>
-    <string name="dialog_say_thanks_donate_message">Un’altro modo di supportare lo sviluppo della app è quella di offrirmi una tazza di caffè o una ciambella! :) Puoi farlo nei modi seguenti:</string>
     <string name="dialog_say_thanks_premium_text_as_button"><a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Versione premium
 </a></string>
     <string name="notification_channel_high_prio">Popup con pulsanti di spegnimento e rinvio</string>

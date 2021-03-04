@@ -14,81 +14,73 @@
      limitations under the License.
 -->
 
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2" xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2" tools:ignore="MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation">
 
     <!--  -->
     <!-- Label shown on launcher icon -->
-    <string name="app_label">Clock</string>
 
     <!-- Title for AlarmClock activity -->
-    <string name="alarm_list_title">Alarms</string>
+    <skip />
 
     <!-- Menu item on Alarm Clock screen: Add alarm -->
-    <string name="add_alarm">Add alarm</string>
+    <skip />
 
     <!-- Menu item on Alarm Clock screen: Desk clock -->
-    <string name="menu_desk_clock">Desk clock</string>
 
     <!-- Menu item on Alarm Clock screen: Edit alarm -->
-    <string name="menu_edit_alarm">Edit alarm</string>
 
     <!-- Context Menu Item on Alarm Settings screen: Delete alarm -->
-    <string name="delete_alarm">Delete alarm</string>
+    <string name="alarm_list_title">Alarms</string>
 
     <!-- Context Menu Item on Alarm Settings screen: Enable alarm -->
-    <string name="enable_alarm">Turn alarm on</string>
+    <string name="add_alarm">Add alarm</string>
 
     <!-- Context Menu Item on Alarm Settings screen: Disable alarm -->
-    <string name="disable_alarm">Turn alarm off</string>
+    <string name="delete_alarm">Delete alarm</string>
 
     <!-- Delete alarm confirmation dialog message. -->
-    <string name="delete_alarm_confirm">Delete this alarm?</string>
+    <string name="enable_alarm">Turn alarm on</string>
 
     <!-- Menu item on Alarm Clock screen: Show clock -->
-    <string name="show_clock">Show clock</string>
 
     <!-- Menu item on Alarm Clock screen: Hide clock -->
-    <string name="hide_clock">Hide clock</string>
 
     <!-- Setting label on Set alarm screen: Label -->
-    <string name="label">Label</string>
+    <string name="disable_alarm">Turn alarm off</string>
 
     <!-- Default label to display for an alarm -->
-    <string name="default_label">Alarm</string>
 
     <!-- Preference category on Alarm Settings screen: Set alarm -->
-    <string name="set_alarm">Set alarm</string>
 
     <!-- Setting labels on Set alarm screen: Vibration on or off -->
-    <string name="alarm_vibrate">Vibrate</string>
+    <string name="delete_alarm_confirm">Delete this alarm?</string>
 
     <!-- Setting labels on Set alarm screen: Repeat -->
-    <string name="alarm_repeat">Repeat</string>
+    <string name="label">Label</string>
 
     <!-- Setting labels on Set alarm screen: Select alarm ringtone -->
-    <string name="alert">Ringtone</string>
+    <string name="alarm_vibrate">Vibrate</string>
 
     <!-- Setting labels on Set alarm screen: Set time -->
-    <string name="time">Time</string>
 
     <!-- Button labels on the alarm dialog: Dismiss -->
-    <string name="alarm_alert_dismiss_text">Dismiss</string>
+    <string name="alarm_repeat">Repeat</string>
 
     <!--
          Alarm Alert screen: this message is shown after an alarm rung
          unattended for a number of minutes.  It tells the user that
          the alarm has been silenced.
     -->
-    <string name="alarm_alert_alert_silenced">Alarm silenced after <xliff:g id="minutes">%d</xliff:g> minutes.</string>
+    <string name="alert">Ringtone</string>
 
     <!-- Button labels on the alarm dialog: Snooze -->
-    <string name="alarm_alert_snooze_text">Snooze</string>
+    <string name="alarm_alert_dismiss_text">Dismiss</string>
 
     <!--
          Toast that appears after Alarm is snoozed from the Alarm
          dialog. Says the alarm will snooze for xxx minutes.
     -->
-    <string name="alarm_alert_snooze_set">Snoozing for <xliff:g id="minutes">%d</xliff:g> minutes.</string>
+    <string name="alarm_alert_alert_silenced">Alarm silenced after <xliff:g id="minutes">%d</xliff:g> minutes.</string>
 
     <!--
          0: nothing
@@ -100,22 +92,13 @@
          6:      hours minutes
          7: days hours minutes
     -->
-    <skip />
+    <string name="alarm_alert_snooze_text">Snooze</string>
 
     <!--
          Alarm confirmation toast: Describes how long from now until
          alarm fires
     -->
-    <string-array name="alarm_set">
-        <item>Alarm set for less than 1 minute from now.</item>
-        <item>Alarm set for <xliff:g id="DAYS" example="2 days">%1$s</xliff:g> from now.</item>
-        <item>Alarm set for <xliff:g id="HOURS" example="2 hours">%2$s</xliff:g> from now.</item>
-        <item>Alarm set for <xliff:g id="DAYS" example="2 days">%1$s</xliff:g> and <xliff:g id="HOURS" example="2 hours">%2$s</xliff:g> from now.</item>
-        <item>Alarm set for <xliff:g id="MINUTES" example="2 minutes">%3$s</xliff:g> from now.</item>
-        <item>Alarm set for <xliff:g id="DAYS" example="2 days">%1$s</xliff:g> and <xliff:g id="MINUTES" example="2 minutes">%3$s</xliff:g> from now.</item>
-        <item>Alarm set for <xliff:g id="HOURS" example="2 hours">%2$s</xliff:g> and <xliff:g id="MINUTES" example="2 minutes">%3$s</xliff:g> from now.</item>
-        <item>Alarm set for <xliff:g id="DAYS" example="2 days">%1$s</xliff:g>, <xliff:g id="HOURS" example="2 hours">%2$s</xliff:g>, and <xliff:g id="MINUTES" example="2 minutes">%3$s</xliff:g> from now.</item>
-    </string-array>
+    <string name="alarm_alert_snooze_set">Snoozing for <xliff:g id="minutes">%d</xliff:g> minutes.</string>
 
     <!-- Alarm confirmation toast: singular day -->
     <string name="day">"1 day"</string>
@@ -160,10 +143,8 @@
          Appears at the top of the Clock Picker screen: Tell user to
          select a clock to display
     -->
-    <string name="clock_instructions">Choose a clock</string>
 
     <!-- Label for analog clock gadget, shown in list of all gadgets -->
-    <string name="analog_gadget">Analog clock</string>
 
     <!-- Menu item title for general Alarm Clock Settings -->
     <string name="settings">Settings</string>
@@ -185,27 +166,11 @@
          Entries listed in the ListPreference when invoking the snooze duration
          preference.
     -->
-    <string-array name="snooze_duration_entries">
-        <item>5 minutes</item>
-        <item>10 minutes</item>
-        <item>15 minutes</item>
-        <item>20 minutes</item>
-        <item>25 minutes</item>
-        <item>30 minutes</item>
-    </string-array>
 
     <!--
          Values that are retrieved from the ListPreference. These must match
          the snooze_duration_entries above.
     -->
-    <string-array name="snooze_duration_values">
-        <item>5</item>
-        <item>10</item>
-        <item>15</item>
-        <item>20</item>
-        <item>25</item>
-        <item>30</item>
-    </string-array>
 
     <!-- Auto silence preference title -->
     <string name="auto_silence_title">Auto-silence</string>
@@ -221,6 +186,78 @@
          Entries listed in the ListPreference when invoking the auto silence
          preference.
     -->
+    <string name="delete">Delete</string>
+
+    <!--
+         Values that are retrieved from the ListPreference. These must match
+         the auto_silence_entries above.
+    -->
+    <string name="alarm_volume_title">Alarm volume</string>
+
+    <!-- Done button when editing an alarm. -->
+
+    <!-- Revert button when editing an alarm. -->
+
+    <!-- Delete button when editing an alarm. -->
+    <string name="alarm_volume_summary">Set the volume of alarms</string>
+
+    <!-- Setting title for changing the alarm volume. -->
+    <string name="silent_alarm_summary">Silent</string>
+
+    <!-- Setting summary for changing the alarm volume. -->
+    <string name="alarm_notify_text">Snooze or dismiss alarm.</string>
+
+    <!-- Summary for the alarm preference when silent is chosen. -->
+    <string name="alarm_notify_snooze_label"><xliff:g id="label">%s</xliff:g> (snoozed)</string>
+
+    <!-- Text to display in the small text of the notification -->
+    <string name="alarm_notify_snooze_text">Alarm set for <xliff:g id="time">%s</xliff:g>. Touch to cancel.</string>
+
+    <!-- Text to display in the notification ticker and label -->
+    <string name="volume_button_dialog_title">Button effect</string>
+
+    <!-- Text to display in the notification when the alarm has been snoozed -->
+    <string name="volume_button_setting_summary">Set what these buttons do when pressed during an alarm</string>
+
+    <!--
+         Title of the setting to change hardware button behavior. This string
+         should be changed for each piece of hardware. [CHAR LIMIT=20]
+    -->
+
+    <!-- Dialog title of the volume and power setting. -->
+    <string name="default_ringtone_setting_title">Set default ringtone</string>
+
+    <!-- The summary of the side button setting. -->
+    <string name="alarm_klaxon_service_desc">Sound playback service for alarms set in Clock.</string>
+
+    <!-- Entries listed in the setting for the side-button action. -->
+    <string name="time_picker_ampm_label" translatable="false">--</string>
+
+    <!-- Values for the side-button setting. -->
+    <string name="time_picker_00_label" translatable="false" tools:ignore="MissingTranslation">:00</string>
+
+    <!-- Title of the ringtone setting. -->
+    <string name="time_picker_30_label" translatable="false" tools:ignore="MissingTranslation">:30</string>
+
+    <!-- Accessibility labels for Clock activity buttons -->
+    <string-array name="alarm_set">
+        <item>Alarm set for less than 1 minute from now.</item>
+        <item>Alarm set for <xliff:g example="2 days" id="DAYS">%1$s</xliff:g> from now.</item>
+        <item>Alarm set for <xliff:g example="2 hours" id="HOURS">%2$s</xliff:g> from now.</item>
+        <item>Alarm set for <xliff:g example="2 days" id="DAYS">%1$s</xliff:g> and <xliff:g example="2 hours" id="HOURS">%2$s</xliff:g> from now.</item>
+        <item>Alarm set for <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g> from now.</item>
+        <item>Alarm set for <xliff:g example="2 days" id="DAYS">%1$s</xliff:g> and <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g> from now.</item>
+        <item>Alarm set for <xliff:g example="2 hours" id="HOURS">%2$s</xliff:g> and <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g> from now.</item>
+        <item>Alarm set for <xliff:g example="2 days" id="DAYS">%1$s</xliff:g>, <xliff:g example="2 hours" id="HOURS">%2$s</xliff:g>, and <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g> from now.</item>
+    </string-array>
+
+    <!-- A short representation of charging information, e.g "34%" -->
+
+    <!--
+         What to show the user if the weather widget exists but fails to
+         respond. This is a sign of an error; if the weather widget is not
+         present on the device, we show nothing at all.
+    -->
     <string-array name="auto_silence_entries">
         <item>Off</item>
         <item>5 minutes</item>
@@ -230,11 +267,9 @@
         <item>25 minutes</item>
         <item>30 minutes</item>
     </string-array>
-
-    <!--
-         Values that are retrieved from the ListPreference. These must match
-         the auto_silence_entries above.
-    -->
+    <!-- Textual content of the button to discard the current dialog values and close the dialog -->
+    <!-- Textual content of the button to update an alarm with the current dialog values -->
+    <!-- place holder for am/pm label when it is not set -->
     <string-array name="auto_silence_values" translatable="false">
         <item>-1</item>
         <!-- Off -->
@@ -245,90 +280,16 @@
         <item>25</item>
         <item>30</item>
     </string-array>
-
-    <!-- Done button when editing an alarm. -->
-    <string name="done">Done</string>
-
-    <!-- Revert button when editing an alarm. -->
-    <string name="revert">Revert</string>
-
-    <!-- Delete button when editing an alarm. -->
-    <string name="delete">Delete</string>
-
-    <!-- Setting title for changing the alarm volume. -->
-    <string name="alarm_volume_title">Alarm volume</string>
-
-    <!-- Setting summary for changing the alarm volume. -->
-    <string name="alarm_volume_summary">Set the volume of alarms</string>
-
-    <!-- Summary for the alarm preference when silent is chosen. -->
-    <string name="silent_alarm_summary">Silent</string>
-
-    <!-- Text to display in the small text of the notification -->
-    <string name="alarm_notify_text">Snooze or dismiss alarm.</string>
-
-    <!-- Text to display in the notification ticker and label -->
-    <string name="alarm_notify_snooze_label"><xliff:g id="label">%s</xliff:g> (snoozed)</string>
-
-    <!-- Text to display in the notification when the alarm has been snoozed -->
-    <string name="alarm_notify_snooze_text">Alarm set for <xliff:g id="time">%s</xliff:g>. Touch to cancel.</string>
-
-    <!--
-         Title of the setting to change hardware button behavior. This string
-         should be changed for each piece of hardware. [CHAR LIMIT=20]
-    -->
-    <string name="volume_button_setting_title">Volume buttons</string>
-
-    <!-- Dialog title of the volume and power setting. -->
-    <string name="volume_button_dialog_title">Button effect</string>
-
-    <!-- The summary of the side button setting. -->
-    <string name="volume_button_setting_summary">Set what these buttons do when pressed during an alarm</string>
-
-    <!-- Entries listed in the setting for the side-button action. -->
+    <!-- add 00 as minutes to the time when pressing this button -->
     <string-array name="volume_button_setting_entries">
         <item>None</item>
         <item>Snooze</item>
         <item>Dismiss</item>
     </string-array>
-
-    <!-- Values for the side-button setting. -->
+    <!-- add 30 as minutes to the time when pressing this button -->
     <string-array name="volume_button_setting_values">
         <item>0</item>
         <item>1</item>
         <item>2</item>
     </string-array>
-
-    <!-- Title of the ringtone setting. -->
-    <string name="default_ringtone_setting_title">Set default ringtone</string>
-
-    <!-- Accessibility labels for Clock activity buttons -->
-    <skip />
-
-    <string name="alarm_button_description">Alarms</string>
-    <string name="gallery_button_description">Gallery</string>
-    <string name="music_button_description">Music</string>
-    <string name="nightmode_button_description">Dim</string>
-    <string name="home_button_description">Launcher</string>
-    <string name="desk_clock_button_description">Clock display</string>
-
-    <!-- A short representation of charging information, e.g "34%" -->
-    <string name="battery_charging_level"><xliff:g id="number">%d</xliff:g><xliff:g id="percent">%%</xliff:g></string>
-
-    <!--
-         What to show the user if the weather widget exists but fails to
-         respond. This is a sign of an error; if the weather widget is not
-         present on the device, we show nothing at all.
-    -->
-    <string name="menu_item_dock_settings" msgid="9161438664257429372">Dock settings</string>
-    <string name="alarm_klaxon_service_desc">Sound playback service for alarms set in Clock.</string>
-    <!-- Textual content of the button to discard the current dialog values and close the dialog -->
-    <!-- Textual content of the button to update an alarm with the current dialog values -->
-    <string name="time_picker_time_seperator" translatable="false">:</string>
-    <!-- place holder for am/pm label when it is not set -->
-    <string name="time_picker_ampm_label" translatable="false">--</string>
-    <!-- add 00 as minutes to the time when pressing this button -->
-    <string name="time_picker_00_label" tools:ignore="MissingTranslation" translatable="false">:00</string>
-    <!-- add 30 as minutes to the time when pressing this button -->
-    <string name="time_picker_30_label" tools:ignore="MissingTranslation" translatable="false">:30</string>
 </resources>

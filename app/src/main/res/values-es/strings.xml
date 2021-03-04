@@ -38,7 +38,6 @@
 <xliff:g id="minutes">%d</xliff:g> minutos antes de la alarma principal</string>
     <string name="info_fragment_prealarm_summary"><xliff:g id="minutes">%d</xliff:g> minutos prealarma</string>
     <string name="prealarm_off_summary">La prealarma está apagada</string>
-    <string name="master_volume">Volumen maestro</string>
     <string name="menu_share">Compartir</string>
     <string name="menu_bugreport">Enviar un informe de error</string>
     <string name="dialog_say_thanks_review_button">Valorar la aplicación</string>
@@ -123,7 +122,6 @@ A menudo recibimos tales quejas, y generalmente resulta que un tiempo después d
     <string name="dialog_say_thanks_review_message">¡Gracias por tomarse el tiempo de agradecernos! "Simple Alarm Clock" es un proyecto de código abierto sin fines de lucro.
 Nunca utilizaremos publicidad ni recopilaremos datos de usuarios con fines de lucro. Sin embargo, estaremos felices si aprecia nuestro trabajo. Una de las mejores maneras de hacer esto es escribir una crítica positiva. También puede hacernos una pregunta o enviar una solicitud para la implementación de una nueva función.</string>
     <string name="dialog_say_thanks_premium_text">Si realmente te gusta nuestra aplicación, puedes considerar comprar una versión premium. Suena genial, ¿verdad? :)</string>
-    <string name="dialog_say_thanks_donate_message">¡Otra excelente manera de apoyar la aplicación es comprarme una taza de café o una galleta! :) Puede hacerlo utilizando una de las siguientes opciones.</string>
     <string name="dialog_say_thanks_premium_text_as_button"><a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Versión premium
 </a></string>
     <string name="notification_channel_high_prio">Gran ventana emergente con botones para posponer y descartar</string>

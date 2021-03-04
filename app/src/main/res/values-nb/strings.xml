@@ -58,7 +58,6 @@
 <xliff:g id="minutes">%d</xliff:g> minutter før hovedalarmen</string>
     <string name="info_fragment_prealarm_summary"><xliff:g id="minutes">%d</xliff:g> minutter forhåndsalarm</string>
     <string name="prealarm_off_summary">Forhåndsalarm er slått av</string>
-    <string name="master_volume">Hovedvolum</string>
     <string name="menu_share">Del</string>
     <string name="menu_bugreport">Send en feilrapport</string>
     <string name="dialog_say_thanks_review_button">Vurder appen</string>
@@ -176,7 +175,6 @@
     <string name="dialog_say_thanks_title">Si takk</string>
     <string name="dialog_say_thanks_review_message">Thanks a lot for taking your time to say thanks! “Simple Alarm Clock” is an open source non-profit project. We will never use ads or gather user data to earn money. However, we are extremely happy if you like our work. One of the best ways to say thanks is to write a positive review. You can also ask a question or leave your feature request.</string>
     <string name="dialog_say_thanks_premium_text">If you really like the app, you could consider upgrading to the premium version! Premium sounds great, does it not?</string>
-    <string name="dialog_say_thanks_donate_message">Another great way to support the app is to buy me a coffee or a donut! You can do this using one of the following options</string>
     <string name="dialog_say_thanks_premium_text_as_button"><a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Go premium</a></string>
 
     <string name="notification_channel_high_prio">Big popup with snooze and dismiss buttons</string>
