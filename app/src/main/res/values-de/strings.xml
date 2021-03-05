@@ -25,7 +25,7 @@
         <item>45 Minuten</item>
         <item>60 Minuten</item>
     </string-array>
-    <string name="prealarm_summary">Der Vorwecker klingelt in <xliff:g id="minutes">%d</xliff:g> Minuten vor dem Wecker</string>
+    <string name="prealarm_summary">Der Vorwecker klingelt <xliff:g id="minutes">%d</xliff:g> Minuten vor dem Wecker</string>
     <string name="info_fragment_prealarm_summary"><xliff:g id="minutes">%d</xliff:g> Minuten Vorwecker</string>
     <string name="prealarm_off_summary">Der Vorwecker ist ausgeschaltet</string>
     <string name="master_volume">Gesamtlautstärke</string>
@@ -35,7 +35,7 @@
     <string name="dialog_bugreport_hint">Bitte beschreiben Sie das Problem</string>
     <string name="longclick_dismiss_title">Lange drücken zum Ausschalten</string>
     <string name="longclick_dismiss_summary">Lange drücken, um den Wecker auszuschalten</string>
-    <string name="fade_in_time_sec_title">Fade-in Dauer</string>
+    <string name="fade_in_time_sec_title">Lautstärke langsam erhöhen</string>
     <string-array name="fade_in_time_sec_entries">
         <item>Aus</item>
         <item>10 Sekunden</item>
@@ -44,8 +44,8 @@
         <item>60 Sekunden</item>
         <item>120 Sekunden</item>
     </string-array>
-    <string name="fade_in_summary">Fade-in Dauer ist <xliff:g id="seconds">%d</xliff:g> Sekunden</string>
-    <string name="fade_in_off_summary">Fade-in ist aus</string>
+    <string name="fade_in_summary"><xliff:g id="seconds">%d</xliff:g> Sekunden</string>
+    <string name="fade_in_off_summary">aus</string>
     <string-array name="alarm_set_short">
         <item msgid="6450913786084215050">"weniger als eine Minute"</item>
         <item msgid="6002066367368421848">"<xliff:g id="DAYS">%1$s</xliff:g>"</item>
@@ -75,17 +75,17 @@
     </string-array>
     <string name="alarm_alert_reschedule_text">Neu planen</string>
     <string name="alarm_alert_hold_the_button_text">Halten Sie die Taste!</string>
-    <string name="permissions_external_storage_text">Sieht so aus das %s kann nicht ohne Berechtigungen gespielt werden. Sie können gerne den Zugriff erlauben. Wenn Sie es nicht wollen, selektieren Sie bitte andren Ringtone. Diese Entscheidung kann in System Einstellungen rückgängig gemacht werden.</string>
+    <string name="permissions_external_storage_text">Sieht so aus, dass %s nicht ohne Berechtigungen gespielt werden kann. Sie können gerne den Zugriff erlauben. Wenn Sie das nicht wollen, wählen Sie bitte einen anderen Weckton. Diese Entscheidung kann in den Systemeinstellungen rückgängig gemacht werden.</string>
     <string name="preference_category_durations">Dauer</string>
-    <string name="preference_category_sound">Lautstärke und Sound</string>
+    <string name="preference_category_sound">Lautstärke und Ton</string>
     <string name="preference_category_ui">Benutzeroberfläche</string>
-    <string name="details_no_ringtone_picker">Kein Ringtone Manager ist vorhanden...</string>
-    <string name="menu_about_title">About</string>
-    <string name="dialog_about_content">Einfacher Wecker ist ein Open Source Projekt der bringt euch alle nötige Features in minimalister Form.
+    <string name="details_no_ringtone_picker">Kein Ringtone Manager vorhanden...</string>
+    <string name="menu_about_title">Über</string>
+    <string name="dialog_about_content">Einfacher Wecker ist ein Open-Source-Projekt mit allen nötigen Funktionen in minimalister Form.
 
-       \n\nHinweiß:
-       \n· Die Größe kann eingestellt werden (in die Einstllungen)
-       \n· Die Farbe kann eingestellt werden (in die Einstllungen)
+       \n\nHinweis:
+       \n· Die Zeilengröße kann eingestellt werden (in den Einstellungen)
+       \n· Die Farbe kann eingestellt werden (in den Einstellungen)
 
        \n\Neu in dieser Version:
        \n· Umbauten für Android 9
@@ -97,9 +97,9 @@
        \n· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Premium version (donate)</a>
    </string>
     <string name="dialog_bugreport_faq"><b>Wie Sie die häufigsten Fehler richtig beheben</b>
-       \n\n<b><font color="#FF0000">Wenn nach dem update alle Wecker weg sind und können nicht mehr gespeichert werden</font></b>, dann hat die Android OS unseres Datenbank während update gesperrt. Das ist ein bug in Android und einzelne Möglichkeit das zu reparieren ist App zu deinstallieren und erneut zu installieren.
+       \n\n<b><font color="#FF0000">Wenn nach dem Update alle Wecker weg sind und nicht mehr gespeichert werden können</font></b>, dann hat das Android OS unsere Datenbank während des Updates gesperrt. Das ist ein Fehler in Android die einzige Möglichkeit, das zu reparieren ist, App zu deinstallieren und erneut zu installieren.
 
-       \n\n<font color="#FF0000">Wenn etwas hat funktioniert und dann plötzlich kaputt ging</font>, ist es sehr wahrscheinlich, dass Android den Application Cache durcheinander gebracht hat. Dies geschieht von Zeit zu Zeit bei alle Apps. Durch Leeren des Caches (App-Info -> Speicher -> Cache leeren) oder im schlimmsten Fall Deinstallieren und erneutes Installieren wird das Problem normalerweise behoben.
+       \n\n<font color="#FF0000">Wenn etwas funktioniert hat und dann plötzlich kaputt ging</font>, ist es sehr wahrscheinlich, dass Android den Application Cache durcheinander gebracht hat. Dies geschieht von Zeit zu Zeit bei allen Apps. Durch Leeren des Caches (App-Info -> Speicher -> Cache leeren) oder im schlimmsten Fall Deinstallieren und erneutes Installieren wird das Problem normalerweise behoben.
 
        \n\n<font color="#FF0000">Wenn kein Ton zu hören ist</font>, überprüfen Sie bitte Ihre Geräteeinstellungen. Sie müssen mindestens "Nur Wecker" für Android 8 und kein "Bitte nicht stören" Modus für Android 9 verwenden. Weitere Informationen finden Sie auf der <a href="https://support.google.com/android/answer/9069335?hl=de"> Google Android-Hilfe Seite </a>
 
@@ -107,11 +107,11 @@
 
        \n\n<font color="#FF0000">Wenn nichts hilft</font>, schreiben Sie uns bitte eine Nachricht in das unten stehende Feld. Wir werden unser Bestes tun, um Ihnen zu helfen.
    </string>
-    <string name="dialog_say_thanks_title">Sagen Danke</string>
+    <string name="dialog_say_thanks_title">Danke sagen</string>
     <string name="dialog_say_thanks_review_message">Vielen Dank, dass Sie sich die Zeit genommen haben, sich zu bedanken! "Wecker ohne Schnickschnack" ist ein Open-Source Nonprofit-Projekt. Wir werden niemals Werbung verwenden oder Benutzerdaten sammeln, um Geld zu verdienen. Wir freuen uns jedoch sehr, wenn Ihnen unsere Arbeit gefällt. Eine der besten Möglichkeiten, sich zu bedanken, ist eine positive Bewertung zu schreiben. Sie können auch eine Frage stellen oder Ihre Featureanfrage hinterlassen.</string>
-    <string name="dialog_say_thanks_premium_text">Wenn die App Ihnen wirklich gefällt, Sie können ein Upgrade auf die Premium-Version überlegen. Premium hört sich toll an, oder?</string>
+    <string name="dialog_say_thanks_premium_text">Wenn die App Ihnen wirklich gefällt, können Sie über ein Upgrade auf die Premium-Version nachdenken. Premium hört sich toll an, oder?</string>
     <string name="dialog_say_thanks_donate_message">Eine andere hervorragende Möglichkeit, die App zu unterstützen, besteht darin, mir einen Kaffee oder einen Krapfen zu kaufen! Sie können dies mit einer der folgenden Optionen tun</string>
-    <string name="dialog_say_thanks_premium_text_as_button"><a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Premium Version</a></string>
+    <string name="dialog_say_thanks_premium_text_as_button"><a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Premium-Version</a></string>
 
     <string name="notification_channel_high_prio">Großes Popup mit Snooze- und Dismiss-Tasten</string>
     <string name="notification_channel_default_prio">Benachrichtigung für einen geduckten Wecker</string>
@@ -122,9 +122,9 @@
 
        \n\Klicken Sie auf OK, um zu den Einstellungen zu springen und die Benachrichtigungen zu aktivieren!</string>
     <string name="alert_notifications_high_prio_text">
-       Die Priorität des großen Popups mit Snooze- und Dismiss-Buttons ist zu niedrig, um den Bildschirm zu entsperren!
+       Die Priorität des großen Popups mit Schlummer- und Beenden-Buttons ist zu niedrig, um den Bildschirm zu entsperren!
 
-       \n\nMöglicherweise haben Sie die Benachrichtigungseinstellungen versehentlich deaktiviert oder geändert.
+       \n\nMöglicherweise haben Sie die Benachrichtigungseinstellungen versehentlich geändert.
 
        \n\nKlicken Sie auf OK, um zu den Einstellungen zu gelangen und die oberste Aktion auszuwählen (Ton und Popup-Benachrichtigung).
 
@@ -132,7 +132,7 @@
     <string name="alert_notifications_default_prio_text">
        Sekundäre Benachrichtigungen sind deaktiviert.
 
-       \n\nMöglicherweise haben Sie die Benachrichtigungseinstellungen versehentlich deaktiviert oder geändert.
+       \n\nMöglicherweise haben Sie die Benachrichtigungseinstellungen versehentlich geändert.
 
        \n\nKlicken Sie auf OK, um zu den Einstellungen zu gelangen, und wählen Sie dann die zweite obere Aktion (Ton) aus.
 
