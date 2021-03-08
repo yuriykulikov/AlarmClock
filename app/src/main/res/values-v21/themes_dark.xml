@@ -9,13 +9,7 @@
 
     <style name="TimePickerDialogFragmentDark" parent="Theme.AppCompat.Dialog">
         <item name="android:windowNoTitle">true</item>
-        <item name="timePickerDeleteButtonStyle">@style/DarkTimePickerDeleteButtonStyle</item>
+        <item name="timePickerDeleteButtonStyle">@style/TimePickerDeleteButtonStyle</item>
         <item name="android:backgroundTint">?android:colorBackground</item>
-    </style>
-
-    <style name="DarkTimePickerDeleteButtonStyle">
-        <item name="android:src">@drawable/ic_backspace</item>
-        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
-        <item name="android:tint">@color/grey</item>
     </style>
 </resources>

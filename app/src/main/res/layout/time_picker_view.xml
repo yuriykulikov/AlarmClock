@@ -39,6 +39,7 @@
                 android:singleLine="true"
                 android:ellipsize="none"
                 android:textSize="60sp"
+                style="@style/dialpad"
                 android:layout_height="wrap_content"
                 tools:text="--:--"
                 android:layout_width="wrap_content" />
@@ -66,11 +67,6 @@
             android:contentDescription="@string/delete"
             android:layout_height="match_parent" />
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dip"
-        android:background="#28ffffff" />
 
     <include
         layout="@layout/three_keys_view"
