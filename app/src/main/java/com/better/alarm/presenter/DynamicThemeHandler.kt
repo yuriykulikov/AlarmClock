@@ -13,10 +13,11 @@ class DynamicThemeHandler(context: Context) {
     private val synthwave = "synthwave"
     private val light = "light"
     private val dark = "dark"
+    private val deusex = "deusex"
 
     init {
         when (sp.getString(themeKey, dark)) {
-            light, dark, synthwave -> {
+            light, dark, synthwave, deusex -> {
             }
             else -> {
                 sp.edit().putString(themeKey, dark).apply()
@@ -28,6 +29,7 @@ class DynamicThemeHandler(context: Context) {
         light -> R.style.DefaultLightTheme
         dark -> R.style.DefaultDarkTheme
         synthwave -> R.style.DefaultSynthwaveTheme
+        deusex -> R.style.DefaultDeusExTheme
         else -> R.style.DefaultDarkTheme
     }
 
@@ -40,6 +42,8 @@ class DynamicThemeHandler(context: Context) {
         preference() == dark && name == TimePickerDialogFragment::class.java.name -> R.style.TimePickerDialogFragmentDark
         preference() == synthwave && name == AlarmAlertFullScreen::class.java.name -> R.style.AlarmAlertFullScreenSynthwaveTheme
         preference() == synthwave && name == TimePickerDialogFragment::class.java.name -> R.style.TimePickerDialogFragmentSynthwave
+        preference() == deusex && name == AlarmAlertFullScreen::class.java.name -> R.style.AlarmAlertFullScreenDeusExTheme
+        preference() == deusex && name == TimePickerDialogFragment::class.java.name -> R.style.TimePickerDialogFragmentDeusEx
         else -> defaultTheme()
     }
 }

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+    <!-- List, details and settings -->
+    <style name="DefaultDeusExTheme" parent="Theme.AppCompat">
+        <!-- accent - buttons, accented text -->
+        <item name="colorAccent">@color/deusex_secondary</item>
+        <!-- FAB color-->
+        <item name="listFabColor">@color/deusex_fab_color</item>
+        <!-- action bar -->
+        <item name="colorPrimary">@color/deusex_surface</item>
+        <item name="titleTextColor">@color/deusex_on_surface</item>
+        <!-- info bar -->
+        <item name="android:colorBackground">@color/deusex_menu_background</item>
+        <!-- lists background -->
+        <item name="android:windowBackground">@color/deusex_background</item>
+        <!-- low bar color -->
+        <item name="android:navigationBarColor">@color/deusex_background</item>
+        <item name="android:alertDialogTheme">@style/DialogThemeDeusEx</item>
+        <item name="android:dialogTheme">@style/DialogThemeDeusEx</item>
+        <item name="alertDialogTheme">@style/DialogThemeDeusEx</item>
+        <item name="dialogTheme">@style/DialogThemeDeusEx</item>
+
+        <item name="colorControlHighlight">@color/deusex_ripple</item>
+
+        <item name="android:ambientShadowAlpha">0.4</item>
+        <item name="android:spotShadowAlpha">0.4</item>
+        <item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/deusex_glow</item>
+        <item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/deusex_glow</item>
+        <item name="infoBarColor">@color/transparent</item>
+        <item name="android:colorForeground">@color/deusex_on_background</item>
+        <item name="listRowDisabledColor">@color/grey</item>
+    </style>
+
+    <style name="AlarmAlertFullScreenDeusExTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="colorAccent">@color/deusex_secondary</item>
+        <item name="colorControlHighlight">@color/deusex_ripple</item>
+        <item name="android:colorBackground">@color/deusex_background</item>
+        <item name="android:colorForeground">@color/deusex_on_background</item>
+    </style>
+
+    <style name="DialogThemeDeusEx" parent="Theme.AppCompat.Dialog">
+        <item name="colorAccent">@color/deusex_secondary</item>
+        <item name="android:colorBackground">@color/deusex_background</item>
+        <item name="backgroundTint">@color/deusex_background</item>
+        <item name="android:windowBackground">@color/deusex_background</item>
+        <item name="android:colorForeground">@color/deusex_on_background</item>
+    </style>
+
+    <style name="TimePickerDialogFragmentDeusEx" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="colorAccent">@color/deusex_secondary</item>
+        <item name="timePickerDeleteButtonStyle">@style/TimePickerDeleteButtonStyle</item>
+        <item name="android:backgroundTint">@color/deusex_background</item>
+        <item name="elevation">20dp</item>
+        <item name="android:ambientShadowAlpha">0.5</item>
+        <item name="android:spotShadowAlpha">0.2</item>
+        <item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/deusex_glow</item>
+        <item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/deusex_glow</item>
+        <item name="colorControlHighlight">@color/deusex_ripple</item>
+        <item name="android:colorForeground">@color/deusex_on_background</item>
+    </style>
+
+    <color name="deusex_on_background">@color/whitish</color>
+    <color name="deusex_surface">@color/dark_grey</color>
+    <color name="deusex_on_surface">@color/whitish</color>
+    <color name="deusex_background">@color/blackish</color>
+    <color name="deusex_secondary">#d0902f</color>
+    <color name="deusex_ripple">@color/dark_grey</color>
+    <color name="deusex_glow">@color/blackish</color>
+    <color name="deusex_primary">#d0902f</color>
+    <color name="deusex_fab_color">#a15501</color>
+    <color name="deusex_menu_background">@color/mat_almost_black</color>
+</resources>

@@ -91,11 +91,13 @@
         <item>Dark</item>
         <item>Light</item>
         <item>Synthwave</item>
+        <item>Deus Ex</item>
     </string-array>
     <string-array name="themes_values">
         <item>dark</item>
         <item>light</item>
         <item>synthwave</item>
+        <item>deusex</item>
     </string-array>
     <string name="preference_list_row_layout_title">Layout style</string>
     <string-array name="preference_list_row_layout_entries">
