@@ -102,7 +102,8 @@ class AlarmsListFragment : Fragment() {
                         alarms.enable(alarm, enable)
                     }
 
-            row.digitalClockContainer.setOnClickListener {
+            val pickerClickTarget = with(row) { if (layout == Layout.CLASSIC) digitalClockContainer else digitalClock }
+            pickerClickTarget.setOnClickListener {
                 timePickerDialogDisposable = TimePickerDialogFragment.showTimePicker(parentFragmentManager)
                         .subscribe { picked ->
                             if (picked.isPresent()) {
@@ -119,7 +120,7 @@ class AlarmsListFragment : Fragment() {
                         }
             }
 
-            row.digitalClockContainer.setOnLongClickListener {
+            pickerClickTarget.setOnLongClickListener {
                 false
             }
 

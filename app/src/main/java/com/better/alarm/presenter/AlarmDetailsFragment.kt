@@ -134,7 +134,8 @@ class AlarmDetailsFragment : Fragment() {
             }
 
             digitalClock.setLive(false)
-            digitalClockContainer.setOnClickListener {
+            val pickerClickTarget = if (layout == Layout.CLASSIC) digitalClockContainer else digitalClock
+            pickerClickTarget.setOnClickListener {
                 disposableDialog = TimePickerDialogFragment.showTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
             }
 
