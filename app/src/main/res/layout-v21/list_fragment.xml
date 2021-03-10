@@ -52,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
             android:layout_alignParentBottom="true"
-            android:background="?android:attr/colorBackground"
+            android:background="?attr/infoBarColor"
             android:elevation="25dp">
 
             <fragment
@@ -65,9 +65,9 @@
 
         <com.melnykov.fab.FloatingActionButton
             android:id="@+id/fab"
-            app:fab_colorNormal="?android:attr/colorAccent"
-            app:fab_colorPressed="?android:attr/colorAccent"
-            android:backgroundTint="?android:attr/colorAccent"
+            app:fab_colorNormal="?attr/listFabColor"
+            app:fab_colorPressed="?attr/listFabColor"
+            android:backgroundTint="?attr/listFabColor"
             android:backgroundTintMode="src_atop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
