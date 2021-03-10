@@ -35,7 +35,7 @@
             android:layout_marginRight="15dp"
             android:layout_weight="1"
             tools:layout="@layout/list_fragment"
-            tools:listitem="@layout/list_row_classic" />
+            tools:listitem="@layout/list_row_bold" />
 
         <View
             android:layout_width="match_parent"
@@ -60,7 +60,6 @@
                 android:name="com.better.alarm.presenter.InfoFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#00000000"
                 tools:layout="@layout/info_fragment" />
         </FrameLayout>
 

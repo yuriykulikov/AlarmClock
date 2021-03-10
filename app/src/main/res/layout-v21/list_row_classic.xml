@@ -65,11 +65,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="12:45"
-                android:fontFamily="sans-serif"
+                android:fontFamily="sans-serif-light"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="30sp" />
 
             <TextView
                 android:id="@+id/digital_clock_am_pm"
+                android:textColor="?android:attr/textColorPrimary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom" />
@@ -121,6 +123,7 @@
                 android:layout_height="wrap_content"
                 android:clickable="false"
                 android:focusable="false"
+                android:textColor="?android:attr/textColorPrimary"
                 android:text="···"
                 android:textSize="40sp"
                 android:textStyle="normal" />

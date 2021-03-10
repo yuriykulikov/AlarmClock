@@ -48,12 +48,14 @@
             <TextView
                 android:id="@+id/digital_clock_time"
                 style="@style/dialpad"
+                android:textColor="?android:attr/textColorPrimary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="12:45" />
 
             <TextView
                 android:id="@+id/digital_clock_am_pm"
+                android:textColor="?android:attr/textColorPrimary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </com.better.alarm.view.DigitalClock>
@@ -118,6 +120,7 @@
                 android:focusable="false"
                 android:text="···"
                 android:textSize="40sp"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textStyle="normal" />
 
             <View

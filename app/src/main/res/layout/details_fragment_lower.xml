@@ -36,10 +36,12 @@
                     android:layout_gravity="center|left"
                     android:layout_weight="1"
                     android:text="@string/alarm_repeat"
+                    android:textColor="?attr/colorAccent"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
                     android:id="@+id/details_repeat_summary"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
@@ -65,10 +67,12 @@
                     android:layout_gravity="center|left"
                     android:layout_weight="1"
                     android:text="@string/alert"
+                    android:textColor="?attr/colorAccent"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
                     android:id="@+id/details_ringtone_summary"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
@@ -92,6 +96,7 @@
                     android:layout_weight="1"
                     android:gravity="center|left"
                     android:text="@string/alarm_prealarm"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <LinearLayout
@@ -125,6 +130,7 @@
                 android:inputType="textNoSuggestions"
                 android:minHeight="68dip"
                 android:singleLine="true"
+                android:textColor="?attr/colorAccent"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
         </LinearLayout>
     </ScrollView>

@@ -42,12 +42,14 @@
                 android:id="@+id/digital_clock_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-thin"
+                android:fontFamily="sans-serif-light"
+                android:textColor="?android:attr/textColorPrimary"
                 tools:text="12:45"
                 android:textSize="40sp" />
 
             <TextView
                 android:id="@+id/digital_clock_am_pm"
+                android:textColor="?android:attr/textColorPrimary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </com.better.alarm.view.DigitalClock>
@@ -126,6 +128,7 @@
                 android:layout_height="wrap_content"
                 android:clickable="false"
                 android:focusable="false"
+                android:textColor="?android:attr/textColorPrimary"
                 android:text="···"
                 android:textSize="40sp"
                 android:textStyle="normal" />

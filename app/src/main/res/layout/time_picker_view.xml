@@ -40,6 +40,7 @@
                 android:ellipsize="none"
                 android:textSize="60sp"
                 style="@style/dialpad"
+                android:textColor="?android:attr/textColorPrimary"
                 android:layout_height="wrap_content"
                 tools:text="--:--"
                 android:layout_width="wrap_content" />
@@ -51,6 +52,7 @@
                 android:singleLine="true"
                 android:ellipsize="none"
                 style="@style/label"
+                android:textColor="?android:attr/textColorPrimary"
                 android:gravity="top"
                 android:text="@string/time_picker_ampm_label" />
 
