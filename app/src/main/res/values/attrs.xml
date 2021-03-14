@@ -10,4 +10,5 @@
     <attr name="timePickerDeleteButtonStyle" format="reference" />
     <attr name="infoBarColor" format="color" />
     <attr name="listFabColor" format="color" />
+    <attr name="listRowDisabledColor" format="color" />
 </resources>

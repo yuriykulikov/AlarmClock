@@ -92,6 +92,8 @@ class AlarmDetailsFragment : Fragment() {
 
     private val alarmId: Int by lazy { store.editing().value!!.id }
 
+    private val highlighter: ListRowHighlighter? by lazy { ListRowHighlighter.createFor(requireActivity().theme) }
+
     private lateinit var fragmentView: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -254,6 +256,8 @@ class AlarmDetailsFragment : Fragment() {
                     if (editor.label != mLabel.text.toString()) {
                         mLabel.setText(editor.label)
                     }
+
+                    highlighter?.applyTo(rowHolder, editor.isEnabled)
                 })
 
         disposables.add(editor

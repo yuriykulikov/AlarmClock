@@ -27,6 +27,7 @@
         <item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/dark_glow</item>
         <item name="infoBarColor">@color/transparent</item>
         <item name="android:colorForeground">@color/dark_on_background</item>
+        <item name="listRowDisabledColor">@color/grey</item>
     </style>
 
     <style name="AlarmAlertFullScreenDarkTheme" parent="Theme.AppCompat.NoActionBar">

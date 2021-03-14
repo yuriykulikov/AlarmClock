@@ -20,6 +20,7 @@ class RowHolder(view: View, id: Int, val layout: Layout) {
     val daysOfWeek: TextView
     val label: TextView
     val detailsButton: View
+    val detailsTextView: TextView
     val idHasChanged: Boolean
 
     init {
@@ -30,6 +31,7 @@ class RowHolder(view: View, id: Int, val layout: Layout) {
         daysOfWeek = find(R.id.list_row_daysOfWeek) as TextView
         label = find(R.id.list_row_label) as TextView
         detailsButton = find(R.id.details_button_container)
+        detailsTextView = detailsButton.findViewById(R.id.details_button_textview)
         val prev: RowHolder? = rowView.tag as RowHolder?
         idHasChanged = prev?.alarmId != id
         rowView.tag = this

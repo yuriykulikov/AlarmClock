@@ -60,6 +60,7 @@ class AlarmsListFragment : Fragment() {
     private var listRowLayout = prefs.layout()
 
     inner class AlarmListAdapter(alarmTime: Int, label: Int, private val values: List<AlarmValue>) : ArrayAdapter<AlarmValue>(requireContext(), alarmTime, label, values) {
+        private val highlighter: ListRowHighlighter? by lazy { ListRowHighlighter.createFor(requireActivity().theme) }
 
         private fun recycleView(convertView: View?, parent: ViewGroup, id: Int): RowHolder {
             val tag = convertView?.tag
@@ -150,6 +151,8 @@ class AlarmsListFragment : Fragment() {
                 removeEmptyView -> View.GONE
                 else -> View.INVISIBLE
             }
+
+            highlighter?.applyTo(row, alarm.isEnabled)
 
             // row.labelsContainer.visibility = when {
             //     row.label().visibility == View.GONE && row.daysOfWeek().visibility == View.GONE -> GONE
