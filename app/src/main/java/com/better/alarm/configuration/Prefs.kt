@@ -23,7 +23,8 @@ class Prefs private constructor(
         val autoSilence: RxDataStore<Int>,
         val fadeInTimeInSeconds: RxDataStore<Int>,
         val vibrate: RxDataStore<Boolean>,
-        val skipDuration: RxDataStore<Int>
+        val skipDuration: RxDataStore<Int>,
+        val longClickDismiss: RxDataStore<Boolean>,
 ) {
     fun layout(): Layout {
         return listRowLayout
@@ -52,7 +53,8 @@ class Prefs private constructor(
                     autoSilence = factory.intStringDataStore("auto_silence", 10),
                     fadeInTimeInSeconds = factory.intStringDataStore(Prefs.KEY_FADE_IN_TIME_SEC, 30),
                     vibrate = factory.booleanDataStore("vibrate", true),
-                    skipDuration = factory.intStringDataStore(SKIP_DURATION_KEY, -1)
+                    skipDuration = factory.intStringDataStore(SKIP_DURATION_KEY, -1),
+                    longClickDismiss = factory.booleanDataStore(LONGCLICK_DISMISS_KEY, LONGCLICK_DISMISS_DEFAULT),
             )
         }
 
@@ -62,7 +64,7 @@ class Prefs private constructor(
         const val KEY_AUTO_SILENCE = "auto_silence"
         const val KEY_PREALARM_DURATION = "prealarm_duration"
         const val KEY_FADE_IN_TIME_SEC = "fade_in_time_sec"
-        const val LONGCLICK_DISMISS_DEFAULT = false
+        const val LONGCLICK_DISMISS_DEFAULT = true
         const val LONGCLICK_DISMISS_KEY = "longclick_dismiss_key"
         const val MAX_PREALARM_VOLUME = 10
         const val DEFAULT_PREALARM_VOLUME = 5

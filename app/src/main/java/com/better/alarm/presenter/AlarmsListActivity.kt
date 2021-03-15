@@ -181,8 +181,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
         this.mActionBarHandler = ActionBarHandler(this, uiStore, alarms, globalGet())
 
-        val isTablet = !resources.getBoolean(R.bool.isTablet)
-        if (isTablet) {
+        if (!resources.getBoolean(R.bool.isTablet)) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
 
