@@ -20,12 +20,6 @@
     android:orientation="vertical">
 
     <TextSwitcher
-        android:id="@+id/info_fragment_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-
-    <TextSwitcher
         android:id="@+id/info_fragment_text_view_remaining_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
