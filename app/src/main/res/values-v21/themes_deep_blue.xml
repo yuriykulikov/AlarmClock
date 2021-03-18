@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+    <!-- List, details and settings -->
+    <style name="DefaultDeepBlueTheme" parent="Theme.AppCompat">
+        <!-- accent - buttons, accented text -->
+        <item name="colorAccent">@color/deepblue_secondary</item>
+        <!-- FAB color-->
+        <item name="listFabColor">@color/deepblue_fab_color</item>
+        <!-- action bar -->
+        <item name="colorPrimary">@color/deepblue_surface</item>
+        <item name="titleTextColor">@color/deepblue_on_surface</item>
+        <!-- info bar -->
+        <item name="android:colorBackground">@color/deepblue_menu_background</item>
+        <!-- lists background -->
+        <item name="android:windowBackground">@color/deepblue_background</item>
+        <!-- low bar color -->
+        <item name="android:navigationBarColor">@color/deepblue_background</item>
+        <item name="android:alertDialogTheme">@style/DialogThemeDeepBlue</item>
+        <item name="android:dialogTheme">@style/DialogThemeDeepBlue</item>
+        <item name="alertDialogTheme">@style/DialogThemeDeepBlue</item>
+        <item name="dialogTheme">@style/DialogThemeDeepBlue</item>
+
+        <item name="colorControlHighlight">@color/deepblue_ripple</item>
+
+        <item name="android:ambientShadowAlpha">0.4</item>
+        <item name="android:spotShadowAlpha">0.4</item>
+        <item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/deepblue_glow</item>
+        <item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/deepblue_glow</item>
+        <item name="infoBarColor">@color/transparent</item>
+        <item name="android:colorForeground">@color/deepblue_on_background</item>
+        <item name="listRowDisabledColor">@color/grey</item>
+    </style>
+
+    <style name="AlarmAlertFullScreenDeepBlueTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="colorAccent">@color/deepblue_secondary</item>
+        <item name="colorControlHighlight">@color/deepblue_ripple</item>
+        <item name="android:colorBackground">@color/deepblue_background</item>
+        <item name="android:colorForeground">@color/deepblue_on_background</item>
+    </style>
+
+    <style name="DialogThemeDeepBlue" parent="Theme.AppCompat.Dialog">
+        <item name="colorAccent">@color/deepblue_secondary</item>
+        <item name="android:colorBackground">@color/deepblue_background</item>
+        <item name="backgroundTint">@color/deepblue_background</item>
+        <item name="android:windowBackground">@color/deepblue_background</item>
+        <item name="android:colorForeground">@color/deepblue_on_background</item>
+    </style>
+
+    <style name="TimePickerDialogFragmentDeepBlue" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="colorAccent">@color/deepblue_secondary</item>
+        <item name="timePickerDeleteButtonStyle">@style/TimePickerDeleteButtonStyle</item>
+        <item name="android:backgroundTint">@color/deepblue_background</item>
+        <item name="elevation">20dp</item>
+        <item name="android:ambientShadowAlpha">0.5</item>
+        <item name="android:spotShadowAlpha">0.2</item>
+        <item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/deepblue_glow</item>
+        <item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/deepblue_glow</item>
+        <item name="colorControlHighlight">@color/deepblue_ripple</item>
+        <item name="android:colorForeground">@color/deepblue_on_background</item>
+    </style>
+
+    <color name="deepblue_on_background">@color/whitish</color>
+    <color name="deepblue_surface">#151D27</color>
+    <color name="deepblue_on_surface">@color/whitish</color>
+    <color name="deepblue_background">#17202A</color>
+    <color name="deepblue_secondary">#4D9EEB</color>
+    <color name="deepblue_ripple">@color/dark_grey</color>
+    <color name="deepblue_glow">@color/blackish</color>
+    <color name="deepblue_primary">#4D9EEB</color>
+    <color name="deepblue_fab_color">#4D9EEB</color>
+    <color name="deepblue_menu_background">@color/mat_almost_black</color>
+</resources>
