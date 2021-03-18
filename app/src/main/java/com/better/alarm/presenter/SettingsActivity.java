@@ -37,7 +37,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        setTheme(dynamicThemeHandler.getIdForName(SettingsActivity.class.getName()));
+        setTheme(dynamicThemeHandler.defaultTheme());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);
         if (!getResources().getBoolean(R.bool.isTablet)) {

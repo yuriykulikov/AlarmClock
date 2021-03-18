@@ -64,7 +64,7 @@ class AlarmAlertFullScreen : FragmentActivity() {
     private var subscription: Disposable? = null
 
     override fun onCreate(icicle: Bundle?) {
-        setTheme(dynamicThemeHandler.getIdForName(AlarmAlertFullScreen::class.java.name))
+        setTheme(dynamicThemeHandler.alertTheme())
         super.onCreate(icicle)
         requestedOrientation = when {
             // portrait on smartphone

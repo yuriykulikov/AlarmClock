@@ -1,53 +1,56 @@
 package com.better.alarm.presenter
 
-import android.content.Context
-import android.content.SharedPreferences
-import androidx.preference.PreferenceManager
 import com.better.alarm.R
-import com.better.alarm.alert.AlarmAlertFullScreen
+import com.better.alarm.configuration.Prefs
+import com.better.alarm.stores.modify
 
-class DynamicThemeHandler(context: Context) {
-    private val themeKey = "theme"
-    private val sp: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-
-    private val synthwave = "synthwave"
+class DynamicThemeHandler(
+        private val prefs: Prefs,
+) {
     private val light = "light"
     private val dark = "dark"
+    private val synthwave = "synthwave"
     private val deusex = "deusex"
     private val deepblue = "deepblue"
 
+    private val themes: Map<String, List<Int>> = mapOf(
+            light to listOf(
+                    R.style.DefaultLightTheme,
+                    R.style.AlarmAlertFullScreenLightTheme,
+                    R.style.TimePickerDialogFragmentLight,
+            ),
+            dark to listOf(
+                    R.style.DefaultDarkTheme,
+                    R.style.AlarmAlertFullScreenDarkTheme,
+                    R.style.TimePickerDialogFragmentDark,
+            ),
+            synthwave to listOf(
+                    R.style.DefaultSynthwaveTheme,
+                    R.style.AlarmAlertFullScreenSynthwaveTheme,
+                    R.style.TimePickerDialogFragmentSynthwave,
+            ),
+            deusex to listOf(
+                    R.style.DefaultDeusExTheme,
+                    R.style.AlarmAlertFullScreenDeusExTheme,
+                    R.style.TimePickerDialogFragmentDeusEx,
+            ),
+            deepblue to listOf(
+                    R.style.DefaultDeepBlueTheme,
+                    R.style.AlarmAlertFullScreenDeepBlueTheme,
+                    R.style.TimePickerDialogFragmentDeepBlue,
+            ),
+    )
+
     init {
-        when (sp.getString(themeKey, dark)) {
-            light, dark, synthwave, deusex, deepblue -> {
-            }
-            else -> {
-                sp.edit().putString(themeKey, dark).apply()
+        prefs.theme.modify { currentTheme ->
+            when (currentTheme) {
+                in themes.keys -> currentTheme
+                else -> dark
             }
         }
     }
 
-    fun defaultTheme(): Int = when (preference()) {
-        light -> R.style.DefaultLightTheme
-        dark -> R.style.DefaultDarkTheme
-        synthwave -> R.style.DefaultSynthwaveTheme
-        deusex -> R.style.DefaultDeusExTheme
-        deepblue -> R.style.DefaultDeepBlueTheme
-        else -> R.style.DefaultDarkTheme
-    }
-
-    private fun preference(): String = sp.getString(themeKey, dark) ?: dark
-
-    fun getIdForName(name: String): Int = when {
-        preference() == light && name == AlarmAlertFullScreen::class.java.name -> R.style.AlarmAlertFullScreenLightTheme
-        preference() == light && name == TimePickerDialogFragment::class.java.name -> R.style.TimePickerDialogFragmentLight
-        preference() == dark && name == AlarmAlertFullScreen::class.java.name -> R.style.AlarmAlertFullScreenDarkTheme
-        preference() == dark && name == TimePickerDialogFragment::class.java.name -> R.style.TimePickerDialogFragmentDark
-        preference() == synthwave && name == AlarmAlertFullScreen::class.java.name -> R.style.AlarmAlertFullScreenSynthwaveTheme
-        preference() == synthwave && name == TimePickerDialogFragment::class.java.name -> R.style.TimePickerDialogFragmentSynthwave
-        preference() == deusex && name == AlarmAlertFullScreen::class.java.name -> R.style.AlarmAlertFullScreenDeusExTheme
-        preference() == deusex && name == TimePickerDialogFragment::class.java.name -> R.style.TimePickerDialogFragmentDeusEx
-        preference() == deepblue && name == AlarmAlertFullScreen::class.java.name -> R.style.AlarmAlertFullScreenDeepBlueTheme
-        preference() == deepblue && name == TimePickerDialogFragment::class.java.name -> R.style.TimePickerDialogFragmentDeepBlue
-        else -> defaultTheme()
-    }
+    fun defaultTheme(): Int = themes.getValue(prefs.theme.value)[0]
+    fun alertTheme(): Int = themes.getValue(prefs.theme.value)[1]
+    fun pickerTheme(): Int = themes.getValue(prefs.theme.value)[2]
 }

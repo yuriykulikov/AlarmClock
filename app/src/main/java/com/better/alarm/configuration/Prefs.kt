@@ -25,6 +25,7 @@ class Prefs private constructor(
         val vibrate: RxDataStore<Boolean>,
         val skipDuration: RxDataStore<Int>,
         val longClickDismiss: RxDataStore<Boolean>,
+        val theme: RxDataStore<String>,
 ) {
     fun layout(): Layout {
         return listRowLayout
@@ -55,6 +56,7 @@ class Prefs private constructor(
                     vibrate = factory.booleanDataStore("vibrate", true),
                     skipDuration = factory.intStringDataStore(SKIP_DURATION_KEY, -1),
                     longClickDismiss = factory.booleanDataStore(LONGCLICK_DISMISS_KEY, LONGCLICK_DISMISS_DEFAULT),
+                    theme = factory.stringDataStore("theme", "dark"),
             )
         }
 
