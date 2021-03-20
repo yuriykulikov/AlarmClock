@@ -21,28 +21,6 @@ import com.better.alarm.model.AlarmValue
  * @author Yuriy
  */
 interface IAlarmsManager {
-    /**
-     * Tell the model that a certain alarm has to be snoozed because of the user
-     * interaction
-     *
-     * @param alarm
-     */
-    fun snooze(alarm: Alarm)
-
-    /**
-     * Tell the model that a certain alarm has to be dismissed because of the
-     * user interaction
-     *
-     * @param alarm
-     */
-    fun dismiss(alarm: Alarm)
-
-    /**
-     * Delete an AlarmCore from the database
-     *
-     * @param alarm
-     */
-    fun delete(alarm: Alarm)
 
     /**
      * Enable of disable an alarm
@@ -65,5 +43,4 @@ interface IAlarmsManager {
      */
     fun createNewAlarm(): Alarm
 
-    fun delete(alarm: AlarmValue)
 }

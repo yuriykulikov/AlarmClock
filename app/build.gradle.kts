@@ -134,6 +134,8 @@ dependencies {
     implementation("org.koin:koin-core:2.1.5")
     implementation("androidx.fragment:fragment:1.2.5")
     implementation("androidx.preference:preference:1.1.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3")
 }
 
 dependencies {
@@ -141,6 +143,7 @@ dependencies {
     testImplementation("junit:junit:4.13")
     testImplementation("org.mockito:mockito-core:2.23.4")
     testImplementation("io.mockk:mockk:1.10.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.3")
 }
 
 dependencies {

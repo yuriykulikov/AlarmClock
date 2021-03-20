@@ -100,7 +100,7 @@ class AlarmsListFragment : Fragment() {
                     .setOnClickListener {
                         val enable = !alarm.isEnabled
                         logger.debug { "onClick: ${if (enable) "enable" else "disable"}" }
-                        alarms.enable(alarm, enable)
+                        alarms.getAlarm(alarm.id)?.enable(enable)
                     }
 
             val pickerClickTarget = with(row) { if (layout == Layout.CLASSIC) digitalClockContainer else digitalClock }
@@ -176,7 +176,8 @@ class AlarmsListFragment : Fragment() {
                 // Confirm that the alarm will be deleted.
                 AlertDialog.Builder(activity).setTitle(getString(R.string.delete_alarm))
                         .setMessage(getString(R.string.delete_alarm_confirm))
-                        .setPositiveButton(android.R.string.ok) { _, _ -> alarms.delete(alarm) }.setNegativeButton(android.R.string.cancel, null).show()
+                        .setPositiveButton(android.R.string.ok) { _, _ -> alarms.getAlarm(alarm.id)?.delete() }
+                        .setNegativeButton(android.R.string.cancel, null).show()
             }
             R.id.list_context_enable -> {
                 alarms.getAlarm(alarmId = alarm.id)?.run {

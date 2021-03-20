@@ -27,6 +27,7 @@ import com.better.alarm.model.Calendars
 import com.better.alarm.model.ContainerFactory
 import com.better.alarm.model.IAlarmsScheduler
 import com.better.alarm.persistance.DatabaseQuery
+import com.better.alarm.persistance.RetryingDatabaseQuery
 import com.better.alarm.persistance.PersistingContainerFactory
 import com.better.alarm.presenter.AlarmsListActivity
 import com.better.alarm.presenter.DynamicThemeHandler
@@ -102,7 +103,7 @@ fun startKoin(context: Context): Koin {
         single<AlarmCore.IStateNotifier> { AlarmStateNotifier(get()) }
         single<ContainerFactory> { PersistingContainerFactory(get(), get()) }
         factory { get<Context>().contentResolver }
-        single<DatabaseQuery> { DatabaseQuery(get(), get()) }
+        single<DatabaseQuery> { RetryingDatabaseQuery(get(), get()) }
         single<AlarmCoreFactory> { AlarmCoreFactory(logger("AlarmCore"), get(), get(), get(), get(), get()) }
         single<Alarms> { Alarms(get(), get(), get(), get(), logger("Alarms")) }
         factory<IAlarmsManager> { get<Alarms>() }
