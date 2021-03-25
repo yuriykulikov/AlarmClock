@@ -64,7 +64,6 @@
             android:layout_weight="1"
             android:gravity="center"
             android:layout_gravity="center"
-            android:background="@color/transparent"
             style="?attr/timePickerDeleteButtonStyle"
             android:contentDescription="@string/delete"
             android:layout_height="match_parent" />
