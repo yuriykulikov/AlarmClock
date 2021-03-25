@@ -19,7 +19,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/set_alarm_menu_delete_alarm"
-        android:icon="@android:drawable/ic_menu_delete"
+        android:icon="@drawable/ic_baseline_delete_24"
         app:showAsAction="ifRoom|withText"
         android:title="@string/delete_alarm" />
     <item

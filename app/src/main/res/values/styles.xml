@@ -30,17 +30,17 @@
     <style name="dialpad">
         <item name="android:textSize">50sp</item>
         <item name="android:fontFamily">sans-serif-light</item>
-        <item name="android:background">@drawable/item_background</item>
+        <item name="android:background">@color/transparent</item>
     </style>
 
     <style name="dialpad_ampm" parent="dialpad">
         <item name="android:textSize">24sp</item>
-        <item name="android:background">@drawable/item_background</item>
+        <item name="android:background">@color/transparent</item>
     </style>
 
     <style name="TimePickerDeleteButtonStyle">
         <item name="android:src">@drawable/ic_backspace</item>
         <item name="android:tint">?android:attr/textColorPrimary</item>
-        <item name="android:background">@drawable/item_background</item>
+        <item name="android:background">@color/transparent</item>
     </style>
 </resources>

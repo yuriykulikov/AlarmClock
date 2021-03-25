@@ -7,6 +7,7 @@
         <!-- FAB color-->
         <item name="listFabColor">@color/light_primary</item>
         <item name="infoBarColor">?android:attr/colorBackground</item>
+        <item name="android:colorForeground">@color/light_on_background</item>
         <item name="listRowDisabledColor">@color/grey</item>
     </style>
 
@@ -17,6 +18,7 @@
     <style name="TimePickerDialogFragmentLight" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="timePickerDeleteButtonStyle">@style/TimePickerDeleteButtonStyle</item>
+        <item name="android:colorForeground">@color/light_on_background</item>
     </style>
 
     <color name="light_on_background">@color/mat_almost_black</color>
