@@ -2,6 +2,7 @@ package com.better.alarm.presenter
 
 import android.view.View
 import android.widget.CompoundButton
+import android.widget.ImageView
 import android.widget.TextView
 import com.better.alarm.R
 import com.better.alarm.configuration.Layout
@@ -20,7 +21,8 @@ class RowHolder(view: View, id: Int, val layout: Layout) {
     val daysOfWeek: TextView
     val label: TextView
     val detailsButton: View
-    val detailsTextView: TextView
+    val detailsImageView: ImageView
+    val detailsCheckImageView: ImageView
     val idHasChanged: Boolean
 
     init {
@@ -31,7 +33,8 @@ class RowHolder(view: View, id: Int, val layout: Layout) {
         daysOfWeek = find(R.id.list_row_daysOfWeek) as TextView
         label = find(R.id.list_row_label) as TextView
         detailsButton = find(R.id.details_button_container)
-        detailsTextView = detailsButton.findViewById(R.id.details_button_textview)
+        detailsImageView = detailsButton.findViewById(R.id.details_button_textview)
+        detailsCheckImageView = detailsButton.findViewById(R.id.details_button_check)
         val prev: RowHolder? = rowView.tag as RowHolder?
         idHasChanged = prev?.alarmId != id
         rowView.tag = this

@@ -94,15 +94,33 @@
         style="@style/alarm_list_left_column"
         android:gravity="center">
 
-        <TextView
-            android:id="@+id/details_button_textview"
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:focusable="false"
-            android:text="···"
-            android:textSize="40dp"
-            android:textStyle="normal" />
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/details_button_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:focusable="false"
+                android:src="@drawable/ic_baseline_more_horiz_24"
+                android:textSize="40dp"
+                android:textStyle="normal"
+                android:tint="?android:attr/textColorPrimary" />
+
+            <ImageView
+                android:id="@+id/details_button_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:focusable="false"
+                android:src="@drawable/ic_baseline_check_24"
+                android:alpha="0"
+                android:textSize="40dp"
+                android:textStyle="normal"
+                android:tint="?android:attr/textColorPrimary" />
+        </RelativeLayout>
     </com.better.alarm.view.DontPressWithParentLayout>
 
 </LinearLayout>

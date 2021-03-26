@@ -1,6 +1,8 @@
 package com.better.alarm.presenter
 
 import android.content.res.Resources
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.util.TypedValue
 import com.better.alarm.lollipop
 
@@ -18,12 +20,14 @@ class ListRowHighlighter(
             row.label.setTextColor(accentColor)
             row.daysOfWeek.setTextColor(accentColor)
             row.digitalClock.setColor(primaryTextColor)
-            row.detailsTextView.setTextColor(primaryTextColor)
+            row.detailsImageView.colorFilter = PorterDuffColorFilter(primaryTextColor, PorterDuff.Mode.MULTIPLY)
+            row.detailsCheckImageView.colorFilter = PorterDuffColorFilter(primaryTextColor, PorterDuff.Mode.MULTIPLY)
         } else {
             row.label.setTextColor(disabledColor)
             row.daysOfWeek.setTextColor(disabledColor)
             row.digitalClock.setColor(disabledColor)
-            row.detailsTextView.setTextColor(disabledColor)
+            row.detailsImageView.colorFilter = PorterDuffColorFilter(disabledColor, PorterDuff.Mode.MULTIPLY)
+            row.detailsCheckImageView.colorFilter = PorterDuffColorFilter(disabledColor, PorterDuff.Mode.MULTIPLY)
         }
     }
 

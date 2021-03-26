@@ -27,6 +27,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.transition.Transition
+import android.util.Config
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -144,6 +145,8 @@ class AlarmDetailsFragment : Fragment() {
             rowView.setOnClickListener {
                 saveAlarm()
             }
+
+            rowHolder.animateCheck(check = true)
         }
 
         view.findViewById<View>(R.id.details_activity_button_save).setOnClickListener { saveAlarm() }
@@ -307,6 +310,7 @@ class AlarmDetailsFragment : Fragment() {
                 edit { withChangeData(editorToSave) }
             }
             store.hideDetails(rowHolder)
+            rowHolder.animateCheck(check = false)
         }.addToDisposables()
     }
 
@@ -318,6 +322,7 @@ class AlarmDetailsFragment : Fragment() {
             }
             // else do not save changes
             store.hideDetails(rowHolder)
+            rowHolder.animateCheck(check = false)
         }
     }
 
@@ -340,6 +345,11 @@ class AlarmDetailsFragment : Fragment() {
 
     private fun Disposable.addToDisposables() {
         disposables.add(this)
+    }
+
+    private fun RowHolder.animateCheck(check: Boolean) {
+        rowHolder.detailsCheckImageView.animate().alpha(if (check) 1f else 0f).setDuration(500).start()
+        rowHolder.detailsImageView.animate().alpha(if (check) 0f else 1f).setDuration(500).start()
     }
 
     /**
