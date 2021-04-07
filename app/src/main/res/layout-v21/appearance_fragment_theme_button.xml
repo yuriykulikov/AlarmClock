@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/appearance_fragment_theme_button_container"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_rect_filled"
+    android:backgroundTint="@color/mat_purple"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/appearance_fragment_theme_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:padding="6dp"
+        android:background="@drawable/rounded_rect_filled"
+        android:backgroundTint="@color/dark_fab_color"
+        android:src="@drawable/ic_baseline_check_24" />
+</LinearLayout>

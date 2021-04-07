@@ -11,4 +11,6 @@
     <attr name="infoBarColor" format="color" />
     <attr name="listFabColor" format="color" />
     <attr name="listRowDisabledColor" format="color" />
+    <attr name="drawerClosedBackgroundColor" format="color" />
+    <attr name="drawerBackgroundColor" format="color" />
 </resources>

@@ -44,11 +44,5 @@ class ListRowHighlighter(
                     disabledColor = theme.resolveColor(com.better.alarm.R.attr.listRowDisabledColor)
             )
         }
-
-        private fun Resources.Theme.resolveColor(color: Int): Int {
-            return TypedValue().also {
-                resolveAttribute(color, it, true)
-            }.data
-        }
     }
 }

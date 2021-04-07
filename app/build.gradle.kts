@@ -64,8 +64,8 @@ val acraEmail = project.rootProject.file("local.properties")
 android {
     compileSdkVersion(29)
     defaultConfig {
-        versionCode = 30701
-        versionName = "3.07.01"
+        versionCode = 30802
+        versionName = "3.08.02"
         applicationId = "com.better.alarm"
         minSdkVersion(16)
         targetSdkVersion(29)
@@ -136,6 +136,7 @@ dependencies {
     implementation("androidx.preference:preference:1.1.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3")
+    implementation("com.google.android.material:material:1.1.0")
 }
 
 dependencies {

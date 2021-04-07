@@ -88,11 +88,11 @@
 
     <string name="theme_title">Interface theme</string>
     <string-array name="themes_entries">
-        <item>Dark</item>
+        <item>Neon</item>
         <item>Light</item>
-        <item>Synthwave</item>
+        <item>Synth</item>
         <item>Deus Ex</item>
-        <item>Deep blue</item>
+        <item>Abyss</item>
     </string-array>
     <string-array name="themes_values">
         <item>dark</item>

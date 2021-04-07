@@ -15,6 +15,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuItemCompat
 import com.better.alarm.BuildConfig
 import com.better.alarm.R
@@ -30,7 +31,7 @@ import io.reactivex.disposables.Disposables
  * @author Kate
  */
 class ActionBarHandler(
-        private val mContext: Activity,
+        private val mContext: AppCompatActivity,
         private val store: UiStore,
         private val alarms: IAlarmsManager,
         private val reporter: BugReporter

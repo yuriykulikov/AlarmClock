@@ -50,7 +50,8 @@ class DynamicThemeHandler(
         }
     }
 
-    fun defaultTheme(): Int = themes.getValue(prefs.theme.value)[0]
+    @JvmOverloads
+    fun defaultTheme(theme: String? = null): Int = themes.getValue(theme ?: prefs.theme.value)[0]
     fun alertTheme(): Int = themes.getValue(prefs.theme.value)[1]
     fun pickerTheme(): Int = themes.getValue(prefs.theme.value)[2]
 }

@@ -35,9 +35,9 @@ data class Store(
 
             val alarm: AlarmValue,
 
-            val nextNonPrealarmTime: Long
+            val nextNonPrealarmTime: Long,
 
-    ) {
+            ) {
         fun alarm(): AlarmValue = alarm
 
         fun nextNonPrealarmTime(): Long = nextNonPrealarmTime
@@ -46,9 +46,9 @@ data class Store(
     data class AlarmSet(
             val alarm: AlarmValue,
 
-            val millis: Long
+            val millis: Long,
 
-    ) {
+            ) {
         fun alarm(): AlarmValue = alarm
 
         fun millis(): Long = millis

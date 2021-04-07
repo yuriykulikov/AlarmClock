@@ -28,6 +28,8 @@
         <item name="infoBarColor">@color/transparent</item>
         <item name="android:colorForeground">@color/synthwave_on_background</item>
         <item name="listRowDisabledColor">@color/grey</item>
+        <item name="drawerBackgroundColor">@color/synthwave_surface</item>
+        <item name="drawerClosedBackgroundColor">@color/synthwave_background</item>
     </style>
 
     <style name="AlarmAlertFullScreenSynthwaveTheme" parent="Theme.AppCompat.NoActionBar">

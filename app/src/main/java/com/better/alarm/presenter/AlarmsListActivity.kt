@@ -107,37 +107,25 @@ class AlarmsListActivity : AppCompatActivity() {
                     return transitioningToNewAlarmDetails
                 }
 
-                override fun edit(id: Int) {
+                override fun edit(id: Int, holder: RowHolder?) {
                     alarms.getAlarm(id)?.let { alarm ->
                         editing.onNext(EditedAlarm(
                                 isNew = false,
                                 value = Optional.of(alarm.data),
                                 id = id,
-                                holder = Optional.absent()))
+                                holder = Optional.fromNullable(holder)))
                     }
                 }
 
-                override fun edit(id: Int, holder: RowHolder) {
-                    alarms.getAlarm(id)?.let { alarm ->
-                        editing.onNext(EditedAlarm(
-                                isNew = false,
-                                value = Optional.of(alarm.data),
-                                id = id,
-                                holder = Optional.of(holder)))
-                    }
-                }
-
-                override fun hideDetails() {
-                    editing.onNext(EditedAlarm())
-                }
-
-                override fun hideDetails(holder: RowHolder) {
+                override fun hideDetails(holder: RowHolder?) {
                     editing.onNext(EditedAlarm(
                             isNew = false,
                             value = Optional.absent(),
-                            id = holder.alarmId,
-                            holder = Optional.of(holder)))
+                            id = holder?.alarmId ?: -1,
+                            holder = Optional.fromNullable(holder)))
                 }
+
+                override var openDrawerOnCreate: Boolean = false
             }
 
             return UiStoreIR()
@@ -146,9 +134,12 @@ class AlarmsListActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+        println("new $intent, ${intent?.extras}")
         if (intent?.getStringExtra("reason") == SettingsFragment.themeChangeReason) {
             finish()
-            startActivity(Intent(this, AlarmsListActivity::class.java))
+            startActivity(Intent(this, AlarmsListActivity::class.java).apply {
+                putExtra("openDrawerOnCreate", true)
+            })
         }
     }
 
@@ -162,7 +153,7 @@ class AlarmsListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(dynamicThemeHandler.defaultTheme())
         super.onCreate(savedInstanceState)
-
+        uiStore.openDrawerOnCreate = intent?.getBooleanExtra("openDrawerOnCreate", false) ?: false
         when {
             savedInstanceState != null && savedInstanceState.getInt("version", BuildConfig.VERSION_CODE) == BuildConfig.VERSION_CODE -> {
                 val restored = editedAlarmFromSavedInstanceState(savedInstanceState)
