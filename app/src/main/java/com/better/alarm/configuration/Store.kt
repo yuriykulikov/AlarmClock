@@ -16,8 +16,10 @@ data class Store(
         val alarmsSubject: BehaviorSubject<List<AlarmValue>>,
         val next: BehaviorSubject<Optional<Next>>,
         val sets: Subject<AlarmSet>,
-        val events: Subject<Event>
+        val events: Subject<Event>,
 ) {
+    val uiVisible: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
+
     fun alarms(): Observable<List<AlarmValue>> {
         return alarmsSubject().distinctUntilChanged()
     }

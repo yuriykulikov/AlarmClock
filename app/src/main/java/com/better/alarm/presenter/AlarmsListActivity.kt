@@ -204,6 +204,12 @@ class AlarmsListActivity : AppCompatActivity() {
         super.onResume()
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
         NotificationSettings().checkSettings(this)
+        store.uiVisible.onNext(true)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        store.uiVisible.onNext(false)
     }
 
     override fun onStop() {

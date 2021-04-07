@@ -22,16 +22,19 @@ import android.widget.Toast
 import com.better.alarm.R
 import com.better.alarm.configuration.Store
 import com.better.alarm.model.AlarmValue
+import io.reactivex.Observable
+import io.reactivex.functions.BiFunction
 
 class ToastPresenter(private val store: Store, private val context: Context) {
     private var sToast: Toast? = null
 
     fun start() {
-        store.sets().subscribe { (alarm: AlarmValue, millis: Long) ->
-            if (alarm.isEnabled) {
-                popAlarmSetToast(context, millis)
-            }
-        }
+        store.sets().withLatestFrom<Boolean, Pair<Store.AlarmSet, Boolean>>(store.uiVisible, BiFunction { set, uiVisible -> set to uiVisible })
+                .subscribe { (set: Store.AlarmSet, uiVisible: Boolean) ->
+                    if (!uiVisible && set.alarm.isEnabled) {
+                        popAlarmSetToast(context, set.millis)
+                    }
+                }
     }
 
     fun setToast(toast: Toast) {
