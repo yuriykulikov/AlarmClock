@@ -175,8 +175,6 @@ class PickerAmTest : BaseTest() {
 
     @Test
     fun test1230pm() {
-        assert(one() == one())
-
         one().click()
         two().click()
         three().click()
