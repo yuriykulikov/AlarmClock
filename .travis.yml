@@ -7,7 +7,7 @@ android:
     - build-tools-26.0.2
     - android-22
     - android-26
-    - sys-img-armeabi-v7a-android-22
+#    - sys-img-armeabi-v7a-android-22
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -18,19 +18,21 @@ cache:
     - $HOME/.android/build-cache
 before_install:
   - yes | sdkmanager "platforms;android-28"
-before_script:
-  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
-  - emulator -avd test -no-audio -no-window &
-  - android-wait-for-emulator
-  - adb shell input keyevent 82 &
+#before_script:
+#  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
+#  - emulator -avd test -no-audio -no-window &
+#  - android-wait-for-emulator
+#  - adb shell input keyevent 82 &
 script:
-  - ./gradlew build
-  - adb shell settings put global window_animation_scale 0.0
-  - adb shell settings put global transition_animation_scale 0.0
-  - adb shell settings put global animator_duration_scale 0.0
-  - adb shell settings put secure show_ime_with_hard_keyboard 0
-  - adb shell am broadcast -a com.android.intent.action.SET_LOCALE --es com.android.intent.extra.LOCALE EN
-  - adb shell setprop dalvik.vm.dexopt-flags v=n,o=v
-  - travis_wait 30 ./gradlew jacocoTestReport
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - ./gradlew assembleDevelopDebug
+  - ./gradlew testDevelopDebugUnitTest
+# This is slow and flaky
+#   - adb shell settings put global window_animation_scale 0.0
+#   - adb shell settings put global transition_animation_scale 0.0
+#   - adb shell settings put global animator_duration_scale 0.0
+#   - adb shell settings put secure show_ime_with_hard_keyboard 0
+#   - adb shell am broadcast -a com.android.intent.action.SET_LOCALE --es com.android.intent.extra.LOCALE EN
+#   - adb shell setprop dalvik.vm.dexopt-flags v=n,o=v
+#   - travis_wait 30 ./gradlew connectedDevelopDebugAndroidTest jacocoTestReport
+# after_success:
+#   - bash <(curl -s https://codecov.io/bash)
