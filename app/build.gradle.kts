@@ -43,12 +43,15 @@ tasks.create("jacocoTestReport", JacocoReport::class.java) {
             )
     ))
 
-    dependsOn("test${"developDebug".capitalize()}UnitTest")
-    dependsOn("connected${"developDebug".capitalize()}AndroidTest")
+    // dependsOn("test${"developDebug".capitalize()}UnitTest")
+    // dependsOn("connected${"developDebug".capitalize()}AndroidTest")
 }
 
 tasks.withType(Test::class.java) {
-    (this.extensions.getByName("jacoco") as JacocoTaskExtension).isIncludeNoLocationClasses = true
+    (this.extensions.getByName("jacoco") as JacocoTaskExtension).apply {
+        isIncludeNoLocationClasses = true
+        excludes = listOf("jdk.internal.*")
+    }
 }
 
 val acraEmail = project.rootProject.file("local.properties")
@@ -61,8 +64,8 @@ val acraEmail = project.rootProject.file("local.properties")
 android {
     compileSdkVersion(29)
     defaultConfig {
-        versionCode = 30700
-        versionName = "3.07.00"
+        versionCode = 30701
+        versionName = "3.07.01"
         applicationId = "com.better.alarm"
         minSdkVersion(15)
         targetSdkVersion(29)
@@ -94,6 +97,7 @@ android {
 
     lintOptions {
         isAbortOnError = false
+        isCheckReleaseBuilds = false
     }
 
     adbOptions {
