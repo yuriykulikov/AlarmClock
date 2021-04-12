@@ -55,11 +55,11 @@ tasks.withType(Test::class.java) {
 }
 
 val acraEmail = project.rootProject.file("local.properties")
-        .let { if (it.exists()) it.readLines() else emptyList() }
-        .filterNot { it.startsWith("#") }
-        .map { line -> line.substringBefore("=") to line.substringAfter("=") }
-        .toMap()
-        .getOrDefault("acra.email", "")
+    .let { if (it.exists()) it.readLines() else emptyList() }
+    .firstOrNull { it.startsWith("acra.email") }
+    ?.substringAfter("=")
+    ?: System.getenv()["ACRA_EMAIL"]
+    ?: ""
 
 android {
     compileSdkVersion(29)
