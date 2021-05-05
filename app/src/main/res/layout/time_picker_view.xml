@@ -38,7 +38,7 @@
                 android:id="@+id/time_picker_time"
                 android:singleLine="true"
                 android:ellipsize="none"
-                android:textSize="60sp"
+                android:textSize="60dp"
                 style="@style/dialpad"
                 android:textColor="?android:attr/textColorPrimary"
                 android:layout_height="wrap_content"

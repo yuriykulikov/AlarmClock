@@ -57,7 +57,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-thin"
-                android:textSize="30sp" />
+                android:textSize="30dp" />
 
             <TextView
                 android:id="@+id/digital_clock_am_pm"
@@ -105,7 +105,6 @@
                 android:clickable="false"
                 android:focusable="false"
                 android:src="@drawable/ic_baseline_more_horiz_24"
-                android:textSize="40dp"
                 android:textStyle="normal"
                 android:tint="?android:attr/textColorPrimary" />
 
@@ -117,7 +116,6 @@
                 android:focusable="false"
                 android:src="@drawable/ic_baseline_check_24"
                 android:alpha="0"
-                android:textSize="40dp"
                 android:textStyle="normal"
                 android:tint="?android:attr/textColorPrimary" />
         </RelativeLayout>
