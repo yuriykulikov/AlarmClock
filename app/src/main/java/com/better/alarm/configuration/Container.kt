@@ -103,7 +103,7 @@ fun startKoin(context: Context): Koin {
         single<AlarmCore.IStateNotifier> { AlarmStateNotifier(get()) }
         single<ContainerFactory> { PersistingContainerFactory(get(), get()) }
         factory { get<Context>().contentResolver }
-        single<DatabaseQuery> { RetryingDatabaseQuery(get(), get()) }
+        single<DatabaseQuery> { RetryingDatabaseQuery(get(), get(), logger("DatabaseQuery")) }
         single<AlarmCoreFactory> { AlarmCoreFactory(logger("AlarmCore"), get(), get(), get(), get(), get()) }
         single<Alarms> { Alarms(get(), get(), get(), get(), logger("Alarms")) }
         factory<IAlarmsManager> { get<Alarms>() }

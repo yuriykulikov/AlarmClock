@@ -64,8 +64,8 @@ val acraEmail = project.rootProject.file("local.properties")
 android {
     compileSdkVersion(29)
     defaultConfig {
-        versionCode = 30804
-        versionName = "3.08.04"
+        versionCode = 30805
+        versionName = "3.08.05"
         applicationId = "com.better.alarm"
         minSdkVersion(16)
         targetSdkVersion(29)
