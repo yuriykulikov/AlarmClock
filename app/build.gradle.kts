@@ -134,21 +134,22 @@ dependencies {
     implementation("org.koin:koin-core:2.1.5")
     implementation("androidx.fragment:fragment:1.2.5")
     implementation("androidx.preference:preference:1.1.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.0.1")
 }
 
 dependencies {
-    testImplementation("net.wuerl.kotlin:assertj-core-kotlin:0.1.1")
-    testImplementation("junit:junit:4.13")
-    testImplementation("org.mockito:mockito-core:2.23.4")
-    testImplementation("io.mockk:mockk:1.10.0")
+    // testImplementation("net.wuerl.kotlin:assertj-core-kotlin:0.1.1")
+    // testImplementation("junit:junit:4.13")
+    // testImplementation("org.mockito:mockito-core:2.23.4")
+    // testImplementation("io.mockk:mockk:1.10.0")
 }
 
 dependencies {
-    androidTestImplementation("com.squareup.assertj:assertj-android:1.1.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
-    androidTestImplementation("androidx.test:runner:1.3.0")
-    androidTestImplementation("androidx.test:rules:1.3.0")
+    // androidTestImplementation("com.squareup.assertj:assertj-android:1.1.1")
+    // androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
+    // androidTestImplementation("androidx.test:runner:1.3.0")
+    // androidTestImplementation("androidx.test:rules:1.3.0")
     // androidx.test.ext.junit.rules.ActivityScenarioRule
     // androidx.test.ext.junit.runners.AndroidJUnit4
-    androidTestImplementation("androidx.test.ext:junit:1.1.2")
+    // androidTestImplementation("androidx.test.ext:junit:1.1.2")
 }

@@ -91,6 +91,7 @@ class ActionBarHandler(
     fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_item_settings -> mContext.startActivity(Intent(mContext, SettingsActivity::class.java))
+            R.id.menu_item_rewards -> mContext.startActivity(Intent(mContext, RewardsActivity::class.java))
             R.id.menu_review -> showSayThanks()
             R.id.menu_bugreport -> showBugreport()
             R.id.set_alarm_menu_delete_alarm -> deleteAlarm()

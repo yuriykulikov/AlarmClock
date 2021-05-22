@@ -47,6 +47,16 @@
             </intent-filter>
         </activity>
 
+        <!-- Rewards activity -->
+        <activity
+            android:name=".presenter.RewardsActivity"
+            android:excludeFromRecents="true"
+            android:label="Rewards">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".presenter.HandleSetAlarm"
             android:excludeFromRecents="true"

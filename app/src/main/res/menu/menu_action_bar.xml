@@ -28,6 +28,11 @@
         app:showAsAction="never"
         android:title="@string/settings" />
     <item
+        android:id="@+id/menu_item_rewards"
+        android:icon="@android:drawable/ic_menu_preferences"
+        app:showAsAction="never"
+        android:title="Rewards" />
+    <item
         android:id="@+id/menu_bugreport"
         android:icon="@android:drawable/ic_menu_send"
         app:showAsAction="never"
