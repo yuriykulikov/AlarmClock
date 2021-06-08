@@ -65,9 +65,10 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
     }
 
     private fun fromCursor(c: Cursor, calendars: Calendars): AlarmValue {
+        val enabled = c.getInt(Columns.ALARM_ENABLED_INDEX) == 1
         return AlarmValue(
                 id = c.getInt(Columns.ALARM_ID_INDEX),
-                isEnabled = c.getInt(Columns.ALARM_ENABLED_INDEX) == 1,
+                isEnabled = enabled,
                 hour = c.getInt(Columns.ALARM_HOUR_INDEX),
                 minutes = c.getInt(Columns.ALARM_MINUTES_INDEX),
                 daysOfWeek = DaysOfWeek(c.getInt(Columns.ALARM_DAYS_OF_WEEK_INDEX)),
@@ -75,7 +76,8 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
                 isPrealarm = c.getInt(Columns.ALARM_PREALARM_INDEX) == 1,
                 label = c.getString(Columns.ALARM_MESSAGE_INDEX) ?: "",
                 alarmtone = Alarmtone.fromString(c.getString(Columns.ALARM_ALERT_INDEX)),
-                state = c.getString(Columns.ALARM_STATE_INDEX),
+                // it seems that there are still users with older databases which do not have the ALARM_STATE_INDEX column
+                state = c.getString(Columns.ALARM_STATE_INDEX) ?: (if (enabled) "NormalSetState" else "DisabledState"),
                 nextTime = calendars.now().apply { timeInMillis = c.getLong(Columns.ALARM_TIME_INDEX) }
         )
     }
