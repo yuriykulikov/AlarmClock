@@ -4,29 +4,57 @@
     android:layout_gravity="bottom"
     android:orientation="vertical">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:text="@string/preference_list_row_layout_title"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="?attr/colorAccent" />
+        android:gravity="center">
 
-    <RadioGroup
-        android:id="@+id/appearance_radio_group_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:orientation="horizontal"
-        android:padding="12dp" />
+        <ImageButton
+            android:id="@+id/appearance_arrow_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:padding="12dp"
+            android:src="@drawable/ic_baseline_keyboard_arrow_down_24"
+            android:tint="?android:attr/textColorPrimary" />
 
-    <TextView
+        <TextView
+            android:id="@+id/appearance_arrows_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:padding="12dp"
+            android:paddingHorizontal="20dp"
+            android:text="@string/preference_list_row_layout_title"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="?attr/colorAccent" />
+
+        <ImageButton
+            android:id="@+id/appearance_arrow_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:padding="12dp"
+            android:src="@drawable/ic_baseline_keyboard_arrow_up_24"
+            android:tint="?android:attr/textColorPrimary" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:text="@string/theme_title"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="?attr/colorAccent" />
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:padding="12dp"
+            android:text="@string/theme_title"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="?attr/colorAccent" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/appearance_row_0"
@@ -35,4 +63,5 @@
         android:layout_marginVertical="12dp"
         android:gravity="center_horizontal"
         android:orientation="horizontal" />
+
 </LinearLayout>

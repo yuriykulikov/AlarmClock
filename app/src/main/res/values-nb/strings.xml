@@ -93,11 +93,6 @@
         <item>Stor</item>
         <item>Klassisk</item>
     </string-array>
-    <string-array name="preference_list_row_layout_values">
-        <item>kompakt</item>
-        <item>stor</item>
-        <item>klassisk</item>
-    </string-array>
 
     <string name="simple_alarm_clock">Simple Alarm Clock</string>
     <!--

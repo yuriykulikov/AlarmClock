@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2012 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License
- */
 package com.better.alarm.presenter
 
 import android.annotation.TargetApi
@@ -26,8 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.LinearLayout
-import android.widget.RadioButton
-import android.widget.RadioGroup
 import androidx.fragment.app.Fragment
 import com.better.alarm.R
 import com.better.alarm.configuration.Prefs
@@ -55,23 +38,20 @@ class AppearanceFragment : Fragment() {
                 }
             }
 
-            findViewById<RadioGroup>(R.id.appearance_radio_group_layout).apply {
-                appendDivider(inflater)
-                val values = resources.getStringArray(R.array.preference_list_row_layout_values)
-                resources.getStringArray(R.array.preference_list_row_layout_entries)
-                        .forEachIndexed { index, entry ->
-                            val radioButton = RadioButton(requireContext()).apply {
-                                text = entry
-                                id = index
-                            }
-                            addView(radioButton)
-                            appendDivider(inflater)
-                        }
+            val arrowUp = findViewById<ImageButton>(R.id.appearance_arrow_up)
+            val arrowDown = findViewById<ImageButton>(R.id.appearance_arrow_down)
 
-                check(values.indexOf(prefs.listRowLayout.value))
+            arrowUp.setOnClickListener {
+                when (prefs.listRowLayout.value) {
+                    "classic" -> prefs.listRowLayout.value = "compact"
+                    "compact" -> prefs.listRowLayout.value = "bold"
+                }
+            }
 
-                setOnCheckedChangeListener { group, checkedId ->
-                    prefs.listRowLayout.value = values[checkedId]
+            arrowDown.setOnClickListener {
+                when (prefs.listRowLayout.value) {
+                    "bold" -> prefs.listRowLayout.value = "compact"
+                    "compact" -> prefs.listRowLayout.value = "classic"
                 }
             }
         }
@@ -88,20 +68,15 @@ class AppearanceFragment : Fragment() {
                 backgroundTintList = ColorStateList.valueOf(appearance.accent)
             }
             findViewById<ImageButton>(R.id.appearance_fragment_theme_button)
-                    .apply {
-                        // text = appearance.name
-                        // setTextColor(appearance.textColor)
-                        // setBackgroundColor(appearance.accent)
-                        // strokeColor = ColorStateList.valueOf(appearance.accent)
-                        backgroundTintList = ColorStateList.valueOf(appearance.background)
-                        imageTintList = if (prefs.theme.value != appearance.preferenceName)
-                            ColorStateList.valueOf(0) else ColorStateList.valueOf(appearance.textColor)
-                        // setBackgroundColor(appearance.background)
-                        setOnClickListener {
-                            prefs.theme.value = appearance.preferenceName
-                            applySelectedTheme()
-                        }
+                .apply {
+                    backgroundTintList = ColorStateList.valueOf(appearance.background)
+                    val imageTintColor = if (prefs.theme.value != appearance.preferenceName) 0 else appearance.textColor
+                    imageTintList = ColorStateList.valueOf(imageTintColor)
+                    setOnClickListener {
+                        prefs.theme.value = appearance.preferenceName
+                        applySelectedTheme()
                     }
+                }
         }
         addView(button)
     }
@@ -109,39 +84,39 @@ class AppearanceFragment : Fragment() {
     private fun applySelectedTheme() {
         Handler().post {
             val intent = requireActivity()
-                    .packageManager
-                    .getLaunchIntentForPackage(requireActivity().packageName)
-                    ?.apply {
-                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        putExtra("reason", SettingsFragment.themeChangeReason)
-                    }
+                .packageManager
+                .getLaunchIntentForPackage(requireActivity().packageName)
+                ?.apply {
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    putExtra("reason", SettingsFragment.themeChangeReason)
+                }
             startActivity(intent)
         }
     }
 }
 
 data class AppearanceModel(
-        val name: String,
-        val preferenceName: String,
-        val background: Int,
-        val accent: Int,
-        val textColor: Int,
+    val name: String,
+    val preferenceName: String,
+    val background: Int,
+    val accent: Int,
+    val textColor: Int,
 )
 
 fun appearances(resources: Resources, themeHandler: DynamicThemeHandler): List<AppearanceModel> {
     val values = resources.getStringArray(R.array.themes_values)
 
     return resources.getStringArray(R.array.themes_entries)
-            .mapIndexed { index, entry ->
-                val theme = resources.newTheme().apply {
-                    applyStyle(themeHandler.defaultTheme(values[index]), true)
-                }
-                AppearanceModel(
-                        name = entry,
-                        preferenceName = values[index],
-                        background = theme.resolveColor(android.R.attr.windowBackground),
-                        accent = theme.resolveColor(R.attr.listFabColor),
-                        textColor = theme.resolveColor(android.R.attr.colorForeground)
-                )
+        .mapIndexed { index, entry ->
+            val theme = resources.newTheme().apply {
+                applyStyle(themeHandler.defaultTheme(values[index]), true)
             }
+            AppearanceModel(
+                name = entry,
+                preferenceName = values[index],
+                background = theme.resolveColor(android.R.attr.windowBackground),
+                accent = theme.resolveColor(R.attr.listFabColor),
+                textColor = theme.resolveColor(android.R.attr.colorForeground)
+            )
+        }
 }
