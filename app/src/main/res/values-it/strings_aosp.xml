@@ -14,7 +14,7 @@
  -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="alarm_list_title" msgid="7589940465292950600">"Simple Alarm Clock - Sveglia Semplice"</string>
+    <string name="alarm_list_title" msgid="7589940465292950600">"Sveglia Semplice"</string>
     <string name="add_alarm" msgid="5976616107390962899">"Aggiungi sveglia"</string>
     <string name="delete_alarm" msgid="3457780990646206817">"Elimina sveglia"</string>
     <string name="enable_alarm" msgid="1834599140632142536">"Attiva sveglia"</string>
