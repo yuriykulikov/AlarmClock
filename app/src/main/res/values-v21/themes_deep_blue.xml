@@ -29,7 +29,7 @@
         <item name="infoBarColor">@color/transparent</item>
         <item name="android:colorForeground">@color/deepblue_on_background</item>
         <item name="listRowDisabledColor">@color/grey</item>
-        <item name="drawerBackgroundColor">@color/deepblue_surface</item>
+        <item name="drawerBackgroundColor">@color/deepblue_lighter_background</item>
         <item name="drawerClosedBackgroundColor">@color/deepblue_background</item>
     </style>
 
@@ -67,6 +67,7 @@
     <color name="deepblue_surface">#151D27</color>
     <color name="deepblue_on_surface">@color/whitish</color>
     <color name="deepblue_background">#17202A</color>
+    <color name="deepblue_lighter_background">#27303A</color>
     <color name="deepblue_secondary">#4D9EEB</color>
     <color name="deepblue_ripple">@color/dark_grey</color>
     <color name="deepblue_glow">@color/blackish</color>

@@ -9,7 +9,7 @@
         <item name="infoBarColor">?android:attr/colorBackground</item>
         <item name="android:colorForeground">@color/light_on_background</item>
         <item name="listRowDisabledColor">@color/grey</item>
-        <item name="drawerBackgroundColor">?android:attr/colorBackgroundFloating</item>
+        <item name="drawerBackgroundColor">@color/whitish</item>
         <item name="drawerClosedBackgroundColor">?android:attr/colorBackground</item>
     </style>
 

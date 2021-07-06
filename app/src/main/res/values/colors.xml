@@ -23,4 +23,9 @@
     <color name="mat_almost_black_ws">#131D23</color>
     <color name="mat_grey_ws">#242D35</color>
     <color name="mat_purple_ws">#AE7AC2</color>
+
+    <color name="reactive_purple">#ee0e90</color>
+    <color name="reactive_background">#2b323b</color>
+    <color name="reactive_surface">#3f3d55</color>
+    <color name="reactive_white">#ffffe8</color>
 </resources>
