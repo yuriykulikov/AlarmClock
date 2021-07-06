@@ -2,66 +2,60 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="bottom"
+    android:paddingHorizontal="30dp"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/appearance_arrows_text"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center">
-
-        <ImageButton
-            android:id="@+id/appearance_arrow_down"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:padding="12dp"
-            android:src="@drawable/ic_baseline_keyboard_arrow_down_24"
-            android:tint="?android:attr/textColorPrimary" />
-
-        <TextView
-            android:id="@+id/appearance_arrows_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:padding="12dp"
-            android:paddingHorizontal="20dp"
-            android:text="@string/preference_list_row_layout_title"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="?attr/colorAccent" />
-
-        <ImageButton
-            android:id="@+id/appearance_arrow_up"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:padding="12dp"
-            android:src="@drawable/ic_baseline_keyboard_arrow_up_24"
-            android:tint="?android:attr/textColorPrimary" />
-
-    </LinearLayout>
-
+        android:gravity="center_horizontal"
+        android:padding="6dp"
+        android:paddingHorizontal="20dp"
+        android:text="@string/preference_list_row_layout_title"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="?attr/colorAccent" />
 
     <LinearLayout
+        android:id="@+id/appearance_row_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center">
+        android:gravity="start">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:padding="12dp"
-            android:text="@string/theme_title"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="?attr/colorAccent" />
+        <include layout="@layout/appearance_fragment_layout_button"/>
+        <include layout="@layout/appearance_fragment_divider"/>
+        <include layout="@layout/appearance_fragment_layout_button"/>
+        <include layout="@layout/appearance_fragment_divider"/>
+        <include layout="@layout/appearance_fragment_layout_button"/>
     </LinearLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:padding="6dp"
+        android:text="@string/theme_title"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="?attr/colorAccent" />
+    <!-- Themes added programatically -->
     <LinearLayout
         android:id="@+id/appearance_row_0"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginVertical="12dp"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal" />
+        android:gravity="start"
+        android:orientation="horizontal" >
+
+        <include layout="@layout/appearance_fragment_theme_button"/>
+        <include layout="@layout/appearance_fragment_divider"/>
+        <include layout="@layout/appearance_fragment_theme_button"/>
+        <include layout="@layout/appearance_fragment_divider"/>
+        <include layout="@layout/appearance_fragment_theme_button"/>
+        <include layout="@layout/appearance_fragment_divider"/>
+        <include layout="@layout/appearance_fragment_theme_button"/>
+        <include layout="@layout/appearance_fragment_divider"/>
+        <include layout="@layout/appearance_fragment_theme_button"/>
+
+    </LinearLayout>
 
 </LinearLayout>
