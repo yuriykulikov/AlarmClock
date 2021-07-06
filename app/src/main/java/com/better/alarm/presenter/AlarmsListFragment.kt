@@ -271,6 +271,7 @@ class AlarmsListFragment : Fragment() {
         val bottomDrawerToolbar = view.findViewById<View>(R.id.bottom_drawer_toolbar)
         val bottomDrawerContent = view.findViewById<View>(R.id.bottom_drawer_content)
         val fab = view.findViewById<FloatingActionButton>(R.id.fab)
+        val infoFragment = view.findViewById<View>(R.id.list_activity_info_fragment)
 
         fun setDrawerBackgrounds(resolveColor: Int) {
             val colorDrawable = ColorDrawable(resolveColor)
@@ -331,6 +332,8 @@ class AlarmsListFragment : Fragment() {
                     } else {
                         fab.elevation = fabK * slideOffset + initialFabElevation
                     }
+                    // hide the info when drawer is open
+                    infoFragment.alpha = 1.0f - slideOffset
                 }
             })
         }
