@@ -17,18 +17,13 @@
 
 package com.better.alarm.presenter
 
-import android.annotation.TargetApi
 import android.content.Intent
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.transition.Transition
-import android.util.Config
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -350,37 +345,5 @@ class AlarmDetailsFragment : Fragment() {
     private fun RowHolder.animateCheck(check: Boolean) {
         rowHolder.detailsCheckImageView.animate().alpha(if (check) 1f else 0f).setDuration(500).start()
         rowHolder.detailsImageView.animate().alpha(if (check) 0f else 1f).setDuration(500).start()
-    }
-
-    /**
-     * his nice hack here is required, because if you do this in XML it will break transitions of the first list row
-     */
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun hackRippleAndAnimation() {
-        if (enterTransition is Transition) {
-            (enterTransition as Transition).addListener(object : Transition.TransitionListener {
-                override fun onTransitionEnd(transition: Transition?) {
-                    activity?.let { parentActivity ->
-                        val selectableItemBackground = TypedValue().apply {
-                            parentActivity.theme.resolveAttribute(android.R.attr.selectableItemBackground, this, true)
-                        }.resourceId
-                        rowHolder.rowView.setBackgroundResource(selectableItemBackground)
-                    }
-                    (enterTransition as Transition).removeListener(this)
-                }
-
-                override fun onTransitionResume(transition: Transition?) {
-                }
-
-                override fun onTransitionPause(transition: Transition?) {
-                }
-
-                override fun onTransitionCancel(transition: Transition?) {
-                }
-
-                override fun onTransitionStart(transition: Transition?) {
-                }
-            })
-        }
     }
 }
