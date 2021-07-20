@@ -77,30 +77,48 @@ class AlarmAlertFullScreen : FragmentActivity() {
 
         mAlarm = alarmsManager.getAlarm(id)
 
-        if (Build.VERSION.SDK_INT >= 27) {
-            setShowWhenLocked(true)
-            setTurnScreenOn(true)
-        } else {
-            @Suppress("DEPRECATION")
-            window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED)
-            @Suppress("DEPRECATION")
-            window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
-        }
-
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                or WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON)
+        turnScreenOn()
         updateLayout()
 
         // Register to get the alarm killed/snooze/dismiss intent.
         subscription = store.events
-                .filter { event ->
-                    (event is SnoozedEvent && event.id == id
-                            || event is DismissEvent && event.id == id
-                            || event is Autosilenced && event.id == id)
-                }
-                .take(1)
-                .subscribe { finish() }
+            .filter { event ->
+                (event is SnoozedEvent && event.id == id
+                    || event is DismissEvent && event.id == id
+                    || event is Autosilenced && event.id == id)
+            }
+            .take(1)
+            .subscribe { finish() }
 
+    }
+
+    /**
+     * ## Turns the screen on
+     * See https://github.com/yuriykulikov/AlarmClock/issues/360
+     * It seems that on some devices with API>=27 calling `setTurnScreenOn(true)` is not enough,
+     * so we will just add all flags regardless of the API level, and call `setTurnScreenOn(true)` if API level is 27+
+     *
+     * ### 3.07.01 reference
+     * In `3.07.01` we added these 4 flags:
+     * final Window win = getWindow();
+     * win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+     * win.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+     *         | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+     *         | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON);
+     */
+    private fun turnScreenOn() {
+        if (Build.VERSION.SDK_INT >= 27) {
+            setShowWhenLocked(true)
+            setTurnScreenOn(true)
+        }
+        window.addFlags(
+            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                or WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
+                // These are required on some devices, even with API>=27
+                or WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                // These are required on some devices, even with API>=27
+                or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+        )
     }
 
     private fun setTitle() {
@@ -151,7 +169,7 @@ class AlarmAlertFullScreen : FragmentActivity() {
     private fun showSnoozePicker() {
         store.events.onNext(MuteEvent())
         val timer = Observable.timer(10, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
-                .subscribe { store.events.onNext(DemuteEvent()) }
+            .subscribe { store.events.onNext(DemuteEvent()) }
 
         val dialog = TimePickerDialogFragment.showTimePicker(supportFragmentManager).subscribe { picked ->
             timer.dispose()
