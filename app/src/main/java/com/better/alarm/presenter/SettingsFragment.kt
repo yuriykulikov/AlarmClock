@@ -37,6 +37,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     companion object {
         const val themeChangeReason = "theme change"
+        private val retainedStrings = listOf(
+                R.string.alarm_alert_snooze_set,
+                R.string.volume_button_dialog_title,
+                R.string.volume_button_setting_summary,
+                R.array.volume_button_setting_entries,
+                R.array.volume_button_setting_values,
+                R.string.default_ringtone_setting_title,
+        )
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

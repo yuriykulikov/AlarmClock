@@ -74,6 +74,6 @@ public class SettingsTest extends BaseTest {
                 .perform(click());
 
         sleep();
-        onView(withText("Dark")).perform(click());
+        onView(withText("Neon")).perform(click());
     }
 }

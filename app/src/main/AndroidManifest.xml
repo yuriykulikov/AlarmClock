@@ -41,6 +41,7 @@
         <activity
             android:name=".presenter.SettingsActivity"
             android:excludeFromRecents="true"
+            android:theme="@style/DefaultDarkTheme"
             android:label="@string/settings">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -64,6 +65,7 @@
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
+            android:theme="@style/DefaultDarkTheme"
             android:taskAffinity="" />
 
         <!-- Transparent activity with TimPickerFragment -->

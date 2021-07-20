@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/appearance_fragment_layout_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:padding="6dp"
+        android:backgroundTint="?android:attr/colorBackground"
+        android:tint="?android:attr/textColorPrimary"
+        android:src="@drawable/ic_baseline_check_24">
+    </ImageButton>
+
+    <TextView
+        android:id="@+id/appearance_fragment_layout_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="5dp"
+        android:text="Theme"
+        android:textColor="?android:attr/textColorPrimary" />
+
+</LinearLayout>

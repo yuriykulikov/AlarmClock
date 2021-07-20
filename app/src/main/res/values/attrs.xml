@@ -8,5 +8,9 @@
     <attr name="alertFullScreenBackground" format="reference" />
     <attr name="alarmDetailsButtonStyle" format="reference" />
     <attr name="timePickerDeleteButtonStyle" format="reference" />
-    <item type="id" name="numbers_key" />
+    <attr name="infoBarColor" format="color" />
+    <attr name="listFabColor" format="color" />
+    <attr name="listRowDisabledColor" format="color" />
+    <attr name="drawerClosedBackgroundColor" format="color" />
+    <attr name="drawerBackgroundColor" format="color" />
 </resources>

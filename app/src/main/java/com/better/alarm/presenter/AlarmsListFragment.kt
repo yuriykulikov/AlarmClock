@@ -1,7 +1,10 @@
 package com.better.alarm.presenter
 
+import android.animation.ArgbEvaluator
+import android.annotation.TargetApi
 import android.app.AlertDialog
 import android.content.Context
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.ContextMenu
 import android.view.ContextMenu.ContextMenuInfo
@@ -25,12 +28,15 @@ import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.logger.Logger
 import com.better.alarm.lollipop
 import com.better.alarm.model.AlarmValue
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.melnykov.fab.FloatingActionButton
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import java.util.ArrayList
 import java.util.Calendar
+
 
 /**
  * Shows a list of alarms. To react on user interaction, requires a strategy. An
@@ -50,6 +56,7 @@ class AlarmsListFragment : Fragment() {
     private val inflater: LayoutInflater by lazy { requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater }
 
     private var alarmsSub: Disposable = Disposables.disposed()
+    private var layoutSub: Disposable = Disposables.disposed()
     private var backSub: Disposable = Disposables.disposed()
     private var timePickerDialogDisposable = Disposables.disposed()
 
@@ -60,6 +67,7 @@ class AlarmsListFragment : Fragment() {
     private var listRowLayout = prefs.layout()
 
     inner class AlarmListAdapter(alarmTime: Int, label: Int, private val values: List<AlarmValue>) : ArrayAdapter<AlarmValue>(requireContext(), alarmTime, label, values) {
+        private val highlighter: ListRowHighlighter? by lazy { ListRowHighlighter.createFor(requireActivity().theme) }
 
         private fun recycleView(convertView: View?, parent: ViewGroup, id: Int): RowHolder {
             val tag = convertView?.tag
@@ -99,10 +107,11 @@ class AlarmsListFragment : Fragment() {
                     .setOnClickListener {
                         val enable = !alarm.isEnabled
                         logger.debug { "onClick: ${if (enable) "enable" else "disable"}" }
-                        alarms.enable(alarm, enable)
+                        alarms.getAlarm(alarm.id)?.enable(enable)
                     }
 
-            row.digitalClockContainer.setOnClickListener {
+            val pickerClickTarget = with(row) { if (layout == Layout.CLASSIC) digitalClockContainer else digitalClock }
+            pickerClickTarget.setOnClickListener {
                 timePickerDialogDisposable = TimePickerDialogFragment.showTimePicker(parentFragmentManager)
                         .subscribe { picked ->
                             if (picked.isPresent()) {
@@ -119,7 +128,7 @@ class AlarmsListFragment : Fragment() {
                         }
             }
 
-            row.digitalClockContainer.setOnLongClickListener {
+            pickerClickTarget.setOnLongClickListener {
                 false
             }
 
@@ -150,6 +159,8 @@ class AlarmsListFragment : Fragment() {
                 else -> View.INVISIBLE
             }
 
+            highlighter?.applyTo(row, alarm.isEnabled)
+
             // row.labelsContainer.visibility = when {
             //     row.label().visibility == View.GONE && row.daysOfWeek().visibility == View.GONE -> GONE
             //     else -> View.VISIBLE
@@ -172,7 +183,8 @@ class AlarmsListFragment : Fragment() {
                 // Confirm that the alarm will be deleted.
                 AlertDialog.Builder(activity).setTitle(getString(R.string.delete_alarm))
                         .setMessage(getString(R.string.delete_alarm_confirm))
-                        .setPositiveButton(android.R.string.ok) { _, _ -> alarms.delete(alarm) }.setNegativeButton(android.R.string.cancel, null).show()
+                        .setPositiveButton(android.R.string.ok) { _, _ -> alarms.getAlarm(alarm.id)?.delete() }
+                        .setNegativeButton(android.R.string.cancel, null).show()
             }
             R.id.list_context_enable -> {
                 alarms.getAlarm(alarmId = alarm.id)?.run {
@@ -246,23 +258,104 @@ class AlarmsListFragment : Fragment() {
                             mAdapter.addAll(sorted)
                         }
 
+        lollipop {
+            configureBottomDrawer(view)
+        }
+
         return view
+    }
+
+    @TargetApi(21)
+    private fun configureBottomDrawer(view: View) {
+        val drawerContainer: View = view.findViewById<View>(R.id.bottom_drawer_container)
+        val bottomDrawerToolbar = view.findViewById<View>(R.id.bottom_drawer_toolbar)
+        val bottomDrawerContent = view.findViewById<View>(R.id.bottom_drawer_content)
+        val fab = view.findViewById<FloatingActionButton>(R.id.fab)
+        val infoFragment = view.findViewById<View>(R.id.list_activity_info_fragment)
+
+        fun setDrawerBackgrounds(resolveColor: Int) {
+            val colorDrawable = ColorDrawable(resolveColor)
+            bottomDrawerToolbar.background = colorDrawable
+            bottomDrawerContent.background = colorDrawable
+            drawerContainer.background = colorDrawable
+        }
+
+        val openColor = requireActivity().theme.resolveColor(R.attr.drawerBackgroundColor)
+        val closedColor = requireActivity().theme.resolveColor(R.attr.drawerClosedBackgroundColor)
+
+        BottomSheetBehavior.from(drawerContainer).apply {
+            val initialElevation = drawerContainer.elevation
+            val initialFabElevation = fab.elevation
+            val fabAtOverlap = 3f
+            // offset of about 0.1 means overlap
+            val overlap = 0.1f
+            val fabK = -((initialFabElevation - fabAtOverlap) / overlap)
+
+            peekHeight = bottomDrawerToolbar.minimumHeight
+            if (uiStore.openDrawerOnCreate) {
+                state = BottomSheetBehavior.STATE_EXPANDED
+                // reset the flag after opening the drawer
+                uiStore.openDrawerOnCreate = false
+                setDrawerBackgrounds(openColor)
+            } else {
+                setDrawerBackgrounds(closedColor)
+                drawerContainer.elevation = 0f
+            }
+
+            bottomDrawerToolbar.setOnClickListener {
+                state = when (state) {
+                    BottomSheetBehavior.STATE_COLLAPSED -> BottomSheetBehavior.STATE_EXPANDED
+                    else -> BottomSheetBehavior.STATE_COLLAPSED
+                }
+            }
+
+            addBottomSheetCallback(object : BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                        setDrawerBackgrounds(openColor)
+                    } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                        setDrawerBackgrounds(closedColor)
+                    }
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                    val color = ArgbEvaluator().evaluate(
+                            slideOffset,
+                            closedColor,
+                            openColor,
+                    ) as Int
+                    setDrawerBackgrounds(color)
+
+                    drawerContainer.elevation = initialElevation * slideOffset
+                    if (slideOffset > overlap) {
+                        fab.elevation = fabAtOverlap
+                    } else {
+                        fab.elevation = fabK * slideOffset + initialFabElevation
+                    }
+                    // hide the info when drawer is open
+                    infoFragment.alpha = 1.0f - slideOffset
+                }
+            })
+        }
     }
 
     override fun onResume() {
         super.onResume()
         backSub = uiStore.onBackPressed().subscribe { requireActivity().finish() }
-        listRowLayout = prefs.layout()
-        listRowLayoutId = when (listRowLayout) {
-            Layout.COMPACT -> R.layout.list_row_compact
-            Layout.CLASSIC -> R.layout.list_row_classic
-            else -> R.layout.list_row_bold
+        layoutSub = prefs.listRowLayout.observe().subscribe {
+            listRowLayout = prefs.layout()
+            listRowLayoutId = when (listRowLayout) {
+                Layout.COMPACT -> R.layout.list_row_compact
+                Layout.CLASSIC -> R.layout.list_row_classic
+                else -> R.layout.list_row_bold
+            }
         }
     }
 
     override fun onPause() {
         super.onPause()
         backSub.dispose()
+        layoutSub.dispose()
         //dismiss the time picker if it was showing. Otherwise we will have to uiStore the state and it is not nice for the user
         timePickerDialogDisposable.dispose()
     }

@@ -97,6 +97,11 @@ open class TimePickerPresenter(private val is24HoursMode: Boolean) {
         val hoursOnesDigit: Int by lazy { inverted.getOrElse(2) { -1 } }
         val minutesTensDigit: Int by lazy { inverted.getOrElse(1) { -1 } }
         val minutesOnesDigit: Int by lazy { inverted.getOrElse(0) { -1 } }
+        val asText: String by lazy {
+            inverted.run {
+                "${getOrElse(3) { '-' }}${getOrElse(2) { '-' }}:${inverted.getOrElse(1) { '-' }}${inverted.getOrElse(0) { '-' }}"
+            }
+        }
 
         val minutes: Int by lazy { minutesTensDigit * 10 + minutesOnesDigit }
         val hours: Int by lazy {

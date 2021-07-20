@@ -199,4 +199,9 @@ public class DigitalClock extends LinearLayout {
     public void setLive(boolean live) {
         mLive = live;
     }
+
+    public void setColor(int color) {
+        mAmPm.mAmPm.setTextColor(color);
+        mTimeDisplay.setTextColor(color);
+    }
 }

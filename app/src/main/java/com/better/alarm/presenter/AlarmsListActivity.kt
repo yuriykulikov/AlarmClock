@@ -107,37 +107,25 @@ class AlarmsListActivity : AppCompatActivity() {
                     return transitioningToNewAlarmDetails
                 }
 
-                override fun edit(id: Int) {
+                override fun edit(id: Int, holder: RowHolder?) {
                     alarms.getAlarm(id)?.let { alarm ->
                         editing.onNext(EditedAlarm(
                                 isNew = false,
                                 value = Optional.of(alarm.data),
                                 id = id,
-                                holder = Optional.absent()))
+                                holder = Optional.fromNullable(holder)))
                     }
                 }
 
-                override fun edit(id: Int, holder: RowHolder) {
-                    alarms.getAlarm(id)?.let { alarm ->
-                        editing.onNext(EditedAlarm(
-                                isNew = false,
-                                value = Optional.of(alarm.data),
-                                id = id,
-                                holder = Optional.of(holder)))
-                    }
-                }
-
-                override fun hideDetails() {
-                    editing.onNext(EditedAlarm())
-                }
-
-                override fun hideDetails(holder: RowHolder) {
+                override fun hideDetails(holder: RowHolder?) {
                     editing.onNext(EditedAlarm(
                             isNew = false,
                             value = Optional.absent(),
-                            id = holder.alarmId,
-                            holder = Optional.of(holder)))
+                            id = holder?.alarmId ?: -1,
+                            holder = Optional.fromNullable(holder)))
                 }
+
+                override var openDrawerOnCreate: Boolean = false
             }
 
             return UiStoreIR()
@@ -146,9 +134,12 @@ class AlarmsListActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+        println("new $intent, ${intent?.extras}")
         if (intent?.getStringExtra("reason") == SettingsFragment.themeChangeReason) {
             finish()
-            startActivity(Intent(this, AlarmsListActivity::class.java))
+            startActivity(Intent(this, AlarmsListActivity::class.java).apply {
+                putExtra("openDrawerOnCreate", true)
+            })
         }
     }
 
@@ -160,9 +151,9 @@ class AlarmsListActivity : AppCompatActivity() {
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(dynamicThemeHandler.getIdForName(AlarmsListActivity::class.java.name))
+        setTheme(dynamicThemeHandler.defaultTheme())
         super.onCreate(savedInstanceState)
-
+        uiStore.openDrawerOnCreate = intent?.getBooleanExtra("openDrawerOnCreate", false) ?: false
         when {
             savedInstanceState != null && savedInstanceState.getInt("version", BuildConfig.VERSION_CODE) == BuildConfig.VERSION_CODE -> {
                 val restored = editedAlarmFromSavedInstanceState(savedInstanceState)
@@ -181,8 +172,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
         this.mActionBarHandler = ActionBarHandler(this, uiStore, alarms, globalGet())
 
-        val isTablet = !resources.getBoolean(R.bool.isTablet)
-        if (isTablet) {
+        if (!resources.getBoolean(R.bool.isTablet)) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
 
@@ -205,6 +195,12 @@ class AlarmsListActivity : AppCompatActivity() {
         super.onResume()
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
         NotificationSettings().checkSettings(this)
+        store.uiVisible.onNext(true)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        store.uiVisible.onNext(false)
     }
 
     override fun onStop() {

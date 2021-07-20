@@ -55,7 +55,7 @@
             app:iconSpaceReserved="false" />
 
         <androidx.preference.ListPreference
-            android:defaultValue="classic"
+            android:defaultValue="bold"
             android:dialogTitle="@string/preference_list_row_layout_title"
             android:entries="@array/preference_list_row_layout_entries"
             android:entryValues="@array/preference_list_row_layout_values"

@@ -34,6 +34,7 @@
             android:layout_gravity="center|left"
             android:layout_marginLeft="16dp"
             android:layout_weight="1"
+            android:textColor="?android:attr/textColorPrimary"
             android:text="@string/alert"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -54,6 +55,7 @@
 
     <TextView
         style="?android:attr/settingsActivity"
+        android:textColor="?android:attr/textColorPrimary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="left"
@@ -70,6 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="16dp"
+            android:tint="?android:attr/textColorPrimary"
             android:src="@android:drawable/ic_lock_idle_alarm" />
 
         <SeekBar
@@ -84,6 +87,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="left"
         android:layout_marginLeft="16dp"
+        android:textColor="?android:attr/textColorPrimary"
         android:text="@string/alarm_prealarm" />
 
     <LinearLayout
@@ -96,6 +100,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="16dp"
+            android:tint="?android:attr/textColorPrimary"
             android:src="@android:drawable/ic_lock_idle_alarm" />
 
         <SeekBar

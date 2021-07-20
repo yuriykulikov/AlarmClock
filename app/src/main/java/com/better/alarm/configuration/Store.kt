@@ -16,8 +16,10 @@ data class Store(
         val alarmsSubject: BehaviorSubject<List<AlarmValue>>,
         val next: BehaviorSubject<Optional<Next>>,
         val sets: Subject<AlarmSet>,
-        val events: Subject<Event>
+        val events: Subject<Event>,
 ) {
+    val uiVisible: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
+
     fun alarms(): Observable<List<AlarmValue>> {
         return alarmsSubject().distinctUntilChanged()
     }
@@ -33,9 +35,9 @@ data class Store(
 
             val alarm: AlarmValue,
 
-            val nextNonPrealarmTime: Long
+            val nextNonPrealarmTime: Long,
 
-    ) {
+            ) {
         fun alarm(): AlarmValue = alarm
 
         fun nextNonPrealarmTime(): Long = nextNonPrealarmTime
@@ -44,9 +46,9 @@ data class Store(
     data class AlarmSet(
             val alarm: AlarmValue,
 
-            val millis: Long
+            val millis: Long,
 
-    ) {
+            ) {
         fun alarm(): AlarmValue = alarm
 
         fun millis(): Long = millis

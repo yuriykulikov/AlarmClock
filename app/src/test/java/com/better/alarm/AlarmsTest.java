@@ -1,7 +1,5 @@
 package com.better.alarm;
 
-import android.content.ContentResolver;
-
 import com.better.alarm.background.Event;
 import com.better.alarm.configuration.Prefs;
 import com.better.alarm.configuration.Store;
@@ -18,7 +16,6 @@ import com.better.alarm.model.Alarms;
 import com.better.alarm.model.AlarmsScheduler;
 import com.better.alarm.model.CalendarType;
 import com.better.alarm.model.Calendars;
-import com.better.alarm.model.ContainerFactory;
 import com.better.alarm.model.DaysOfWeek;
 import com.better.alarm.persistance.DatabaseQuery;
 import com.better.alarm.stores.InMemoryRxDataStoreFactory;
@@ -38,10 +35,8 @@ import java.util.List;
 import io.reactivex.Single;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Predicate;
-import io.reactivex.schedulers.TestScheduler;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
-import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,12 +47,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class AlarmsTest {
     private AlarmCore.IStateNotifier stateNotifierMock;
     private final AlarmSchedulerTest.SetterMock alarmSetterMock = new AlarmSchedulerTest.SetterMock();
-    private TestScheduler testScheduler;
     private Store store;
     private Prefs prefs;
     private Logger logger;
@@ -82,7 +75,8 @@ public class AlarmsTest {
 
     @Before
     public void setUp() {
-        testScheduler = new TestScheduler();
+        CoroutinesKt.setMainUnconfined();
+
         logger = Logger.create(new SysoutLogWriter());
 
         prefs = Prefs.create(Single.just(true), InMemoryRxDataStoreFactory.create());
@@ -117,10 +111,7 @@ public class AlarmsTest {
 
     @androidx.annotation.NonNull
     private DatabaseQuery mockQuery() {
-        final DatabaseQuery query = mock(DatabaseQuery.class);
-        List<AlarmStore> list = new ArrayList<>();
-        when(query.query()).thenReturn(Single.just(list));
-        return query;
+        return DatabaseQueryMock.createStub(new ArrayList<>());
     }
 
     @Test
@@ -129,7 +120,6 @@ public class AlarmsTest {
         IAlarmsManager instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
         newAlarm.enable(true);
-        testScheduler.triggerActions();
         //verify
         store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
             @Override
@@ -144,9 +134,7 @@ public class AlarmsTest {
         //when
         IAlarmsManager instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
-        testScheduler.triggerActions();
-        instance.delete(newAlarm);
-        testScheduler.triggerActions();
+        newAlarm.delete();
         //verify
         store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
             @Override
@@ -161,11 +149,8 @@ public class AlarmsTest {
         //when
         IAlarmsManager instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
-        testScheduler.triggerActions();
         newAlarm.enable(true);
-        testScheduler.triggerActions();
         instance.getAlarm(0).delete();
-        testScheduler.triggerActions();
         //verify
         store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
             @Override
@@ -180,11 +165,8 @@ public class AlarmsTest {
         //when
         IAlarmsManager instance = createAlarms();
         instance.createNewAlarm();
-        testScheduler.triggerActions();
         instance.createNewAlarm().enable(true);
-        testScheduler.triggerActions();
         instance.createNewAlarm();
-        testScheduler.triggerActions();
         //verify
         store.alarms().test().assertValueAt(0, new Predicate<List<AlarmValue>>() {
             @Override
@@ -198,31 +180,10 @@ public class AlarmsTest {
         });
     }
 
-    static class DatabaseQueryMock extends DatabaseQuery {
-        private ContainerFactory factory;
-
-        public DatabaseQueryMock(ContainerFactory factory) {
-            super(mock(ContentResolver.class), factory);
-            this.factory = factory;
-        }
-
-        @Override
-        public Single<List<AlarmStore>> query() {
-            AlarmStore container = factory.create();
-            container.setValue(container.getValue()
-                    .withId(100500)
-                    .withIsEnabled(true)
-                    .withLabel("hello")
-            );
-            List<AlarmStore> item = CollectionsKt.arrayListOf(container);
-            return Single.just(item);
-        }
-    }
-
     @Test
     public void alarmsFromMemoryMustBePresentInTheList() {
         //when
-        Alarms instance = createAlarms(new DatabaseQueryMock(new TestContainerFactory(new Calendars() {
+        Alarms instance = createAlarms(DatabaseQueryMock.createWithFactory(new TestContainerFactory(new Calendars() {
             @Override
             public Calendar now() {
                 return Calendar.getInstance();
@@ -259,8 +220,6 @@ public class AlarmsTest {
                           }
                       }
         );
-
-        testScheduler.triggerActions();
         //verify
         store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
             @Override
@@ -278,14 +237,11 @@ public class AlarmsTest {
         Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
         newAlarm.enable(true);
-        testScheduler.triggerActions();
 
         instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
-        testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
 
         newAlarm.dismiss();
-        testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
 
         //verify
@@ -313,14 +269,10 @@ public class AlarmsTest {
                       }
         );
 
-        testScheduler.triggerActions();
-
         instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
-        testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
 
         newAlarm.dismiss();
-        testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
 
         //verify
@@ -339,12 +291,10 @@ public class AlarmsTest {
         Alarms instance = createAlarms();
         Alarm newAlarm = instance.createNewAlarm();
         newAlarm.enable(true);
-        testScheduler.triggerActions();
 
         assertThat(alarmSetterMock.getTypeName()).isEqualTo("NORMAL");
 
         instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
-        testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
 
         newAlarm.edit(new Function1<AlarmValue, AlarmValue>() {
@@ -356,8 +306,6 @@ public class AlarmsTest {
                           }
                       }
         );
-
-        testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
 
         //verify
@@ -390,28 +338,23 @@ public class AlarmsTest {
                           }
                       }
         );
-        testScheduler.triggerActions();
         //TODO verify
 
         //when pre-alarm fired
         instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.PREALARM);
-        testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_PREALARM_ACTION));
 
         //when pre-alarm-snoozed
         newAlarm.snooze();
-        testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_SNOOZE_ACTION), any());
 
         //when alarm fired
         instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
-        testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ACTION_CANCEL_SNOOZE));
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
 
         //when alarm is snoozed
         newAlarm.snooze();
-        testScheduler.triggerActions();
         verify(stateNotifierMock, times(2)).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
 
         newAlarm.delete();
@@ -435,17 +378,14 @@ public class AlarmsTest {
                           }
                       }
         );
-        testScheduler.triggerActions();
         //TODO verify
 
         //when alarm fired
         instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
-        testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
 
         //when pre-alarm-snoozed
         newAlarm.snooze(23, 59);
-        testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_SNOOZE_ACTION), any());
     }
 
@@ -466,21 +406,17 @@ public class AlarmsTest {
                           }
                       }
         );
-        testScheduler.triggerActions();
         //TODO verify
 
         //when alarm fired
         instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.PREALARM);
-        testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_PREALARM_ACTION));
 
         //when pre-alarm-snoozed
         newAlarm.snooze(23, 59);
-        testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_SNOOZE_ACTION), any());
 
         instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.SNOOZE);
-        testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
     }
 
@@ -502,21 +438,17 @@ public class AlarmsTest {
                           }
                       }
         );
-        testScheduler.triggerActions();
         //TODO verify
 
         //when alarm fired
         instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.PREALARM);
-        testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_PREALARM_ACTION));
 
         instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
-        testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
 
         //when pre-alarm-snoozed
         newAlarm.enable(false);
-        testScheduler.triggerActions();
         verify(stateNotifierMock, atLeastOnce()).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
     }
 
@@ -536,15 +468,12 @@ public class AlarmsTest {
                           }
                       }
         );
-        testScheduler.triggerActions();
 
         //when alarm fired
         instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
-        testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
 
-        instance.snooze(newAlarm);
-        testScheduler.triggerActions();
+        newAlarm.snooze();
 
         AlarmStore record = containerFactory.getCreatedRecords().get(0);
 
@@ -552,11 +481,12 @@ public class AlarmsTest {
         // now we simulate it started all over again
         alarmSetterMock.removeRTCAlarm();
 
-        final DatabaseQuery query = mock(DatabaseQuery.class);
-        when(query.query()).thenReturn(Single.just(containerFactory.getCreatedRecords()));
+        DatabaseQueryMock.createStub(
+                containerFactory.getCreatedRecords()
+        );
+        final DatabaseQuery query = DatabaseQueryMock.createStub(containerFactory.getCreatedRecords());
         Alarms newAlarms = createAlarms(query);
         newAlarms.start();
-        testScheduler.triggerActions();
 
         assertThat(alarmSetterMock.getId()).isEqualTo(record.getValue().getId());
     }
@@ -577,22 +507,18 @@ public class AlarmsTest {
                           }
                       }
         );
-        testScheduler.triggerActions();
 
         //when alarm fired
         currentHour = 7;
         instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
-        testScheduler.triggerActions();
 
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
 
-        instance.snooze(newAlarm);
-        testScheduler.triggerActions();
+        newAlarm.snooze();
 
         System.out.println("----- now snooze -------");
 
         newAlarm.snooze(7, 42);
-        testScheduler.triggerActions();
 
         assertThat(alarmSetterMock.getId()).isEqualTo(newAlarm.getId());
         assertThat(alarmSetterMock.getCalendar().get(Calendar.MINUTE)).isEqualTo(42);
@@ -608,11 +534,9 @@ public class AlarmsTest {
         // now we simulate it started all over again
         alarmSetterMock.removeRTCAlarm();
 
-        final DatabaseQuery query = mock(DatabaseQuery.class);
-        when(query.query()).thenReturn(Single.just(containerFactory.getCreatedRecords()));
+        final DatabaseQuery query = DatabaseQueryMock.createStub(containerFactory.getCreatedRecords());
         Alarms newAlarms = createAlarms(query);
         newAlarms.start();
-        testScheduler.triggerActions();
 
         assertThat(alarmSetterMock.getId()).isEqualTo(record.getValue().getId());
         // TODO
@@ -634,20 +558,16 @@ public class AlarmsTest {
                           }
                       }
         );
-        testScheduler.triggerActions();
 
         //when alarm fired
         instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.PREALARM);
-        testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_PREALARM_ACTION));
 
         instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
-        testScheduler.triggerActions();
         verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
         verify(stateNotifierMock, never()).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
 
-        instance.snooze(newAlarm);
-        testScheduler.triggerActions();
+        newAlarm.snooze();
         verify(stateNotifierMock, times(1)).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
     }
 }

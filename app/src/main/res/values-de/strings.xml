@@ -28,7 +28,6 @@
     <string name="prealarm_summary">Der Vorwecker klingelt <xliff:g id="minutes">%d</xliff:g> Minuten vor dem Wecker</string>
     <string name="info_fragment_prealarm_summary"><xliff:g id="minutes">%d</xliff:g> Minuten Vorwecker</string>
     <string name="prealarm_off_summary">Der Vorwecker ist ausgeschaltet</string>
-    <string name="master_volume">Gesamtlautstärke</string>
     <string name="menu_share">Teilen</string>
     <string name="menu_bugreport">Fehlerbericht senden</string>
     <string name="dialog_say_thanks_review_button">Bewerten</string>
@@ -110,7 +109,6 @@
     <string name="dialog_say_thanks_title">Danke sagen</string>
     <string name="dialog_say_thanks_review_message">Vielen Dank, dass Sie sich die Zeit genommen haben, sich zu bedanken! "Wecker ohne Schnickschnack" ist ein Open-Source Nonprofit-Projekt. Wir werden niemals Werbung verwenden oder Benutzerdaten sammeln, um Geld zu verdienen. Wir freuen uns jedoch sehr, wenn Ihnen unsere Arbeit gefällt. Eine der besten Möglichkeiten, sich zu bedanken, ist eine positive Bewertung zu schreiben. Sie können auch eine Frage stellen oder Ihre Featureanfrage hinterlassen.</string>
     <string name="dialog_say_thanks_premium_text">Wenn die App Ihnen wirklich gefällt, können Sie über ein Upgrade auf die Premium-Version nachdenken. Premium hört sich toll an, oder?</string>
-    <string name="dialog_say_thanks_donate_message">Eine andere hervorragende Möglichkeit, die App zu unterstützen, besteht darin, mir einen Kaffee oder einen Krapfen zu kaufen! Sie können dies mit einer der folgenden Optionen tun</string>
     <string name="dialog_say_thanks_premium_text_as_button"><a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Premium-Version</a></string>
 
     <string name="notification_channel_high_prio">Großes Popup mit Snooze- und Dismiss-Tasten</string>

@@ -92,10 +92,7 @@ public class BaseTest {
     }
 
     protected void assertTimerView(String s) {
-        onView(withId(com.better.alarm.R.id.hours_tens)).check(matches(withText("" + s.charAt(0))));
-        onView(withId(com.better.alarm.R.id.hours_ones)).check(matches(withText("" + s.charAt(1))));
-        onView(withId(com.better.alarm.R.id.minutes_tens)).check(matches(withText("" + s.charAt(3))));
-        onView(withId(com.better.alarm.R.id.minutes_ones)).check(matches(withText("" + s.charAt(4))));
+        onView(withId(R.id.time_picker_time)).check(matches(withText(s)));
     }
 
     @androidx.annotation.NonNull
