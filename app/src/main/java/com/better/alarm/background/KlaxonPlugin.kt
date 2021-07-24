@@ -29,12 +29,12 @@ interface Player {
  * Plays sound when told to. Performs a fade-in.
  */
 class KlaxonPlugin(
-        private val log: Logger,
-        private val playerFactory: () -> Player,
-        private val prealarmVolume: Observable<Int>,
-        private val fadeInTimeInMillis: Observable<Int>,
-        private val inCall: Observable<Boolean>,
-        private val scheduler: Scheduler
+    private val log: Logger,
+    private val playerFactory: () -> Player,
+    private val prealarmVolume: Observable<Int>,
+    private val fadeInTimeInMillis: Observable<Int>,
+    private val inCall: Observable<Boolean>,
+    private val scheduler: Scheduler
 ) : AlertPlugin {
     companion object {
         private const val FAST_FADE_IN_TIME = 5000
@@ -71,9 +71,9 @@ class KlaxonPlugin(
 
         log.debug { "[KlaxonPlugin] go (prealarm: $prealarm)" }
         val volumeSub = volume
-                .subscribe { currentVolume ->
-                    player?.setPerceivedVolume(currentVolume)
-                }
+            .subscribe { currentVolume ->
+                player?.setPerceivedVolume(currentVolume)
+            }
 
         disposable = CompositeDisposable(callSub, volumeSub, Disposables.fromAction {
             player?.stopAndCleanup()
@@ -118,12 +118,12 @@ class KlaxonPlugin(
         return if (!prealarm) Observable.just(1f)
         else prealarmVolume.map {
             it
-                    .plus(1)//0 is 1
-                    .coerceAtMost(maxVolume)
-                    .toFloat()
-                    .div(maxVolume)
-                    .div(2)
-                    .apply { log.debug { "targetPrealarmVolume=$this" } }
+                .plus(1)//0 is 1
+                .coerceAtMost(maxVolume)
+                .toFloat()
+                .div(maxVolume)
+                .div(2)
+                .apply { log.debug { "targetPrealarmVolume=$this" } }
         }
     }
 
@@ -134,16 +134,16 @@ class KlaxonPlugin(
         val fadeInStep: Long = fadeInTime / FADE_IN_STEPS
 
         val fadeIn = Observable.interval(fadeInStep, TimeUnit.MILLISECONDS, scheduler)
-                .map { it * fadeInStep }
-                .takeWhile { it <= fadeInTime }
-                .map { elapsed -> elapsed.toFloat() / fadeInTime }
-                .map { fraction -> fraction.squared() }
-                .doOnComplete { log.debug { "Completed fade-in in $time milliseconds" } }
+            .map { it * fadeInStep }
+            .takeWhile { it <= fadeInTime }
+            .map { elapsed -> elapsed.toFloat() / fadeInTime }
+            .map { fraction -> fraction.squared() }
+            .doOnComplete { log.debug { "Completed fade-in in $time milliseconds" } }
 
         return Observable.combineLatest(
-                observeVolume(prealarm),
-                fadeIn,
-                BiFunction<Float, Float, Float> { targetVolume, fadePercentage -> fadePercentage * targetVolume })
+            observeVolume(prealarm),
+            fadeIn,
+            BiFunction<Float, Float, Float> { targetVolume, fadePercentage -> fadePercentage * targetVolume })
     }
 
     /**

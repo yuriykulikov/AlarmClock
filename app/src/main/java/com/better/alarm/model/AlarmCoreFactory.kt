@@ -9,12 +9,12 @@ import com.better.alarm.logger.Logger
  */
 
 class AlarmCoreFactory(
-        private val logger: Logger,
-        private val alarmsScheduler: IAlarmsScheduler,
-        private val broadcaster: AlarmCore.IStateNotifier,
-        private val prefs: Prefs,
-        private val store: Store,
-        private val calendars: Calendars
+    private val logger: Logger,
+    private val alarmsScheduler: IAlarmsScheduler,
+    private val broadcaster: AlarmCore.IStateNotifier,
+    private val prefs: Prefs,
+    private val store: Store,
+    private val calendars: Calendars
 ) {
     fun create(container: AlarmStore): AlarmCore {
         return AlarmCore(container, logger, alarmsScheduler, broadcaster, prefs, store, calendars)

@@ -13,9 +13,9 @@ import org.acra.config.MailSenderConfigurationBuilder
 import org.acra.data.StringFormat
 
 class BugReporter(
-        private val logger: Logger,
-        private val context: Context,
-        private val startupLog: Lazy<StartupLogWriter>
+    private val logger: Logger,
+    private val context: Context,
+    private val startupLog: Lazy<StartupLogWriter>
 ) {
     fun sendUserReport() {
         if (BuildConfig.ACRA_EMAIL.isNotEmpty()) {
@@ -30,13 +30,13 @@ class BugReporter(
             setReportFormat(StringFormat.KEY_VALUE_LIST)
             setEnabled(true)
             setReportContent(
-                    ReportField.IS_SILENT,
-                    ReportField.APP_VERSION_CODE,
-                    ReportField.PHONE_MODEL,
-                    ReportField.ANDROID_VERSION,
-                    ReportField.CUSTOM_DATA,
-                    ReportField.STACK_TRACE,
-                    ReportField.SHARED_PREFERENCES
+                ReportField.IS_SILENT,
+                ReportField.APP_VERSION_CODE,
+                ReportField.PHONE_MODEL,
+                ReportField.ANDROID_VERSION,
+                ReportField.CUSTOM_DATA,
+                ReportField.STACK_TRACE,
+                ReportField.SHARED_PREFERENCES
             )
             getPluginConfigurationBuilder(MailSenderConfigurationBuilder::class.java).apply {
                 setMailTo(BuildConfig.ACRA_EMAIL)

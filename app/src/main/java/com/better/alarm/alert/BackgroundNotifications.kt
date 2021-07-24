@@ -42,11 +42,11 @@ import java.util.Calendar
  * through Alarm ID.
  */
 class BackgroundNotifications(
-        private var mContext: Context,
-        private val nm: NotificationManager,
-        private val alarmsManager: IAlarmsManager,
-        private val prefs: Prefs,
-        private val store: Store
+    private var mContext: Context,
+    private val nm: NotificationManager,
+    private val alarmsManager: IAlarmsManager,
+    private val prefs: Prefs,
+    private val store: Store
 ) {
     init {
         store.events.subscribeForever { event ->
@@ -73,14 +73,16 @@ class BackgroundNotifications(
             PendingIntent.getActivity(mContext, id, it, 0)
         }
 
-        val pendingDismiss = PresentationToModelIntents.createPendingIntent(mContext,
-                PresentationToModelIntents.ACTION_REQUEST_DISMISS, id)
+        val pendingDismiss = PresentationToModelIntents.createPendingIntent(
+            mContext,
+            PresentationToModelIntents.ACTION_REQUEST_DISMISS, id
+        )
 
         val label = alarmsManager.getAlarm(id)?.labelOrDefault ?: ""
 
         val contentText: String = alarmsManager.getAlarm(id)
-                ?.let { mContext.getString(R.string.alarm_notify_snooze_text, calendar.formatTimeString()) }
-                ?: ""
+            ?.let { mContext.getString(R.string.alarm_notify_snooze_text, calendar.formatTimeString()) }
+            ?: ""
 
         val status = mContext.notificationBuilder(CHANNEL_ID) {
             // Get the display time for the snooze and update the notification.
@@ -135,10 +137,12 @@ class BackgroundNotifications(
 
             val notification = mContext.notificationBuilder(CHANNEL_ID) {
                 setAutoCancel(true)
-                addAction(R.drawable.ic_action_dismiss, when {
-                    data.daysOfWeek.isRepeatSet -> getString(R.string.skip)
-                    else -> getString(R.string.disable_alarm)
-                }, pendingSkip)
+                addAction(
+                    R.drawable.ic_action_dismiss, when {
+                        data.daysOfWeek.isRepeatSet -> getString(R.string.skip)
+                        else -> getString(R.string.disable_alarm)
+                    }, pendingSkip
+                )
                 setSmallIcon(R.drawable.stat_notify_alarm)
                 setWhen(Calendar.getInstance().timeInMillis)
                 setContentTitle(label)

@@ -63,13 +63,13 @@ class AlertServiceTest {
     private val notificationsPlugin: NotificationsPlugin = mockk(relaxed = true)
 
     private val alertService: AlertService = AlertService(
-            log = Logger.factory(SysoutLogWriter()).createLogger("alertService"),
-            inCall = Observable.just(false),
-            wakelocks = wakelocks,
-            alarms = alarmsManager,
-            enclosing = enclosingService,
-            notifications = notificationsPlugin,
-            plugins = listOf(plugin)
+        log = Logger.factory(SysoutLogWriter()).createLogger("alertService"),
+        inCall = Observable.just(false),
+        wakelocks = wakelocks,
+        alarms = alarmsManager,
+        enclosing = enclosingService,
+        notifications = notificationsPlugin,
+        plugins = listOf(plugin)
     )
 
     init {

@@ -13,10 +13,10 @@ import io.reactivex.subjects.Subject
  */
 
 data class Store(
-        val alarmsSubject: BehaviorSubject<List<AlarmValue>>,
-        val next: BehaviorSubject<Optional<Next>>,
-        val sets: Subject<AlarmSet>,
-        val events: Subject<Event>,
+    val alarmsSubject: BehaviorSubject<List<AlarmValue>>,
+    val next: BehaviorSubject<Optional<Next>>,
+    val sets: Subject<AlarmSet>,
+    val events: Subject<Event>,
 ) {
     val uiVisible: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
 
@@ -31,24 +31,24 @@ data class Store(
     fun sets(): Subject<AlarmSet> = sets
 
     data class Next(
-            val isPrealarm: Boolean,
+        val isPrealarm: Boolean,
 
-            val alarm: AlarmValue,
+        val alarm: AlarmValue,
 
-            val nextNonPrealarmTime: Long,
+        val nextNonPrealarmTime: Long,
 
-            ) {
+        ) {
         fun alarm(): AlarmValue = alarm
 
         fun nextNonPrealarmTime(): Long = nextNonPrealarmTime
     }
 
     data class AlarmSet(
-            val alarm: AlarmValue,
+        val alarm: AlarmValue,
 
-            val millis: Long,
+        val millis: Long,
 
-            ) {
+        ) {
         fun alarm(): AlarmValue = alarm
 
         fun millis(): Long = millis

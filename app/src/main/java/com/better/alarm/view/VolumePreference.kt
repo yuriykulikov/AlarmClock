@@ -84,8 +84,8 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
 
     fun onResume() {
         ringtoneSummary?.text = RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
-                ?.getTitle(context)
-                ?: context.getText(R.string.silent_alarm_summary)
+            ?.getTitle(context)
+            ?: context.getText(R.string.silent_alarm_summary)
     }
 
     override fun onPrepareForRemoval() {
@@ -109,22 +109,22 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
         seekBar.max = am.getStreamMaxVolume(AudioManager.STREAM_ALARM)
 
         masterListener
-                .progressObservable()
-                .subscribe { progress ->
-                    //stop prealarm sample if there is one
-                    stopPrealarmSample()
-                    am.setStreamVolume(AudioManager.STREAM_ALARM, progress!!, 0)
-                    if (ringtone?.isPlaying == false) {
-                        ringtone?.play()
-                    }
+            .progressObservable()
+            .subscribe { progress ->
+                //stop prealarm sample if there is one
+                stopPrealarmSample()
+                am.setStreamVolume(AudioManager.STREAM_ALARM, progress!!, 0)
+                if (ringtone?.isPlaying == false) {
+                    ringtone?.play()
                 }
-                .let { disposable.add(it) }
+            }
+            .let { disposable.add(it) }
 
         masterListener
-                .progressObservable()
-                .debounce(3, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
-                .subscribe { ringtone?.stop() }
-                .let { disposable.add(it) }
+            .progressObservable()
+            .debounce(3, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
+            .subscribe { ringtone?.stop() }
+            .let { disposable.add(it) }
     }
 
     private fun bindPrealarmSeekBar(preAlarmSeekBar: SeekBar) {
@@ -138,27 +138,29 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
         prealarmPreference.observe().subscribe { integer -> preAlarmSeekBar.progress = integer }.let { disposable.add(it) }
 
         prealarmListener
-                .progressObservable()
-                .doOnNext { integer ->
-                    log.debug { "Pre-alarm $integer" }
-                    prealarmPreference.value = integer
-                    ringtone?.stop()
-                }
-                .subscribe {
-                    prealarmSampleDisposable.dispose()
-                    prealarmSampleDisposable = klaxon.go(PluginAlarmData(
-                            id = -1,
-                            label = "",
-                            alarmtone = Alarmtone.Default()
-                    ), prealarm = true, targetVolume = Observable.just(TargetVolume.FADED_IN))
-                }
-                .let { disposable.add(it) }
+            .progressObservable()
+            .doOnNext { integer ->
+                log.debug { "Pre-alarm $integer" }
+                prealarmPreference.value = integer
+                ringtone?.stop()
+            }
+            .subscribe {
+                prealarmSampleDisposable.dispose()
+                prealarmSampleDisposable = klaxon.go(
+                    PluginAlarmData(
+                        id = -1,
+                        label = "",
+                        alarmtone = Alarmtone.Default()
+                    ), prealarm = true, targetVolume = Observable.just(TargetVolume.FADED_IN)
+                )
+            }
+            .let { disposable.add(it) }
 
         prealarmListener
-                .progressObservable()
-                .debounce(3, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
-                .subscribe { stopPrealarmSample() }
-                .let { disposable.add(it) }
+            .progressObservable()
+            .debounce(3, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
+            .subscribe { stopPrealarmSample() }
+            .let { disposable.add(it) }
     }
 
     private var prealarmSampleDisposable = Disposables.empty()

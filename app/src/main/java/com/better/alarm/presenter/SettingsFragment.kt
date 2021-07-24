@@ -38,12 +38,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
     companion object {
         const val themeChangeReason = "theme change"
         private val retainedStrings = listOf(
-                R.string.alarm_alert_snooze_set,
-                R.string.volume_button_dialog_title,
-                R.string.volume_button_setting_summary,
-                R.array.volume_button_setting_entries,
-                R.array.volume_button_setting_values,
-                R.string.default_ringtone_setting_title,
+            R.string.alarm_alert_snooze_set,
+            R.string.volume_button_dialog_title,
+            R.string.volume_button_setting_summary,
+            R.array.volume_button_setting_entries,
+            R.array.volume_button_setting_values,
+            R.string.default_ringtone_setting_title,
         )
     }
 
@@ -62,16 +62,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             findPreference<PreferenceCategory>("preference_category_ui")
-                    ?.removePreference(findPreference(Prefs.LIST_ROW_LAYOUT))
+                ?.removePreference(findPreference(Prefs.LIST_ROW_LAYOUT))
         }
 
         findPreference<Preference>("theme")?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
             Handler().post {
                 val intent = requireActivity().packageManager
-                        .getLaunchIntentForPackage(requireActivity().packageName)?.apply {
-                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                            putExtra("reason", themeChangeReason)
-                        }
+                    .getLaunchIntentForPackage(requireActivity().packageName)?.apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        putExtra("reason", themeChangeReason)
+                    }
                 startActivity(intent)
             }
             true
@@ -88,9 +88,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     else -> systemModeRingerStreamsAffected() or alarmStreamTypeBit
                 }
 
-                Settings.System.putInt(contentResolver,
-                        Settings.System.MODE_RINGER_STREAMS_AFFECTED,
-                        ringerModeStreamTypes)
+                Settings.System.putInt(
+                    contentResolver,
+                    Settings.System.MODE_RINGER_STREAMS_AFFECTED,
+                    ringerModeStreamTypes
+                )
 
                 return true
             }
@@ -110,80 +112,80 @@ class SettingsFragment : PreferenceFragmentCompat() {
         checkPermissions(requireActivity(), listOf(Alarmtone.Default()))
 
         findListPreference(Prefs.KEY_ALARM_SNOOZE)
-                .let { snoozePref ->
-                    prefs.snoozeDuration
-                            .observe()
-                            .subscribe { newValue ->
-                                val idx = snoozePref.findIndexOfValue(newValue.toString())
-                                snoozePref.summary = snoozePref.entries[idx]
-                            }
-                }
-                .let { disposables.add(it) }
+            .let { snoozePref ->
+                prefs.snoozeDuration
+                    .observe()
+                    .subscribe { newValue ->
+                        val idx = snoozePref.findIndexOfValue(newValue.toString())
+                        snoozePref.summary = snoozePref.entries[idx]
+                    }
+            }
+            .let { disposables.add(it) }
 
         findListPreference(Prefs.KEY_AUTO_SILENCE)
-                .let { autoSilencePref ->
-                    prefs.autoSilence
-                            .observe()
-                            .subscribe { newValue ->
-                                autoSilencePref.summary = when {
-                                    newValue == -1 -> getString(R.string.auto_silence_never)
-                                    else -> getString(R.string.auto_silence_summary, newValue.toInt())
-                                }
-                            }
-                }
-                .let { disposables.add(it) }
+            .let { autoSilencePref ->
+                prefs.autoSilence
+                    .observe()
+                    .subscribe { newValue ->
+                        autoSilencePref.summary = when {
+                            newValue == -1 -> getString(R.string.auto_silence_never)
+                            else -> getString(R.string.auto_silence_summary, newValue.toInt())
+                        }
+                    }
+            }
+            .let { disposables.add(it) }
 
         findListPreference(Prefs.SKIP_DURATION_KEY)
-                .let { skipDurationPref ->
-                    prefs.skipDuration
-                            .observe()
-                            .subscribe {
-                                val indexOfValue = skipDurationPref.findIndexOfValue(skipDurationPref.value)
-                                skipDurationPref.summary = skipDurationPref.entries[indexOfValue]
-                            }
+            .let { skipDurationPref ->
+                prefs.skipDuration
+                    .observe()
+                    .subscribe {
+                        val indexOfValue = skipDurationPref.findIndexOfValue(skipDurationPref.value)
+                        skipDurationPref.summary = skipDurationPref.entries[indexOfValue]
+                    }
 
-                }
-                .let { disposables.add(it) }
+            }
+            .let { disposables.add(it) }
 
         findListPreference(Prefs.KEY_PREALARM_DURATION)
-                .let { prealarmDurationPref ->
-                    prefs.preAlarmDuration
-                            .observe()
-                            .subscribe { newValue ->
-                                prealarmDurationPref.summary = when {
-                                    newValue == -1 -> getString(R.string.prealarm_off_summary)
-                                    else -> getString(R.string.prealarm_summary, newValue.toInt())
-                                }
-                            }
+            .let { prealarmDurationPref ->
+                prefs.preAlarmDuration
+                    .observe()
+                    .subscribe { newValue ->
+                        prealarmDurationPref.summary = when {
+                            newValue == -1 -> getString(R.string.prealarm_off_summary)
+                            else -> getString(R.string.prealarm_summary, newValue.toInt())
+                        }
+                    }
 
-                }
-                .let { disposables.add(it) }
+            }
+            .let { disposables.add(it) }
 
         findListPreference(Prefs.KEY_FADE_IN_TIME_SEC)
-                .let { fadeInPref ->
-                    prefs.fadeInTimeInSeconds
-                            .observe()
-                            .subscribe { newValue ->
-                                when {
-                                    newValue.toInt() == 1 -> fadeInPref.summary = getString(R.string.fade_in_off_summary)
-                                    else -> fadeInPref.summary = getString(R.string.fade_in_summary, newValue.toInt())
-                                }
-                            }
-                }
-                .let { disposables.add(it) }
+            .let { fadeInPref ->
+                prefs.fadeInTimeInSeconds
+                    .observe()
+                    .subscribe { newValue ->
+                        when {
+                            newValue.toInt() == 1 -> fadeInPref.summary = getString(R.string.fade_in_off_summary)
+                            else -> fadeInPref.summary = getString(R.string.fade_in_summary, newValue.toInt())
+                        }
+                    }
+            }
+            .let { disposables.add(it) }
 
         val theme = findListPreference("theme")
         theme.summary = theme.entry
 
         lollipop {
             prefs.listRowLayout
-                    .observe()
-                    .subscribe {
-                        findListPreference(Prefs.LIST_ROW_LAYOUT).run {
-                            summary = entry
-                        }
+                .observe()
+                .subscribe {
+                    findListPreference(Prefs.LIST_ROW_LAYOUT).run {
+                        summary = entry
                     }
-                    .let { disposables.add(it) }
+                }
+                .let { disposables.add(it) }
         }
     }
 
@@ -196,8 +198,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun findListPreference(key: String) = findPreference<ListPreference>(key)!!
 
     private fun systemModeRingerStreamsAffected(): Int {
-        return Settings.System.getInt(contentResolver,
-                Settings.System.MODE_RINGER_STREAMS_AFFECTED,
-                0)
+        return Settings.System.getInt(
+            contentResolver,
+            Settings.System.MODE_RINGER_STREAMS_AFFECTED,
+            0
+        )
     }
 }

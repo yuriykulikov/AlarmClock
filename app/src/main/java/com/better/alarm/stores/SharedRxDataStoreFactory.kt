@@ -33,8 +33,8 @@ import io.reactivex.Observable
  * Implementation of [PrimitiveDataStoreFactory] which uses [SharedPreferences] to store values.
  */
 class SharedRxDataStoreFactory private constructor(
-        private val preferences: SharedPreferences,
-        private val logger: Logger
+    private val preferences: SharedPreferences,
+    private val logger: Logger
 ) : PrimitiveDataStoreFactory {
     companion object {
         fun create(context: Context, logger: Logger): PrimitiveDataStoreFactory {
@@ -72,9 +72,9 @@ class SharedRxDataStoreFactory private constructor(
                 set(value) = preferences.edit().putBoolean(key, value).apply()
 
             override fun observe(): Observable<Boolean> = keyChanges
-                    .startWith(key)
-                    .filter { it == key }
-                    .map { value }
+                .startWith(key)
+                .filter { it == key }
+                .map { value }
         }
     }
 
@@ -85,9 +85,9 @@ class SharedRxDataStoreFactory private constructor(
                 set(value) = preferences.edit().putString(key, value).apply()
 
             override fun observe(): Observable<String> = keyChanges
-                    .startWith(key)
-                    .filter { it == key }
-                    .map { value }
+                .startWith(key)
+                .filter { it == key }
+                .map { value }
         }
     }
 
@@ -98,9 +98,9 @@ class SharedRxDataStoreFactory private constructor(
                 set(value) = preferences.edit().putInt(key, value).apply()
 
             override fun observe(): Observable<Int> = keyChanges
-                    .startWith(key)
-                    .filter { it == key }
-                    .map { value }
+                .startWith(key)
+                .filter { it == key }
+                .map { value }
         }
     }
 }

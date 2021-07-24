@@ -32,7 +32,12 @@ class DaysOfWeekTest {
     fun `toString property prints many days`() {
         Locale.setDefault(Locale.ENGLISH)
         assertThat(DaysOfWeek((1 shl 0) or (1 shl 1)).toString(context, false)).isEqualTo("Mon, Tue")
-        assertThat(DaysOfWeek(arrayOf(0, 1, 2, 3, 4).fold(0) { acc, day -> acc or (1 shl day) }).toString(context, false)).isEqualTo("Mon, Tue, Wed, Thu, Fri")
+        assertThat(
+            DaysOfWeek(arrayOf(0, 1, 2, 3, 4).fold(0) { acc, day -> acc or (1 shl day) }).toString(
+                context,
+                false
+            )
+        ).isEqualTo("Mon, Tue, Wed, Thu, Fri")
         assertThat(DaysOfWeek(arrayOf(5, 6).fold(0) { acc, day -> acc or (1 shl day) }).toString(context, false)).isEqualTo("Sat, Sun")
     }
 

@@ -25,14 +25,20 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.PriorityQueue
 
-class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, private val store: Store, private val prefs: Prefs, private val calendars: Calendars) : IAlarmsScheduler {
+class AlarmsScheduler(
+    private val setter: AlarmSetter,
+    private val log: Logger,
+    private val store: Store,
+    private val prefs: Prefs,
+    private val calendars: Calendars
+) : IAlarmsScheduler {
 
     data class ScheduledAlarm(
-            val id: Int,
-            val calendar: Calendar,
-            val type: CalendarType,
-            val alarmValue: AlarmValue)
-        : Comparable<ScheduledAlarm> {
+        val id: Int,
+        val calendar: Calendar,
+        val type: CalendarType,
+        val alarmValue: AlarmValue
+    ) : Comparable<ScheduledAlarm> {
 
         override fun compareTo(other: ScheduledAlarm): Int {
             return this.calendar.compareTo(other.calendar)
@@ -136,30 +142,31 @@ class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, 
      */
     private fun notifyListeners() {
         findNextNormalAlarm()
-                ?.let { scheduledAlarm: ScheduledAlarm ->
-                    fun findNormalTime(scheduledAlarm: ScheduledAlarm): Long {
-                        // we can only assume that the real one will be a little later,
-                        // namely:
-                        val prealarmOffsetInMillis = prefs.preAlarmDuration.value * 60 * 1000
-                        return scheduledAlarm.calendar.timeInMillis + prealarmOffsetInMillis
-                    }
-
-                    val isPrealarm = scheduledAlarm.type == CalendarType.PREALARM
-                    Store.Next(
-                            /* isPrealarm */ isPrealarm,
-                            /* alarm */ scheduledAlarm.alarmValue,
-                            /* nextNonPrealarmTime */ if (isPrealarm) findNormalTime(scheduledAlarm) else scheduledAlarm.calendar.timeInMillis)
-
-
+            ?.let { scheduledAlarm: ScheduledAlarm ->
+                fun findNormalTime(scheduledAlarm: ScheduledAlarm): Long {
+                    // we can only assume that the real one will be a little later,
+                    // namely:
+                    val prealarmOffsetInMillis = prefs.preAlarmDuration.value * 60 * 1000
+                    return scheduledAlarm.calendar.timeInMillis + prealarmOffsetInMillis
                 }
-                .let { next: Store.Next? -> Optional.fromNullable(next) }
-                .run { store.next().onNext(this) }
+
+                val isPrealarm = scheduledAlarm.type == CalendarType.PREALARM
+                Store.Next(
+                    /* isPrealarm */ isPrealarm,
+                    /* alarm */ scheduledAlarm.alarmValue,
+                    /* nextNonPrealarmTime */ if (isPrealarm) findNormalTime(scheduledAlarm) else scheduledAlarm.calendar.timeInMillis
+                )
+
+
+            }
+            .let { next: Store.Next? -> Optional.fromNullable(next) }
+            .run { store.next().onNext(this) }
     }
 
     private fun findNextNormalAlarm(): ScheduledAlarm? {
         return queue
-                .sorted()
-                .firstOrNull { it.type != CalendarType.AUTOSILENCE }
+            .sorted()
+            .firstOrNull { it.type != CalendarType.AUTOSILENCE }
     }
 
     companion object {

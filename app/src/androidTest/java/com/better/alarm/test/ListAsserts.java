@@ -1,5 +1,9 @@
 package com.better.alarm.test;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -16,10 +20,6 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Predicate;
-
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by Yuriy on 09.07.2017.

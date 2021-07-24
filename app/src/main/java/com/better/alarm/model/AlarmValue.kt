@@ -5,17 +5,17 @@ import android.net.Uri
 import java.util.Calendar
 
 data class AlarmValue(
-        val nextTime: Calendar,
-        val state: String,
-        val id: Int,
-        val isEnabled: Boolean,
-        val hour: Int,
-        val minutes: Int,
-        val isPrealarm: Boolean,
-        val alarmtone: Alarmtone,
-        val isVibrate: Boolean,
-        val label: String,
-        val daysOfWeek: DaysOfWeek
+    val nextTime: Calendar,
+    val state: String,
+    val id: Int,
+    val isEnabled: Boolean,
+    val hour: Int,
+    val minutes: Int,
+    val isPrealarm: Boolean,
+    val alarmtone: Alarmtone,
+    val isVibrate: Boolean,
+    val label: String,
+    val daysOfWeek: DaysOfWeek
 ) {
     val skipping = state.contentEquals("SkippingSetState")
 
@@ -47,15 +47,15 @@ data class AlarmValue(
     fun withIsEnabled(enabled: Boolean): AlarmValue = copy(isEnabled = enabled)
     fun withNextTime(calendar: Calendar): AlarmValue = copy(nextTime = calendar)
     fun withChangeData(data: AlarmValue) = copy(
-            id = data.id,
-            isEnabled = data.isEnabled,
-            hour = data.hour,
-            minutes = data.minutes,
-            isPrealarm = data.isPrealarm,
-            alarmtone = data.alarmtone,
-            isVibrate = data.isVibrate,
-            label = data.label,
-            daysOfWeek = data.daysOfWeek
+        id = data.id,
+        isEnabled = data.isEnabled,
+        hour = data.hour,
+        minutes = data.minutes,
+        isPrealarm = data.isPrealarm,
+        alarmtone = data.alarmtone,
+        isVibrate = data.isVibrate,
+        label = data.label,
+        daysOfWeek = data.daysOfWeek
     )
 
     fun withLabel(label: String) = copy(label = label)

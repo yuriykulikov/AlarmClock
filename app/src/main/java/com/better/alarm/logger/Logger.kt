@@ -14,9 +14,9 @@ interface LoggerFactory {
 }
 
 class Logger private constructor(
-        private val writers: List<LogWriter> = emptyList(),
-        val logLevel: LogLevel = LogLevel.DBG,
-        private val tag: String = ""
+    private val writers: List<LogWriter> = emptyList(),
+    val logLevel: LogLevel = LogLevel.DBG,
+    private val tag: String = ""
 ) {
     private fun logIfApplicable(requestedLogLevel: LogLevel, message: Any?, throwable: Throwable?) {
         if (requestedLogLevel.ordinal <= logLevel.ordinal) {
@@ -26,8 +26,10 @@ class Logger private constructor(
 
     fun write(message: Any?, throwable: Throwable?) {
         for (writer in writers) {
-            writer.write(logLevel, "[${tag.padStart(20, ' ')}]", message?.toString()
-                    ?: "null", throwable)
+            writer.write(
+                logLevel, "[${tag.padStart(20, ' ')}]", message?.toString()
+                    ?: "null", throwable
+            )
         }
     }
 

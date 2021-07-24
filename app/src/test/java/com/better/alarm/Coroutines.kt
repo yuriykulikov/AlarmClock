@@ -5,6 +5,6 @@ import kotlinx.coroutines.test.setMain
 
 fun setMainUnconfined() {
     Dispatchers.setMain(
-            Dispatchers.Unconfined
+        Dispatchers.Unconfined
     )
 }

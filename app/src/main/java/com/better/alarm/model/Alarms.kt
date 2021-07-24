@@ -29,19 +29,19 @@ import kotlinx.coroutines.launch
  */
 @SuppressLint("UseSparseArrays")
 class Alarms(
-        private val mAlarmsScheduler: IAlarmsScheduler,
-        private val query: DatabaseQuery,
-        private val factory: AlarmCoreFactory,
-        private val containerFactory: ContainerFactory,
-        private val logger: Logger
+    private val mAlarmsScheduler: IAlarmsScheduler,
+    private val query: DatabaseQuery,
+    private val factory: AlarmCoreFactory,
+    private val containerFactory: ContainerFactory,
+    private val logger: Logger
 ) : IAlarmsManager {
     private val alarms: MutableMap<Int, AlarmCore> = mutableMapOf()
     private val scope = CoroutineScope(Dispatchers.Main.immediate)
     fun start() {
         scope.launch {
             val created = query.query()
-                    .map { container -> container.value.id to factory.create(container) }
-                    .toMap()
+                .map { container -> container.value.id to factory.create(container) }
+                .toMap()
             alarms.putAll(created)
             created.values.forEach { it.start() }
         }

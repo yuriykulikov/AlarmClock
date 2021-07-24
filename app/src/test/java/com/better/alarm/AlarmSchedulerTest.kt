@@ -43,10 +43,11 @@ class AlarmSchedulerTest {
         prefs = Prefs.create(Single.just(true), InMemoryRxDataStoreFactory.create())
 
         store = Store(
-                alarmsSubject = BehaviorSubject.createDefault(ArrayList()),
-                next = BehaviorSubject.createDefault<Optional<Store.Next>>(Optional.absent<Store.Next>()),
-                sets = PublishSubject.create(),
-                events = PublishSubject.create())
+            alarmsSubject = BehaviorSubject.createDefault(ArrayList()),
+            next = BehaviorSubject.createDefault<Optional<Store.Next>>(Optional.absent<Store.Next>()),
+            sets = PublishSubject.create(),
+            events = PublishSubject.create()
+        )
 
         stateNotifierMock = mock<AlarmCore.IStateNotifier>(AlarmCore.IStateNotifier::class.java)
         alarmSetterMock = SetterMock()
@@ -87,10 +88,10 @@ class AlarmSchedulerTest {
     fun `Only closest alarm is set by the scheduler`() {
         alarmsScheduler.start()
         alarmsScheduler.setAlarm(
-                1,
-                CalendarType.NORMAL,
-                Calendar.getInstance().apply { add(Calendar.HOUR_OF_DAY, 1) },
-                createTestAlarmValue(1)
+            1,
+            CalendarType.NORMAL,
+            Calendar.getInstance().apply { add(Calendar.HOUR_OF_DAY, 1) },
+            createTestAlarmValue(1)
         )
 
         assertThat(alarmSetterMock.id).isEqualTo(1)
@@ -100,17 +101,17 @@ class AlarmSchedulerTest {
     fun `Only closest alarm is set by the scheduler if more alarms are present`() {
         alarmsScheduler.start()
         alarmsScheduler.setAlarm(
-                1,
-                CalendarType.NORMAL,
-                Calendar.getInstance().apply { add(Calendar.HOUR_OF_DAY, 1) },
-                createTestAlarmValue(1)
+            1,
+            CalendarType.NORMAL,
+            Calendar.getInstance().apply { add(Calendar.HOUR_OF_DAY, 1) },
+            createTestAlarmValue(1)
         )
 
         alarmsScheduler.setAlarm(
-                2,
-                CalendarType.NORMAL,
-                Calendar.getInstance().apply { add(Calendar.HOUR_OF_DAY, 2) },
-                createTestAlarmValue(2)
+            2,
+            CalendarType.NORMAL,
+            Calendar.getInstance().apply { add(Calendar.HOUR_OF_DAY, 2) },
+            createTestAlarmValue(2)
         )
 
         assertThat(alarmSetterMock.id).isEqualTo(1)
@@ -120,17 +121,17 @@ class AlarmSchedulerTest {
     fun `Only closest alarm is set by the scheduler if more alarms are present scheduled before current`() {
         alarmsScheduler.start()
         alarmsScheduler.setAlarm(
-                2,
-                CalendarType.NORMAL,
-                Calendar.getInstance().apply { add(Calendar.HOUR_OF_DAY, 2) },
-                createTestAlarmValue(2)
+            2,
+            CalendarType.NORMAL,
+            Calendar.getInstance().apply { add(Calendar.HOUR_OF_DAY, 2) },
+            createTestAlarmValue(2)
         )
 
         alarmsScheduler.setAlarm(
-                1,
-                CalendarType.NORMAL,
-                Calendar.getInstance().apply { add(Calendar.HOUR_OF_DAY, 1) },
-                createTestAlarmValue(1)
+            1,
+            CalendarType.NORMAL,
+            Calendar.getInstance().apply { add(Calendar.HOUR_OF_DAY, 1) },
+            createTestAlarmValue(1)
         )
 
         assertThat(alarmSetterMock.id).isEqualTo(1)
@@ -139,17 +140,17 @@ class AlarmSchedulerTest {
     @Test
     fun `Scheduler must wait until it has been started to set alarms`() {
         alarmsScheduler.setAlarm(
-                2,
-                CalendarType.NORMAL,
-                Calendar.getInstance().apply { add(Calendar.HOUR_OF_DAY, 2) },
-                createTestAlarmValue(2)
+            2,
+            CalendarType.NORMAL,
+            Calendar.getInstance().apply { add(Calendar.HOUR_OF_DAY, 2) },
+            createTestAlarmValue(2)
         )
 
         alarmsScheduler.setAlarm(
-                1,
-                CalendarType.NORMAL,
-                Calendar.getInstance().apply { add(Calendar.HOUR_OF_DAY, 1) },
-                createTestAlarmValue(1)
+            1,
+            CalendarType.NORMAL,
+            Calendar.getInstance().apply { add(Calendar.HOUR_OF_DAY, 1) },
+            createTestAlarmValue(1)
         )
 
         assertThat(alarmSetterMock.id).isNull()
@@ -158,17 +159,17 @@ class AlarmSchedulerTest {
     }
 
     private fun createTestAlarmValue(id: Int, label: String = id.toString()) =
-            AlarmValue(
-                    id = id,
-                    alarmtone = Alarmtone.Default(),
-                    daysOfWeek = DaysOfWeek(0),
-                    hour = 12,
-                    isEnabled = true,
-                    isPrealarm = false,
-                    isVibrate = false,
-                    label = label,
-                    minutes = 1,
-                    nextTime = calendars.now(),
-                    state = ""
-            )
+        AlarmValue(
+            id = id,
+            alarmtone = Alarmtone.Default(),
+            daysOfWeek = DaysOfWeek(0),
+            hour = 12,
+            isEnabled = true,
+            isPrealarm = false,
+            isVibrate = false,
+            label = label,
+            minutes = 1,
+            nextTime = calendars.now(),
+            state = ""
+        )
 }

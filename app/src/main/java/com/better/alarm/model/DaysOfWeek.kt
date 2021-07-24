@@ -31,9 +31,9 @@ data class DaysOfWeek(val coded: Int) {
                 }
 
                 (0..6).filter { it.isSet() }
-                        .map { dayIndex -> DAY_MAP[dayIndex] }
-                        .map { calDay -> dayStrings[calDay] }
-                        .joinToString(context.getText(R.string.day_concat))
+                    .map { dayIndex -> DAY_MAP[dayIndex] }
+                    .map { calDay -> dayStrings[calDay] }
+                    .joinToString(context.getText(R.string.day_concat))
             }
         }
 
@@ -57,15 +57,23 @@ data class DaysOfWeek(val coded: Int) {
 
     override fun toString(): String {
         return (if (0.isSet()) "m" else "_") +
-                (if (1.isSet()) 't' else '_') +
-                (if (2.isSet()) 'w' else '_') +
-                (if (3.isSet()) 't' else '_') +
-                (if (4.isSet()) 'f' else '_') +
-                (if (5.isSet()) 's' else '_') +
-                if (6.isSet()) 's' else '_'
+            (if (1.isSet()) 't' else '_') +
+            (if (2.isSet()) 'w' else '_') +
+            (if (3.isSet()) 't' else '_') +
+            (if (4.isSet()) 'f' else '_') +
+            (if (5.isSet()) 's' else '_') +
+            if (6.isSet()) 's' else '_'
     }
 
     companion object {
-        private val DAY_MAP = intArrayOf(Calendar.MONDAY, Calendar.TUESDAY, Calendar.WEDNESDAY, Calendar.THURSDAY, Calendar.FRIDAY, Calendar.SATURDAY, Calendar.SUNDAY)
+        private val DAY_MAP = intArrayOf(
+            Calendar.MONDAY,
+            Calendar.TUESDAY,
+            Calendar.WEDNESDAY,
+            Calendar.THURSDAY,
+            Calendar.FRIDAY,
+            Calendar.SATURDAY,
+            Calendar.SUNDAY
+        )
     }
 }

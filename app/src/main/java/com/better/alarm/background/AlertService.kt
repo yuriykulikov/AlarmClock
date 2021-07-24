@@ -50,13 +50,13 @@ interface EnclosingService {
  * Listens to all kinds of events, vibrates, shows notifications and so on.
  */
 class AlertService(
-        private val log: Logger,
-        private val wakelocks: Wakelocks,
-        private val alarms: IAlarmsManager,
-        private val inCall: Observable<Boolean>,
-        private val plugins: List<AlertPlugin>,
-        private val notifications: NotificationsPlugin,
-        private val enclosing: EnclosingService
+    private val log: Logger,
+    private val wakelocks: Wakelocks,
+    private val alarms: IAlarmsManager,
+    private val inCall: Observable<Boolean>,
+    private val plugins: List<AlertPlugin>,
+    private val notifications: NotificationsPlugin,
+    private val enclosing: EnclosingService
 ) {
     private val wantedVolume: BehaviorSubject<TargetVolume> = BehaviorSubject.createDefault(TargetVolume.MUTED)
 
@@ -72,24 +72,24 @@ class AlertService(
     init {
         wakelocks.acquireServiceLock()
         activeAlarms
-                .distinctUntilChanged()
-                .skipWhile { it.isEmpty() }
-                .subscribeWith(disposable) { active ->
-                    if (active.isNotEmpty()) {
-                        log.debug { "activeAlarms: $active" }
-                        playSound(active)
-                        showNotifications(active)
-                    } else {
-                        log.debug { "no alarms anymore, stopSelf()" }
-                        soundAlarmDisposable.dispose()
-                        wantedVolume.onNext(TargetVolume.MUTED)
-                        nowShowing
-                                .filter { !isOreo() || it != 0 } // not the foreground notification
-                                .forEach { notifications.cancel(it) }
-                        enclosing.stopSelf()
-                        disposable.dispose()
-                    }
+            .distinctUntilChanged()
+            .skipWhile { it.isEmpty() }
+            .subscribeWith(disposable) { active ->
+                if (active.isNotEmpty()) {
+                    log.debug { "activeAlarms: $active" }
+                    playSound(active)
+                    showNotifications(active)
+                } else {
+                    log.debug { "no alarms anymore, stopSelf()" }
+                    soundAlarmDisposable.dispose()
+                    wantedVolume.onNext(TargetVolume.MUTED)
+                    nowShowing
+                        .filter { !isOreo() || it != 0 } // not the foreground notification
+                        .forEach { notifications.cancel(it) }
+                    enclosing.stopSelf()
+                    disposable.dispose()
                 }
+            }
     }
 
     fun onDestroy() {
@@ -153,11 +153,11 @@ class AlertService(
     private fun showNotifications(active: Map<Int, Type>) {
         require(active.isNotEmpty())
         val toShow = active.mapNotNull { (id, _) -> alarms.getAlarm(id) }
-                .map { alarm ->
-                    val alarmtone = alarm.alarmtone
-                    val label = alarm.labelOrDefault
-                    PluginAlarmData(alarm.id, alarmtone, label)
-                }
+            .map { alarm ->
+                val alarmtone = alarm.alarmtone
+                val label = alarm.labelOrDefault
+                PluginAlarmData(alarm.id, alarmtone, label)
+            }
 
         log.debug { "Show notifications: $toShow" }
 
@@ -189,23 +189,28 @@ class AlertService(
 
         wantedVolume.onNext(TargetVolume.FADED_IN)
 
-        val targetVolumeAccountingForInCallState: Observable<TargetVolume> = Observable.combineLatest<TargetVolume, CallState, TargetVolume>(
+        val targetVolumeAccountingForInCallState: Observable<TargetVolume> =
+            Observable.combineLatest<TargetVolume, CallState, TargetVolume>(
                 wantedVolume,
                 inCall.zipWithIndex { callActive, index ->
                     CallState(index == 0, callActive)
                 }, BiFunction { volume, callState ->
-            when {
-                !callState.initial && callState.inCall -> TargetVolume.MUTED
-                !callState.initial && !callState.inCall -> TargetVolume.FADED_IN_FAST
-                else -> volume
-            }
-        })
+                    when {
+                        !callState.initial && callState.inCall -> TargetVolume.MUTED
+                        !callState.initial && !callState.inCall -> TargetVolume.FADED_IN_FAST
+                        else -> volume
+                    }
+                })
 
         val alarm = alarms.getAlarm(id)
         val alarmtone = alarm?.alarmtone ?: Alarmtone.Default()
         val label = alarm?.labelOrDefault ?: ""
         val pluginDisposables = plugins.map {
-            it.go(PluginAlarmData(id, alarmtone, label), prealarm = type == Type.PREALARM, targetVolume = targetVolumeAccountingForInCallState)
+            it.go(
+                PluginAlarmData(id, alarmtone, label),
+                prealarm = type == Type.PREALARM,
+                targetVolume = targetVolumeAccountingForInCallState
+            )
         }
         soundAlarmDisposable = CompositeDisposable(pluginDisposables)
     }

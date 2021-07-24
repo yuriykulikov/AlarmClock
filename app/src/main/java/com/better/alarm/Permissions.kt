@@ -20,27 +20,27 @@ fun checkPermissions(activity: Activity, tones: List<Alarmtone>) {
         val logger: Logger by globalLogger("checkPermissions")
 
         val unplayable = tones
-                .filter { alarmtone ->
-                    runCatching {
-                        PlayerWrapper(context = activity, resources = activity.resources, log = logger).setDataSource(alarmtone)
-                    }.isFailure
-                }
-                .mapNotNull { tone -> RingtoneManager.getRingtone(activity, tone.ringtoneManagerString()) }
-                .map { ringtone ->
-                    runCatching {
-                        ringtone.getTitle(activity) ?: "null"
-                    }.getOrDefault("null")
-                }
+            .filter { alarmtone ->
+                runCatching {
+                    PlayerWrapper(context = activity, resources = activity.resources, log = logger).setDataSource(alarmtone)
+                }.isFailure
+            }
+            .mapNotNull { tone -> RingtoneManager.getRingtone(activity, tone.ringtoneManagerString()) }
+            .map { ringtone ->
+                runCatching {
+                    ringtone.getTitle(activity) ?: "null"
+                }.getOrDefault("null")
+            }
 
         if (unplayable.isNotEmpty()) {
             try {
                 AlertDialog.Builder(activity).setTitle(activity.getString(R.string.alert))
-                        .setMessage(activity.getString(R.string.permissions_external_storage_text, unplayable.joinToString(", ")))
-                        .setPositiveButton(android.R.string.ok) { _, _ ->
-                            activity.requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 3)
-                        }
-                        .setNegativeButton(android.R.string.cancel, null)
-                        .show()
+                    .setMessage(activity.getString(R.string.permissions_external_storage_text, unplayable.joinToString(", ")))
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                        activity.requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 3)
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
             } catch (e: Exception) {
                 logger.e("Was not able to show dialog to request permission, continue without the dialog")
                 activity.requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 3)

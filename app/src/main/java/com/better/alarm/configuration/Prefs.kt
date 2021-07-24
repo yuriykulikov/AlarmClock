@@ -15,30 +15,30 @@ enum class Layout {
 }
 
 class Prefs private constructor(
-        val is24HourFormat: Single<Boolean>,
-        val preAlarmDuration: RxDataStore<Int>,
-        val preAlarmVolume: RxDataStore<Int>,
-        val snoozeDuration: RxDataStore<Int>,
-        val listRowLayout: RxDataStore<String>,
-        val autoSilence: RxDataStore<Int>,
-        val fadeInTimeInSeconds: RxDataStore<Int>,
-        val vibrate: RxDataStore<Boolean>,
-        val skipDuration: RxDataStore<Int>,
-        val longClickDismiss: RxDataStore<Boolean>,
-        val theme: RxDataStore<String>,
+    val is24HourFormat: Single<Boolean>,
+    val preAlarmDuration: RxDataStore<Int>,
+    val preAlarmVolume: RxDataStore<Int>,
+    val snoozeDuration: RxDataStore<Int>,
+    val listRowLayout: RxDataStore<String>,
+    val autoSilence: RxDataStore<Int>,
+    val fadeInTimeInSeconds: RxDataStore<Int>,
+    val vibrate: RxDataStore<Boolean>,
+    val skipDuration: RxDataStore<Int>,
+    val longClickDismiss: RxDataStore<Boolean>,
+    val theme: RxDataStore<String>,
 ) {
     fun layout(): Layout {
         return listRowLayout
-                .observe()
-                .take(1)
-                .map {
-                    when {
-                        !lollipop() -> Layout.CLASSIC
-                        it == LIST_ROW_LAYOUT_CLASSIC -> Layout.CLASSIC
-                        it == LIST_ROW_LAYOUT_COMPACT -> Layout.COMPACT
-                        else -> Layout.BOLD
-                    }
-                }.blockingFirst()
+            .observe()
+            .take(1)
+            .map {
+                when {
+                    !lollipop() -> Layout.CLASSIC
+                    it == LIST_ROW_LAYOUT_CLASSIC -> Layout.CLASSIC
+                    it == LIST_ROW_LAYOUT_COMPACT -> Layout.COMPACT
+                    else -> Layout.BOLD
+                }
+            }.blockingFirst()
     }
 
     companion object {
@@ -46,17 +46,17 @@ class Prefs private constructor(
         @JvmStatic
         fun create(is24HourFormat: Single<Boolean>, factory: PrimitiveDataStoreFactory): Prefs {
             return Prefs(
-                    is24HourFormat = is24HourFormat,
-                    preAlarmDuration = factory.intStringDataStore("prealarm_duration", 30),
-                    preAlarmVolume = factory.intDataStore(KEY_PREALARM_VOLUME, DEFAULT_PREALARM_VOLUME),
-                    snoozeDuration = factory.intStringDataStore("snooze_duration", 10),
-                    listRowLayout = factory.stringDataStore(LIST_ROW_LAYOUT, LIST_ROW_LAYOUT_COMPACT),
-                    autoSilence = factory.intStringDataStore("auto_silence", 10),
-                    fadeInTimeInSeconds = factory.intStringDataStore(Prefs.KEY_FADE_IN_TIME_SEC, 30),
-                    vibrate = factory.booleanDataStore("vibrate", true),
-                    skipDuration = factory.intStringDataStore(SKIP_DURATION_KEY, -1),
-                    longClickDismiss = factory.booleanDataStore(LONGCLICK_DISMISS_KEY, LONGCLICK_DISMISS_DEFAULT),
-                    theme = factory.stringDataStore("theme", "dark"),
+                is24HourFormat = is24HourFormat,
+                preAlarmDuration = factory.intStringDataStore("prealarm_duration", 30),
+                preAlarmVolume = factory.intDataStore(KEY_PREALARM_VOLUME, DEFAULT_PREALARM_VOLUME),
+                snoozeDuration = factory.intStringDataStore("snooze_duration", 10),
+                listRowLayout = factory.stringDataStore(LIST_ROW_LAYOUT, LIST_ROW_LAYOUT_COMPACT),
+                autoSilence = factory.intStringDataStore("auto_silence", 10),
+                fadeInTimeInSeconds = factory.intStringDataStore(Prefs.KEY_FADE_IN_TIME_SEC, 30),
+                vibrate = factory.booleanDataStore("vibrate", true),
+                skipDuration = factory.intStringDataStore(SKIP_DURATION_KEY, -1),
+                longClickDismiss = factory.booleanDataStore(LONGCLICK_DISMISS_KEY, LONGCLICK_DISMISS_DEFAULT),
+                theme = factory.stringDataStore("theme", "dark"),
             )
         }
 

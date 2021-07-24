@@ -10,9 +10,9 @@ import com.better.alarm.logger.Logger
 import com.better.alarm.model.Alarmtone
 
 class PlayerWrapper(
-        val resources: Resources,
-        val context: Context,
-        val log: Logger
+    val resources: Resources,
+    val context: Context,
+    val log: Logger
 ) : Player {
     override fun setDataSource(alarmtone: Alarmtone) {
         // Fall back on the default alarm if the database does not have an

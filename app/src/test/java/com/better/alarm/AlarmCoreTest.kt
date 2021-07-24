@@ -32,10 +32,10 @@ class AlarmCoreTest {
     private val alarmSetterMock = AlarmSchedulerTest.SetterMock()
     private var testScheduler: TestScheduler = TestScheduler()
     private var store: Store = Store(
-            alarmsSubject = BehaviorSubject.createDefault(ArrayList()),
-            next = BehaviorSubject.createDefault<Optional<Store.Next>>(Optional.absent()),
-            sets = PublishSubject.create(),
-            events = PublishSubject.create()
+        alarmsSubject = BehaviorSubject.createDefault(ArrayList()),
+        next = BehaviorSubject.createDefault<Optional<Store.Next>>(Optional.absent()),
+        sets = PublishSubject.create(),
+        events = PublishSubject.create()
     )
     private var prefs: Prefs = Prefs.create(Single.just(true), InMemoryRxDataStoreFactory.create()).apply {
         autoSilence.value = 7
@@ -74,13 +74,13 @@ class AlarmCoreTest {
         val alarmsScheduler = AlarmsScheduler(alarmSetterMock, logger, store, prefs, calendars)
         alarmsScheduler.start()
         return AlarmCore(
-                containerFactory.create(),
-                logger,
-                alarmsScheduler,
-                stateNotifierMock,
-                prefs,
-                store,
-                calendars
+            containerFactory.create(),
+            logger,
+            alarmsScheduler,
+            stateNotifierMock,
+            prefs,
+            store,
+            calendars
         ).apply {
             start()
             testScheduler.triggerActions()
@@ -107,8 +107,9 @@ class AlarmCoreTest {
         act("Enable on 03:00") {
             alarm.edit {
                 copy(
-                        isEnabled = true,
-                        hour = 3)
+                    isEnabled = true,
+                    hour = 3
+                )
             }
         }
 
@@ -122,8 +123,9 @@ class AlarmCoreTest {
         act("Enable on 03:00") {
             alarm.edit {
                 copy(
-                        isEnabled = true,
-                        hour = 3)
+                    isEnabled = true,
+                    hour = 3
+                )
             }
         }
 
@@ -143,8 +145,9 @@ class AlarmCoreTest {
         act("Set on 01:00") {
             alarm.edit {
                 copy(
-                        isEnabled = true,
-                        hour = 1)
+                    isEnabled = true,
+                    hour = 1
+                )
             }
         }
         verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_SHOW_SKIP) }
@@ -163,10 +166,11 @@ class AlarmCoreTest {
         act("Set on 01:30") {
             alarm.edit {
                 copy(
-                        isEnabled = true,
-                        daysOfWeek = DaysOfWeek(0x7f),
-                        hour = 1, minutes = 30)
-                        .withIsPrealarm(true)
+                    isEnabled = true,
+                    daysOfWeek = DaysOfWeek(0x7f),
+                    hour = 1, minutes = 30
+                )
+                    .withIsPrealarm(true)
             }
         }
 
@@ -192,8 +196,9 @@ class AlarmCoreTest {
         act("Set on 01:00") {
             alarm.edit {
                 copy(
-                        isEnabled = true,
-                        hour = 1)
+                    isEnabled = true,
+                    hour = 1
+                )
             }
         }
 
@@ -215,9 +220,10 @@ class AlarmCoreTest {
         act("Set on 1:00") {
             alarm.edit {
                 copy(
-                        daysOfWeek = DaysOfWeek(0x7f),
-                        isEnabled = true,
-                        hour = 1)
+                    daysOfWeek = DaysOfWeek(0x7f),
+                    isEnabled = true,
+                    hour = 1
+                )
             }
         }
 
@@ -242,9 +248,10 @@ class AlarmCoreTest {
         act("Set on 1:00") {
             alarm.edit {
                 copy(
-                        daysOfWeek = DaysOfWeek(0x7f),
-                        isEnabled = true,
-                        hour = 1)
+                    daysOfWeek = DaysOfWeek(0x7f),
+                    isEnabled = true,
+                    hour = 1
+                )
             }
         }
 
@@ -267,9 +274,10 @@ class AlarmCoreTest {
         act("Set on 1:00") {
             alarm.edit {
                 copy(
-                        daysOfWeek = DaysOfWeek(0x7f),
-                        isEnabled = true,
-                        hour = 1)
+                    daysOfWeek = DaysOfWeek(0x7f),
+                    isEnabled = true,
+                    hour = 1
+                )
             }
         }
 
@@ -291,9 +299,10 @@ class AlarmCoreTest {
         act("Set on 1:00") {
             alarm.edit {
                 copy(
-                        daysOfWeek = DaysOfWeek(0x3),
-                        isEnabled = true,
-                        hour = 1)
+                    daysOfWeek = DaysOfWeek(0x3),
+                    isEnabled = true,
+                    hour = 1
+                )
             }
         }
 
@@ -314,9 +323,10 @@ class AlarmCoreTest {
         act("Set repeating on 01:00") {
             alarm.edit {
                 copy(
-                        daysOfWeek = DaysOfWeek(0x7f),
-                        isEnabled = true,
-                        hour = 1)
+                    daysOfWeek = DaysOfWeek(0x7f),
+                    isEnabled = true,
+                    hour = 1
+                )
             }
         }
 
@@ -341,9 +351,10 @@ class AlarmCoreTest {
         act("Set on 1:00") {
             alarm.edit {
                 copy(
-                        daysOfWeek = DaysOfWeek(0x7f),
-                        isEnabled = true,
-                        hour = 1)
+                    daysOfWeek = DaysOfWeek(0x7f),
+                    isEnabled = true,
+                    hour = 1
+                )
             }
         }
 

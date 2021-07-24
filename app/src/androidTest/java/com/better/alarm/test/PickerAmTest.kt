@@ -27,7 +27,8 @@ import java.util.Locale
 class PickerAmTest : BaseTest() {
     @JvmField
     var listActivity = ActivityTestRule(
-            AlarmsListActivity::class.java, false, /* autostart*/ true)
+        AlarmsListActivity::class.java, false, /* autostart*/ true
+    )
 
     @JvmField
     @Rule
@@ -36,8 +37,8 @@ class PickerAmTest : BaseTest() {
     class OnView {
         fun with(id: Int? = null, text: String? = null): ViewInteraction {
             val matcher = listOfNotNull(
-                    text?.let { ViewMatchers.withText(it) },
-                    id?.let { ViewMatchers.withId(it) }
+                text?.let { ViewMatchers.withText(it) },
+                id?.let { ViewMatchers.withId(it) }
             ).let { Matchers.allOf(it) }
             return Espresso.onView(matcher)
         }

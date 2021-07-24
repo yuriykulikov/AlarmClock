@@ -111,8 +111,8 @@ import kotlin.properties.Delegates
  * [Android SM](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/core/java/com/android/internal/util/StateMachine.java)
  */
 internal class StateMachine<T : Any>(
-        val name: String,
-        private val logger: Logger
+    val name: String,
+    private val logger: Logger
 ) {
     /** State hierarchy as a tree. Root Node is null.*/
     private lateinit var tree: Map<State<T>, Node<T>>
@@ -137,9 +137,9 @@ internal class StateMachine<T : Any>(
      */
     fun start(event: T? = null, configurator: StateMachineBuilder.(StateMachineBuilder) -> Unit) {
         tree = StateMachineBuilder()
-                .apply { configurator(this, this) }
-                .mutableTree
-                .toMap()
+            .apply { configurator(this, this) }
+            .mutableTree
+            .toMap()
         enterInitialState(event)
     }
 
@@ -216,8 +216,8 @@ internal class StateMachine<T : Any>(
 
     private fun branchToRoot(state: State<T>): List<State<T>> {
         return generateSequence(tree.getValue(state)) { it.parentNode }
-                .map { it.state }
-                .toList()
+            .map { it.state }
+            .toList()
     }
 
     /** Goes all states from root to [currentState] and invokes [State.enter] */
@@ -264,8 +264,8 @@ internal class StateMachine<T : Any>(
 
 /** Node in the state tree */
 internal class Node<T>(
-        var state: State<T>,
-        var parentNode: Node<T>?
+    var state: State<T>,
+    var parentNode: Node<T>?
 )
 
 /**

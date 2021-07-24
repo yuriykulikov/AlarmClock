@@ -27,8 +27,8 @@ import com.better.alarm.model.Calendars
 import com.better.alarm.model.ContainerFactory
 import com.better.alarm.model.IAlarmsScheduler
 import com.better.alarm.persistance.DatabaseQuery
-import com.better.alarm.persistance.RetryingDatabaseQuery
 import com.better.alarm.persistance.PersistingContainerFactory
+import com.better.alarm.persistance.RetryingDatabaseQuery
 import com.better.alarm.presenter.AlarmsListActivity
 import com.better.alarm.presenter.DynamicThemeHandler
 import com.better.alarm.presenter.ScheduledReceiver
@@ -68,8 +68,8 @@ fun startKoin(context: Context): Koin {
         single<StartupLogWriter> { StartupLogWriter.create() }
         single<LoggerFactory> {
             Logger.factory(
-                    LogcatLogWriter.create(),
-                    get<StartupLogWriter>()
+                LogcatLogWriter.create(),
+                get<StartupLogWriter>()
             )
         }
         single<BugReporter> { BugReporter(logger("BugReporter"), context, lazy { get<StartupLogWriter>() }) }
@@ -78,7 +78,7 @@ fun startKoin(context: Context): Koin {
         factory<Single<Boolean>>(named("dateFormat")) {
             Single.fromCallable {
                 get<String>(named("dateFormatOverride")).let { if (it == "none") null else it.toBoolean() }
-                        ?: android.text.format.DateFormat.is24HourFormat(context)
+                    ?: android.text.format.DateFormat.is24HourFormat(context)
             }
         }
 
@@ -89,10 +89,11 @@ fun startKoin(context: Context): Koin {
 
         single<Store> {
             Store(
-                    alarmsSubject = BehaviorSubject.createDefault(ArrayList()),
-                    next = BehaviorSubject.createDefault<Optional<Store.Next>>(Optional.absent()),
-                    sets = PublishSubject.create(),
-                    events = PublishSubject.create())
+                alarmsSubject = BehaviorSubject.createDefault(ArrayList()),
+                next = BehaviorSubject.createDefault<Optional<Store.Next>>(Optional.absent()),
+                sets = PublishSubject.create(),
+                events = PublishSubject.create()
+            )
         }
 
         factory { get<Context>().getSystemService(Context.ALARM_SERVICE) as AlarmManager }
@@ -123,12 +124,12 @@ fun startKoin(context: Context): Koin {
 
         factory(named("volumePreferenceDemo")) {
             KlaxonPlugin(
-                    log = logger("VolumePreference"),
-                    playerFactory = { PlayerWrapper(get(), get(), logger("VolumePreference")) },
-                    prealarmVolume = get<Prefs>().preAlarmVolume.observe(),
-                    fadeInTimeInMillis = Observable.just(100),
-                    inCall = Observable.just(false),
-                    scheduler = get()
+                log = logger("VolumePreference"),
+                playerFactory = { PlayerWrapper(get(), get(), logger("VolumePreference")) },
+                prealarmVolume = get<Prefs>().preAlarmVolume.observe(),
+                fadeInTimeInMillis = Observable.just(100),
+                inCall = Observable.just(false),
+                scheduler = get()
             )
         }
     }

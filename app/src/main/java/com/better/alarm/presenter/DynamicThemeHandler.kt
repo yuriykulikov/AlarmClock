@@ -5,7 +5,7 @@ import com.better.alarm.configuration.Prefs
 import com.better.alarm.stores.modify
 
 class DynamicThemeHandler(
-        private val prefs: Prefs,
+    private val prefs: Prefs,
 ) {
     private val light = "light"
     private val dark = "dark"
@@ -14,31 +14,31 @@ class DynamicThemeHandler(
     private val deepblue = "deepblue"
 
     private val themes: Map<String, List<Int>> = mapOf(
-            light to listOf(
-                    R.style.DefaultLightTheme,
-                    R.style.AlarmAlertFullScreenLightTheme,
-                    R.style.TimePickerDialogFragmentLight,
-            ),
-            dark to listOf(
-                    R.style.DefaultDarkTheme,
-                    R.style.AlarmAlertFullScreenDarkTheme,
-                    R.style.TimePickerDialogFragmentDark,
-            ),
-            synthwave to listOf(
-                    R.style.DefaultSynthwaveTheme,
-                    R.style.AlarmAlertFullScreenSynthwaveTheme,
-                    R.style.TimePickerDialogFragmentSynthwave,
-            ),
-            deusex to listOf(
-                    R.style.DefaultDeusExTheme,
-                    R.style.AlarmAlertFullScreenDeusExTheme,
-                    R.style.TimePickerDialogFragmentDeusEx,
-            ),
-            deepblue to listOf(
-                    R.style.DefaultDeepBlueTheme,
-                    R.style.AlarmAlertFullScreenDeepBlueTheme,
-                    R.style.TimePickerDialogFragmentDeepBlue,
-            ),
+        light to listOf(
+            R.style.DefaultLightTheme,
+            R.style.AlarmAlertFullScreenLightTheme,
+            R.style.TimePickerDialogFragmentLight,
+        ),
+        dark to listOf(
+            R.style.DefaultDarkTheme,
+            R.style.AlarmAlertFullScreenDarkTheme,
+            R.style.TimePickerDialogFragmentDark,
+        ),
+        synthwave to listOf(
+            R.style.DefaultSynthwaveTheme,
+            R.style.AlarmAlertFullScreenSynthwaveTheme,
+            R.style.TimePickerDialogFragmentSynthwave,
+        ),
+        deusex to listOf(
+            R.style.DefaultDeusExTheme,
+            R.style.AlarmAlertFullScreenDeusExTheme,
+            R.style.TimePickerDialogFragmentDeusEx,
+        ),
+        deepblue to listOf(
+            R.style.DefaultDeepBlueTheme,
+            R.style.AlarmAlertFullScreenDeepBlueTheme,
+            R.style.TimePickerDialogFragmentDeepBlue,
+        ),
     )
 
     init {

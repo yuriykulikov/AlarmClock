@@ -69,11 +69,14 @@ open class TimePickerPresenter(private val is24HoursMode: Boolean) {
             key == Key.DELETE -> input = input.dropLast(1)
         }
 
-        subject.onNext(State(
+        subject.onNext(
+            State(
                 input = this.input,
                 amPm = this.amPm,
                 is24HoursMode = is24HoursMode,
-                leftRightEntered = leftRightEntered))
+                leftRightEntered = leftRightEntered
+            )
+        )
     }
 
     fun reset() {
@@ -83,10 +86,10 @@ open class TimePickerPresenter(private val is24HoursMode: Boolean) {
     }
 
     data class State(
-            val input: List<Int> = arrayListOf(),
-            val amPm: AmPm = AmPm.NONE,
-            val is24HoursMode: Boolean,
-            val leftRightEntered: Boolean = false
+        val input: List<Int> = arrayListOf(),
+        val amPm: AmPm = AmPm.NONE,
+        val is24HoursMode: Boolean,
+        val leftRightEntered: Boolean = false
     ) {
         val any: List<Key> = arrayListOf(Key.ZERO, Key.ONE, Key.TWO, Key.THREE, Key.FOUR, Key.FIVE, Key.SIX, Key.SEVEN, Key.EIGHT, Key.NINE)
         private val zeroToFive: List<Key> = arrayListOf(Key.ZERO, Key.ONE, Key.TWO, Key.THREE, Key.FOUR, Key.FIVE)

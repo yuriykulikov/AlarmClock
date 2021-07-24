@@ -16,10 +16,10 @@ class TestContainerFactory(private val calendars: Calendars) : ContainerFactory 
 
     override fun create(): AlarmStore {
         val inMemory = inMemoryRxDataStore(
-                PersistingContainerFactory.create(
-                        calendars = calendars,
-                        idMapper = { _ -> idCounter++ }
-                )
+            PersistingContainerFactory.create(
+                calendars = calendars,
+                idMapper = { _ -> idCounter++ }
+            )
         )
         return object : AlarmStore {
             override var value = inMemory.value
@@ -28,7 +28,7 @@ class TestContainerFactory(private val calendars: Calendars) : ContainerFactory 
                 createdRecords.removeIf { it.value.id == value.id }
             }
         }
-                .also { createdRecords.add(it) }
+            .also { createdRecords.add(it) }
     }
 
     override fun create(cursor: Cursor): AlarmStore {

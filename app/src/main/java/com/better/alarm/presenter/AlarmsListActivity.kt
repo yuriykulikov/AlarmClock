@@ -28,11 +28,12 @@ import android.transition.ChangeTransform
 import android.transition.Fade
 import android.transition.Slide
 import android.transition.TransitionSet
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.Gravity
 import android.view.WindowManager
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.better.alarm.BuildConfig
 import com.better.alarm.NotificationSettings
@@ -50,6 +51,7 @@ import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.Alarmtone
 import com.better.alarm.model.DaysOfWeek
 import com.better.alarm.util.Optional
+import com.better.alarm.util.formatToast
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposables
@@ -61,8 +63,6 @@ import io.reactivex.subjects.Subject
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
-import android.widget.TextView
-import com.better.alarm.util.formatToast
 
 
 /**
@@ -105,11 +105,14 @@ class AlarmsListActivity : AppCompatActivity() {
                 override fun createNewAlarm() {
                     transitioningToNewAlarmDetails.onNext(true)
                     val newAlarm = alarms.createNewAlarm()
-                    editing.onNext(EditedAlarm(
+                    editing.onNext(
+                        EditedAlarm(
                             isNew = true,
                             value = Optional.of(newAlarm.data),
                             id = newAlarm.id,
-                            holder = Optional.absent()))
+                            holder = Optional.absent()
+                        )
+                    )
                 }
 
                 override fun transitioningToNewAlarmDetails(): Subject<Boolean> {
@@ -118,20 +121,26 @@ class AlarmsListActivity : AppCompatActivity() {
 
                 override fun edit(id: Int, holder: RowHolder?) {
                     alarms.getAlarm(id)?.let { alarm ->
-                        editing.onNext(EditedAlarm(
+                        editing.onNext(
+                            EditedAlarm(
                                 isNew = false,
                                 value = Optional.of(alarm.data),
                                 id = id,
-                                holder = Optional.fromNullable(holder)))
+                                holder = Optional.fromNullable(holder)
+                            )
+                        )
                     }
                 }
 
                 override fun hideDetails(holder: RowHolder?) {
-                    editing.onNext(EditedAlarm(
+                    editing.onNext(
+                        EditedAlarm(
                             isNew = false,
                             value = Optional.absent(),
                             id = holder?.alarmId ?: -1,
-                            holder = Optional.fromNullable(holder)))
+                            holder = Optional.fromNullable(holder)
+                        )
+                    )
                 }
 
                 override var openDrawerOnCreate: Boolean = false
@@ -188,11 +197,11 @@ class AlarmsListActivity : AppCompatActivity() {
         setContentView(R.layout.list_activity)
 
         store
-                .alarms()
-                .take(1)
-                .subscribe { alarms ->
-                    checkPermissions(this, alarms.map { it.alarmtone })
-                }.apply { }
+            .alarms()
+            .take(1)
+            .subscribe { alarms ->
+                checkPermissions(this, alarms.map { it.alarmtone })
+            }.apply { }
     }
 
     override fun onStart() {
@@ -202,14 +211,14 @@ class AlarmsListActivity : AppCompatActivity() {
     }
 
     private fun configureSnackbar() {
-      snackbarDisposable =    store.sets().withLatestFrom<Boolean, Pair<Store.AlarmSet, Boolean>>(
+        snackbarDisposable = store.sets().withLatestFrom<Boolean, Pair<Store.AlarmSet, Boolean>>(
             store.uiVisible,
             BiFunction { set, uiVisible -> set to uiVisible })
             .subscribe { (set: Store.AlarmSet, uiVisible: Boolean) ->
                 val rootView = window.decorView.rootView
-                if (uiVisible ) {
-                    val toastText = formatToast( applicationContext, set.millis)
-                    val snackbar =  Snackbar.make(rootView, toastText, Snackbar.LENGTH_LONG)
+                if (uiVisible) {
+                    val toastText = formatToast(applicationContext, set.millis)
+                    val snackbar = Snackbar.make(rootView, toastText, Snackbar.LENGTH_LONG)
                     val snackbarView = snackbar.view
                     val snackText = snackbarView.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
                     snackText.gravity = Gravity.CENTER_HORIZONTAL
@@ -247,7 +256,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         return supportActionBar?.let { mActionBarHandler.onCreateOptionsMenu(menu, menuInflater, it) }
-                ?: false
+            ?: false
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -260,14 +269,14 @@ class AlarmsListActivity : AppCompatActivity() {
 
     private fun configureTransactions() {
         sub = uiStore.editing()
-                .distinctUntilChanged { edited -> edited.isEdited }
-                .subscribe(Consumer { edited ->
-                    when {
-                        lollipop() && isDestroyed -> return@Consumer
-                        edited.isEdited -> showDetails(edited)
-                        else -> showList(edited)
-                    }
-                })
+            .distinctUntilChanged { edited -> edited.isEdited }
+            .subscribe(Consumer { edited ->
+                when {
+                    lollipop() && isDestroyed -> return@Consumer
+                    edited.isEdited -> showDetails(edited)
+                    else -> showList(edited)
+                }
+            })
     }
 
     private fun showList(@NonNull edited: EditedAlarm) {
@@ -292,18 +301,18 @@ class AlarmsListActivity : AppCompatActivity() {
             }
 
             supportFragmentManager.beginTransaction()
-                    .apply {
-                        lollipop {
-                            edited.holder.getOrNull()?.addSharedElementsToTransition(this)
-                        }
+                .apply {
+                    lollipop {
+                        edited.holder.getOrNull()?.addSharedElementsToTransition(this)
                     }
-                    .apply {
-                        if (!lollipop()) {
-                            this.setCustomAnimations(R.anim.push_down_in, android.R.anim.fade_out)
-                        }
+                }
+                .apply {
+                    if (!lollipop()) {
+                        this.setCustomAnimations(R.anim.push_down_in, android.R.anim.fade_out)
                     }
-                    .replace(R.id.main_fragment_container, listFragment)
-                    .commitAllowingStateLoss()
+                }
+                .replace(R.id.main_fragment_container, listFragment)
+                .commitAllowingStateLoss()
         }
     }
 
@@ -331,18 +340,18 @@ class AlarmsListActivity : AppCompatActivity() {
             }
 
             supportFragmentManager.beginTransaction()
-                    .apply {
-                        if (!lollipop()) {
-                            this.setCustomAnimations(R.anim.push_down_in, android.R.anim.fade_out)
-                        }
+                .apply {
+                    if (!lollipop()) {
+                        this.setCustomAnimations(R.anim.push_down_in, android.R.anim.fade_out)
                     }
-                    .apply {
-                        lollipop {
-                            edited.holder.getOrNull()?.addSharedElementsToTransition(this)
-                        }
+                }
+                .apply {
+                    lollipop {
+                        edited.holder.getOrNull()?.addSharedElementsToTransition(this)
                     }
-                    .replace(R.id.main_fragment_container, detailsFragment)
-                    .commitAllowingStateLoss()
+                }
+                .replace(R.id.main_fragment_container, detailsFragment)
+                .commitAllowingStateLoss()
         }
     }
 
@@ -366,27 +375,27 @@ class AlarmsListActivity : AppCompatActivity() {
      */
     private fun editedAlarmFromSavedInstanceState(savedInstanceState: Bundle): EditedAlarm {
         return EditedAlarm(
-                isNew = savedInstanceState.getBoolean("isNew"),
-                id = savedInstanceState.getInt("id"),
-                value = if (savedInstanceState.getBoolean("isEdited")) {
-                    Optional.of(
-                            AlarmValue(
-                                    id = savedInstanceState.getInt("id"),
-                                    isEnabled = savedInstanceState.getBoolean("isEnabled"),
-                                    hour = savedInstanceState.getInt("hour"),
-                                    minutes = savedInstanceState.getInt("minutes"),
-                                    daysOfWeek = DaysOfWeek(savedInstanceState.getInt("daysOfWeek")),
-                                    isPrealarm = savedInstanceState.getBoolean("isPrealarm"),
-                                    alarmtone = Alarmtone.fromString(savedInstanceState.getString("alarmtone")),
-                                    label = savedInstanceState.getString("label") ?: "",
-                                    isVibrate = true,
-                                    state = savedInstanceState.getString("state") ?: "",
-                                    nextTime = Calendar.getInstance()
-                            )
+            isNew = savedInstanceState.getBoolean("isNew"),
+            id = savedInstanceState.getInt("id"),
+            value = if (savedInstanceState.getBoolean("isEdited")) {
+                Optional.of(
+                    AlarmValue(
+                        id = savedInstanceState.getInt("id"),
+                        isEnabled = savedInstanceState.getBoolean("isEnabled"),
+                        hour = savedInstanceState.getInt("hour"),
+                        minutes = savedInstanceState.getInt("minutes"),
+                        daysOfWeek = DaysOfWeek(savedInstanceState.getInt("daysOfWeek")),
+                        isPrealarm = savedInstanceState.getBoolean("isPrealarm"),
+                        alarmtone = Alarmtone.fromString(savedInstanceState.getString("alarmtone")),
+                        label = savedInstanceState.getString("label") ?: "",
+                        isVibrate = true,
+                        state = savedInstanceState.getString("state") ?: "",
+                        nextTime = Calendar.getInstance()
                     )
-                } else {
-                    Optional.absent()
-                }
+                )
+            } else {
+                Optional.absent()
+            }
         )
     }
 

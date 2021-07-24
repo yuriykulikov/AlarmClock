@@ -7,8 +7,8 @@ import org.junit.Test
 
 class StateMachineTest {
     private val stateMachine = StateMachine<Event>(
-            name = "TestStateMachine",
-            logger = Logger.create(SysoutLogWriter())
+        name = "TestStateMachine",
+        logger = Logger.create(SysoutLogWriter())
     )
 
     private val captured: MutableList<CapturedEvent> = mutableListOf()
@@ -42,12 +42,12 @@ class StateMachineTest {
         val s3 = state("s3") { false }
 
         stateMachine
-                .start(Switch(on = true)) {
-                    addState(state = root)
-                    addState(state = s1, parent = root)
-                    addState(state = s2, parent = s1)
-                    addState(state = s3, parent = s2, initial = true)
-                }
+            .start(Switch(on = true)) {
+                addState(state = root)
+                addState(state = s1, parent = root)
+                addState(state = s2, parent = s1)
+                addState(state = s3, parent = s2, initial = true)
+            }
 
         assertThat(capturedEvents).isEmpty()
 
@@ -58,9 +58,9 @@ class StateMachineTest {
 
         // root does not receive the events
         assertThat(capturedEvents).containsExactly(
-                OnEvent(s3, grind),
-                OnEvent(s2, grind),
-                OnEvent(s1, grind)
+            OnEvent(s3, grind),
+            OnEvent(s2, grind),
+            OnEvent(s1, grind)
         )
     }
 
@@ -72,18 +72,18 @@ class StateMachineTest {
         val s3 = state("s3") { false }
 
         stateMachine
-                .start(Switch(on = true)) {
-                    addState(state = root)
-                    addState(state = s1, parent = root)
-                    addState(state = s2, parent = s1)
-                    addState(state = s3, parent = s2, initial = true)
-                }
+            .start(Switch(on = true)) {
+                addState(state = root)
+                addState(state = s1, parent = root)
+                addState(state = s2, parent = s1)
+                addState(state = s3, parent = s2, initial = true)
+            }
 
         assertThat(captured).containsExactly(
-                OnEnter(root),
-                OnEnter(s1),
-                OnEnter(s2),
-                OnEnter(s3)
+            OnEnter(root),
+            OnEnter(s1),
+            OnEnter(s2),
+            OnEnter(s3)
         )
     }
 
@@ -106,23 +106,23 @@ class StateMachineTest {
         //     /  \     /  \
         //  s1a  s1b   s2a  s2b
         stateMachine
-                .start(Switch(on = true)) {
-                    addState(state = root)
-                    addState(state = s0, parent = root)
-                    addState(state = s1, parent = s0)
-                    addState(state = s1a, parent = s1)
-                    addState(state = s1b, parent = s1)
-                    addState(state = s2, parent = s0)
-                    addState(state = s2a, parent = s2)
-                    addState(state = s2b, parent = s2)
-                    setInitialState(s2b)
-                }
+            .start(Switch(on = true)) {
+                addState(state = root)
+                addState(state = s0, parent = root)
+                addState(state = s1, parent = s0)
+                addState(state = s1a, parent = s1)
+                addState(state = s1b, parent = s1)
+                addState(state = s2, parent = s0)
+                addState(state = s2a, parent = s2)
+                addState(state = s2b, parent = s2)
+                setInitialState(s2b)
+            }
 
         assertThat(captured).containsExactly(
-                OnEnter(root),
-                OnEnter(s0),
-                OnEnter(s2),
-                OnEnter(s2b)
+            OnEnter(root),
+            OnEnter(s0),
+            OnEnter(s2),
+            OnEnter(s2b)
         )
     }
 
@@ -151,23 +151,23 @@ class StateMachineTest {
         //     /  \     /  \
         //  s1a  s1b   s2a  s2b
         stateMachine
-                .start(Switch(on = true)) {
-                    addState(state = root)
-                    addState(state = s0, parent = root)
-                    addState(state = s1, parent = s0)
-                    addState(state = s1a, parent = s1)
-                    addState(state = s1b, parent = s1)
-                    addState(state = s2, parent = s0)
-                    addState(state = s2a, parent = s2)
-                    addState(state = s2b, parent = s2)
-                    setInitialState(s2b)
-                }
+            .start(Switch(on = true)) {
+                addState(state = root)
+                addState(state = s0, parent = root)
+                addState(state = s1, parent = s0)
+                addState(state = s1a, parent = s1)
+                addState(state = s1b, parent = s1)
+                addState(state = s2, parent = s0)
+                addState(state = s2a, parent = s2)
+                addState(state = s2b, parent = s2)
+                setInitialState(s2b)
+            }
         // VERIFY after start we have entered s2b
         assertThat(capturedTransitions).containsExactly(
-                OnEnter(root),
-                OnEnter(s0),
-                OnEnter(s2),
-                OnEnter(s2b)
+            OnEnter(root),
+            OnEnter(s0),
+            OnEnter(s2),
+            OnEnter(s2b)
         )
         captured.clear()
 
@@ -175,10 +175,10 @@ class StateMachineTest {
         stateMachine.sendEvent(Brew(1))
         // VERIFY first we exit and then we enter
         assertThat(capturedTransitions).containsExactly(
-                OnExit(s2b),
-                OnExit(s2),
-                OnEnter(s1),
-                OnEnter(s1b)
+            OnExit(s2b),
+            OnExit(s2),
+            OnEnter(s1),
+            OnEnter(s1b)
         )
 
         // RESET
@@ -187,8 +187,8 @@ class StateMachineTest {
         stateMachine.sendEvent(Brew(1))
         // VERIFY since we are already in root and s0, no states will be entered, only 2 states exit
         assertThat(capturedTransitions).containsExactly(
-                OnExit(s1b),
-                OnExit(s1)
+            OnExit(s1b),
+            OnExit(s1)
         )
     }
 
@@ -218,25 +218,25 @@ class StateMachineTest {
         //     /  \     /  \
         //  s1a ready s2a  grinding
         stateMachine
-                .start(Switch(on = true)) {
-                    addState(state = root)
-                    addState(state = s0, parent = root)
-                    addState(state = s1, parent = s0)
-                    addState(state = s1a, parent = s1)
-                    addState(state = ready, parent = s1)
-                    addState(state = s2, parent = s0)
-                    addState(state = s2a, parent = s2)
-                    addState(state = grinding, parent = s2)
-                    setInitialState(grinding)
-                }
+            .start(Switch(on = true)) {
+                addState(state = root)
+                addState(state = s0, parent = root)
+                addState(state = s1, parent = s0)
+                addState(state = s1a, parent = s1)
+                addState(state = ready, parent = s1)
+                addState(state = s2, parent = s0)
+                addState(state = s2a, parent = s2)
+                addState(state = grinding, parent = s2)
+                setInitialState(grinding)
+            }
 
         // WHEN events are sent
         stateMachine.sendEvent(Brew(1))
         stateMachine.sendEvent(Brew(2))
         // VERIFY they are processed by current state
         assertThat(capturedEvents).containsExactly(
-                OnEvent(grinding, Brew(1)),
-                OnEvent(grinding, Brew(2))
+            OnEvent(grinding, Brew(1)),
+            OnEvent(grinding, Brew(2))
         )
 
         // RESET
@@ -245,9 +245,9 @@ class StateMachineTest {
         stateMachine.sendEvent(DoneGrinding)
         // VERIFY all deferred events are delivered to ready
         assertThat(capturedEvents).containsExactly(
-                OnEvent(grinding, DoneGrinding),
-                OnEvent(ready, Brew(1)),
-                OnEvent(ready, Brew(2))
+            OnEvent(grinding, DoneGrinding),
+            OnEvent(ready, Brew(1)),
+            OnEvent(ready, Brew(2))
         )
     }
 }
