@@ -1,5 +1,15 @@
 package com.better.alarm.test;
 
+import static android.provider.AlarmClock.ACTION_SET_ALARM;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.longClick;
+import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.allOf;
+
 import android.content.Intent;
 import android.provider.AlarmClock;
 
@@ -31,16 +41,6 @@ import org.junit.runner.RunWith;
 
 import java.util.Calendar;
 import java.util.Locale;
-
-import static android.provider.AlarmClock.ACTION_SET_ALARM;
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.longClick;
-import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.allOf;
 
 /**
  * Created by Yuriy on 12.07.2017.

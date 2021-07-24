@@ -23,12 +23,12 @@ class KlaxonPluginTest {
     private val playerMock = mock(Player::class.java)
     private val scheduler = TestScheduler()
     private val klaxonPlugin = KlaxonPlugin(
-            inCall = Observable.just(false),
-            fadeInTimeInMillis = Observable.just(30 * 1000),
-            log = Logger.create(),
-            playerFactory = { playerMock },
-            prealarmVolume = Observable.just(5),
-            scheduler = scheduler
+        inCall = Observable.just(false),
+        fadeInTimeInMillis = Observable.just(30 * 1000),
+        log = Logger.create(),
+        playerFactory = { playerMock },
+        prealarmVolume = Observable.just(5),
+        scheduler = scheduler
     )
 
     private fun Float.squared() = this * this
@@ -37,9 +37,9 @@ class KlaxonPluginTest {
     @Test
     fun `player should be configured when started`() {
         klaxonPlugin.go(
-                PluginAlarmData(1, Alarmtone.Default(), ""),
-                false,
-                Observable.just(TargetVolume.FADED_IN)
+            PluginAlarmData(1, Alarmtone.Default(), ""),
+            false,
+            Observable.just(TargetVolume.FADED_IN)
         )
 
         verify(playerMock).setPerceivedVolume(0f)
@@ -51,9 +51,9 @@ class KlaxonPluginTest {
     @Test
     fun `clean up should be sequenced`() {
         klaxonPlugin.go(
-                PluginAlarmData(1, Alarmtone.Default(), ""),
-                true,
-                Observable.just(TargetVolume.FADED_IN)
+            PluginAlarmData(1, Alarmtone.Default(), ""),
+            true,
+            Observable.just(TargetVolume.FADED_IN)
         ).dispose()
 
         verify(playerMock).stop()
@@ -62,9 +62,9 @@ class KlaxonPluginTest {
     @Test
     fun `gradual fade in`() {
         klaxonPlugin.go(
-                PluginAlarmData(1, Alarmtone.Default(), ""),
-                false,
-                Observable.just(TargetVolume.FADED_IN)
+            PluginAlarmData(1, Alarmtone.Default(), ""),
+            false,
+            Observable.just(TargetVolume.FADED_IN)
         )
 
         scheduler.advanceTimeBy(15, TimeUnit.SECONDS)
@@ -85,9 +85,9 @@ class KlaxonPluginTest {
     @Test
     fun `gradual fade in prealarm`() {
         klaxonPlugin.go(
-                PluginAlarmData(1, Alarmtone.Default(), ""),
-                true,
-                Observable.just(TargetVolume.FADED_IN)
+            PluginAlarmData(1, Alarmtone.Default(), ""),
+            true,
+            Observable.just(TargetVolume.FADED_IN)
         )
 
         scheduler.advanceTimeBy(15, TimeUnit.SECONDS)
@@ -115,9 +115,9 @@ class KlaxonPluginTest {
         `when`(playerMock.setDataSource(Alarmtone.Default())).thenThrow(NullPointerException("Test IOE"))
 
         klaxonPlugin.go(
-                PluginAlarmData(1, Alarmtone.Default(), ""),
-                true,
-                Observable.just(TargetVolume.FADED_IN)
+            PluginAlarmData(1, Alarmtone.Default(), ""),
+            true,
+            Observable.just(TargetVolume.FADED_IN)
         )
 
         verify(playerMock).setDataSourceFromResource(R.raw.fallbackring)
@@ -129,9 +129,9 @@ class KlaxonPluginTest {
         `when`(playerMock.setDataSource(Alarmtone.Sound(""))).thenThrow(NullPointerException("Test IOE"))
 
         klaxonPlugin.go(
-                PluginAlarmData(1, Alarmtone.Sound(""), ""),
-                true,
-                Observable.just(TargetVolume.FADED_IN)
+            PluginAlarmData(1, Alarmtone.Sound(""), ""),
+            true,
+            Observable.just(TargetVolume.FADED_IN)
         )
 
         verify(playerMock).setDataSourceFromResource(R.raw.fallbackring)

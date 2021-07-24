@@ -22,7 +22,7 @@ class StartupLogWriter private constructor() : LogWriter {
     fun getMessagesAsString(): String {
         return lock.withLock {
             generateSequence { if (messages.isEmpty) null else messages.popFirst() }
-                    .joinToString("\n")
+                .joinToString("\n")
         }
     }
 

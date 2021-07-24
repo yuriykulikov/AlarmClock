@@ -49,9 +49,9 @@ class ListTest : BaseTest() {
         assertThatList().items().hasSize(3)
 
         ListAsserts.assertThatList<AlarmValue>(R.id.list_fragment_list)
-                .filter(enabled())
-                .items()
-                .isEmpty()
+            .filter(enabled())
+            .items()
+            .isEmpty()
 
         deleteAlarm(0)
         assertThatList().items().hasSize(2)
@@ -78,10 +78,10 @@ class ListTest : BaseTest() {
         onView(withText("5")).perform(click())
 
         onView(withText("AM"))
-                .withFailureHandler { _, _ ->
-                    //ignore fails - only use if View is found
-                }
-                .perform(click())
+            .withFailureHandler { _, _ ->
+                //ignore fails - only use if View is found
+            }
+            .perform(click())
 
         sleep()
         onView(withText("OK")).perform(click())
@@ -91,9 +91,9 @@ class ListTest : BaseTest() {
         assertThatList().items().hasSize(3)
 
         ListAsserts.assertThatList<AlarmValue>(R.id.list_fragment_list)
-                .filter(enabled())
-                .items()
-                .hasSize(1)
+            .filter(enabled())
+            .items()
+            .hasSize(1)
 
         deleteAlarm(0)
         assertThatList().items().hasSize(2)
@@ -132,10 +132,10 @@ class ListTest : BaseTest() {
         onView(withText("5")).perform(click())
 
         onView(withText("AM"))
-                .withFailureHandler { _, _ ->
-                    //ignore fails - only use if View is found
-                }
-                .perform(click())
+            .withFailureHandler { _, _ ->
+                //ignore fails - only use if View is found
+            }
+            .perform(click())
 
         Thread.sleep(1000)
         onView(withText("OK")).perform(click())
@@ -143,9 +143,9 @@ class ListTest : BaseTest() {
         Thread.sleep(1000)
 
         ListAsserts.assertThatList<AlarmValue>(R.id.list_fragment_list)
-                .filter(enabled())
-                .items()
-                .hasSize(1)
+            .filter(enabled())
+            .items()
+            .hasSize(1)
 
         val id = ListAsserts.listObservable<AlarmValue>(R.id.list_fragment_list).firstOrError().blockingGet().id
 
@@ -174,9 +174,9 @@ class ListTest : BaseTest() {
 
         //alarm must be disabled because there is no repeating
         ListAsserts.assertThatList<AlarmValue>(R.id.list_fragment_list)
-                .filter(enabled())
-                .items()
-                .isEmpty()
+            .filter(enabled())
+            .items()
+            .isEmpty()
 
         Thread.sleep(1000)
         deleteAlarm(0)
@@ -234,14 +234,14 @@ class ListTest : BaseTest() {
         assertThatList().items().hasSize(3)
 
         ListAsserts.assertThatList<AlarmValue>(R.id.list_fragment_list)
-                .filter(enabled())
-                .items()
-                .hasSize(1)
+            .filter(enabled())
+            .items()
+            .hasSize(1)
 
         ListAsserts.assertThatList<AlarmValue>(R.id.list_fragment_list)
-                .filter { alarmValue -> alarmValue.daysOfWeek.isRepeatSet }
-                .items()
-                .hasSize(3)
+            .filter { alarmValue -> alarmValue.daysOfWeek.isRepeatSet }
+            .items()
+            .hasSize(3)
 
         onView(withText("Every day")).check(matches(isDisplayed()))
 
@@ -260,25 +260,25 @@ class ListTest : BaseTest() {
         onView(withText("5")).perform(click())
 
         onView(withText("AM"))
-                .withFailureHandler { error, viewMatcher ->
-                    //ignore fails - only use if View is found
-                }
-                .perform(click())
+            .withFailureHandler { error, viewMatcher ->
+                //ignore fails - only use if View is found
+            }
+            .perform(click())
 
         sleep()
         onView(withText("OK")).perform(click())
         sleep()
 
         ListAsserts.assertThatList<AlarmValue>(R.id.list_fragment_list)
-                .filter(enabled())
-                .items()
-                .hasSize(1)
+            .filter(enabled())
+            .items()
+            .hasSize(1)
 
         onData(anything()).atPosition(0).onChildView(withId(R.id.list_row_on_off_checkbox_container)).perform(click())
         sleep()
         ListAsserts.assertThatList<AlarmValue>(R.id.list_fragment_list)
-                .filter(enabled())
-                .items()
-                .isEmpty()
+            .filter(enabled())
+            .items()
+            .isEmpty()
     }
 }

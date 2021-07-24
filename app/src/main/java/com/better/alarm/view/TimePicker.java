@@ -188,7 +188,7 @@ public class TimePicker extends LinearLayout implements Button.OnClickListener {
 
                 for (TimePickerPresenter.Key key : state.getEnabled()) {
                     views.get(key.ordinal()).setEnabled(true);
-                    if (key.equals(TimePickerPresenter.Key.DELETE)){
+                    if (key.equals(TimePickerPresenter.Key.DELETE)) {
                         views.get(TimePickerPresenter.Key.DELETE.ordinal()).setAlpha(1f);
                     }
                 }

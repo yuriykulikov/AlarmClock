@@ -12,8 +12,11 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AbsListView
+import android.widget.AdapterView
 import android.widget.AdapterView.AdapterContextMenuInfo
+import android.widget.ArrayAdapter
+import android.widget.ListView
 import androidx.fragment.app.Fragment
 import com.better.alarm.R
 import com.better.alarm.configuration.Layout
@@ -27,12 +30,10 @@ import com.better.alarm.lollipop
 import com.better.alarm.model.AlarmValue
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
-import com.google.android.material.snackbar.Snackbar
 import com.melnykov.fab.FloatingActionButton
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
-import io.reactivex.functions.BiFunction
 import java.util.ArrayList
 import java.util.Calendar
 
@@ -65,7 +66,8 @@ class AlarmsListFragment : Fragment() {
     /** changed by [Prefs.listRowLayout] in [onResume]*/
     private var listRowLayout = prefs.layout()
 
-    inner class AlarmListAdapter(alarmTime: Int, label: Int, private val values: List<AlarmValue>) : ArrayAdapter<AlarmValue>(requireContext(), alarmTime, label, values) {
+    inner class AlarmListAdapter(alarmTime: Int, label: Int, private val values: List<AlarmValue>) :
+        ArrayAdapter<AlarmValue>(requireContext(), alarmTime, label, values) {
         private val highlighter: ListRowHighlighter? by lazy { ListRowHighlighter.createFor(requireActivity().theme) }
 
         private fun recycleView(convertView: View?, parent: ViewGroup, id: Int): RowHolder {
@@ -102,29 +104,29 @@ class AlarmsListFragment : Fragment() {
             }
 
             row.container
-                    //onOff
-                    .setOnClickListener {
-                        val enable = !alarm.isEnabled
-                        logger.debug { "onClick: ${if (enable) "enable" else "disable"}" }
-                        alarms.getAlarm(alarm.id)?.enable(enable)
-                    }
+                //onOff
+                .setOnClickListener {
+                    val enable = !alarm.isEnabled
+                    logger.debug { "onClick: ${if (enable) "enable" else "disable"}" }
+                    alarms.getAlarm(alarm.id)?.enable(enable)
+                }
 
             val pickerClickTarget = with(row) { if (layout == Layout.CLASSIC) digitalClockContainer else digitalClock }
             pickerClickTarget.setOnClickListener {
                 timePickerDialogDisposable = TimePickerDialogFragment.showTimePicker(parentFragmentManager)
-                        .subscribe { picked ->
-                            if (picked.isPresent()) {
-                                alarms.getAlarm(alarm.id)?.also { alarm ->
-                                    alarm.edit {
-                                        copy(
-                                                isEnabled = true,
-                                                hour = picked.get().hour,
-                                                minutes = picked.get().minute
-                                        )
-                                    }
+                    .subscribe { picked ->
+                        if (picked.isPresent()) {
+                            alarms.getAlarm(alarm.id)?.also { alarm ->
+                                alarm.edit {
+                                    copy(
+                                        isEnabled = true,
+                                        hour = picked.get().hour,
+                                        minutes = picked.get().minute
+                                    )
                                 }
                             }
                         }
+                    }
             }
 
             pickerClickTarget.setOnLongClickListener {
@@ -181,9 +183,9 @@ class AlarmsListFragment : Fragment() {
             R.id.delete_alarm -> {
                 // Confirm that the alarm will be deleted.
                 AlertDialog.Builder(activity).setTitle(getString(R.string.delete_alarm))
-                        .setMessage(getString(R.string.delete_alarm_confirm))
-                        .setPositiveButton(android.R.string.ok) { _, _ -> alarms.getAlarm(alarm.id)?.delete() }
-                        .setNegativeButton(android.R.string.cancel, null).show()
+                    .setMessage(getString(R.string.delete_alarm_confirm))
+                    .setPositiveButton(android.R.string.ok) { _, _ -> alarms.getAlarm(alarm.id)?.delete() }
+                    .setNegativeButton(android.R.string.cancel, null).show()
             }
             R.id.list_context_enable -> {
                 alarms.getAlarm(alarmId = alarm.id)?.run {
@@ -219,7 +221,6 @@ class AlarmsListFragment : Fragment() {
         val view = inflater.inflate(R.layout.list_fragment, container, false)
 
 
-
         val listView = view.findViewById(R.id.list_fragment_list) as ListView
 
         listView.adapter = mAdapter
@@ -249,18 +250,18 @@ class AlarmsListFragment : Fragment() {
         }
 
         alarmsSub =
-                prefs.listRowLayout
-                        .observe()
-                        .switchMap { uiStore.transitioningToNewAlarmDetails() }
-                        .switchMap { transitioning -> if (transitioning) Observable.never() else store.alarms() }
-                        .subscribe { alarms ->
-                            val sorted = alarms
-                                    .sortedWith(Comparators.MinuteComparator())
-                                    .sortedWith(Comparators.HourComparator())
-                                    .sortedWith(Comparators.RepeatComparator())
-                            mAdapter.clear()
-                            mAdapter.addAll(sorted)
-                        }
+            prefs.listRowLayout
+                .observe()
+                .switchMap { uiStore.transitioningToNewAlarmDetails() }
+                .switchMap { transitioning -> if (transitioning) Observable.never() else store.alarms() }
+                .subscribe { alarms ->
+                    val sorted = alarms
+                        .sortedWith(Comparators.MinuteComparator())
+                        .sortedWith(Comparators.HourComparator())
+                        .sortedWith(Comparators.RepeatComparator())
+                    mAdapter.clear()
+                    mAdapter.addAll(sorted)
+                }
 
         lollipop {
             configureBottomDrawer(view)
@@ -268,8 +269,6 @@ class AlarmsListFragment : Fragment() {
 
         return view
     }
-
-
 
 
     @TargetApi(21)
@@ -327,9 +326,9 @@ class AlarmsListFragment : Fragment() {
 
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
                     val color = ArgbEvaluator().evaluate(
-                            slideOffset,
-                            closedColor,
-                            openColor,
+                        slideOffset,
+                        closedColor,
+                        openColor,
                     ) as Int
                     setDrawerBackgrounds(color)
 
@@ -397,7 +396,7 @@ class AlarmsListFragment : Fragment() {
         }
 
         listOf(R.id.list_context_enable, R.id.list_context_menu_disable, R.id.skip_alarm)
-                .minus(visible)
-                .forEach { menu.removeItem(it) }
+            .minus(visible)
+            .forEach { menu.removeItem(it) }
     }
 }

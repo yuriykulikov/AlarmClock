@@ -31,10 +31,10 @@ import io.reactivex.disposables.Disposables
  * @author Kate
  */
 class ActionBarHandler(
-        private val mContext: AppCompatActivity,
-        private val store: UiStore,
-        private val alarms: IAlarmsManager,
-        private val reporter: BugReporter
+    private val mContext: AppCompatActivity,
+    private val store: UiStore,
+    private val alarms: IAlarmsManager,
+    private val reporter: BugReporter
 ) {
     private var sub = Disposables.disposed()
 
@@ -52,10 +52,12 @@ class ActionBarHandler(
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
 
-            addFlags(when {
-                lollipop() -> Intent.FLAG_ACTIVITY_NEW_DOCUMENT
-                else -> @Suppress("DEPRECATION") Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET
-            })
+            addFlags(
+                when {
+                    lollipop() -> Intent.FLAG_ACTIVITY_NEW_DOCUMENT
+                    else -> @Suppress("DEPRECATION") Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET
+                }
+            )
 
             // Add data to the intent, the receiving app will decide what to do with
             // it.
@@ -112,8 +114,8 @@ class ActionBarHandler(
             })
             setPositiveButton(android.R.string.ok) { _, _ ->
             }
-                    .create()
-                    .show()
+                .create()
+                .show()
         }
     }
 
@@ -147,8 +149,8 @@ class ActionBarHandler(
             setView(dialogView)
             setCancelable(true)
         }
-                .create()
-                .show()
+            .create()
+            .show()
     }
 
     private fun showBugreport() {
@@ -167,8 +169,8 @@ class ActionBarHandler(
             setNegativeButton(android.R.string.cancel, EmptyClickListener())
             setView(dialogView)
         }
-                .create()
-                .show()
+            .create()
+            .show()
     }
 
     private class EmptyClickListener : DialogInterface.OnClickListener {

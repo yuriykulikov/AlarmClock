@@ -16,8 +16,8 @@ class PrimitiveDataStoresMediumTest(val name: String, private val inMemory: Bool
         @JvmStatic
         @Parameterized.Parameters(name = "{0}")
         fun params(): Array<Array<Any>> = arrayOf(
-                arrayOf("in memory", true),
-                arrayOf("stubbed preferences", false)
+            arrayOf("in memory", true),
+            arrayOf("stubbed preferences", false)
         )
     }
 

@@ -3,7 +3,6 @@ package com.better.alarm.presenter
 import android.content.res.Resources
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
-import android.util.TypedValue
 import com.better.alarm.lollipop
 
 /**
@@ -11,9 +10,9 @@ import com.better.alarm.lollipop
  * If an alarm is disabled, colors will be greyed out.
  */
 class ListRowHighlighter(
-        val accentColor: Int,
-        val primaryTextColor: Int,
-        val disabledColor: Int,
+    val accentColor: Int,
+    val primaryTextColor: Int,
+    val disabledColor: Int,
 ) {
     fun applyTo(row: RowHolder, enabled: Boolean) {
         if (enabled) {
@@ -39,9 +38,9 @@ class ListRowHighlighter(
             if (!lollipop()) return null
 
             return ListRowHighlighter(
-                    accentColor = theme.resolveColor(android.R.attr.colorAccent),
-                    primaryTextColor = theme.resolveColor(android.R.attr.colorForeground),
-                    disabledColor = theme.resolveColor(com.better.alarm.R.attr.listRowDisabledColor)
+                accentColor = theme.resolveColor(android.R.attr.colorAccent),
+                primaryTextColor = theme.resolveColor(android.R.attr.colorForeground),
+                disabledColor = theme.resolveColor(com.better.alarm.R.attr.listRowDisabledColor)
             )
         }
     }

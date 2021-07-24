@@ -47,23 +47,23 @@ class InfoFragment : Fragment() {
         }
 
         disposable = Observable.combineLatest<Optional<Store.Next>, Long, String>(
-                store.next(),
-                now(),
-                BiFunction { next, now ->
-                    next.getOrNull()?.let {
-                        computeTexts(
-                                resources,
-                                it,
-                                now,
-                                prefs.preAlarmDuration.value,
-                        )
-                    } ?: ""
-                }
+            store.next(),
+            now(),
+            BiFunction { next, now ->
+                next.getOrNull()?.let {
+                    computeTexts(
+                        resources,
+                        it,
+                        now,
+                        prefs.preAlarmDuration.value,
+                    )
+                } ?: ""
+            }
         )
-                .distinctUntilChanged()
-                .subscribe { remainingText ->
-                    remainingTime.setText(remainingText)
-                }
+            .distinctUntilChanged()
+            .subscribe { remainingText ->
+                remainingTime.setText(remainingText)
+            }
 
         return view
     }
@@ -83,15 +83,15 @@ class InfoFragment : Fragment() {
             requireActivity().registerReceiver(tickReceiver, IntentFilter(Intent.ACTION_TIME_TICK))
             emitter.setCancellable { requireActivity().unregisterReceiver(tickReceiver) }
         }
-                .startWith(System.currentTimeMillis())
+            .startWith(System.currentTimeMillis())
     }
 }
 
 fun computeTexts(
-        res: Resources,
-        alarm: Store.Next,
-        now: Long,
-        prealarmDuration: Int,
+    res: Resources,
+    alarm: Store.Next,
+    now: Long,
+    prealarmDuration: Int,
 ): String {
     val nextMillis = alarm.nextNonPrealarmTime()
 
@@ -133,8 +133,8 @@ private fun formatRemainingTimeString(res: Resources, timeInMillis: Long, now: L
 
     // bitmask
     val index = (if (days > 0) 1 else 0) or
-            (if (hours > 0) 2 else 0) or
-            (if (minutes > 0) 4 else 0)
+        (if (hours > 0) 2 else 0) or
+        (if (minutes > 0) 4 else 0)
 
     val formats = res.getStringArray(R.array.alarm_set_short)
     return String.format(formats[index], daySeq, hourSeq, minSeq)

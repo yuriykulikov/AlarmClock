@@ -12,13 +12,13 @@ import org.koin.core.qualifier.Qualifier
  * @param parameters - injection parameters
  */
 inline fun <reified T : Any> globalInject(
-        qualifier: Qualifier? = null,
-        noinline parameters: ParametersDefinition? = null
+    qualifier: Qualifier? = null,
+    noinline parameters: ParametersDefinition? = null
 ) = lazy { KoinContextHandler.get().get<T>(qualifier, parameters) }
 
 inline fun <reified T : Any> globalGet(
-        qualifier: Qualifier? = null,
-        noinline parameters: ParametersDefinition? = null
+    qualifier: Qualifier? = null,
+    noinline parameters: ParametersDefinition? = null
 ) = KoinContextHandler.get().get<T>(qualifier, parameters)
 
 fun globalLogger(tag: String) = lazy { KoinContextHandler.get().get<LoggerFactory>().createLogger(tag) }

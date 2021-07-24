@@ -37,10 +37,10 @@ import com.better.alarm.notificationBuilder
  * through Alarm ID.
  */
 class NotificationsPlugin(
-        private val logger: Logger,
-        private val mContext: Context,
-        private val nm: NotificationManager,
-        private val enclosingService: EnclosingService
+    private val logger: Logger,
+    private val mContext: Context,
+    private val nm: NotificationManager,
+    private val enclosingService: EnclosingService
 ) {
     fun show(alarm: PluginAlarmData, index: Int, startForeground: Boolean) {
         /* Close dialogs and window shade */
@@ -52,10 +52,14 @@ class NotificationsPlugin(
         val notify = Intent(mContext, AlarmAlertFullScreen::class.java)
         notify.putExtra(Intents.EXTRA_ID, alarm.id)
         val pendingNotify = PendingIntent.getActivity(mContext, alarm.id, notify, 0)
-        val pendingSnooze = PresentationToModelIntents.createPendingIntent(mContext,
-                PresentationToModelIntents.ACTION_REQUEST_SNOOZE, alarm.id)
-        val pendingDismiss = PresentationToModelIntents.createPendingIntent(mContext,
-                PresentationToModelIntents.ACTION_REQUEST_DISMISS, alarm.id)
+        val pendingSnooze = PresentationToModelIntents.createPendingIntent(
+            mContext,
+            PresentationToModelIntents.ACTION_REQUEST_SNOOZE, alarm.id
+        )
+        val pendingDismiss = PresentationToModelIntents.createPendingIntent(
+            mContext,
+            PresentationToModelIntents.ACTION_REQUEST_DISMISS, alarm.id
+        )
 
         val notification = mContext.notificationBuilder(CHANNEL_ID_HIGH_PRIO) {
             setContentTitle(alarm.label)

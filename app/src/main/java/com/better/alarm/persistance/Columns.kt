@@ -114,7 +114,8 @@ class Columns : BaseColumns {
         const val DEFAULT_SORT_ORDER = "$HOUR, $MINUTES ASC"
 
         @JvmField
-        val ALARM_QUERY_COLUMNS = arrayOf(BaseColumns._ID, HOUR, MINUTES, DAYS_OF_WEEK, ALARM_TIME, ENABLED, VIBRATE, MESSAGE, ALERT, PREALARM, STATE)
+        val ALARM_QUERY_COLUMNS =
+            arrayOf(BaseColumns._ID, HOUR, MINUTES, DAYS_OF_WEEK, ALARM_TIME, ENABLED, VIBRATE, MESSAGE, ALERT, PREALARM, STATE)
 
         /**
          * These save calls to cursor.getColumnIndexOrThrow() THEY MUST BE KEPT

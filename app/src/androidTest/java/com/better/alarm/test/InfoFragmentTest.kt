@@ -33,44 +33,45 @@ class InfoFragmentTest {
     fun prealarmOff3Hours() {
         val now = Calendar.getInstance().timeInMillis
         assertThat(
-                computeTexts(
-                        res = InstrumentationRegistry.getInstrumentation().targetContext.resources,
-                        alarm = create(
-                                Calendar.getInstance().apply {
-                                    timeInMillis = now
-                                    add(Calendar.HOUR_OF_DAY, 3)
-                                },
-                                false,
-                        ),
-                        now = now,
-                        prealarmDuration = 30,
-                )
+            computeTexts(
+                res = InstrumentationRegistry.getInstrumentation().targetContext.resources,
+                alarm = create(
+                    Calendar.getInstance().apply {
+                        timeInMillis = now
+                        add(Calendar.HOUR_OF_DAY, 3)
+                    },
+                    false,
+                ),
+                now = now,
+                prealarmDuration = 30,
+            )
         )
-                .isEqualTo("3 hours")
+            .isEqualTo("3 hours")
     }
 
     @Test
     fun prealarmOn3Days() {
         val now = Calendar.getInstance().timeInMillis
         assertThat(
-                computeTexts(
-                        res = InstrumentationRegistry.getInstrumentation().targetContext.resources,
-                        alarm = create(
-                                Calendar.getInstance().apply {
-                                    timeInMillis = now
-                                    add(Calendar.DAY_OF_YEAR, 3)
-                                },
-                                true,
-                        ),
-                        now = now,
-                        prealarmDuration = 30,
-                )
+            computeTexts(
+                res = InstrumentationRegistry.getInstrumentation().targetContext.resources,
+                alarm = create(
+                    Calendar.getInstance().apply {
+                        timeInMillis = now
+                        add(Calendar.DAY_OF_YEAR, 3)
+                    },
+                    true,
+                ),
+                now = now,
+                prealarmDuration = 30,
+            )
         )
-                .isEqualTo("3 days\n30 minutes pre-alarm")
+            .isEqualTo("3 days\n30 minutes pre-alarm")
     }
 
     fun create(time: Calendar, isPrealarm: Boolean): Store.Next {
-        return Store.Next(isPrealarm, AlarmValue(
+        return Store.Next(
+            isPrealarm, AlarmValue(
                 id = 1,
                 alarmtone = Alarmtone.Default(),
                 daysOfWeek = DaysOfWeek(0),
@@ -82,6 +83,7 @@ class InfoFragmentTest {
                 minutes = 1,
                 nextTime = time,
                 state = ""
-        ), nextNonPrealarmTime = time.timeInMillis)
+            ), nextNonPrealarmTime = time.timeInMillis
+        )
     }
 }

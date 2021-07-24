@@ -104,13 +104,13 @@ object Create : Event()
  * @enduml
  */
 class AlarmCore(
-        private val alarmStore: AlarmStore,
-        private val log: Logger,
-        private val mAlarmsScheduler: IAlarmsScheduler,
-        private val broadcaster: IStateNotifier,
-        private val prefs: Prefs,
-        private val store: Store,
-        private val calendars: Calendars
+    private val alarmStore: AlarmStore,
+    private val log: Logger,
+    private val mAlarmsScheduler: IAlarmsScheduler,
+    private val broadcaster: IStateNotifier,
+    private val prefs: Prefs,
+    private val store: Store,
+    private val calendars: Calendars
 ) : Alarm {
     private val stateMachine: StateMachine<Event>
     private val df: DateFormat
@@ -132,11 +132,11 @@ class AlarmCore(
         stateMachine = StateMachine("Alarm " + container.id, log)
 
         preAlarmDuration
-                .skip(1)// not interested in the first update on startup
-                .subscribe {
-                    stateMachine.sendEvent(PrealarmDurationChanged)
-                }
-                .let { disposable.add(it) }
+            .skip(1)// not interested in the first update on startup
+            .subscribe {
+                stateMachine.sendEvent(PrealarmDurationChanged)
+            }
+            .let { disposable.add(it) }
     }
 
     /**

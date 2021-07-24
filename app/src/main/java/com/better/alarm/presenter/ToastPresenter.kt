@@ -19,28 +19,21 @@ package com.better.alarm.presenter
 
 import android.content.Context
 import android.widget.Toast
-import com.better.alarm.R
 import com.better.alarm.configuration.Store
 import com.better.alarm.util.formatToast
-import com.google.android.material.snackbar.Snackbar
-import io.reactivex.functions.BiFunction
 
 class ToastPresenter(private val store: Store, private val context: Context) {
     private var sToast: Toast? = null
 
     fun start() {
-        store.sets().withLatestFrom<Boolean, Pair<Store.AlarmSet, Boolean>>(store.uiVisible, BiFunction { set, uiVisible -> set to uiVisible })
-                .subscribe { (set: Store.AlarmSet, uiVisible: Boolean) ->
-                    if (!uiVisible && set.alarm.isEnabled) {
-                        popAlarmSetToast(context, set.millis)
-                    }
-
-
-
+        store.sets()
+            .withLatestFrom(store.uiVisible, { set, uiVisible -> set to uiVisible })
+            .subscribe { (set: Store.AlarmSet, uiVisible: Boolean) ->
+                if (!uiVisible && set.alarm.isEnabled) {
+                    popAlarmSetToast(context, set.millis)
                 }
+            }
     }
-
-
 
     fun setToast(toast: Toast) {
         sToast?.cancel()
@@ -53,6 +46,4 @@ class ToastPresenter(private val store: Store, private val context: Context) {
         setToast(toast)
         toast.show()
     }
-
-
 }

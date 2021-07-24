@@ -7,8 +7,8 @@ import io.reactivex.subjects.BehaviorSubject
 
 fun <T, O> Observable<T>.mapNotNull(func: (T) -> O?): Observable<O> {
     return map { Optional.fromNullable<O>(func(it)) }
-            .filter { it.isPresent() }
-            .map { it.get() }
+        .filter { it.isPresent() }
+        .map { it.get() }
 }
 
 fun <T : Any> BehaviorSubject<T>.modify(func: (T).(T) -> T) {

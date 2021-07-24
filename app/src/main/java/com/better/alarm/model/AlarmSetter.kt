@@ -36,13 +36,13 @@ interface AlarmSetter {
         override fun removeRTCAlarm() {
             log.debug { "Removed all alarms" }
             val pendingAlarm = PendingIntent.getBroadcast(
-                    mContext,
-                    pendingAlarmRequestCode,
-                    Intent(ACTION_FIRED).apply {
-                        // must be here, otherwise replace does not work
-                        setClass(mContext, AlarmsReceiver::class.java)
-                    },
-                    PendingIntent.FLAG_UPDATE_CURRENT
+                mContext,
+                pendingAlarmRequestCode,
+                Intent(ACTION_FIRED).apply {
+                    // must be here, otherwise replace does not work
+                    setClass(mContext, AlarmsReceiver::class.java)
+                },
+                PendingIntent.FLAG_UPDATE_CURRENT
             )
             am.cancel(pendingAlarm)
         }
@@ -50,12 +50,12 @@ interface AlarmSetter {
         override fun setUpRTCAlarm(id: Int, typeName: String, calendar: Calendar) {
             log.debug { "Set $id ($typeName) on ${AlarmsScheduler.DATE_FORMAT.format(calendar.time)}" }
             val pendingAlarm = Intent(ACTION_FIRED)
-                    .apply {
-                        setClass(mContext, AlarmsReceiver::class.java)
-                        putExtra(EXTRA_ID, id)
-                        putExtra(EXTRA_TYPE, typeName)
-                    }
-                    .let { PendingIntent.getBroadcast(mContext, pendingAlarmRequestCode, it, PendingIntent.FLAG_UPDATE_CURRENT) }
+                .apply {
+                    setClass(mContext, AlarmsReceiver::class.java)
+                    putExtra(EXTRA_ID, id)
+                    putExtra(EXTRA_TYPE, typeName)
+                }
+                .let { PendingIntent.getBroadcast(mContext, pendingAlarmRequestCode, it, PendingIntent.FLAG_UPDATE_CURRENT) }
 
             setAlarmStrategy.setRTCAlarm(calendar, pendingAlarm)
         }
@@ -71,11 +71,11 @@ interface AlarmSetter {
         override fun setInexactAlarm(id: Int, calendar: Calendar) {
             log.debug { "setInexactAlarm id: $id on ${AlarmsScheduler.DATE_FORMAT.format(calendar.time)}" }
             val pendingAlarm = Intent(ACTION_INEXACT_FIRED)
-                    .apply {
-                        setClass(mContext, AlarmsReceiver::class.java)
-                        putExtra(EXTRA_ID, id)
-                    }
-                    .let { PendingIntent.getBroadcast(mContext, id, it, PendingIntent.FLAG_UPDATE_CURRENT) }
+                .apply {
+                    setClass(mContext, AlarmsReceiver::class.java)
+                    putExtra(EXTRA_ID, id)
+                }
+                .let { PendingIntent.getBroadcast(mContext, id, it, PendingIntent.FLAG_UPDATE_CURRENT) }
 
             setAlarmStrategy.setInexactAlarm(calendar, pendingAlarm)
         }
@@ -83,13 +83,13 @@ interface AlarmSetter {
         override fun removeInexactAlarm(id: Int) {
             log.debug { "removeInexactAlarm id: $id" }
             val pendingAlarm = PendingIntent.getBroadcast(
-                    mContext,
-                    id,
-                    Intent(ACTION_INEXACT_FIRED).apply {
-                        // must be here, otherwise replace does not work
-                        setClass(mContext, AlarmsReceiver::class.java)
-                    },
-                    PendingIntent.FLAG_UPDATE_CURRENT
+                mContext,
+                id,
+                Intent(ACTION_INEXACT_FIRED).apply {
+                    // must be here, otherwise replace does not work
+                    setClass(mContext, AlarmsReceiver::class.java)
+                },
+                PendingIntent.FLAG_UPDATE_CURRENT
             )
             am.cancel(pendingAlarm)
         }
@@ -137,10 +137,10 @@ interface AlarmSetter {
         private inner class OreoSetter : ISetAlarmStrategy {
             override fun setRTCAlarm(calendar: Calendar, pendingIntent: PendingIntent) {
                 val pendingShowList = PendingIntent.getActivity(
-                        mContext,
-                        100500,
-                        Intent(mContext, AlarmsListActivity::class.java),
-                        PendingIntent.FLAG_UPDATE_CURRENT
+                    mContext,
+                    100500,
+                    Intent(mContext, AlarmsListActivity::class.java),
+                    PendingIntent.FLAG_UPDATE_CURRENT
                 )
                 am.setAlarmClock(AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingShowList), pendingIntent)
             }

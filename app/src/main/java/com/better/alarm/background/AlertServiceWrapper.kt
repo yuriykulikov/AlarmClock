@@ -40,68 +40,68 @@ class AlertServiceWrapper : Service() {
             factory(named("inCall")) {
                 val tm: TelephonyManager = get()
                 Observable
-                        .create<Int> { emitter ->
-                            class PhoneStateListenerIR : PhoneStateListener() {
-                                override fun onCallStateChanged(state: Int, ignored: String) {
-                                    emitter.onNext(state)
-                                }
+                    .create<Int> { emitter ->
+                        class PhoneStateListenerIR : PhoneStateListener() {
+                            override fun onCallStateChanged(state: Int, ignored: String) {
+                                emitter.onNext(state)
                             }
-
-                            val listener = PhoneStateListenerIR()
-
-                            emitter.setCancellable {
-                                // Stop listening for incoming calls.
-                                tm.listen(listener, PhoneStateListener.LISTEN_NONE)
-                            }
-
-                            tm.listen(listener, PhoneStateListener.LISTEN_CALL_STATE)
                         }
-                        .startWith(tm.callState)
-                        .map { it != TelephonyManager.CALL_STATE_IDLE }
-                        .distinctUntilChanged()
-                        .replay(1)
-                        .refCount()
+
+                        val listener = PhoneStateListenerIR()
+
+                        emitter.setCancellable {
+                            // Stop listening for incoming calls.
+                            tm.listen(listener, PhoneStateListener.LISTEN_NONE)
+                        }
+
+                        tm.listen(listener, PhoneStateListener.LISTEN_CALL_STATE)
+                    }
+                    .startWith(tm.callState)
+                    .map { it != TelephonyManager.CALL_STATE_IDLE }
+                    .distinctUntilChanged()
+                    .replay(1)
+                    .refCount()
             }
 
             factory<AlertPlugin>(named("KlaxonPlugin")) {
                 KlaxonPlugin(
-                        log = logger("AlertService"),
-                        playerFactory = { PlayerWrapper(get(), get(), logger("AlertService")) },
-                        prealarmVolume = get<Prefs>().preAlarmVolume.observe(),
-                        fadeInTimeInMillis = get<Prefs>().fadeInTimeInSeconds.observe().map { it * 1000 },
-                        inCall = get(named("inCall")),
-                        scheduler = get()
+                    log = logger("AlertService"),
+                    playerFactory = { PlayerWrapper(get(), get(), logger("AlertService")) },
+                    prealarmVolume = get<Prefs>().preAlarmVolume.observe(),
+                    fadeInTimeInMillis = get<Prefs>().fadeInTimeInSeconds.observe().map { it * 1000 },
+                    inCall = get(named("inCall")),
+                    scheduler = get()
                 )
             }
 
             factory<AlertPlugin>(named("VibrationPlugin")) {
                 VibrationPlugin(
-                        log = logger("AlertService"),
-                        vibrator = get(),
-                        fadeInTimeInMillis = get<Prefs>().fadeInTimeInSeconds.observe().map { it * 1000 },
-                        scheduler = get(),
-                        vibratePreference = get<Prefs>().vibrate.observe()
+                    log = logger("AlertService"),
+                    vibrator = get(),
+                    fadeInTimeInMillis = get<Prefs>().fadeInTimeInSeconds.observe().map { it * 1000 },
+                    scheduler = get(),
+                    vibratePreference = get<Prefs>().vibrate.observe()
                 )
             }
 
             single<NotificationsPlugin> {
                 NotificationsPlugin(
-                        logger = logger("AlertService"),
-                        mContext = get(),
-                        nm = get(),
-                        enclosingService = get()
+                    logger = logger("AlertService"),
+                    mContext = get(),
+                    nm = get(),
+                    enclosingService = get()
                 )
             }
 
             single {
                 AlertService(
-                        log = logger("AlertService"),
-                        wakelocks = get(),
-                        alarms = get(),
-                        inCall = get(named("inCall")),
-                        plugins = getAll(),
-                        notifications = get(),
-                        enclosing = get()
+                    log = logger("AlertService"),
+                    wakelocks = get(),
+                    alarms = get(),
+                    inCall = get(named("inCall")),
+                    plugins = getAll(),
+                    notifications = get(),
+                    enclosing = get()
                 )
             }
         }
@@ -173,14 +173,16 @@ class AlertServiceWrapper : Service() {
             alertService.onStartCommand(Event.NullEvent())
             START_NOT_STICKY
         } else {
-            alertService.onStartCommand(when (intent.action) {
-                Intents.ALARM_ALERT_ACTION -> Event.AlarmEvent(intent.getIntExtra(Intents.EXTRA_ID, -1))
-                Intents.ALARM_PREALARM_ACTION -> Event.PrealarmEvent(intent.getIntExtra(Intents.EXTRA_ID, -1))
-                Intents.ACTION_MUTE -> Event.MuteEvent()
-                Intents.ACTION_DEMUTE -> Event.DemuteEvent()
-                Intents.ALARM_DISMISS_ACTION -> Event.DismissEvent(intent.getIntExtra(Intents.EXTRA_ID, -1))
-                else -> throw RuntimeException("Unknown action ${intent.action}")
-            })
+            alertService.onStartCommand(
+                when (intent.action) {
+                    Intents.ALARM_ALERT_ACTION -> Event.AlarmEvent(intent.getIntExtra(Intents.EXTRA_ID, -1))
+                    Intents.ALARM_PREALARM_ACTION -> Event.PrealarmEvent(intent.getIntExtra(Intents.EXTRA_ID, -1))
+                    Intents.ACTION_MUTE -> Event.MuteEvent()
+                    Intents.ACTION_DEMUTE -> Event.DemuteEvent()
+                    Intents.ALARM_DISMISS_ACTION -> Event.DismissEvent(intent.getIntExtra(Intents.EXTRA_ID, -1))
+                    else -> throw RuntimeException("Unknown action ${intent.action}")
+                }
+            )
 
             val ret = when (intent.action) {
                 Intents.ALARM_ALERT_ACTION,

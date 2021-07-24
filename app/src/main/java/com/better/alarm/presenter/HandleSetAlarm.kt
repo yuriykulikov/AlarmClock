@@ -102,10 +102,10 @@ class HandleSetAlarm : Activity() {
         return alarmsManager.createNewAlarm().apply {
             edit {
                 copy(
-                        hour = hours,
-                        minutes = minutes,
-                        isEnabled = true,
-                        label = label
+                    hour = hours,
+                    minutes = minutes,
+                    isEnabled = true,
+                    label = label
                 )
             }
         }

@@ -23,8 +23,8 @@ internal class DatabaseQueryMock {
                     val container = factory.create().apply {
                         modify {
                             withId(100500)
-                                    .withIsEnabled(true)
-                                    .withLabel("hello")
+                                .withIsEnabled(true)
+                                .withLabel("hello")
                         }
                     }
                     return listOf(container)
