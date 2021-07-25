@@ -20,7 +20,8 @@
         <item name="dialogTheme">@style/DialogThemeDark</item>
 
         <item name="colorControlHighlight">@color/dark_ripple</item>
-         <!--        snackbar theming-->
+
+        <!--        snackbar theming-->
         <item name="snackbarStyle">@style/Widget.App.SnackbarDefaultDarkTheme</item>
         <item name="android:ambientShadowAlpha">0.4</item>
         <item name="android:spotShadowAlpha">0.4</item>
@@ -35,6 +36,7 @@
 
     <style name="Widget.App.SnackbarDefaultDarkTheme" parent="" >
         <item name="android:background">@color/dark_secondary</item>
+
     </style>
     <style name="AlarmAlertFullScreenDarkTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowNoTitle">true</item>

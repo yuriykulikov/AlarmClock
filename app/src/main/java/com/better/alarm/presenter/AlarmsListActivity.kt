@@ -77,6 +77,8 @@ class AlarmsListActivity : AppCompatActivity() {
     private val store: Store by globalInject()
 
     private var sub = Disposables.disposed()
+    private var snackbarDisposable = Disposables.disposed()
+
 
     private val uiStore: UiStore by globalInject()
     private val dynamicThemeHandler: DynamicThemeHandler by globalInject()
@@ -200,7 +202,7 @@ class AlarmsListActivity : AppCompatActivity() {
     }
 
     private fun configureSnackbar() {
-        store.sets().withLatestFrom<Boolean, Pair<Store.AlarmSet, Boolean>>(
+      snackbarDisposable =    store.sets().withLatestFrom<Boolean, Pair<Store.AlarmSet, Boolean>>(
             store.uiVisible,
             BiFunction { set, uiVisible -> set to uiVisible })
             .subscribe { (set: Store.AlarmSet, uiVisible: Boolean) ->
@@ -234,6 +236,7 @@ class AlarmsListActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         this.sub.dispose()
+        snackbarDisposable.dispose()
     }
 
     override fun onDestroy() {

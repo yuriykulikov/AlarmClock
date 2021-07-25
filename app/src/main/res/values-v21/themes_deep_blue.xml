@@ -22,7 +22,6 @@
         <item name="colorControlHighlight">@color/deepblue_ripple</item>
         <!--        snackbar theming-->
         <item name="snackbarStyle">@style/Widget.App.SnackbarDefaultDeepBlueTheme</item>
-       
 
         <item name="android:ambientShadowAlpha">0.4</item>
         <item name="android:spotShadowAlpha">0.4</item>
@@ -39,7 +38,6 @@
         <item name="android:background">@color/deepblue_secondary</item>
     </style>
     
-
 
     <style name="AlarmAlertFullScreenDeepBlueTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowNoTitle">true</item>

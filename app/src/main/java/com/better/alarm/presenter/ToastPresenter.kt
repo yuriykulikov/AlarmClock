@@ -19,8 +19,10 @@ package com.better.alarm.presenter
 
 import android.content.Context
 import android.widget.Toast
+import com.better.alarm.R
 import com.better.alarm.configuration.Store
 import com.better.alarm.util.formatToast
+import com.google.android.material.snackbar.Snackbar
 import io.reactivex.functions.BiFunction
 
 class ToastPresenter(private val store: Store, private val context: Context) {
@@ -32,8 +34,13 @@ class ToastPresenter(private val store: Store, private val context: Context) {
                     if (!uiVisible && set.alarm.isEnabled) {
                         popAlarmSetToast(context, set.millis)
                     }
+
+
+
                 }
     }
+
+
 
     fun setToast(toast: Toast) {
         sToast?.cancel()
