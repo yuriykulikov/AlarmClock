@@ -20,6 +20,8 @@
         <item name="alertDialogTheme">@style/DialogThemeSynthwave</item>
         <item name="dialogTheme">@style/DialogThemeSynthwave</item>
         <item name="colorControlHighlight">@color/synthwave_ripple</item>
+        <!--        snackbar theming-->
+        <item name="snackbarStyle">@style/Widget.App.SnackbarDefaultSynthWaveTheme</item>
 
         <item name="android:ambientShadowAlpha">0.4</item>
         <item name="android:spotShadowAlpha">0.4</item>
@@ -30,6 +32,10 @@
         <item name="listRowDisabledColor">@color/grey</item>
         <item name="drawerBackgroundColor">@color/mat_purple_dark</item>
         <item name="drawerClosedBackgroundColor">@color/synthwave_background</item>
+    </style>
+
+    <style name="Widget.App.SnackbarDefaultSynthWaveTheme" parent="" >
+        <item name="android:background">@color/synthwave_secondary</item>
     </style>
 
     <style name="AlarmAlertFullScreenSynthwaveTheme" parent="Theme.AppCompat.NoActionBar">

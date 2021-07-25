@@ -30,6 +30,8 @@ import android.transition.Slide
 import android.transition.TransitionSet
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.Gravity
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.better.alarm.BuildConfig
@@ -48,8 +50,10 @@ import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.Alarmtone
 import com.better.alarm.model.DaysOfWeek
 import com.better.alarm.util.Optional
+import com.google.android.material.snackbar.Snackbar
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposables
+import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Consumer
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
@@ -57,6 +61,9 @@ import io.reactivex.subjects.Subject
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
+import android.widget.TextView
+import com.better.alarm.util.formatToast
+
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.
@@ -189,6 +196,27 @@ class AlarmsListActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         configureTransactions()
+        configureSnackbar()
+    }
+
+    private fun configureSnackbar() {
+        store.sets().withLatestFrom<Boolean, Pair<Store.AlarmSet, Boolean>>(
+            store.uiVisible,
+            BiFunction { set, uiVisible -> set to uiVisible })
+            .subscribe { (set: Store.AlarmSet, uiVisible: Boolean) ->
+                val rootView = window.decorView.rootView
+                if (uiVisible ) {
+                    val toastText = formatToast( applicationContext, set.millis)
+                    val snackbar =  Snackbar.make(rootView, toastText, Snackbar.LENGTH_LONG)
+                    val snackbarView = snackbar.view
+                    val snackText = snackbarView.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+                    snackText.gravity = Gravity.CENTER_HORIZONTAL
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                        snackText.textAlignment = View.TEXT_ALIGNMENT_CENTER
+                    }
+                    snackbar.show()
+                }
+            }
     }
 
     override fun onResume() {

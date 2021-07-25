@@ -19,8 +19,10 @@
         <item name="android:dialogTheme">@style/DialogThemeDeepBlue</item>
         <item name="alertDialogTheme">@style/DialogThemeDeepBlue</item>
         <item name="dialogTheme">@style/DialogThemeDeepBlue</item>
-
         <item name="colorControlHighlight">@color/deepblue_ripple</item>
+        <!--        snackbar theming-->
+        <item name="snackbarStyle">@style/Widget.App.SnackbarDefaultDeepBlueTheme</item>
+       
 
         <item name="android:ambientShadowAlpha">0.4</item>
         <item name="android:spotShadowAlpha">0.4</item>
@@ -32,6 +34,12 @@
         <item name="drawerBackgroundColor">@color/deepblue_lighter_background</item>
         <item name="drawerClosedBackgroundColor">@color/deepblue_background</item>
     </style>
+
+    <style name="Widget.App.SnackbarDefaultDeepBlueTheme" parent="" >
+        <item name="android:background">@color/deepblue_secondary</item>
+    </style>
+    
+
 
     <style name="AlarmAlertFullScreenDeepBlueTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowNoTitle">true</item>
