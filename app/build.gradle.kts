@@ -19,29 +19,52 @@ tasks.create("jacocoTestReport", JacocoReport::class.java) {
         html.isEnabled = true
     }
 
-    val fileFilter = listOf("**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*", "**/*Test*.*", "android/**/*.*")
+    val fileFilter = listOf(
+        "**/R.class",
+        "**/R$*.class",
+        "**/BuildConfig.*",
+        "**/Manifest*.*",
+        "**/*Test*.*",
+        "android/**/*.*"
+    )
 
     val developDebug = "developDebug"
 
-    sourceDirectories.setFrom(files(listOf(
-            "$projectDir/src/main/java",
-            "$projectDir/src/main/kotlin"
-    )))
-    classDirectories.setFrom(files(listOf(
-            fileTree("dir" to "$buildDir/intermediates/javac/$developDebug", "excludes" to fileFilter),
-            fileTree("dir" to "$buildDir/tmp/kotlin-classes/$developDebug", "excludes" to fileFilter)
-    )))
+    sourceDirectories.setFrom(
+        files(
+            listOf(
+                "$projectDir/src/main/java",
+                "$projectDir/src/main/kotlin"
+            )
+        )
+    )
+    classDirectories.setFrom(
+        files(
+            listOf(
+                fileTree(
+                    "dir" to "$buildDir/intermediates/javac/$developDebug",
+                    "excludes" to fileFilter
+                ),
+                fileTree(
+                    "dir" to "$buildDir/tmp/kotlin-classes/$developDebug",
+                    "excludes" to fileFilter
+                )
+            )
+        )
+    )
 
     // execution data from both unit and instrumentation tests
-    executionData.setFrom(fileTree(
+    executionData.setFrom(
+        fileTree(
             "dir" to project.buildDir,
             "includes" to listOf(
-                    // unit tests
-                    "jacoco/test${"developDebug".capitalize()}UnitTest.exec",
-                    // instrumentation tests
-                    "outputs/code_coverage/${developDebug}AndroidTest/connected/**/*.ec"
+                // unit tests
+                "jacoco/test${"developDebug".capitalize()}UnitTest.exec",
+                // instrumentation tests
+                "outputs/code_coverage/${developDebug}AndroidTest/connected/**/*.ec"
             )
-    ))
+        )
+    )
 
     // dependsOn("test${"developDebug".capitalize()}UnitTest")
     // dependsOn("connected${"developDebug".capitalize()}AndroidTest")
@@ -64,8 +87,8 @@ val acraEmail = project.rootProject.file("local.properties")
 android {
     compileSdkVersion(29)
     defaultConfig {
-        versionCode = 30811
-        versionName = "3.08.11"
+        versionCode = 30901
+        versionName = "3.09.01"
         applicationId = "com.better.alarm"
         minSdkVersion(16)
         targetSdkVersion(29)
