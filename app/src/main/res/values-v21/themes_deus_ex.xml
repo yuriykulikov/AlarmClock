@@ -20,6 +20,8 @@
         <item name="alertDialogTheme">@style/DialogThemeDeusEx</item>
         <item name="dialogTheme">@style/DialogThemeDeusEx</item>
 
+        <!--        snackbar theming-->
+        <item name="snackbarStyle">@style/Widget.App.SnackbarDefaultDeusExTheme</item>
         <item name="colorControlHighlight">@color/deusex_ripple</item>
 
         <item name="android:ambientShadowAlpha">0.4</item>
@@ -32,6 +34,13 @@
         <item name="drawerBackgroundColor">@color/deusex_surface</item>
         <item name="drawerClosedBackgroundColor">@color/deusex_background</item>
     </style>
+
+    <style name="Widget.App.SnackbarDefaultDeusExTheme" parent="" >
+        <item name="android:background">@color/deusex_fab_color</item>
+
+    </style>
+
+
 
     <style name="AlarmAlertFullScreenDeusExTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowNoTitle">true</item>

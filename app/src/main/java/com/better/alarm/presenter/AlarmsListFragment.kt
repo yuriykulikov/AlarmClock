@@ -12,11 +12,8 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AbsListView
-import android.widget.AdapterView
+import android.widget.*
 import android.widget.AdapterView.AdapterContextMenuInfo
-import android.widget.ArrayAdapter
-import android.widget.ListView
 import androidx.fragment.app.Fragment
 import com.better.alarm.R
 import com.better.alarm.configuration.Layout
@@ -30,10 +27,12 @@ import com.better.alarm.lollipop
 import com.better.alarm.model.AlarmValue
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
+import com.google.android.material.snackbar.Snackbar
 import com.melnykov.fab.FloatingActionButton
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
+import io.reactivex.functions.BiFunction
 import java.util.ArrayList
 import java.util.Calendar
 
@@ -219,9 +218,14 @@ class AlarmsListFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.list_fragment, container, false)
 
+
+
         val listView = view.findViewById(R.id.list_fragment_list) as ListView
 
         listView.adapter = mAdapter
+
+
+
 
         listView.isVerticalScrollBarEnabled = false
         listView.setOnCreateContextMenuListener(this)
@@ -264,6 +268,9 @@ class AlarmsListFragment : Fragment() {
 
         return view
     }
+
+
+
 
     @TargetApi(21)
     private fun configureBottomDrawer(view: View) {
@@ -350,6 +357,7 @@ class AlarmsListFragment : Fragment() {
                 else -> R.layout.list_row_bold
             }
         }
+
     }
 
     override fun onPause() {

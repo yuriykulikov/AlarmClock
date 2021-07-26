@@ -4,6 +4,10 @@
     <style name="DefaultLightTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- accent - buttons, accented text -->
         <item name="colorAccent">@color/light_secondary</item>
+
+
+        <!--        snackbar theming-->
+        <item name="snackbarStyle">@style/Widget.App.SnackbarDefaultLightTheme</item>
         <!-- FAB color-->
         <item name="listFabColor">@color/light_primary</item>
         <item name="infoBarColor">?android:attr/colorBackground</item>
@@ -13,6 +17,11 @@
         <item name="drawerClosedBackgroundColor">?android:attr/colorBackground</item>
     </style>
 
+
+    <style name="Widget.App.SnackbarDefaultLightTheme" parent="" >
+        <item name="android:background">@color/light_primary</item>
+
+    </style>
     <style name="AlarmAlertFullScreenLightTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>
     </style>
