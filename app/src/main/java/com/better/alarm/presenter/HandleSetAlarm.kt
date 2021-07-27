@@ -29,7 +29,6 @@ import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
 
-
 class HandleSetAlarm : Activity() {
     private val store: Store by globalInject()
     private val alarmsManager: IAlarmsManager by globalInject()
@@ -73,7 +72,6 @@ class HandleSetAlarm : Activity() {
         val minutes = intent.getIntExtra(AlarmClock.EXTRA_MINUTES, 0)
         val msg = intent.getStringExtra(AlarmClock.EXTRA_MESSAGE)
         val label = msg ?: ""
-
 
         val alarms = store.alarms().blockingFirst()
         val sameAlarm = alarms.find {

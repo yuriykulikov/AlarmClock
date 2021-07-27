@@ -1,6 +1,5 @@
 package com.better.alarm.configuration
 
-
 import com.better.alarm.background.Event
 import com.better.alarm.model.AlarmValue
 import com.better.alarm.util.Optional

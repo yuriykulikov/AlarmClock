@@ -19,7 +19,6 @@ import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.globalInject
 import io.reactivex.disposables.CompositeDisposable
 
-
 /**
  * Dialog to set alarm time.
  */

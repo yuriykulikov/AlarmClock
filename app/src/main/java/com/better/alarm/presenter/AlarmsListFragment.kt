@@ -37,7 +37,6 @@ import io.reactivex.disposables.Disposables
 import java.util.ArrayList
 import java.util.Calendar
 
-
 /**
  * Shows a list of alarms. To react on user interaction, requires a strategy. An
  * activity hosting this fragment should provide a proper strategy for single
@@ -220,13 +219,9 @@ class AlarmsListFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.list_fragment, container, false)
 
-
         val listView = view.findViewById(R.id.list_fragment_list) as ListView
 
         listView.adapter = mAdapter
-
-
-
 
         listView.isVerticalScrollBarEnabled = false
         listView.setOnCreateContextMenuListener(this)
@@ -269,7 +264,6 @@ class AlarmsListFragment : Fragment() {
 
         return view
     }
-
 
     @TargetApi(21)
     private fun configureBottomDrawer(view: View) {

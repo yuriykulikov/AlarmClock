@@ -157,7 +157,6 @@ class AlarmsScheduler(
                     /* nextNonPrealarmTime */ if (isPrealarm) findNormalTime(scheduledAlarm) else scheduledAlarm.calendar.timeInMillis
                 )
 
-
             }
             .let { next: Store.Next? -> Optional.fromNullable(next) }
             .run { store.next().onNext(this) }

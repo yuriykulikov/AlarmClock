@@ -94,7 +94,6 @@ class AlertServiceTest {
         plugin.targetVolumeTest.assertValues(TargetVolume.FADED_IN, TargetVolume.MUTED, TargetVolume.FADED_IN_FAST)
     }
 
-
     @Test
     fun `last alarm plays the sound and previous does not`() {
         alertService.run {

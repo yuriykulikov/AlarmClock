@@ -47,7 +47,6 @@ class KlaxonPluginTest {
         verify(playerMock).startAlarm()
     }
 
-
     @Test
     fun `clean up should be sequenced`() {
         klaxonPlugin.go(
@@ -107,7 +106,6 @@ class KlaxonPluginTest {
             assertThat(value).isCloseTo(0.5f.squared(), closeEnough)
         }
     }
-
 
     @Test
     fun `fallback should be used if failed to play default`() {

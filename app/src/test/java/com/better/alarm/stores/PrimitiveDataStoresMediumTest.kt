@@ -9,7 +9,6 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.util.WeakHashMap
 
-
 @RunWith(Parameterized::class)
 class PrimitiveDataStoresMediumTest(val name: String, private val inMemory: Boolean) {
     companion object {
@@ -119,7 +118,6 @@ class PrimitiveDataStoresMediumTest(val name: String, private val inMemory: Bool
                     override fun remove(key: String) = apply { }
 
                     override fun putLong(key: String, value: Long) = apply { changes[key] = value }
-
 
                     override fun putInt(key: String, value: Int) = apply { changes[key] = value }
                     override fun putBoolean(key: String, value: Boolean) = apply { changes[key] = value }

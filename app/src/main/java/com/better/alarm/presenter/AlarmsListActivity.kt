@@ -64,7 +64,6 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */
@@ -78,7 +77,6 @@ class AlarmsListActivity : AppCompatActivity() {
 
     private var sub = Disposables.disposed()
     private var snackbarDisposable = Disposables.disposed()
-
 
     private val uiStore: UiStore by globalInject()
     private val dynamicThemeHandler: DynamicThemeHandler by globalInject()

@@ -24,7 +24,6 @@ import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.lollipop
 import io.reactivex.disposables.Disposables
 
-
 /**
  * This class handles options menu and action bar
  *
@@ -79,7 +78,6 @@ class ActionBarHandler(
 
         return true
     }
-
 
     fun onDestroy() {
         sub.dispose()

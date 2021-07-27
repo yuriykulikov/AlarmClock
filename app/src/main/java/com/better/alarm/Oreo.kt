@@ -7,7 +7,6 @@ import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
 
-
 enum class NotificationImportance {
     HIGH, NORMAL, LOW;
 }

@@ -87,7 +87,6 @@ class AlarmCoreTest {
         }
     }
 
-
     @Test
     fun `skip notification must be shown if less than 2 hours`() {
         val alarm = createAlarm()
@@ -115,7 +114,6 @@ class AlarmCoreTest {
 
         verify(exactly = 0) { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_SHOW_SKIP) }
     }
-
 
     @Test
     fun `skip notification must be shown if more than 2 hours and time has passed`() {
@@ -291,7 +289,6 @@ class AlarmCoreTest {
         // next repeating
         assertThat(alarmSetterMock.calendar?.get(Calendar.DAY_OF_YEAR)).isEqualTo(2)
     }
-
 
     @Test
     fun `Repeating alarm shows proper next time when repeating is not every day`() {

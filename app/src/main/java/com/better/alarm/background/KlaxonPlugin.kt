@@ -127,7 +127,6 @@ class KlaxonPlugin(
         }
     }
 
-
     private fun fadeIn(time: Int, prealarm: Boolean): Observable<Float> {
         val fadeInTime: Long = time.toLong()
 

@@ -250,7 +250,6 @@ class AlarmCore(
         }
     }
 
-
     private inner class RescheduleTransition : ComplexTransition<Event>() {
         override fun performComplexTransition() {
             if (container.daysOfWeek.isRepeatSet) {
