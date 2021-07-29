@@ -6,15 +6,11 @@ import android.app.AlertDialog
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.ContextMenu
-import android.view.ContextMenu.ContextMenuInfo
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.AdapterView
-import android.widget.AdapterView.AdapterContextMenuInfo
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.fragment.app.Fragment
@@ -175,43 +171,48 @@ class AlarmsListFragment : Fragment() {
         }
     }
 
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-        val info = item.menuInfo as AdapterContextMenuInfo
-        val alarm = mAdapter.getItem(info.position) ?: return false
-        when (item.itemId) {
-            R.id.delete_alarm -> {
-                // Confirm that the alarm will be deleted.
-                AlertDialog.Builder(activity).setTitle(getString(R.string.delete_alarm))
-                    .setMessage(getString(R.string.delete_alarm_confirm))
-                    .setPositiveButton(android.R.string.ok) { _, _ -> alarms.getAlarm(alarm.id)?.delete() }
-                    .setNegativeButton(android.R.string.cancel, null).show()
-            }
-            R.id.list_context_enable -> {
-                alarms.getAlarm(alarmId = alarm.id)?.run {
-                    edit {
-                        copy(isEnabled = true)
+    private fun showActionsPopupFor(alarm: AlarmValue) {
+        AlertDialog.Builder(activity, R.style.DialogThemeDeusEx)
+            .setTitle(
+                "${alarm.hour.toString().padStart(2, '0')}:${
+                    alarm.minutes.toString().padStart(2, '0')
+                }"
+            )
+            .setMessage(alarm.label)
+            .setNeutralButton(R.string.dialog_delete) { _, _ -> alarms.getAlarm(alarm.id)?.delete() }
+            .apply {
+                when {
+                    alarm.isEnabled -> when {
+                        alarm.skipping -> setNegativeButton(R.string.dialog_enable) { _, _ ->
+                            alarms.getAlarm(alarmId = alarm.id)?.run {
+                                // removes the skip
+                                edit { this }
+                            }
+                        }
+                        alarm.daysOfWeek.isRepeatSet -> setNegativeButton(R.string.skip) { _, _ ->
+                            alarms.getAlarm(alarmId = alarm.id)?.run {
+                                requestSkip()
+                            }
+                        }
+                        else -> setNegativeButton(R.string.dialog_disable) { _, _ ->
+                            alarms.getAlarm(alarmId = alarm.id)?.run {
+                                edit {
+                                    copy(isEnabled = false)
+                                }
+                            }
+                        }
+                    }
+                    else -> setNegativeButton(R.string.dialog_enable) { _, _ ->
+                        alarms.getAlarm(alarmId = alarm.id)?.run {
+                            edit {
+                                copy(isEnabled = true)
+                            }
+                        }
                     }
                 }
             }
-            R.id.list_context_menu_disable -> {
-                alarms.getAlarm(alarmId = alarm.id)?.run {
-                    edit {
-                        copy(isEnabled = false)
-                    }
-                }
-            }
-            R.id.skip_alarm -> {
-                alarms.getAlarm(alarmId = alarm.id)?.run {
-                    if (isSkipping()) {
-                        // removes the skip
-                        edit { this }
-                    } else {
-                        requestSkip()
-                    }
-                }
-            }
-        }
-        return true
+            .setPositiveButton(android.R.string.cancel) { _, _ -> }
+            .show()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -224,8 +225,6 @@ class AlarmsListFragment : Fragment() {
         listView.adapter = mAdapter
 
         listView.isVerticalScrollBarEnabled = false
-        listView.setOnCreateContextMenuListener(this)
-        listView.choiceMode = AbsListView.CHOICE_MODE_SINGLE
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { _, listRow, position, _ ->
             mAdapter.getItem(position)?.id?.let {
@@ -233,9 +232,12 @@ class AlarmsListFragment : Fragment() {
             }
         }
 
-        registerForContextMenu(listView)
-
-        setHasOptionsMenu(true)
+        listView.onItemLongClickListener = AdapterView.OnItemLongClickListener { _, _, position, _ ->
+            mAdapter.getItem(position)?.let { alarm ->
+                showActionsPopupFor(alarm)
+            }
+            true
+        }
 
         val fab: View = view.findViewById(R.id.fab)
         fab.setOnClickListener { uiStore.createNewAlarm() }
@@ -350,7 +352,6 @@ class AlarmsListFragment : Fragment() {
                 else -> R.layout.list_row_bold
             }
         }
-
     }
 
     override fun onPause() {
@@ -364,33 +365,5 @@ class AlarmsListFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         alarmsSub.dispose()
-    }
-
-    override fun onCreateContextMenu(menu: ContextMenu, view: View, menuInfo: ContextMenuInfo?) {
-        // Inflate the menu from xml.
-        requireActivity().menuInflater.inflate(R.menu.list_context_menu, menu)
-
-        // Use the current item to create a custom view for the header.
-        val info = menuInfo as AdapterContextMenuInfo
-        val alarm = mAdapter.getItem(info.position)
-
-        // Construct the Calendar to compute the time.
-        val cal = Calendar.getInstance()
-        cal.set(Calendar.HOUR_OF_DAY, alarm!!.hour)
-        cal.set(Calendar.MINUTE, alarm.minutes)
-
-        val visible = when {
-            alarm.isEnabled -> when {
-                alarm.skipping -> listOf(R.id.list_context_enable)
-                alarm.daysOfWeek.isRepeatSet -> listOf(R.id.skip_alarm)
-                else -> listOf(R.id.list_context_menu_disable)
-            }
-            // disabled
-            else -> listOf(R.id.list_context_enable)
-        }
-
-        listOf(R.id.list_context_enable, R.id.list_context_menu_disable, R.id.skip_alarm)
-            .minus(visible)
-            .forEach { menu.removeItem(it) }
     }
 }

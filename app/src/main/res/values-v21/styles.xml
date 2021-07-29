@@ -43,4 +43,12 @@
         <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
         <item name="android:tint">?android:attr/textColorPrimary</item>
     </style>
+
+    <style name="DeleteButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@android:color/holo_red_dark</item>
+    </style>
+
+    <style name="SkipButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@android:color/holo_green_dark</item>
+    </style>
 </resources>

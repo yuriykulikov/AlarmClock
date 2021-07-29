@@ -38,6 +38,10 @@
     <!-- Context Menu Item on Alarm Settings screen: Disable alarm -->
     <string name="delete_alarm">Delete alarm</string>
 
+    <string name="dialog_delete">Delete</string>
+    <string name="dialog_disable">Disable</string>
+    <string name="dialog_enable">Enable</string>
+
     <!-- Delete alarm confirmation dialog message. -->
     <string name="enable_alarm">Turn alarm on</string>
 

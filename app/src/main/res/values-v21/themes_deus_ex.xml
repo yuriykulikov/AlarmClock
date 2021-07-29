@@ -19,11 +19,8 @@
         <item name="android:dialogTheme">@style/DialogThemeDeusEx</item>
         <item name="alertDialogTheme">@style/DialogThemeDeusEx</item>
         <item name="dialogTheme">@style/DialogThemeDeusEx</item>
-
-        <!--        snackbar theming-->
         <item name="snackbarStyle">@style/Widget.App.SnackbarDefaultDeusExTheme</item>
         <item name="colorControlHighlight">@color/deusex_ripple</item>
-
         <item name="android:ambientShadowAlpha">0.4</item>
         <item name="android:spotShadowAlpha">0.4</item>
         <item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/deusex_glow</item>
@@ -37,10 +34,7 @@
 
     <style name="Widget.App.SnackbarDefaultDeusExTheme" parent="" >
         <item name="android:background">@color/deusex_fab_color</item>
-
     </style>
-
-
 
     <style name="AlarmAlertFullScreenDeusExTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowNoTitle">true</item>
@@ -56,6 +50,8 @@
         <item name="backgroundTint">@color/deusex_background</item>
         <item name="android:windowBackground">@color/deusex_background</item>
         <item name="android:colorForeground">@color/deusex_on_background</item>
+        <item name="android:buttonBarNeutralButtonStyle">@style/DeleteButtonStyle</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/SkipButtonStyle</item>
     </style>
 
     <style name="TimePickerDialogFragmentDeusEx" parent="Theme.AppCompat.Dialog">
