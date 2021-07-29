@@ -333,7 +333,7 @@ class AlarmCore(
             inner class NormalSetState : AlarmState() {
                 override fun onEnter(reason: Event) {
                     when (reason) {
-                        is Dismiss, is Snooze, is Change -> {
+                        is Dismiss, is Snooze, is Change, is Enable -> {
                             broadcastAlarmSetWithNormalTime(calculateNextTime().timeInMillis)
                         }
                     }
@@ -358,7 +358,7 @@ class AlarmCore(
 
                 override fun onEnter(reason: Event) {
                     when (reason) {
-                        is Dismiss, is Snooze, is Change -> {
+                        is Dismiss, is Snooze, is Change, is Enable -> {
                             broadcastAlarmSetWithNormalTime(calculateNextPrealarmTime().timeInMillis)
                         }
                     }
