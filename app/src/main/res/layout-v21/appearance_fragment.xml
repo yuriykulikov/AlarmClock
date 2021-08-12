@@ -16,18 +16,21 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="?attr/colorAccent" />
 
-    <LinearLayout
-        android:id="@+id/appearance_row_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="start">
-
-        <include layout="@layout/appearance_fragment_layout_button"/>
-        <include layout="@layout/appearance_fragment_divider"/>
-        <include layout="@layout/appearance_fragment_layout_button"/>
-        <include layout="@layout/appearance_fragment_divider"/>
-        <include layout="@layout/appearance_fragment_layout_button"/>
-    </LinearLayout>
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/appearance_row_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="start">
+            <include layout="@layout/appearance_fragment_layout_button"/>
+            <include layout="@layout/appearance_fragment_divider"/>
+            <include layout="@layout/appearance_fragment_layout_button"/>
+            <include layout="@layout/appearance_fragment_divider"/>
+            <include layout="@layout/appearance_fragment_layout_button"/>
+        </LinearLayout>
+    </HorizontalScrollView>
 
     <TextView
         android:layout_width="wrap_content"
@@ -38,24 +41,28 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="?attr/colorAccent" />
     <!-- Themes added programatically -->
-    <LinearLayout
-        android:id="@+id/appearance_row_0"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="12dp"
-        android:gravity="start"
-        android:orientation="horizontal" >
 
-        <include layout="@layout/appearance_fragment_theme_button"/>
-        <include layout="@layout/appearance_fragment_divider"/>
-        <include layout="@layout/appearance_fragment_theme_button"/>
-        <include layout="@layout/appearance_fragment_divider"/>
-        <include layout="@layout/appearance_fragment_theme_button"/>
-        <include layout="@layout/appearance_fragment_divider"/>
-        <include layout="@layout/appearance_fragment_theme_button"/>
-        <include layout="@layout/appearance_fragment_divider"/>
-        <include layout="@layout/appearance_fragment_theme_button"/>
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/appearance_row_0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="12dp"
+            android:gravity="start"
+            android:orientation="horizontal" >
+            <include layout="@layout/appearance_fragment_theme_button"/>
+            <include layout="@layout/appearance_fragment_divider"/>
+            <include layout="@layout/appearance_fragment_theme_button"/>
+            <include layout="@layout/appearance_fragment_divider"/>
+            <include layout="@layout/appearance_fragment_theme_button"/>
+            <include layout="@layout/appearance_fragment_divider"/>
+            <include layout="@layout/appearance_fragment_theme_button"/>
+            <include layout="@layout/appearance_fragment_divider"/>
+            <include layout="@layout/appearance_fragment_theme_button"/>
 
-    </LinearLayout>
+        </LinearLayout>
+    </HorizontalScrollView>
 
 </LinearLayout>
