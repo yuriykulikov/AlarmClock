@@ -1,5 +1,5 @@
 buildscript {
-    val kotlin = "1.4.0"
+    val kotlin = "1.5.21"
 
     allprojects {
         extra.apply {
@@ -9,12 +9,12 @@ buildscript {
 
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         maven { url = uri("https://plugins.gradle.org/m2/") }
     }
 
     dependencies {
-        classpath("com.android.tools.build:gradle:4.1.3")
+        classpath("com.android.tools.build:gradle:7.0.0")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin")
     }
 }
@@ -22,7 +22,7 @@ buildscript {
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         maven { url = uri("https://plugins.gradle.org/m2/") }
     }
 }
