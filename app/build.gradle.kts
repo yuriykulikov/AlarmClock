@@ -1,11 +1,11 @@
 plugins {
     id("com.android.application")
-    kotlin("android")
+    id("org.jetbrains.kotlin.android")
     jacoco
 }
 
 jacoco {
-    toolVersion = "0.8.3"
+    toolVersion = "0.8.7"
 }
 
 // ./gradlew test connectedDevelopDebugAndroidTest jacocoTestReport
@@ -85,13 +85,13 @@ val acraEmail = project.rootProject.file("local.properties")
     ?: ""
 
 android {
-    compileSdkVersion(29)
+    compileSdk = 30
     defaultConfig {
-        versionCode = 30902
-        versionName = "3.09.02"
+        versionCode = 30904
+        versionName = "3.09.04"
         applicationId = "com.better.alarm"
-        minSdkVersion(16)
-        targetSdkVersion(29)
+        minSdk = 16
+        targetSdk = 30
         testApplicationId = "com.better.alarm.test"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
@@ -108,7 +108,9 @@ android {
             buildConfigField("String", "ACRA_EMAIL", "\"$acraEmail\"")
         }
     }
-    flavorDimensions("default")
+
+    flavorDimensions.add("default")
+
     productFlavors {
         create("develop") {
             applicationId = "com.better.alarm"
@@ -118,18 +120,9 @@ android {
         }
     }
 
-    lintOptions {
-        isAbortOnError = false
-        isCheckReleaseBuilds = false
-    }
-
-    adbOptions {
+    installation {
         timeOutInMs = 20 * 60 * 1000  // 20 minutes
         installOptions("-d", "-t")
-    }
-
-    dexOptions {
-        preDexLibraries = System.getenv("TRAVIS") != "true"
     }
 
     useLibrary("android.test.runner")
@@ -140,10 +133,14 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+}
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     kotlinOptions {
+        freeCompilerArgs =
+            freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn" + "-Xopt-in=kotlin.Experimental"
+
         jvmTarget = "1.8"
-        useIR = true
     }
 }
 
@@ -154,28 +151,29 @@ dependencies {
     implementation("com.melnykov:floatingactionbutton:1.2.0")
     implementation("io.reactivex.rxjava2:rxjava:2.2.19")
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
-    implementation("org.koin:koin-core:2.1.5")
+    implementation("org.koin:koin-core:2.2.2")
+    // Updating this to 1.3.6 breaks transition animations and layout setting
     implementation("androidx.fragment:fragment:1.2.5")
     implementation("androidx.preference:preference:1.1.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3")
-    implementation("com.google.android.material:material:1.1.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")
+    implementation("com.google.android.material:material:1.4.0")
 }
 
 dependencies {
     testImplementation("net.wuerl.kotlin:assertj-core-kotlin:0.1.1")
-    testImplementation("junit:junit:4.13")
+    testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:2.23.4")
-    testImplementation("io.mockk:mockk:1.10.0")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.3")
+    testImplementation("io.mockk:mockk:1.11.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.0")
 }
 
 dependencies {
     androidTestImplementation("com.squareup.assertj:assertj-android:1.1.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
-    androidTestImplementation("androidx.test:runner:1.3.0")
-    androidTestImplementation("androidx.test:rules:1.3.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation("androidx.test:runner:1.4.0")
+    androidTestImplementation("androidx.test:rules:1.4.0")
     // androidx.test.ext.junit.rules.ActivityScenarioRule
     // androidx.test.ext.junit.runners.AndroidJUnit4
-    androidTestImplementation("androidx.test.ext:junit:1.1.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.3")
 }
