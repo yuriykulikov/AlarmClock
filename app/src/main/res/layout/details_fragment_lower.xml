@@ -127,7 +127,7 @@
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:hint="@string/label"
-                android:inputType="textNoSuggestions"
+                android:inputType="textCapSentences"
                 android:minHeight="68dip"
                 android:singleLine="true"
                 android:textColor="?attr/colorAccent"
