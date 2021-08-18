@@ -1,27 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:layout_margin="5dp"
+    android:orientation="vertical">
 
-    <ImageButton
-        android:id="@+id/appearance_fragment_layout_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:padding="6dp"
-        android:backgroundTint="?android:attr/colorBackground"
-        android:tint="?android:attr/textColorPrimary"
-        android:src="@drawable/ic_baseline_check_24">
-    </ImageButton>
+    <RelativeLayout
+        android:id="@+id/appearance_fragment_layout_container"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/rounded_rect_filled"
+        android:backgroundTint="?attr/drawerClosedBackgroundColor"
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/appearance_fragment_layout_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="5dp"
-        android:text="Theme"
-        android:textColor="?android:attr/textColorPrimary" />
+        <ImageView
+            android:id="@+id/appearance_fragment_layout_check_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:padding="6dp"
+            android:src="@drawable/ic_baseline_check_24" />
 
+        <TextView
+            android:id="@+id/appearance_fragment_layout_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="8:30"
+            android:textColor="?attr/colorAccent"
+            android:textSize="20dp"
+            tools:text="8:30" />
+    </RelativeLayout>
 </LinearLayout>
