@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/appearance_fragment_theme_button_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_margin="5dp"
         android:background="@drawable/rounded_rect_filled"
         android:backgroundTint="@color/deusex_surface"
@@ -45,5 +46,6 @@
         android:id="@+id/appearance_fragment_theme_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Theme" />
+        android:textSize="16dp"
+        tools:text="Theme" />
 </LinearLayout>

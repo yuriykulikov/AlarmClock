@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.os.Bundle
 import android.os.Handler
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,10 +45,12 @@ class AppearanceFragment : Fragment() {
             findViewById<LinearLayout>(R.id.appearance_row_layout).apply {
                 removeAllViews()
                 val layouts = layouts(resources)
-                layouts.forEachIndexed { index, layout ->
-                    appendLayoutButton(inflater, layout)
-                    if (index != layouts.lastIndex) appendDivider(inflater)
-                }
+                layouts
+                    .sortedBy { it.perceivedSize }
+                    .forEachIndexed { index, layout ->
+                        appendLayoutButton(inflater, layout)
+                        if (index != layouts.lastIndex) appendDivider(inflater)
+                    }
             }
         }
     }
@@ -82,9 +85,14 @@ class AppearanceFragment : Fragment() {
     @TargetApi(21)
     private fun LinearLayout.appendLayoutButton(inflater: LayoutInflater, layout: LayoutModel) {
         val button = inflater.inflate(R.layout.appearance_fragment_layout_button, this, false).apply {
-            findViewById<TextView>(R.id.appearance_fragment_layout_text).text = layout.name
+            val size = when (layout.preferenceName) {
+                "classic" -> 13f
+                "compact" -> 17f
+                else -> 20f
+            }
+            findViewById<TextView>(R.id.appearance_fragment_layout_text).setTextSize(TypedValue.COMPLEX_UNIT_DIP, size)
 
-            val button = findViewById<ImageButton>(R.id.appearance_fragment_layout_button)
+            val button = findViewById<ImageView>(R.id.appearance_fragment_layout_check_button)
 
             disposable.add(prefs.listRowLayout.observe().subscribe { value ->
                 val selected = value == layout.preferenceName
@@ -150,7 +158,14 @@ fun appearances(resources: Resources, themeHandler: DynamicThemeHandler): List<A
 data class LayoutModel(
     val name: String,
     val preferenceName: String,
-)
+) {
+    val perceivedSize: Int = when (preferenceName) {
+        "classic" -> 1
+        "compact" -> 2
+        "bold" -> 3
+        else -> 4
+    }
+}
 
 fun layouts(resources: Resources): List<LayoutModel> {
     return resources.getStringArray(R.array.preference_list_row_layout_entries)
