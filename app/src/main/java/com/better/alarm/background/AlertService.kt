@@ -215,7 +215,7 @@ class AlertService(
         soundAlarmDisposable = CompositeDisposable(pluginDisposables)
     }
 
-    private fun <U, D> Observable<U>.zipWithIndex(function: (U, Int) -> D): Observable<D> {
+    private fun <U : Any, D : Any> Observable<U>.zipWithIndex(function: (U, Int) -> D): Observable<D> {
         return zipWith(generateSequence(0) { it + 1 }.asIterable()) { next, index -> function.invoke(next, index) }
     }
 }

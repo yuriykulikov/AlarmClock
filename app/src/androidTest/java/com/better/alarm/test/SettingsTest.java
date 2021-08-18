@@ -10,6 +10,7 @@ import androidx.test.espresso.action.GeneralClickAction;
 import androidx.test.espresso.action.GeneralLocation;
 import androidx.test.espresso.action.Press;
 import androidx.test.espresso.action.Tap;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
 
@@ -29,8 +30,7 @@ import java.util.Locale;
  */
 @RunWith(AndroidJUnit4.class)
 public class SettingsTest extends BaseTest {
-    public ActivityTestRule<SettingsActivity> settings = new ActivityTestRule<SettingsActivity>(
-            SettingsActivity.class, false, /* autostart*/ true);
+    public ActivityScenarioRule<SettingsActivity> settings = new ActivityScenarioRule<>(SettingsActivity.class);
 
     @Rule
     public TestRule chain = RuleChain.outerRule(new ForceLocaleRule(Locale.US)).around(settings);
@@ -39,19 +39,19 @@ public class SettingsTest extends BaseTest {
     public void controlVolume() {
         sleep();
         onView(withId(R.id.seekbar_dialog_seekbar_master_volume))
-                .perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_LEFT, Press.FINGER));
+                .perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_LEFT, Press.FINGER,0, 0));
 
         sleep();
         onView(withId(R.id.seekbar_dialog_seekbar_master_volume))
-                .perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_RIGHT, Press.FINGER));
+                .perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_RIGHT, Press.FINGER,0, 0));
 
         sleep();
         onView(withId(R.id.seekbar_dialog_seekbar_prealarm_volume))
-                .perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_LEFT, Press.FINGER));
+                .perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_LEFT, Press.FINGER,0, 0));
 
         sleep();
         onView(withId(R.id.seekbar_dialog_seekbar_prealarm_volume))
-                .perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_RIGHT, Press.FINGER));
+                .perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_RIGHT, Press.FINGER,0, 0));
     }
 
     @Test
