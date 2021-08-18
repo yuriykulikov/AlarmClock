@@ -86,7 +86,7 @@ class HandleSetAlarm : Activity() {
             createNewAlarm(hours, minutes, label)
         } else {
             val edited = alarmsManager.getAlarm(sameAlarm.id)
-            if (edited != null) {
+            if (edited != null && !edited.data.isEnabled) {
                 logger.debug { "Editing existing alarm ${sameAlarm.id}" }
                 edited.apply { enable(true) }
             } else {

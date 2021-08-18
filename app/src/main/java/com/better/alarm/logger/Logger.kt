@@ -58,7 +58,6 @@ class Logger private constructor(
     }
 
     /** Java */
-    @Deprecated("Use debug", replaceWith = ReplaceWith("this.debug { message }"))
     fun d(message: Any) {
         logIfApplicable(LogLevel.DBG, message, null)
     }
@@ -83,14 +82,6 @@ class Logger private constructor(
     }
 
     companion object {
-        private fun formatTag(): String {
-            val caller = Thread.currentThread().stackTrace[5]
-            val fileName = caller.fileName
-            val logClass = fileName.substring(0, fileName.length - 5)
-            val methodName = caller.methodName
-            return "[$logClass.$methodName]"
-        }
-
         @JvmStatic
         fun create(): Logger {
             return Logger()
