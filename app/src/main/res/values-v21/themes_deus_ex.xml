@@ -6,41 +6,47 @@
         <item name="colorAccent">@color/deusex_secondary</item>
         <!-- FAB color-->
         <item name="listFabColor">@color/deusex_fab_color</item>
-        <!-- action bar -->
-        <item name="colorPrimary">@color/deusex_surface</item>
-        <item name="titleTextColor">@color/deusex_on_surface</item>
-        <!-- info bar -->
-        <item name="android:colorBackground">@color/deusex_menu_background</item>
         <!-- lists background -->
         <item name="android:windowBackground">@color/deusex_background</item>
-        <!-- low bar color -->
-        <item name="android:navigationBarColor">@color/deusex_background</item>
-        <item name="android:alertDialogTheme">@style/DialogThemeDeusEx</item>
-        <item name="android:dialogTheme">@style/DialogThemeDeusEx</item>
-        <item name="alertDialogTheme">@style/DialogThemeDeusEx</item>
-        <item name="dialogTheme">@style/DialogThemeDeusEx</item>
-
-        <!--        snackbar theming-->
-        <item name="snackbarStyle">@style/Widget.App.SnackbarDefaultDeusExTheme</item>
+        <!-- context menu background -->
+        <item name="android:colorBackground">@color/deusex_menu_background</item>
+        <!-- ripple color -->
         <item name="colorControlHighlight">@color/deusex_ripple</item>
 
+        <!-- lighting, affects dialogs, popups and elevated elements -->
         <item name="android:ambientShadowAlpha">0.4</item>
         <item name="android:spotShadowAlpha">0.4</item>
         <item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/deusex_glow</item>
         <item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/deusex_glow</item>
-        <item name="infoBarColor">@color/transparent</item>
+
+        <!-- clock colors in the list -->
         <item name="android:colorForeground">@color/deusex_on_background</item>
         <item name="listRowDisabledColor">@color/grey</item>
+
+        <!-- drawer -->
         <item name="drawerBackgroundColor">@color/deusex_surface</item>
         <item name="drawerClosedBackgroundColor">@color/deusex_background</item>
+
+        <!-- notification bar color -->
+        <item name="android:colorPrimaryDark">@color/deusex_surface</item>
+        <!-- action bar -->
+        <item name="titleTextColor">@color/deusex_on_surface</item>
+        <item name="colorPrimary">@color/deusex_surface</item>
+        <item name="android:colorPrimary">@color/deusex_surface</item>
+        <!-- navigation bar color -->
+        <item name="android:navigationBarColor">@color/deusex_background</item>
+
+        <!-- other styles -->
+        <item name="android:alertDialogTheme">@style/DialogThemeDeusEx</item>
+        <item name="android:dialogTheme">@style/DialogThemeDeusEx</item>
+        <item name="alertDialogTheme">@style/DialogThemeDeusEx</item>
+        <item name="dialogTheme">@style/DialogThemeDeusEx</item>
+        <item name="snackbarStyle">@style/Widget.App.SnackbarDefaultDeusExTheme</item>
     </style>
 
     <style name="Widget.App.SnackbarDefaultDeusExTheme" parent="" >
         <item name="android:background">@color/deusex_fab_color</item>
-
     </style>
-
-
 
     <style name="AlarmAlertFullScreenDeusExTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowNoTitle">true</item>

@@ -1,27 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Light Themes -->
-    <style name="DefaultLightTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="DefaultLightThemeBase" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- accent - buttons, accented text -->
         <item name="colorAccent">@color/light_secondary</item>
-
-
-        <!--        snackbar theming-->
-        <item name="snackbarStyle">@style/Widget.App.SnackbarDefaultLightTheme</item>
         <!-- FAB color-->
         <item name="listFabColor">@color/light_primary</item>
-        <item name="infoBarColor">?android:attr/colorBackground</item>
+
+        <!-- clock colors in the list -->
         <item name="android:colorForeground">@color/light_on_background</item>
         <item name="listRowDisabledColor">@color/grey</item>
+
+        <!-- action bar -->
+        <item name="titleTextColor">@color/whitish</item>
+        <item name="android:colorPrimary">@color/dark_grey</item>
+        <item name="colorPrimary">@color/dark_grey</item>
+
+        <!-- drawer -->
         <item name="drawerBackgroundColor">@color/whitish</item>
         <item name="drawerClosedBackgroundColor">?android:attr/colorBackground</item>
+
+        <!-- other styles -->
+        <item name="snackbarStyle">@style/Widget.App.SnackbarDefaultLightTheme</item>
     </style>
 
+    <style name="DefaultLightTheme" parent="DefaultLightThemeBase" />
 
-    <style name="Widget.App.SnackbarDefaultLightTheme" parent="" >
+    <style name="Widget.App.SnackbarDefaultLightTheme" parent="">
         <item name="android:background">@color/light_primary</item>
-
     </style>
+
     <style name="AlarmAlertFullScreenLightTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>
     </style>

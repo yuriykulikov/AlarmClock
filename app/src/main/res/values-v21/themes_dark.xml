@@ -6,38 +6,49 @@
         <item name="colorAccent">@color/dark_secondary</item>
         <!-- FAB color-->
         <item name="listFabColor">@color/dark_fab_color</item>
-        <!-- action bar -->
-        <item name="colorPrimary">@color/dark_surface</item>
-        <!-- info bar -->
-        <item name="android:colorBackground">@color/dark_background</item>
         <!-- lists background -->
         <item name="android:windowBackground">@color/dark_background</item>
-        <!-- low bar color -->
-        <item name="android:navigationBarColor">@color/dark_background</item>
-        <item name="android:alertDialogTheme">@style/DialogThemeDark</item>
-        <item name="android:dialogTheme">@style/DialogThemeDark</item>
-        <item name="alertDialogTheme">@style/DialogThemeDark</item>
-        <item name="dialogTheme">@style/DialogThemeDark</item>
-
+        <!-- context menu background -->
+        <item name="android:colorBackground">@color/dark_background</item>
+        <!-- ripple color -->
         <item name="colorControlHighlight">@color/dark_ripple</item>
 
-        <!--        snackbar theming-->
-        <item name="snackbarStyle">@style/Widget.App.SnackbarDefaultDarkTheme</item>
+        <!-- lighting, affects dialogs, popups and elevated elements -->
         <item name="android:ambientShadowAlpha">0.4</item>
         <item name="android:spotShadowAlpha">0.4</item>
         <item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/dark_glow</item>
         <item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/dark_glow</item>
-        <item name="infoBarColor">@color/transparent</item>
+
+        <!-- clock colors in the list -->
         <item name="android:colorForeground">@color/dark_on_background</item>
         <item name="listRowDisabledColor">@color/grey</item>
+
+        <!-- drawer -->
         <item name="drawerBackgroundColor">@color/dark_surface</item>
         <item name="drawerClosedBackgroundColor">@color/dark_background</item>
+
+        <!-- notification bar color -->
+        <item name="android:colorPrimaryDark">@color/dark_surface</item>
+        <!-- action bar -->
+        <item name="titleTextColor">@color/dark_on_surface</item>
+        <item name="colorPrimary">@color/dark_surface</item>
+        <item name="android:colorPrimary">@color/dark_surface</item>
+        <!-- navigation bar color -->
+        <item name="android:navigationBarColor">@color/dark_background</item>
+
+        <!-- other styles -->
+        <item name="android:alertDialogTheme">@style/DialogThemeDark</item>
+        <item name="android:dialogTheme">@style/DialogThemeDark</item>
+        <item name="alertDialogTheme">@style/DialogThemeDark</item>
+        <item name="dialogTheme">@style/DialogThemeDark</item>
+        <item name="snackbarStyle">@style/Widget.App.SnackbarDefaultDarkTheme</item>
     </style>
 
-    <style name="Widget.App.SnackbarDefaultDarkTheme" parent="" >
+    <style name="Widget.App.SnackbarDefaultDarkTheme" parent="">
         <item name="android:background">@color/dark_secondary</item>
 
     </style>
+
     <style name="AlarmAlertFullScreenDarkTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowNoTitle">true</item>
         <item name="colorAccent">@color/dark_secondary</item>
