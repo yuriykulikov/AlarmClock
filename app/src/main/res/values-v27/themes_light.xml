@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="DefaultLightTheme" parent="DefaultLightThemeBase">`
+        <!-- notification bar color -->
+        <item name="android:colorPrimaryDark">@color/dark_grey</item>
+
+        <!-- low bar color -->
+        <item name="android:navigationBarColor">?android:attr/colorBackground</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+</resources>
