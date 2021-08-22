@@ -55,7 +55,6 @@ import com.better.alarm.util.formatToast
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposables
-import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Consumer
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
@@ -63,6 +62,7 @@ import io.reactivex.subjects.Subject
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
+
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.
@@ -209,21 +209,24 @@ class AlarmsListActivity : AppCompatActivity() {
     }
 
     private fun configureSnackbar() {
-        snackbarDisposable = store.sets().withLatestFrom<Boolean, Pair<Store.AlarmSet, Boolean>>(
+        snackbarDisposable = store.sets().withLatestFrom(
             store.uiVisible,
-            BiFunction { set, uiVisible -> set to uiVisible })
+            { set, uiVisible -> set to uiVisible })
             .subscribe { (set: Store.AlarmSet, uiVisible: Boolean) ->
-                val rootView = window.decorView.rootView
                 if (uiVisible) {
                     val toastText = formatToast(applicationContext, set.millis)
-                    val snackbar = Snackbar.make(rootView, toastText, Snackbar.LENGTH_LONG)
-                    val snackbarView = snackbar.view
-                    val snackText = snackbarView.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
-                    snackText.gravity = Gravity.CENTER_HORIZONTAL
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                        snackText.textAlignment = View.TEXT_ALIGNMENT_CENTER
-                    }
-                    snackbar.show()
+                    Snackbar.make(
+                        // using the main container instead of a root view here fixes https://github.com/yuriykulikov/AlarmClock/issues/372
+                        findViewById(R.id.main_fragment_container),
+                        toastText,
+                        Snackbar.LENGTH_LONG
+                    ).apply {
+                        val snackText = view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+                        snackText.gravity = Gravity.CENTER_HORIZONTAL
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                            snackText.textAlignment = View.TEXT_ALIGNMENT_CENTER
+                        }
+                    }.show()
                 }
             }
     }
