@@ -14,8 +14,8 @@
         <item name="colorControlHighlight">@color/dark_ripple</item>
 
         <!-- lighting, affects dialogs, popups and elevated elements -->
-        <item name="android:ambientShadowAlpha">0.4</item>
-        <item name="android:spotShadowAlpha">0.4</item>
+        <item name="android:ambientShadowAlpha">0.2</item>
+        <item name="android:spotShadowAlpha">0.2</item>
         <item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/dark_glow</item>
         <item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/dark_glow</item>
 
