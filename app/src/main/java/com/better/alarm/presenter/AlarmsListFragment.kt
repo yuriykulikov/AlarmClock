@@ -251,9 +251,16 @@ class AlarmsListFragment : Fragment() {
                 .switchMap { transitioning -> if (transitioning) Observable.never() else store.alarms() }
                 .subscribe { alarms ->
                     val sorted = alarms
-                        .sortedWith(Comparators.MinuteComparator())
-                        .sortedWith(Comparators.HourComparator())
-                        .sortedWith(Comparators.RepeatComparator())
+                        .sortedBy { it.minutes }
+                        .sortedBy { it.hour }
+                        .sortedBy {
+                            when (it.daysOfWeek.coded) {
+                                0x7F -> 1
+                                0x1F -> 2
+                                0x60 -> 3
+                                else -> 0
+                            }
+                        }
                     mAdapter.clear()
                     mAdapter.addAll(sorted)
                 }
