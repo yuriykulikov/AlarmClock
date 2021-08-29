@@ -16,11 +16,11 @@
  */
 
 package com.better.alarm.presenter
-
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
 import android.transition.ChangeBounds
@@ -34,6 +34,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
+
 import androidx.appcompat.app.AppCompatActivity
 import com.better.alarm.BuildConfig
 import com.better.alarm.NotificationSettings
@@ -63,13 +64,17 @@ import io.reactivex.subjects.Subject
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
+import android.media.RingtoneManager
+import android.net.Uri
+import java.util.concurrent.Executors
+
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */
+
 class AlarmsListActivity : AppCompatActivity() {
     private lateinit var mActionBarHandler: ActionBarHandler
-
     // lazy because it seems that AlarmsListActivity.<init> can be called before Application.onCreate()
     private val logger: Logger by globalLogger("AlarmsListActivity")
     private val alarms: IAlarmsManager by globalInject()
@@ -193,6 +198,7 @@ class AlarmsListActivity : AppCompatActivity() {
         }
 
         setContentView(R.layout.list_activity)
+        showMuteAlert()
 
         store
             .alarms()
@@ -200,6 +206,28 @@ class AlarmsListActivity : AppCompatActivity() {
             .subscribe { alarms ->
                 checkPermissions(this, alarms.map { it.alarmtone })
             }.apply { }
+    }
+
+    private fun showMuteAlert() {
+        val audio: AudioManager = this.getSystemService(AUDIO_SERVICE) as AudioManager
+        if(audio.getStreamVolume(AudioManager.STREAM_ALARM)<=1) {
+            //implementation of snackbar
+//            Toast.makeText(this,"" + audio.getStreamVolume(AudioManager.STREAM_ALARM) , Toast.LENGTH_LONG).show();
+            val rootView = findViewById<View>(android.R.id.content)
+            val toastText = "Warning: Alarm volume is low"
+            val volumeSnack = Snackbar.make(rootView, toastText, Snackbar.LENGTH_INDEFINITE)
+
+
+            volumeSnack.setAction("Test Alarm") {
+                val notification: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+                val r = RingtoneManager.getRingtone(applicationContext, notification)
+                r.play()
+                Executors.newSingleThreadScheduledExecutor().schedule({
+                    r.stop()
+                }, 2, java.util.concurrent.TimeUnit.SECONDS)
+            }
+            volumeSnack.show()
+        }
     }
 
     override fun onStart() {
