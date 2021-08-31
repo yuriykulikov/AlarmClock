@@ -22,49 +22,47 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.better.alarm.R;
 import com.better.alarm.configuration.InjectKt;
 
-/**
- * Settings for the Alarm Clock.
- */
+/** Settings for the Alarm Clock. */
 public class SettingsActivity extends AppCompatActivity {
-    private final DynamicThemeHandler dynamicThemeHandler = InjectKt.globalInject(DynamicThemeHandler.class).getValue();
+  private final DynamicThemeHandler dynamicThemeHandler =
+      InjectKt.globalInject(DynamicThemeHandler.class).getValue();
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        setTheme(dynamicThemeHandler.defaultTheme());
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.settings_activity);
-        if (!getResources().getBoolean(R.bool.isTablet)) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
+  @Override
+  public void onCreate(@Nullable Bundle savedInstanceState) {
+    setTheme(dynamicThemeHandler.defaultTheme());
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.settings_activity);
+    if (!getResources().getBoolean(R.bool.isTablet)) {
+      setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
+  }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        return true;
-    }
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    return true;
+  }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            goBack();
-            return true;
-        } else return false;
-    }
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == android.R.id.home) {
+      goBack();
+      return true;
+    } else return false;
+  }
 
-    private void goBack() {
-        // This is called when the Home (Up) button is pressed
-        // in the Action Bar.
-        Intent parentActivityIntent = new Intent(this, AlarmsListActivity.class);
-        // parentActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(parentActivityIntent);
-        finish();
-    }
+  private void goBack() {
+    // This is called when the Home (Up) button is pressed
+    // in the Action Bar.
+    Intent parentActivityIntent = new Intent(this, AlarmsListActivity.class);
+    // parentActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+    // Intent.FLAG_ACTIVITY_NEW_TASK);
+    startActivity(parentActivityIntent);
+    finish();
+  }
 }

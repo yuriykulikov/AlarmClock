@@ -24,36 +24,35 @@ import java.text.DateFormatSymbols
 import java.util.Calendar
 
 fun DaysOfWeek.summary(context: Context): String {
-    return toString(context, true)
+  return toString(context, true)
 }
 
 fun DaysOfWeek.showDialog(context: Context): Single<DaysOfWeek> {
-    return Single.create { emitter ->
-        val weekdays = DateFormatSymbols().weekdays
-        val entries = arrayOf(
+  return Single.create { emitter ->
+    val weekdays = DateFormatSymbols().weekdays
+    val entries =
+        arrayOf(
             weekdays[Calendar.MONDAY],
             weekdays[Calendar.TUESDAY],
             weekdays[Calendar.WEDNESDAY],
             weekdays[Calendar.THURSDAY],
             weekdays[Calendar.FRIDAY],
             weekdays[Calendar.SATURDAY],
-            weekdays[Calendar.SUNDAY]
-        )
-        var mutableDays = coded
-        AlertDialog.Builder(context)
-            .setMultiChoiceItems(entries, booleanArray) { _, which, isChecked ->
-                mutableDays = when {
-                    isChecked -> mutableDays or (1 shl which)
-                    else -> mutableDays and (1 shl which).inv()
-                }
-            }
-            .setPositiveButton(android.R.string.ok) { _, _ ->
-                emitter.onSuccess(DaysOfWeek(mutableDays))
-            }
-            .setOnCancelListener {
-                emitter.onSuccess(DaysOfWeek(mutableDays))
-            }
-            .create()
-            .show()
-    }
+            weekdays[Calendar.SUNDAY])
+    var mutableDays = coded
+    AlertDialog.Builder(context)
+        .setMultiChoiceItems(entries, booleanArray) { _, which, isChecked ->
+          mutableDays =
+              when {
+                isChecked -> mutableDays or (1 shl which)
+                else -> mutableDays and (1 shl which).inv()
+              }
+        }
+        .setPositiveButton(android.R.string.ok) { _, _ ->
+          emitter.onSuccess(DaysOfWeek(mutableDays))
+        }
+        .setOnCancelListener { emitter.onSuccess(DaysOfWeek(mutableDays)) }
+        .create()
+        .show()
+  }
 }

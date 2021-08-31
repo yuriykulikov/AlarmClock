@@ -29,7 +29,15 @@ import com.better.alarm.model.DaysOfWeek;
 import com.better.alarm.persistance.DatabaseQuery;
 import com.better.alarm.stores.InMemoryRxDataStoreFactory;
 import com.better.alarm.util.Optional;
-
+import io.reactivex.Single;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Predicate;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.PublishSubject;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import kotlin.jvm.functions.Function1;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,537 +45,580 @@ import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
-import io.reactivex.Single;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Predicate;
-import io.reactivex.subjects.BehaviorSubject;
-import io.reactivex.subjects.PublishSubject;
-import kotlin.jvm.functions.Function1;
-
 public class AlarmsTest {
-    private AlarmCore.IStateNotifier stateNotifierMock;
-    private final AlarmSchedulerTest.SetterMock alarmSetterMock = new AlarmSchedulerTest.SetterMock();
-    private Store store;
-    private Prefs prefs;
-    private Logger logger;
-    private int currentHour = 0;
-    private int currentMinute = 0;
-    private final Calendars calendars = new Calendars() {
+  private AlarmCore.IStateNotifier stateNotifierMock;
+  private final AlarmSchedulerTest.SetterMock alarmSetterMock = new AlarmSchedulerTest.SetterMock();
+  private Store store;
+  private Prefs prefs;
+  private Logger logger;
+  private int currentHour = 0;
+  private int currentMinute = 0;
+  private final Calendars calendars =
+      new Calendars() {
         @Override
         public Calendar now() {
-            Calendar instance = Calendar.getInstance();
-            instance.set(Calendar.HOUR_OF_DAY, currentHour);
-            instance.set(Calendar.MINUTE, currentMinute);
-            return instance;
+          Calendar instance = Calendar.getInstance();
+          instance.set(Calendar.HOUR_OF_DAY, currentHour);
+          instance.set(Calendar.MINUTE, currentMinute);
+          return instance;
         }
-    };
-    private final TestContainerFactory containerFactory = new TestContainerFactory(calendars);
-    @Rule
-    public TestRule watcher = new TestWatcher() {
+      };
+  private final TestContainerFactory containerFactory = new TestContainerFactory(calendars);
+
+  @Rule
+  public TestRule watcher =
+      new TestWatcher() {
         protected void starting(Description description) {
-            System.out.println("---- " + description.getMethodName() + " ----");
+          System.out.println("---- " + description.getMethodName() + " ----");
         }
-    };
+      };
 
-    @Before
-    public void setUp() {
-        CoroutinesKt.setMainUnconfined();
+  @Before
+  public void setUp() {
+    CoroutinesKt.setMainUnconfined();
 
-        logger = Logger.create(new SysoutLogWriter());
+    logger = Logger.create(new SysoutLogWriter());
 
-        prefs = Prefs.create(Single.just(true), InMemoryRxDataStoreFactory.create());
+    prefs = Prefs.create(Single.just(true), InMemoryRxDataStoreFactory.create());
 
-        store = new Store(
-                /* alarmsSubject */ BehaviorSubject.<List<AlarmValue>>createDefault(new ArrayList<AlarmValue>()),
-                /* next */ BehaviorSubject.createDefault(Optional.<Store.Next>absent()),
-                /* sets */ PublishSubject.<Store.AlarmSet>create(),
-                /* events */ PublishSubject.<Event>create());
+    store =
+        new Store(
+            /* alarmsSubject */ BehaviorSubject.createDefault(new ArrayList<>()),
+            /* next */ BehaviorSubject.createDefault(Optional.<Store.Next>absent()),
+            /* sets */ PublishSubject.<Store.AlarmSet>create(),
+            /* events */ PublishSubject.<Event>create());
 
-        stateNotifierMock = mock(AlarmCore.IStateNotifier.class);
-    }
+    stateNotifierMock = mock(AlarmCore.IStateNotifier.class);
+  }
 
-    private Alarms createAlarms(DatabaseQuery query) {
-        AlarmsScheduler alarmsScheduler = new AlarmsScheduler(alarmSetterMock, logger, store, prefs, calendars);
-        Alarms alarms = new Alarms(alarmsScheduler, query, new AlarmCoreFactory(logger,
-                alarmsScheduler,
-                stateNotifierMock,
-                prefs,
-                store,
-                calendars
-        ),
-                containerFactory,
-                logger);
-        alarmsScheduler.start();
-        return alarms;
-    }
+  private Alarms createAlarms(DatabaseQuery query) {
+    AlarmsScheduler alarmsScheduler =
+        new AlarmsScheduler(alarmSetterMock, logger, store, prefs, calendars);
+    Alarms alarms =
+        new Alarms(
+            alarmsScheduler,
+            query,
+            new AlarmCoreFactory(
+                logger, alarmsScheduler, stateNotifierMock, prefs, store, calendars),
+            containerFactory,
+            logger);
+    alarmsScheduler.start();
+    return alarms;
+  }
 
-    private Alarms createAlarms() {
-        return createAlarms(mockQuery());
-    }
+  private Alarms createAlarms() {
+    return createAlarms(mockQuery());
+  }
 
-    @androidx.annotation.NonNull
-    private DatabaseQuery mockQuery() {
-        return DatabaseQueryMock.createStub(new ArrayList<>());
-    }
+  @androidx.annotation.NonNull
+  private DatabaseQuery mockQuery() {
+    return DatabaseQueryMock.createStub(new ArrayList<>());
+  }
 
-    @Test
-    public void create() {
-        //when
-        IAlarmsManager instance = createAlarms();
-        Alarm newAlarm = instance.createNewAlarm();
-        newAlarm.enable(true);
-        //verify
-        store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
-            @Override
-            public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
+  @Test
+  public void create() {
+    // when
+    IAlarmsManager instance = createAlarms();
+    Alarm newAlarm = instance.createNewAlarm();
+    newAlarm.enable(true);
+    // verify
+    store
+        .alarms()
+        .test()
+        .assertValue(
+            new Predicate<List<AlarmValue>>() {
+              @Override
+              public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
                 return alarmValues.size() == 1 && alarmValues.get(0).isEnabled();
-            }
-        });
-    }
+              }
+            });
+  }
 
-    @Test
-    public void deleteDisabledAlarm() {
-        //when
-        IAlarmsManager instance = createAlarms();
-        Alarm newAlarm = instance.createNewAlarm();
-        newAlarm.delete();
-        //verify
-        store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
-            @Override
-            public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
+  @Test
+  public void deleteDisabledAlarm() {
+    // when
+    IAlarmsManager instance = createAlarms();
+    Alarm newAlarm = instance.createNewAlarm();
+    newAlarm.delete();
+    // verify
+    store
+        .alarms()
+        .test()
+        .assertValue(
+            new Predicate<List<AlarmValue>>() {
+              @Override
+              public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
                 return alarmValues.size() == 0;
-            }
-        });
-    }
+              }
+            });
+  }
 
-    @Test
-    public void deleteEnabledAlarm() {
-        //when
-        IAlarmsManager instance = createAlarms();
-        Alarm newAlarm = instance.createNewAlarm();
-        newAlarm.enable(true);
-        instance.getAlarm(0).delete();
-        //verify
-        store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
-            @Override
-            public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
+  @Test
+  public void deleteEnabledAlarm() {
+    // when
+    IAlarmsManager instance = createAlarms();
+    Alarm newAlarm = instance.createNewAlarm();
+    newAlarm.enable(true);
+    instance.getAlarm(0).delete();
+    // verify
+    store
+        .alarms()
+        .test()
+        .assertValue(
+            new Predicate<List<AlarmValue>>() {
+              @Override
+              public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
                 return alarmValues.size() == 0;
-            }
-        });
-    }
+              }
+            });
+  }
 
-    @Test
-    public void createThreeAlarms() {
-        //when
-        IAlarmsManager instance = createAlarms();
-        instance.createNewAlarm();
-        instance.createNewAlarm().enable(true);
-        instance.createNewAlarm();
-        //verify
-        store.alarms().test().assertValueAt(0, new Predicate<List<AlarmValue>>() {
-            @Override
-            public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
+  @Test
+  public void createThreeAlarms() {
+    // when
+    IAlarmsManager instance = createAlarms();
+    instance.createNewAlarm();
+    instance.createNewAlarm().enable(true);
+    instance.createNewAlarm();
+    // verify
+    store
+        .alarms()
+        .test()
+        .assertValueAt(
+            0,
+            new Predicate<List<AlarmValue>>() {
+              @Override
+              public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
                 System.out.println(alarmValues);
                 return alarmValues.size() == 3
-                        && !alarmValues.get(0).isEnabled()
-                        && alarmValues.get(1).isEnabled()
-                        && !alarmValues.get(2).isEnabled();
-            }
-        });
-    }
+                    && !alarmValues.get(0).isEnabled()
+                    && alarmValues.get(1).isEnabled()
+                    && !alarmValues.get(2).isEnabled();
+              }
+            });
+  }
 
-    @Test
-    public void alarmsFromMemoryMustBePresentInTheList() {
-        //when
-        Alarms instance = createAlarms(DatabaseQueryMock.createWithFactory(new TestContainerFactory(new Calendars() {
-            @Override
-            public Calendar now() {
-                return Calendar.getInstance();
-            }
-        })));
-
-        instance.start();
-
-        //verify
-        store.alarms().test()
-                .assertValue(new Predicate<List<AlarmValue>>() {
-                    @Override
-                    public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
-                        System.out.println(alarmValues);
-                        return alarmValues.size() == 1
-                                && alarmValues.get(0).isEnabled()
-                                && alarmValues.get(0).getLabel().equals("hello");
-                    }
-                });
-    }
-
-    @Test
-    public void editAlarm() {
-        //when
-        IAlarmsManager instance = createAlarms();
-        Alarm newAlarm = instance.createNewAlarm();
-
-        newAlarm.edit(new Function1<AlarmValue, AlarmValue>() {
-                          @Override
-                          public AlarmValue invoke(AlarmValue alarmValue) {
-                              return alarmValue
-                                      .withIsEnabled(true)
-                                      .withHour(7);
-                          }
+  @Test
+  public void alarmsFromMemoryMustBePresentInTheList() {
+    // when
+    Alarms instance =
+        createAlarms(
+            DatabaseQueryMock.createWithFactory(
+                new TestContainerFactory(
+                    new Calendars() {
+                      @Override
+                      public Calendar now() {
+                        return Calendar.getInstance();
                       }
-        );
-        //verify
-        store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
-            @Override
-            public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
+                    })));
+
+    instance.start();
+
+    // verify
+    store
+        .alarms()
+        .test()
+        .assertValue(
+            new Predicate<List<AlarmValue>>() {
+              @Override
+              public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
+                System.out.println(alarmValues);
                 return alarmValues.size() == 1
-                        && alarmValues.get(0).isEnabled()
-                        && alarmValues.get(0).getHour() == 7;
-            }
+                    && alarmValues.get(0).isEnabled()
+                    && alarmValues.get(0).getLabel().equals("hello");
+              }
+            });
+  }
+
+  @Test
+  public void editAlarm() {
+    // when
+    IAlarmsManager instance = createAlarms();
+    Alarm newAlarm = instance.createNewAlarm();
+
+    newAlarm.edit(
+        new Function1<AlarmValue, AlarmValue>() {
+          @Override
+          public AlarmValue invoke(AlarmValue alarmValue) {
+            return alarmValue.withIsEnabled(true).withHour(7);
+          }
         });
-    }
-
-    @Test
-    public void firedAlarmShouldBeDisabledIfNoRepeatingIsSet() {
-        //when
-        Alarms instance = createAlarms();
-        Alarm newAlarm = instance.createNewAlarm();
-        newAlarm.enable(true);
-
-        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
-
-        newAlarm.dismiss();
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
-
-        //verify
-        store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
-            @Override
-            public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
+    // verify
+    store
+        .alarms()
+        .test()
+        .assertValue(
+            new Predicate<List<AlarmValue>>() {
+              @Override
+              public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
                 return alarmValues.size() == 1
-                        && !alarmValues.get(0).isEnabled();
-            }
-        });
-    }
+                    && alarmValues.get(0).isEnabled()
+                    && alarmValues.get(0).getHour() == 7;
+              }
+            });
+  }
 
-    @Test
-    public void firedAlarmShouldBeRescheduledIfRepeatingIsSet() {
-        //when
-        Alarms instance = createAlarms();
-        Alarm newAlarm = instance.createNewAlarm();
-        newAlarm.edit(new Function1<AlarmValue, AlarmValue>() {
-                          @Override
-                          public AlarmValue invoke(AlarmValue alarmValue) {
-                              return alarmValue
-                                      .withIsEnabled(true)
-                                      .withDaysOfWeek(new DaysOfWeek(1));
-                          }
-                      }
-        );
+  @Test
+  public void firedAlarmShouldBeDisabledIfNoRepeatingIsSet() {
+    // when
+    Alarms instance = createAlarms();
+    Alarm newAlarm = instance.createNewAlarm();
+    newAlarm.enable(true);
 
-        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
+    instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
+    verify(stateNotifierMock)
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
 
-        newAlarm.dismiss();
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
+    newAlarm.dismiss();
+    verify(stateNotifierMock)
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
 
-        //verify
-        store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
-            @Override
-            public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
-                return alarmValues.size() == 1
-                        && alarmValues.get(0).isEnabled();
-            }
-        });
-    }
+    // verify
+    store
+        .alarms()
+        .test()
+        .assertValue(
+            new Predicate<List<AlarmValue>>() {
+              @Override
+              public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
+                return alarmValues.size() == 1 && !alarmValues.get(0).isEnabled();
+              }
+            });
+  }
 
-    @Test
-    public void changingAlarmWhileItIsFiredShouldReschedule() {
-        //when
-        Alarms instance = createAlarms();
-        Alarm newAlarm = instance.createNewAlarm();
-        newAlarm.enable(true);
-
-        assertThat(alarmSetterMock.getTypeName()).isEqualTo("NORMAL");
-
-        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
-
-        newAlarm.edit(new Function1<AlarmValue, AlarmValue>() {
-                          @Override
-                          public AlarmValue invoke(AlarmValue alarmValue) {
-                              return alarmValue
-                                      .withDaysOfWeek(new DaysOfWeek(1))
-                                      .withIsPrealarm(true);
-                          }
-                      }
-        );
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
-
-        //verify
-        store.alarms().test().assertValue(new Predicate<List<AlarmValue>>() {
-            @Override
-            public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
-                return alarmValues.size() == 1
-                        && alarmValues.get(0).isEnabled();
-            }
+  @Test
+  public void firedAlarmShouldBeRescheduledIfRepeatingIsSet() {
+    // when
+    Alarms instance = createAlarms();
+    Alarm newAlarm = instance.createNewAlarm();
+    newAlarm.edit(
+        new Function1<AlarmValue, AlarmValue>() {
+          @Override
+          public AlarmValue invoke(AlarmValue alarmValue) {
+            return alarmValue.withIsEnabled(true).withDaysOfWeek(new DaysOfWeek(1));
+          }
         });
 
-        assertThat(alarmSetterMock.getId()).isEqualTo(newAlarm.getId());
-    }
+    instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
+    verify(stateNotifierMock)
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
 
+    newAlarm.dismiss();
+    verify(stateNotifierMock)
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
 
-    @Test
-    public void firedAlarmShouldBeStillEnabledAfterSnoozed() {
-        //given
-        Alarms instance = createAlarms();
-        Alarm newAlarm = instance.createNewAlarm();
-        //TODO circle the time, otherwise the tests may fail around 0 hours
-        newAlarm.edit(new Function1<AlarmValue, AlarmValue>() {
-                          @Override
-                          public AlarmValue invoke(AlarmValue alarmValue) {
-                              return alarmValue
-                                      .withIsEnabled(true)
-                                      .withHour(0)
-                                      .withDaysOfWeek(new DaysOfWeek(1))
-                                      .withIsPrealarm(true);
-                          }
-                      }
-        );
-        //TODO verify
+    // verify
+    store
+        .alarms()
+        .test()
+        .assertValue(
+            new Predicate<List<AlarmValue>>() {
+              @Override
+              public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
+                return alarmValues.size() == 1 && alarmValues.get(0).isEnabled();
+              }
+            });
+  }
 
-        //when pre-alarm fired
-        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.PREALARM);
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_PREALARM_ACTION));
+  @Test
+  public void changingAlarmWhileItIsFiredShouldReschedule() {
+    // when
+    Alarms instance = createAlarms();
+    Alarm newAlarm = instance.createNewAlarm();
+    newAlarm.enable(true);
 
-        //when pre-alarm-snoozed
-        newAlarm.snooze();
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_SNOOZE_ACTION), any());
+    assertThat(alarmSetterMock.getTypeName()).isEqualTo("NORMAL");
 
-        //when alarm fired
-        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ACTION_CANCEL_SNOOZE));
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
+    instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
+    verify(stateNotifierMock)
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
 
-        //when alarm is snoozed
-        newAlarm.snooze();
-        verify(stateNotifierMock, times(2)).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
+    newAlarm.edit(
+        new Function1<AlarmValue, AlarmValue>() {
+          @Override
+          public AlarmValue invoke(AlarmValue alarmValue) {
+            return alarmValue.withDaysOfWeek(new DaysOfWeek(1)).withIsPrealarm(true);
+          }
+        });
+    verify(stateNotifierMock)
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
 
-        newAlarm.delete();
-        verify(stateNotifierMock, times(2)).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ACTION_CANCEL_SNOOZE));
-    }
+    // verify
+    store
+        .alarms()
+        .test()
+        .assertValue(
+            new Predicate<List<AlarmValue>>() {
+              @Override
+              public boolean test(@NonNull List<AlarmValue> alarmValues) throws Exception {
+                return alarmValues.size() == 1 && alarmValues.get(0).isEnabled();
+              }
+            });
 
+    assertThat(alarmSetterMock.getId()).isEqualTo(newAlarm.getId());
+  }
 
-    @Test
-    public void snoozeToTime() {
-        //given
-        Alarms instance = createAlarms();
-        Alarm newAlarm = instance.createNewAlarm();
-        //TODO circle the time, otherwise the tests may fail around 0 hours
-        newAlarm.edit(new Function1<AlarmValue, AlarmValue>() {
-                          @Override
-                          public AlarmValue invoke(AlarmValue alarmValue) {
-                              return alarmValue
-                                      .withIsEnabled(true)
-                                      .withHour(0)
-                                      .withDaysOfWeek(new DaysOfWeek(1));
-                          }
-                      }
-        );
-        //TODO verify
+  @Test
+  public void firedAlarmShouldBeStillEnabledAfterSnoozed() {
+    // given
+    Alarms instance = createAlarms();
+    Alarm newAlarm = instance.createNewAlarm();
+    // TODO circle the time, otherwise the tests may fail around 0 hours
+    newAlarm.edit(
+        new Function1<AlarmValue, AlarmValue>() {
+          @Override
+          public AlarmValue invoke(AlarmValue alarmValue) {
+            return alarmValue
+                .withIsEnabled(true)
+                .withHour(0)
+                .withDaysOfWeek(new DaysOfWeek(1))
+                .withIsPrealarm(true);
+          }
+        });
+    // TODO verify
 
-        //when alarm fired
-        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
+    // when pre-alarm fired
+    instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.PREALARM);
+    verify(stateNotifierMock)
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_PREALARM_ACTION));
 
-        //when pre-alarm-snoozed
-        newAlarm.snooze(23, 59);
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_SNOOZE_ACTION), any());
-    }
+    // when pre-alarm-snoozed
+    newAlarm.snooze();
+    verify(stateNotifierMock)
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_SNOOZE_ACTION), any());
 
-    @Test
-    public void snoozePreAlarmToTime() {
-        //given
-        Alarms instance = createAlarms();
-        Alarm newAlarm = instance.createNewAlarm();
-        //TODO circle the time, otherwise the tests may fail around 0 hours
-        newAlarm.edit(new Function1<AlarmValue, AlarmValue>() {
-                          @Override
-                          public AlarmValue invoke(AlarmValue alarmValue) {
-                              return alarmValue
-                                      .withIsEnabled(true)
-                                      .withHour(0)
-                                      .withDaysOfWeek(new DaysOfWeek(1))
-                                      .withIsPrealarm(true);
-                          }
-                      }
-        );
-        //TODO verify
+    // when alarm fired
+    instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
+    verify(stateNotifierMock)
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ACTION_CANCEL_SNOOZE));
+    verify(stateNotifierMock)
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
 
-        //when alarm fired
-        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.PREALARM);
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_PREALARM_ACTION));
+    // when alarm is snoozed
+    newAlarm.snooze();
+    verify(stateNotifierMock, times(2))
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
 
-        //when pre-alarm-snoozed
-        newAlarm.snooze(23, 59);
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_SNOOZE_ACTION), any());
+    newAlarm.delete();
+    verify(stateNotifierMock, times(2))
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ACTION_CANCEL_SNOOZE));
+  }
 
-        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.SNOOZE);
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
-    }
+  @Test
+  public void snoozeToTime() {
+    // given
+    Alarms instance = createAlarms();
+    Alarm newAlarm = instance.createNewAlarm();
+    // TODO circle the time, otherwise the tests may fail around 0 hours
+    newAlarm.edit(
+        new Function1<AlarmValue, AlarmValue>() {
+          @Override
+          public AlarmValue invoke(AlarmValue alarmValue) {
+            return alarmValue.withIsEnabled(true).withHour(0).withDaysOfWeek(new DaysOfWeek(1));
+          }
+        });
+    // TODO verify
 
+    // when alarm fired
+    instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
+    verify(stateNotifierMock)
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
 
-    @Test
-    public void prealarmTimedOutAndThenDisabled() {
-        //given
-        Alarms instance = createAlarms();
-        Alarm newAlarm = instance.createNewAlarm();
-        //TODO circle the time, otherwise the tests may fail around 0 hours
-        newAlarm.edit(new Function1<AlarmValue, AlarmValue>() {
-                          @Override
-                          public AlarmValue invoke(AlarmValue alarmValue) {
-                              return alarmValue
-                                      .withIsEnabled(true)
-                                      .withHour(0)
-                                      .withDaysOfWeek(new DaysOfWeek(1))
-                                      .withIsPrealarm(true);
-                          }
-                      }
-        );
-        //TODO verify
+    // when pre-alarm-snoozed
+    newAlarm.snooze(23, 59);
+    verify(stateNotifierMock)
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_SNOOZE_ACTION), any());
+  }
 
-        //when alarm fired
-        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.PREALARM);
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_PREALARM_ACTION));
+  @Test
+  public void snoozePreAlarmToTime() {
+    // given
+    Alarms instance = createAlarms();
+    Alarm newAlarm = instance.createNewAlarm();
+    // TODO circle the time, otherwise the tests may fail around 0 hours
+    newAlarm.edit(
+        new Function1<AlarmValue, AlarmValue>() {
+          @Override
+          public AlarmValue invoke(AlarmValue alarmValue) {
+            return alarmValue
+                .withIsEnabled(true)
+                .withHour(0)
+                .withDaysOfWeek(new DaysOfWeek(1))
+                .withIsPrealarm(true);
+          }
+        });
+    // TODO verify
 
-        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
+    // when alarm fired
+    instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.PREALARM);
+    verify(stateNotifierMock)
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_PREALARM_ACTION));
 
-        //when pre-alarm-snoozed
-        newAlarm.enable(false);
-        verify(stateNotifierMock, atLeastOnce()).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
-    }
+    // when pre-alarm-snoozed
+    newAlarm.snooze(23, 59);
+    verify(stateNotifierMock)
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_SNOOZE_ACTION), any());
 
-    @Test
-    public void snoozedAlarmsMustGoOutOfHibernation() {
-        //given
-        Alarms instance = createAlarms();
-        Alarm newAlarm = instance.createNewAlarm();
-        newAlarm.edit(new Function1<AlarmValue, AlarmValue>() {
-                          @Override
-                          public AlarmValue invoke(AlarmValue alarmValue) {
-                              return alarmValue
-                                      .withIsEnabled(true)
-                                      .withHour(0)
-                                      .withDaysOfWeek(new DaysOfWeek(0))
-                                      .withIsPrealarm(false);
-                          }
-                      }
-        );
+    instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.SNOOZE);
+    verify(stateNotifierMock)
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
+  }
 
-        //when alarm fired
-        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
+  @Test
+  public void prealarmTimedOutAndThenDisabled() {
+    // given
+    Alarms instance = createAlarms();
+    Alarm newAlarm = instance.createNewAlarm();
+    // TODO circle the time, otherwise the tests may fail around 0 hours
+    newAlarm.edit(
+        new Function1<AlarmValue, AlarmValue>() {
+          @Override
+          public AlarmValue invoke(AlarmValue alarmValue) {
+            return alarmValue
+                .withIsEnabled(true)
+                .withHour(0)
+                .withDaysOfWeek(new DaysOfWeek(1))
+                .withIsPrealarm(true);
+          }
+        });
+    // TODO verify
 
-        newAlarm.snooze();
+    // when alarm fired
+    instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.PREALARM);
+    verify(stateNotifierMock)
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_PREALARM_ACTION));
 
-        AlarmStore record = containerFactory.getCreatedRecords().get(0);
+    instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
+    verify(stateNotifierMock)
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
 
-        System.out.println("------------");
-        // now we simulate it started all over again
-        alarmSetterMock.removeRTCAlarm();
+    // when pre-alarm-snoozed
+    newAlarm.enable(false);
+    verify(stateNotifierMock, atLeastOnce())
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
+  }
 
-        DatabaseQueryMock.createStub(
-                containerFactory.getCreatedRecords()
-        );
-        final DatabaseQuery query = DatabaseQueryMock.createStub(containerFactory.getCreatedRecords());
-        Alarms newAlarms = createAlarms(query);
-        newAlarms.start();
+  @Test
+  public void snoozedAlarmsMustGoOutOfHibernation() {
+    // given
+    Alarms instance = createAlarms();
+    Alarm newAlarm = instance.createNewAlarm();
+    newAlarm.edit(
+        new Function1<AlarmValue, AlarmValue>() {
+          @Override
+          public AlarmValue invoke(AlarmValue alarmValue) {
+            return alarmValue
+                .withIsEnabled(true)
+                .withHour(0)
+                .withDaysOfWeek(new DaysOfWeek(0))
+                .withIsPrealarm(false);
+          }
+        });
 
-        assertThat(alarmSetterMock.getId()).isEqualTo(record.getValue().getId());
-    }
+    // when alarm fired
+    instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
+    verify(stateNotifierMock)
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
 
-    @Test
-    public void snoozedAlarmsMustCanBeRescheduled() {
-        //given
-        Alarms instance = createAlarms();
-        Alarm newAlarm = instance.createNewAlarm();
-        newAlarm.edit(new Function1<AlarmValue, AlarmValue>() {
-                          @Override
-                          public AlarmValue invoke(AlarmValue alarmValue) {
-                              return alarmValue
-                                      .withIsEnabled(true)
-                                      .withHour(7)
-                                      .withDaysOfWeek(new DaysOfWeek(0))
-                                      .withIsPrealarm(false);
-                          }
-                      }
-        );
+    newAlarm.snooze();
 
-        //when alarm fired
-        currentHour = 7;
-        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
+    AlarmStore record = containerFactory.getCreatedRecords().get(0);
 
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
+    System.out.println("------------");
+    // now we simulate it started all over again
+    alarmSetterMock.removeRTCAlarm();
 
-        newAlarm.snooze();
+    DatabaseQueryMock.createStub(containerFactory.getCreatedRecords());
+    final DatabaseQuery query = DatabaseQueryMock.createStub(containerFactory.getCreatedRecords());
+    Alarms newAlarms = createAlarms(query);
+    newAlarms.start();
 
-        System.out.println("----- now snooze -------");
+    assertThat(alarmSetterMock.getId()).isEqualTo(record.getValue().getId());
+  }
 
-        newAlarm.snooze(7, 42);
+  @Test
+  public void snoozedAlarmsMustCanBeRescheduled() {
+    // given
+    Alarms instance = createAlarms();
+    Alarm newAlarm = instance.createNewAlarm();
+    newAlarm.edit(
+        new Function1<AlarmValue, AlarmValue>() {
+          @Override
+          public AlarmValue invoke(AlarmValue alarmValue) {
+            return alarmValue
+                .withIsEnabled(true)
+                .withHour(7)
+                .withDaysOfWeek(new DaysOfWeek(0))
+                .withIsPrealarm(false);
+          }
+        });
 
-        assertThat(alarmSetterMock.getId()).isEqualTo(newAlarm.getId());
-        assertThat(alarmSetterMock.getCalendar().get(Calendar.MINUTE)).isEqualTo(42);
-    }
+    // when alarm fired
+    currentHour = 7;
+    instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
 
-    @Test
-    public void snoozedAlarmsMustGoOutOfHibernationIfItWasRescheduled() {
-        snoozedAlarmsMustCanBeRescheduled();
+    verify(stateNotifierMock)
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
 
-        AlarmStore record = containerFactory.getCreatedRecords().get(0);
+    newAlarm.snooze();
 
-        System.out.println("------------");
-        // now we simulate it started all over again
-        alarmSetterMock.removeRTCAlarm();
+    System.out.println("----- now snooze -------");
 
-        final DatabaseQuery query = DatabaseQueryMock.createStub(containerFactory.getCreatedRecords());
-        Alarms newAlarms = createAlarms(query);
-        newAlarms.start();
+    newAlarm.snooze(7, 42);
 
-        assertThat(alarmSetterMock.getId()).isEqualTo(record.getValue().getId());
-        // TODO
-        //  assertThat(alarmSetterMock.getCalendar().get(Calendar.MINUTE)).isEqualTo(42);
-    }
+    assertThat(alarmSetterMock.getId()).isEqualTo(newAlarm.getId());
+    assertThat(alarmSetterMock.getCalendar().get(Calendar.MINUTE)).isEqualTo(42);
+  }
 
-    @Test
-    public void prealarmFiredAlarmTransitioningToFiredShouldNotDismissTheService() {
-        //given
-        Alarms instance = createAlarms();
-        Alarm newAlarm = instance.createNewAlarm();
-        newAlarm.edit(new Function1<AlarmValue, AlarmValue>() {
-                          @Override
-                          public AlarmValue invoke(AlarmValue alarmValue) {
-                              return alarmValue.withIsEnabled(true)
-                                      .withHour(0)
-                                      .withDaysOfWeek(new DaysOfWeek(0))
-                                      .withIsPrealarm(true);
-                          }
-                      }
-        );
+  @Test
+  public void snoozedAlarmsMustGoOutOfHibernationIfItWasRescheduled() {
+    snoozedAlarmsMustCanBeRescheduled();
 
-        //when alarm fired
-        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.PREALARM);
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_PREALARM_ACTION));
+    AlarmStore record = containerFactory.getCreatedRecords().get(0);
 
-        instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
-        verify(stateNotifierMock).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
-        verify(stateNotifierMock, never()).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
+    System.out.println("------------");
+    // now we simulate it started all over again
+    alarmSetterMock.removeRTCAlarm();
 
-        newAlarm.snooze();
-        verify(stateNotifierMock, times(1)).broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
-    }
+    final DatabaseQuery query = DatabaseQueryMock.createStub(containerFactory.getCreatedRecords());
+    Alarms newAlarms = createAlarms(query);
+    newAlarms.start();
+
+    assertThat(alarmSetterMock.getId()).isEqualTo(record.getValue().getId());
+    // TODO
+    //  assertThat(alarmSetterMock.getCalendar().get(Calendar.MINUTE)).isEqualTo(42);
+  }
+
+  @Test
+  public void prealarmFiredAlarmTransitioningToFiredShouldNotDismissTheService() {
+    // given
+    Alarms instance = createAlarms();
+    Alarm newAlarm = instance.createNewAlarm();
+    newAlarm.edit(
+        new Function1<AlarmValue, AlarmValue>() {
+          @Override
+          public AlarmValue invoke(AlarmValue alarmValue) {
+            return alarmValue
+                .withIsEnabled(true)
+                .withHour(0)
+                .withDaysOfWeek(new DaysOfWeek(0))
+                .withIsPrealarm(true);
+          }
+        });
+
+    // when alarm fired
+    instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.PREALARM);
+    verify(stateNotifierMock)
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_PREALARM_ACTION));
+
+    instance.onAlarmFired((AlarmCore) newAlarm, CalendarType.NORMAL);
+    verify(stateNotifierMock)
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_ALERT_ACTION));
+    verify(stateNotifierMock, never())
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
+
+    newAlarm.snooze();
+    verify(stateNotifierMock, times(1))
+        .broadcastAlarmState(eq(newAlarm.getId()), eq(Intents.ALARM_DISMISS_ACTION));
+  }
 }

@@ -43,153 +43,151 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.subjects.PublishSubject
-import org.koin.core.qualifier.named
 import java.util.concurrent.TimeUnit
+import org.koin.core.qualifier.named
 
 class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mContext, attrs) {
-    private var ringtone: Ringtone? = null
-    private var ringtoneSummary: TextView? = null
-    private val disposable = CompositeDisposable()
+  private var ringtone: Ringtone? = null
+  private var ringtoneSummary: TextView? = null
+  private val disposable = CompositeDisposable()
 
-    private val klaxon: KlaxonPlugin by globalInject(named("volumePreferenceDemo"))
+  private val klaxon: KlaxonPlugin by globalInject(named("volumePreferenceDemo"))
 
-    init {
-        layoutResource = R.layout.seekbar_dialog
-        // this actually can return null
-        this.ringtone = RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
-        ringtone?.streamType = AudioManager.STREAM_ALARM
+  init {
+    layoutResource = R.layout.seekbar_dialog
+    // this actually can return null
+    this.ringtone =
+        RingtoneManager.getRingtone(
+            context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
+    ringtone?.streamType = AudioManager.STREAM_ALARM
+  }
+
+  override fun onBindViewHolder(holder: PreferenceViewHolder?) {
+    super.onBindViewHolder(holder)
+    holder?.let { view ->
+      bindPrealarmSeekBar(view.findById(R.id.seekbar_dialog_seekbar_prealarm_volume))
+      bindAudioManagerVolume(view.findById(R.id.seekbar_dialog_seekbar_master_volume))
+
+      view.findById<View>(R.id.settings_ringtone).setOnClickListener {
+        context.startActivity(Intent(Settings.ACTION_SOUND_SETTINGS))
+      }
+      ringtoneSummary = view.findById(R.id.settings_ringtone_summary)
+      onResume()
     }
+  }
 
-    override fun onBindViewHolder(holder: PreferenceViewHolder?) {
-        super.onBindViewHolder(holder)
-        holder?.let { view ->
-            bindPrealarmSeekBar(view.findById(R.id.seekbar_dialog_seekbar_prealarm_volume))
-            bindAudioManagerVolume(view.findById(R.id.seekbar_dialog_seekbar_master_volume))
+  /** Extension function to avoid crashes cause by an incorrect cast (see history) */
+  private fun <T> PreferenceViewHolder.findById(id: Int): T = findViewById(id) as T
 
-            view.findById<View>(R.id.settings_ringtone).setOnClickListener {
-                context.startActivity(Intent(Settings.ACTION_SOUND_SETTINGS))
-            }
-            ringtoneSummary = view.findById(R.id.settings_ringtone_summary)
-            onResume()
-        }
-    }
+  override fun onDetached() {
+    super.onDetached()
+    disposable.dispose()
+  }
 
-    /** Extension function to avoid crashes cause by an incorrect cast (see history) */
-    private fun <T> PreferenceViewHolder.findById(id: Int): T = findViewById(id) as T
-
-    override fun onDetached() {
-        super.onDetached()
-        disposable.dispose()
-    }
-
-    fun onResume() {
-        ringtoneSummary?.text = RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
+  fun onResume() {
+    ringtoneSummary?.text =
+        RingtoneManager.getRingtone(
+                context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
             ?.getTitle(context)
             ?: context.getText(R.string.silent_alarm_summary)
-    }
+  }
 
-    override fun onPrepareForRemoval() {
-        super.onPrepareForRemoval()
-        ringtone?.stop()
-    }
+  override fun onPrepareForRemoval() {
+    super.onPrepareForRemoval()
+    ringtone?.stop()
+  }
 
-    fun onPause() {
+  fun onPause() {}
 
-    }
+  /** This class is controls playback using AudioManager */
+  private fun bindAudioManagerVolume(seekBar: SeekBar) {
+    val am: AudioManager by globalInject()
+    val masterListener = SeekBarListener()
+    seekBar.setOnSeekBarChangeListener(masterListener)
 
-    /**
-     * This class is controls playback using AudioManager
-     */
-    private fun bindAudioManagerVolume(seekBar: SeekBar) {
-        val am: AudioManager by globalInject()
-        val masterListener = SeekBarListener()
-        seekBar.setOnSeekBarChangeListener(masterListener)
+    seekBar.progress = am.getStreamVolume(AudioManager.STREAM_ALARM)
+    seekBar.max = am.getStreamMaxVolume(AudioManager.STREAM_ALARM)
 
-        seekBar.progress = am.getStreamVolume(AudioManager.STREAM_ALARM)
-        seekBar.max = am.getStreamMaxVolume(AudioManager.STREAM_ALARM)
-
-        masterListener
-            .progressObservable()
-            .subscribe { progress ->
-                //stop prealarm sample if there is one
-                stopPrealarmSample()
-                am.setStreamVolume(AudioManager.STREAM_ALARM, progress!!, 0)
-                if (ringtone?.isPlaying == false) {
-                    ringtone?.play()
-                }
-            }
-            .let { disposable.add(it) }
-
-        masterListener
-            .progressObservable()
-            .debounce(3, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
-            .subscribe { ringtone?.stop() }
-            .let { disposable.add(it) }
-    }
-
-    private fun bindPrealarmSeekBar(preAlarmSeekBar: SeekBar) {
-        val prealarmListener = SeekBarListener()
-        preAlarmSeekBar.setOnSeekBarChangeListener(prealarmListener)
-        val rxPrefs: Prefs by globalInject()
-        val log by globalLogger("VolumePreference")
-        val prealarmPreference = rxPrefs.preAlarmVolume
-        preAlarmSeekBar.max = MAX_PREALARM_VOLUME
-
-        prealarmPreference.observe().subscribe { integer -> preAlarmSeekBar.progress = integer }.let { disposable.add(it) }
-
-        prealarmListener
-            .progressObservable()
-            .doOnNext { integer ->
-                log.debug { "Pre-alarm $integer" }
-                prealarmPreference.value = integer
-                ringtone?.stop()
-            }
-            .subscribe {
-                prealarmSampleDisposable.dispose()
-                prealarmSampleDisposable = klaxon.go(
-                    PluginAlarmData(
-                        id = -1,
-                        label = "",
-                        alarmtone = Alarmtone.Default()
-                    ), prealarm = true, targetVolume = Observable.just(TargetVolume.FADED_IN)
-                )
-            }
-            .let { disposable.add(it) }
-
-        prealarmListener
-            .progressObservable()
-            .debounce(3, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
-            .subscribe { stopPrealarmSample() }
-            .let { disposable.add(it) }
-    }
-
-    private var prealarmSampleDisposable = Disposables.empty()
-
-    private fun stopPrealarmSample() {
-        prealarmSampleDisposable.dispose()
-    }
-
-    /**
-     * Turns a [SeekBar] into a volume control.
-     */
-    private class SeekBarListener : OnSeekBarChangeListener {
-        private val progressChanged = PublishSubject.create<Int>()
-
-        override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromTouch: Boolean) {
-            if (!fromTouch) return
-            progressChanged.onNext(progress)
+    masterListener
+        .progressObservable()
+        .subscribe { progress ->
+          // stop prealarm sample if there is one
+          stopPrealarmSample()
+          am.setStreamVolume(AudioManager.STREAM_ALARM, progress!!, 0)
+          if (ringtone?.isPlaying == false) {
+            ringtone?.play()
+          }
         }
+        .let { disposable.add(it) }
 
-        override fun onStartTrackingTouch(seekBar: SeekBar) {
-            //empty
-        }
+    masterListener
+        .progressObservable()
+        .debounce(3, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
+        .subscribe { ringtone?.stop() }
+        .let { disposable.add(it) }
+  }
 
-        override fun onStopTrackingTouch(seekBar: SeekBar) {
-            //empty
-        }
+  private fun bindPrealarmSeekBar(preAlarmSeekBar: SeekBar) {
+    val prealarmListener = SeekBarListener()
+    preAlarmSeekBar.setOnSeekBarChangeListener(prealarmListener)
+    val rxPrefs: Prefs by globalInject()
+    val log by globalLogger("VolumePreference")
+    val prealarmPreference = rxPrefs.preAlarmVolume
+    preAlarmSeekBar.max = MAX_PREALARM_VOLUME
 
-        fun progressObservable(): Observable<Int> {
-            return progressChanged
-        }
+    prealarmPreference.observe().subscribe { integer -> preAlarmSeekBar.progress = integer }.let {
+      disposable.add(it)
     }
+
+    prealarmListener
+        .progressObservable()
+        .doOnNext { integer ->
+          log.debug { "Pre-alarm $integer" }
+          prealarmPreference.value = integer
+          ringtone?.stop()
+        }
+        .subscribe {
+          prealarmSampleDisposable.dispose()
+          prealarmSampleDisposable =
+              klaxon.go(
+                  PluginAlarmData(id = -1, label = "", alarmtone = Alarmtone.Default()),
+                  prealarm = true,
+                  targetVolume = Observable.just(TargetVolume.FADED_IN))
+        }
+        .let { disposable.add(it) }
+
+    prealarmListener
+        .progressObservable()
+        .debounce(3, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
+        .subscribe { stopPrealarmSample() }
+        .let { disposable.add(it) }
+  }
+
+  private var prealarmSampleDisposable = Disposables.empty()
+
+  private fun stopPrealarmSample() {
+    prealarmSampleDisposable.dispose()
+  }
+
+  /** Turns a [SeekBar] into a volume control. */
+  private class SeekBarListener : OnSeekBarChangeListener {
+    private val progressChanged = PublishSubject.create<Int>()
+
+    override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromTouch: Boolean) {
+      if (!fromTouch) return
+      progressChanged.onNext(progress)
+    }
+
+    override fun onStartTrackingTouch(seekBar: SeekBar) {
+      // empty
+    }
+
+    override fun onStopTrackingTouch(seekBar: SeekBar) {
+      // empty
+    }
+
+    fun progressObservable(): Observable<Int> {
+      return progressChanged
+    }
+  }
 }

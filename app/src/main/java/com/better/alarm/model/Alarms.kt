@@ -24,9 +24,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-/**
- * The Alarms implements application domain logic
- */
+/** The Alarms implements application domain logic */
 @SuppressLint("UseSparseArrays")
 class Alarms(
     private val mAlarmsScheduler: IAlarmsScheduler,
@@ -35,53 +33,49 @@ class Alarms(
     private val containerFactory: ContainerFactory,
     private val logger: Logger
 ) : IAlarmsManager {
-    private val alarms: MutableMap<Int, AlarmCore> = mutableMapOf()
-    private val scope = CoroutineScope(Dispatchers.Main.immediate)
-    fun start() {
-        scope.launch {
-            val created = query.query()
-                .map { container -> container.value.id to factory.create(container) }
-                .toMap()
-            alarms.putAll(created)
-            created.values.forEach { it.start() }
-        }
+  private val alarms: MutableMap<Int, AlarmCore> = mutableMapOf()
+  private val scope = CoroutineScope(Dispatchers.Main.immediate)
+  fun start() {
+    scope.launch {
+      val created =
+          query.query().map { container -> container.value.id to factory.create(container) }.toMap()
+      alarms.putAll(created)
+      created.values.forEach { it.start() }
     }
+  }
 
-    fun refresh() {
-        alarms.values.forEach { alarmCore ->
-            alarmCore.refresh()
-        }
-    }
+  fun refresh() {
+    alarms.values.forEach { alarmCore -> alarmCore.refresh() }
+  }
 
-    fun onTimeSet() {
-        alarms.values.forEach { alarmCore ->
-            alarmCore.onTimeSet()
-        }
-    }
+  fun onTimeSet() {
+    alarms.values.forEach { alarmCore -> alarmCore.onTimeSet() }
+  }
 
-    override fun getAlarm(alarmId: Int): AlarmCore? {
-        return alarms[alarmId].also {
-            if (it == null) {
-                val exception = RuntimeException("Alarm with id $alarmId not found!").apply { fillInStackTrace() }
-                logger.error(exception) { "Alarm with id $alarmId not found!" }
-            }
-        }
+  override fun getAlarm(alarmId: Int): AlarmCore? {
+    return alarms[alarmId].also {
+      if (it == null) {
+        val exception =
+            RuntimeException("Alarm with id $alarmId not found!").apply { fillInStackTrace() }
+        logger.error(exception) { "Alarm with id $alarmId not found!" }
+      }
     }
+  }
 
-    override fun createNewAlarm(): Alarm {
-        val alarm = factory.create(containerFactory.create())
-        alarms[alarm.id] = alarm
-        alarm.start()
-        return alarm
-    }
+  override fun createNewAlarm(): Alarm {
+    val alarm = factory.create(containerFactory.create())
+    alarms[alarm.id] = alarm
+    alarm.start()
+    return alarm
+  }
 
-    fun onAlarmFired(alarm: AlarmCore, calendarType: CalendarType?) {
-        //TODO this should not be needed
-        mAlarmsScheduler.removeAlarm(alarm.id)
-        alarm.onAlarmFired()
-    }
+  fun onAlarmFired(alarm: AlarmCore, calendarType: CalendarType?) {
+    // TODO this should not be needed
+    mAlarmsScheduler.removeAlarm(alarm.id)
+    alarm.onAlarmFired()
+  }
 
-    override fun enable(alarm: AlarmValue, enable: Boolean) {
-        alarms.getValue(alarm.id).enable(enable)
-    }
+  override fun enable(alarm: AlarmValue, enable: Boolean) {
+    alarms.getValue(alarm.id).enable(enable)
+  }
 }

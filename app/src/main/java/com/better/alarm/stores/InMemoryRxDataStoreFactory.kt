@@ -27,41 +27,34 @@ import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 
 class InMemoryRxDataStoreFactory : PrimitiveDataStoreFactory {
-    companion object {
-        @JvmStatic
-        fun create(): PrimitiveDataStoreFactory = InMemoryRxDataStoreFactory()
+  companion object {
+    @JvmStatic fun create(): PrimitiveDataStoreFactory = InMemoryRxDataStoreFactory()
 
-        fun <T : Any> inMemoryRxDataStore(defaultValue: T): RxDataStore<T> {
-            return object : RxDataStore<T> {
-                private val subject: BehaviorSubject<T> = BehaviorSubject.createDefault(defaultValue)
-                override var value: T
-                    get() = requireNotNull(subject.value)
-                    set(value) = subject.onNext(value)
+    fun <T : Any> inMemoryRxDataStore(defaultValue: T): RxDataStore<T> {
+      return object : RxDataStore<T> {
+        private val subject: BehaviorSubject<T> = BehaviorSubject.createDefault(defaultValue)
+        override var value: T
+          get() = requireNotNull(subject.value)
+          set(value) = subject.onNext(value)
 
-                override fun observe(): Observable<T> = subject.hide()
-            }
-        }
+        override fun observe(): Observable<T> = subject.hide()
+      }
     }
+  }
 
-    private val booleans = mutableMapOf<String, RxDataStore<Boolean>>()
-    private val strings = mutableMapOf<String, RxDataStore<String>>()
-    private val ints = mutableMapOf<String, RxDataStore<Int>>()
+  private val booleans = mutableMapOf<String, RxDataStore<Boolean>>()
+  private val strings = mutableMapOf<String, RxDataStore<String>>()
+  private val ints = mutableMapOf<String, RxDataStore<Int>>()
 
-    override fun booleanDataStore(key: String, defaultValue: Boolean): RxDataStore<Boolean> {
-        return booleans.getOrPut(key) {
-            inMemoryRxDataStore(defaultValue)
-        }
-    }
+  override fun booleanDataStore(key: String, defaultValue: Boolean): RxDataStore<Boolean> {
+    return booleans.getOrPut(key) { inMemoryRxDataStore(defaultValue) }
+  }
 
-    override fun stringDataStore(key: String, defaultValue: String): RxDataStore<String> {
-        return strings.getOrPut(key) {
-            inMemoryRxDataStore(defaultValue)
-        }
-    }
+  override fun stringDataStore(key: String, defaultValue: String): RxDataStore<String> {
+    return strings.getOrPut(key) { inMemoryRxDataStore(defaultValue) }
+  }
 
-    override fun intDataStore(key: String, defaultValue: Int): RxDataStore<Int> {
-        return ints.getOrPut(key) {
-            inMemoryRxDataStore(defaultValue)
-        }
-    }
+  override fun intDataStore(key: String, defaultValue: Int): RxDataStore<Int> {
+    return ints.getOrPut(key) { inMemoryRxDataStore(defaultValue) }
+  }
 }

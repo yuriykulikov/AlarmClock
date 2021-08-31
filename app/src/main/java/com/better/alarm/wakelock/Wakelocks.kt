@@ -1,7 +1,7 @@
 package com.better.alarm.wakelock
 
 interface Wakelocks {
-    fun acquireServiceLock()
+  fun acquireServiceLock()
 
-    fun releaseServiceLock()
+  fun releaseServiceLock()
 }

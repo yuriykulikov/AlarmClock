@@ -1,21 +1,23 @@
 package com.better.alarm.model
 
 fun removeWithId(alarmValues: List<AlarmValue>, id: Int): List<AlarmValue> {
-    return alarmValues.filter { it.id != id }
+  return alarmValues.filter { it.id != id }
 }
 
 /**
- * Replaces the [AlarmValue] if the list contains this ID and appends to the back if it does not contain such id.
+ * Replaces the [AlarmValue] if the list contains this ID and appends to the back if it does not
+ * contain such id.
  */
 fun addOrReplace(alarmValues: List<AlarmValue>, activeRecord: AlarmValue): List<AlarmValue> {
-    var replaced = false
-    val withReplacedById = alarmValues.map { alarmValue ->
+  var replaced = false
+  val withReplacedById =
+      alarmValues.map { alarmValue ->
         if (activeRecord.id == alarmValue.id) {
-            replaced = true
-            activeRecord
+          replaced = true
+          activeRecord
         } else {
-            alarmValue
+          alarmValue
         }
-    }
-    return if (replaced) withReplacedById else alarmValues.plus(activeRecord)
+      }
+  return if (replaced) withReplacedById else alarmValues.plus(activeRecord)
 }

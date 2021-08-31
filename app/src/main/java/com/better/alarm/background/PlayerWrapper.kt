@@ -9,71 +9,67 @@ import android.net.Uri
 import com.better.alarm.logger.Logger
 import com.better.alarm.model.Alarmtone
 
-class PlayerWrapper(
-    val resources: Resources,
-    val context: Context,
-    val log: Logger
-) : Player {
-    override fun setDataSource(alarmtone: Alarmtone) {
-        // Fall back on the default alarm if the database does not have an
-        // alarm stored.
-        val uri = when (alarmtone) {
-            is Alarmtone.Silent -> throw RuntimeException("alarm is silent")
-            is Alarmtone.Default -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-            is Alarmtone.Sound -> Uri.parse(alarmtone.uriString)
+class PlayerWrapper(val resources: Resources, val context: Context, val log: Logger) : Player {
+  override fun setDataSource(alarmtone: Alarmtone) {
+    // Fall back on the default alarm if the database does not have an
+    // alarm stored.
+    val uri =
+        when (alarmtone) {
+          is Alarmtone.Silent -> throw RuntimeException("alarm is silent")
+          is Alarmtone.Default -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+          is Alarmtone.Sound -> Uri.parse(alarmtone.uriString)
         }
 
-        player?.setDataSource(context, uri)
-    }
+    player?.setDataSource(context, uri)
+  }
 
-    private var player: MediaPlayer? = MediaPlayer().apply {
+  private var player: MediaPlayer? =
+      MediaPlayer().apply {
         setOnErrorListener { mp, _, _ ->
-            log.e("Error occurred while playing audio.")
-            mp.stop()
-            mp.release()
-            player = null
-            true
+          log.e("Error occurred while playing audio.")
+          mp.stop()
+          mp.release()
+          player = null
+          true
         }
-    }
+      }
 
-    override fun startAlarm() {
-        player?.runCatching {
-            setAudioStreamType(AudioManager.STREAM_ALARM)
-            isLooping = true
-            prepare()
-            start()
-        }
+  override fun startAlarm() {
+    player?.runCatching {
+      setAudioStreamType(AudioManager.STREAM_ALARM)
+      isLooping = true
+      prepare()
+      start()
     }
+  }
 
-    override fun setDataSourceFromResource(res: Int) {
-        resources.openRawResourceFd(res)?.run {
-            player?.setDataSource(fileDescriptor, startOffset, length)
-            close()
-        }
+  override fun setDataSourceFromResource(res: Int) {
+    resources.openRawResourceFd(res)?.run {
+      player?.setDataSource(fileDescriptor, startOffset, length)
+      close()
     }
+  }
 
-    override fun setPerceivedVolume(perceived: Float) {
-        val volume = perceived.squared()
-        player?.setVolume(volume, volume)
+  override fun setPerceivedVolume(perceived: Float) {
+    val volume = perceived.squared()
+    player?.setVolume(volume, volume)
+  }
+
+  /** Stops alarm audio */
+  override fun stop() {
+    try {
+      player?.run {
+        if (isPlaying) stop()
+        release()
+      }
+    } finally {
+      player = null
     }
+  }
 
-    /**
-     * Stops alarm audio
-     */
-    override fun stop() {
-        try {
-            player?.run {
-                if (isPlaying) stop()
-                release()
-            }
-        } finally {
-            player = null
-        }
-    }
+  override fun reset() {
+    player?.reset()
+  }
 
-    override fun reset() {
-        player?.reset()
-    }
-
-    private fun Float.squared() = this * this
+  private fun Float.squared() = this * this
 }
