@@ -7,8 +7,10 @@ import org.koin.core.qualifier.Qualifier
 
 /**
  * globalInject lazily given dependency
- * @param qualifier - bean qualifier / optional
- * @param parameters - injection parameters
+ * @param qualifier
+ * - bean qualifier / optional
+ * @param parameters
+ * - injection parameters
  */
 inline fun <reified T : Any> globalInject(
     qualifier: Qualifier? = null,

@@ -33,146 +33,141 @@ class AlarmsScheduler(
     private val calendars: Calendars
 ) : IAlarmsScheduler {
 
-    data class ScheduledAlarm(
-        val id: Int,
-        val calendar: Calendar,
-        val type: CalendarType,
-        val alarmValue: AlarmValue
-    ) : Comparable<ScheduledAlarm> {
+  data class ScheduledAlarm(
+      val id: Int,
+      val calendar: Calendar,
+      val type: CalendarType,
+      val alarmValue: AlarmValue
+  ) : Comparable<ScheduledAlarm> {
 
-        override fun compareTo(other: ScheduledAlarm): Int {
-            return this.calendar.compareTo(other.calendar)
-        }
-
-        override fun toString(): String {
-            return "$id $type on ${DATE_FORMAT.format(calendar.time)}"
-        }
+    override fun compareTo(other: ScheduledAlarm): Int {
+      return this.calendar.compareTo(other.calendar)
     }
 
-    private val queue: PriorityQueue<ScheduledAlarm> = PriorityQueue()
+    override fun toString(): String {
+      return "$id $type on ${DATE_FORMAT.format(calendar.time)}"
+    }
+  }
 
-    private var isStarted = false
+  private val queue: PriorityQueue<ScheduledAlarm> = PriorityQueue()
 
-    /** Actually start scheduling alarms */
-    fun start() {
-        isStarted = true
-        fireAlarmsInThePast()
-        if (queue.isNotEmpty()) {
-            // do not use iterator, order is not defined
-            queue.peek()?.let { currentHead ->
-                setter.setUpRTCAlarm(currentHead.id, currentHead.type.name, currentHead.calendar)
-            }
-        }
+  private var isStarted = false
+
+  /** Actually start scheduling alarms */
+  fun start() {
+    isStarted = true
+    fireAlarmsInThePast()
+    if (queue.isNotEmpty()) {
+      // do not use iterator, order is not defined
+      queue.peek()?.let { currentHead ->
+        setter.setUpRTCAlarm(currentHead.id, currentHead.type.name, currentHead.calendar)
+      }
+    }
+    notifyListeners()
+  }
+
+  override fun setAlarm(id: Int, type: CalendarType, calendar: Calendar, alarmValue: AlarmValue) {
+    val scheduledAlarm = ScheduledAlarm(id, calendar, type, alarmValue)
+    replaceAlarm(id, scheduledAlarm)
+  }
+
+  override fun setInexactAlarm(id: Int, cal: Calendar) {
+    setter.setInexactAlarm(id, cal)
+  }
+
+  override fun removeInexactAlarm(id: Int) {
+    setter.removeInexactAlarm(id)
+  }
+
+  override fun removeAlarm(id: Int) {
+    replaceAlarm(id, null)
+  }
+
+  private fun replaceAlarm(id: Int, newAlarm: ScheduledAlarm?) {
+    val prevHead: ScheduledAlarm? = queue.peek()
+
+    // remove if we have already an alarm
+    queue.removeAll { it.id == id }
+    if (newAlarm != null) {
+      queue.add(newAlarm)
+    }
+
+    if (isStarted) {
+      fireAlarmsInThePast()
+    }
+
+    val currentHead: ScheduledAlarm? = queue.peek()
+    when {
+      !isStarted -> {
+        log.debug { "skip setting $currentHead (not started yet)" }
+      }
+      // no alarms, remove
+      currentHead == null -> {
+        setter.removeRTCAlarm()
         notifyListeners()
+      }
+      // update current RTC, id will be used as the request code
+      currentHead != prevHead -> {
+        setter.setUpRTCAlarm(currentHead.id, currentHead.type.name, currentHead.calendar)
+        notifyListeners()
+      }
+      // if head remains the same, do nothing
+      else -> log.debug { "skip setting $currentHead (already set)" }
     }
+  }
 
-    override fun setAlarm(id: Int, type: CalendarType, calendar: Calendar, alarmValue: AlarmValue) {
-        val scheduledAlarm = ScheduledAlarm(id, calendar, type, alarmValue)
-        replaceAlarm(id, scheduledAlarm)
+  /**
+   * If two alarms were set for the same time, then the second alarm will be processed in the past.
+   * In this case we remove it from the queue and fire it.
+   */
+  private fun fireAlarmsInThePast() {
+    val now = calendars.now()
+    while (!queue.isEmpty() && queue.peek()?.calendar?.before(now) == true) {
+      // remove happens in fire
+      queue.poll()?.let { firedInThePastAlarm ->
+        log.debug { "In the past - $firedInThePastAlarm" }
+        setter.fireNow(firedInThePastAlarm.id, firedInThePastAlarm.type.name)
+      }
     }
+  }
 
-    override fun setInexactAlarm(id: Int, cal: Calendar) {
-        setter.setInexactAlarm(id, cal)
-    }
+  /**
+   * TODO the whole mechanism has to be revised. Currently we can only know when next alarm is
+   * scheduled and we do not know what is the reason for that. Maybe create a separate component for
+   * that or notify from the alarm SM. Actually notify this component from SM :-) and he can notify
+   * the rest.
+   */
+  private fun notifyListeners() {
+    findNextNormalAlarm()
+        ?.let { scheduledAlarm: ScheduledAlarm ->
+          fun findNormalTime(scheduledAlarm: ScheduledAlarm): Long {
+            // we can only assume that the real one will be a little later,
+            // namely:
+            val prealarmOffsetInMillis = prefs.preAlarmDuration.value * 60 * 1000
+            return scheduledAlarm.calendar.timeInMillis + prealarmOffsetInMillis
+          }
 
-    override fun removeInexactAlarm(id: Int) {
-        setter.removeInexactAlarm(id)
-    }
-
-    override fun removeAlarm(id: Int) {
-        replaceAlarm(id, null)
-    }
-
-    private fun replaceAlarm(id: Int, newAlarm: ScheduledAlarm?) {
-        val prevHead: ScheduledAlarm? = queue.peek()
-
-        // remove if we have already an alarm
-        queue.removeAll { it.id == id }
-        if (newAlarm != null) {
-            queue.add(newAlarm)
+          val isPrealarm = scheduledAlarm.type == CalendarType.PREALARM
+          Store.Next(
+              isPrealarm = isPrealarm,
+              alarm = scheduledAlarm.alarmValue,
+              nextNonPrealarmTime =
+                  if (isPrealarm) findNormalTime(scheduledAlarm)
+                  else scheduledAlarm.calendar.timeInMillis)
         }
+        .let { next: Store.Next? -> Optional.fromNullable(next) }
+        .run { store.next().onNext(this) }
+  }
 
-        if (isStarted) {
-            fireAlarmsInThePast()
-        }
+  private fun findNextNormalAlarm(): ScheduledAlarm? {
+    return queue.sorted().firstOrNull { it.type != CalendarType.AUTOSILENCE }
+  }
 
-        val currentHead: ScheduledAlarm? = queue.peek()
-        when {
-            !isStarted -> {
-                log.debug { "skip setting $currentHead (not started yet)" }
-            }
-            // no alarms, remove
-            currentHead == null -> {
-                setter.removeRTCAlarm()
-                notifyListeners()
-            }
-            // update current RTC, id will be used as the request code
-            currentHead != prevHead -> {
-                setter.setUpRTCAlarm(currentHead.id, currentHead.type.name, currentHead.calendar)
-                notifyListeners()
-            }
-            // if head remains the same, do nothing
-            else -> log.debug { "skip setting $currentHead (already set)" }
-        }
-    }
-
-    /**
-     * If two alarms were set for the same time, then the second alarm will be
-     * processed in the past. In this case we remove it from the queue and fire
-     * it.
-     */
-
-    private fun fireAlarmsInThePast() {
-        val now = calendars.now()
-        while (!queue.isEmpty() && queue.peek()?.calendar?.before(now) == true) {
-            // remove happens in fire
-            queue.poll()?.let { firedInThePastAlarm ->
-                log.debug { "In the past - $firedInThePastAlarm" }
-                setter.fireNow(firedInThePastAlarm.id, firedInThePastAlarm.type.name)
-            }
-        }
-    }
-
-    /**
-     * TODO the whole mechanism has to be revised. Currently we can only know
-     * when next alarm is scheduled and we do not know what is the reason for
-     * that. Maybe create a separate component for that or notify from the alarm
-     * SM. Actually notify this component from SM :-) and he can notify the
-     * rest.
-     */
-    private fun notifyListeners() {
-        findNextNormalAlarm()
-            ?.let { scheduledAlarm: ScheduledAlarm ->
-                fun findNormalTime(scheduledAlarm: ScheduledAlarm): Long {
-                    // we can only assume that the real one will be a little later,
-                    // namely:
-                    val prealarmOffsetInMillis = prefs.preAlarmDuration.value * 60 * 1000
-                    return scheduledAlarm.calendar.timeInMillis + prealarmOffsetInMillis
-                }
-
-                val isPrealarm = scheduledAlarm.type == CalendarType.PREALARM
-                Store.Next(
-                    /* isPrealarm */ isPrealarm,
-                    /* alarm */ scheduledAlarm.alarmValue,
-                    /* nextNonPrealarmTime */ if (isPrealarm) findNormalTime(scheduledAlarm) else scheduledAlarm.calendar.timeInMillis
-                )
-
-            }
-            .let { next: Store.Next? -> Optional.fromNullable(next) }
-            .run { store.next().onNext(this) }
-    }
-
-    private fun findNextNormalAlarm(): ScheduledAlarm? {
-        return queue
-            .sorted()
-            .firstOrNull { it.type != CalendarType.AUTOSILENCE }
-    }
-
-    companion object {
-        val DATE_FORMAT: SimpleDateFormat = SimpleDateFormat("dd-MM-yy HH:mm:ss", Locale.GERMANY)
-        const val ACTION_FIRED = BuildConfig.APPLICATION_ID + ".ACTION_FIRED"
-        const val ACTION_INEXACT_FIRED = BuildConfig.APPLICATION_ID + ".ACTION_INEXACT_FIRED"
-        const val EXTRA_ID = "intent.extra.alarm"
-        const val EXTRA_TYPE = "intent.extra.type"
-    }
+  companion object {
+    val DATE_FORMAT: SimpleDateFormat = SimpleDateFormat("dd-MM-yy HH:mm:ss", Locale.GERMANY)
+    const val ACTION_FIRED = BuildConfig.APPLICATION_ID + ".ACTION_FIRED"
+    const val ACTION_INEXACT_FIRED = BuildConfig.APPLICATION_ID + ".ACTION_INEXACT_FIRED"
+    const val EXTRA_ID = "intent.extra.alarm"
+    const val EXTRA_TYPE = "intent.extra.type"
+  }
 }

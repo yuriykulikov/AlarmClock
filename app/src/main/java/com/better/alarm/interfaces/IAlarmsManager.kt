@@ -17,30 +17,27 @@ package com.better.alarm.interfaces
 
 import com.better.alarm.model.AlarmValue
 
-/**
- * @author Yuriy
- */
+/** @author Yuriy */
 interface IAlarmsManager {
 
-    /**
-     * Enable of disable an alarm
-     *
-     * @param alarm
-     * @param enable
-     */
-    fun enable(alarm: AlarmValue, enable: Boolean)
+  /**
+   * Enable of disable an alarm
+   *
+   * @param alarm
+   * @param enable
+   */
+  fun enable(alarm: AlarmValue, enable: Boolean)
 
-    /**
-     * Return an AlarmCore object representing the alarm id in the database.
-     * Returns null if no alarm exists.
-     */
-    fun getAlarm(alarmId: Int): Alarm?
+  /**
+   * Return an AlarmCore object representing the alarm id in the database. Returns null if no alarm
+   * exists.
+   */
+  fun getAlarm(alarmId: Int): Alarm?
 
-    /**
-     * Create new AlarmCore with default settings
-     *
-     * @return Alarm
-     */
-    fun createNewAlarm(): Alarm
-
+  /**
+   * Create new AlarmCore with default settings
+   *
+   * @return Alarm
+   */
+  fun createNewAlarm(): Alarm
 }

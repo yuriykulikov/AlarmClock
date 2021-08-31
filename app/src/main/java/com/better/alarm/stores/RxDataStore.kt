@@ -25,45 +25,51 @@ package com.better.alarm.stores
 
 import io.reactivex.Observable
 
-/**
- * Represents a single store. This an observable and persistent container for a single value.
- */
+/** Represents a single store. This an observable and persistent container for a single value. */
 interface RxDataStore<T> {
-    var value: T
-    fun observe(): Observable<T>
+  var value: T
+  fun observe(): Observable<T>
 }
 
-/**
- * Change the contents of the [RxDataStore] given the previous value.
- */
+/** Change the contents of the [RxDataStore] given the previous value. */
 fun <T> RxDataStore<T>.modify(func: T.(prev: T) -> T) {
-    value = func(value, value)
+  value = func(value, value)
+}
+
+/** Factory to create [RxDataStore] objects. */
+interface PrimitiveDataStoreFactory {
+  /**
+   * Creates a new [RxDataStore]<[Boolean]>. [defaultValue] will be used if the RxDataStore was not
+   * initialized yet.
+   */
+  fun booleanDataStore(key: String, defaultValue: Boolean): RxDataStore<Boolean>
+
+  /**
+   * Creates a new [RxDataStore]<[String]>. [defaultValue] will be used if the RxDataStore was not
+   * initialized yet.
+   */
+  fun stringDataStore(key: String, defaultValue: String): RxDataStore<String>
+
+  /**
+   * Creates a new [RxDataStore]<[Int]>. [defaultValue] will be used if the RxDataStore was not
+   * initialized yet.
+   */
+  fun intDataStore(key: String, defaultValue: Int): RxDataStore<Int>
 }
 
 /**
- * Factory to create [RxDataStore] objects.
+ * Creates a new [RxDataStore]<[Int]>. [defaultValue] will be used if the RxDataStore was not
+ * initialized yet.
  */
-interface PrimitiveDataStoreFactory {
-    /** Creates a new [RxDataStore]<[Boolean]>. [defaultValue] will be used if the RxDataStore was not initialized yet. */
-    fun booleanDataStore(key: String, defaultValue: Boolean): RxDataStore<Boolean>
-
-    /** Creates a new [RxDataStore]<[String]>. [defaultValue] will be used if the RxDataStore was not initialized yet. */
-    fun stringDataStore(key: String, defaultValue: String): RxDataStore<String>
-
-    /** Creates a new [RxDataStore]<[Int]>. [defaultValue] will be used if the RxDataStore was not initialized yet. */
-    fun intDataStore(key: String, defaultValue: Int): RxDataStore<Int>
-}
-
-/** Creates a new [RxDataStore]<[Int]>. [defaultValue] will be used if the RxDataStore was not initialized yet. */
 fun PrimitiveDataStoreFactory.intStringDataStore(key: String, defaultValue: Int): RxDataStore<Int> {
-    val stringStore = stringDataStore(key, defaultValue.toString())
-    return object : RxDataStore<Int> {
-        override var value: Int
-            get() = stringStore.value.toInt()
-            set(value) {
-                stringStore.value = value.toString()
-            }
+  val stringStore = stringDataStore(key, defaultValue.toString())
+  return object : RxDataStore<Int> {
+    override var value: Int
+      get() = stringStore.value.toInt()
+      set(value) {
+        stringStore.value = value.toString()
+      }
 
-        override fun observe(): Observable<Int> = stringStore.observe().map { it.toInt() }
-    }
+    override fun observe(): Observable<Int> = stringStore.observe().map { it.toInt() }
+  }
 }

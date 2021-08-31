@@ -23,27 +23,28 @@ import com.better.alarm.configuration.Store
 import com.better.alarm.util.formatToast
 
 class ToastPresenter(private val store: Store, private val context: Context) {
-    private var sToast: Toast? = null
+  private var sToast: Toast? = null
 
-    fun start() {
-        store.sets()
-            .withLatestFrom(store.uiVisible, { set, uiVisible -> set to uiVisible })
-            .subscribe { (set: Store.AlarmSet, uiVisible: Boolean) ->
-                if (!uiVisible && set.alarm.isEnabled) {
-                    popAlarmSetToast(context, set.millis)
-                }
-            }
-    }
+  fun start() {
+    store
+        .sets()
+        .withLatestFrom(store.uiVisible, { set, uiVisible -> set to uiVisible })
+        .subscribe { (set: Store.AlarmSet, uiVisible: Boolean) ->
+          if (!uiVisible && set.alarm.isEnabled) {
+            popAlarmSetToast(context, set.millis)
+          }
+        }
+  }
 
-    fun setToast(toast: Toast) {
-        sToast?.cancel()
-        sToast = toast
-    }
+  fun setToast(toast: Toast) {
+    sToast?.cancel()
+    sToast = toast
+  }
 
-    private fun popAlarmSetToast(context: Context, timeInMillis: Long) {
-        val toastText = formatToast(context, timeInMillis)
-        val toast = Toast.makeText(context, toastText, Toast.LENGTH_LONG)
-        setToast(toast)
-        toast.show()
-    }
+  private fun popAlarmSetToast(context: Context, timeInMillis: Long) {
+    val toastText = formatToast(context, timeInMillis)
+    val toast = Toast.makeText(context, toastText, Toast.LENGTH_LONG)
+    setToast(toast)
+    toast.show()
+  }
 }

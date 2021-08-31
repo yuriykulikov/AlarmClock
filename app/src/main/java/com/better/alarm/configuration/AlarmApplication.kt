@@ -30,52 +30,53 @@ import com.better.alarm.presenter.ScheduledReceiver
 import com.better.alarm.presenter.ToastPresenter
 
 class AlarmApplication : Application() {
-    @SuppressLint("SoonBlockedPrivateApi")
-    override fun onCreate() {
-        runCatching {
-            ViewConfiguration::class.java
-                .getDeclaredField("sHasPermanentMenuKey")
-                .apply { isAccessible = true }
-                .setBoolean(ViewConfiguration.get(this), false)
-        }
-
-        val koin = startKoin(applicationContext)
-
-        koin.get<BugReporter>().attachToMainThread(this)
-
-        // must be after sContainer
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
-
-        // TODO make it lazy
-        koin.get<ScheduledReceiver>().start()
-        koin.get<ToastPresenter>().start()
-        koin.get<AlertServicePusher>()
-        koin.get<BackgroundNotifications>()
-
-        createNotificationChannels()
-
-        // must be started the last, because otherwise we may loose intents from it.
-        val alarmsLogger = koin.logger("Alarms")
-        alarmsLogger.debug { "Starting alarms" }
-        koin.get<Alarms>().start()
-        // start scheduling alarms after all alarms have been started
-        koin.get<AlarmsScheduler>().start()
-
-        with(koin.get<Store>()) {
-            // register logging after startup has finished to avoid logging( O(n) instead of O(n log n) )
-            alarms()
-                .distinctUntilChanged()
-                .subscribe { alarmValues ->
-                    for (alarmValue in alarmValues) {
-                        alarmsLogger.debug { "$alarmValue" }
-                    }
-                }
-
-            next()
-                .distinctUntilChanged()
-                .subscribe { next -> alarmsLogger.debug { "## Next: $next" } }
-        }
-
-        super.onCreate()
+  @SuppressLint("SoonBlockedPrivateApi")
+  override fun onCreate() {
+    runCatching {
+      ViewConfiguration::class
+          .java
+          .getDeclaredField("sHasPermanentMenuKey")
+          .apply { isAccessible = true }
+          .setBoolean(ViewConfiguration.get(this), false)
     }
+
+    val koin = startKoin(applicationContext)
+
+    koin.get<BugReporter>().attachToMainThread(this)
+
+    // must be after sContainer
+    PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
+
+    // TODO make it lazy
+    koin.get<ScheduledReceiver>().start()
+    koin.get<ToastPresenter>().start()
+    koin.get<AlertServicePusher>()
+    koin.get<BackgroundNotifications>()
+
+    createNotificationChannels()
+
+    // must be started the last, because otherwise we may loose intents from it.
+    val alarmsLogger = koin.logger("Alarms")
+    alarmsLogger.debug { "Starting alarms" }
+    koin.get<Alarms>().start()
+    // start scheduling alarms after all alarms have been started
+    koin.get<AlarmsScheduler>().start()
+
+    with(koin.get<Store>()) {
+      // register logging after startup has finished to avoid logging( O(n) instead of O(n log n) )
+      alarms() //
+          .distinctUntilChanged()
+          .subscribe { alarmValues ->
+            for (alarmValue in alarmValues) {
+              alarmsLogger.debug { "$alarmValue" }
+            }
+          }
+
+      next() //
+          .distinctUntilChanged()
+          .subscribe { next -> alarmsLogger.debug { "## Next: $next" } }
+    }
+
+    super.onCreate()
+  }
 }

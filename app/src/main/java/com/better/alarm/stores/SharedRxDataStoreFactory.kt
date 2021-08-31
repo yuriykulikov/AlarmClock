@@ -29,78 +29,79 @@ import androidx.preference.PreferenceManager
 import com.better.alarm.logger.Logger
 import io.reactivex.Observable
 
-/**
- * Implementation of [PrimitiveDataStoreFactory] which uses [SharedPreferences] to store values.
- */
-class SharedRxDataStoreFactory private constructor(
-    private val preferences: SharedPreferences,
-    private val logger: Logger
-) : PrimitiveDataStoreFactory {
-    companion object {
-        fun create(context: Context, logger: Logger): PrimitiveDataStoreFactory {
-            return SharedRxDataStoreFactory(PreferenceManager.getDefaultSharedPreferences(context), logger)
-        }
-
-        fun createFromSharedPreferences(preferences: SharedPreferences, logger: Logger): PrimitiveDataStoreFactory {
-            return SharedRxDataStoreFactory(preferences, logger)
-        }
+/** Implementation of [PrimitiveDataStoreFactory] which uses [SharedPreferences] to store values. */
+class SharedRxDataStoreFactory
+private constructor(private val preferences: SharedPreferences, private val logger: Logger) :
+    PrimitiveDataStoreFactory {
+  companion object {
+    fun create(context: Context, logger: Logger): PrimitiveDataStoreFactory {
+      return SharedRxDataStoreFactory(
+          PreferenceManager.getDefaultSharedPreferences(context), logger)
     }
 
-    private val keyChanges = Observable.create<String> { emitter ->
-        // we need to hold a strong reference to this listener
-        val listener = object : SharedPreferences.OnSharedPreferenceChangeListener {
-            override fun onSharedPreferenceChanged(preferences: SharedPreferences, key: String) {
-                emitter.onNext(key)
+    fun createFromSharedPreferences(
+        preferences: SharedPreferences,
+        logger: Logger
+    ): PrimitiveDataStoreFactory {
+      return SharedRxDataStoreFactory(preferences, logger)
+    }
+  }
+
+  private val keyChanges =
+      Observable.create<String> { emitter ->
+            // we need to hold a strong reference to this listener
+            val listener =
+                object : SharedPreferences.OnSharedPreferenceChangeListener {
+                  override fun onSharedPreferenceChanged(
+                      preferences: SharedPreferences,
+                      key: String
+                  ) {
+                    emitter.onNext(key)
+                  }
+
+                  protected fun finalize() {
+                    logger.error { "finalized ${javaClass.name}" }
+                  }
+                }
+
+            emitter.setCancellable {
+              preferences.unregisterOnSharedPreferenceChangeListener(listener)
             }
 
-            protected fun finalize() {
-                logger.error { "finalized ${javaClass.name}" }
-            }
-        }
+            preferences.registerOnSharedPreferenceChangeListener(listener)
+          }
+          .share()
 
-        emitter.setCancellable {
-            preferences.unregisterOnSharedPreferenceChangeListener(listener)
-        }
+  override fun booleanDataStore(key: String, defaultValue: Boolean): RxDataStore<Boolean> {
+    return object : RxDataStore<Boolean> {
+      override var value: Boolean
+        get() = preferences.getBoolean(key, defaultValue)
+        set(value) = preferences.edit().putBoolean(key, value).apply()
 
-        preferences.registerOnSharedPreferenceChangeListener(listener)
-    }.share()
-
-    override fun booleanDataStore(key: String, defaultValue: Boolean): RxDataStore<Boolean> {
-        return object : RxDataStore<Boolean> {
-            override var value: Boolean
-                get() = preferences.getBoolean(key, defaultValue)
-                set(value) = preferences.edit().putBoolean(key, value).apply()
-
-            override fun observe(): Observable<Boolean> = keyChanges
-                .startWith(key)
-                .filter { it == key }
-                .map { value }
-        }
+      override fun observe(): Observable<Boolean> =
+          keyChanges.startWith(key).filter { it == key }.map { value }
     }
+  }
 
-    override fun stringDataStore(key: String, defaultValue: String): RxDataStore<String> {
-        return object : RxDataStore<String> {
-            override var value: String
-                get() = preferences.getString(key, defaultValue) ?: defaultValue
-                set(value) = preferences.edit().putString(key, value).apply()
+  override fun stringDataStore(key: String, defaultValue: String): RxDataStore<String> {
+    return object : RxDataStore<String> {
+      override var value: String
+        get() = preferences.getString(key, defaultValue) ?: defaultValue
+        set(value) = preferences.edit().putString(key, value).apply()
 
-            override fun observe(): Observable<String> = keyChanges
-                .startWith(key)
-                .filter { it == key }
-                .map { value }
-        }
+      override fun observe(): Observable<String> =
+          keyChanges.startWith(key).filter { it == key }.map { value }
     }
+  }
 
-    override fun intDataStore(key: String, defaultValue: Int): RxDataStore<Int> {
-        return object : RxDataStore<Int> {
-            override var value: Int
-                get() = preferences.getInt(key, defaultValue)
-                set(value) = preferences.edit().putInt(key, value).apply()
+  override fun intDataStore(key: String, defaultValue: Int): RxDataStore<Int> {
+    return object : RxDataStore<Int> {
+      override var value: Int
+        get() = preferences.getInt(key, defaultValue)
+        set(value) = preferences.edit().putInt(key, value).apply()
 
-            override fun observe(): Observable<Int> = keyChanges
-                .startWith(key)
-                .filter { it == key }
-                .map { value }
-        }
+      override fun observe(): Observable<Int> =
+          keyChanges.startWith(key).filter { it == key }.map { value }
     }
+  }
 }
