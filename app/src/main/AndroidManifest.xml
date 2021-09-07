@@ -105,4 +105,15 @@
             android:authorities="${applicationId}.model"
             android:exported="false" />
     </application>
+    <!-- https://github.com/ACRA/acra/issues/787 -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+            <data android:mimeType="message/rfc822" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SEND_MULTIPLE" />
+            <data android:mimeType="message/rfc822" />
+        </intent>
+    </queries>
 </manifest>
