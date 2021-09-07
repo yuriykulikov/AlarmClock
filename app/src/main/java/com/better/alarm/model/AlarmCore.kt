@@ -260,19 +260,21 @@ class AlarmCore(
   }
 
   private inner class RescheduleTransition : ComplexTransition<Event>() {
-    override fun performComplexTransition() {
-      if (container.daysOfWeek.isRepeatSet) {
-        if (container.isPrealarm && preAlarmDuration.blockingFirst() != -1) {
-          stateMachine.transitionTo(preAlarmSet)
-        } else {
-          stateMachine.transitionTo(normalSet)
-        }
-      } else {
-        log.debug { "Repeating is not set, disabling the alarm" }
-        alarmStore.modify { withIsEnabled(false) }
-        stateMachine.transitionTo(disabledState)
+      override fun performComplexTransition() {
+          if (container.daysOfWeek.isRepeatSet) {
+              if (container.isPrealarm && preAlarmDuration.blockingFirst() != -1) {
+                  stateMachine.transitionTo(preAlarmSet)
+              } else {
+                  stateMachine.transitionTo(normalSet)
+              }
+          } else if (container.isDeleteOnDismiss){
+              stateMachine.transitionTo(deletedState)
+          } else {
+              log.debug { "Repeating is not set, disabling the alarm" }
+              alarmStore.modify { withIsEnabled(false) }
+              stateMachine.transitionTo(disabledState)
+          }
       }
-    }
   }
 
   /**

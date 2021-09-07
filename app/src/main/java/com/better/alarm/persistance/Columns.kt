@@ -86,6 +86,15 @@ class Columns : BaseColumns {
      */
     const val STATE = "state"
 
+      /**
+       * Delete on dismissal of alarm
+       *
+       *
+       * Type: BOOLEAN
+       *
+       */
+
+      const val DELETE_ON_DISMISS = "deleteondismiss"
     /** The default sort order for this table */
     const val DEFAULT_SORT_ORDER = "$HOUR, $MINUTES ASC"
 
@@ -102,7 +111,8 @@ class Columns : BaseColumns {
             MESSAGE,
             ALERT,
             PREALARM,
-            STATE)
+            STATE,
+            DELETE_ON_DISMISS)
 
     /**
      * These save calls to cursor.getColumnIndexOrThrow() THEY MUST BE KEPT IN SYNC WITH ABOVE QUERY
@@ -119,5 +129,6 @@ class Columns : BaseColumns {
     const val ALARM_ALERT_INDEX = 8
     const val ALARM_PREALARM_INDEX = 9
     const val ALARM_STATE_INDEX = 10
+    const val ALARM_DELETE_ON_DISMISS_INDEX = 11
   }
 }

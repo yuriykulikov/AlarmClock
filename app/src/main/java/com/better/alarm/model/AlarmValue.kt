@@ -12,6 +12,7 @@ data class AlarmValue(
     val hour: Int,
     val minutes: Int,
     val isPrealarm: Boolean,
+    val isDeleteOnDismiss: Boolean,
     val alarmtone: Alarmtone,
     val isVibrate: Boolean,
     val label: String,
@@ -57,10 +58,13 @@ data class AlarmValue(
           alarmtone = data.alarmtone,
           isVibrate = data.isVibrate,
           label = data.label,
-          daysOfWeek = data.daysOfWeek)
+          daysOfWeek = data.daysOfWeek,
+          isDeleteOnDismiss = data.isDeleteOnDismiss
+      )
 
   fun withLabel(label: String) = copy(label = label)
   fun withHour(hour: Int) = copy(hour = hour)
   fun withDaysOfWeek(daysOfWeek: DaysOfWeek) = copy(daysOfWeek = daysOfWeek)
   fun withIsPrealarm(isPrealarm: Boolean) = copy(isPrealarm = isPrealarm)
+  fun withIsDeleteOnDismiss(isDeleteOnDismiss: Boolean) = copy(isDeleteOnDismiss =  isDeleteOnDismiss)
 }

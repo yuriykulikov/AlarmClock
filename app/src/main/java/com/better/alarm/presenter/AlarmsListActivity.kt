@@ -371,7 +371,9 @@ class AlarmsListActivity : AppCompatActivity() {
                       label = savedInstanceState.getString("label") ?: "",
                       isVibrate = true,
                       state = savedInstanceState.getString("state") ?: "",
-                      nextTime = Calendar.getInstance()))
+                      nextTime = Calendar.getInstance(),
+                      isDeleteOnDismiss = savedInstanceState.getBoolean("isDeleteOnDismiss")
+              ))
             } else {
               Optional.absent()
             })
@@ -399,6 +401,7 @@ class AlarmsListActivity : AppCompatActivity() {
         putString("alarmtone", edited.alarmtone.persistedString)
         putBoolean("skipping", edited.skipping)
         putString("state", edited.state)
+        putBoolean("isDeleteOnDismiss", edited.isDeleteOnDismiss)
       }
 
       logger.debug { "Saved state $toWrite" }

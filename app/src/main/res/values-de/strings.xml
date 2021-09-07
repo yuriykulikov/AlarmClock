@@ -14,6 +14,7 @@
  -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="alarm_delete_on_dismiss">Beim Verwerfen löschen</string>
     <!-- Here come strings which are not contained in the AOSP -->
     <string name="alarm_prealarm">Vorwecker</string>
     <string name="prealarm_duration_title">Vorwecker-Dauer</string>
