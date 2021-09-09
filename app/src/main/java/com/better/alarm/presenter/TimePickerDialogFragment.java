@@ -34,6 +34,8 @@ import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposables;
 import io.reactivex.functions.Cancellable;
 
 /** Dialog to set alarm time. */
@@ -42,6 +44,7 @@ public class TimePickerDialogFragment extends DialogFragment {
       InjectKt.globalInject(DynamicThemeHandler.class).getValue();
   private TimePicker mPicker;
   private SingleEmitter<Optional<PickedTime>> emitter;
+  private Disposable disposable = Disposables.disposed();
 
   /** @return */
   public static TimePickerDialogFragment newInstance() {
@@ -75,7 +78,7 @@ public class TimePickerDialogFragment extends DialogFragment {
           }
         });
     mPicker = (TimePicker) v.findViewById(R.id.time_picker);
-    mPicker.setSetButton(set);
+    disposable = mPicker.setSetButton(set);
     set.setOnClickListener(
         new View.OnClickListener() {
           @Override
@@ -138,5 +141,11 @@ public class TimePickerDialogFragment extends DialogFragment {
             }
           }
         });
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    disposable.dispose();
   }
 }
