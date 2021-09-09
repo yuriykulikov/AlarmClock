@@ -29,7 +29,9 @@ import android.widget.TextView;
 import com.better.alarm.R;
 import com.better.alarm.configuration.InjectKt;
 import com.better.alarm.configuration.Prefs;
+import io.reactivex.annotations.CheckReturnValue;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import java.text.DateFormatSymbols;
 
@@ -161,13 +163,14 @@ public class TimePicker extends LinearLayout implements Button.OnClickListener {
     presenter.onClick((TimePickerPresenter.Key) v.getTag());
   }
 
-  public void setSetButton(Button setButton) {
+  @CheckReturnValue
+  public Disposable setSetButton(Button setButton) {
     setButton.setTag(TimePickerPresenter.Key.OK);
     views.append(TimePickerPresenter.Key.OK.ordinal(), setButton);
 
     final String noAmPm = getContext().getResources().getString(R.string.time_picker_ampm_label);
 
-    presenter
+    return presenter
         .getState()
         .subscribe(
             new Consumer<TimePickerPresenter.State>() {

@@ -277,4 +277,165 @@ class TimePickerPresenterTest {
 
     assertThat(last.enabled.containsAll(last.any)).isTrue()
   }
+
+  /** 12:00 a.m 00:00 */
+  @Test
+  fun `12 am`() {
+    with(TimePickerPresenter(false)) {
+      onClick(Key.ONE)
+      onClick(Key.TWO)
+      onClick(Key.ZERO)
+      onClick(Key.ZERO)
+      onClick(Key.LEFT)
+
+      with(state.test().values().last()) {
+        assertThat(hours).isEqualTo(0)
+        assertThat(minutes).isEqualTo(0)
+      }
+    }
+  }
+  /** 12:01 a.m. 00:01 */
+  @Test
+  fun `12 01 am`() {
+    with(TimePickerPresenter(false)) {
+      onClick(Key.ONE)
+      onClick(Key.TWO)
+      onClick(Key.ZERO)
+      onClick(Key.ONE)
+      onClick(Key.LEFT)
+
+      with(state.test().values().last()) {
+        assertThat(hours).isEqualTo(0)
+        assertThat(minutes).isEqualTo(1)
+      }
+    }
+  }
+  /** 1:00 a.m. 01:00 */
+  @Test
+  fun `1 am`() {
+    with(TimePickerPresenter(false)) {
+      onClick(Key.ZERO)
+      onClick(Key.ONE)
+      onClick(Key.ZERO)
+      onClick(Key.ZERO)
+      onClick(Key.LEFT)
+
+      with(state.test().values().last()) {
+        assertThat(hours).isEqualTo(1)
+        assertThat(minutes).isEqualTo(0)
+      }
+    }
+  }
+  /** 11:00 a.m. 11:00 */
+  @Test
+  fun `11 am`() {
+    with(TimePickerPresenter(false)) {
+      onClick(Key.ONE)
+      onClick(Key.ONE)
+      onClick(Key.ZERO)
+      onClick(Key.ZERO)
+      onClick(Key.LEFT)
+
+      with(state.test().values().last()) {
+        assertThat(hours).isEqualTo(11)
+        assertThat(minutes).isEqualTo(0)
+      }
+    }
+  }
+  /** 11:59 a.m. 11:59 */
+  @Test
+  fun `11 59 am`() {
+    with(TimePickerPresenter(false)) {
+      onClick(Key.ONE)
+      onClick(Key.ONE)
+      onClick(Key.FIVE)
+      onClick(Key.NINE)
+      onClick(Key.LEFT)
+
+      with(state.test().values().last()) {
+        assertThat(hours).isEqualTo(11)
+        assertThat(minutes).isEqualTo(59)
+      }
+    }
+  }
+  /** 12:00 p.m. 12:00 */
+  @Test
+  fun `12 pm`() {
+    with(TimePickerPresenter(false)) {
+      onClick(Key.ONE)
+      onClick(Key.TWO)
+      onClick(Key.ZERO)
+      onClick(Key.ZERO)
+      onClick(Key.RIGHT)
+
+      with(state.test().values().last()) {
+        assertThat(hours).isEqualTo(12)
+        assertThat(minutes).isEqualTo(0)
+      }
+    }
+  }
+  /** 12:01 p.m. 12:01 */
+  @Test
+  fun `12 01 pm`() {
+    with(TimePickerPresenter(false)) {
+      onClick(Key.ONE)
+      onClick(Key.TWO)
+      onClick(Key.ZERO)
+      onClick(Key.ONE)
+      onClick(Key.RIGHT)
+
+      with(state.test().values().last()) {
+        assertThat(hours).isEqualTo(12)
+        assertThat(minutes).isEqualTo(1)
+      }
+    }
+  }
+  /** 1:00 p.m. 13:00 */
+  @Test
+  fun `1 pm`() {
+    with(TimePickerPresenter(false)) {
+      onClick(Key.ZERO)
+      onClick(Key.ONE)
+      onClick(Key.ZERO)
+      onClick(Key.ZERO)
+      onClick(Key.RIGHT)
+
+      with(state.test().values().last()) {
+        assertThat(hours).isEqualTo(13)
+        assertThat(minutes).isEqualTo(0)
+      }
+    }
+  }
+  /** 11:00 p.m. 23:00 */
+  @Test
+  fun `11 pm`() {
+    with(TimePickerPresenter(false)) {
+      onClick(Key.ONE)
+      onClick(Key.ONE)
+      onClick(Key.ZERO)
+      onClick(Key.ZERO)
+      onClick(Key.RIGHT)
+
+      with(state.test().values().last()) {
+        assertThat(hours).isEqualTo(23)
+        assertThat(minutes).isEqualTo(0)
+      }
+    }
+  }
+  /** 11:59 p.m. 23:59 */
+  @Test
+  fun `11 59 pm`() {
+    with(TimePickerPresenter(false)) {
+      onClick(Key.ONE)
+      onClick(Key.ONE)
+      onClick(Key.FIVE)
+      onClick(Key.NINE)
+      onClick(Key.RIGHT)
+
+      with(state.test().values().last()) {
+        assertThat(hours).isEqualTo(23)
+        assertThat(minutes).isEqualTo(59)
+      }
+    }
+  }
 }
