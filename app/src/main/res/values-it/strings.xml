@@ -99,8 +99,6 @@
        \n\· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Versione Premium (donazione)</a>
    </string>
     <string name="dialog_bugreport_faq"><b>Problemi comuni e come risolverli</b>
-       \n\n<b><font color="#FF0000">Se hai perso tutte le sveglie dopo un aggiornamento e queste non vengono più riportate</font></b>, vuol dire che durante l\’aggiornamento Android ha bloccato il nostro database. Questo errore è causato da un bug in Android, l’unico modo per risolverlo è reinstallare l’applicazione.
-
        \n\n<font color="#FF0000">Se all\’improvviso qualcosa si rompe, nonostante prima funzionasse</font>, probabilmente Android ha avuto dei problemi con la cache dell\'applicazione. A volte capita, può succedere a tutte le applicazioni. Di solito svuotare la cache (App e notifiche -> Mostra tutte le app -> Simple Alarm Clock -> Spazio di archiviazione -> Cancella cache) o, nel caso peggiore, disinstallare e reinstallare l\’applicazione, risolve il problema.
 
        \n\n<font color="#FF0000">Se le sveglie non si sentono</font>, controlla le impostazioni del tuo dispositivo. È necessario utilizzare almeno "Solo sveglie" su Android 8 e non usare la modalità "Non disturbare" su Android 9. Per maggiori informazioni visitare la pagina apposita <a href="https://support.google.com/android/answer/9069335?hl=ru">del supporto Google</a>

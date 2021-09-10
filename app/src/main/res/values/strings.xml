@@ -166,9 +166,7 @@
        \n· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Go premium</a>
    </string>
     <string name="dialog_bugreport_faq"><b>Common issues and how to fix them</b>
-       \n\n<b><font color="#FF0000">If after the update all alarms disappeared and are not saved anymore</font></b>, it means that during the update Android has locked our database. It is a bug in Android OS and the only way to resolve this is to reinstall!
-
-       \n\n<font color="#FF0000">If something was working and then suddenly broke</font>, it is very likely that Android has messed up the application cache. This happens from time to time to all apps. <b>Clearing the cache (App info -> Storage -> Clear cache) or in the worst case uninstalling and reinstalling the app usually resolves the issue.</b>
+        \n\n<font color="#FF0000">If something was working and then suddenly broke</font>, it is very likely that Android has messed up the application cache. This happens from time to time to all apps. <b>Clearing the cache (App info -> Storage -> Clear cache) or in the worst case uninstalling and reinstalling the app usually resolves the issue.</b>
 
        \n\n<font color="#FF0000">If there is no sound</font>, please check your device settings. You must use at least Alarms Only on Android 8 and you should not use Do not disturb on Android 9. Read more on <a href="https://support.google.com/android/answer/9069335">Google support page</a>
 

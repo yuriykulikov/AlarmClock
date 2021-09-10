@@ -2,6 +2,7 @@ package com.better.alarm.bugreports
 
 import android.app.Application
 import android.content.Context
+import android.os.Build
 import com.better.alarm.BuildConfig
 import com.better.alarm.R
 import com.better.alarm.logger.Logger
@@ -45,7 +46,7 @@ class BugReporter(
             setReportAsFile(true)
             setReportFileName("application-logs.txt")
             setEnabled(true)
-            setSubject("${context.getString(R.string.simple_alarm_clock)} Bug Report")
+            setSubject("${context.getString(R.string.simple_alarm_clock)} ${BuildConfig.FLAVOR} ${BuildConfig.VERSION_NAME} Bug Report")
             setBody(context.getString(R.string.dialog_bugreport_hint))
           }
         })

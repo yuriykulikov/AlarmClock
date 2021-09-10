@@ -87,7 +87,7 @@
        \n· Die Farbe kann eingestellt werden (in den Einstellungen)
 
        \n\Neu in dieser Version:
-       \n· Umbauten für Android 9
+       \n· Umbauten für Android 12
        \n· Neues Design
 
        \n· <a href="https://github.com/yuriykulikov/AlarmClock">Mehr über das Projekt auf GitHub</a>
@@ -96,8 +96,6 @@
        \n· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Premium version (donate)</a>
    </string>
     <string name="dialog_bugreport_faq"><b>Wie Sie die häufigsten Fehler richtig beheben</b>
-       \n\n<b><font color="#FF0000">Wenn nach dem Update alle Wecker weg sind und nicht mehr gespeichert werden können</font></b>, dann hat das Android OS unsere Datenbank während des Updates gesperrt. Das ist ein Fehler in Android die einzige Möglichkeit, das zu reparieren ist, App zu deinstallieren und erneut zu installieren.
-
        \n\n<font color="#FF0000">Wenn etwas funktioniert hat und dann plötzlich kaputt ging</font>, ist es sehr wahrscheinlich, dass Android den Application Cache durcheinander gebracht hat. Dies geschieht von Zeit zu Zeit bei allen Apps. Durch Leeren des Caches (App-Info -> Speicher -> Cache leeren) oder im schlimmsten Fall Deinstallieren und erneutes Installieren wird das Problem normalerweise behoben.
 
        \n\n<font color="#FF0000">Wenn kein Ton zu hören ist</font>, überprüfen Sie bitte Ihre Geräteeinstellungen. Sie müssen mindestens "Nur Wecker" für Android 8 und kein "Bitte nicht stören" Modus für Android 9 verwenden. Weitere Informationen finden Sie auf der <a href="https://support.google.com/android/answer/9069335?hl=de"> Google Android-Hilfe Seite </a>
