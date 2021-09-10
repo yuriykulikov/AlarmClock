@@ -107,8 +107,6 @@
        \n\· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Versión premium (donar)</a>
    </string>
     <string name="dialog_bugreport_faq"><b>Problemas comunes y cómo solucionarlos</b>
-       \n\n<b><font color="#FF0000">Si después de la actualización todas las alarmas desaparecieron y ya no se guardan</font></b>, significa que durante la actualización, Android ha bloqueado nuestra base de datos. Este error es causado por un error en Android, ocurre muy raramente, pero si esto sucede, la única forma de solucionarlo es desinstalar y reinstalar la aplicación.
-
        \n\n<font color="#FF0000">Si algo se rompió de repente, aunque anteriormente funcionó sin problemas</font>, es muy probable que Android haya desordenado el caché de la aplicación.
 Esto sucede de vez en cuando con todas las aplicaciones. Normalmente, borrar el caché o desinstalar y reinstalar la aplicación ayuda a resolver el problema.
 
