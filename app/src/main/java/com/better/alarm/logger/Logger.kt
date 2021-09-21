@@ -1,105 +1,63 @@
 package com.better.alarm.logger
 
-/**
- * Log writing strategy
- *
- * @author Yuriy
- */
-interface LogWriter {
-  fun write(level: Logger.LogLevel, tag: String, message: String, e: Throwable?)
-}
+import org.slf4j.LoggerFactory
 
 interface LoggerFactory {
   fun createLogger(tag: String): Logger
 }
 
 class Logger
-private constructor(
-    private val writers: List<LogWriter> = emptyList(),
-    val logLevel: LogLevel = LogLevel.DBG,
-    private val tag: String = ""
+constructor(
+    val slf4jLogger: org.slf4j.Logger,
 ) {
-  private fun logIfApplicable(requestedLogLevel: LogLevel, message: Any?, throwable: Throwable?) {
-    if (requestedLogLevel.ordinal <= logLevel.ordinal) {
-      write(message, throwable)
-    }
-  }
-
-  fun write(message: Any?, throwable: Throwable?) {
-    for (writer in writers) {
-      writer.write(logLevel, "[${tag.padStart(20, ' ')}]", message?.toString() ?: "null", throwable)
-    }
-  }
-
   inline fun debug(supplier: () -> String) {
-    if (LogLevel.DBG <= logLevel) {
-      write(supplier(), null)
+    if (slf4jLogger.isDebugEnabled) {
+      slf4jLogger.debug(supplier())
     }
   }
 
   inline fun warning(supplier: () -> String) {
-    if (LogLevel.WRN <= logLevel) {
-      write(supplier(), null)
+    if (slf4jLogger.isWarnEnabled) {
+      slf4jLogger.warn(supplier())
     }
   }
 
   inline fun info(supplier: () -> String) {
-    if (LogLevel.INF <= logLevel) {
-      write(supplier(), null)
+    if (slf4jLogger.isInfoEnabled) {
+      slf4jLogger.info(supplier())
     }
   }
 
   inline fun error(e: Throwable? = null, supplier: () -> String) {
-    if (LogLevel.ERR <= logLevel) {
-      write(supplier(), e)
+    if (slf4jLogger.isErrorEnabled) {
+      slf4jLogger.error(supplier(), e)
     }
   }
 
   /** Java */
   fun d(message: Any) {
-    logIfApplicable(LogLevel.DBG, message, null)
+    slf4jLogger.debug(message.toString())
   }
 
   /** Java */
   fun w(message: Any) {
-    logIfApplicable(LogLevel.WRN, message, null)
+    slf4jLogger.warn(message.toString())
   }
 
   /** Java */
   fun e(message: Any) {
-    logIfApplicable(LogLevel.ERR, message, null)
+    slf4jLogger.error(message.toString())
   }
 
   /** Java */
   fun e(message: Any, throwable: Throwable) {
-    logIfApplicable(LogLevel.ERR, message, throwable)
-  }
-
-  enum class LogLevel {
-    ERR,
-    WRN,
-    DBG,
-    INF
+    slf4jLogger.error(message.toString(), throwable)
   }
 
   companion object {
     @JvmStatic
     fun create(): Logger {
-      return Logger()
-    }
-
-    @JvmStatic
-    fun create(vararg writer: LogWriter): Logger {
-      return Logger(writer.toList())
-    }
-
-    @JvmStatic
-    fun factory(vararg writer: LogWriter): LoggerFactory {
-      return object : LoggerFactory {
-        override fun createLogger(tag: String): Logger {
-          return Logger(writers = writer.toList(), tag = tag)
-        }
-      }
+      return Logger(LoggerFactory.getLogger("DEFAULT"))
     }
   }
 }

@@ -13,10 +13,9 @@ import com.better.alarm.background.KlaxonPlugin
 import com.better.alarm.background.PlayerWrapper
 import com.better.alarm.bugreports.BugReporter
 import com.better.alarm.interfaces.IAlarmsManager
-import com.better.alarm.logger.LogcatLogWriter
 import com.better.alarm.logger.Logger
 import com.better.alarm.logger.LoggerFactory
-import com.better.alarm.logger.StartupLogWriter
+import com.better.alarm.logger.loggerModule
 import com.better.alarm.model.AlarmCore
 import com.better.alarm.model.AlarmCoreFactory
 import com.better.alarm.model.AlarmSetter
@@ -65,11 +64,7 @@ fun startKoin(context: Context): Koin {
 
   val module = module {
     single<DynamicThemeHandler> { DynamicThemeHandler(get()) }
-    single<StartupLogWriter> { StartupLogWriter.create() }
-    single<LoggerFactory> { Logger.factory(LogcatLogWriter.create(), get<StartupLogWriter>()) }
-    single<BugReporter> {
-      BugReporter(logger("BugReporter"), context, lazy { get<StartupLogWriter>() })
-    }
+    single<BugReporter> { BugReporter(logger("BugReporter"), context) }
     factory<Context> { context }
     factory(named("dateFormatOverride")) { "none" }
     factory<Single<Boolean>>(named("dateFormat")) {
@@ -136,6 +131,7 @@ fun startKoin(context: Context): Koin {
   return startKoin {
         modules(module)
         modules(AlarmsListActivity.uiStoreModule)
+        modules(loggerModule())
       }
       .koin
 }

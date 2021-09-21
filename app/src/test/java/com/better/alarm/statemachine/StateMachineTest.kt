@@ -1,13 +1,12 @@
 package com.better.alarm.statemachine
 
 import com.better.alarm.logger.Logger
-import com.better.alarm.logger.SysoutLogWriter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class StateMachineTest {
   private val stateMachine =
-      StateMachine<Event>(name = "TestStateMachine", logger = Logger.create(SysoutLogWriter()))
+      StateMachine<Event>(name = "TestStateMachine", logger = Logger.create())
 
   private val captured: MutableList<CapturedEvent> = mutableListOf()
   private val capturedEvents: List<OnEvent>

@@ -73,8 +73,8 @@ val acraEmail =
 android {
   compileSdk = 30
   defaultConfig {
-    versionCode = 30908
-    versionName = "3.09.08"
+    versionCode = 30909
+    versionName = "3.09.09"
     applicationId = "com.better.alarm"
     minSdk = 16
     targetSdk = 30
@@ -140,6 +140,8 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")
   implementation("com.google.android.material:material:1.4.0")
+  implementation("org.slf4j:slf4j-api:1.7.25")
+  implementation("com.github.tony19:logback-android:2.0.0")
 }
 
 dependencies {

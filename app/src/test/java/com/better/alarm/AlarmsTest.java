@@ -16,7 +16,6 @@ import com.better.alarm.interfaces.Alarm;
 import com.better.alarm.interfaces.IAlarmsManager;
 import com.better.alarm.interfaces.Intents;
 import com.better.alarm.logger.Logger;
-import com.better.alarm.logger.SysoutLogWriter;
 import com.better.alarm.model.AlarmCore;
 import com.better.alarm.model.AlarmCoreFactory;
 import com.better.alarm.model.AlarmStore;
@@ -77,7 +76,7 @@ public class AlarmsTest {
   public void setUp() {
     CoroutinesKt.setMainUnconfined();
 
-    logger = Logger.create(new SysoutLogWriter());
+    logger = Logger.create();
 
     prefs = Prefs.create(Single.just(true), InMemoryRxDataStoreFactory.create());
 

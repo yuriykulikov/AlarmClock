@@ -2,29 +2,35 @@ package com.better.alarm.bugreports
 
 import android.app.Application
 import android.content.Context
-import android.os.Build
 import com.better.alarm.BuildConfig
 import com.better.alarm.R
 import com.better.alarm.logger.Logger
-import com.better.alarm.logger.StartupLogWriter
 import org.acra.ACRA
 import org.acra.ReportField
 import org.acra.config.CoreConfigurationBuilder
 import org.acra.config.MailSenderConfigurationBuilder
 import org.acra.data.StringFormat
+import org.acra.file.Directory
 
 class BugReporter(
     private val logger: Logger,
     private val context: Context,
-    private val startupLog: Lazy<StartupLogWriter>
 ) {
   fun sendUserReport() {
     if (BuildConfig.ACRA_EMAIL.isNotEmpty()) {
-      ACRA.getErrorReporter()
-          .putCustomData("STARTUP_LOG", "\n${startupLog.value.getMessagesAsString()}")
+      ACRA.getErrorReporter().putCustomData("LOGS", rollingLogs())
       ACRA.getErrorReporter().handleSilentException(Exception())
     }
   }
+
+  private fun rollingLogs() =
+      context
+          .filesDir
+          .walk()
+          .filter { it.name.startsWith("rolling") }
+          .sortedBy { it.name }
+          .flatMap { listOf(it.name) + it.readLines() }
+          .joinToString("\n")
 
   fun attachToMainThread(application: Application) {
     ACRA.init(
@@ -40,13 +46,17 @@ class BugReporter(
               ReportField.ANDROID_VERSION,
               ReportField.CUSTOM_DATA,
               ReportField.STACK_TRACE,
-              ReportField.SHARED_PREFERENCES)
+              ReportField.SHARED_PREFERENCES,
+          )
+          setApplicationLogFileDir(Directory.ROOT)
+          setApplicationLogFile(context.getFileStreamPath("app.log").absolutePath)
           getPluginConfigurationBuilder(MailSenderConfigurationBuilder::class.java).apply {
             setMailTo(BuildConfig.ACRA_EMAIL)
             setReportAsFile(true)
             setReportFileName("application-logs.txt")
             setEnabled(true)
-            setSubject("${context.getString(R.string.simple_alarm_clock)} ${BuildConfig.FLAVOR} ${BuildConfig.VERSION_NAME} Bug Report")
+            setSubject(
+                "${context.getString(R.string.simple_alarm_clock)} ${BuildConfig.FLAVOR} ${BuildConfig.VERSION_NAME} Bug Report")
             setBody(context.getString(R.string.dialog_bugreport_hint))
           }
         })
@@ -54,8 +64,7 @@ class BugReporter(
     val prev = Thread.currentThread().uncaughtExceptionHandler
     Thread.currentThread().setUncaughtExceptionHandler { thread, throwable ->
       logger.error(throwable) { "Uncaught exception $throwable" }
-      ACRA.getErrorReporter()
-          .putCustomData("STARTUP_LOG", "\n${startupLog.value.getMessagesAsString()}")
+      ACRA.getErrorReporter().putCustomData("LOGS", rollingLogs())
       ACRA.getErrorReporter().handleException(throwable)
       prev?.uncaughtException(thread, throwable)
     }

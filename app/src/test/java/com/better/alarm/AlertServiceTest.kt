@@ -10,7 +10,6 @@ import com.better.alarm.background.TargetVolume
 import com.better.alarm.interfaces.Alarm
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.logger.Logger
-import com.better.alarm.logger.SysoutLogWriter
 import com.better.alarm.model.Alarmtone
 import com.better.alarm.wakelock.Wakelocks
 import io.mockk.Ordering
@@ -25,6 +24,7 @@ import io.reactivex.plugins.RxJavaPlugins
 import kotlin.properties.Delegates
 import org.assertj.core.api.KotlinAssertions.assertThat
 import org.junit.Test
+import org.slf4j.helpers.NOPLogger
 
 class AlertServiceTest {
   private val alarm1 =
@@ -72,7 +72,7 @@ class AlertServiceTest {
 
   private val alertService: AlertService =
       AlertService(
-          log = Logger.factory(SysoutLogWriter()).createLogger("alertService"),
+          log = Logger(NOPLogger.NOP_LOGGER),
           inCall = Observable.just(false),
           wakelocks = wakelocks,
           alarms = alarmsManager,
