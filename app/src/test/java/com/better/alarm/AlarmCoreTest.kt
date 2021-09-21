@@ -4,7 +4,6 @@ import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.Store
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
-import com.better.alarm.logger.SysoutLogWriter
 import com.better.alarm.model.AlarmCore
 import com.better.alarm.model.AlarmsScheduler
 import com.better.alarm.model.Calendars
@@ -42,7 +41,7 @@ class AlarmCoreTest {
         autoSilence.value = 7
         skipDuration.value = 120
       }
-  private var logger: Logger = Logger.create(SysoutLogWriter())
+  private var logger: Logger = Logger.create()
   private var currentHour = 0
   private var currentMinute = 5
   private var currentDay = 1
