@@ -63,3 +63,7 @@ data class AlarmValue(
     fun withDaysOfWeek(daysOfWeek: DaysOfWeek) = copy(daysOfWeek = daysOfWeek)
     fun withIsPrealarm(isPrealarm: Boolean) = copy(isPrealarm = isPrealarm)
 }
+
+fun AlarmValue.formatTime(): String {
+    return "${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}"
+}

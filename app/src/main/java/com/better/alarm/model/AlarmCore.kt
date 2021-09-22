@@ -204,6 +204,7 @@ class AlarmCore(
             alarmStore.delete()
             removeFromStore()
             disposable.dispose()
+            store.deletes.onNext(container)
         }
     }
 

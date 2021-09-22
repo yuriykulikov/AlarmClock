@@ -50,12 +50,13 @@ import com.better.alarm.lollipop
 import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.Alarmtone
 import com.better.alarm.model.DaysOfWeek
+import com.better.alarm.model.formatTime
 import com.better.alarm.util.Optional
 import com.better.alarm.util.formatToast
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.annotations.NonNull
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposables
-import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Consumer
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
@@ -209,23 +210,42 @@ class AlarmsListActivity : AppCompatActivity() {
     }
 
     private fun configureSnackbar() {
-        snackbarDisposable = store.sets().withLatestFrom<Boolean, Pair<Store.AlarmSet, Boolean>>(
-            store.uiVisible,
-            BiFunction { set, uiVisible -> set to uiVisible })
-            .subscribe { (set: Store.AlarmSet, uiVisible: Boolean) ->
+        val disposable = CompositeDisposable()
+        snackbarDisposable = disposable
+
+        store.sets()
+            .subscribe { set: Store.AlarmSet ->
                 val rootView = window.decorView.rootView
-                if (uiVisible) {
-                    val toastText = formatToast(applicationContext, set.millis)
-                    val snackbar = Snackbar.make(rootView, toastText, Snackbar.LENGTH_LONG)
-                    val snackbarView = snackbar.view
-                    val snackText = snackbarView.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
-                    snackText.gravity = Gravity.CENTER_HORIZONTAL
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                        snackText.textAlignment = View.TEXT_ALIGNMENT_CENTER
-                    }
-                    snackbar.show()
+                val toastText = formatToast(applicationContext, set.millis)
+                val snackbar = Snackbar.make(rootView, toastText, Snackbar.LENGTH_LONG)
+                val snackbarView = snackbar.view
+                val snackText = snackbarView.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+                snackText.gravity = Gravity.CENTER_HORIZONTAL
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    snackText.textAlignment = View.TEXT_ALIGNMENT_CENTER
                 }
+                snackbar.show()
             }
+            .let { disposable.add(it) }
+
+        store.deletes().subscribe { deleted: AlarmValue ->
+            Snackbar.make(
+                window.decorView.rootView,
+                "Deleted ${deleted.label} ${deleted.formatTime()}", Snackbar.LENGTH_LONG
+            ).apply {
+                val snackText = view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+                snackText.gravity = Gravity.CENTER_HORIZONTAL
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    snackText.textAlignment = View.TEXT_ALIGNMENT_CENTER
+                }
+                setAction("Undo") {
+                    alarms.createNewAlarm().edit {
+                        deleted.copy(id = id, state = state, nextTime = nextTime)
+                    }
+                }
+            }.show()
+        }
+            .let { disposable.add(it) }
     }
 
     override fun onResume() {

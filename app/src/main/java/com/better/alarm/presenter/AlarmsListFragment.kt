@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AbsListView
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
@@ -24,6 +23,7 @@ import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.logger.Logger
 import com.better.alarm.lollipop
 import com.better.alarm.model.AlarmValue
+import com.better.alarm.model.formatTime
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.melnykov.fab.FloatingActionButton
@@ -173,11 +173,7 @@ class AlarmsListFragment : Fragment() {
 
     private fun showActionsPopupFor(alarm: AlarmValue) {
         AlertDialog.Builder(activity, R.style.DialogThemeDeusEx)
-            .setTitle(
-                "${alarm.hour.toString().padStart(2, '0')}:${
-                    alarm.minutes.toString().padStart(2, '0')
-                }"
-            )
+            .setTitle(alarm.formatTime())
             .setMessage(alarm.label)
             .setNeutralButton(R.string.dialog_delete) { _, _ -> alarms.getAlarm(alarm.id)?.delete() }
             .apply {

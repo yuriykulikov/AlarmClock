@@ -5,6 +5,7 @@ import com.better.alarm.model.AlarmValue
 import com.better.alarm.util.Optional
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 
 /**
@@ -18,6 +19,7 @@ data class Store(
     val events: Subject<Event>,
 ) {
     val uiVisible: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
+    val deletes: Subject<AlarmValue> = PublishSubject.create()
 
     fun alarms(): Observable<List<AlarmValue>> {
         return alarmsSubject().distinctUntilChanged()
@@ -28,6 +30,8 @@ data class Store(
     fun next(): BehaviorSubject<Optional<Next>> = next
 
     fun sets(): Subject<AlarmSet> = sets
+
+    fun deletes(): Subject<AlarmValue> = deletes
 
     data class Next(
         val isPrealarm: Boolean,
