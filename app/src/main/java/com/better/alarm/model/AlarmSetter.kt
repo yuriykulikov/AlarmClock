@@ -8,7 +8,7 @@ import android.content.Intent
 import android.os.Build
 import com.better.alarm.logger.Logger
 import com.better.alarm.presenter.AlarmsListActivity
-import java.util.Calendar
+import java.util.*
 
 /** Created by Yuriy on 24.06.2017. */
 interface AlarmSetter {
@@ -92,7 +92,7 @@ interface AlarmSetter {
     }
 
     override fun removeInexactAlarm(id: Int) {
-      log.debug { "removeInexactAlarm id: $id" }
+      log.trace { "removeInexactAlarm id: $id" }
       val pendingAlarm =
           PendingIntent.getBroadcast(
               mContext,
@@ -106,7 +106,6 @@ interface AlarmSetter {
     }
 
     private fun initSetStrategyForVersion(): ISetAlarmStrategy {
-      log.debug { "SDK is " + Build.VERSION.SDK_INT }
       return when {
         Build.VERSION.SDK_INT >= 26 -> OreoSetter()
         Build.VERSION.SDK_INT >= 23 -> MarshmallowSetter()

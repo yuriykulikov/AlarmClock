@@ -47,7 +47,6 @@ public class AlarmProvider extends ContentProvider {
   @Override
   public boolean onCreate() {
     log = Logger.create();
-    // log.addLogWriter(LogcatLogWriter.create());
     mOpenHelper = new AlarmDatabaseHelper(getContext(), log);
     return true;
   }
@@ -99,7 +98,6 @@ public class AlarmProvider extends ContentProvider {
     String segment = url.getPathSegments().get(1);
     long rowId = Long.parseLong(segment);
     int count = db.update("alarms", values, "_id=" + rowId, null);
-    log.d("*** notifyChange() rowId: " + rowId + " url " + url);
     getContext().getContentResolver().notifyChange(url, null);
     return count;
   }

@@ -162,11 +162,8 @@ class AlarmsListActivity : AppCompatActivity() {
     val prevVersion = savedInstanceState?.getInt("version", BuildConfig.VERSION_CODE)
     if (prevVersion == BuildConfig.VERSION_CODE) {
       val restored = editedAlarmFromSavedInstanceState(savedInstanceState)
-      logger.debug { "Restored $this with $restored" }
+      logger.trace { "Restored $this with $restored" }
       uiStore.editing().onNext(restored)
-    } else {
-      val initialState = EditedAlarm()
-      logger.debug { "Created $this with $initialState" }
     }
 
     this.mActionBarHandler = ActionBarHandler(this, uiStore, alarms, globalGet())
@@ -275,9 +272,8 @@ class AlarmsListActivity : AppCompatActivity() {
     val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
 
     if (currentFragment is AlarmsListFragment) {
-      logger.debug { "skipping fragment transition, because already showing $currentFragment" }
+      // "skipping fragment transition, because already showing $currentFragment"
     } else {
-      logger.debug { "transition from: $currentFragment to show list, edited: $edited" }
       supportFragmentManager.findFragmentById(R.id.main_fragment_container)?.apply {
         lollipop { exitTransition = Fade() }
       }
@@ -308,9 +304,9 @@ class AlarmsListActivity : AppCompatActivity() {
     val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
 
     if (currentFragment is AlarmDetailsFragment) {
-      logger.debug { "skipping fragment transition, because already showing $currentFragment" }
+      logger.trace { "skipping fragment transition, because already showing $currentFragment" }
     } else {
-      logger.debug { "transition from: $currentFragment to show details, edited: $edited" }
+      logger.trace { "transition from: $currentFragment to show details, edited: $edited" }
       currentFragment?.apply { lollipop { exitTransition = Fade() } }
 
       val detailsFragment =
@@ -401,7 +397,7 @@ class AlarmsListActivity : AppCompatActivity() {
         putString("state", edited.state)
       }
 
-      logger.debug { "Saved state $toWrite" }
+      logger.trace { "Saved state $toWrite" }
     }
   }
 }

@@ -99,7 +99,7 @@ class AlarmsScheduler(
     val currentHead: ScheduledAlarm? = queue.peek()
     when {
       !isStarted -> {
-        log.debug { "skip setting $currentHead (not started yet)" }
+        log.trace { "skip setting $currentHead (not started yet)" }
       }
       // no alarms, remove
       currentHead == null -> {
@@ -112,7 +112,7 @@ class AlarmsScheduler(
         notifyListeners()
       }
       // if head remains the same, do nothing
-      else -> log.debug { "skip setting $currentHead (already set)" }
+      else -> log.trace { "skip setting $currentHead (already set)" }
     }
   }
 
@@ -125,7 +125,7 @@ class AlarmsScheduler(
     while (!queue.isEmpty() && queue.peek()?.calendar?.before(now) == true) {
       // remove happens in fire
       queue.poll()?.let { firedInThePastAlarm ->
-        log.debug { "In the past - $firedInThePastAlarm" }
+        log.warning { "In the past - $firedInThePastAlarm" }
         setter.fireNow(firedInThePastAlarm.id, firedInThePastAlarm.type.name)
       }
     }

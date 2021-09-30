@@ -632,7 +632,7 @@ class AlarmCore(
   }
 
   private fun broadcastAlarmState(action: String, calendar: Calendar? = null) {
-    log.debug { "${container.id} - $action" }
+    log.trace { "[Alarm ${container.id}] broadcastAlarmState($action)" }
     when {
       calendar != null -> broadcaster.broadcastAlarmState(container.id, action, calendar)
       else -> broadcaster.broadcastAlarmState(container.id, action)

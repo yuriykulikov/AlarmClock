@@ -10,6 +10,12 @@ class Logger
 constructor(
     val slf4jLogger: org.slf4j.Logger,
 ) {
+  inline fun trace(supplier: () -> String) {
+    if (slf4jLogger.isTraceEnabled) {
+      slf4jLogger.trace(supplier())
+    }
+  }
+
   inline fun debug(supplier: () -> String) {
     if (slf4jLogger.isDebugEnabled) {
       slf4jLogger.debug(supplier())

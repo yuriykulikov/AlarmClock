@@ -1,9 +1,13 @@
 package com.better.alarm
 
+import ch.qos.logback.core.OutputStreamAppender
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.Store
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
+import com.better.alarm.logger.addAppender
+import com.better.alarm.logger.logback
+import com.better.alarm.logger.patternLayoutEncoder
 import com.better.alarm.model.AlarmCore
 import com.better.alarm.model.AlarmsScheduler
 import com.better.alarm.model.Calendars
@@ -17,9 +21,9 @@ import io.reactivex.Single
 import io.reactivex.schedulers.TestScheduler
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
-import java.util.ArrayList
-import java.util.Calendar
+import java.util.*
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
@@ -27,6 +31,18 @@ import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
 class AlarmCoreTest {
+  companion object {
+    @BeforeClass
+    @JvmStatic
+    fun initLoggers() {
+      logback {
+        addAppender(OutputStreamAppender()) {
+          outputStream = System.out
+          encoder = patternLayoutEncoder("[%thread] %-5level %logger{36} - %msg%n")
+        }
+      }
+    }
+  }
   private var stateNotifierMock: AlarmCore.IStateNotifier = mockk(relaxed = true)
   private val alarmSetterMock = AlarmSchedulerTest.SetterMock()
   private var testScheduler: TestScheduler = TestScheduler()
@@ -55,6 +71,12 @@ class AlarmCoreTest {
     instance
   }
   private val containerFactory = TestContainerFactory(calendars)
+
+  fun advanceTime(timeString: String) {
+    require(timeString.contains(":"))
+    currentHour = timeString.substringBefore(":").toInt()
+    currentMinute = timeString.substringAfter(":").toInt()
+  }
 
   @JvmField
   @Rule

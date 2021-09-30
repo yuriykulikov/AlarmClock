@@ -150,11 +150,11 @@ internal class StateMachine<T : Any>(val name: String, private val logger: Logge
   fun sendEvent(event: T) = withProcessingFlag {
     val hierarchy = branchToRoot(currentState)
 
-    logger.debug { "[$name] $event -> (${hierarchy.joinToString(" > ")})" }
+    logger.debug { "[$name] event $event -> (${hierarchy.joinToString(" > ")})" }
 
     val processedIn: State<T>? =
         hierarchy.firstOrNull { state: State<T> ->
-          logger.debug { "[$name] $state.processEvent()" }
+          logger.trace { "[$name] $state.processEvent()" }
           state.onEvent(event)
         }
 
@@ -171,7 +171,6 @@ internal class StateMachine<T : Any>(val name: String, private val logger: Logge
   fun transitionTo(state: State<T>) {
     check(processing > 0) { "transitionTo can only be called within processEvent" }
     targetState = state
-    logger.debug { "[$name] ${currentState.name} -> ${targetState.name}" }
   }
 
   /**
@@ -201,7 +200,7 @@ internal class StateMachine<T : Any>(val name: String, private val logger: Logge
       // calling exit/enter may change this afterwards
       currentState = targetState
 
-      logger.debug { "[$name] exiting $toExit, entering $toEnter" }
+      logger.debug { "[$name] transition $toExit => $toEnter" }
 
       toExit.forEach { state -> state.exit(reason) }
       toEnter.forEach { state -> state.enter(reason) }

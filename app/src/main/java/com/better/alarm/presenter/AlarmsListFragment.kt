@@ -213,8 +213,6 @@ class AlarmsListFragment : Fragment() {
       container: ViewGroup?,
       savedInstanceState: Bundle?
   ): View {
-    logger.debug { "onCreateView $this" }
-
     val view = inflater.inflate(R.layout.list_fragment, container, false)
 
     val listView = view.findViewById(R.id.list_fragment_list) as ListView

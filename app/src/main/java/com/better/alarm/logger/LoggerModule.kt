@@ -122,7 +122,7 @@ fun RollingFileAppender<ILoggingEvent>.timeBasedRollingPolicy(
  * [Logback ClassicPatternLayout](http://logback.qos.ch/manual/layouts.html#ClassicPatternLayout)
  * for details.
  */
-private fun Appender<ILoggingEvent>.patternLayoutEncoder(template: String): PatternLayoutEncoder {
+fun Appender<ILoggingEvent>.patternLayoutEncoder(template: String): PatternLayoutEncoder {
   return PatternLayoutEncoder().apply {
     context = this@patternLayoutEncoder.context
     pattern = template
