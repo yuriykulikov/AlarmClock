@@ -82,8 +82,6 @@ public class AlarmDatabaseHelper extends SQLiteOpenHelper {
     SQLiteDatabase db = getWritableDatabase();
     long rowId = db.insert("alarms", Columns.MESSAGE, values);
     if (rowId < 0) throw new SQLException("Failed to insert row");
-    log.d("Added alarm rowId = " + rowId);
-
     return ContentUris.withAppendedId(Columns.contentUri(), rowId);
   }
 }

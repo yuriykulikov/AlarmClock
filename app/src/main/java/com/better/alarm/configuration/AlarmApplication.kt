@@ -17,6 +17,7 @@ package com.better.alarm.configuration
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.os.Build
 import android.view.ViewConfiguration
 import androidx.preference.PreferenceManager
 import com.better.alarm.R
@@ -24,6 +25,7 @@ import com.better.alarm.alert.BackgroundNotifications
 import com.better.alarm.background.AlertServicePusher
 import com.better.alarm.bugreports.BugReporter
 import com.better.alarm.createNotificationChannels
+import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.Alarms
 import com.better.alarm.model.AlarmsScheduler
 import com.better.alarm.presenter.ScheduledReceiver
@@ -57,24 +59,21 @@ class AlarmApplication : Application() {
 
     // must be started the last, because otherwise we may loose intents from it.
     val alarmsLogger = koin.logger("Alarms")
-    alarmsLogger.debug { "Starting alarms" }
     koin.get<Alarms>().start()
+    alarmsLogger.debug { "Started alarms, SDK is " + Build.VERSION.SDK_INT }
     // start scheduling alarms after all alarms have been started
     koin.get<AlarmsScheduler>().start()
 
     with(koin.get<Store>()) {
       // register logging after startup has finished to avoid logging( O(n) instead of O(n log n) )
-      alarms() //
+      alarms()
           .distinctUntilChanged()
-          .subscribe { alarmValues ->
-            for (alarmValue in alarmValues) {
-              alarmsLogger.debug { "$alarmValue" }
-            }
-          }
-
-      next() //
+          .map { it.toSet() }
+          .startWith(emptySet<AlarmValue>())
+          .buffer(2, 1)
+          .map { (prev, next) -> next.minus(prev).map { it.toString() } }
           .distinctUntilChanged()
-          .subscribe { next -> alarmsLogger.debug { "## Next: $next" } }
+          .subscribe { lines -> lines.forEach { alarmsLogger.debug { it } } }
     }
 
     super.onCreate()

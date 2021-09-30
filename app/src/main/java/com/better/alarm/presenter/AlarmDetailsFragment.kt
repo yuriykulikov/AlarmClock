@@ -93,7 +93,7 @@ class AlarmDetailsFragment : Fragment() {
       container: ViewGroup?,
       savedInstanceState: Bundle?
   ): View {
-    logger.debug { "$this with ${store.editing().value}" }
+    logger.trace { "Showing details of ${store.editing().value}" }
 
     val view =
         inflater.inflate(
