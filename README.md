@@ -2,7 +2,7 @@
 [![Rating](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplayshields.herokuapp.com%2Fplay%3Fi%3Dcom.better.alarm%26l%3DPlay%2520Store%2520Rating%26m%3D%24rating)](https://play.google.com/store/apps/details?id=com.better.alarm)
 [![Version](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplayshields.herokuapp.com%2Fplay%3Fi%3Dcom.better.alarm%26l%3DPlay%2520Store%2520Version%26m%3D%24version)](https://play.google.com/store/apps/details?id=com.better.alarm)
 
-[![Build Status](https://travis-ci.org/yuriykulikov/AlarmClock.svg?branch=develop)](https://travis-ci.org/yuriykulikov/AlarmClock)
+[![Build Status](https://github.com/yuriykulikov/AlarmClock/actions/workflows/gradle.yml/badge.svg?branch=develop)](https://github.com/yuriykulikov/AlarmClock/actions)
 [![codecov](https://codecov.io/gh/yuriykulikov/AlarmClock/branch/develop/graph/badge.svg)](https://codecov.io/gh/yuriykulikov/AlarmClock)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/f5af63df137746bcb45e43b4f2a78217)](https://www.codacy.com/app/yuriy.kulikov.87/AlarmClock?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=yuriykulikov/AlarmClock&amp;utm_campaign=Badge_Grade)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
