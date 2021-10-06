@@ -68,6 +68,7 @@ interface AlarmSetter {
     override fun fireNow(id: Int, typeName: String) {
       val intent =
           Intent(ACTION_FIRED).apply {
+            setClass(mContext, AlarmsReceiver::class.java)
             putExtra(EXTRA_ID, id)
             putExtra(EXTRA_TYPE, typeName)
           }
