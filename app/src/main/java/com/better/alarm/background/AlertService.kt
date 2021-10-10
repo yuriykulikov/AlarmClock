@@ -9,7 +9,7 @@ import com.better.alarm.logger.Logger
 import com.better.alarm.model.Alarmtone
 import com.better.alarm.util.modify
 import com.better.alarm.util.requireValue
-import com.better.alarm.util.subscribeWith
+import com.better.alarm.util.subscribeIn
 import com.better.alarm.wakelock.Wakelocks
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -89,8 +89,8 @@ class AlertService(
 
   init {
     wakelocks.acquireServiceLock()
-    activeAlarms.distinctUntilChanged().skipWhile { it.isEmpty() }.subscribeWith(disposable) {
-        active ->
+    activeAlarms.distinctUntilChanged().skipWhile { it.isEmpty() }.subscribeIn(disposable) { active
+      ->
       if (active.isNotEmpty()) {
         log.debug { "activeAlarms: $active" }
         playSound(active)
