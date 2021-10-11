@@ -92,12 +92,10 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
             ?: context.getText(R.string.silent_alarm_summary)
   }
 
-  override fun onPrepareForRemoval() {
-    super.onPrepareForRemoval()
+  fun onPause() {
     ringtone?.stop()
+    stopPrealarmSample()
   }
-
-  fun onPause() {}
 
   /** This class is controls playback using AudioManager */
   private fun bindAudioManagerVolume(seekBar: SeekBar) {
