@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+    Copyright (C) 2007 The Android Open Source Project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2" tools:ignore="MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation">
+    <!--      Here come strings which are not contained in the AOSP -->
+
+    <string-array name="fade_in_time_sec_values" tools:ignore="MissingTranslation">
+        <item>1</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+    </string-array>
+    <!-- Setting labels on Set alarm screen: Prealarm -->
+    <string name="alarm_prealarm">轻柔的预警</string>
+    <!-- Pre-alarm duration title -->
+    <string name="prealarm_duration_title">预警时长</string>
+    <!--
+         Entries listed in the ListPreference when invoking the pre-alarm duration
+         preference.
+    -->
+    <string-array name="prealarm_duration_entries">
+        <item>关闭</item>
+        <item>10 分钟</item>
+        <item>20 分钟</item>
+        <item>30 分钟</item>
+        <item>45 分钟</item>
+        <item>60 分钟</item>
+    </string-array>
+    <!--
+         Values that are retrieved from the ListPreference. These must match
+         the prealarm_duration_entries above.
+    -->
+    <string-array name="prealarm_duration_values" tools:ignore="MissingTranslation">
+        <item>-1</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>45</item>
+        <item>60</item>
+    </string-array>
+    <!-- Pre-alarm duration summary string set based on the preference value. -->
+    <string name="prealarm_summary">预警将于主闹钟前 <xliff:g id="minutes">%d</xliff:g> 分钟开始</string>
+    <string name="info_fragment_prealarm_summary"><xliff:g id="minutes">%d</xliff:g> 分钟的预警</string>
+    <string name="prealarm_off_summary">预警已关闭</string>
+    <string name="menu_share">分享</string>
+    <string name="menu_bugreport">发送bug报告</string>
+    <string name="dialog_say_thanks_review_button">给App评分</string>
+    <string name="dialog_bugreport_hint">描述你要投诉的问题</string>
+    <string name="longclick_dismiss_title">长按取消</string>
+    <string name="longclick_dismiss_summary">长按取消按钮来取消闹钟</string>
+    <string name="fade_in_time_sec_title">渐入时长</string>
+    <string-array name="fade_in_time_sec_entries">
+        <item>关闭</item>
+        <item>10 秒</item>
+        <item>20 秒</item>
+        <item>30 秒</item>
+        <item>60 秒</item>
+        <item>120 秒</item>
+    </string-array>
+    <string name="fade_in_summary">淡入时长是 <xliff:g id="seconds">%d</xliff:g> 秒</string>
+    <string name="fade_in_off_summary">淡入已关闭</string>
+    <string-array name="alarm_set_short">
+        <item>不到一分钟了</item>
+        <item><xliff:g example="2 days" id="DAYS">%1$s</xliff:g></item>
+        <item><xliff:g example="2 hours" id="HOURS">%2$s</xliff:g></item>
+        <item><xliff:g example="2 days" id="DAYS">%1$s</xliff:g> <xliff:g example="2 hours" id="HOURS">%2$s</xliff:g></item>
+        <item><xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
+        <item><xliff:g example="2 days" id="DAYS">%1$s</xliff:g> <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
+        <item><xliff:g example="2 hours" id="HOURS">%2$s</xliff:g> <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
+        <item><xliff:g example="2 days" id="DAYS">%1$s</xliff:g> <xliff:g example="2 hours" id="HOURS">%2$s</xliff:g> <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
+    </string-array>
+
+    <string name="theme_title">界面主题</string>
+    <string-array name="themes_entries">
+        <item>Neon</item>
+        <item>Light</item>
+        <item>Synth</item>
+        <item>Deus Ex</item>
+        <item>Abyss</item>
+    </string-array>
+    <string-array name="themes_values">
+        <item>dark</item>
+        <item>light</item>
+        <item>synthwave</item>
+        <item>deusex</item>
+        <item>deepblue</item>
+    </string-array>
+    <string name="preference_list_row_layout_title">布局样式</string>
+    <string name="simple_alarm_clock">简单闹钟</string>
+    <!--
+     Entries listed in the ListPreference when invoking the snooze duration
+     preference.
+ -->
+    <string-array name="snooze_duration_with_off_entries">
+        <item>关闭</item>
+        <item>5 分钟</item>
+        <item>10 分钟</item>
+        <item>15 分钟</item>
+        <item>20 分钟</item>
+        <item>25 分钟</item>
+        <item>30 分钟</item>
+    </string-array>
+    <!--
+         Values that are retrieved from the ListPreference. These must match
+         the snooze_duration_entries above.
+    -->
+    <string-array name="snooze_duration_with_off_values">
+        <item>-1</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>25</item>
+        <item>30</item>
+    </string-array>
+    <string name="alarm_alert_reschedule_text">重新安排</string>
+    <string name="alarm_alert_hold_the_button_text">长按！</string>
+    <string name="preference_category_sound">音量和声音</string>
+    <string name="preference_category_ui">用户界面</string>
+    <string name="preference_category_durations">时长</string>
+    <string name="details_no_ringtone_picker">没有找到铃声提供者...</string>
+    <string name="permissions_external_storage_text">"貌似 %s 播放不了, 也许是因为没有权限. 如果你想播放, 你可以授予App权限. 或者, 在系统设置里换一个闹铃. "</string>
+    <string name="menu_about_title">关于</string>
+    <string name="dialog_about_content">简单闹钟是一个开源项目, 它的闹钟功能和干净的界面能给你带来纯净的闹钟体验.
+
+       \n\n小提示:
+       \n· 设置里可以调整布局大小
+       \n· 设置里可以修改颜色主题
+
+       \n\n新功能:
+       \n· 兼容安卓9
+       \n· 新外观设计
+       \n· 设置里可以选择行大小
+
+       \n· <a href="https://github.com/yuriykulikov/AlarmClock">访问GitHub查看更多</a>
+
+       \n\n支持本App:         
+       \n· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">购买高级版</a>
+   </string>
+    <string name="dialog_bugreport_faq"><b>常见问题和修复方法</b>
+        \n\n<font color="#FF0000">如果App突然不能正常工作</font>, 很有可能是安卓系统把应用缓存弄坏了. 所有应用都有可能时不时发生这个问题. <b>请清理缓存 (应用信息 -> 存储 -> 清理缓存) 或者重装App来解决这个问题.</b>
+
+        \n\n<font color="#FF0000">如果没有声音</font>, 请检查你的设备设置. 安卓8 至少需要\"仅闹铃\"模式, 安卓9 不能开启勿扰模式. 请阅读<a href="https://support.google.com/android/answer/9069335">谷歌支持页面</a>获取更多信息.
+
+        \n\n<font color="#FF0000">如果闹钟没响</font>, 请确认您没有不小心将闹钟关闭. 我们接到过一些用户投诉, 最后发现有些用户在<b>半梦半醒</b>的情况下按了“取消”按钮. 如果你有这种经历, 请尝试睡觉时让手机远离你的床.
+
+        \n\n<font color="#FF0000">如果以上都没有用</font>, 请在下方给我们留言, 我们会尽全力帮助您.
+    </string>
+    <string name="dialog_say_thanks_title">感谢</string>
+    <string name="dialog_say_thanks_review_message">非常感谢您抽出宝贵时间表示感谢! 简单闹钟是一个开源的非盈利项目. 我们绝不会使用广告或收集用户数据来赚钱. 但是如果您喜欢我们的工作, 我们会非常高兴. 表达感谢的最佳方式之一是撰写正面评价. 您还可以提出问题或留下您的功能请求.</string>
+    <string name="dialog_say_thanks_premium_text">如果您真的喜欢该应用程序, 可以考虑升级到高级版! 高级版听起来就很棒, 不是吗?</string>
+    <string name="dialog_say_thanks_premium_text_as_button"><a href="https://play.google.com/store/apps/details?id=com.premium.alarm">购买高级版</a></string>
+    <string name="notification_channel_high_prio">带有再响和取消按钮的大弹出窗口</string>
+    <string name="notification_channel_default_prio">再响闹钟的通知</string>
+    <string name="notification_channel_low_prio">过期的闹钟通知</string>
+    <string name="alert_notifications_title">欧吼！出大问题！</string>
+    <string name="alert_notifications_turned_off">
+        所有通知都已关闭,包括带有再响和取消按钮的大弹出窗口!
+
+        \n\n单击确定跳转到设置并启用通知!</string>
+    <string name="alert_notifications_high_prio_text">
+        带有再响和取消按钮的大弹出窗口的优先级太低而无法解锁屏幕! 
+
+        \n\n如果您再次禁用和启用通知或手动更改设置, 则会发生这种情况.
+
+        \n\n单击确定跳转到系统设置并为此通知选择最高优先级(发出声音并在屏幕上弹出).
+
+        \n\n同时, 您应该在高级设置中将声音设置为无.</string>
+    <string name="alert_notifications_default_prio_text">
+        次要通知已禁用
+
+        \n\n如果您再次禁用和启用通知或手动更改设置, 则会发生这种情况.
+
+        \n\n单击确定跳转到系统设置并为此通知选择最高优先级(发出声音并在屏幕上弹出). 
+
+        \n\n同时, 您应该在高级设置中将声音设置为无.</string>
+</resources>

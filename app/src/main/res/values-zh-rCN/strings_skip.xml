@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="skip">跳过</string>
+    <string name="notification_alarm_is_about_to_go_off">闹钟快要响了</string>
+    <string name="skip_duration_title">跳过闹钟通知</string>
+    <string-array name="skip_duration_entries">
+        <item>关闭</item>
+        <item>15 分钟</item>
+        <item>30 分钟</item>
+        <item>1 小时</item>
+        <item>2 小时</item>
+        <item>3 小时</item>
+    </string-array>
+    <string-array name="skip_duration_values">
+        <item>-1</item>
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+        <item>180</item>
+    </string-array>
+</resources>
