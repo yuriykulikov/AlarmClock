@@ -87,6 +87,13 @@
     </string-array>
 
     <string name="theme_title">Brukerflatetema</string>
+    <string-array name="themes_entries">
+        <item>Neon</item>
+        <item>Lyst</item>
+        <item>Synth</item>
+        <item>Deus Ex</item>
+        <item>Abyss</item>
+    </string-array>
     <string name="preference_list_row_layout_title">Layout-stil</string>
     <string-array name="preference_list_row_layout_entries">
         <item>Kompakt</item>
