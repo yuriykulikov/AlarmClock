@@ -48,31 +48,31 @@ private constructor(
     fun create(is24HourFormat: Single<Boolean>, factory: PrimitiveDataStoreFactory): Prefs {
       return Prefs(
           is24HourFormat = is24HourFormat,
-          preAlarmDuration = factory.intStringDataStore("prealarm_duration", 30),
-          preAlarmVolume = factory.intDataStore(KEY_PREALARM_VOLUME, DEFAULT_PREALARM_VOLUME),
-          snoozeDuration = factory.intStringDataStore("snooze_duration", 10),
+          preAlarmDuration = factory.intStringDataStore(KEY_PREALARM_DURATION, 30),
+          preAlarmVolume = factory.intDataStore(KEY_PREALARM_VOLUME, 5),
+          snoozeDuration = factory.intStringDataStore(KEY_ALARM_SNOOZE, 10),
           listRowLayout = factory.stringDataStore(LIST_ROW_LAYOUT, LIST_ROW_LAYOUT_COMPACT),
-          autoSilence = factory.intStringDataStore("auto_silence", 10),
-          fadeInTimeInSeconds = factory.intStringDataStore(Prefs.KEY_FADE_IN_TIME_SEC, 30),
-          vibrate = factory.booleanDataStore("vibrate", true),
-          skipDuration = factory.intStringDataStore(SKIP_DURATION_KEY, -1),
-          longClickDismiss =
-              factory.booleanDataStore(LONGCLICK_DISMISS_KEY, LONGCLICK_DISMISS_DEFAULT),
-          theme = factory.stringDataStore("theme", "dark"),
+          autoSilence = factory.intStringDataStore(KEY_AUTO_SILENCE, 10),
+          fadeInTimeInSeconds = factory.intStringDataStore(KEY_FADE_IN_TIME_SEC, 30),
+          vibrate = factory.booleanDataStore(KEY_VIBRATE, true),
+          skipDuration = factory.intStringDataStore(KEY_SKIP_DURATION, -1),
+          longClickDismiss = factory.booleanDataStore(KEY_LONGCLICK_DISMISS, true),
+          theme = factory.stringDataStore(KEY_THEME, "dark"),
       )
     }
 
-    const val SKIP_DURATION_KEY = "skip_duration"
+    const val KEY_THEME = "theme"
+    const val KEY_VIBRATE = "vibrate"
+    const val KEY_SKIP_DURATION = "skip_duration"
     const val KEY_ALARM_IN_SILENT_MODE = "alarm_in_silent_mode"
     const val KEY_ALARM_SNOOZE = "snooze_duration"
     const val KEY_AUTO_SILENCE = "auto_silence"
     const val KEY_PREALARM_DURATION = "prealarm_duration"
     const val KEY_FADE_IN_TIME_SEC = "fade_in_time_sec"
-    const val LONGCLICK_DISMISS_DEFAULT = true
-    const val LONGCLICK_DISMISS_KEY = "longclick_dismiss_key"
+    const val KEY_LONGCLICK_DISMISS = "longclick_dismiss_key"
     const val MAX_PREALARM_VOLUME = 10
-    const val DEFAULT_PREALARM_VOLUME = 5
     const val KEY_PREALARM_VOLUME = "key_prealarm_volume"
+    const val KEY_VOLUME_PREFERENCE = "volume_preference"
     const val LIST_ROW_LAYOUT = "list_row_layout"
     const val LIST_ROW_LAYOUT_COMPACT = "compact"
     const val LIST_ROW_LAYOUT_CLASSIC = "classic"
