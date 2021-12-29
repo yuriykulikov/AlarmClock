@@ -51,19 +51,19 @@ private constructor(
           preAlarmDuration = factory.intStringDataStore(KEY_PREALARM_DURATION, 30),
           preAlarmVolume = factory.intDataStore(KEY_PREALARM_VOLUME, 5),
           snoozeDuration = factory.intStringDataStore(KEY_ALARM_SNOOZE, 10),
-          listRowLayout = factory.stringDataStore(LIST_ROW_LAYOUT, LIST_ROW_LAYOUT_COMPACT),
+          listRowLayout = factory.stringDataStore(LIST_ROW_LAYOUT, LIST_ROW_LAYOUT_BOLD),
           autoSilence = factory.intStringDataStore(KEY_AUTO_SILENCE, 10),
           fadeInTimeInSeconds = factory.intStringDataStore(KEY_FADE_IN_TIME_SEC, 30),
           vibrate = factory.booleanDataStore(KEY_VIBRATE, true),
-          skipDuration = factory.intStringDataStore(KEY_SKIP_DURATION, -1),
+          skipDuration = factory.intStringDataStore(KEY_SKIP_DURATION, 30),
           longClickDismiss = factory.booleanDataStore(KEY_LONGCLICK_DISMISS, true),
-          theme = factory.stringDataStore(KEY_THEME, "dark"),
+          theme = factory.stringDataStore(KEY_THEME, "deusex"),
       )
     }
 
-    const val KEY_THEME = "theme"
+    const val KEY_THEME = "ui_theme"
     const val KEY_VIBRATE = "vibrate"
-    const val KEY_SKIP_DURATION = "skip_duration"
+    const val KEY_SKIP_DURATION = "skip_notification_time"
     const val KEY_ALARM_IN_SILENT_MODE = "alarm_in_silent_mode"
     const val KEY_ALARM_SNOOZE = "snooze_duration"
     const val KEY_AUTO_SILENCE = "auto_silence"
@@ -73,8 +73,9 @@ private constructor(
     const val MAX_PREALARM_VOLUME = 10
     const val KEY_PREALARM_VOLUME = "key_prealarm_volume"
     const val KEY_VOLUME_PREFERENCE = "volume_preference"
-    const val LIST_ROW_LAYOUT = "list_row_layout"
+    const val LIST_ROW_LAYOUT = "ui_list_row_layout"
     const val LIST_ROW_LAYOUT_COMPACT = "compact"
     const val LIST_ROW_LAYOUT_CLASSIC = "classic"
+    const val LIST_ROW_LAYOUT_BOLD = "bold"
   }
 }
