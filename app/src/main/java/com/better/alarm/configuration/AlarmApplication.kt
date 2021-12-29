@@ -16,9 +16,9 @@
 package com.better.alarm.configuration
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.os.Build
 import android.view.ViewConfiguration
+import androidx.multidex.MultiDexApplication
 import androidx.preference.PreferenceManager
 import com.better.alarm.R
 import com.better.alarm.alert.BackgroundNotifications
@@ -31,7 +31,7 @@ import com.better.alarm.model.AlarmsScheduler
 import com.better.alarm.presenter.ScheduledReceiver
 import com.better.alarm.presenter.ToastPresenter
 
-class AlarmApplication : Application() {
+class AlarmApplication : MultiDexApplication() {
   @SuppressLint("SoonBlockedPrivateApi")
   override fun onCreate() {
     runCatching {
