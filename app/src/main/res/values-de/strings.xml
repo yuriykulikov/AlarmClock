@@ -78,13 +78,12 @@
     <string name="preference_category_durations">Dauer</string>
     <string name="preference_category_sound">Lautstärke und Ton</string>
     <string name="preference_category_ui">Benutzeroberfläche</string>
-    <string name="details_no_ringtone_picker">Kein Ringtone Manager vorhanden...</string>
+    <string name="details_no_ringtone_picker">Kein Ringtone Manager vorhanden…</string>
     <string name="menu_about_title">Über</string>
     <string name="dialog_about_content">Einfacher Wecker ist ein Open-Source-Projekt mit allen nötigen Funktionen in minimalister Form.
 
        \n\nHinweis:
-       \n· Die Zeilengröße kann eingestellt werden (in den Einstellungen)
-       \n· Die Farbe kann eingestellt werden (in den Einstellungen)
+       \n· Die Zeilengröße und Farbe kann eingestellt werden (in den Einstellungen oder die Schuhblade unten)
 
        \n\Neu in dieser Version:
        \n· Umbauten für Android 12
@@ -99,8 +98,6 @@
        \n\n<font color="#FF0000">Wenn etwas funktioniert hat und dann plötzlich kaputt ging</font>, ist es sehr wahrscheinlich, dass Android den Application Cache durcheinander gebracht hat. Dies geschieht von Zeit zu Zeit bei allen Apps. Durch Leeren des Caches (App-Info -> Speicher -> Cache leeren) oder im schlimmsten Fall Deinstallieren und erneutes Installieren wird das Problem normalerweise behoben.
 
        \n\n<font color="#FF0000">Wenn kein Ton zu hören ist</font>, überprüfen Sie bitte Ihre Geräteeinstellungen. Sie müssen mindestens "Nur Wecker" für Android 8 und kein "Bitte nicht stören" Modus für Android 9 verwenden. Weitere Informationen finden Sie auf der <a href="https://support.google.com/android/answer/9069335?hl=de"> Google Android-Hilfe Seite </a>
-
-       \n\n<font color="#FF0000">Wenn der Alarm nicht ausgelöst wurde</font>, stellen Sie bitte sicher, dass Sie ihn nicht versehentlich ausgeschaltet haben. Wir bekommen diesbezüglich eine Reihe von Beschwerden und stellen fest, dass Benutzer den Alarm nach einer Weile im Schlaf einfach ausschalten (mittels Button “Ausschalten”). Wenn Sie dies bemerken, bewegen Sie das Telefon weiter weg, wenn Sie ins Bett gehen.
 
        \n\n<font color="#FF0000">Wenn nichts hilft</font>, schreiben Sie uns bitte eine Nachricht in das unten stehende Feld. Wir werden unser Bestes tun, um Ihnen zu helfen.
    </string>
