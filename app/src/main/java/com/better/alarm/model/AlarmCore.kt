@@ -246,6 +246,10 @@ class AlarmCore(
       // NOP
     }
 
+    override fun onPreAlarmDurationChanged() {
+      // NOP
+    }
+
     override fun onSnooze(snooze: Snooze) {
       log.warning { "$this is in DisabledState" }
     }

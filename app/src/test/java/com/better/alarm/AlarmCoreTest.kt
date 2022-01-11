@@ -18,14 +18,14 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import io.reactivex.Single
+import io.reactivex.exceptions.CompositeException
+import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.TestScheduler
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.BeforeClass
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 import org.junit.rules.TestRule
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
@@ -46,6 +46,7 @@ class AlarmCoreTest {
   private var stateNotifierMock: AlarmCore.IStateNotifier = mockk(relaxed = true)
   private val alarmSetterMock = AlarmSchedulerTest.SetterMock()
   private var testScheduler: TestScheduler = TestScheduler()
+  private var rxjavaExceptions: CompositeException? = null
   private var store: Store =
       Store(
           alarmsSubject = BehaviorSubject.createDefault(ArrayList()),
@@ -86,6 +87,20 @@ class AlarmCoreTest {
           println("---- " + description.methodName + " ----")
         }
       }
+
+  private var rxJavaExceptionHandler = RxJavaPlugins.getErrorHandler()
+  @Before
+  fun setErrorHandler() {
+    RxJavaPlugins.setErrorHandler {
+      rxjavaExceptions = rxjavaExceptions?.apply { addSuppressed(it) } ?: CompositeException(it)
+    }
+  }
+
+  @After
+  fun checkRxJavaErrors() {
+    RxJavaPlugins.setErrorHandler(rxJavaExceptionHandler)
+    rxjavaExceptions?.let { throw it }
+  }
 
   fun act(what: String, func: () -> Unit) {
     println("When $what")
@@ -334,5 +349,15 @@ class AlarmCoreTest {
 
     verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_SNOOZE_ACTION, any()) }
     assertThat(nextTimeInStoreWhenBroadcasting?.get(Calendar.MINUTE)).isEqualTo(15)
+  }
+
+  @Test
+  fun `prealarm duration can be changed in all states`() {
+    val alarm = createAlarm()
+    act("Change pre alarm duration") { prefs.preAlarmDuration.value = 1 }
+    act("Set on 01:00") { alarm.edit { copy(isEnabled = true, hour = 1) } }
+    act("Change pre alarm duration") { prefs.preAlarmDuration.value = 1 }
+    act("Set on 01:00") { alarm.edit { copy(isEnabled = true, isPrealarm = true) } }
+    act("Change pre alarm duration") { prefs.preAlarmDuration.value = 1 }
   }
 }
