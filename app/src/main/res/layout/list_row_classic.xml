@@ -16,6 +16,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:baselineAligned="true"
     android:orientation="horizontal">
 
@@ -106,7 +107,7 @@
                 android:focusable="false"
                 android:src="@drawable/ic_baseline_more_horiz_24"
                 android:textStyle="normal"
-                android:tint="?android:attr/textColorPrimary" />
+                app:tint="?android:attr/textColorPrimary" />
 
             <ImageView
                 android:id="@+id/details_button_check"
@@ -117,7 +118,7 @@
                 android:src="@drawable/ic_baseline_check_24"
                 android:alpha="0"
                 android:textStyle="normal"
-                android:tint="?android:attr/textColorPrimary" />
+                app:tint="?android:attr/textColorPrimary" />
         </RelativeLayout>
     </com.better.alarm.view.DontPressWithParentLayout>
 

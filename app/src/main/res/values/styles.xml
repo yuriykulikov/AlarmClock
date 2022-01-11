@@ -40,7 +40,7 @@
 
     <style name="TimePickerDeleteButtonStyle">
         <item name="android:src">@drawable/ic_backspace</item>
-        <item name="android:tint">?android:attr/textColorPrimary</item>
+        <item name="tint">?android:attr/textColorPrimary</item>
         <item name="android:background">@color/transparent</item>
     </style>
 
