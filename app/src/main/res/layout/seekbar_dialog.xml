@@ -17,6 +17,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
@@ -72,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="16dp"
-            android:tint="?android:attr/textColorPrimary"
+            app:tint="?android:attr/textColorPrimary"
             android:src="@android:drawable/ic_lock_idle_alarm" />
 
         <SeekBar
@@ -100,7 +101,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="16dp"
-            android:tint="?android:attr/textColorPrimary"
+            app:tint="?android:attr/textColorPrimary"
             android:src="@android:drawable/ic_lock_idle_alarm" />
 
         <SeekBar

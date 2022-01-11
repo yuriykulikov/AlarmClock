@@ -50,6 +50,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
       findPreference<PreferenceCategory>("preference_category_ui")
           ?.removePreference(findPreference(Prefs.LIST_ROW_LAYOUT))
+
+      findPreference<ListPreference>(Prefs.KEY_THEME)?.apply {
+        entries = entries.take(2).toTypedArray()
+        entryValues = entryValues.take(2).toTypedArray()
+      }
     }
 
     findPreference<Preference>(Prefs.KEY_THEME)?.onPreferenceChangeListener =
