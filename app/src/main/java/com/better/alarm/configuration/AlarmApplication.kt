@@ -16,6 +16,7 @@
 package com.better.alarm.configuration
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.os.Build
 import android.view.ViewConfiguration
 import androidx.multidex.MultiDexApplication
@@ -24,16 +25,38 @@ import com.better.alarm.R
 import com.better.alarm.alert.BackgroundNotifications
 import com.better.alarm.background.AlertServicePusher
 import com.better.alarm.bugreports.BugReporter
+import com.better.alarm.configuration.AlarmApplicationInit.startOnce
 import com.better.alarm.createNotificationChannels
 import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.Alarms
 import com.better.alarm.model.AlarmsScheduler
 import com.better.alarm.presenter.ScheduledReceiver
 import com.better.alarm.presenter.ToastPresenter
+import java.util.concurrent.atomic.AtomicBoolean
 
 class AlarmApplication : MultiDexApplication() {
-  @SuppressLint("SoonBlockedPrivateApi")
   override fun onCreate() {
+    startOnce(this)
+    super.onCreate()
+  }
+
+  companion object {
+    @JvmStatic
+    fun startOnce(application: Application) {
+      application.startOnce()
+    }
+  }
+}
+
+private object AlarmApplicationInit {
+  private val started = AtomicBoolean(false)
+
+  @SuppressLint("SoonBlockedPrivateApi")
+  fun Application.startOnce() {
+    if (started.getAndSet(true)) {
+      return
+    }
+
     runCatching {
       ViewConfiguration::class
           .java
@@ -75,7 +98,5 @@ class AlarmApplication : MultiDexApplication() {
           .distinctUntilChanged()
           .subscribe { lines -> lines.forEach { alarmsLogger.debug { it } } }
     }
-
-    super.onCreate()
   }
 }

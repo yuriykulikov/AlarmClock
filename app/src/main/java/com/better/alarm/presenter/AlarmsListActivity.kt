@@ -39,6 +39,7 @@ import com.better.alarm.BuildConfig
 import com.better.alarm.NotificationSettings
 import com.better.alarm.R
 import com.better.alarm.checkPermissions
+import com.better.alarm.configuration.AlarmApplication
 import com.better.alarm.configuration.EditedAlarm
 import com.better.alarm.configuration.Store
 import com.better.alarm.configuration.globalGet
@@ -138,7 +139,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
   override fun onNewIntent(intent: Intent?) {
     super.onNewIntent(intent)
-    println("new $intent, ${intent?.extras}")
+    logger.debug { "new $intent, ${intent?.extras}" }
     if (intent?.getStringExtra("reason") == SettingsFragment.themeChangeReason) {
       finish()
       startActivity(
@@ -156,6 +157,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
   @SuppressLint("SourceLockedOrientationActivity")
   override fun onCreate(savedInstanceState: Bundle?) {
+    AlarmApplication.startOnce(application)
     setTheme(dynamicThemeHandler.defaultTheme())
     super.onCreate(savedInstanceState)
     uiStore.openDrawerOnCreate = intent?.getBooleanExtra("openDrawerOnCreate", false) ?: false
