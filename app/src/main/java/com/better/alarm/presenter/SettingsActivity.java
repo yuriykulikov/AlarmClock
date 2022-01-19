@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.better.alarm.R;
+import com.better.alarm.configuration.AlarmApplication;
 import com.better.alarm.configuration.InjectKt;
 
 /** Settings for the Alarm Clock. */
@@ -34,6 +35,7 @@ public class SettingsActivity extends AppCompatActivity {
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
+    AlarmApplication.startOnce(getApplication());
     setTheme(dynamicThemeHandler.defaultTheme());
     super.onCreate(savedInstanceState);
     setContentView(R.layout.settings_activity);

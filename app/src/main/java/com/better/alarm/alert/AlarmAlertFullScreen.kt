@@ -32,6 +32,7 @@ import com.better.alarm.background.Event.DemuteEvent
 import com.better.alarm.background.Event.DismissEvent
 import com.better.alarm.background.Event.MuteEvent
 import com.better.alarm.background.Event.SnoozedEvent
+import com.better.alarm.configuration.AlarmApplication
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.Store
 import com.better.alarm.configuration.globalInject
@@ -63,6 +64,7 @@ class AlarmAlertFullScreen : FragmentActivity() {
   private var subscription: Disposable? = null
 
   override fun onCreate(icicle: Bundle?) {
+    AlarmApplication.startOnce(application)
     setTheme(dynamicThemeHandler.alertTheme())
     super.onCreate(icicle)
     requestedOrientation =

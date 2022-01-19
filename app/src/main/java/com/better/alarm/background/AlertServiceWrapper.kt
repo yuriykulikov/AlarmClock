@@ -10,6 +10,7 @@ import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import com.better.alarm.CHANNEL_ID
 import com.better.alarm.R
+import com.better.alarm.configuration.AlarmApplication
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.globalGet
 import com.better.alarm.configuration.globalInject
@@ -102,6 +103,7 @@ class AlertServiceWrapper : Service() {
   private lateinit var alertService: AlertService
 
   override fun onCreate() {
+    AlarmApplication.startOnce(application)
     alertService =
         koinApplication {
               modules(module())
