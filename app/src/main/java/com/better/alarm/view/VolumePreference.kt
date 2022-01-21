@@ -97,9 +97,13 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
 
   private fun updateRingtoneSummary() {
     ringtoneSummary?.text =
-        RingtoneManager.getRingtone(context, alarmTypeUri) //
-            ?.getTitle(context)
-            ?: context.getText(R.string.silent_alarm_summary)
+        runCatching {
+              RingtoneManager.getRingtone(context, alarmTypeUri) //
+                  // this can fail, see https://github.com/yuriykulikov/AlarmClock/issues/403
+                  ?.getTitle(context)
+                  ?: context.getText(R.string.silent_alarm_summary)
+            }
+            .getOrDefault("")
   }
 
   /** Called from [com.better.alarm.presenter.SettingsFragment.onPause] */
