@@ -51,6 +51,12 @@ fun DaysOfWeek.showDialog(context: Context): Single<DaysOfWeek> {
         .setPositiveButton(android.R.string.ok) { _, _ ->
           emitter.onSuccess(DaysOfWeek(mutableDays))
         }
+        .setNeutralButton("select all") { _, _ ->
+            emitter.onSuccess(DaysOfWeek(0x7f))
+        }
+        .setNegativeButton("deselect all") { _, _ ->
+            emitter.onSuccess(DaysOfWeek(0))
+        }
         .setOnCancelListener { emitter.onSuccess(DaysOfWeek(mutableDays)) }
         .create()
         .show()
