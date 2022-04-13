@@ -139,7 +139,7 @@ dependencies {
   implementation("androidx.fragment:fragment:1.2.5")
   implementation("androidx.preference:preference:1.1.1")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1")
   implementation("com.google.android.material:material:1.4.0")
   implementation("org.slf4j:slf4j-api:1.7.36")
   implementation("com.github.tony19:logback-android:2.0.0")
