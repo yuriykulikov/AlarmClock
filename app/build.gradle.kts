@@ -1,10 +1,10 @@
 plugins {
   id("com.android.application")
-  id("org.jetbrains.kotlin.android")
+  kotlin("android")
   jacoco
 }
 
-jacoco { toolVersion = "0.8.7" }
+jacoco { toolVersion = "0.8.8" }
 
 // ./gradlew test connectedDevelopDebugAndroidTest jacocoTestReport
 // task must be created, examples in Kotlin which call tasks.jacocoTestReport do not work
@@ -138,10 +138,10 @@ dependencies {
   // Updating this to 1.3.6 breaks transition animations and layout setting
   implementation("androidx.fragment:fragment:1.2.5")
   implementation("androidx.preference:preference:1.1.1")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")
   implementation("com.google.android.material:material:1.4.0")
-  implementation("org.slf4j:slf4j-api:1.7.25")
+  implementation("org.slf4j:slf4j-api:1.7.36")
   implementation("com.github.tony19:logback-android:2.0.0")
   implementation("androidx.multidex:multidex:2.0.1")
 }
@@ -151,7 +151,7 @@ dependencies {
   testImplementation("junit:junit:4.13.2")
   testImplementation("org.mockito:mockito-core:2.23.4")
   testImplementation("io.mockk:mockk:1.11.0")
-  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.0")
+  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1")
 }
 
 dependencies {
