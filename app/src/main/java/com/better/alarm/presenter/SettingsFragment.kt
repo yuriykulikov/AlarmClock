@@ -3,7 +3,11 @@ package com.better.alarm.presenter
 import android.content.ContentResolver
 import android.content.Intent
 import android.media.AudioManager
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Vibrator
 import android.provider.Settings
 import androidx.preference.CheckBoxPreference
 import androidx.preference.ListPreference
@@ -44,12 +48,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      category.removePreference(findPreference(Prefs.KEY_ALARM_IN_SILENT_MODE))
+      findPreference<Preference>(Prefs.KEY_ALARM_IN_SILENT_MODE)?.let {
+        category.removePreference(it)
+      }
     }
 
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-      findPreference<PreferenceCategory>("preference_category_ui")
-          ?.removePreference(findPreference(Prefs.LIST_ROW_LAYOUT))
+      findPreference<PreferenceCategory>("preference_category_ui")?.run {
+        findPreference<Preference>(Prefs.LIST_ROW_LAYOUT)?.let { rowLayout ->
+          removePreference(rowLayout)
+        }
+      }
 
       findPreference<ListPreference>(Prefs.KEY_THEME)?.apply {
         entries = entries.take(2).toTypedArray()
@@ -74,8 +83,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
   }
 
-  override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-    when (preference?.key) {
+  override fun onPreferenceTreeClick(preference: Preference): Boolean {
+    when (preference.key) {
       Prefs.KEY_ALARM_IN_SILENT_MODE -> {
         val pref = preference as CheckBoxPreference
 
