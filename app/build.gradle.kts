@@ -155,7 +155,7 @@ dependencies {
 }
 
 dependencies {
-  androidTestImplementation("com.squareup.assertj:assertj-android:1.1.1")
+  androidTestImplementation("com.squareup.assertj:assertj-android:1.2.0")
   androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
   androidTestImplementation("androidx.test:runner:1.4.0")
   androidTestImplementation("androidx.test:rules:1.4.0")
