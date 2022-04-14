@@ -68,18 +68,16 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
     ringtone?.streamType = AudioManager.STREAM_ALARM
   }
 
-  override fun onBindViewHolder(holder: PreferenceViewHolder?) {
+  override fun onBindViewHolder(holder: PreferenceViewHolder) {
     super.onBindViewHolder(holder)
-    if (holder != null) {
-      bindPrealarmSeekBar(holder.findById(R.id.seekbar_dialog_seekbar_prealarm_volume))
-      bindAudioManagerVolume(holder.findById(R.id.seekbar_dialog_seekbar_master_volume))
+    bindPrealarmSeekBar(holder.findById(R.id.seekbar_dialog_seekbar_prealarm_volume))
+    bindAudioManagerVolume(holder.findById(R.id.seekbar_dialog_seekbar_master_volume))
 
-      holder.findById<View>(R.id.settings_ringtone).setOnClickListener {
-        context.startActivity(Intent(Settings.ACTION_SOUND_SETTINGS))
-      }
-      ringtoneSummary = holder.findById(R.id.settings_ringtone_summary)
-      onResume()
+    holder.findById<View>(R.id.settings_ringtone).setOnClickListener {
+      context.startActivity(Intent(Settings.ACTION_SOUND_SETTINGS))
     }
+    ringtoneSummary = holder.findById(R.id.settings_ringtone_summary)
+    onResume()
   }
 
   /** Extension function to avoid crashes cause by an incorrect cast (see history) */
