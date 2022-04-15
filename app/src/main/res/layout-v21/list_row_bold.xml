@@ -14,12 +14,13 @@
      limitations under the License.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="120dp"
-    android:gravity="center_vertical"
     android:baselineAligned="true"
+    android:gravity="center_vertical"
+    android:minHeight="120dp"
     android:orientation="horizontal">
 
     <LinearLayout
@@ -34,8 +35,8 @@
             android:id="@+id/list_row_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="label"
-            android:textColor="?android:attr/colorAccent" />
+            android:textColor="?android:attr/colorAccent"
+            tools:text="label" />
 
         <com.better.alarm.view.DigitalClock
             android:id="@+id/list_row_digital_clock"
@@ -58,9 +59,11 @@
 
             <TextView
                 android:id="@+id/digital_clock_am_pm"
-                android:textColor="?android:attr/textColorPrimary"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textAllCaps="true"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="20sp" />
         </com.better.alarm.view.DigitalClock>
 
         <TextView
@@ -68,9 +71,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="2dip"
-            tools:text="Weekdays"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="?android:attr/colorAccent" />
+            android:textColor="?android:attr/colorAccent"
+            tools:text="Weekdays" />
     </LinearLayout>
 
     <LinearLayout
@@ -129,18 +132,18 @@
                     android:src="@drawable/ic_baseline_more_horiz_24"
                     android:textSize="40sp"
                     android:textStyle="normal"
-                    android:tint="?android:attr/textColorPrimary" />
+                    app:tint="?android:attr/textColorPrimary" />
 
                 <ImageView
                     android:id="@+id/details_button_check"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:alpha="0"
                     android:clickable="false"
                     android:focusable="false"
                     android:src="@drawable/ic_baseline_check_24"
                     android:textSize="40sp"
                     android:textStyle="normal"
-                    android:alpha="0"
                     android:tint="?android:attr/textColorPrimary" />
             </RelativeLayout>
 
