@@ -2,18 +2,18 @@ package com.better.alarm.model
 
 import android.content.Context
 import com.better.alarm.R
+import io.mockk.every
+import io.mockk.mockk
 import java.util.Locale
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
 
 class DaysOfWeekTest {
-  private val context = mock(Context::class.java)
+  private val context = mockk<Context>()
 
   init {
-    `when`(context.getText(R.string.day_concat)).thenReturn(", ")
-    `when`(context.getText(R.string.never)).thenReturn("")
+    every { context.getText(R.string.day_concat) } returns ", "
+    every { context.getText(R.string.never) } returns ""
   }
 
   @Test
