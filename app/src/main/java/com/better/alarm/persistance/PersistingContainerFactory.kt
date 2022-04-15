@@ -55,14 +55,14 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
 
   override fun create(): AlarmStore {
     return createStore(
-        create(
-            calendars = calendars,
-            idMapper = { container ->
-              val inserted: Uri? =
-                  mContext.contentResolver.insert(
-                      Columns.contentUri(), container.createContentValues())
-              ContentUris.parseId(requireNotNull(inserted)).toInt()
-            }))
+            create(
+                calendars = calendars,
+                idMapper = { container ->
+                  val inserted: Uri? =
+                      mContext.contentResolver.insert(
+                          Columns.contentUri(), container.createContentValues())
+                  ContentUris.parseId(requireNotNull(inserted)).toInt()
+                }))
         .also { container ->
           // persist created container
           container.value = container.value

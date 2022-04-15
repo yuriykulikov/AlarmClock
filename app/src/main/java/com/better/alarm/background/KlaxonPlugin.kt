@@ -115,8 +115,7 @@ class KlaxonPlugin(
     return if (!prealarm) Observable.just(1f)
     else
         prealarmVolume.map {
-          it
-              .plus(1) // 0 is 1
+          it.plus(1) // 0 is 1
               .coerceAtMost(maxVolume)
               .toFloat()
               .div(maxVolume)

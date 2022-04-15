@@ -36,7 +36,7 @@ class PickerAmTest : BaseTest() {
     fun with(id: Int? = null, text: String? = null): ViewInteraction {
       val matcher =
           listOfNotNull(
-              text?.let { ViewMatchers.withText(it) }, id?.let { ViewMatchers.withId(it) })
+                  text?.let { ViewMatchers.withText(it) }, id?.let { ViewMatchers.withId(it) })
               .let { Matchers.allOf(it) }
       return Espresso.onView(matcher)
     }

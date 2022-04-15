@@ -37,12 +37,11 @@ private fun configureLogback(context: Context): ILoggerFactory {
 
     addAppender(RollingFileAppender(), async = true) {
       isAppend = true
-      rollingPolicy =
-          timeBasedRollingPolicy {
-            fileNamePattern = "$logDir/rolling-%d{yyyy-MM-dd}.log"
-            maxHistory = 3
-            isCleanHistoryOnStart = true
-          }
+      rollingPolicy = timeBasedRollingPolicy {
+        fileNamePattern = "$logDir/rolling-%d{yyyy-MM-dd}.log"
+        maxHistory = 3
+        isCleanHistoryOnStart = true
+      }
 
       encoder =
           patternLayoutEncoder(
