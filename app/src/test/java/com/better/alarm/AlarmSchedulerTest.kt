@@ -13,6 +13,7 @@ import com.better.alarm.model.Calendars
 import com.better.alarm.model.DaysOfWeek
 import com.better.alarm.stores.InMemoryRxDataStoreFactory
 import com.better.alarm.util.Optional
+import io.mockk.mockk
 import io.reactivex.Single
 import io.reactivex.schedulers.TestScheduler
 import io.reactivex.subjects.BehaviorSubject
@@ -22,7 +23,6 @@ import java.util.Calendar
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.mock
 
 class AlarmSchedulerTest {
   private lateinit var stateNotifierMock: AlarmCore.IStateNotifier
@@ -48,7 +48,7 @@ class AlarmSchedulerTest {
             sets = PublishSubject.create(),
             events = PublishSubject.create())
 
-    stateNotifierMock = mock(AlarmCore.IStateNotifier::class.java)
+    stateNotifierMock = mockk()
     alarmSetterMock = SetterMock()
     alarmsScheduler = AlarmsScheduler(alarmSetterMock, logger, store, prefs, calendars)
   }
