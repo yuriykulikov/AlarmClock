@@ -17,6 +17,7 @@ import android.widget.AdapterView
 import android.widget.AdapterView.AdapterContextMenuInfo
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import com.better.alarm.R
 import com.better.alarm.configuration.Layout
@@ -34,8 +35,7 @@ import com.melnykov.fab.FloatingActionButton
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
-import java.util.ArrayList
-import java.util.Calendar
+import java.util.*
 
 /**
  * Shows a list of alarms. To react on user interaction, requires a strategy. An activity hosting
@@ -76,7 +76,6 @@ class AlarmsListFragment : Fragment() {
 
     private fun recycleView(convertView: View?, parent: ViewGroup, id: Int): RowHolder {
       val tag = convertView?.tag
-
       return when {
         tag is RowHolder && tag.layout == listRowLayout -> RowHolder(convertView, id, listRowLayout)
         else -> {
@@ -89,6 +88,8 @@ class AlarmsListFragment : Fragment() {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
       // get the alarm which we have to display
       val alarm = values[position]
+
+      logger.trace { "getView($position) $alarm" }
 
       val row = recycleView(convertView, parent, alarm.id)
 
@@ -160,11 +161,6 @@ class AlarmsListFragment : Fragment() {
           }
 
       highlighter?.applyTo(row, alarm.isEnabled)
-
-      // row.labelsContainer.visibility = when {
-      //     row.label().visibility == View.GONE && row.daysOfWeek().visibility == View.GONE -> GONE
-      //     else -> View.VISIBLE
-      // }
 
       return row.rowView
     }
@@ -264,6 +260,13 @@ class AlarmsListFragment : Fragment() {
 
     lollipop { configureBottomDrawer(view) }
 
+    logger.trace { "onCreateView() { postponeEnterTransition() }" }
+    postponeEnterTransition()
+    view.doOnPreDraw {
+      logger.trace { "onCreateView() { doOnPreDraw { startPostponedEnterTransition() } }" }
+      startPostponedEnterTransition()
+    }
+
     return view
   }
 
@@ -349,6 +352,10 @@ class AlarmsListFragment : Fragment() {
   override fun onResume() {
     super.onResume()
     backSub = uiStore.onBackPressed().subscribe { requireActivity().finish() }
+  }
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
     layoutSub =
         prefs.listRowLayout.observe().subscribe {
           listRowLayout = prefs.layout()
@@ -364,7 +371,6 @@ class AlarmsListFragment : Fragment() {
   override fun onPause() {
     super.onPause()
     backSub.dispose()
-    layoutSub.dispose()
     // dismiss the time picker if it was showing. Otherwise we will have to uiStore the state and it
     // is not nice for the user
     timePickerDialogDisposable.dispose()
@@ -373,6 +379,7 @@ class AlarmsListFragment : Fragment() {
   override fun onDestroy() {
     super.onDestroy()
     alarmsSub.dispose()
+    layoutSub.dispose()
   }
 
   override fun onCreateContextMenu(menu: ContextMenu, view: View, menuInfo: ContextMenuInfo?) {
