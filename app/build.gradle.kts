@@ -132,7 +132,7 @@ dependencies {
   implementation(kotlin("stdlib", version = project.extra["kotlin"] as String))
   implementation("ch.acra:acra-mail:5.5.0")
   implementation("com.melnykov:floatingactionbutton:1.3.0")
-  implementation("io.reactivex.rxjava2:rxjava:2.2.19")
+  implementation("io.reactivex.rxjava2:rxjava:2.2.21")
   implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
   implementation("org.koin:koin-core:2.2.2")
   // Updating this to 1.3.6 breaks transition animations and layout setting
@@ -147,7 +147,7 @@ dependencies {
 }
 
 dependencies {
-  testImplementation("net.wuerl.kotlin:assertj-core-kotlin:0.1.1")
+  testImplementation("net.wuerl.kotlin:assertj-core-kotlin:0.2.1")
   testImplementation("junit:junit:4.13.2")
   testImplementation("org.mockito:mockito-core:2.23.4")
   testImplementation("io.mockk:mockk:1.12.3")
