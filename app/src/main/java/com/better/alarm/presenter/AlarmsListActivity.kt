@@ -35,6 +35,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.better.alarm.BuildConfig
 import com.better.alarm.NotificationSettings
 import com.better.alarm.R
@@ -60,7 +61,7 @@ import io.reactivex.functions.Consumer
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
-import java.util.Calendar
+import java.util.*
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -271,64 +272,58 @@ class AlarmsListActivity : AppCompatActivity() {
   }
 
   private fun showList(@NonNull edited: EditedAlarm) {
-    val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
-
-    if (currentFragment is AlarmsListFragment) {
-      // "skipping fragment transition, because already showing $currentFragment"
-    } else {
-      supportFragmentManager.findFragmentById(R.id.main_fragment_container)?.apply {
-        lollipop { exitTransition = Fade() }
-      }
-
-      val listFragment =
-          AlarmsListFragment().apply {
-            lollipop {
-              sharedElementEnterTransition = moveTransition()
-              enterTransition = Fade()
-              allowEnterTransitionOverlap = true
-            }
-          }
-
-      supportFragmentManager
-          .beginTransaction()
-          .apply { lollipop { edited.holder.getOrNull()?.addSharedElementsToTransition(this) } }
-          .apply {
-            if (!lollipop()) {
-              this.setCustomAnimations(R.anim.push_down_in, android.R.anim.fade_out)
-            }
-          }
-          .replace(R.id.main_fragment_container, listFragment)
-          .commitAllowingStateLoss()
-    }
+    replace(
+        fragment =
+            AlarmsListFragment().apply {
+              arguments = Bundle()
+              lollipop {
+                enterTransition = TransitionSet().addTransition(Fade())
+                sharedElementEnterTransition = moveTransition()
+                allowEnterTransitionOverlap = true
+              }
+            },
+        edited = edited,
+    )
   }
 
   private fun showDetails(@NonNull edited: EditedAlarm) {
+    replace(
+        fragment =
+            AlarmDetailsFragment().apply {
+              arguments = Bundle()
+              lollipop {
+                enterTransition = TransitionSet().addTransition(Slide()).addTransition(Fade())
+                sharedElementEnterTransition = moveTransition()
+                allowEnterTransitionOverlap = true
+              }
+            },
+        edited = edited,
+    )
+  }
+
+  fun replace(fragment: Fragment, edited: EditedAlarm) {
     val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
 
-    if (currentFragment is AlarmDetailsFragment) {
+    if (currentFragment?.javaClass == fragment.javaClass) {
       logger.trace { "skipping fragment transition, because already showing $currentFragment" }
     } else {
-      logger.trace { "transition from: $currentFragment to show details, edited: $edited" }
+      logger.trace { "transition from: $currentFragment to $fragment" }
       currentFragment?.apply { lollipop { exitTransition = Fade() } }
-
-      val detailsFragment =
-          AlarmDetailsFragment().apply { arguments = Bundle() }.apply {
-            lollipop {
-              enterTransition = TransitionSet().addTransition(Slide()).addTransition(Fade())
-              sharedElementEnterTransition = moveTransition()
-              allowEnterTransitionOverlap = true
-            }
-          }
 
       supportFragmentManager
           .beginTransaction()
+          .replace(R.id.main_fragment_container, fragment)
           .apply {
-            if (!lollipop()) {
+            if (lollipop()) {
+              edited.holder.getOrNull()?.run {
+                addSharedElement(digitalClock, "clock${alarmId}")
+                addSharedElement(container, "onOff${alarmId}")
+                addSharedElement(detailsButton, "detailsButton${alarmId}")
+              }
+            } else {
               this.setCustomAnimations(R.anim.push_down_in, android.R.anim.fade_out)
             }
           }
-          .apply { lollipop { edited.holder.getOrNull()?.addSharedElementsToTransition(this) } }
-          .replace(R.id.main_fragment_container, detailsFragment)
           .commitAllowingStateLoss()
     }
   }
@@ -340,14 +335,6 @@ class AlarmsListActivity : AppCompatActivity() {
       addTransition(ChangeBounds())
       addTransition(ChangeTransform())
     }
-  }
-
-  private fun RowHolder.addSharedElementsToTransition(
-      fragmentTransaction: androidx.fragment.app.FragmentTransaction
-  ) {
-    fragmentTransaction.addSharedElement(digitalClock, "clock$alarmId")
-    fragmentTransaction.addSharedElement(container, "onOff$alarmId")
-    fragmentTransaction.addSharedElement(detailsButton, "detailsButton$alarmId")
   }
 
   /** restores an [EditedAlarm] from SavedInstanceState. Counterpart of [EditedAlarm.writeInto]. */
