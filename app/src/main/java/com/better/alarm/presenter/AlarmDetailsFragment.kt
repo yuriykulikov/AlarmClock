@@ -311,9 +311,8 @@ class AlarmDetailsFragment : Fragment() {
 
     val alarmtone =
         when (alert) {
-          null -> Alarmtone.Silent()
-          RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString() ->
-              Alarmtone.Default()
+          null -> Alarmtone.Silent
+          RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString() -> Alarmtone.Default
           else -> Alarmtone.Sound(alert)
         }
 

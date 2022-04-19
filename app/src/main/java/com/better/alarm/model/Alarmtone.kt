@@ -13,18 +13,25 @@ fun Alarmtone.ringtoneManagerString(): Uri? {
   }
 }
 
-sealed class Alarmtone(open val persistedString: String?) {
+sealed class Alarmtone {
+  object Silent : Alarmtone()
+  object Default : Alarmtone()
+  data class Sound(val uriString: String) : Alarmtone()
 
-  data class Silent(override val persistedString: String? = null) : Alarmtone(persistedString)
-  data class Default(override val persistedString: String? = "") : Alarmtone(persistedString)
-  data class Sound(val uriString: String) : Alarmtone(uriString)
+  val persistedString: String?
+    get() =
+        when (this) {
+          is Silent -> null
+          is Default -> ""
+          is Sound -> uriString
+        }
 
   companion object {
     fun fromString(string: String?): Alarmtone {
       return when (string) {
-        null -> Silent()
-        "" -> Default()
-        defaultAlarmAlertUri -> Default()
+        null -> Silent
+        "" -> Default
+        defaultAlarmAlertUri -> Default
         else -> Sound(string)
       }
     }

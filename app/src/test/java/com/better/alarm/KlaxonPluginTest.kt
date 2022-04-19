@@ -34,20 +34,17 @@ class KlaxonPluginTest {
   @Test
   fun `player should be configured when started`() {
     klaxonPlugin.go(
-        PluginAlarmData(1, Alarmtone.Default(), ""), false, Observable.just(TargetVolume.FADED_IN))
+        PluginAlarmData(1, Alarmtone.Default, ""), false, Observable.just(TargetVolume.FADED_IN))
 
     verify { playerMock.setPerceivedVolume(0f) }
-    verify { playerMock.setDataSource(Alarmtone.Default()) }
+    verify { playerMock.setDataSource(Alarmtone.Default) }
     verify { playerMock.startAlarm() }
   }
 
   @Test
   fun `clean up should be sequenced`() {
     klaxonPlugin
-        .go(
-            PluginAlarmData(1, Alarmtone.Default(), ""),
-            true,
-            Observable.just(TargetVolume.FADED_IN))
+        .go(PluginAlarmData(1, Alarmtone.Default, ""), true, Observable.just(TargetVolume.FADED_IN))
         .dispose()
 
     verify { playerMock.stop() }
@@ -56,7 +53,7 @@ class KlaxonPluginTest {
   @Test
   fun `gradual fade in`() {
     klaxonPlugin.go(
-        PluginAlarmData(1, Alarmtone.Default(), ""), false, Observable.just(TargetVolume.FADED_IN))
+        PluginAlarmData(1, Alarmtone.Default, ""), false, Observable.just(TargetVolume.FADED_IN))
 
     scheduler.advanceTimeBy(15, TimeUnit.SECONDS)
 
@@ -74,7 +71,7 @@ class KlaxonPluginTest {
   @Test
   fun `gradual fade in prealarm`() {
     klaxonPlugin.go(
-        PluginAlarmData(1, Alarmtone.Default(), ""), true, Observable.just(TargetVolume.FADED_IN))
+        PluginAlarmData(1, Alarmtone.Default, ""), true, Observable.just(TargetVolume.FADED_IN))
 
     scheduler.advanceTimeBy(15, TimeUnit.SECONDS)
 
@@ -92,10 +89,10 @@ class KlaxonPluginTest {
   @Test
   fun `fallback should be used if failed to play default`() {
 
-    every { playerMock.setDataSource(Alarmtone.Default()) } throws NullPointerException("Test IOE")
+    every { playerMock.setDataSource(Alarmtone.Default) } throws NullPointerException("Test IOE")
 
     klaxonPlugin.go(
-        PluginAlarmData(1, Alarmtone.Default(), ""), true, Observable.just(TargetVolume.FADED_IN))
+        PluginAlarmData(1, Alarmtone.Default, ""), true, Observable.just(TargetVolume.FADED_IN))
 
     verify { playerMock.setDataSourceFromResource(R.raw.fallbackring) }
   }

@@ -147,7 +147,7 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
       stopPrealarmSample()
       prealarmSampleDisposable =
           klaxon.go(
-              PluginAlarmData(id = -1, label = "", alarmtone = Alarmtone.Default()),
+              PluginAlarmData(id = -1, label = "", alarmtone = Alarmtone.Default),
               prealarm = true,
               targetVolume = Observable.just(TargetVolume.FADED_IN))
     }

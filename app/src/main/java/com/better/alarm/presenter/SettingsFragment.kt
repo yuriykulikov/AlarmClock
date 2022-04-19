@@ -105,7 +105,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     findPreference<VolumePreference>(Prefs.KEY_VOLUME_PREFERENCE)?.onResume()
 
-    checkPermissions(requireActivity(), listOf(Alarmtone.Default()))
+    checkPermissions(requireActivity(), listOf(Alarmtone.Default))
 
     bindListPreference(Prefs.KEY_ALARM_SNOOZE, prefs.snoozeDuration) { duration ->
       val idx = findIndexOfValue(duration.toString())
