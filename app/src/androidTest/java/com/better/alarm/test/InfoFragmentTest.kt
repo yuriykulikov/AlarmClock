@@ -72,7 +72,7 @@ class InfoFragmentTest {
         isPrealarm,
         AlarmValue(
             id = 1,
-            alarmtone = Alarmtone.Default(),
+            alarmtone = Alarmtone.Default,
             daysOfWeek = DaysOfWeek(0),
             hour = 12,
             isEnabled = true,

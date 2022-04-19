@@ -31,7 +31,7 @@ class AlertServiceTest {
       mockk<Alarm> {
         every { id } returns 1
         every { labelOrDefault } returns "1"
-        every { alarmtone } returns Alarmtone.Default()
+        every { alarmtone } returns Alarmtone.Default
         every { dismiss() } answers {}
       }
   private val alarmsManager: IAlarmsManager = mockk {
@@ -40,13 +40,13 @@ class AlertServiceTest {
         mockk<Alarm> {
           every { id } returns 2
           every { labelOrDefault } returns "2"
-          every { alarmtone } returns Alarmtone.Default()
+          every { alarmtone } returns Alarmtone.Default
         }
     val alarm3 =
         mockk<Alarm> {
           every { id } returns 3
           every { labelOrDefault } returns "3"
-          every { alarmtone } returns Alarmtone.Default()
+          every { alarmtone } returns Alarmtone.Default
         }
     every { getAlarm(2) } returns alarm2
     every { getAlarm(3) } returns alarm3

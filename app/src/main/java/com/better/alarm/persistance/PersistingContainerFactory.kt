@@ -103,7 +103,7 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
               isVibrate = true,
               isPrealarm = false,
               label = "",
-              alarmtone = Alarmtone.Default(),
+              alarmtone = Alarmtone.Default,
               state = "",
               nextTime = now)
 

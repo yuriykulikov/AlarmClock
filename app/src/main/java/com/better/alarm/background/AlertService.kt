@@ -212,7 +212,7 @@ class AlertService(
             })
 
     val alarm = alarms.getAlarm(id)
-    val alarmtone = alarm?.alarmtone ?: Alarmtone.Default()
+    val alarmtone = alarm?.alarmtone ?: Alarmtone.Default
     val label = alarm?.labelOrDefault ?: ""
     val pluginDisposables =
         plugins.map {

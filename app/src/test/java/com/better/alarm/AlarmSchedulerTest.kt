@@ -152,7 +152,7 @@ class AlarmSchedulerTest {
   private fun createTestAlarmValue(id: Int, label: String = id.toString()) =
       AlarmValue(
           id = id,
-          alarmtone = Alarmtone.Default(),
+          alarmtone = Alarmtone.Default,
           daysOfWeek = DaysOfWeek(0),
           hour = 12,
           isEnabled = true,
