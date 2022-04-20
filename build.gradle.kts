@@ -1,5 +1,5 @@
 buildscript {
-  val kotlin = "1.6.20"
+  val kotlin = "1.6.21"
 
   allprojects { extra.apply { set("kotlin", kotlin) } }
 
