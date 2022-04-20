@@ -9,6 +9,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.Appender
 import ch.qos.logback.core.rolling.RollingFileAppender
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy
+import ch.qos.logback.core.util.FileSize
 import org.koin.dsl.module
 import org.slf4j.ILoggerFactory
 
@@ -41,6 +42,7 @@ private fun configureLogback(context: Context): ILoggerFactory {
         fileNamePattern = "$logDir/rolling-%d{yyyy-MM-dd}.log"
         maxHistory = 3
         isCleanHistoryOnStart = true
+        setTotalSizeCap(FileSize.valueOf("800KB"))
       }
 
       encoder =
