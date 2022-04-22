@@ -31,14 +31,13 @@
             android:paddingBottom="12dp"
             android:paddingLeft="16dip"
             android:layout_gravity="center"
-            android:baselineAligned="false"
             android:gravity="top">
 
             <TextView
                 android:id="@+id/time_picker_time"
                 android:singleLine="true"
                 android:ellipsize="none"
-                android:textSize="60dp"
+                android:textSize="50dp"
                 style="@style/dialpad"
                 android:textColor="?android:attr/textColorPrimary"
                 android:layout_height="wrap_content"
@@ -50,10 +49,11 @@
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:singleLine="true"
+                android:textAllCaps="true"
+                android:textSize="25dp"
                 android:ellipsize="none"
-                style="@style/label"
                 android:textColor="?android:attr/textColorPrimary"
-                android:gravity="top"
+                android:gravity="bottom"
                 android:text="@string/time_picker_ampm_label" />
 
         </LinearLayout>

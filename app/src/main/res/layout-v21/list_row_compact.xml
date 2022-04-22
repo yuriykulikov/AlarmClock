@@ -14,9 +14,10 @@
      limitations under the License.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="80dp"
-    xmlns:tools="http://schemas.android.com/tools"
     android:baselineAligned="true"
     android:orientation="horizontal">
 
@@ -44,14 +45,16 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-light"
                 android:textColor="?android:attr/textColorPrimary"
-                tools:text="12:45"
-                android:textSize="40dp" />
+                android:textSize="40dp"
+                tools:text="12:45" />
 
             <TextView
                 android:id="@+id/digital_clock_am_pm"
-                android:textColor="?android:attr/textColorPrimary"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textAllCaps="true"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="20dp" />
         </com.better.alarm.view.DigitalClock>
 
         <LinearLayout
@@ -66,17 +69,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="5dp"
                 android:paddingTop="2dip"
-                tools:text="Weekdays"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="?android:attr/colorAccent" />
+                android:textColor="?android:attr/colorAccent"
+                tools:text="Weekdays" />
 
             <TextView
                 android:id="@+id/list_row_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                tools:text="label"
-                android:textColor="?android:attr/colorAccent" />
+                android:textColor="?android:attr/colorAccent"
+                tools:text="label" />
         </LinearLayout>
     </LinearLayout>
 
@@ -136,16 +139,16 @@
                     android:src="@drawable/ic_baseline_more_horiz_24"
                     android:textSize="40dp"
                     android:textStyle="normal"
-                    android:tint="?android:attr/textColorPrimary" />
+                    app:tint="?android:attr/textColorPrimary" />
 
                 <ImageView
                     android:id="@+id/details_button_check"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:alpha="0"
                     android:clickable="false"
                     android:focusable="false"
                     android:src="@drawable/ic_baseline_check_24"
-                    android:alpha="0"
                     android:textSize="40dp"
                     android:textStyle="normal"
                     android:tint="?android:attr/textColorPrimary" />
