@@ -31,6 +31,7 @@ import com.better.alarm.interfaces.PresentationToModelIntents
 import com.better.alarm.isOreo
 import com.better.alarm.logger.Logger
 import com.better.alarm.notificationBuilder
+import com.better.alarm.pendingIntentUpdateCurrentFlag
 
 /**
  * Glue class: connects AlarmAlert IntentReceiver to AlarmAlert activity. Passes through Alarm ID.
@@ -42,15 +43,13 @@ class NotificationsPlugin(
     private val enclosingService: EnclosingService
 ) {
   fun show(alarm: PluginAlarmData, index: Int, startForeground: Boolean) {
-    /* Close dialogs and window shade */
-    mContext.sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
-
     // Trigger a notification that, when clicked, will show the alarm
     // alert dialog. No need to check for fullscreen since this will always
     // be launched from a user action.
     val notify = Intent(mContext, AlarmAlertFullScreen::class.java)
     notify.putExtra(Intents.EXTRA_ID, alarm.id)
-    val pendingNotify = PendingIntent.getActivity(mContext, alarm.id, notify, 0)
+    val pendingNotify =
+        PendingIntent.getActivity(mContext, alarm.id, notify, pendingIntentUpdateCurrentFlag())
     val pendingSnooze =
         PresentationToModelIntents.createPendingIntent(
             mContext, PresentationToModelIntents.ACTION_REQUEST_SNOOZE, alarm.id)

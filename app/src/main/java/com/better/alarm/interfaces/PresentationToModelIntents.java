@@ -4,6 +4,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import com.better.alarm.BuildConfig;
+import com.better.alarm.OreoKt;
 import com.better.alarm.model.AlarmsReceiver;
 
 public class PresentationToModelIntents {
@@ -19,6 +20,6 @@ public class PresentationToModelIntents {
     Intent intent = new Intent(action);
     intent.putExtra(Intents.EXTRA_ID, id);
     intent.setClass(context, AlarmsReceiver.class);
-    return PendingIntent.getBroadcast(context, id, intent, 0);
+    return PendingIntent.getBroadcast(context, id, intent, OreoKt.pendingIntentUpdateCurrentFlag());
   }
 }

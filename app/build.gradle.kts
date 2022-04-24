@@ -71,13 +71,13 @@ val acraEmail =
         ?: System.getenv()["ACRA_EMAIL"] ?: ""
 
 android {
-  compileSdk = 30
+  compileSdk = 31
   defaultConfig {
     versionCode = 31007
     versionName = "3.10.07"
     applicationId = "com.better.alarm"
     minSdk = 16
-    targetSdk = 30
+    targetSdk = 31
     testApplicationId = "com.better.alarm.test"
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     multiDexEnabled = true

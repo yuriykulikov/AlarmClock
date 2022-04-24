@@ -5,9 +5,12 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
+import android.os.Build
 import android.os.Vibrator
 import android.telephony.PhoneStateListener
+import android.telephony.TelephonyCallback
 import android.telephony.TelephonyManager
+import androidx.annotation.RequiresApi
 import com.better.alarm.CHANNEL_ID
 import com.better.alarm.R
 import com.better.alarm.configuration.AlarmApplication
@@ -25,6 +28,7 @@ import com.better.alarm.wakelock.WakeLockManager
 import com.better.alarm.wakelock.Wakelocks
 import io.reactivex.Observable
 import io.reactivex.Scheduler
+import java.util.concurrent.Executor
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.koinApplication
@@ -38,26 +42,17 @@ class AlertServiceWrapper : Service() {
   companion object {
     fun module(): Module = module {
       factory(named("inCall")) {
-        val tm: TelephonyManager = get()
-        Observable.create<Int> { emitter ->
-              class PhoneStateListenerIR : PhoneStateListener() {
-                override fun onCallStateChanged(state: Int, ignored: String) {
-                  emitter.onNext(state)
-                }
-              }
-
-              val listener = PhoneStateListenerIR()
-
-              emitter.setCancellable {
-                // Stop listening for incoming calls.
-                tm.listen(listener, PhoneStateListener.LISTEN_NONE)
-              }
-
-              tm.listen(listener, PhoneStateListener.LISTEN_CALL_STATE)
+        val telephonyManager: TelephonyManager = get()
+        when {
+              Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
+                  telephonyManager.observeCallState(get<Context>().mainExecutor)
+              else -> telephonyManager.observePhoneState()
             }
-            .startWith(tm.callState)
-            .map { it != TelephonyManager.CALL_STATE_IDLE }
             .distinctUntilChanged()
+            .onErrorReturn { e ->
+              logger("inCall").error { "Failed to subscribe with PhoneStateListener: $e" }
+              false
+            }
             .replay(1)
             .refCount()
       }
@@ -95,6 +90,42 @@ class AlertServiceWrapper : Service() {
             plugins = getAll(),
             notifications = get(),
             enclosing = get())
+      }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun TelephonyManager.observePhoneState() =
+        Observable.create<Boolean> { emitter ->
+          val listener =
+              object : PhoneStateListener() {
+                @Deprecated(
+                    "Deprecated in Java", ReplaceWith("TelephonyCallback.CallStateListener"))
+                override fun onCallStateChanged(state: Int, ignored: String) {
+                  emitter.onNext(state != TelephonyManager.CALL_STATE_IDLE)
+                }
+              }
+
+          emitter.onNext(callState != TelephonyManager.CALL_STATE_IDLE)
+
+          emitter.setCancellable { listen(listener, PhoneStateListener.LISTEN_NONE) }
+
+          listen(listener, PhoneStateListener.LISTEN_CALL_STATE)
+        }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun TelephonyManager.observeCallState(
+        executor: Executor,
+    ): Observable<Boolean> {
+      return Observable.create { emitter ->
+        val cb =
+            object : TelephonyCallback(), TelephonyCallback.CallStateListener {
+              override fun onCallStateChanged(state: Int) {
+                emitter.onNext(state != TelephonyManager.CALL_STATE_IDLE)
+              }
+            }
+
+        emitter.setCancellable { unregisterTelephonyCallback(cb) }
+        registerTelephonyCallback(executor, cb)
       }
     }
   }

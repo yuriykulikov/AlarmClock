@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.format.DateFormat;
+import com.better.alarm.OreoKt;
 import com.better.alarm.configuration.Prefs;
 import com.better.alarm.configuration.Store;
 import com.better.alarm.interfaces.Intents;
@@ -104,15 +105,23 @@ public class ScheduledReceiver {
       Intent showList = new Intent(context, AlarmsListActivity.class);
       showList.putExtra(Intents.EXTRA_ID, id);
       PendingIntent showIntent =
-          PendingIntent.getActivity(context, id, showList, PendingIntent.FLAG_UPDATE_CURRENT);
+          PendingIntent.getActivity(context, id, showList, OreoKt.pendingIntentUpdateCurrentFlag());
 
       long milliseconds = nextOptional.get().nextNonPrealarmTime();
       am.setAlarmClock(
           new AlarmClockInfo(milliseconds, showIntent),
-          PendingIntent.getBroadcast(context, hashCode(), FAKE_INTENT_JUST_TO_DISPLAY_IN_ICON, 0));
+          PendingIntent.getBroadcast(
+              context,
+              hashCode(),
+              FAKE_INTENT_JUST_TO_DISPLAY_IN_ICON,
+              OreoKt.pendingIntentUpdateCurrentFlag()));
     } else {
       am.cancel(
-          PendingIntent.getBroadcast(context, hashCode(), FAKE_INTENT_JUST_TO_DISPLAY_IN_ICON, 0));
+          PendingIntent.getBroadcast(
+              context,
+              hashCode(),
+              FAKE_INTENT_JUST_TO_DISPLAY_IN_ICON,
+              OreoKt.pendingIntentUpdateCurrentFlag()));
     }
   }
 }

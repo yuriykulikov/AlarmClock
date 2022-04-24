@@ -9,21 +9,19 @@
         android:name="android.permission.WRITE_SETTINGS"
         android:maxSdkVersion="19" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
-    <uses-permission
-        android:name="android.permission.READ_PHONE_STATE"
-        android:maxSdkVersion="22" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
     <application
         android:name=".configuration.AlarmApplication"
+        android:allowBackup="true"
+        android:fullBackupOnly="true"
         android:icon="@mipmap/ic_launcher"
         android:installLocation="internalOnly"
         android:label="@string/simple_alarm_clock"
-        android:fullBackupOnly="true"
-        android:allowBackup="true"
         tools:targetApi="lollipop">
 
         <!-- Activity to set a new or modify existing alarm -->
@@ -44,16 +42,14 @@
         <activity
             android:name=".presenter.SettingsActivity"
             android:excludeFromRecents="true"
-            android:theme="@style/DefaultDarkTheme"
-            android:label="@string/settings">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
+            android:exported="false"
+            android:label="@string/settings"
+            android:theme="@style/DefaultDarkTheme" />
 
         <activity
             android:name=".presenter.HandleSetAlarm"
             android:excludeFromRecents="true"
+            android:exported="true"
             android:permission="com.android.alarm.permission.SET_ALARM"
             android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
@@ -68,8 +64,8 @@
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
-            android:theme="@style/DefaultDarkTheme"
-            android:taskAffinity="" />
+            android:taskAffinity=""
+            android:theme="@style/DefaultDarkTheme" />
 
         <!-- Transparent activity with TimPickerFragment -->
         <activity
