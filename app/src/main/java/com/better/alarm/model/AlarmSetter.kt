@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import com.better.alarm.logger.Logger
+import com.better.alarm.pendingIntentUpdateCurrentFlag
 import com.better.alarm.presenter.AlarmsListActivity
 import java.util.*
 
@@ -44,7 +45,7 @@ interface AlarmSetter {
                 // must be here, otherwise replace does not work
                 setClass(mContext, AlarmsReceiver::class.java)
               },
-              PendingIntent.FLAG_UPDATE_CURRENT)
+              pendingIntentUpdateCurrentFlag())
       am.cancel(pendingAlarm)
     }
 
@@ -59,7 +60,7 @@ interface AlarmSetter {
               }
               .let {
                 PendingIntent.getBroadcast(
-                    mContext, pendingAlarmRequestCode, it, PendingIntent.FLAG_UPDATE_CURRENT)
+                    mContext, pendingAlarmRequestCode, it, pendingIntentUpdateCurrentFlag())
               }
 
       setAlarmStrategy.setRTCAlarm(calendar, pendingAlarm)
@@ -86,7 +87,7 @@ interface AlarmSetter {
                 putExtra(EXTRA_ID, id)
               }
               .let {
-                PendingIntent.getBroadcast(mContext, id, it, PendingIntent.FLAG_UPDATE_CURRENT)
+                PendingIntent.getBroadcast(mContext, id, it, pendingIntentUpdateCurrentFlag())
               }
 
       setAlarmStrategy.setInexactAlarm(calendar, pendingAlarm)
@@ -102,7 +103,7 @@ interface AlarmSetter {
                 // must be here, otherwise replace does not work
                 setClass(mContext, AlarmsReceiver::class.java)
               },
-              PendingIntent.FLAG_UPDATE_CURRENT)
+              pendingIntentUpdateCurrentFlag())
       am.cancel(pendingAlarm)
     }
 
@@ -152,7 +153,7 @@ interface AlarmSetter {
                 mContext,
                 100500,
                 Intent(mContext, AlarmsListActivity::class.java),
-                PendingIntent.FLAG_UPDATE_CURRENT)
+                pendingIntentUpdateCurrentFlag())
         am.setAlarmClock(
             AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingShowList), pendingIntent)
       }

@@ -33,6 +33,7 @@ import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.interfaces.PresentationToModelIntents
 import com.better.alarm.notificationBuilder
+import com.better.alarm.pendingIntentUpdateCurrentFlag
 import com.better.alarm.presenter.TransparentActivity
 import com.better.alarm.util.subscribeForever
 import java.util.Calendar
@@ -58,6 +59,7 @@ class BackgroundNotifications(
         is Event.Autosilenced -> onSoundExpired(event.id)
         is Event.ShowSkip -> onShowSkip(event.id)
         is Event.HideSkip -> nm.cancel(SKIP_NOTIFICATION + event.id)
+        is Event.DemuteEvent, is Event.MuteEvent, is Event.NullEvent -> Unit
       }
     }
   }
@@ -71,7 +73,7 @@ class BackgroundNotifications(
               setClass(mContext, TransparentActivity::class.java)
               putExtra(Intents.EXTRA_ID, id)
             }
-            .let { PendingIntent.getActivity(mContext, id, it, 0) }
+            .let { PendingIntent.getActivity(mContext, id, it, pendingIntentUpdateCurrentFlag()) }
 
     val pendingDismiss =
         PresentationToModelIntents.createPendingIntent(

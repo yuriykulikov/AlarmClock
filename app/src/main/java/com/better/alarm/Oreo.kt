@@ -3,15 +3,10 @@ package com.better.alarm
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
-
-enum class NotificationImportance {
-  HIGH,
-  NORMAL,
-  LOW
-}
 
 const val CHANNEL_ID_HIGH_PRIO = "${BuildConfig.APPLICATION_ID}.NotificationsPlugin"
 const val CHANNEL_ID = "${BuildConfig.APPLICATION_ID}.BackgroundNotifications"
@@ -79,12 +74,14 @@ fun lollipop(action: () -> Unit) {
   }
 }
 
-fun preLollipop(action: () -> Unit) {
-  if (!lollipop()) {
-    action()
-  }
-}
-
 fun lollipop(): Boolean {
   return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+}
+
+fun pendingIntentUpdateCurrentFlag(): Int {
+  return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+  } else {
+    PendingIntent.FLAG_UPDATE_CURRENT
+  }
 }
