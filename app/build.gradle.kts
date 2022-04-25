@@ -130,7 +130,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 dependencies {
   // App dependencies
   implementation(kotlin("stdlib", version = project.extra["kotlin"] as String))
-  implementation("ch.acra:acra-mail:5.9.1")
+  implementation("ch.acra:acra-mail:5.9.3")
   implementation("com.melnykov:floatingactionbutton:1.3.0")
   implementation("io.reactivex.rxjava2:rxjava:2.2.21")
   implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
