@@ -25,7 +25,11 @@ import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.*
+import org.junit.After
+import org.junit.Before
+import org.junit.BeforeClass
+import org.junit.Rule
+import org.junit.Test
 import org.junit.rules.TestRule
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
@@ -71,7 +75,7 @@ class AlarmCoreTest {
     instance.set(Calendar.SECOND, 0)
     instance
   }
-  private val containerFactory = TestContainerFactory(calendars)
+  private val containerFactory = TestAlarmsRepository()
 
   fun advanceTime(timeString: String) {
     require(timeString.contains(":"))
@@ -118,7 +122,8 @@ class AlarmCoreTest {
             stateNotifierMock,
             prefs,
             store,
-            calendars)
+            calendars,
+            onDelete = {})
         .apply {
           start()
           testScheduler.triggerActions()

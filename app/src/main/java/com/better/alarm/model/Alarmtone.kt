@@ -2,6 +2,8 @@ package com.better.alarm.model
 
 import android.net.Uri
 import android.provider.Settings
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 private val defaultAlarmAlertUri = Settings.System.DEFAULT_ALARM_ALERT_URI.toString()
 
@@ -13,20 +15,14 @@ fun Alarmtone.ringtoneManagerString(): Uri? {
   }
 }
 
+@Serializable
 sealed class Alarmtone {
-  object Silent : Alarmtone()
-  object Default : Alarmtone()
-  data class Sound(val uriString: String) : Alarmtone()
-
-  val persistedString: String?
-    get() =
-        when (this) {
-          is Silent -> null
-          is Default -> ""
-          is Sound -> uriString
-        }
+  @SerialName("Silent") @Serializable object Silent : Alarmtone()
+  @SerialName("Default") @Serializable object Default : Alarmtone()
+  @SerialName("Sound") @Serializable data class Sound(val uriString: String) : Alarmtone()
 
   companion object {
+    /** For migration from ContentProvider table */
     fun fromString(string: String?): Alarmtone {
       return when (string) {
         null -> Silent

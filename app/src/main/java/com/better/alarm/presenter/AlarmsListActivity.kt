@@ -50,8 +50,6 @@ import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.logger.Logger
 import com.better.alarm.lollipop
 import com.better.alarm.model.AlarmValue
-import com.better.alarm.model.Alarmtone
-import com.better.alarm.model.DaysOfWeek
 import com.better.alarm.util.Optional
 import com.better.alarm.util.formatToast
 import com.google.android.material.snackbar.Snackbar
@@ -62,10 +60,13 @@ import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import java.util.*
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.protobuf.ProtoBuf
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
 /** This activity displays a list of alarms and optionally a details fragment. */
+@OptIn(ExperimentalSerializationApi::class)
 class AlarmsListActivity : AppCompatActivity() {
   private lateinit var mActionBarHandler: ActionBarHandler
 
@@ -344,19 +345,11 @@ class AlarmsListActivity : AppCompatActivity() {
         id = savedInstanceState.getInt("id"),
         value =
             if (savedInstanceState.getBoolean("isEdited")) {
-              Optional.of(
-                  AlarmValue(
-                      id = savedInstanceState.getInt("id"),
-                      isEnabled = savedInstanceState.getBoolean("isEnabled"),
-                      hour = savedInstanceState.getInt("hour"),
-                      minutes = savedInstanceState.getInt("minutes"),
-                      daysOfWeek = DaysOfWeek(savedInstanceState.getInt("daysOfWeek")),
-                      isPrealarm = savedInstanceState.getBoolean("isPrealarm"),
-                      alarmtone = Alarmtone.fromString(savedInstanceState.getString("alarmtone")),
-                      label = savedInstanceState.getString("label") ?: "",
-                      isVibrate = true,
-                      state = savedInstanceState.getString("state") ?: "",
-                      nextTime = Calendar.getInstance()))
+              val restored =
+                  savedInstanceState.getByteArray("edited")?.let {
+                    ProtoBuf.decodeFromByteArray(AlarmValue.serializer(), it)
+                  }
+              Optional.fromNullable(restored)
             } else {
               Optional.absent()
             })
@@ -373,17 +366,7 @@ class AlarmsListActivity : AppCompatActivity() {
       putBoolean("isEdited", isEdited)
 
       value.getOrNull()?.let { edited ->
-        putInt("id", edited.id)
-        putBoolean("isEnabled", edited.isEnabled)
-        putInt("hour", edited.hour)
-        putInt("minutes", edited.minutes)
-        putInt("daysOfWeek", edited.daysOfWeek.coded)
-        putString("label", edited.label)
-        putBoolean("isPrealarm", edited.isPrealarm)
-        putBoolean("isVibrate", edited.isVibrate)
-        putString("alarmtone", edited.alarmtone.persistedString)
-        putBoolean("skipping", edited.skipping)
-        putString("state", edited.state)
+        putByteArray("edited", ProtoBuf.encodeToByteArray(AlarmValue.serializer(), edited))
       }
 
       logger.trace { "Saved state $toWrite" }
