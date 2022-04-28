@@ -109,10 +109,10 @@ class AlarmsListFragment : Fragment() {
       row.container
           // onOff
           .setOnClickListener {
-        val enable = !alarm.isEnabled
-        logger.debug { "onClick: ${if (enable) "enable" else "disable"}" }
-        alarms.getAlarm(alarm.id)?.enable(enable)
-      }
+            val enable = !alarm.isEnabled
+            logger.debug { "onClick: ${if (enable) "enable" else "disable"}" }
+            alarms.getAlarm(alarm.id)?.enable(enable)
+          }
 
       val pickerClickTarget =
           with(row) { if (layout == Layout.CLASSIC) digitalClockContainer else digitalClock }
@@ -234,8 +234,7 @@ class AlarmsListFragment : Fragment() {
     lollipop { (fab as FloatingActionButton).attachToListView(listView) }
 
     alarmsSub =
-        prefs
-            .listRowLayout
+        prefs.listRowLayout
             .observe()
             .switchMap { uiStore.transitioningToNewAlarmDetails() }
             .switchMap { transitioning ->
@@ -332,8 +331,7 @@ class AlarmsListFragment : Fragment() {
                           slideOffset,
                           closedColor,
                           openColor,
-                      ) as
-                      Int
+                      ) as Int
               setDrawerBackgrounds(color)
 
               drawerContainer.elevation = initialElevation * slideOffset

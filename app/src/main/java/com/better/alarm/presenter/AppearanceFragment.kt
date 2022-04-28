@@ -47,10 +47,12 @@ class AppearanceFragment : Fragment() {
       findViewById<LinearLayout>(R.id.appearance_row_layout).apply {
         removeAllViews()
         val layouts = layouts(resources)
-        layouts.sortedBy { it.perceivedSize }.forEachIndexed { index, layout ->
-          appendLayoutButton(inflater, layout)
-          if (index != layouts.lastIndex) appendDivider(inflater)
-        }
+        layouts
+            .sortedBy { it.perceivedSize }
+            .forEachIndexed { index, layout ->
+              appendLayoutButton(inflater, layout)
+              if (index != layouts.lastIndex) appendDivider(inflater)
+            }
       }
     }
   }

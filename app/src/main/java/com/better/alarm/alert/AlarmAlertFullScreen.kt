@@ -85,8 +85,7 @@ class AlarmAlertFullScreen : FragmentActivity() {
 
     // Register to get the alarm killed/snooze/dismiss intent.
     subscription =
-        store
-            .events
+        store.events
             .filter { event ->
               (event is SnoozedEvent && event.id == id ||
                   event is DismissEvent && event.id == id ||

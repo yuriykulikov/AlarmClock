@@ -193,8 +193,7 @@ class AlarmDetailsFragment : Fragment() {
     observeEditor { value -> mPreAlarmCheckBox.isChecked = value.isPrealarm }
 
     // pre-alarm duration, if set to "none", remove the option
-    prefs
-        .preAlarmDuration
+    prefs.preAlarmDuration
         .observe()
         .subscribe { value ->
           mPreAlarmRow.visibility = if (value.toInt() == -1) View.GONE else View.VISIBLE

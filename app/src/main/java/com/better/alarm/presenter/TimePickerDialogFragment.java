@@ -46,7 +46,9 @@ public class TimePickerDialogFragment extends DialogFragment {
   private SingleEmitter<Optional<PickedTime>> emitter;
   private Disposable disposable = Disposables.disposed();
 
-  /** @return */
+  /**
+   * @return
+   */
   public static TimePickerDialogFragment newInstance() {
     final TimePickerDialogFragment frag = new TimePickerDialogFragment();
     Bundle args = new Bundle();

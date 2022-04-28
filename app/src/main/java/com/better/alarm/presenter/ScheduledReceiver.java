@@ -32,7 +32,9 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 import java.util.Calendar;
 
-/** @author Yuriy */
+/**
+ * @author Yuriy
+ */
 public class ScheduledReceiver {
   private static final String DM12 = "E h:mm aa";
   private static final String DM24 = "E kk:mm";

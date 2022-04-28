@@ -76,8 +76,8 @@ fun <T : Appender<ILoggingEvent>> LoggerContext.addAppender(
   appender.start()
 
   val root =
-      org.slf4j.LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME) as
-          ch.qos.logback.classic.Logger
+      org.slf4j.LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME)
+          as ch.qos.logback.classic.Logger
 
   root.addAppender(
       when {
