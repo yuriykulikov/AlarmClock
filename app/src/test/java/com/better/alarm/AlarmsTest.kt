@@ -1,8 +1,6 @@
 package com.better.alarm
 
 import com.better.alarm.AlarmSchedulerTest.SetterMock
-import com.better.alarm.DatabaseQueryMock.Companion.createStub
-import com.better.alarm.DatabaseQueryMock.Companion.createWithFactory
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.Prefs.Companion.create
 import com.better.alarm.configuration.Store
@@ -11,15 +9,17 @@ import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
 import com.better.alarm.model.AlarmCore
 import com.better.alarm.model.AlarmCore.IStateNotifier
-import com.better.alarm.model.AlarmCoreFactory
+import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.Alarms
 import com.better.alarm.model.AlarmsScheduler
 import com.better.alarm.model.CalendarType
 import com.better.alarm.model.Calendars
 import com.better.alarm.model.DaysOfWeek
+import com.better.alarm.model.modify
 import com.better.alarm.persistance.DatabaseQuery
 import com.better.alarm.stores.InMemoryRxDataStoreFactory
 import com.better.alarm.util.Optional.Companion.absent
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import io.reactivex.Single
@@ -27,6 +27,7 @@ import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import java.util.*
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -48,7 +49,9 @@ class AlarmsTest {
     instance[Calendar.MINUTE] = currentMinute
     instance
   }
-  private val containerFactory = TestContainerFactory(calendars)
+  private val alarmsRepository = TestAlarmsRepository()
+  private val databaseQuery =
+      mockk<DatabaseQuery>(relaxed = true) { every { query() } returns emptyList() }
 
   @Rule
   @JvmField
@@ -72,21 +75,20 @@ class AlarmsTest {
             PublishSubject.create())
   }
 
-  private fun createAlarms(query: DatabaseQuery = mockQuery()): Alarms {
+  private fun createAlarms(): Alarms {
     val alarmsScheduler = AlarmsScheduler(alarmSetterMock, logger, store, prefs, calendars)
     val alarms =
         Alarms(
+            prefs,
+            store,
+            calendars,
             alarmsScheduler,
-            query,
-            AlarmCoreFactory(logger, alarmsScheduler, stateNotifierMock, prefs, store, calendars),
-            containerFactory,
-            logger)
+            stateNotifierMock,
+            alarmsRepository,
+            logger,
+            databaseQuery)
     alarmsScheduler.start()
     return alarms
-  }
-
-  private fun mockQuery(): DatabaseQuery {
-    return createStub(ArrayList())
   }
 
   @Test
@@ -141,8 +143,10 @@ class AlarmsTest {
 
   @Test
   fun alarmsFromMemoryMustBePresentInTheList() {
+    // given
+    alarmsRepository.create().modify { copy(isEnabled = true, label = "hello") }
+    val instance = createAlarms()
     // when
-    val instance = createAlarms(createWithFactory(TestContainerFactory { Calendar.getInstance() }))
     instance.start()
 
     // verify
@@ -336,13 +340,11 @@ class AlarmsTest {
     instance.onAlarmFired((newAlarm as AlarmCore), CalendarType.NORMAL)
     verify { stateNotifierMock.broadcastAlarmState(newAlarm.id, Intents.ALARM_ALERT_ACTION) }
     newAlarm.snooze()
-    val record = containerFactory.createdRecords[0]
+    val record = alarmsRepository.createdRecords[0]
     println("------------")
     // now we simulate it started all over again
     alarmSetterMock.removeRTCAlarm()
-    createStub(containerFactory.createdRecords)
-    val query = createStub(containerFactory.createdRecords)
-    val newAlarms = createAlarms(query)
+    val newAlarms = createAlarms()
     newAlarms.start()
     Assertions.assertThat(alarmSetterMock.id).isEqualTo(record.value.id)
   }
@@ -370,12 +372,11 @@ class AlarmsTest {
   @Test
   fun snoozedAlarmsMustGoOutOfHibernationIfItWasRescheduled() {
     snoozedAlarmsMustCanBeRescheduled()
-    val record = containerFactory.createdRecords[0]
+    val record = alarmsRepository.createdRecords[0]
     println("------------")
     // now we simulate it started all over again
     alarmSetterMock.removeRTCAlarm()
-    val query = createStub(containerFactory.createdRecords)
-    val newAlarms = createAlarms(query)
+    val newAlarms = createAlarms()
     newAlarms.start()
     Assertions.assertThat(alarmSetterMock.id).isEqualTo(record.value.id)
     // TODO
@@ -404,5 +405,42 @@ class AlarmsTest {
     verify(exactly = 1) {
       stateNotifierMock.broadcastAlarmState(newAlarm.id, Intents.ALARM_DISMISS_ACTION)
     }
+  }
+
+  @Test
+  fun `when repository is not initialized and database is empty then default alarms are created`() {
+    alarmsRepository.initialized = false
+
+    // when
+    createAlarms().start()
+
+    // verify
+    assertThat(store.alarms().test().values().first())
+        .containsAll(
+            listOf(
+                AlarmValue(id = 0, hour = 8, minutes = 30, daysOfWeek = DaysOfWeek(31)),
+                AlarmValue(id = 1, hour = 9, minutes = 0, daysOfWeek = DaysOfWeek(96)),
+            ))
+  }
+
+  @Test
+  fun `when repository is not initialized and database contains alarms then alarms are migrated`() {
+    alarmsRepository.initialized = false
+    val alarmsInDatabase =
+        listOf(
+            AlarmValue(id = 0, hour = 8, minutes = 30),
+            AlarmValue(id = 1, hour = 9, minutes = 0, daysOfWeek = DaysOfWeek(31)),
+            AlarmValue(id = 2, hour = 10, minutes = 30, isEnabled = true),
+        )
+    every { databaseQuery.query() } returns alarmsInDatabase
+
+    // when
+    createAlarms().start()
+
+    // verify
+    assertThat(store.alarms().test().values().first()).containsAll(alarmsInDatabase)
+    verify { databaseQuery.delete(0) }
+    verify { databaseQuery.delete(1) }
+    verify { databaseQuery.delete(2) }
   }
 }

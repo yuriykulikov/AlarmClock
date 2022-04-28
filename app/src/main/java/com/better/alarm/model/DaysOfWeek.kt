@@ -4,16 +4,20 @@ import android.content.Context
 import com.better.alarm.R
 import java.text.DateFormatSymbols
 import java.util.Calendar
+import kotlinx.serialization.Serializable
 
 /*
  * Days of week code as a single int. 0x00: no day 0x01: Monday 0x02:
  * Tuesday 0x04: Wednesday 0x08: Thursday 0x10: Friday 0x20: Saturday 0x40:
  * Sunday
  */
+@Serializable
 data class DaysOfWeek(val coded: Int) {
   // Returns days of week encoded in an array of booleans.
-  val booleanArray = BooleanArray(7) { index -> index.isSet() }
-  val isRepeatSet = coded != 0
+  val booleanArray
+    get() = BooleanArray(7) { index -> index.isSet() }
+  val isRepeatSet
+    get() = coded != 0
 
   fun toString(context: Context, showNever: Boolean): String {
     return when {

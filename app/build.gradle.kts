@@ -2,6 +2,7 @@ plugins {
   id("com.android.application")
   kotlin("android")
   jacoco
+  kotlin("plugin.serialization") version "1.6.20"
 }
 
 jacoco { toolVersion = "0.8.8" }
@@ -13,8 +14,8 @@ tasks.create("jacocoTestReport", JacocoReport::class.java) {
   description = "Generate Jacoco coverage reports."
 
   reports {
-    xml.isEnabled = true
-    html.isEnabled = true
+    xml.required.set(true)
+    html.required.set(true)
   }
 
   val fileFilter =
@@ -24,31 +25,32 @@ tasks.create("jacocoTestReport", JacocoReport::class.java) {
           "**/BuildConfig.*",
           "**/Manifest*.*",
           "**/*Test*.*",
-          "android/**/*.*")
+          "android/**/*.*",
+          "**/*\$\$serializer.class",
+      )
 
   val developDebug = "developDebug"
 
   sourceDirectories.setFrom(
       files(listOf("$projectDir/src/main/java", "$projectDir/src/main/kotlin")))
+
   classDirectories.setFrom(
       files(
           listOf(
-              fileTree(
-                  "dir" to "$buildDir/intermediates/javac/$developDebug", "excludes" to fileFilter),
-              fileTree(
-                  "dir" to "$buildDir/tmp/kotlin-classes/$developDebug",
-                  "excludes" to fileFilter))))
+              fileTree("$buildDir/intermediates/javac/$developDebug") { exclude(fileFilter) },
+              fileTree("$buildDir/tmp/kotlin-classes/$developDebug") { exclude(fileFilter) },
+          )))
 
   // execution data from both unit and instrumentation tests
   executionData.setFrom(
-      fileTree(
-          "dir" to project.buildDir,
-          "includes" to
-              listOf(
-                  // unit tests
-                  "jacoco/test${"developDebug".capitalize()}UnitTest.exec",
-                  // instrumentation tests
-                  "outputs/code_coverage/${developDebug}AndroidTest/connected/**/*.ec")))
+      fileTree(project.buildDir) {
+        include(
+            // unit tests
+            "jacoco/test${"developDebug".capitalize()}UnitTest.exec",
+            // instrumentation tests
+            "outputs/code_coverage/${developDebug}AndroidTest/connected/**/*.ec",
+        )
+      })
 
   // dependsOn("test${"developDebug".capitalize()}UnitTest")
   // dependsOn("connected${"developDebug".capitalize()}AndroidTest")
@@ -142,6 +144,9 @@ dependencies {
   implementation("org.slf4j:slf4j-api:1.7.36")
   implementation("com.github.tony19:logback-android:2.0.0")
   implementation("androidx.multidex:multidex:2.0.1")
+  implementation("androidx.datastore:datastore:1.0.0")
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.3.2")
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 }
 
 dependencies {

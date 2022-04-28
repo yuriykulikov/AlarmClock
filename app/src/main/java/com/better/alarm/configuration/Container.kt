@@ -7,6 +7,7 @@ import android.media.AudioManager
 import android.os.PowerManager
 import android.os.Vibrator
 import android.telephony.TelephonyManager
+import android.text.format.DateFormat
 import com.better.alarm.alert.BackgroundNotifications
 import com.better.alarm.background.AlertServicePusher
 import com.better.alarm.background.KlaxonPlugin
@@ -17,17 +18,17 @@ import com.better.alarm.logger.Logger
 import com.better.alarm.logger.LoggerFactory
 import com.better.alarm.logger.loggerModule
 import com.better.alarm.model.AlarmCore
-import com.better.alarm.model.AlarmCoreFactory
 import com.better.alarm.model.AlarmSetter
 import com.better.alarm.model.AlarmStateNotifier
 import com.better.alarm.model.Alarms
+import com.better.alarm.model.AlarmsRepository
 import com.better.alarm.model.AlarmsScheduler
 import com.better.alarm.model.Calendars
-import com.better.alarm.model.ContainerFactory
 import com.better.alarm.model.IAlarmsScheduler
+import com.better.alarm.persistance.DataStoreAlarmsRepository
 import com.better.alarm.persistance.DatabaseQuery
-import com.better.alarm.persistance.PersistingContainerFactory
-import com.better.alarm.persistance.RetryingDatabaseQuery
+import com.better.alarm.persistance.DatastoreMigration
+import com.better.alarm.persistance.SQLiteDatabaseQuery
 import com.better.alarm.presenter.AlarmsListActivity
 import com.better.alarm.presenter.DynamicThemeHandler
 import com.better.alarm.presenter.ScheduledReceiver
@@ -42,13 +43,15 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
-import java.util.ArrayList
-import java.util.Calendar
+import java.io.File
+import java.util.*
+import kotlinx.coroutines.Dispatchers
 import org.koin.core.Koin
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
 import org.koin.core.qualifier.named
 import org.koin.core.scope.Scope
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 fun Scope.logger(tag: String): Logger {
@@ -70,7 +73,7 @@ fun startKoin(context: Context): Koin {
     factory<Single<Boolean>>(named("dateFormat")) {
       Single.fromCallable {
         get<String>(named("dateFormatOverride")).let { if (it == "none") null else it.toBoolean() }
-            ?: android.text.format.DateFormat.is24HourFormat(context)
+            ?: DateFormat.is24HourFormat(context)
       }
     }
 
@@ -95,14 +98,19 @@ fun startKoin(context: Context): Koin {
     }
     factory<IAlarmsScheduler> { get<AlarmsScheduler>() }
     single<AlarmCore.IStateNotifier> { AlarmStateNotifier(get()) }
-    single<ContainerFactory> { PersistingContainerFactory(get(), get()) }
-    factory { get<Context>().contentResolver }
-    single<DatabaseQuery> { RetryingDatabaseQuery(get(), get(), logger("DatabaseQuery")) }
-    single<AlarmCoreFactory> {
-      AlarmCoreFactory(logger("AlarmCore"), get(), get(), get(), get(), get())
+    single<AlarmsRepository> {
+      DataStoreAlarmsRepository(
+          datastoreDir = get(named("datastore")),
+          logger = logger("DataStoreAlarmsRepository"),
+          ioDispatcher = Dispatchers.IO,
+      )
     }
-    single<Alarms> { Alarms(get(), get(), get(), get(), logger("Alarms")) }
-    factory<IAlarmsManager> { get<Alarms>() }
+    single(named("datastore")) { File(get<Context>().applicationContext.filesDir, "datastore") }
+    factory { get<Context>().contentResolver }
+    single<DatabaseQuery> { SQLiteDatabaseQuery(get()) }
+    single { Alarms(get(), get(), get(), get(), get(), get(), logger("Alarms"), get()) }
+        .bind(IAlarmsManager::class)
+        .bind(DatastoreMigration::class)
     single { ScheduledReceiver(get(), get(), get(), get()) }
     single { ToastPresenter(get(), get()) }
     single { AlertServicePusher(get(), get(), get(), logger("AlertServicePusher")) }

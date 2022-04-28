@@ -69,10 +69,8 @@ private object AlarmApplicationInit {
 
     koin.get<BugReporter>().attachToMainThread(this)
 
-    // must be after sContainer
     PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
 
-    // TODO make it lazy
     koin.get<ScheduledReceiver>().start()
     koin.get<ToastPresenter>().start()
     koin.get<AlertServicePusher>()

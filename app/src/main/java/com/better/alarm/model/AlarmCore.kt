@@ -26,13 +26,11 @@ import com.better.alarm.logger.Logger
 import com.better.alarm.statemachine.ComplexTransition
 import com.better.alarm.statemachine.State
 import com.better.alarm.statemachine.StateMachine
-import com.better.alarm.stores.modify
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
+import java.util.*
 
 sealed class Event {
   override fun toString(): String = javaClass.simpleName
@@ -122,7 +120,8 @@ class AlarmCore(
     private val broadcaster: IStateNotifier,
     private val prefs: Prefs,
     private val store: Store,
-    private val calendars: Calendars
+    private val calendars: Calendars,
+    private val onDelete: (Int) -> Unit,
 ) : Alarm {
   private val stateMachine: StateMachine<Event>
   private val df: DateFormat
@@ -210,8 +209,9 @@ class AlarmCore(
   private inner class DeletedState : AlarmState() {
     override fun onEnter(reason: Event) {
       removeAlarm()
-      alarmStore.delete()
       removeFromStore()
+      onDelete(id)
+      alarmStore.delete()
       disposable.dispose()
     }
   }
@@ -838,6 +838,7 @@ class AlarmCore(
     val prev = container
     change(
         func(prev).also {
+          require(prev.id == it.id)
           require(prev.state == it.state)
           require(prev.nextTime == it.nextTime)
         })

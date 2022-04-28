@@ -11,18 +11,15 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.anything;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.Intent;
 import androidx.test.platform.app.InstrumentationRegistry;
 import com.better.alarm.R;
-import com.better.alarm.logger.Logger;
 import com.better.alarm.model.AlarmValue;
-import com.better.alarm.persistance.AlarmDatabaseHelper;
+import com.better.alarm.model.TestReceiver;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Predicate;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 
 /** Created by Yuriy on 11.07.2017. */
 public class BaseTest {
@@ -39,19 +36,21 @@ public class BaseTest {
   }
 
   protected static void sleep() {
-    sleep(1000);
+    sleep(500);
   }
 
-  @BeforeClass
-  @AfterClass
   public static void dropDatabase() {
-    final Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-    AlarmDatabaseHelper dbHelper = new AlarmDatabaseHelper(context, Logger.create());
-    SQLiteDatabase db = dbHelper.getWritableDatabase();
-    db.execSQL("DROP TABLE IF EXISTS alarms");
-    dbHelper.onCreate(db);
-    db.close();
-    System.out.println("Dropped database");
+    Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+    Intent intent = new Intent(TestReceiver.ACTION_DROP_AND_INSERT_DEFAULTS);
+    intent.setClass(targetContext, TestReceiver.class);
+    targetContext.sendBroadcast(intent);
+    sleep();
+  }
+
+  @Before
+  @After
+  public void cleanup() {
+    dropDatabase();
   }
 
   protected void deleteAlarm(int position) {

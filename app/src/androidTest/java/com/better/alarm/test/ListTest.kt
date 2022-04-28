@@ -19,8 +19,10 @@ import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.AlarmsReceiver
 import com.better.alarm.model.CalendarType
 import com.better.alarm.presenter.AlarmsListActivity
-import java.util.Locale
+import java.util.*
 import org.hamcrest.Matchers.anything
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
@@ -34,6 +36,13 @@ class ListTest : BaseTest() {
   @JvmField
   @Rule
   var chain: TestRule = RuleChain.outerRule(ForceLocaleRule(Locale.US)).around(listActivity)
+
+  @Before
+  @After
+  fun drop() {
+    println("Drop!!!")
+    dropDatabase()
+  }
 
   @Test
   fun newAlarmShouldBeDisabledIfNotEdited() {

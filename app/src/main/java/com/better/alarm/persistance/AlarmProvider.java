@@ -27,13 +27,10 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 import com.better.alarm.BuildConfig;
-import com.better.alarm.logger.Logger;
 import com.better.alarm.util.Preconditions;
 
 public class AlarmProvider extends ContentProvider {
   private AlarmDatabaseHelper mOpenHelper;
-
-  private Logger log;
 
   private static final int ALARMS = 1;
   private static final int ALARMS_ID = 2;
@@ -46,8 +43,7 @@ public class AlarmProvider extends ContentProvider {
 
   @Override
   public boolean onCreate() {
-    log = Logger.create();
-    mOpenHelper = new AlarmDatabaseHelper(getContext(), log);
+    mOpenHelper = new AlarmDatabaseHelper(getContext());
     return true;
   }
 
@@ -65,9 +61,7 @@ public class AlarmProvider extends ContentProvider {
     try {
       ret = qb.query(db, projectionIn, selection, selectionArgs, null, null, sort);
     } catch (SQLException e) {
-      log.e("query failed because of " + e.getMessage() + ", recreating DB");
       db.execSQL("DROP TABLE IF EXISTS alarms");
-      // I know this is not nice to call onCreate() by ourselves :-)
       mOpenHelper.onCreate(db);
       ret = qb.query(db, projectionIn, selection, selectionArgs, null, null, sort);
     }
@@ -93,21 +87,12 @@ public class AlarmProvider extends ContentProvider {
 
   @Override
   public int update(Uri url, ContentValues values, String where, String[] whereArgs) {
-    Preconditions.checkArgument(sURLMatcher.match(url) == ALARMS_ID, "Invalid URL %s", url);
-    SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-    String segment = url.getPathSegments().get(1);
-    long rowId = Long.parseLong(segment);
-    int count = db.update("alarms", values, "_id=" + rowId, null);
-    getContext().getContentResolver().notifyChange(url, null);
-    return count;
+    throw new UnsupportedOperationException("Not supported");
   }
 
   @Override
   public Uri insert(Uri url, ContentValues initialValues) {
-    Preconditions.checkArgument(sURLMatcher.match(url) == ALARMS, "Invalid URL %s", url);
-    Uri newUrl = mOpenHelper.commonInsert(initialValues);
-    getContext().getContentResolver().notifyChange(newUrl, null);
-    return newUrl;
+    throw new UnsupportedOperationException("Not supported");
   }
 
   @Override
