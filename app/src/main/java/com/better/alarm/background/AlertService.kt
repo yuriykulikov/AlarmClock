@@ -89,23 +89,25 @@ class AlertService(
 
   init {
     wakelocks.acquireServiceLock()
-    activeAlarms.distinctUntilChanged().skipWhile { it.isEmpty() }.subscribeIn(disposable) { active
-      ->
-      if (active.isNotEmpty()) {
-        log.debug { "activeAlarms: $active" }
-        playSound(active)
-        showNotifications(active)
-      } else {
-        log.debug { "no alarms anymore, stopSelf()" }
-        soundAlarmDisposable.dispose()
-        wantedVolume.onNext(TargetVolume.MUTED)
-        nowShowing
-            .filter { !isOreo() || it != 0 } // not the foreground notification
-            .forEach { notifications.cancel(it) }
-        enclosing.stopSelf()
-        disposable.dispose()
-      }
-    }
+    activeAlarms
+        .distinctUntilChanged()
+        .skipWhile { it.isEmpty() }
+        .subscribeIn(disposable) { active ->
+          if (active.isNotEmpty()) {
+            log.debug { "activeAlarms: $active" }
+            playSound(active)
+            showNotifications(active)
+          } else {
+            log.debug { "no alarms anymore, stopSelf()" }
+            soundAlarmDisposable.dispose()
+            wantedVolume.onNext(TargetVolume.MUTED)
+            nowShowing
+                .filter { !isOreo() || it != 0 } // not the foreground notification
+                .forEach { notifications.cancel(it) }
+            enclosing.stopSelf()
+            disposable.dispose()
+          }
+        }
   }
 
   fun onDestroy() {
@@ -165,11 +167,13 @@ class AlertService(
   private fun showNotifications(active: Map<Int, Type>) {
     require(active.isNotEmpty())
     val toShow =
-        active.mapNotNull { (id, _) -> alarms.getAlarm(id) }.map { alarm ->
-          val alarmtone = alarm.alarmtone
-          val label = alarm.labelOrDefault
-          PluginAlarmData(alarm.id, alarmtone, label)
-        }
+        active
+            .mapNotNull { (id, _) -> alarms.getAlarm(id) }
+            .map { alarm ->
+              val alarmtone = alarm.alarmtone
+              val label = alarm.labelOrDefault
+              PluginAlarmData(alarm.id, alarmtone, label)
+            }
 
     log.debug { "Show notifications: $toShow" }
 

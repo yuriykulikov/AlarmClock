@@ -62,8 +62,7 @@ tasks.withType(Test::class.java) {
 }
 
 val acraEmail =
-    project
-        .rootProject
+    project.rootProject
         .file("local.properties")
         .let { if (it.exists()) it.readLines() else emptyList() }
         .firstOrNull { it.startsWith("acra.email") }

@@ -40,8 +40,8 @@ class InfoFragment : Fragment() {
     val fadeOut = AnimationUtils.loadAnimation(requireActivity(), android.R.anim.fade_out)
     val viewFactory =
         ViewSwitcher.ViewFactory {
-          requireActivity().layoutInflater.inflate(R.layout.info_fragment_text, container, false) as
-              TextView
+          requireActivity().layoutInflater.inflate(R.layout.info_fragment_text, container, false)
+              as TextView
         }
 
     val remainingTime: TextSwitcher =

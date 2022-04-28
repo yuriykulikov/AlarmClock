@@ -24,8 +24,7 @@ class BugReporter(
   }
 
   private fun rollingLogs() =
-      context
-          .filesDir
+      context.filesDir
           .walk()
           .filter { it.name.startsWith("rolling") }
           .sortedBy { it.name }

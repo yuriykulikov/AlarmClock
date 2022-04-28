@@ -185,8 +185,7 @@ class AlertServiceWrapper : Service() {
                     }
                   })
             }
-            .koin
-            .get()
+            .koin.get()
   }
 
   override fun onDestroy() {
