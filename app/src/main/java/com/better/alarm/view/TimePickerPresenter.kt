@@ -49,7 +49,8 @@ open class TimePickerPresenter(private val is24HoursMode: Boolean) {
       Key.EIGHT -> input = input.plus(8)
       Key.NINE -> input = input.plus(9)
       Key.ZERO -> input = input.plus(0)
-      Key.LEFT, Key.RIGHT -> leftRightEntered = true
+      Key.LEFT,
+      Key.RIGHT -> leftRightEntered = true
       else -> {}
     }
 
