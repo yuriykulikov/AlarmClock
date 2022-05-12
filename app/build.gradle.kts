@@ -147,7 +147,7 @@ dependencies {
 dependencies {
   testImplementation("net.wuerl.kotlin:assertj-core-kotlin:0.2.1")
   testImplementation("junit:junit:4.13.2")
-  testImplementation("io.mockk:mockk:1.12.3")
+  testImplementation("io.mockk:mockk:1.12.4")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1")
 }
 
