@@ -50,6 +50,7 @@ import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.logger.Logger
 import com.better.alarm.lollipop
 import com.better.alarm.model.AlarmValue
+import com.better.alarm.model.AlarmsRepository
 import com.better.alarm.util.Optional
 import com.better.alarm.util.formatToast
 import com.google.android.material.snackbar.Snackbar
@@ -60,6 +61,7 @@ import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import java.util.*
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.protobuf.ProtoBuf
 import org.koin.core.module.Module
@@ -73,6 +75,7 @@ class AlarmsListActivity : AppCompatActivity() {
   private val logger: Logger by globalLogger("AlarmsListActivity")
   private val alarms: IAlarmsManager by globalInject()
   private val store: Store by globalInject()
+  private val repository: AlarmsRepository by globalInject()
 
   private var sub = Disposables.disposed()
   private var snackbarDisposable = Disposables.disposed()
@@ -230,6 +233,7 @@ class AlarmsListActivity : AppCompatActivity() {
   override fun onPause() {
     super.onPause()
     store.uiVisible.onNext(false)
+    runBlocking { repository.awaitStored() }
   }
 
   override fun onStop() {

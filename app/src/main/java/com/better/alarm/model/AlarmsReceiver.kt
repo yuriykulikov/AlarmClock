@@ -22,9 +22,11 @@ import com.better.alarm.configuration.globalInject
 import com.better.alarm.configuration.globalLogger
 import com.better.alarm.interfaces.PresentationToModelIntents
 import com.better.alarm.logger.Logger
+import kotlinx.coroutines.runBlocking
 
 class AlarmsReceiver : BroadcastReceiver() {
   private val alarms: Alarms by globalInject()
+  private val repository: AlarmsRepository by globalInject()
   private val log: Logger by globalLogger("AlarmsReceiver")
 
   override fun onReceive(context: Context, intent: Intent) {
@@ -65,5 +67,6 @@ class AlarmsReceiver : BroadcastReceiver() {
         alarms.getAlarm(id)?.requestSkip()
       }
     }
+    runBlocking { repository.awaitStored() }
   }
 }
