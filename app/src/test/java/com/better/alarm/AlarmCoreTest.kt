@@ -112,7 +112,7 @@ class AlarmCoreTest {
     testScheduler.triggerActions()
   }
 
-  fun createAlarm(): AlarmCore {
+  private fun createAlarm(): AlarmCore {
     val alarmsScheduler = AlarmsScheduler(alarmSetterMock, logger, store, prefs, calendars)
     alarmsScheduler.start()
     return AlarmCore(

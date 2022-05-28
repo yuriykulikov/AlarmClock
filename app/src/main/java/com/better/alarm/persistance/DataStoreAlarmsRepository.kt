@@ -63,7 +63,6 @@ class DataStoreAlarmsRepository(
     val id = (0..Int.MAX_VALUE).first { it !in stores.keys }
     val store = createProtobufStore(id, AlarmValue())
     stores[store.id] = store
-    logger.debug { "create(): ${store.id}" }
     store.modify { AlarmValue(id = id) }
     return store
   }
@@ -77,8 +76,7 @@ class DataStoreAlarmsRepository(
     get() = datastoreDir.resolve("alarms").exists()
 
   override suspend fun awaitStored() {
-    logger.debug { "awaitStored(): $stores" }
-    stores.forEach { (id, store) -> store.awaitStored() }
+    stores.forEach { (_, store) -> store.awaitStored() }
   }
   private fun createProtobufStore(id: Int, value: AlarmValue) =
       ProtobufAlarmStore(
