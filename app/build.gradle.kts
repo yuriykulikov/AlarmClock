@@ -136,7 +136,7 @@ dependencies {
   implementation("org.koin:koin-core:2.2.2")
   implementation("androidx.fragment:fragment:1.4.1")
   implementation("androidx.preference:preference:1.2.0")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1")
   implementation("com.google.android.material:material:1.6.1")
   implementation("org.slf4j:slf4j-api:1.7.36")
