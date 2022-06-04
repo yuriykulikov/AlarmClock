@@ -203,4 +203,5 @@
        \n\nClick OK to jump to system settings and select the second highest priority for this notification (Make sound).
 
        \n\nIronically, you should set the sound to "none" in advanced settings.</string>
+    <string name="date">Date</string>
 </resources>

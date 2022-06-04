@@ -20,11 +20,9 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class DaysOfWeek(val coded: Int) {
-  // Returns days of week encoded in an array of booleans.
-  val booleanArray
-    get() = BooleanArray(7) { index -> index.isSet() }
-  val isRepeatSet
-    get() = coded != 0
+  fun isDaySet(dayIndex: Int): Boolean {
+    return dayIndex.isSet()
+  }
 
   fun toString(context: Context, showNever: Boolean): String {
     return when {
@@ -74,6 +72,16 @@ data class DaysOfWeek(val coded: Int) {
         (if (4.isSet()) 'f' else '_') +
         (if (5.isSet()) 's' else '_') +
         if (6.isSet()) 's' else '_'
+  }
+
+  fun withSet(position: Int): DaysOfWeek {
+    require(position in 0..7) { "Invalid position: $position" }
+    return DaysOfWeek(coded or (1 shl position))
+  }
+
+  fun withCleared(position: Int): DaysOfWeek {
+    require(position in 0..7) { "Invalid position: $position" }
+    return DaysOfWeek(coded and (1 shl position).inv())
   }
 
   companion object {

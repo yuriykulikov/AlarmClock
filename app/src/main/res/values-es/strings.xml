@@ -143,4 +143,5 @@ Todas las notificaciones están desactivadas, ¡incluida la gran ventana emergen
        \n\nEs posible que haya apagado o cambiado accidentalmente la configuración de notificaciones.
        \n\nHaga clic en Aceptar para ir a la configuración y luego seleccione la segunda acción superior (Sonido).
        \n\nEsto puede parecer extraño, pero simplemente apague el sonido en la configuración avanzada.</string>
+    <string name="date">Fecha</string>
 </resources>

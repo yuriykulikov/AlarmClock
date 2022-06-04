@@ -381,4 +381,56 @@ class AlarmCoreTest {
     // no other alarms is set
     assertThat(alarmSetterMock.calendar).isNull()
   }
+
+  @Test
+  fun `Set alarm on a specific date`() {
+    val alarm = createAlarm()
+    act("Set on 18 ov November") {
+      alarm.edit {
+        copy(
+            date =
+                Calendar.getInstance().apply {
+                  set(Calendar.MONTH, 11)
+                  set(Calendar.DAY_OF_MONTH, 18)
+                },
+            isEnabled = true,
+            hour = 13,
+            minutes = 15,
+        )
+      }
+    }
+    val calendar = requireNotNull(alarmSetterMock.calendar)
+    assertThat(calendar.get(Calendar.DAY_OF_MONTH)).isEqualTo(18)
+    assertThat(calendar.get(Calendar.MONTH)).isEqualTo(11)
+    assertThat(calendar.get(Calendar.HOUR_OF_DAY)).isEqualTo(13)
+    assertThat(calendar.get(Calendar.MINUTE)).isEqualTo(15)
+  }
+
+  @Test
+  fun `Alarm on a specific date does not reschedule`() {
+    val alarm = createAlarm()
+    act("Set two days from now") {
+      alarm.edit {
+        copy(
+            date =
+                Calendar.getInstance().apply {
+                  set(Calendar.DAY_OF_YEAR, get(Calendar.DAY_OF_YEAR + 2))
+                },
+            isEnabled = true,
+            hour = 13,
+            minutes = 15,
+        )
+      }
+    }
+
+    currentDay += 2
+    currentHour = 13
+    currentMinute = 15
+
+    act("Fired") { alarm.onAlarmFired() }
+    act("Dismiss") { alarm.dismiss() }
+
+    // then no rescheduling
+    assertThat(alarmSetterMock.calendar).isNull()
+  }
 }

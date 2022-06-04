@@ -47,15 +47,15 @@ import com.better.alarm.model.Alarmtone
 import com.better.alarm.model.ringtoneManagerString
 import com.better.alarm.util.Optional
 import com.better.alarm.util.modify
-import com.better.alarm.view.showDialog
-import com.better.alarm.view.summary
+import com.better.alarm.view.showRepeatAndDateDialog
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
-import java.util.Calendar
+import java.text.SimpleDateFormat
+import java.util.*
 
 /** Details activity allowing for fine-grained alarm modification */
 class AlarmDetailsFragment : Fragment() {
@@ -161,20 +161,53 @@ class AlarmDetailsFragment : Fragment() {
   }
 
   private fun onCreateRepeatView() {
-
     fragmentView.findViewById<LinearLayout>(R.id.details_repeat_row).setOnClickListener {
       editor
           .firstOrError()
-          .flatMap { value -> value.daysOfWeek.showDialog(requireContext()) }
-          .subscribe { daysOfWeek ->
-            modify("Repeat dialog") { prev -> prev.copy(daysOfWeek = daysOfWeek, isEnabled = true) }
+          .flatMap { value -> requireContext().showRepeatAndDateDialog(value) }
+          .subscribe { fromDialog ->
+            modify("Repeat dialog") { prev ->
+              prev.copy(
+                  isEnabled = true, daysOfWeek = fromDialog.daysOfWeek, date = fromDialog.date)
+            }
           }
           .addTo(disposables)
     }
 
+    val repeatTitle = fragmentView.findViewById<TextView>(R.id.details_repeat_title)
     val repeatSummary = fragmentView.findViewById<TextView>(R.id.details_repeat_summary)
 
-    observeEditor { value -> repeatSummary.text = value.daysOfWeek.summary(requireContext()) }
+    observeEditor { value ->
+      repeatTitle.text =
+          when {
+            value.date != null -> requireContext().getString(R.string.date)
+            else -> requireContext().getString(R.string.alarm_repeat)
+          }
+
+      repeatSummary.text =
+          when {
+            value.date != null -> SimpleDateFormat.getDateInstance().format(value.date.time)
+            else -> value.daysOfWeek.toString(requireContext(), true)
+          }
+    }
+
+    observeEditor { alarmValue ->
+      if (alarmValue.date != null) {
+        val nextTime =
+            Calendar.getInstance().apply {
+              timeInMillis = alarmValue.date.timeInMillis
+              set(Calendar.HOUR_OF_DAY, alarmValue.hour)
+              set(Calendar.MINUTE, alarmValue.minutes)
+            }
+        val invalid = nextTime.before(Calendar.getInstance())
+        fragmentView.findViewById<View>(R.id.details_activity_button_save).isEnabled = !invalid
+
+        repeatSummary.setTextColor(
+            requireActivity()
+                .theme.resolveColor(
+                    if (invalid) R.attr.colorError else android.R.attr.colorForeground))
+      }
+    }
   }
 
   private fun onCreateDeleteOnDismissView() {
@@ -194,7 +227,7 @@ class AlarmDetailsFragment : Fragment() {
 
     observeEditor { value ->
       mDeleteOnDismissCheckBox.isChecked = value.isDeleteAfterDismiss
-      mDeleteOnDismissRow.visibility = if (value.daysOfWeek.isRepeatSet) View.GONE else View.VISIBLE
+      mDeleteOnDismissRow.visibility = if (value.isRepeatSet) View.GONE else View.VISIBLE
     }
   }
 

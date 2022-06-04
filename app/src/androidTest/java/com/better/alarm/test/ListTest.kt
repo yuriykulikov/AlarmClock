@@ -209,7 +209,7 @@ class ListTest {
 
     assertThat(alarmsList().filter { it.isEnabled }).hasSize(1)
 
-    assertThat(alarmsList().filter { it.daysOfWeek.isRepeatSet }).hasSize(3)
+    assertThat(alarmsList().filter { it.isRepeatSet }).hasSize(3)
 
     onView(withText("Every day")).check(matches(isDisplayed()))
   }

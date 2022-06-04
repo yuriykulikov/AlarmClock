@@ -265,7 +265,7 @@ class AlarmCore(
 
   private inner class RescheduleTransition : ComplexTransition<Event>() {
     override fun performComplexTransition() {
-      if (container.daysOfWeek.isRepeatSet) {
+      if (container.isRepeatSet) {
         if (container.isPrealarm && preAlarmDuration.blockingFirst() != -1) {
           stateMachine.transitionTo(preAlarmSet)
         } else {
@@ -442,7 +442,7 @@ class AlarmCore(
 
       override fun onRequestSkip() {
         when {
-          container.daysOfWeek.isRepeatSet -> stateMachine.transitionTo(skipping)
+          container.isRepeatSet -> stateMachine.transitionTo(skipping)
           else -> stateMachine.transitionTo(rescheduleTransition)
         }
       }
@@ -683,12 +683,23 @@ class AlarmCore(
   }
 
   private fun calculateNextTime(): Calendar {
-    return calendars.now().apply {
-      set(Calendar.HOUR_OF_DAY, container.hour)
-      set(Calendar.MINUTE, container.minutes)
-      set(Calendar.SECOND, 0)
-      set(Calendar.MILLISECOND, 0)
-      advanceCalendar()
+    val date = container.date
+    return if (date != null) {
+      calendars.now().apply {
+        timeInMillis = date.timeInMillis
+        set(Calendar.HOUR_OF_DAY, container.hour)
+        set(Calendar.MINUTE, container.minutes)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+      }
+    } else {
+      calendars.now().apply {
+        set(Calendar.HOUR_OF_DAY, container.hour)
+        set(Calendar.MINUTE, container.minutes)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+        advanceCalendar()
+      }
     }
   }
 

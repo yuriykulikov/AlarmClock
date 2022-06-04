@@ -77,7 +77,7 @@ class HandleSetAlarm : Activity() {
           val hoursMatch = it.hour == hours
           val minutesMatch = it.minutes == minutes
           val labelsMatch = it.label == label
-          val noRepeating = !it.daysOfWeek.isRepeatSet
+          val noRepeating = !it.isRepeatSet
           hoursMatch && minutesMatch && labelsMatch && noRepeating
         }
 

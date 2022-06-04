@@ -35,6 +35,7 @@ import com.melnykov.fab.FloatingActionButton
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlinx.coroutines.channels.Channel
 
@@ -171,7 +172,11 @@ class AlarmsListFragment : Fragment() {
 
     private fun daysOfWeekStringWithSkip(alarm: AlarmValue): String {
       val daysOfWeekStr = alarm.daysOfWeek.toString(context, false)
-      return if (alarm.skipping) "$daysOfWeekStr (skipping)" else daysOfWeekStr
+      return when {
+        alarm.date != null -> SimpleDateFormat.getDateInstance().format(alarm.date.time)
+        alarm.skipping -> "$daysOfWeekStr (skipping)"
+        else -> daysOfWeekStr
+      }
     }
   }
 
@@ -405,7 +410,7 @@ class AlarmsListFragment : Fragment() {
           alarm.isEnabled ->
               when {
                 alarm.skipping -> listOf(R.id.list_context_enable)
-                alarm.daysOfWeek.isRepeatSet -> listOf(R.id.skip_alarm)
+                alarm.isRepeatSet -> listOf(R.id.skip_alarm)
                 else -> listOf(R.id.list_context_menu_disable)
               }
           // disabled

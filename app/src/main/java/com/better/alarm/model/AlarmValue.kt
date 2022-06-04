@@ -28,9 +28,12 @@ data class AlarmValue(
     val label: String = "",
     val daysOfWeek: DaysOfWeek = DaysOfWeek(0),
     val isDeleteAfterDismiss: Boolean = false,
+    @Serializable(with = CalendarSerializer::class) val date: Calendar? = null,
 ) {
   val skipping
     get() = state.contentEquals("SkippingSetState")
+  val isRepeatSet
+    get() = date == null && daysOfWeek.coded != 0
 
   override fun toString(): String {
     val box = if (isEnabled) "[x]" else "[ ]"
@@ -52,6 +55,7 @@ data class AlarmValue(
           label = data.label,
           daysOfWeek = data.daysOfWeek,
           isDeleteAfterDismiss = data.isDeleteAfterDismiss,
+          date = data.date,
       )
 
   fun withHour(hour: Int) = copy(hour = hour)
