@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Here come strings which are not contained in the AOSP -->
+    <string name="alarm_prealarm">Попередній сигнал</string>
+    <string name="prealarm_duration_title">Довжина попереднього сигнала</string>
+    <string-array name="prealarm_duration_entries">
+        <item>Вимк.</item>
+        <item>10 хвилин</item>
+        <item>20 хвилин</item>
+        <item>30 хвилин</item>
+        <item>45 хвилин</item>
+        <item>60 хвилин</item>
+    </string-array>
+    <string name="prealarm_summary">Попередній сигнал дзвонить за <xliff:g id="minutes">%d</xliff:g>хвилин перед основным</string>
+    <string name="info_fragment_prealarm_summary">Попередній сигнал <xliff:g id="minutes">%d</xliff:g> хвилин</string>
+    <string name="prealarm_off_summary">Попередній сигнал вимкнен </string>
+    <string name="menu_share">Поділитися</string>
+    <string name="menu_bugreport">Звіт про помилку</string>
+    <string name="dialog_say_thanks_review_button">Залишити відгук</string>
+    <string name="dialog_bugreport_hint">Опишіть проблему тут</string>
+    <string name="longclick_dismiss_title">Довге натискання</string>
+    <string name="longclick_dismiss_summary">Тримати кнопку "відключити" щоб відключити будильник</string>
+    <string name="fade_in_time_sec_title">Нарощеня гучності</string>
+    <string-array name="fade_in_time_sec_entries">
+        <item>Вимк.</item>
+        <item>10 секунд</item>
+        <item>20 секунд</item>
+        <item>30 секунд</item>
+        <item>60 секунд</item>
+        <item>120 секунд</item>
+    </string-array>
+    <string name="fade_in_summary">Наростання гучності за <xliff:g id="seconds">%d</xliff:g> секунд</string>
+    <string name="fade_in_off_summary">Вимк.</string>
+    <string-array name="alarm_set_short">
+        <item>"Меньш заніж хвилину"</item>
+        <item>"<xliff:g id="DAYS">%1$s</xliff:g>"</item>
+        <item>"<xliff:g id="HOURS">%2$s</xliff:g>"</item>
+        <item>"<xliff:g id="DAYS">%1$s</xliff:g> и <xliff:g id="HOURS">%2$s</xliff:g>"</item>
+        <item>"<xliff:g id="MINUTES">%3$s</xliff:g>"</item>
+        <item>"<xliff:g id="DAYS">%1$s</xliff:g> и <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
+        <item>"<xliff:g id="HOURS">%2$s</xliff:g> и <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
+        <item>"<xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> и <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
+    </string-array>
+    <string name="theme_title">Кольорова гамма</string>
+    <string-array name="preference_list_row_layout_entries">
+        <item>Компактний</item>
+        <item>Нормальний</item>
+        <item>Класичний</item>
+    </string-array>
+    <string name="simple_alarm_clock">Простий будильник</string>
+    <string-array name="snooze_duration_with_off_entries">
+        <item>"Вимк."</item>
+        <item>"5 хвилин"</item>
+        <item>"10 хвилин"</item>
+        <item>"15 хвилин"</item>
+        <item>"20 хвилин"</item>
+        <item>"25 хвилин"</item>
+        <item>"30 хвилин"</item>
+    </string-array>
+    <string name="alarm_alert_reschedule_text">Перенести</string>
+    <string name="alarm_alert_hold_the_button_text">Утримуйте кнопку!</string>
+    <string name="permissions_external_storage_text">Для того, щоб програвати %s, необхідно спеціальне разрішення. Натисніть ОК для підтвердження. Якщо ви не бажаєте цього, виберіть, будь ласка, інший рінгтон. Це рішення може бути у будь-який час змінено у налаштуваннях системи.</string>
+    <string name="details_no_ringtone_picker">Не знайдено провайдера Рінгтонів. Будь ласка, встановіть провайдер з Маркету</string>
+    <string name="preference_category_durations">Тривалість</string>
+    <string name="preference_category_sound">Гучность та звук</string>
+    <string name="preference_category_ui">Інтерфейс</string>
+    <string name="preference_list_row_layout_title">Розмір</string>
+    <string name="menu_about_title">Про програму</string>
+    <string name="dialog_about_content">Простий будильник це програма з відкритим початковим кодом, який поєднує простий інтерфейс та необхідні фічі.
+
+       \n\nПоради:
+       \n· Розмір будильників можна змінювати у налаштуваннях і у нижній панелі.
+       \n· Колір можно змінювати у налаштуваннях та у нижній панелі.
+
+       \n\nНове у цій версії:
+       \n· Підтримка Android 12
+       \n· Новий дизайн
+
+       \n· <a href="https://github.com/yuriykulikov/AlarmClock">Прочитати про проект на GitHub</a>
+
+       \n\nПідтримати разробку
+       \n\· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Преміум версія (донейт)</a>
+   </string>
+    <string name="dialog_bugreport_faq"><b>Проблемы и как их исправить</b>
+       \n\n<font color="#FF0000">Якщо щось несподівано зламалося , хоча раніше працювало без проблем</font>, зазвичай очищення кеша або деінсталяція та повторне встановлення програми.
+
+       \n\n<font color="#FF0000">якщо звук будильника не чутен</font>, будь ласка перевірте налаштування вашего пристрою.
+
+       \n\n<font color="#FF0000">Якщо ви перепробували всі вище вказані методи, але нічого не допомогає</font>, будь ласка напишіть нам повідомлення у наступному полю. Ми зробимо усе можливе, щоб вам допомогти.
+   </string>
+    <string name="dialog_say_thanks_title">Подякувати</string>
+    <string name="dialog_say_thanks_review_message">Дякую, що приділили час для того, щоб подякувати нам! “Простий будильник” - це некомерційна програма з відкритим початковим кодом. Ми ніколи не будемо використовувати рекламу, або збирати дані користувачів з метою отримання прибутку. Однак ми будемо раді, якщо ви оціните нашу роботу належним чином. Один з найкращих способів зробити це – написати позитивний відгук. Ви також можете поставити нам запитання або надіслати запит на впровадження нової функції.</string>
+    <string name="dialog_say_thanks_premium_text">Якщо наша програма Вам дуже подобається, Ви можете розглянути можливість придбання преміум-версії. Звучить чудово, чи не так? :)</string>
+    <string name="dialog_say_thanks_premium_text_as_button"><a href="https://play.google.com/store/apps/details?id=com.premium.alarm">преміум версія</a></string>
+    <string name="notification_channel_high_prio">Велике спливаюче вікно з кнопками "вимкнути" і "відкласти"</string>
+    <string name="notification_channel_default_prio">Повідомлення про відкладений будильник</string>
+    <string name="notification_channel_low_prio">Сповіщення про будильник що минув</string>
+    <string name="alert_notifications_title">Здається, у нас помилка!</string>
+    <string name="alert_notifications_turned_off">
+       Всі повідомлення вимкнені, включаючи велике вікно з кнопками "вимкнути" та "відкласти"!
+
+       \n\nНатисніть OK, щоб перейти до налаштувань та увімкнути сповіщення!</string>
+    <string name="alert_notifications_high_prio_text">
+       Пріоритет великого вікна з кнопками "вимкнути" та "відкласти" надто низький для розблокування екрану!
+
+       \n\nМожливо, ви випадково вимкнули або змінили налаштування повідомлень
+
+       \n\nНатисніть OK, щоб перейти до налаштувань і виберіть найвищу дію (Звук та спливаюче повідомлення).
+
+       \n\nЗабавно, але як раз звук треба вимкнути у додаткових налаштуваннях.</string>
+    <string name="alert_notifications_default_prio_text">
+       Iнші повідомлення вимкнуто.
+
+       \n\nМожливо, ви випадково вимкнули або змінили налаштування повідомлень.
+
+       \n\nНатисніть OK, щоб перейти до налаштувань, а потім виберіть другий крок зверху (Звук).
+
+       \n\nКумедно, але як раз звук треба вимкнути у додаткових налаштуваннях.</string>
+</resources>
