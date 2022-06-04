@@ -135,4 +135,5 @@
        \n\nFare clic su OK per accedere alle impostazioni, quindi selezionare il secondo livello di importanza per questa notifica (Con suoneria).
 
        \n\nParadossalmente il suono deve essere disattivato nelle impostazioni avanzate.</string>
+    <string name="date">Giorno</string>
 </resources>

@@ -156,7 +156,7 @@ class BackgroundNotifications(
             addAction(
                 R.drawable.ic_action_dismiss,
                 when {
-                  data.daysOfWeek.isRepeatSet -> getString(R.string.skip)
+                  data.isRepeatSet -> getString(R.string.skip)
                   else -> getString(R.string.disable_alarm)
                 },
                 pendingSkip)

@@ -46,6 +46,8 @@ message AlarmValue {
   optional DaysOfWeek daysOfWeek = 11;
   // WARNING: a default value decoded when value is missing
   optional bool isDeleteAfterDismiss = 12;
+  // WARNING: a default value decoded when value is missing
+  optional int64 date = 13;
 }
 
 // serial name 'com.better.alarm.model.Alarmtone'

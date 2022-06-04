@@ -102,7 +102,8 @@ class Columns : BaseColumns {
             MESSAGE,
             ALERT,
             PREALARM,
-            STATE)
+            STATE,
+        )
 
     /**
      * These save calls to cursor.getColumnIndexOrThrow() THEY MUST BE KEPT IN SYNC WITH ABOVE QUERY
