@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="skip">Пропустити</string>
+    <string name="notification_alarm_is_about_to_go_off">Будильник от-от спрацює</string>
+    <string name="skip_duration_title">Повідомлення "пропустити будильник"</string>
+    <string-array name="skip_duration_entries">
+        <item>Вимк.</item>
+        <item>15 хвилин</item>
+        <item>30 хвилин</item>
+        <item>1 година</item>
+        <item>2 години</item>
+        <item>3 години</item>
+    </string-array>
+</resources>

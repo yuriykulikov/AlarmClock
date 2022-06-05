@@ -2,7 +2,7 @@
 <resources>
     <string name="skip">Пропустить</string>
     <string name="notification_alarm_is_about_to_go_off">Будильник вот-вот сработает</string>
-    <string name="skip_duration_title">Уведомление  "Пропустить будильник"</string>
+    <string name="skip_duration_title">Уведомление "Пропустить будильник"</string>
     <string-array name="skip_duration_entries">
         <item>Выкл.</item>
         <item>15 минут</item>
