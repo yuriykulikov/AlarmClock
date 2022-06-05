@@ -47,7 +47,7 @@
     <string name="every_day" msgid="4100909974923444602">"Щодня"</string>
     <string name="never" msgid="54104287800571769">"Ніколи"</string>
     <string name="day_concat" msgid="971998564991636532">", "</string>
-    <string name="settings" msgid="5849739030579520686">"Налаштув-ня"</string>
+    <string name="settings" msgid="5849739030579520686">"Налаштування"</string>
     <string name="alarm_in_silent_mode_title" msgid="3892612644543516705">"Сигнал у беззвуч. режимі"</string>
     <string name="alarm_in_silent_mode_summary" msgid="6042500263899922832">"Відтворювати сигнал навіть у беззвучному режимі"</string>
     <string name="snooze_duration_title" msgid="1471249885139952670">"Періодичність"</string>
