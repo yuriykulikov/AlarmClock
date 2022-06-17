@@ -9,6 +9,9 @@ on:
 jobs:
   build-develop:
     runs-on: macos-latest
+    concurrency:
+      group: build-${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
     env:
       ACRA_EMAIL: ${{ secrets.ACRA_EMAIL }}
     steps:
@@ -41,6 +44,9 @@ jobs:
   publish-develop:
     needs: build-develop
     runs-on: ubuntu-latest
+    concurrency:
+      group: publish-develop-${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
     env:
       ACRA_EMAIL: ${{ secrets.ACRA_EMAIL }}
     steps:
@@ -83,6 +89,9 @@ jobs:
   publish-premium:
     needs: build-develop
     runs-on: ubuntu-latest
+    concurrency:
+      group: publish-premium-${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
     env:
       ACRA_EMAIL: ${{ secrets.ACRA_EMAIL }}
     steps:
