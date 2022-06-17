@@ -1,0 +1,11 @@
+#!/bin/sh
+
+REPO_ROOT_DIR="$(git rev-parse --show-toplevel)"
+
+KT_FILES=$(git diff --cached --name-only --diff-filter=ACMR | grep -Ei "\.kts?$")
+if [ -n "${KT_FILES}" ]; then
+    echo "Spotless"
+    "${REPO_ROOT_DIR}/gradlew" spotlessApply
+    # shellcheck disable=SC2046
+    git add $(echo "$KT_FILES" | paste -s -d " " -)
+fi
