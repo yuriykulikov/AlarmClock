@@ -25,7 +25,12 @@ The application code is branched from AOSP and is open source. Additional featur
 # License
 Apache 2.0
 
-[![Get it on Google Play](https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png)](https://play.google.com/store/apps/details?id=com.better.alarm&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
+     alt="Get it on Google Play"
+     height="100">](https://play.google.com/store/apps/details?id=com.better.alarm)
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="100">](https://f-droid.org/packages/com.better.alarm/)
 
 [![Installs](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplayshields.herokuapp.com%2Fplay%3Fi%3Dcom.better.alarm%26l%3DPlay%2520Store%2520Installs%26m%3D%24installs)](https://play.google.com/store/apps/details?id=com.better.alarm&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)
 
