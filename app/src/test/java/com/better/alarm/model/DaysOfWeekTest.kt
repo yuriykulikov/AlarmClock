@@ -13,7 +13,7 @@ class DaysOfWeekTest {
 
   init {
     every { context.getText(R.string.day_concat) } returns ", "
-    every { context.getText(R.string.never) } returns ""
+    every { context.getText(R.string.never) } returns "Never"
   }
 
   @Test
@@ -41,6 +41,4 @@ class DaysOfWeekTest {
                 .toString(context, false))
         .isEqualTo("Sat, Sun")
   }
-
-  @Test fun `getNextAlarm`() {}
 }

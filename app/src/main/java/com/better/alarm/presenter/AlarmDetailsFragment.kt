@@ -112,6 +112,7 @@ class AlarmDetailsFragment : Fragment() {
     onCreateLabelView()
     onCreateRepeatView()
     onCreateRingtoneView()
+    onCreateDeleteOnDismissView()
     onCreatePrealarmView()
     onCreateBottomView()
 
@@ -174,6 +175,27 @@ class AlarmDetailsFragment : Fragment() {
     val repeatSummary = fragmentView.findViewById<TextView>(R.id.details_repeat_summary)
 
     observeEditor { value -> repeatSummary.text = value.daysOfWeek.summary(requireContext()) }
+  }
+
+  private fun onCreateDeleteOnDismissView() {
+    val mDeleteOnDismissRow by lazy {
+      fragmentView.findViewById(R.id.details_delete_on_dismiss_row) as LinearLayout
+    }
+
+    val mDeleteOnDismissCheckBox by lazy {
+      fragmentView.findViewById(R.id.details_delete_on_dismiss_checkbox) as CheckBox
+    }
+
+    mDeleteOnDismissRow.setOnClickListener {
+      modify("Delete on Dismiss") { value ->
+        value.copy(isDeleteAfterDismiss = !value.isDeleteAfterDismiss, isEnabled = true)
+      }
+    }
+
+    observeEditor { value ->
+      mDeleteOnDismissCheckBox.isChecked = value.isDeleteAfterDismiss
+      mDeleteOnDismissRow.visibility = if (value.daysOfWeek.isRepeatSet) View.GONE else View.VISIBLE
+    }
   }
 
   private fun onCreatePrealarmView() {

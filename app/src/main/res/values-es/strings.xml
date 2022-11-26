@@ -16,7 +16,7 @@
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2" xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation">
     <!--      Here come strings which are not contained in the AOSP -->
-
+    <string name="alarm_delete_on_dismiss">Eliminar al descartar</string>
     <!-- Setting labels on Set alarm screen: Prealarm -->
     <string name="alarm_prealarm">Prealarma discreta</string>
     <!-- Pre-alarm duration title -->

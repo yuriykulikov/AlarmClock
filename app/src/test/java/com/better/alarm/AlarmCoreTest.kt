@@ -365,4 +365,20 @@ class AlarmCoreTest {
     act("Set on 01:00") { alarm.edit { copy(isEnabled = true, isPrealarm = true) } }
     act("Change pre alarm duration") { prefs.preAlarmDuration.value = 1 }
   }
+
+  @Test
+  fun `Delete after dismiss alarm is deleted after dismiss`() {
+    val alarm = createAlarm()
+    act("Set on 1:00") {
+      alarm.edit { copy(isDeleteAfterDismiss = true, isEnabled = true, hour = 1) }
+    }
+    act("Fired") { alarm.onAlarmFired() }
+    act("Dismiss") { alarm.dismiss() }
+
+    verify { stateNotifierMock.broadcastAlarmState(alarm.id, Intents.ALARM_DISMISS_ACTION) }
+    // alarm was deleted
+    assertThat(store.alarms().blockingFirst().isEmpty()).isTrue()
+    // no other alarms is set
+    assertThat(alarmSetterMock.calendar).isNull()
+  }
 }
