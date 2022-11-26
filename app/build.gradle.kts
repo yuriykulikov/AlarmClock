@@ -2,7 +2,7 @@ plugins {
   id("com.android.application")
   kotlin("android")
   jacoco
-  kotlin("plugin.serialization") version "1.6.20"
+  kotlin("plugin.serialization")
 }
 
 jacoco { toolVersion = "0.8.8" }
@@ -130,12 +130,11 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 
 dependencies {
   // App dependencies
-  implementation(kotlin("stdlib", version = project.extra["kotlin"] as String))
   implementation("ch.acra:acra-mail:5.9.3")
   implementation("com.melnykov:floatingactionbutton:1.3.0")
   implementation("io.reactivex.rxjava2:rxjava:2.2.21")
   implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
-  implementation("org.koin:koin-core:2.2.2")
+  implementation("io.insert-koin:koin-core:2.2.3")
   implementation("androidx.fragment:fragment:1.4.1")
   implementation("androidx.preference:preference:1.2.0")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
