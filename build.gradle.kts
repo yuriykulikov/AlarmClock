@@ -1,47 +1,53 @@
 buildscript {
-  val kotlin = "1.6.21"
-
-  allprojects { extra.apply { set("kotlin", kotlin) } }
-
-  repositories {
-    google()
-    mavenCentral()
-    maven { url = uri("https://plugins.gradle.org/m2/") }
-  }
-
-  dependencies {
-    classpath("com.android.tools.build:gradle:7.1.3")
-    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin")
-  }
+  repositories { google() }
+  dependencies { dependencies { classpath("com.android.tools.build:gradle:7.3.1") } }
 }
 
-plugins { id("com.diffplug.spotless") version "6.7.2" }
+plugins {
+  jacoco
+  id("com.diffplug.spotless") version "6.7.2"
+  val kotlin = "1.6.21"
+  kotlin("plugin.serialization") version kotlin apply false
+  kotlin("android") version kotlin apply false
+}
 
 allprojects {
   repositories {
-    google()
     mavenCentral()
-    maven { url = uri("https://plugins.gradle.org/m2/") }
+    google()
   }
+}
 
-  apply(plugin = "com.diffplug.spotless")
-  spotless {
-    kotlin {
-      target("**/*.kt", "**/*.kts")
-      targetExclude("$buildDir/**/*.kt")
-      targetExclude("/gen/**/*.kt")
-      targetExclude("/src/test/resources/**/*.kt")
-      ktfmt()
-      lineEndings = com.diffplug.spotless.LineEnding.UNIX
+spotless {
+  kotlin {
+    target("build.gradle.kts")
+    ktfmt()
+    lineEndings = com.diffplug.spotless.LineEnding.UNIX
+  }
+}
+
+/** Applies spotless to app projects */
+subprojects {
+  // afterEvaluate is required for android projects
+  afterEvaluate {
+    apply(plugin = "com.diffplug.spotless")
+    spotless {
+      kotlin {
+        target("build.gradle.kts", "**/*.kt")
+        targetExclude("$buildDir/**/*.kt")
+        targetExclude("**/test/resources/**/*.kt")
+        ktfmt()
+        lineEndings = com.diffplug.spotless.LineEnding.UNIX
+      }
     }
 
-    java {
-      target("**/*.java")
-      targetExclude("$buildDir/**/*.java")
-      targetExclude("/gen/**/*.java")
-      targetExclude("/src/test/resources/**/*.java")
-      googleJavaFormat()
-      lineEndings = com.diffplug.spotless.LineEnding.UNIX
+    spotless {
+      java {
+        target("**/*.java")
+        targetExclude("$buildDir/**/*.java")
+        googleJavaFormat()
+        lineEndings = com.diffplug.spotless.LineEnding.UNIX
+      }
     }
   }
 }
