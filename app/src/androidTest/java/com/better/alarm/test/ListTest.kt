@@ -19,7 +19,8 @@ import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.AlarmsReceiver
 import com.better.alarm.model.CalendarType
 import com.better.alarm.presenter.AlarmsListActivity
-import java.util.*
+import java.util.Locale
+import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.anything
 import org.junit.After
 import org.junit.Before
@@ -164,30 +165,10 @@ class ListTest : BaseTest() {
             .blockingGet()
             .id
 
-    // simulate alarm fired
-    listActivity.scenario.onActivity { activity ->
-      activity.sendBroadcast(
-          Intent().apply {
-            action = AlarmSetter.ACTION_FIRED
-            setClass(activity, AlarmsReceiver::class.java)
-            putExtra(AlarmSetter.EXTRA_ID, id)
-            putExtra(AlarmSetter.EXTRA_TYPE, CalendarType.NORMAL.name)
-          })
-    }
-
-    Thread.sleep(1000)
-
-    // simulate dismiss from the notification bar
-    listActivity.scenario.onActivity { activity ->
-      activity.sendBroadcast(
-          Intent().apply {
-            action = PresentationToModelIntents.ACTION_REQUEST_DISMISS
-            setClass(activity, AlarmsReceiver::class.java)
-            putExtra(AlarmSetter.EXTRA_ID, id)
-          })
-    }
-
-    Thread.sleep(1000)
+    fireAlarm(id)
+    sleep()
+    dismissAlarm(id)
+    sleep()
 
     // alarm must be disabled because there is no repeating
     ListAsserts.assertThatList<AlarmValue>(R.id.list_fragment_list)
@@ -300,5 +281,57 @@ class ListTest : BaseTest() {
         .filter(enabled())
         .items()
         .isEmpty()
+  }
+
+  /**
+   * This is a test for https://github.com/yuriykulikov/AlarmClock/issues/361
+   *
+   * ## Given
+   * * An alarm with Delete after dismissed activated ## When
+   * * Alarm is fired
+   * * Alarm is dismissed ## Then
+   * * It should be deleted
+   */
+  @Test
+  fun deleteOnDismiss() {
+    onView(withId(R.id.fab)).perform(click())
+    onView(withText("Cancel")).perform(click())
+    onView(withText("Delete after dismissed")).perform(click())
+    onView(withText("OK")).perform(click())
+
+    assertThat(alarmsList()).hasSize(3)
+    assertThat(alarmsList().filter { it.isEnabled }).hasSize(1)
+    assertThat(alarmsList().first { it.isEnabled }.isDeleteAfterDismiss).isTrue
+
+    // when fired and dismissed
+    val id = alarmsList().first { it.isEnabled }.id
+    fireAlarm(id)
+    dismissAlarm(id)
+
+    // then alarm must be deleted from the list
+    assertThat(alarmsList()).hasSize(2)
+  }
+
+  private fun fireAlarm(id: Int) {
+    listActivity.scenario.onActivity { activity ->
+      activity.sendBroadcast(
+          Intent().apply {
+            action = AlarmSetter.ACTION_FIRED
+            setClass(activity, AlarmsReceiver::class.java)
+            putExtra(AlarmSetter.EXTRA_ID, id)
+            putExtra(AlarmSetter.EXTRA_TYPE, CalendarType.NORMAL.name)
+          })
+    }
+  }
+
+  private fun dismissAlarm(id: Int) {
+    listActivity.scenario.onActivity { activity ->
+      activity.sendBroadcast(
+          Intent().apply {
+            action = PresentationToModelIntents.ACTION_REQUEST_DISMISS
+            setClass(activity, AlarmsReceiver::class.java)
+            putExtra(AlarmSetter.EXTRA_ID, id)
+          })
+    }
   }
 }

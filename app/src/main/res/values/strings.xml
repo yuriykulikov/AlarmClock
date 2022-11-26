@@ -16,7 +16,7 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2" tools:ignore="MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation">
     <!--      Here come strings which are not contained in the AOSP -->
-
+    <string name="alarm_delete_on_dismiss">Delete after dismissed</string>
     <string-array name="fade_in_time_sec_values" tools:ignore="MissingTranslation">
         <item>1</item>
         <item>10</item>

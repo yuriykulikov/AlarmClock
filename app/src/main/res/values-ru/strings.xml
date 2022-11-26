@@ -15,6 +15,7 @@
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- Here come strings which are not contained in the AOSP -->
+    <string name="alarm_delete_on_dismiss">Удалить после срабатывания</string>
     <string name="alarm_prealarm">Предварительный сигнал</string>
     <string name="prealarm_duration_title">Длительность предварительного сигнала</string>
     <string-array name="prealarm_duration_entries">

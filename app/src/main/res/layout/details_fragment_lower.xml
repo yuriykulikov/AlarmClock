@@ -55,6 +55,41 @@
                 android:background="?android:attr/dividerHorizontal" />
 
             <LinearLayout
+                android:id="@+id/details_delete_on_dismiss_row"
+                android:layout_width="match_parent"
+                android:layout_height="68dip"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center|left"
+                    android:text="@string/alarm_delete_on_dismiss"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="?android:attr/textColorPrimary" />
+
+                <LinearLayout
+                    android:layout_width="68dip"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <CheckBox
+                        android:id="@+id/details_delete_on_dismiss_checkbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:clickable="false"
+                        android:focusable="false" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dip"
+                android:background="?android:attr/dividerHorizontal" />
+
+            <LinearLayout
                 android:id="@+id/details_ringtone_row"
                 android:layout_width="match_parent"
                 android:layout_height="68dip"
@@ -114,7 +149,6 @@
 
                 </LinearLayout>
             </LinearLayout>
-
 
             <View
                 android:layout_width="match_parent"
