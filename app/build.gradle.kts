@@ -129,7 +129,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 }
 
 dependencies {
-  // App dependencies
+  val coroutinesVersion = "1.6.2"
+  val serializationVersion = "1.3.2"
   implementation("ch.acra:acra-mail:5.9.3")
   implementation("com.melnykov:floatingactionbutton:1.3.0")
   implementation("io.reactivex.rxjava2:rxjava:2.2.21")
@@ -137,28 +138,25 @@ dependencies {
   implementation("io.insert-koin:koin-core:2.2.3")
   implementation("androidx.fragment:fragment:1.4.1")
   implementation("androidx.preference:preference:1.2.0")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.2")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
   implementation("com.google.android.material:material:1.6.1")
   implementation("org.slf4j:slf4j-api:1.7.36")
   implementation("com.github.tony19:logback-android:2.0.0")
   implementation("androidx.multidex:multidex:2.0.1")
   implementation("androidx.datastore:datastore:1.0.0")
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.3.2")
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-}
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:$serializationVersion")
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
 
-dependencies {
   testImplementation("net.wuerl.kotlin:assertj-core-kotlin:0.2.1")
   testImplementation("junit:junit:4.13.2")
   testImplementation("io.mockk:mockk:1.12.4")
-  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.2")
-}
+  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
 
-dependencies {
+  val androidxTest = "1.4.0"
   androidTestImplementation("com.squareup.assertj:assertj-android:1.2.0")
   androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
-  androidTestImplementation("androidx.test:runner:1.4.0")
-  androidTestImplementation("androidx.test:rules:1.4.0")
+  androidTestImplementation("androidx.test:runner:$androidxTest")
+  androidTestImplementation("androidx.test:rules:$androidxTest")
   androidTestImplementation("androidx.test.ext:junit:1.1.3")
 }
