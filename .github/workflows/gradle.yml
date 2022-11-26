@@ -43,6 +43,7 @@ jobs:
 
   publish-develop:
     needs: build-develop
+    if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     concurrency:
       group: publish-develop-${{ github.workflow }}-${{ github.ref }}
@@ -88,6 +89,7 @@ jobs:
           # mappingFile: app/build/outputs/mapping/release/mapping.txt
   publish-premium:
     needs: build-develop
+    if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     concurrency:
       group: publish-premium-${{ github.workflow }}-${{ github.ref }}
