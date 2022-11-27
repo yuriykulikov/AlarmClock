@@ -72,22 +72,24 @@ val acraEmail =
         ?: System.getenv()["ACRA_EMAIL"] ?: ""
 
 android {
-  compileSdk = 31
+  compileSdk = 33
   defaultConfig {
     versionCode = 31100
     versionName = "3.11.00"
     applicationId = "com.better.alarm"
     minSdk = 16
-    targetSdk = 31
+    targetSdk = 33
     testApplicationId = "com.better.alarm.test"
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     multiDexEnabled = true
   }
+  namespace = "com.better.alarm"
+  testNamespace = "com.better.alarm.debug"
   buildTypes {
     getByName("debug") {
-      isTestCoverageEnabled = true
+      enableUnitTestCoverage = true
+      enableAndroidTestCoverage = true
       buildConfigField("String", "ACRA_EMAIL", "\"$acraEmail\"")
-      applicationIdSuffix = ".debug"
     }
     getByName("release") {
       isMinifyEnabled = false
@@ -122,7 +124,7 @@ android {
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
   kotlinOptions {
     freeCompilerArgs =
-        freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn" + "-Xopt-in=kotlin.Experimental"
+        freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn" + "-opt-in=kotlin.Experimental"
 
     jvmTarget = "1.8"
   }

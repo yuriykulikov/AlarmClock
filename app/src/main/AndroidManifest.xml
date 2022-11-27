@@ -1,6 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.better.alarm">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -100,8 +99,7 @@
         </receiver>
         <receiver
             android:name=".model.TestReceiver"
-            android:exported="false">
-        </receiver>
+            android:exported="false"></receiver>
         <!-- Persistence -->
         <provider
             android:name=".persistance.AlarmProvider"
