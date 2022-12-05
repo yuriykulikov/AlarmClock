@@ -6,6 +6,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
@@ -15,12 +16,14 @@ import com.better.alarm.R
 import com.better.alarm.configuration.overrideIs24hoursFormatOverride
 import com.better.alarm.interfaces.PresentationToModelIntents
 import com.better.alarm.model.AlarmSetter
-import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.AlarmsReceiver
 import com.better.alarm.model.CalendarType
 import com.better.alarm.presenter.AlarmsListActivity
-import java.util.Locale
+import com.better.alarm.test.TestSync.Companion.clickFab
+import java.util.*
+import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.anything
 import org.junit.After
 import org.junit.Before
@@ -31,7 +34,7 @@ import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class ListTest : BaseTest() {
+class ListTest {
   @JvmField var listActivity = ActivityScenarioRule(AlarmsListActivity::class.java)
 
   @JvmField
@@ -39,31 +42,41 @@ class ListTest : BaseTest() {
   var chain: TestRule = RuleChain.outerRule(ForceLocaleRule(Locale.US)).around(listActivity)
 
   @Before
-  @After
   fun drop() {
-    println("Drop!!!")
+    dropDatabase()
+  }
+
+  @After
+  fun after() {
     dropDatabase()
   }
 
   @Test
   fun newAlarmShouldBeDisabledIfNotEdited() {
-    sleep()
-    onView(withId(R.id.fab)).perform(click())
-    sleep()
+    clickFab()
     onView(withText("Cancel")).perform(click())
-    sleep()
     onView(withText("OK")).perform(click())
-    sleep()
 
-    assertThatList().items().hasSize(3)
+    assertThat(alarmsList()).hasSize(3)
 
-    ListAsserts.assertThatList<AlarmValue>(R.id.list_fragment_list)
-        .filter(enabled())
-        .items()
-        .isEmpty()
+    assertThat(alarmsList().filter { it.isEnabled }).isEmpty()
+  }
+  @Test
+  fun alarmsCanBeDeletedWithLongClick() {
+    clickFab()
+    onView(withText("Cancel")).perform(click())
+    onView(withText("OK")).perform(click())
 
-    deleteAlarm(0)
-    assertThatList().items().hasSize(2)
+    assertThat(alarmsList()).hasSize(3)
+
+    onData(anything())
+        .onChildView(withId(R.id.details_button_container))
+        .atPosition(0)
+        .perform(longClick())
+    onView(withText("Delete alarm")).click()
+    onView(withText("OK")).click()
+
+    assertThat(alarmsList()).hasSize(2)
   }
 
   @Test
@@ -79,8 +92,7 @@ class ListTest : BaseTest() {
   }
 
   private fun newAlarmShouldBeEnabledIfEdited() {
-    onView(withId(R.id.fab)).perform(click())
-    sleep()
+    clickFab()
     onView(withText("1")).perform(click())
     onView(withText("2")).perform(click())
     onView(withText("3")).perform(click())
@@ -92,99 +104,69 @@ class ListTest : BaseTest() {
         }
         .perform(click())
 
-    sleep()
     onView(withText("OK")).perform(click())
     onView(withText("OK")).perform(click())
-    sleep()
 
-    assertThatList().items().hasSize(3)
+    assertThat(alarmsList()).hasSize(3)
 
-    ListAsserts.assertThatList<AlarmValue>(R.id.list_fragment_list)
-        .filter(enabled())
-        .items()
-        .hasSize(1)
-
-    deleteAlarm(0)
-    assertThatList().items().hasSize(2)
+    assertThat(alarmsList().filter { it.isEnabled }).hasSize(1)
   }
 
   @Test
   fun testDeleteNewAlarmInDetailsActivity() {
-    onView(withId(R.id.fab)).perform(click())
-    sleep()
+    clickFab()
     onView(withText("Cancel")).perform(click())
     onView(withText("OK")).perform(click())
-    sleep()
 
-    assertThatList().items().hasSize(3)
-    sleep()
+    assertThat(alarmsList()).hasSize(3)
 
     onData(anything())
         .atPosition(0)
         .onChildView(withId(R.id.details_button_container))
         .perform(click())
-    sleep()
 
     onView(withId(R.id.set_alarm_menu_delete_alarm)).perform(click())
-    sleep()
 
     onView(withText("OK")).perform(click())
-    sleep()
 
-    assertThatList().items().hasSize(2)
+    assertThat(alarmsList()).hasSize(2)
   }
 
   @Test
-  fun newAlarmShouldBeDisabledAfterDismiss() {
-    onView(withId(R.id.fab)).perform(click())
-    Thread.sleep(1000)
-    onView(withText("1")).perform(click())
-    onView(withText("2")).perform(click())
-    onView(withText("3")).perform(click())
-    onView(withText("5")).perform(click())
+  fun newAlarmShouldBeDisabledAfterDismiss() =
+      runBlocking<Unit> {
+        clickFab()
+        onView(withText("1")).perform(click())
+        onView(withText("2")).perform(click())
+        onView(withText("3")).perform(click())
+        onView(withText("5")).perform(click())
 
-    onView(withText("AM"))
-        .withFailureHandler { _, _ ->
-          // ignore fails - only use if View is found
-        }
-        .perform(click())
+        onView(withText("AM"))
+            .withFailureHandler { _, _ ->
+              // ignore fails - only use if View is found
+            }
+            .perform(click())
 
-    Thread.sleep(1000)
-    onView(withText("OK")).perform(click())
-    onView(withText("OK")).perform(click())
-    Thread.sleep(1000)
+        onView(withText("OK")).perform(click())
+        onView(withText("OK")).perform(click())
 
-    ListAsserts.assertThatList<AlarmValue>(R.id.list_fragment_list)
-        .filter(enabled())
-        .items()
-        .hasSize(1)
+        assertThat(alarmsList().filter { it.isEnabled }).hasSize(1)
 
-    val id =
-        ListAsserts.listObservable<AlarmValue>(R.id.list_fragment_list)
-            .firstOrError()
-            .blockingGet()
-            .id
+        val id = alarmsList().first { it.isEnabled }.id
 
-    fireAlarm(id)
-    sleep()
-    dismissAlarm(id)
-    sleep()
+        fireAlarm(id)
+        dismissAlarm(id)
 
-    // alarm must be disabled because there is no repeating
-    ListAsserts.assertThatList<AlarmValue>(R.id.list_fragment_list)
-        .filter(enabled())
-        .items()
-        .isEmpty()
+        // listActivity.scenario.onActivity { it.store.uiVisible.filter { it }.blockingFirst() }
+        println("Dismissed (done)")
 
-    Thread.sleep(1000)
-    deleteAlarm(0)
-    assertThatList().items().hasSize(2)
-  }
+        // alarm must be disabled because there is no repeating
+        assertThat(alarmsList().filter { it.isEnabled }).isEmpty()
+      }
 
   @Test
   fun editAlarmALot() {
-    onView(withId(R.id.fab)).perform(click())
-    sleep()
+    clickFab()
     assertTimerView("--:--")
     onView(withText("1")).perform(click())
     assertTimerView("--:-1")
@@ -200,58 +182,42 @@ class ListTest : BaseTest() {
     assertTimerView("--:12")
     onView(withId(R.id.delete)).perform(longClick())
     assertTimerView("--:--")
-    sleep()
     onView(withText("Cancel")).perform(click())
-    sleep()
     onView(withText("Cancel")).perform(click())
-    assertThatList().items().hasSize(2)
+    assertThat(alarmsList()).hasSize(2)
   }
 
   @Test
   fun editRepeat() {
-    sleep()
-    onView(withId(R.id.fab)).perform(click())
-    sleep()
+    clickFab()
     onView(withText("Cancel")).perform(click())
-    sleep()
 
     onView(withText("Repeat")).perform(click())
-    onView(withText("Monday")).perform(click())
-    onView(withText("Tuesday")).perform(click())
-    onView(withText("Wednesday")).perform(click())
-    onView(withText("Thursday")).perform(click())
-    onView(withText("Friday")).perform(click())
-    onView(withText("Saturday")).perform(click())
-    onView(withText("Sunday")).perform(click())
-    onView(withText("OK")).perform(click())
+
+    onView(allOf(isCompletelyDisplayed(), withText("Monday"))).perform(click())
+    onView(allOf(isCompletelyDisplayed(), withText("Tuesday"))).perform(click())
+    onView(allOf(isCompletelyDisplayed(), withText("Wednesday"))).perform(click())
+    onView(allOf(isCompletelyDisplayed(), withText("Thursday"))).perform(click())
+    onView(allOf(isCompletelyDisplayed(), withText("Friday"))).perform(click())
+    onView(allOf(isCompletelyDisplayed(), withText("Saturday"))).perform(click())
+    onView(allOf(isCompletelyDisplayed(), withText("Sunday"))).perform(click())
+    onView(allOf(isCompletelyDisplayed(), withText("OK"))).perform(click())
 
     onView(withText("OK")).perform(click())
-    sleep()
-    sleep()
 
-    assertThatList().items().hasSize(3)
+    assertThat(alarmsList()).hasSize(3)
 
-    ListAsserts.assertThatList<AlarmValue>(R.id.list_fragment_list)
-        .filter(enabled())
-        .items()
-        .hasSize(1)
+    assertThat(alarmsList().filter { it.isEnabled }).hasSize(1)
 
-    ListAsserts.assertThatList<AlarmValue>(R.id.list_fragment_list)
-        .filter { alarmValue -> alarmValue.daysOfWeek.isRepeatSet }
-        .items()
-        .hasSize(3)
+    assertThat(alarmsList().filter { it.daysOfWeek.isRepeatSet }).hasSize(3)
 
     onView(withText("Every day")).check(matches(isDisplayed()))
-
-    deleteAlarm(0)
-    assertThatList().items().hasSize(2)
   }
 
   @Test
   fun changeTimeInList() {
     onData(anything()).atPosition(0).onChildView(withId(R.id.digital_clock_time)).perform(click())
 
-    sleep()
     onView(withText("1")).perform(click())
     onView(withText("2")).perform(click())
     onView(withText("3")).perform(click())
@@ -263,24 +229,15 @@ class ListTest : BaseTest() {
         }
         .perform(click())
 
-    sleep()
     onView(withText("OK")).perform(click())
-    sleep()
 
-    ListAsserts.assertThatList<AlarmValue>(R.id.list_fragment_list)
-        .filter(enabled())
-        .items()
-        .hasSize(1)
+    assertThat(alarmsList().filter { it.isEnabled }).hasSize(1)
 
     onData(anything())
         .atPosition(0)
         .onChildView(withId(R.id.list_row_on_off_checkbox_container))
         .perform(click())
-    sleep()
-    ListAsserts.assertThatList<AlarmValue>(R.id.list_fragment_list)
-        .filter(enabled())
-        .items()
-        .isEmpty()
+    assertThat(alarmsList().filter { it.isEnabled }).isEmpty()
   }
 
   /**
@@ -293,24 +250,25 @@ class ListTest : BaseTest() {
    * * It should be deleted
    */
   @Test
-  fun deleteOnDismiss() {
-    onView(withId(R.id.fab)).perform(click())
-    onView(withText("Cancel")).perform(click())
-    onView(withText("Delete after dismissed")).perform(click())
-    onView(withText("OK")).perform(click())
+  fun deleteOnDismiss() =
+      runBlocking<Unit> {
+        clickFab()
+        onView(withText("Cancel")).perform(click())
+        onView(withText("Delete after dismissed")).perform(click())
+        onView(withText("OK")).perform(click())
 
-    assertThat(alarmsList()).hasSize(3)
-    assertThat(alarmsList().filter { it.isEnabled }).hasSize(1)
-    assertThat(alarmsList().first { it.isEnabled }.isDeleteAfterDismiss).isTrue
+        assertThat(alarmsList()).hasSize(3)
+        assertThat(alarmsList().filter { it.isEnabled }).hasSize(1)
+        assertThat(alarmsList().first { it.isEnabled }.isDeleteAfterDismiss).isTrue
 
-    // when fired and dismissed
-    val id = alarmsList().first { it.isEnabled }.id
-    fireAlarm(id)
-    dismissAlarm(id)
+        // when fired and dismissed
+        val id = alarmsList().first { it.isEnabled }.id
+        fireAlarm(id)
+        dismissAlarm(id)
 
-    // then alarm must be deleted from the list
-    assertThat(alarmsList()).hasSize(2)
-  }
+        // then alarm must be deleted from the list
+        assertThat(alarmsList()).hasSize(2)
+      }
 
   private fun fireAlarm(id: Int) {
     listActivity.scenario.onActivity { activity ->
@@ -324,14 +282,11 @@ class ListTest : BaseTest() {
     }
   }
 
-  private fun dismissAlarm(id: Int) {
-    listActivity.scenario.onActivity { activity ->
-      activity.sendBroadcast(
-          Intent().apply {
-            action = PresentationToModelIntents.ACTION_REQUEST_DISMISS
-            setClass(activity, AlarmsReceiver::class.java)
-            putExtra(AlarmSetter.EXTRA_ID, id)
-          })
+  private suspend fun dismissAlarm(id: Int) {
+    sentTestIntent { context ->
+      action = PresentationToModelIntents.ACTION_REQUEST_DISMISS
+      setClass(context, AlarmsReceiver::class.java)
+      putExtra(AlarmSetter.EXTRA_ID, id)
     }
   }
 }

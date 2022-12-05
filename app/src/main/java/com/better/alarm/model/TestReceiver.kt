@@ -9,7 +9,7 @@ import com.better.alarm.logger.Logger
 import com.better.alarm.persistance.DatastoreMigration
 
 class TestReceiver : BroadcastReceiver() {
-  private val log: Logger by globalLogger("AlarmsReceiver")
+  private val log: Logger by globalLogger("TestReceiver")
   private val migration: DatastoreMigration by globalInject()
 
   override fun onReceive(context: Context?, intent: Intent?) {
@@ -28,6 +28,7 @@ class TestReceiver : BroadcastReceiver() {
       }
       else -> error("Unexpected $intent")
     }
+    intent.getStringExtra("CB")?.let { cbAction -> context?.sendBroadcast(Intent(cbAction)) }
   }
 
   companion object {

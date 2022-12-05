@@ -14,20 +14,31 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
+import org.junit.rules.TestWatcher
+import org.junit.runner.Description
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class PickerAmTest {
+class PickerTest {
   @JvmField var listActivity = ActivityScenarioRule(AlarmsListActivity::class.java)
 
   @JvmField
   @Rule
   var chain: TestRule = RuleChain.outerRule(ForceLocaleRule(Locale.US)).around(listActivity)
 
+  @JvmField
+  @Rule
+  var watcher: TestRule =
+      object : TestWatcher() {
+        override fun starting(description: Description) {
+          println("---- " + description.methodName + " ----")
+        }
+      }
+
   @Before
   fun setUp() {
     dropDatabase()
-    overrideIs24hoursFormatOverride(false)
+    overrideIs24hoursFormatOverride(true)
     clickFab()
   }
 
@@ -40,31 +51,19 @@ class PickerAmTest {
   @Test
   fun testNothing() {
     assertTimerView("--:--")
-    arrayOf(one(), two(), three(), four(), five(), six(), seven(), eight(), nine()).forEach {
-      it.assertEnabled()
-    }
-    zero().assertDisabled()
+    allDigits().forEach { it.assertEnabled() }
+    half().assertDisabled()
+    zeros().assertDisabled()
     ok().assertDisabled()
-    am().assertDisabled()
-    pm().assertDisabled()
   }
 
   @Test
   fun test1() {
     one().click()
-    arrayOf(zero(), one(), two()).forEach { it.assertEnabled() }
+    allDigits().forEach { it.assertEnabled() }
+    half().assertEnabled()
+    zeros().assertEnabled()
     ok().assertDisabled()
-    pm().assertEnabled()
-  }
-
-  @Test
-  fun test1pm() {
-    one().click()
-    arrayOf(zero(), one(), two()).forEach { it.assertEnabled() }
-    am().click()
-    arrayOf(zero(), one(), two(), three(), four(), five()).forEach { it.assertDisabled() }
-    ok().assertEnabled()
-    pm().assertDisabled()
   }
 
   @Test
@@ -72,8 +71,9 @@ class PickerAmTest {
     two().click()
     arrayOf(zero(), one(), two(), three(), four(), five()).forEach { it.assertEnabled() }
     arrayOf(six(), seven(), eight(), nine()).forEach { it.assertDisabled() }
+    half().assertEnabled()
+    zeros().assertEnabled()
     ok().assertDisabled()
-    pm().assertEnabled()
   }
 
   @Test
@@ -81,8 +81,9 @@ class PickerAmTest {
     three().click()
     arrayOf(zero(), one(), two(), three(), four(), five()).forEach { it.assertEnabled() }
     arrayOf(six(), seven(), eight(), nine()).forEach { it.assertDisabled() }
+    half().assertEnabled()
+    zeros().assertEnabled()
     ok().assertDisabled()
-    pm().assertEnabled()
   }
 
   @Test
@@ -90,8 +91,9 @@ class PickerAmTest {
     four().click()
     arrayOf(zero(), one(), two(), three(), four(), five()).forEach { it.assertEnabled() }
     arrayOf(six(), seven(), eight(), nine()).forEach { it.assertDisabled() }
+    half().assertEnabled()
+    zeros().assertEnabled()
     ok().assertDisabled()
-    pm().assertEnabled()
   }
 
   @Test
@@ -99,8 +101,9 @@ class PickerAmTest {
     five().click()
     arrayOf(zero(), one(), two(), three(), four(), five()).forEach { it.assertEnabled() }
     arrayOf(six(), seven(), eight(), nine()).forEach { it.assertDisabled() }
+    half().assertEnabled()
+    zeros().assertEnabled()
     ok().assertDisabled()
-    pm().assertEnabled()
   }
 
   @Test
@@ -108,8 +111,9 @@ class PickerAmTest {
     six().click()
     arrayOf(zero(), one(), two(), three(), four(), five()).forEach { it.assertEnabled() }
     arrayOf(six(), seven(), eight(), nine()).forEach { it.assertDisabled() }
+    half().assertEnabled()
+    zeros().assertEnabled()
     ok().assertDisabled()
-    pm().assertEnabled()
   }
 
   @Test
@@ -117,8 +121,9 @@ class PickerAmTest {
     seven().click()
     arrayOf(zero(), one(), two(), three(), four(), five()).forEach { it.assertEnabled() }
     arrayOf(six(), seven(), eight(), nine()).forEach { it.assertDisabled() }
+    half().assertEnabled()
+    zeros().assertEnabled()
     ok().assertDisabled()
-    pm().assertEnabled()
   }
 
   @Test
@@ -126,8 +131,9 @@ class PickerAmTest {
     eight().click()
     arrayOf(zero(), one(), two(), three(), four(), five()).forEach { it.assertEnabled() }
     arrayOf(six(), seven(), eight(), nine()).forEach { it.assertDisabled() }
+    half().assertEnabled()
+    zeros().assertEnabled()
     ok().assertDisabled()
-    pm().assertEnabled()
   }
 
   @Test
@@ -135,22 +141,22 @@ class PickerAmTest {
     nine().click()
     arrayOf(zero(), one(), two(), three(), four(), five()).forEach { it.assertEnabled() }
     arrayOf(six(), seven(), eight(), nine()).forEach { it.assertDisabled() }
+    half().assertEnabled()
+    zeros().assertEnabled()
     ok().assertDisabled()
-    pm().assertEnabled()
   }
 
   @Test
-  fun test1230pm() {
-    one().click()
-    two().click()
-    three().click()
+  fun test0() {
     zero().click()
-    pm().click()
-
-    arrayOf<ViewInteraction>().forEach { it.assertEnabled() }
-    pm().assertDisabled()
-    ok().assertEnabled()
+    allDigits().forEach { it.assertEnabled() }
+    half().assertEnabled()
+    zeros().assertEnabled()
+    ok().assertDisabled()
   }
+
+  private fun allDigits() =
+      arrayOf(zero(), one(), two(), three(), four(), five(), six(), seven(), eight(), nine())
 
   private fun one(): ViewInteraction = onView().with(id = R.id.key_left, text = "1")
   private fun two(): ViewInteraction = onView().with(id = R.id.key_middle, text = "2")
@@ -163,6 +169,6 @@ class PickerAmTest {
   private fun nine(): ViewInteraction = onView().with(id = R.id.key_right, text = "9")
   private fun zero(): ViewInteraction = onView().with(id = R.id.key_middle, text = "0")
   private fun ok(): ViewInteraction = onView().with(text = "OK")
-  private fun am(): ViewInteraction = onView().with(id = R.id.key_left, text = "AM")
-  private fun pm(): ViewInteraction = onView().with(id = R.id.key_right, text = "PM")
+  private fun zeros(): ViewInteraction = onView().with(id = R.id.key_left, text = ":00")
+  private fun half(): ViewInteraction = onView().with(id = R.id.key_right, text = ":30")
 }
