@@ -143,7 +143,9 @@ class AlertService(
           is Event.AlarmEvent -> true
           is Event.PrealarmEvent -> true
           else -> {
-            check(!BuildConfig.DEBUG) { "First event must be AlarmEvent or PrealarmEvent" }
+            check(!BuildConfig.DEBUG) {
+              "First event must be AlarmEvent or PrealarmEvent, but was $event"
+            }
             false
           }
         }

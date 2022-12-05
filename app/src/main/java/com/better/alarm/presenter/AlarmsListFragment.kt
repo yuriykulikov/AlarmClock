@@ -36,6 +36,7 @@ import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import java.util.*
+import kotlinx.coroutines.channels.Channel
 
 /**
  * Shows a list of alarms. To react on user interaction, requires a strategy. An activity hosting
@@ -68,6 +69,9 @@ class AlarmsListFragment : Fragment() {
   /** changed by [Prefs.listRowLayout] in [onResume] */
   private var listRowLayout = prefs.layout()
 
+  companion object {
+    var fabSync: Channel<Unit>? = null
+  }
   inner class AlarmListAdapter(alarmTime: Int, label: Int, private val values: List<AlarmValue>) :
       ArrayAdapter<AlarmValue>(requireContext(), alarmTime, label, values) {
     private val highlighter: ListRowHighlighter? by lazy {
@@ -229,7 +233,10 @@ class AlarmsListFragment : Fragment() {
     setHasOptionsMenu(true)
 
     val fab: View = view.findViewById(R.id.fab)
-    fab.setOnClickListener { uiStore.createNewAlarm() }
+    fab.setOnClickListener {
+      uiStore.createNewAlarm()
+      fabSync?.trySend(Unit)?.getOrThrow()
+    }
 
     lollipop { (fab as FloatingActionButton).attachToListView(listView) }
 

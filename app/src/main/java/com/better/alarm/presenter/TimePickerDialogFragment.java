@@ -117,7 +117,6 @@ public class TimePickerDialogFragment extends DialogFragment {
           @Override
           public void subscribe(@NonNull SingleEmitter<Optional<PickedTime>> emitter)
               throws Exception {
-
             final FragmentTransaction ft = fragmentManager.beginTransaction();
             final Fragment prev = fragmentManager.findFragmentByTag("time_dialog");
             if (prev != null) {

@@ -62,13 +62,11 @@ import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import java.util.*
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.protobuf.ProtoBuf
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
 /** This activity displays a list of alarms and optionally a details fragment. */
-@OptIn(ExperimentalSerializationApi::class)
 class AlarmsListActivity : AppCompatActivity() {
   private lateinit var mActionBarHandler: ActionBarHandler
 
@@ -80,7 +78,7 @@ class AlarmsListActivity : AppCompatActivity() {
   private var sub = Disposables.disposed()
   private var snackbarDisposable = Disposables.disposed()
 
-  private val uiStore: UiStore by globalInject()
+  val uiStore: UiStore by globalInject()
   private val dynamicThemeHandler: DynamicThemeHandler by globalInject()
 
   companion object {
@@ -171,6 +169,10 @@ class AlarmsListActivity : AppCompatActivity() {
       val restored = editedAlarmFromSavedInstanceState(savedInstanceState)
       logger.trace { "Restored $this with $restored" }
       uiStore.editing().onNext(restored)
+    } else {
+      // need this because store is not scoped
+      uiStore.editing().onNext(EditedAlarm())
+      uiStore.transitioningToNewAlarmDetails().onNext(false)
     }
 
     this.mActionBarHandler = ActionBarHandler(this, uiStore, alarms, globalGet())

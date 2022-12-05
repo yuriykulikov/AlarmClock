@@ -68,5 +68,6 @@ class AlarmsReceiver : BroadcastReceiver() {
       }
     }
     runBlocking { repository.awaitStored() }
+    intent.getStringExtra("CB")?.let { cbAction -> context.sendBroadcast(Intent(cbAction)) }
   }
 }
