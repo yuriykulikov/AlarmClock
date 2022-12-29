@@ -244,7 +244,9 @@ class ListTest {
    * This is a test for https://github.com/yuriykulikov/AlarmClock/issues/361
    *
    * ## Given
-   * * An alarm with Delete after dismissed activated ## When
+   * * An alarm with Delete after dismissed activated
+   *
+   * ## When
    * * Alarm is fired
    * * Alarm is dismissed ## Then
    * * It should be deleted
@@ -253,8 +255,17 @@ class ListTest {
   fun deleteOnDismiss() =
       runBlocking<Unit> {
         clickFab()
-        onView(withText("Cancel")).perform(click())
-        onView(withText("Delete after dismissed")).perform(click())
+        onView(withText("1")).perform(click())
+        onView(withText("2")).perform(click())
+        onView(withText("3")).perform(click())
+        onView(withText("5")).perform(click())
+
+        onView(withText("AM"))
+            .withFailureHandler { error, viewMatcher ->
+              // ignore fails - only use if View is found
+            }
+            .perform(click())
+        onView(withText("OK")).perform(click())
         onView(withText("OK")).perform(click())
 
         assertThat(alarmsList()).hasSize(3)
@@ -268,6 +279,38 @@ class ListTest {
 
         // then alarm must be deleted from the list
         assertThat(alarmsList()).hasSize(2)
+      }
+
+  /**
+   * This is a test for https://github.com/yuriykulikov/AlarmClock/issues/361
+   *
+   * ## Given
+   * * An alarm with Delete after dismissed activated
+   *
+   * ## When
+   * * Alarm is fired
+   * * Alarm is dismissed ## Then
+   * * It should be deleted
+   */
+  @Test
+  fun deleteOnDismissDeactivated() =
+      runBlocking<Unit> {
+        clickFab()
+        onView(withText("Cancel")).perform(click())
+        onView(withText("Delete after dismissed")).perform(click())
+        onView(withText("OK")).perform(click())
+
+        assertThat(alarmsList()).hasSize(3)
+        assertThat(alarmsList().filter { it.isEnabled }).hasSize(1)
+        assertThat(alarmsList().first { it.isEnabled }.isDeleteAfterDismiss).isFalse
+
+        // when fired and dismissed
+        val id = alarmsList().first { it.isEnabled }.id
+        fireAlarm(id)
+        dismissAlarm(id)
+
+        // then alarm must still be present in the list
+        assertThat(alarmsList()).hasSize(3)
       }
 
   private fun fireAlarm(id: Int) {

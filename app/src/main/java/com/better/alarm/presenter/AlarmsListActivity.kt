@@ -104,7 +104,7 @@ class AlarmsListActivity : AppCompatActivity() {
           editing.onNext(
               EditedAlarm(
                   isNew = true,
-                  value = Optional.of(newAlarm.data),
+                  value = Optional.of(newAlarm.data.copy(isDeleteAfterDismiss = true)),
                   id = newAlarm.id,
                   holder = Optional.absent()))
         }
