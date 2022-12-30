@@ -106,4 +106,5 @@
     <string name="permissions_external_storage_text">Det ser ut til at %s ikke kan spilles, sannsynligvis fordi en tillatelse kreves. Hvis du vil kan du gi tillatelsen. Alternativt, velg en annen lyd. Denne beslutningen kan endres i Systeminnstillinger.</string>
     <string name="menu_about_title">Om</string>
     <string name="dialog_say_thanks_title">Si takk</string>
+    <string name="date">Dato</string>
 </resources>
