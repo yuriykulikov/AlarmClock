@@ -54,8 +54,8 @@ message AlarmValue {
 message Alarmtone {
   required string type = 1;
   // decoded as message with one of these types:
-  //   message Silent, serial name 'Silent'
   //   message Default, serial name 'Default'
+  //   message Silent, serial name 'Silent'
   //   message Sound, serial name 'Sound'
   required bytes value = 2;
 }
@@ -65,10 +65,10 @@ message DaysOfWeek {
   required int32 coded = 1;
 }
 
-message Silent {
+message Default {
 }
 
-message Default {
+message Silent {
 }
 
 message Sound {

@@ -345,14 +345,7 @@ class AlarmCore(
 
       inner class NormalSetState : AlarmState() {
         override fun onEnter(reason: Event) {
-          when (reason) {
-            is Dismiss,
-            is Snooze,
-            is Change,
-            is Enable -> {
-              broadcastAlarmSetWithNormalTime(calculateNextTime().timeInMillis)
-            }
-          }
+          broadcastAlarmSetWithNormalTime(calculateNextTime().timeInMillis)
         }
 
         override fun onResume() {
@@ -371,18 +364,8 @@ class AlarmCore(
       }
 
       inner class PreAlarmSetState : AlarmState() {
-
         override fun onEnter(reason: Event) {
-          when (reason) {
-            is Dismiss,
-            is Snooze,
-            is Change,
-            is Enable -> {
-              broadcastAlarmSetWithNormalTime(calculateNextPrealarmTime().timeInMillis)
-            }
-          }
-
-          updateListInStore()
+          broadcastAlarmSetWithNormalTime(calculateNextPrealarmTime().timeInMillis)
         }
 
         override fun onResume() {
@@ -742,6 +725,7 @@ class AlarmCore(
     override fun onEvent(event: Event): Boolean {
       handled = true
       when (event) {
+        Create -> Unit
         is Enable -> onEnable()
         is Disable -> onDisable()
         is Snooze -> onSnooze(event)
@@ -754,6 +738,9 @@ class AlarmCore(
         is InexactFired -> onInexactFired()
         is RequestSkip -> onRequestSkip()
         is Delete -> onDelete()
+        Create -> {
+          check(!BuildConfig.DEBUG) { "Unexpected $event" }
+        }
       }
       return handled
     }
