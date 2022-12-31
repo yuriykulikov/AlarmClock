@@ -3,7 +3,6 @@ package com.better.alarm.logger
 import android.content.Context
 import ch.qos.logback.classic.AsyncAppender
 import ch.qos.logback.classic.LoggerContext
-import ch.qos.logback.classic.android.LogcatAppender
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.Appender
@@ -59,6 +58,7 @@ fun logback(config: LoggerContext.() -> Unit): ILoggerFactory {
   val context = org.slf4j.LoggerFactory.getILoggerFactory() as LoggerContext
   context.stop()
   config(context)
+  context.start()
   return context
 }
 

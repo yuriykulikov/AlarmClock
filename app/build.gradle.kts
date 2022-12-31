@@ -117,6 +117,8 @@ android {
     targetCompatibility = JavaVersion.VERSION_1_8
   }
   testOptions { unitTests.isReturnDefaultValues = true }
+
+  packagingOptions { resources.excludes.add("META-INF/INDEX.LIST") }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
@@ -141,8 +143,9 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
   implementation("com.google.android.material:material:1.6.1")
-  implementation("org.slf4j:slf4j-api:1.7.36")
-  implementation("com.github.tony19:logback-android:2.0.0")
+  implementation("org.slf4j:slf4j-api:2.0.6")
+  // we need 1.3.x on android because of the Java version
+  implementation("ch.qos.logback:logback-classic:1.3.5")
   implementation("androidx.multidex:multidex:2.0.1")
   implementation("androidx.datastore:datastore:1.0.0")
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:$serializationVersion")
