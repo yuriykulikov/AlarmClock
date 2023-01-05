@@ -51,7 +51,7 @@ import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
 import org.koin.core.qualifier.named
 import org.koin.core.scope.Scope
-import org.koin.dsl.bind
+import org.koin.dsl.binds
 import org.koin.dsl.module
 
 fun Scope.logger(tag: String): Logger {
@@ -108,9 +108,8 @@ fun startKoin(context: Context): Koin {
     single(named("datastore")) { File(get<Context>().applicationContext.filesDir, "datastore") }
     factory { get<Context>().contentResolver }
     single<DatabaseQuery> { SQLiteDatabaseQuery(get()) }
-    single { Alarms(get(), get(), get(), get(), get(), get(), logger("Alarms"), get()) }
-        .bind(IAlarmsManager::class)
-        .bind(DatastoreMigration::class)
+    single { Alarms(get(), get(), get(), get(), get(), get(), logger("Alarms"), get()) } binds
+        arrayOf(IAlarmsManager::class, DatastoreMigration::class)
     single { ScheduledReceiver(get(), get(), get(), get()) }
     single { ToastPresenter(get(), get()) }
     single { AlertServicePusher(get(), get(), get(), logger("AlertServicePusher")) }

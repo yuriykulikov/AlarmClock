@@ -31,4 +31,5 @@ fun globalLogger(tag: String) = lazy { GlobalContext.get().get<LoggerFactory>().
  *
  * @param clazz
  */
-fun <T : Any> globalInject(clazz: Class<T>) = lazy { GlobalContext.get().get(clazz = clazz.kotlin) }
+fun <T : Any> globalInject(clazz: Class<T>) =
+    lazy<T> { GlobalContext.get().get(clazz = clazz.kotlin) }
