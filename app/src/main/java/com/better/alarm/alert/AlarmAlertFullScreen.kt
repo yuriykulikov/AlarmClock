@@ -103,7 +103,6 @@ class AlarmAlertFullScreen : FragmentActivity() {
    * of the API level, and call `setTurnScreenOn(true)` if API level is 27+
    *
    * ### 3.07.01 reference In `3.07.01` we added these 4 flags:
-   *
    * ```
    * final Window win = getWindow();
    * win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);

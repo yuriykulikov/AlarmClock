@@ -204,8 +204,8 @@ class AlarmDetailsFragment : Fragment() {
 
         repeatSummary.setTextColor(
             requireActivity()
-                .theme.resolveColor(
-                    if (invalid) R.attr.colorError else android.R.attr.colorForeground))
+                .theme
+                .resolveColor(if (invalid) R.attr.colorError else android.R.attr.colorForeground))
       }
     }
   }

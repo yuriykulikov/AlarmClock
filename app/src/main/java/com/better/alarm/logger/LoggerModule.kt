@@ -96,6 +96,7 @@ fun <T : Appender<ILoggingEvent>> LoggerContext.addAppender(
  * Creates and configures a [TimeBasedRollingPolicy].
  *
  * ## Example
+ *
  * ```
  * rollingPolicy = timeBasedRollingPolicy {
  *   fileNamePattern = "$logDir/rolling-%d{yyyy-MM-dd}.log"

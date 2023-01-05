@@ -7,8 +7,10 @@ import org.koin.core.qualifier.Qualifier
 
 /**
  * globalInject lazily given dependency
+ *
  * @param qualifier
  * - bean qualifier / optional
+ *
  * @param parameters
  * - injection parameters
  */
@@ -26,6 +28,7 @@ fun globalLogger(tag: String) = lazy { GlobalContext.get().get<LoggerFactory>().
 
 /**
  * globalInject lazily given dependency
+ *
  * @param clazz
  */
 fun <T : Any> globalInject(clazz: Class<T>) = lazy { GlobalContext.get().get(clazz = clazz.kotlin) }

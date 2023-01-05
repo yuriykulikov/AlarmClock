@@ -105,7 +105,8 @@ fun computeTexts(
   return if (alarm.isPrealarm) {
     val prealarmSummary = res.getString(R.string.info_fragment_prealarm_summary, prealarmDuration)
     """$formatRemainingTimeString
-           $prealarmSummary""".trimIndent()
+           $prealarmSummary"""
+        .trimIndent()
     formatRemainingTimeString.plus("\n$prealarmSummary")
   } else {
     formatRemainingTimeString
