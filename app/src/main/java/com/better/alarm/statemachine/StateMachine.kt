@@ -62,6 +62,7 @@ import kotlin.properties.Delegates
  *     /  \     /  \      \
  *   a    b   *x*    y     G
  * ```
+ *
  * If *x* is not able to handle an event, it is delivered to B, which is a parent of *x*. If B is
  * also not able to handle this event, it goes to the next parent. If no parent is available (root
  * was not able to handle), an exception is thrown. O-M-G is a separate hierarchy which is not used
@@ -84,9 +85,9 @@ import kotlin.properties.Delegates
  *     /  \     /  \     ->             ->    /  \     /  \
  *   a    b   *x*    y   ->             ->   a    b  x    *y*
  * ```
+ *
  * States will be notified in this order: x.exit(), y.enter(). The B state will not get any event
  * because root was not exited or entered.
- *
  * * Consider moving from *a* to *y*:
  * ```
  *          root         ->             ->         root
@@ -95,6 +96,7 @@ import kotlin.properties.Delegates
  *     /  \     /  \     ->             ->    /  \      /  \
  *  *a*    b   x    y    ->             ->   a    b    x   *y*
  * ```
+ *
  * States will be notified in this order: a.exit(), A.exit(), B.enter(), y.enter(). The root state
  * will not get any event because root was not exited or entered. A and B states are parent states
  * of the leaf states and they also receive [State.enter] and [State.exit]. Both callbacks will
@@ -110,6 +112,7 @@ import kotlin.properties.Delegates
  *     /  \     /  \       \    ->             ->    /  \     /  \       \
  *  *a*    b   x    y       G   ->             ->   a    b    x   y       G
  * ```
+ *
  * States will be notified in this order: a.exit(), A.exit(), root.exit(), O.enter(), M.enter().
  *
  * ## Origin

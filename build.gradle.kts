@@ -5,7 +5,7 @@ buildscript {
 
 plugins {
   jacoco
-  id("com.diffplug.spotless") version "6.7.2"
+  id("com.diffplug.spotless") version "6.12.1"
   val kotlin = "1.6.21"
   kotlin("plugin.serialization") version kotlin apply false
   kotlin("android") version kotlin apply false

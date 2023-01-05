@@ -8,7 +8,6 @@ import kotlinx.serialization.Serializable
 
 /**
  * Days of week code as a single int.
- *
  * * 0x00: no day
  * * 0x01: Monday
  * * 0x02: Tuesday
