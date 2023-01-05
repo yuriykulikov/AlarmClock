@@ -40,6 +40,13 @@ jobs:
       uses: codecov/codecov-action@v1
       with:
         files: ./app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
+    - name: Upload Reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: Unit Test Reports
+        path: ${{ github.workspace }}/**/build/reports/**/*
+        retention-days: 5
 
   publish-develop:
     needs: build-develop
