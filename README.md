@@ -1,6 +1,6 @@
-[![Installs](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplayshields.herokuapp.com%2Fplay%3Fi%3Dcom.better.alarm%26l%3DPlay%2520Store%2520Installs%26m%3D%24installs)](https://play.google.com/store/apps/details?id=com.better.alarm)
-[![Rating](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplayshields.herokuapp.com%2Fplay%3Fi%3Dcom.better.alarm%26l%3DPlay%2520Store%2520Rating%26m%3D%24rating)](https://play.google.com/store/apps/details?id=com.better.alarm)
-[![Version](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplayshields.herokuapp.com%2Fplay%3Fi%3Dcom.better.alarm%26l%3DPlay%2520Store%2520Version%26m%3D%24version)](https://play.google.com/store/apps/details?id=com.better.alarm)
+[![Installs](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.better.alarm%26l%3DGoogle%2520Play%2520Installs%26m%3D%24totalinstalls)](https://play.google.com/store/apps/details?id=com.better.alarm)
+[![Rating](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.better.alarm%26l%3DGoogle%2520Play%2520Rating%26m%3D%24rating)](https://play.google.com/store/apps/details?id=com.better.alarm)
+[![Version](https://img.shields.io/endpoint?color=blue&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.better.alarm%26l%3DGoogle%2520Play%26m%3D%24version)](https://play.google.com/store/apps/details?id=com.better.alarm)
 
 [![Build Status](https://github.com/yuriykulikov/AlarmClock/actions/workflows/gradle.yml/badge.svg?branch=develop)](https://github.com/yuriykulikov/AlarmClock/actions)
 [![codecov](https://codecov.io/gh/yuriykulikov/AlarmClock/branch/develop/graph/badge.svg)](https://codecov.io/gh/yuriykulikov/AlarmClock)
@@ -32,7 +32,7 @@ Apache 2.0
      alt="Get it on F-Droid"
      height="100">](https://f-droid.org/packages/com.better.alarm/)
 
-[![Installs](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplayshields.herokuapp.com%2Fplay%3Fi%3Dcom.better.alarm%26l%3DPlay%2520Store%2520Installs%26m%3D%24installs)](https://play.google.com/store/apps/details?id=com.better.alarm&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)
+[![Installs](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.better.alarm%26l%3DGoogle%2520Play%2520Installs%26m%3D%24totalinstalls)](https://play.google.com/store/apps/details?id=com.better.alarm)
 
 # Code coverage
 [![Codecov](https://codecov.io/gh/yuriykulikov/AlarmClock/branch/develop/graphs/tree.svg)](https://codecov.io/github/yuriykulikov/AlarmClock?branch=develop)
