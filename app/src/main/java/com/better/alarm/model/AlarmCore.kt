@@ -25,6 +25,7 @@ import com.better.alarm.interfaces.Alarm
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.DateTransformer
 import com.better.alarm.logger.Logger
+import com.better.alarm.logger.StringUtils
 import com.better.alarm.statemachine.ComplexTransition
 import com.better.alarm.statemachine.State
 import com.better.alarm.statemachine.StateMachine
