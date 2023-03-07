@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import com.better.alarm.logger.Logger
 import com.better.alarm.pendingIntentUpdateCurrentFlag
 import com.better.alarm.presenter.AlarmsListActivity
@@ -50,7 +51,7 @@ interface AlarmSetter {
     }
 
     override fun setUpRTCAlarm(id: Int, typeName: String, calendar: Calendar) {
-      log.debug { "Set $id ($typeName) on ${AlarmsScheduler.DATE_FORMAT.format(calendar.time)}" }
+//      log.debug { "Set $id ($typeName) on ${AlarmsScheduler.DATE_FORMAT.format(calendar.time)}" }
       val pendingAlarm =
           Intent(ACTION_FIRED)
               .apply {
@@ -63,6 +64,7 @@ interface AlarmSetter {
                     mContext, pendingAlarmRequestCode, it, pendingIntentUpdateCurrentFlag())
               }
 
+        Log.println(Log.WARN, TAG, "setUpRTCAlarm: sending intent of id = $id")
       setAlarmStrategy.setRTCAlarm(calendar, pendingAlarm)
     }
 
@@ -73,13 +75,14 @@ interface AlarmSetter {
             putExtra(EXTRA_ID, id)
             putExtra(EXTRA_TYPE, typeName)
           }
+        Log.println(Log.ASSERT, TAG, "fireNow: sending intent of id = $id")
       mContext.sendBroadcast(intent)
     }
 
     override fun setInexactAlarm(id: Int, calendar: Calendar) {
-      log.debug {
-        "setInexactAlarm id: $id on ${AlarmsScheduler.DATE_FORMAT.format(calendar.time)}"
-      }
+//      log.debug {
+//        "setInexactAlarm id: $id on ${AlarmsScheduler.DATE_FORMAT.format(calendar.time)}"
+//      }
       val pendingAlarm =
           Intent(ACTION_INEXACT_FIRED)
               .apply {
@@ -176,6 +179,7 @@ interface AlarmSetter {
   }
 
   companion object {
+      private const val TAG = "AlarmSetter"
     const val ACTION_FIRED = AlarmsScheduler.ACTION_FIRED
     const val ACTION_INEXACT_FIRED = AlarmsScheduler.ACTION_INEXACT_FIRED
     const val EXTRA_ID = AlarmsScheduler.EXTRA_ID

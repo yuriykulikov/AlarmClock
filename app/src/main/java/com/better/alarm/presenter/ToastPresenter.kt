@@ -18,11 +18,15 @@
 package com.better.alarm.presenter
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import com.better.alarm.configuration.Store
 import com.better.alarm.util.formatToast
 
 class ToastPresenter(private val store: Store, private val context: Context) {
+    companion object {
+        private const val TAG = "ToastPresenter"
+    }
   private var sToast: Toast? = null
 
   fun start() {
@@ -30,6 +34,7 @@ class ToastPresenter(private val store: Store, private val context: Context) {
         .sets()
         .withLatestFrom(store.uiVisible, { set, uiVisible -> set to uiVisible })
         .subscribe { (set: Store.AlarmSet, uiVisible: Boolean) ->
+            Log.println(Log.INFO, TAG, "start: ")
           if (!uiVisible && set.alarm.isEnabled) {
             popAlarmSetToast(context, set.millis)
           }
@@ -42,7 +47,7 @@ class ToastPresenter(private val store: Store, private val context: Context) {
   }
 
   private fun popAlarmSetToast(context: Context, timeInMillis: Long) {
-    val toastText = formatToast(context, timeInMillis)
+    val toastText = formatToast(context, timeInMillis) + "FOUND THIS!!!"
     val toast = Toast.makeText(context, toastText, Toast.LENGTH_LONG)
     setToast(toast)
     toast.show()

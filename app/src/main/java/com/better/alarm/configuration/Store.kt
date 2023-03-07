@@ -43,5 +43,9 @@ data class Store(
     fun alarm(): AlarmValue = alarm
 
     fun millis(): Long = millis
+
+      override fun toString(): String {
+          return "AlarmValue = $alarm, \n millis = $millis"
+      }
   }
 }

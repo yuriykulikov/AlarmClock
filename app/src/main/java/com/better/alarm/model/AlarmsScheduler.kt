@@ -15,6 +15,7 @@
  */
 package com.better.alarm.model
 
+import android.util.Log
 import com.better.alarm.BuildConfig
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.Store
@@ -92,6 +93,7 @@ class AlarmsScheduler(
       queue.add(newAlarm)
     }
 
+      Log.println(Log.VERBOSE, TAG, "replaceAlarm: is started?? $isStarted")
     if (isStarted) {
       fireAlarmsInThePast()
     }
@@ -99,7 +101,7 @@ class AlarmsScheduler(
     val currentHead: ScheduledAlarm? = queue.peek()
     when {
       !isStarted -> {
-        log.trace { "skip setting $currentHead (not started yet)" }
+//        log.trace { "skip setting $currentHead (not started yet)" }
       }
       // no alarms, remove
       currentHead == null -> {
@@ -108,6 +110,7 @@ class AlarmsScheduler(
       }
       // update current RTC, id will be used as the request code
       currentHead != prevHead -> {
+          Log.d(TAG, "replaceAlarm: ")
         setter.setUpRTCAlarm(currentHead.id, currentHead.type.name, currentHead.calendar)
         notifyListeners()
       }
@@ -122,10 +125,15 @@ class AlarmsScheduler(
    */
   private fun fireAlarmsInThePast() {
     val now = calendars.now()
-    while (!queue.isEmpty() && queue.peek()?.calendar?.before(now) == true) {
+      val peeked : ScheduledAlarm? = queue.peek()
+      val topIsBeforeNow = peeked?.calendar?.before(now)
+//      val topIsBeforeNow = queue.peek()?.calendar?.before(now)
+      Log.println(Log.ASSERT, TAG, "fireAlarmsInThePast: peeked = $peeked" +
+          ",\n is before now? $topIsBeforeNow")
+    while (!queue.isEmpty() && topIsBeforeNow == true) {
       // remove happens in fire
       queue.poll()?.let { firedInThePastAlarm ->
-        log.warning { "In the past - $firedInThePastAlarm" }
+//        log.warning { "In the past - $firedInThePastAlarm" }
         setter.fireNow(firedInThePastAlarm.id, firedInThePastAlarm.type.name)
       }
     }
@@ -164,7 +172,8 @@ class AlarmsScheduler(
   }
 
   companion object {
-    val DATE_FORMAT: SimpleDateFormat = SimpleDateFormat("dd-MM-yy HH:mm:ss", Locale.GERMANY)
+      private const val TAG = "AlarmsScheduler"
+      val DATE_FORMAT: SimpleDateFormat = SimpleDateFormat("dd-MM-yy HH:mm:ss", Locale.GERMANY)
     const val ACTION_FIRED = BuildConfig.APPLICATION_ID + ".ACTION_FIRED"
     const val ACTION_INEXACT_FIRED = BuildConfig.APPLICATION_ID + ".ACTION_INEXACT_FIRED"
     const val EXTRA_ID = "intent.extra.alarm"

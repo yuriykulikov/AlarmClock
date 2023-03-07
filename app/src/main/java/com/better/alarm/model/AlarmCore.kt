@@ -379,7 +379,8 @@ class AlarmCore(
                 }
 
                 override fun onResume() {
-                    Log.println(Log.ASSERT, TAG, "onResume: this = $this")
+                    Log.println(Log.ASSERT, TAG, "onResume: this = $this" +
+                        ", \n stack = ${StringUtils.getSingleStackTrace()}")
                     val nextTime = calculateNextTime()
                     setAlarm(nextTime, CalendarType.NORMAL)
                     showSkipNotification(nextTime)
@@ -706,6 +707,7 @@ class AlarmCore(
     }
 
     private fun setAlarm(calendar: Calendar, calendarType: CalendarType) {
+        Log.println(Log.ERROR, TAG, "setAlarm: nextTime = ${calendar.time}")
         mAlarmsScheduler.setAlarm(container.id, calendarType, calendar, container)
         alarmStore.modify { withNextTime(calendar) }
     }
