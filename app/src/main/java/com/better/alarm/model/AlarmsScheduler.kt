@@ -20,6 +20,7 @@ import com.better.alarm.BuildConfig
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.Store
 import com.better.alarm.logger.Logger
+import com.better.alarm.presenter.AlarmsListActivity
 import com.better.alarm.util.Optional
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -64,7 +65,8 @@ class AlarmsScheduler(
         setter.setUpRTCAlarm(currentHead.id, currentHead.type.name, currentHead.calendar)
       }
     }
-    notifyListeners()
+      Log.println(Log.ERROR, TAG, "start: queue = ${collectionToString(queue)}")
+      notifyListeners()
   }
 
   override fun setAlarm(id: Int, type: CalendarType, calendar: Calendar, alarmValue: AlarmValue) {
@@ -85,18 +87,22 @@ class AlarmsScheduler(
   }
 
   private fun replaceAlarm(id: Int, newAlarm: ScheduledAlarm?) {
-    val prevHead: ScheduledAlarm? = queue.peek()
+      Log.d(TAG, "replaceAlarm: A = ${collectionToString(queue)}")
+      val prevHead: ScheduledAlarm? = queue.peek()
 
     // remove if we have already an alarm
     queue.removeAll { it.id == id }
-    if (newAlarm != null) {
-      queue.add(newAlarm)
-    }
+      Log.d(TAG, "replaceAlarm: B = ${collectionToString(queue)}")
+      if (newAlarm != null) {
+          queue.add(newAlarm)
+      }
 
-      Log.println(Log.VERBOSE, TAG, "replaceAlarm: is started?? $isStarted")
-    if (isStarted) {
-      fireAlarmsInThePast()
-    }
+      Log.println(Log.VERBOSE, TAG, "replaceAlarm C: is started?? $isStarted" +
+          ",\n queue = ${collectionToString(queue)}")
+      if (isStarted) {
+          fireAlarmsInThePast()
+      }
+      Log.d(TAG, "replaceAlarm: D = ${collectionToString(queue)}")
 
     val currentHead: ScheduledAlarm? = queue.peek()
     when {
@@ -110,7 +116,12 @@ class AlarmsScheduler(
       }
       // update current RTC, id will be used as the request code
       currentHead != prevHead -> {
-          Log.d(TAG, "replaceAlarm: ")
+//          if (currentHead != null) {
+              Log.d(TAG, "replaceAlarm: id{${currentHead.id}}" +
+                  ",\n of time = ${currentHead.alarmValue}")
+//          } else {
+//              Log.d(TAG, "replaceAlarm: it was null")
+//          }
         setter.setUpRTCAlarm(currentHead.id, currentHead.type.name, currentHead.calendar)
         notifyListeners()
       }
@@ -120,7 +131,8 @@ class AlarmsScheduler(
   }
 
   /**
-   * If two alarms were set for the same time, then the second alarm will be processed in the past.
+   * If two alarms were set for the same time,
+   * then the second alarm will be processed in the past.
    * In this case we remove it from the queue and fire it.
    */
   private fun fireAlarmsInThePast() {
@@ -128,16 +140,36 @@ class AlarmsScheduler(
       val peeked : ScheduledAlarm? = queue.peek()
       val topIsBeforeNow = peeked?.calendar?.before(now)
 //      val topIsBeforeNow = queue.peek()?.calendar?.before(now)
-      Log.println(Log.ASSERT, TAG, "fireAlarmsInThePast: peeked = $peeked" +
-          ",\n is before now? $topIsBeforeNow")
+//      Log.println(Log.ASSERT, TAG, "fireAlarmsInThePast: peeked = $peeked" +
+//          ",\n is before now? $topIsBeforeNow" +
+//          ",\n now = ${now.time}" +
+//          ",\n all in queue = ${collectionToString(queue)}"
+//      )
     while (!queue.isEmpty() && topIsBeforeNow == true) {
       // remove happens in fire
       queue.poll()?.let { firedInThePastAlarm ->
-//        log.warning { "In the past - $firedInThePastAlarm" }
+          Log.println(Log.INFO, TAG, "fireAlarmsInThePast: id{$firedInThePastAlarm.id}" +
+              ",\n for time = ${firedInThePastAlarm.alarmValue}")
+          //Todo: BUG
         setter.fireNow(firedInThePastAlarm.id, firedInThePastAlarm.type.name)
       }
     }
   }
+
+    fun<V> collectionToString(col: Collection<V>, map: (V) -> String) : String {
+        val b = StringBuilder()
+        for ((i, v) in col.withIndex()) {
+            b.append(
+                " " +
+                    "\n Entry >>>>> No [$i]" +
+                    "\n    item = ${map(v)}"
+            )
+        }
+        return b.toString()
+    }
+    fun<V> collectionToString(col: Collection<V>) : String {
+        return collectionToString(col, map = {v ->  v.toString()})
+    }
 
   /**
    * TODO the whole mechanism has to be revised. Currently we can only know when next alarm is

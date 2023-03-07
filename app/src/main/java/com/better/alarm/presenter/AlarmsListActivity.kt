@@ -192,7 +192,7 @@ class AlarmsListActivity : AppCompatActivity() {
         .subscribe { alarms -> checkPermissions(this, alarms.map { it.alarmtone }) }
         .apply {}
   }
-    private fun<V> collectionToString(col: Collection<V>, map: (V) -> String) : String {
+    public fun<V> collectionToString(col: Collection<V>, map: (V) -> String) : String {
         val b = StringBuilder()
         for ((i, v) in col.withIndex()) {
             b.append(
@@ -203,7 +203,7 @@ class AlarmsListActivity : AppCompatActivity() {
         }
         return b.toString()
     }
-    private fun<V> collectionToString(col: Collection<V>) : String {
+    public fun<V> collectionToString(col: Collection<V>) : String {
         return collectionToString(col, map = {v ->  v.toString()})
     }
   override fun onStart() {
