@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import com.better.alarm.logger.Logger
+import com.better.alarm.logger.StringUtils
 import com.better.alarm.pendingIntentUpdateCurrentFlag
 import com.better.alarm.presenter.AlarmsListActivity
 import java.util.*
@@ -111,12 +112,27 @@ interface AlarmSetter {
     }
 
     private fun initSetStrategyForVersion(): ISetAlarmStrategy {
-      return when {
+
+        Log.println(Log.ERROR, TAG, "initSetStrategyForVersion: IMPORTANT = stack = ${StringUtils.getSingleStackTrace()}")
+        val strat : ISetAlarmStrategy = when {
+//      return when {
         Build.VERSION.SDK_INT >= 26 -> OreoSetter()
         Build.VERSION.SDK_INT >= 23 -> MarshmallowSetter()
         Build.VERSION.SDK_INT >= 19 -> KitKatSetter()
         else -> IceCreamSetter()
       }
+        return object : ISetAlarmStrategy {
+            override fun setRTCAlarm(calendar: Calendar, pendingIntent: PendingIntent) {
+                Log.println(Log.WARN, TAG, "setRTCAlarm: calendar = $calendar" +
+                    ",\n pendingIntent = $pendingIntent")
+                strat.setRTCAlarm(calendar, pendingIntent)
+            }
+
+            override fun setInexactAlarm(calendar: Calendar, pendingIntent: PendingIntent) {
+                strat.setInexactAlarm(calendar, pendingIntent)
+            }
+        }
+//        return strat;
     }
 
     private inner class IceCreamSetter : ISetAlarmStrategy {
@@ -142,8 +158,12 @@ interface AlarmSetter {
 
     @TargetApi(23)
     private inner class MarshmallowSetter : ISetAlarmStrategy {
-      override fun setRTCAlarm(calendar: Calendar, pendingIntent: PendingIntent) {
-        am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+      override fun setRTCAlarm(
+          calendar: Calendar, pendingIntent: PendingIntent
+      ) {
+        am.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent
+        )
       }
     }
 
@@ -151,14 +171,15 @@ interface AlarmSetter {
     @TargetApi(Build.VERSION_CODES.O)
     private inner class OreoSetter : ISetAlarmStrategy {
       override fun setRTCAlarm(calendar: Calendar, pendingIntent: PendingIntent) {
-        val pendingShowList =
-            PendingIntent.getActivity(
-                mContext,
-                100500,
-                Intent(mContext, AlarmsListActivity::class.java),
-                pendingIntentUpdateCurrentFlag())
-        am.setAlarmClock(
-            AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingShowList), pendingIntent)
+          val pendingShowList =
+              PendingIntent.getActivity(
+                  mContext,
+                  100500,
+                  Intent(mContext, AlarmsListActivity::class.java),
+                  pendingIntentUpdateCurrentFlag())
+          am.setAlarmClock(
+              AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingShowList), pendingIntent
+          )
       }
 
       override fun setInexactAlarm(calendar: Calendar, pendingIntent: PendingIntent) {

@@ -87,22 +87,22 @@ class AlarmsScheduler(
   }
 
   private fun replaceAlarm(id: Int, newAlarm: ScheduledAlarm?) {
-      Log.d(TAG, "replaceAlarm: A = ${collectionToString(queue)}")
+//      Log.d(TAG, "replaceAlarm: A = ${collectionToString(queue)}")
       val prevHead: ScheduledAlarm? = queue.peek()
 
     // remove if we have already an alarm
     queue.removeAll { it.id == id }
-      Log.d(TAG, "replaceAlarm: B = ${collectionToString(queue)}")
+//      Log.d(TAG, "replaceAlarm: B = ${collectionToString(queue)}")
       if (newAlarm != null) {
           queue.add(newAlarm)
       }
 
-      Log.println(Log.VERBOSE, TAG, "replaceAlarm C: is started?? $isStarted" +
-          ",\n queue = ${collectionToString(queue)}")
+//      Log.println(Log.VERBOSE, TAG, "replaceAlarm C: is started?? $isStarted" +
+//          ",\n queue = ${collectionToString(queue)}")
       if (isStarted) {
           fireAlarmsInThePast()
       }
-      Log.d(TAG, "replaceAlarm: D = ${collectionToString(queue)}")
+//      Log.d(TAG, "replaceAlarm: D = ${collectionToString(queue)}")
 
     val currentHead: ScheduledAlarm? = queue.peek()
     when {
@@ -111,14 +111,17 @@ class AlarmsScheduler(
       }
       // no alarms, remove
       currentHead == null -> {
+          Log.d(TAG, "replaceAlarm: removing...")
         setter.removeRTCAlarm()
         notifyListeners()
       }
       // update current RTC, id will be used as the request code
       currentHead != prevHead -> {
 //          if (currentHead != null) {
-              Log.d(TAG, "replaceAlarm: id{${currentHead.id}}" +
-                  ",\n of time = ${currentHead.alarmValue}")
+              Log.d(
+                  TAG, "replaceAlarm (setUpRTCAlarm): id{${currentHead.id}}" +
+                  ",\n of time = ${currentHead.alarmValue}"
+              )
 //          } else {
 //              Log.d(TAG, "replaceAlarm: it was null")
 //          }
@@ -126,7 +129,9 @@ class AlarmsScheduler(
         notifyListeners()
       }
       // if head remains the same, do nothing
-      else -> log.trace { "skip setting $currentHead (already set)" }
+      else -> {
+//          log.trace { "skip setting $currentHead (already set)" }
+      }
     }
   }
 
@@ -180,7 +185,8 @@ class AlarmsScheduler(
   private fun notifyListeners() {
     findNextNormalAlarm()
         ?.let { scheduledAlarm: ScheduledAlarm ->
-          fun findNormalTime(scheduledAlarm: ScheduledAlarm): Long {
+          fun findNormalTime(scheduledAlarm: ScheduledAlarm): Long
+          {
             // we can only assume that the real one will be a little later,
             // namely:
             val prealarmOffsetInMillis = prefs.preAlarmDuration.value * 60 * 1000
@@ -193,7 +199,8 @@ class AlarmsScheduler(
               alarm = scheduledAlarm.alarmValue,
               nextNonPrealarmTime =
                   if (isPrealarm) findNormalTime(scheduledAlarm)
-                  else scheduledAlarm.calendar.timeInMillis)
+                  else scheduledAlarm.calendar.timeInMillis
+          )
         }
         .let { next: Store.Next? -> Optional.fromNullable(next) }
         .run { store.next().onNext(this) }
