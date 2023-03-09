@@ -120,7 +120,8 @@ class AlarmsScheduler(
 //          if (currentHead != null) {
               Log.d(
                   TAG, "replaceAlarm (setUpRTCAlarm): id{${currentHead.id}}" +
-                  ",\n of time = ${currentHead.alarmValue}"
+                  ",\n of time = ${currentHead.alarmValue}" +
+                      ",\n name = ${currentHead.type.name}"
               )
 //          } else {
 //              Log.d(TAG, "replaceAlarm: it was null")
