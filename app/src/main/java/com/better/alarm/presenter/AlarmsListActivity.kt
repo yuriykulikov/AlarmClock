@@ -28,6 +28,7 @@ import android.transition.ChangeTransform
 import android.transition.Fade
 import android.transition.Slide
 import android.transition.TransitionSet
+import android.util.Log
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
@@ -51,6 +52,7 @@ import com.better.alarm.logger.Logger
 import com.better.alarm.lollipop
 import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.AlarmsRepository
+import com.better.alarm.statemachine.StateMachine
 import com.better.alarm.util.Optional
 import com.better.alarm.util.formatToast
 import com.google.android.material.snackbar.Snackbar
@@ -82,7 +84,8 @@ class AlarmsListActivity : AppCompatActivity() {
   private val dynamicThemeHandler: DynamicThemeHandler by globalInject()
 
   companion object {
-    val uiStoreModule: Module = module { single<UiStore> { createStore(EditedAlarm(), get()) } }
+      private const val TAG = "AlarmsListActivity"
+      val uiStoreModule: Module = module { single<UiStore> { createStore(EditedAlarm(), get()) } }
 
     private fun createStore(edited: EditedAlarm, alarms: IAlarmsManager): UiStore {
       class UiStoreIR : UiStore {
@@ -189,7 +192,20 @@ class AlarmsListActivity : AppCompatActivity() {
         .subscribe { alarms -> checkPermissions(this, alarms.map { it.alarmtone }) }
         .apply {}
   }
-
+    public fun<V> collectionToString(col: Collection<V>, map: (V) -> String) : String {
+        val b = StringBuilder()
+        for ((i, v) in col.withIndex()) {
+            b.append(
+                " " +
+                    "\n Entry >>>>> No [$i]" +
+                    "\n    item = ${map(v)}"
+            )
+        }
+        return b.toString()
+    }
+    public fun<V> collectionToString(col: Collection<V>) : String {
+        return collectionToString(col, map = {v ->  v.toString()})
+    }
   override fun onStart() {
     super.onStart()
     configureTransactions()
@@ -202,6 +218,7 @@ class AlarmsListActivity : AppCompatActivity() {
             .sets()
             .withLatestFrom(store.uiVisible, { set, uiVisible -> set to uiVisible })
             .subscribe { (set: Store.AlarmSet, uiVisible: Boolean) ->
+                Log.println(Log.VERBOSE, TAG, "configureSnackbar: new alarmSet $set")
               if (uiVisible) {
                 showSnackbar(set)
               }
@@ -213,7 +230,7 @@ class AlarmsListActivity : AppCompatActivity() {
    * https://github.com/yuriykulikov/AlarmClock/issues/372
    */
   private fun showSnackbar(set: Store.AlarmSet) {
-    val toastText = formatToast(applicationContext, set.millis)
+    val toastText = formatToast(applicationContext, set.millis) + " FOUND THIS!!!"
     Snackbar.make(findViewById(R.id.main_fragment_container), toastText, Snackbar.LENGTH_LONG)
         .apply {
           val text = view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)

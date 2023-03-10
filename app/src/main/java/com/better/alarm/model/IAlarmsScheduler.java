@@ -19,14 +19,14 @@ import java.util.Calendar;
 
 public interface IAlarmsScheduler {
   /** remove all Calendars of the AlarmCore with given id */
-  public void removeAlarm(int id);
+  void removeAlarm(int id);
 
   /**
    * Set all from a map.
    *
    * @param id
    */
-  public void setAlarm(int id, CalendarType calendarType, Calendar calendar, AlarmValue alarmValue);
+  void setAlarm(int id, CalendarType calendarType, Calendar calendar, AlarmValue alarmValue);
 
   void setInexactAlarm(int id, Calendar calendar);
 

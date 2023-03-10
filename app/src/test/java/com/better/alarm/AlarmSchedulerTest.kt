@@ -59,7 +59,7 @@ class AlarmSchedulerTest {
     var calendar: Calendar? = null
     val inexactAlarms = mutableMapOf<Int, Calendar>()
 
-    override fun setUpRTCAlarm(id: Int, typeName: String, calendar: Calendar) {
+    override fun setUpRTCAlarm(id: Int, calendar: Calendar) {
       this.id = id
       this.typeName = typeName
       this.calendar = calendar
@@ -71,7 +71,7 @@ class AlarmSchedulerTest {
       calendar = null
     }
 
-    override fun fireNow(id: Int, typeName: String) {}
+    override fun fireNow(id: Int) {}
 
     override fun removeInexactAlarm(id: Int) {
       inexactAlarms.remove(id)

@@ -23,6 +23,7 @@
  */
 package com.better.alarm.statemachine
 
+import android.util.Log
 import com.better.alarm.logger.Logger
 import kotlin.properties.Delegates
 
@@ -121,180 +122,227 @@ import kotlin.properties.Delegates
  * is inspired by an
  * [Android SM](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/core/java/com/android/internal/util/StateMachine.java)
  */
-internal class StateMachine<T : Any>(val name: String, private val logger: Logger) {
-  /** State hierarchy as a tree. Root Node is null. */
-  private lateinit var tree: Map<State<T>, Node<T>>
+internal class StateMachine<T : Any>(val name: String, private val logger: Logger)
+{
 
-  /** Current state of the state machine */
-  private var currentState: State<T> by Delegates.notNull()
-
-  /** State into which the state machine transitions */
-  private var targetState: State<T> by Delegates.notNull()
-
-  /**
-   * Counter which is incremented when SM starts processing and decremented when it finishes. Use to
-   * make sure that [transitionTo] is only used when SM is processing. See [withProcessingFlag].
-   */
-  private var processing: Int = 0
-
-  /** Events not processed by current state and put on hold until the next transition */
-  private val deferred = mutableListOf<T>()
-
-  /**
-   * Configure and start the state machine. [State.enter] will be called on the initial state and
-   * its parents.
-   */
-  fun start(event: T? = null, configurator: StateMachineBuilder.(StateMachineBuilder) -> Unit) {
-    tree = StateMachineBuilder().apply { configurator(this, this) }.mutableTree.toMap()
-    enterInitialState(event)
-  }
-
-  /** Process the event. If [State.onEvent] returns false, event goes to the next parent state. */
-  fun sendEvent(event: T) = withProcessingFlag {
-    val hierarchy = branchToRoot(currentState)
-
-    logger.debug { "[$name] event $event -> (${hierarchy.joinToString(" > ")})" }
-
-    val processedIn: State<T>? =
-        hierarchy.firstOrNull { state: State<T> ->
-          logger.trace { "[$name] $state.processEvent()" }
-          state.onEvent(event)
-        }
-
-    requireNotNull(processedIn) { "[$name] was not able to handle $event" }
-
-    performTransitions(event)
-  }
-
-  /**
-   * Trigger a transition. Allowed only while processing events. All exiting states will receive
-   * [State.exit] and all entering states [State.enter] calls. Transitions will be performed after
-   * the [sendEvent] is done. Can be called from [State.enter]. In this case last call wins.
-   */
-  fun transitionTo(state: State<T>) {
-    check(processing > 0) { "transitionTo can only be called within processEvent" }
-    targetState = state
-  }
-
-  /**
-   * Indicate that current state defers processing of this event to the next state. Event will be
-   * delivered upon state change to the next state.
-   */
-  fun deferEvent(event: T) {
-    logger.debug { "[$name] deferring $event from $name to next state" }
-    deferred.add(event)
-  }
-
-  /**
-   * Loop until [currentState] is not the same as [targetState] which can be caused by
-   * [transitionTo]
-   */
-  private fun performTransitions(reason: T?) {
-    check(processing > 0)
-    while (currentState != targetState) {
-      val currentBranch = branchToRoot(currentState)
-      val targetBranch = branchToRoot(targetState)
-      val common = currentBranch.intersect(targetBranch)
-
-      val toExit = currentBranch.minus(common)
-      val toEnter = targetBranch.minus(common).reversed()
-
-      // now that we know the branches, change the current state to target state
-      // calling exit/enter may change this afterwards
-      currentState = targetState
-
-      logger.debug { "[$name] transition $toExit => $toEnter" }
-
-      toExit.forEach { state -> state.exit(reason) }
-      toEnter.forEach { state -> state.enter(reason) }
-
-      processDeferred()
+    companion object {
+        private const val TAG = "StateMachine"
     }
-  }
 
-  private fun processDeferred() {
-    val copy = deferred.toList()
-    deferred.clear()
-    copy.forEach { sendEvent(it) }
-  }
+    override fun toString(): String {
+        return super.toString() +
+            ",\n >> current state = $currentState <<"
+    }
+    /** State hierarchy as a tree. Root Node is null. */
+    private lateinit var tree: Map<State<T>, Node<T>>
 
-  private fun branchToRoot(state: State<T>): List<State<T>> {
-    return generateSequence(tree.getValue(state)) { it.parentNode }.map { it.state }.toList()
-  }
+    /** Current state of the state machine */
+    var currentState: State<T> by Delegates.notNull()
+//  private var currentState: State<T> by Delegates.notNull()
 
-  /** Goes all states from root to [currentState] and invokes [State.enter] */
-  private fun enterInitialState(event: T?) = withProcessingFlag {
-    val toEnter = branchToRoot(currentState).reversed()
-    logger.debug { "[$name] entering $toEnter" }
-    toEnter.forEach { it.enter(event) }
-    performTransitions(event)
-  }
-
-  /**
-   * Executes the [block] increasing [processing] before and decreasing it after the block
-   * execution.
-   */
-  private inline fun withProcessingFlag(block: () -> Unit) {
-    processing++
-    block()
-    processing--
-  }
-
-  inner class StateMachineBuilder {
-    internal val mutableTree = mutableMapOf<State<T>, Node<T>>()
+    /** State into which the state machine transitions */
+    public var targetState: State<T> by Delegates.notNull()
 
     /**
-     * Adds a new state. Parent must be added before it is used here as [parent].
-     *
-     * At least one state must have [initial] == true or [setInitialState]
+     * Counter which is incremented when SM starts processing and decremented when it finishes. Use to
+     * make sure that [transitionTo] is only used when SM is processing. See [withProcessingFlag].
      */
-    fun addState(state: State<T>, parent: State<T>? = null, initial: Boolean = false) {
-      val parentNode: Node<T>? =
-          parent?.let {
-            requireNotNull(mutableTree[it]) { "Parent $parent must be added before adding a child" }
-          }
+    private var processing: Int = 0
 
-      mutableTree[state] = Node(state, parentNode)
+    /** Events not processed by current state and put on hold until the next transition */
+    private val deferred = mutableListOf<T>()
 
-      if (initial) setInitialState(state)
+    /**
+     * Configure and start the state machine. [State.enter] will be called on the initial state and
+     * its parents.
+     */
+    fun start(event: T? = null, configurator: StateMachineBuilder.(StateMachineBuilder) -> Unit) {
+        tree = StateMachineBuilder().apply { configurator(this, this) }.mutableTree.toMap()
+        enterInitialState(event)
     }
 
-    fun setInitialState(state: State<T>) {
-      currentState = state
-      targetState = state
+    /** Process the event. If [State.onEvent] returns false, event goes to the next parent state. */
+    fun sendEvent(event: T) = withProcessingFlag {
+//      Log.println(Log.ERROR, TAG, " " +
+//          "\n sendEvent: event = $event" +
+//          ", \n stack = ${StringUtils.getSingleStackTrace()}" +
+//      ",\n current state = $currentState" +
+//      ",\n target state = $targetState"
+//      )
+        val hierarchy = branchToRoot(currentState)
+
+//    logger.debug { "[$name] event $event -> (${hierarchy.joinToString(" > ")})" }
+        Log.d(TAG, "sendEvent: branch = $hierarchy")
+        val processedIn: State<T>? =
+            hierarchy.firstOrNull { state: State<T> ->
+//          logger.trace { "[$name] $state.processEvent()" }
+            Log.println(Log.INFO, TAG, "sendEvent: state = $state")
+                state.onEvent(event)
+            }
+
+        requireNotNull(processedIn) { "[$name] was not able to handle $event" }
+
+        performTransitions(event)
     }
-  }
+
+    /**
+     * Trigger a transition. Allowed only while processing events. All exiting states will receive
+     * [State.exit] and all entering states [State.enter] calls. Transitions will be performed after
+     * the [sendEvent] is done. Can be called from [State.enter]. In this case last call wins.
+     */
+    fun transitionTo(state: State<T>) {
+        check(processing > 0) { "transitionTo can only be called within processEvent" }
+        targetState = state
+    }
+
+    /**
+     * Indicate that current state defers processing of this event to the next state. Event will be
+     * delivered upon state change to the next state.
+     */
+    fun deferEvent(event: T) {
+        logger.debug { "[$name] deferring $event from $name to next state" }
+        deferred.add(event)
+    }
+
+    /**
+     * Loop until [currentState] is not the same as [targetState] which can be caused by
+     * [transitionTo]
+     */
+    private fun performTransitions(reason: T?) {
+        check(processing > 0)
+//      Log.d(TAG, "performTransitions: current = $currentState" +
+//          ",\n target = $targetState, \n stack = ${StringUtils.getSingleStackTrace()}")
+        while (currentState != targetState) {
+            val currentBranch = branchToRoot(currentState)
+//        Log.println(Log.VERBOSE, TAG, "performTransitions: currentBranch = $currentBranch")
+            val targetBranch = branchToRoot(targetState)
+//        Log.println(Log.INFO, TAG, "performTransitions: targetBranch = $targetBranch")
+            val common = currentBranch.intersect(targetBranch)
+
+            val toExit = currentBranch.minus(common)
+            val toEnter = targetBranch.minus(common).reversed()
+
+            // now that we know the branches, change the current state to target state
+            // calling exit/enter may change this afterwards
+            currentState = targetState
+
+            logger.debug { "[$name] transition $toExit => $toEnter" }
+
+            toExit.forEach { state ->
+//          Log.println(Log.WARN, TAG, "performTransitions: exiting... $state")
+                state.exit(reason) }
+            toEnter.forEach { state ->
+//          Log.println(Log.VERBOSE, TAG, "performTransitions: entering... $state")
+                state.enter(reason) }
+
+            processDeferred()
+        }
+    }
+
+    private fun processDeferred() {
+        val copy = deferred.toList()
+        deferred.clear()
+        copy.forEach {
+//        Log.println(Log.ASSERT, TAG, "processDeferred: processing event = $it")
+            sendEvent(it) }
+    }
+
+    private fun branchToRoot(state: State<T>): List<State<T>> {
+        return generateSequence(tree.getValue(state)) { it.parentNode }.map { it.state }.toList()
+    }
+
+    /** Goes all states from root to [currentState] and invokes [State.enter] */
+    private fun enterInitialState(event: T?) = withProcessingFlag {
+        val toEnter = branchToRoot(currentState).reversed()
+        logger.debug { "[$name] entering $toEnter" }
+        toEnter.forEach { it.enter(event) }
+        performTransitions(event)
+    }
+
+    /**
+     * Executes the [block] increasing [processing] before and decreasing it after the block
+     * execution.
+     */
+    private inline fun withProcessingFlag(block: () -> Unit) {
+        processing++
+        block()
+        processing--
+    }
+
+    inner class StateMachineBuilder {
+        internal val mutableTree = mutableMapOf<State<T>, Node<T>>()
+
+        /**
+         * Adds a new state. Parent must be added before it is used here as [parent].
+         *
+         * At least one state must have [initial] == true or [setInitialState]
+         */
+        fun addState(state: State<T>, parent: State<T>? = null, initial: Boolean = false) {
+            val parentNode: Node<T>? =
+                parent?.let {
+                    requireNotNull(mutableTree[it]) { "Parent $parent must be added before adding a child" }
+                }
+
+            mutableTree[state] = Node(state, parentNode)
+
+            if (initial) setInitialState(state)
+        }
+
+        fun setInitialState(state: State<T>) {
+            currentState = state
+            targetState = state
+        }
+    }
 }
 
 /** Node in the state tree */
-internal class Node<T>(var state: State<T>, var parentNode: Node<T>?)
+internal class Node<T>(var state: State<T>, var parentNode: Node<T>?) {
+    override fun toString(): String {
+        return "<START><><state = $state>" +
+            "\n    Parent = $parentNode" +
+            "\n <state = $state><><END>"
+    }
+}
+
+fun<K, V> mapToString(map: Map<K, V>) : String {
+    val b = StringBuilder()
+    for ((i, e: Map.Entry<K, V>) in map.entries.withIndex()) {
+        b.append(
+            " " +
+                "\n Entry >>>>> No [$i]" +
+                "\n    key = ${e.key}" +
+                "\n    value = ${e.value}"
+        )
+    }
+    return b.toString()
+}
 
 /** Event handler in a [StateMachine] */
 abstract class State<T> {
-  /**
-   * State is entered. It is not called if the state is re-entered (transition to self).
-   *
-   * [reason] is the message which caused and and *null* if [enter] is called from the initial state
-   * is entered.
-   */
-  abstract fun enter(reason: T?)
+    /**
+     * State is entered. It is not called if the state is re-entered (transition to self).
+     *
+     * [reason] is the message which caused and and *null* if [enter] is called from the initial state
+     * is entered.
+     */
+    abstract fun enter(reason: T?)
 
-  /**
-   * State is exited. It is only called if the state is completely left. Transitions in the child
-   * states do not cause this.
-   *
-   * [reason] is the message which caused and and *null* if [exit] is called from the initial state
-   * is entered.
-   */
-  abstract fun exit(reason: T?)
+    /**
+     * State is exited. It is only called if the state is completely left. Transitions in the child
+     * states do not cause this.
+     *
+     * [reason] is the message which caused and and *null* if [exit] is called from the initial state
+     * is entered.
+     */
+    abstract fun exit(reason: T?)
 
-  /**
-   * Process events in the state. Return *true* if the state has handled the event and *false* if
-   * not. Unhandled event will be propagated to the parent.
-   */
-  abstract fun onEvent(event: T): Boolean
+    /**
+     * Process events in the state. Return *true* if the state has handled the event and *false* if
+     * not. Unhandled event will be propagated to the parent.
+     */
+    abstract fun onEvent(event: T): Boolean
 
-  open val name: String = javaClass.simpleName
+    open val name: String = javaClass.simpleName
 
-  override fun toString(): String = name
+    override fun toString(): String = name
 }

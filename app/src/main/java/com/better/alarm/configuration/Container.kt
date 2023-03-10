@@ -8,6 +8,7 @@ import android.os.PowerManager
 import android.os.Vibrator
 import android.telephony.TelephonyManager
 import android.text.format.DateFormat
+import android.util.Log
 import com.better.alarm.alert.BackgroundNotifications
 import com.better.alarm.background.AlertServicePusher
 import com.better.alarm.background.KlaxonPlugin
@@ -16,6 +17,7 @@ import com.better.alarm.bugreports.BugReporter
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.logger.Logger
 import com.better.alarm.logger.LoggerFactory
+import com.better.alarm.logger.StringUtils
 import com.better.alarm.logger.loggerModule
 import com.better.alarm.model.AlarmCore
 import com.better.alarm.model.AlarmSetter
@@ -54,6 +56,7 @@ import org.koin.core.scope.Scope
 import org.koin.dsl.binds
 import org.koin.dsl.module
 
+
 fun Scope.logger(tag: String): Logger {
   return get<LoggerFactory>().createLogger(tag)
 }
@@ -91,10 +94,13 @@ fun startKoin(context: Context): Koin {
     }
 
     factory { get<Context>().getSystemService(Context.ALARM_SERVICE) as AlarmManager }
-    single<AlarmSetter> { AlarmSetter.AlarmSetterImpl(logger("AlarmSetter"), get(), get()) }
+    single<AlarmSetter> { AlarmSetter.AlarmSetterImpl(get(), get()) }
+
     factory { Calendars { Calendar.getInstance() } }
     single<AlarmsScheduler> {
-      AlarmsScheduler(get(), logger("AlarmsScheduler"), get(), get(), get())
+      AlarmsScheduler(get()
+//          , logger("AlarmsScheduler"), get(), get(), get()
+      )
     }
     factory<IAlarmsScheduler> { get<AlarmsScheduler>() }
     single<AlarmCore.IStateNotifier> { AlarmStateNotifier(get()) }
