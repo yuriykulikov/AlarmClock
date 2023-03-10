@@ -6,6 +6,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.ContextMenu
 import android.view.ContextMenu.ContextMenuInfo
 import android.view.LayoutInflater
@@ -71,7 +72,8 @@ class AlarmsListFragment : Fragment() {
   private var listRowLayout = prefs.layout()
 
   companion object {
-    var fabSync: Channel<Unit>? = null
+      private const val TAG = "AlarmsListFragment"
+      var fabSync: Channel<Unit>? = null
   }
   inner class AlarmListAdapter(alarmTime: Int, label: Int, private val values: List<AlarmValue>) :
       ArrayAdapter<AlarmValue>(requireContext(), alarmTime, label, values) {
@@ -115,8 +117,11 @@ class AlarmsListFragment : Fragment() {
           // onOff
           .setOnClickListener {
             val enable = !alarm.isEnabled
-            logger.debug { "onClick: ${if (enable) "enable" else "disable"}" }
-            alarms.getAlarm(alarm.id)?.enable(enable)
+//            logger.debug { "onClick: ${if (enable) "enable" else "disable"}" }
+            val currAlarm =  alarms.getAlarm(alarm.id)
+              Log.println(Log.INFO, TAG, "getView: alarm is: $currAlarm" +
+                  ",\n setting enabled = $enable")
+              currAlarm?.enable(enable)
           }
 
       val pickerClickTarget =
@@ -271,10 +276,10 @@ class AlarmsListFragment : Fragment() {
 
     lollipop { configureBottomDrawer(view) }
 
-    logger.trace { "onCreateView() { postponeEnterTransition() }" }
+//    logger.trace { "onCreateView() { postponeEnterTransition() }" }
     postponeEnterTransition()
     view.doOnPreDraw {
-      logger.trace { "onCreateView() { doOnPreDraw { startPostponedEnterTransition() } }" }
+//      logger.trace { "onCreateView() { doOnPreDraw { startPostponedEnterTransition() } }" }
       startPostponedEnterTransition()
     }
 

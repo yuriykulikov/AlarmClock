@@ -19,7 +19,7 @@ import java.util.Calendar;
 
 public interface IAlarmsScheduler {
   /** remove all Calendars of the AlarmCore with given id */
-  public void removeAlarm(int id);
+  void removeAlarm(int id);
 
   /**
    * Set all from a map.

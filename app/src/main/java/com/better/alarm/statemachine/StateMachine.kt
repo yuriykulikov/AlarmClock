@@ -128,6 +128,11 @@ internal class StateMachine<T : Any>(val name: String, private val logger: Logge
     companion object {
         private const val TAG = "StateMachine"
     }
+
+    override fun toString(): String {
+        return super.toString() +
+            ",\n >> current state = $currentState <<"
+    }
     /** State hierarchy as a tree. Root Node is null. */
     private lateinit var tree: Map<State<T>, Node<T>>
 
@@ -171,7 +176,7 @@ internal class StateMachine<T : Any>(val name: String, private val logger: Logge
         val processedIn: State<T>? =
             hierarchy.firstOrNull { state: State<T> ->
 //          logger.trace { "[$name] $state.processEvent()" }
-//            Log.println(Log.INFO, TAG, "sendEvent: state = $state")
+            Log.println(Log.INFO, TAG, "sendEvent: state = $state")
                 state.onEvent(event)
             }
 

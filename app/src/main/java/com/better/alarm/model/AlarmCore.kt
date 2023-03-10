@@ -138,10 +138,6 @@ class AlarmCore(
 
     private val disposable = CompositeDisposable()
 
-    companion object {
-        private const val TAG = "AlarmCore"
-    }
-
     init {
         this.df = SimpleDateFormat("dd-MM-yy HH:mm:ss", Locale.GERMANY)
 
@@ -229,7 +225,6 @@ class AlarmCore(
         }
 
         override fun onChange(alarmValue: AlarmValue) {
-            Log.println(Log.ASSERT, TAG, "onChange: ")
             writeChangeData(alarmValue)
             updateListInStore()
             if (container.isEnabled) {
@@ -238,7 +233,6 @@ class AlarmCore(
         }
 
         override fun onEnable() {
-            Log.println(Log.ERROR, TAG, "onEnable: ")
             alarmStore.modify { withIsEnabled(true) }
             stateMachine.transitionTo(enableTransition)
         }
@@ -302,10 +296,8 @@ class AlarmCore(
             val preAlarmMinutes = preAlarmDuration.blockingFirst()
             preAlarm.add(Calendar.MINUTE, -1 * preAlarmMinutes!!)
             if (container.isPrealarm && preAlarm.after(calendars.now()) && preAlarmMinutes != -1) {
-                Log.println(Log.VERBOSE, TAG, "performComplexTransition: to preAlarm")
                 stateMachine.transitionTo(preAlarmSet)
             } else {
-                Log.println(Log.VERBOSE, TAG, "performComplexTransition: to normalSet")
                 stateMachine.transitionTo(normalSet)
             }
         }
@@ -317,7 +309,6 @@ class AlarmCore(
             return super.toString() + "@${hashCode()}"
         }
         override fun onEnter(reason: Event) {
-            Log.d(TAG, "onEnter: this = $this")
             if (!container.isEnabled) {
                 // if due to an exception during development an alarm is not enabled but the state is
                 alarmStore.modify { withIsEnabled(true) } // Writes to DB
@@ -326,7 +317,6 @@ class AlarmCore(
         }
 
         override fun onChange(alarmValue: AlarmValue) {
-            Log.d(TAG, "onChange: this = $this")
             writeChangeData(alarmValue)
             updateListInStore()
             if (container.isEnabled) {
@@ -364,34 +354,22 @@ class AlarmCore(
                 override fun toString(): String {
                     return super.toString() + "@${hashCode()}"
                 }
+
                 override fun onEnter(reason: Event) {
-//            val c = container.date;
                     val prevTime = getCurrentCalendar().timeInMillis
                     val myNextTime = DateTransformer.addADay(prevTime)
                     val nextTimeMillis = calculateNextTime().timeInMillis
-                    Log.println(Log.WARN, TAG, " " +
-                        "\n onEnter: this $this" +
-                        ", \n prevTime = ${DateTransformer.getDateFromTime(prevTime)}" +
-                        ", \n REAL nextTimeMillis = ${DateTransformer.getDateFromTime(nextTimeMillis)}" +
-                        ",\n myNextTime = ${DateTransformer.getDateFromTime(myNextTime)}}"
-                    )
                     broadcastAlarmSetWithNormalTime(nextTimeMillis)
                 }
 
                 override fun onResume() {
-                    Log.println(Log.ASSERT, TAG, "onResume: this = $this" +
-                        ", \n stack = ${StringUtils.getSingleStackTrace()}")
                     val nextTime = calculateNextTime()
                     setAlarm(nextTime, CalendarType.NORMAL)
                     showSkipNotification(nextTime)
                 }
 
                 override fun onFired() {
-//            Log.println(Log.ERROR, TAG, " " +
-//                "\n onFired: NORMAL_STATE this = $this" +
-//            ",\n target state = ${stateMachine.targetState}")
                     stateMachine.transitionTo(fired)
-//            Log.println(Log.WARN, TAG, "onFired: AFTER Transition = ${stateMachine.targetState} ")
                 }
 
                 override fun onPreAlarmDurationChanged() {
@@ -691,9 +669,6 @@ class AlarmCore(
     }
 
     private fun broadcastAlarmState(action: String, calendar: Calendar? = null) {
-//    log.trace { "[Alarm ${container.id}] broadcastAlarmState($action)" }
-//      Log.d(TAG, "broadcastAlarmState: calendar = $calendar" +
-//      ",\n action = $action")
         when {
             calendar != null -> broadcaster.broadcastAlarmState(container.id, action, calendar)
             else -> broadcaster.broadcastAlarmState(container.id, action)
@@ -707,7 +682,6 @@ class AlarmCore(
     }
 
     private fun setAlarm(calendar: Calendar, calendarType: CalendarType) {
-        Log.println(Log.ERROR, TAG, "setAlarm: nextTime = ${calendar.time}")
         mAlarmsScheduler.setAlarm(container.id, calendarType, calendar, container)
         alarmStore.modify { withNextTime(calendar) }
     }
@@ -747,9 +721,7 @@ class AlarmCore(
                 set(Calendar.MINUTE, container.minutes)
                 set(Calendar.SECOND, 0)
                 set(Calendar.MILLISECOND, 0)
-                Log.d(TAG, "calculateNextTime: prev advanced = ${DateTransformer.getDateFromTime(timeInMillis)}")
                 advanceCalendar()
-                Log.println(Log.INFO, TAG, "calculateNextTime: AFTER advanced = ${DateTransformer.getDateFromTime(timeInMillis)}")
             }
         }
     }
@@ -770,9 +742,6 @@ class AlarmCore(
                 set(Calendar.MINUTE, container.minutes)
                 set(Calendar.SECOND, 0)
                 set(Calendar.MILLISECOND, 0)
-//          Log.d(TAG, "calculateNextTime: prev advanced = ${DateTransformer.getDateFromTime(timeInMillis)}")
-//        advanceCalendar()
-//          Log.println(Log.INFO, TAG, "calculateNextTime: AFTER advanced = ${DateTransformer.getDateFromTime(timeInMillis)}")
             }
         }
     }
@@ -781,27 +750,13 @@ class AlarmCore(
         val now = calendars.now()
         // if alarm is behind current time, advance one day
         if (before(now)) {
-            Log.d(TAG, "advanceCalendar: ")
             add(Calendar.DAY_OF_YEAR, 1)
         }
         val addDays = container.daysOfWeek.getNextAlarm(this)
-        Log.println(Log.ERROR, TAG, "advanceCalendar: addDays = $addDays, \n stack = ${StringUtils.getSingleStackTrace()}")
         if (addDays > 0) {
             add(Calendar.DAY_OF_WEEK, addDays)
         }
     }
-
-//  private fun advanceCalendar1(prev: Calendar) {
-////    val now = calendars.now()
-//    // if alarm is behind current time, advance one day
-//    if (prev.before(calendars.now())) {
-//      prev.add(Calendar.DAY_OF_YEAR, 1)
-//    }
-//    val addDays = container.daysOfWeek.getNextAlarm(this)
-//    if (addDays > 0) {
-//      prev.add(Calendar.DAY_OF_WEEK, addDays)
-//    }
-//  }
 
     private fun alarmWillBeRescheduled(reason: Event?): Boolean {
         return reason is Change && reason.value.isEnabled
@@ -811,9 +766,6 @@ class AlarmCore(
         private var handled: Boolean = false
 
         final override fun enter(reason: Event?) {
-//        Log.d(TAG, "enter: reason = $reason" +
-//        ",\n at this $this" +
-//        ",\n at stack = ${StringUtils.getSingleStackTrace()}")
             when (reason) {
                 null -> onResume()
                 else -> {
@@ -821,8 +773,6 @@ class AlarmCore(
                         alarmStore.modify { withState(name) }
                     }
                     onEnter(reason)
-//            Log.println(Log.ERROR, TAG, "enter: this = $this" +
-//            ",\n for event = $reason")
                     onResume()
                 }
             }
@@ -834,9 +784,6 @@ class AlarmCore(
 
         override fun onEvent(event: Event): Boolean {
             handled = true
-//        Log.println(Log.INFO, TAG, "onEvent: event = $event" +
-//        ",\n at stack ${StringUtils.getSingleStackTrace()}" +
-//        ",\n at this = $this")
             when (event) {
                 Create -> Unit
                 is Enable -> onEnable()
@@ -845,7 +792,6 @@ class AlarmCore(
                 is Dismiss -> onDismiss()
                 is Change -> onChange(event.value)
                 is Fired -> {
-//            Log.println(Log.WARN, TAG, "onEvent: FIRED!!!")
                     onFired()
                 }
                 is PrealarmDurationChanged -> onPreAlarmDurationChanged()
@@ -856,7 +802,6 @@ class AlarmCore(
                 is Delete -> onDelete()
                 Create -> check(!BuildConfig.DEBUG) { "Unexpected $event" }
             }
-//        Log.d(TAG, "onEvent: returning handled = $handled")
             return handled
         }
 
@@ -879,20 +824,14 @@ class AlarmCore(
     }
 
     private fun updateListInStore() {
-//      Log.println(Log.ASSERT, TAG, "updateListInStore: this = $this" +
-//      ",\n stack = ${StringUtils.getSingleStackTrace()}")
         store
             .alarms()
             .take(1)
             .subscribe { alarmValues ->
-//            Log.d(TAG, " " +
-//                "\n updateListInStore: alarm values = $alarmValues" +
-//            ",\n this = $this")
                 val copy = addOrReplace(alarmValues, container)
                 store.alarmsSubject().onNext(copy)
             }
             .let {
-//            Log.d(TAG, "updateListInStore: it is = $it")
                 disposable.add(it) }
     }
 
@@ -923,7 +862,6 @@ class AlarmCore(
     }
 
     override fun enable(enable: Boolean) {
-        Log.d(TAG, "enable: current node = ${stateMachine.currentState}")
         stateMachine.sendEvent(if (enable) Enable else Disable)
     }
 
@@ -955,7 +893,8 @@ class AlarmCore(
         get() = container.alarmtone
 
     override fun toString(): String {
-        return "AlarmCore ${container.id} $stateMachine on ${df.format(container.nextTime.time)}"
+        return "AlarmCore ${container.id},\n" +
+            "state = $stateMachine on ${df.format(container.nextTime.time)}"
     }
 
     override fun edit(func: AlarmValue.() -> AlarmValue) {

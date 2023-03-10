@@ -18,6 +18,7 @@ package com.better.alarm.model
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import com.better.alarm.configuration.globalInject
 import com.better.alarm.configuration.globalLogger
 import com.better.alarm.interfaces.PresentationToModelIntents
@@ -25,45 +26,49 @@ import com.better.alarm.logger.Logger
 import kotlinx.coroutines.runBlocking
 
 class AlarmsReceiver : BroadcastReceiver() {
+    companion object {
+        private const val TAG = "AlarmsReceiver"
+    }
   private val alarms: Alarms by globalInject()
   private val repository: AlarmsRepository by globalInject()
-  private val log: Logger by globalLogger("AlarmsReceiver")
+//  private val log: Logger by globalLogger("AlarmsReceiver")
 
   override fun onReceive(context: Context, intent: Intent) {
+      Log.println(Log.INFO, TAG, "onReceive: action = ${intent.action}")
     when (intent.action) {
       AlarmsScheduler.ACTION_FIRED -> {
         val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
-        val calendarType =
-            intent.extras?.getString(AlarmsScheduler.EXTRA_TYPE)?.let { CalendarType.valueOf(it) }
-        log.debug { "Fired $id $calendarType" }
-        alarms.getAlarm(id)?.let { alarms.onAlarmFired(it, calendarType) }
+//        val calendarType =
+//            intent.extras?.getString(AlarmsScheduler.EXTRA_TYPE)?.let { CalendarType.valueOf(it) }
+//        log.debug { "Fired $id $calendarType" }
+        alarms.getAlarm(id)?.let { alarms.onAlarmFired(it/*, calendarType*/) }
       }
       AlarmsScheduler.ACTION_INEXACT_FIRED -> {
         val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
-        log.debug { "Fired  ACTION_INEXACT_FIRED $id" }
+//        log.debug { "Fired  ACTION_INEXACT_FIRED $id" }
         alarms.getAlarm(id)?.onInexactAlarmFired()
       }
       Intent.ACTION_BOOT_COMPLETED,
       Intent.ACTION_TIMEZONE_CHANGED,
       Intent.ACTION_LOCALE_CHANGED,
       Intent.ACTION_MY_PACKAGE_REPLACED -> {
-        log.debug { "Refreshing alarms because of ${intent.action}" }
+//        log.debug { "Refreshing alarms because of ${intent.action}" }
         alarms.refresh()
       }
       Intent.ACTION_TIME_CHANGED -> alarms.onTimeSet()
       PresentationToModelIntents.ACTION_REQUEST_SNOOZE -> {
         val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
-        log.debug { "Snooze $id" }
+//        log.debug { "Snooze $id" }
         alarms.getAlarm(id)?.snooze()
       }
       PresentationToModelIntents.ACTION_REQUEST_DISMISS -> {
         val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
-        log.debug { "Dismiss $id" }
+//        log.debug { "Dismiss $id" }
         alarms.getAlarm(id)?.dismiss()
       }
       PresentationToModelIntents.ACTION_REQUEST_SKIP -> {
         val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
-        log.debug { "RequestSkip $id" }
+//        log.debug { "RequestSkip $id" }
         alarms.getAlarm(id)?.requestSkip()
       }
     }
