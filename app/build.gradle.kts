@@ -139,7 +139,12 @@ dependencies {
   implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
   implementation("io.insert-koin:koin-core:3.3.3")
   implementation("androidx.fragment:fragment:1.5.5")
+  // TODO remove this when we don't use it anymore
   implementation("androidx.preference:preference:1.2.0")
+  // resolves duplicate class caused by androidx.preference:preference:1.2.0
+  implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+  // implementation("androidx.lifecycle:lifecycle-viewmodel:2.5.1")
+
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
   implementation("com.google.android.material:material:1.8.0")
