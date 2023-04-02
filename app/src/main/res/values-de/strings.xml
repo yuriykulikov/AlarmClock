@@ -132,4 +132,6 @@
 
        \n\nEs ist lustig, aber schalte einfach den Ton in den erweiterten Einstellungen aus.</string>
     <string name="date">Tag</string>
+    <string name="alert_permission_post_notifications_title">Berechtigung zur Anzeige von Benachrichtigungen</string>
+    <string name="alert_permission_post_notifications_text">Um ein Popup anzuzeigen, wenn der Alarm klingelt, ist eine Berechtigung zur Anzeige von Benachrichtigungen erforderlich.</string>
 </resources>
