@@ -136,4 +136,6 @@
 
        \n\nParadossalmente il suono deve essere disattivato nelle impostazioni avanzate.</string>
     <string name="date">Giorno</string>
+    <string name="alert_permission_post_notifications_title">Permesso di visualizzare le notifiche</string>
+    <string name="alert_permission_post_notifications_text">Per visualizzare un popup quando suona la sveglia, è necessario il permesso di visualizzare le notifiche.</string>
 </resources>

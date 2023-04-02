@@ -107,4 +107,6 @@
     <string name="menu_about_title">Om</string>
     <string name="dialog_say_thanks_title">Si takk</string>
     <string name="date">Dato</string>
+    <string name="alert_permission_post_notifications_title">Tillatelse til å vise varsler</string>
+    <string name="alert_permission_post_notifications_text">For å vise et popup-vindu når alarmen ringer, er det nødvendig med tillatelse til å vise varsler.</string>
 </resources>

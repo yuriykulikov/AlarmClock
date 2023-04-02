@@ -132,4 +132,6 @@
 
        \n\nЗабавно, но как раз звук надо выключить в дополнительных настройках.</string>
     <string name="date">День</string>
+    <string name="alert_permission_post_notifications_title">Разрешение на показ уведомлений</string>
+    <string name="alert_permission_post_notifications_text">Для отображения всплывающего окна при звонке будильника требуется разрешение на показ уведомлений.</string>
 </resources>
