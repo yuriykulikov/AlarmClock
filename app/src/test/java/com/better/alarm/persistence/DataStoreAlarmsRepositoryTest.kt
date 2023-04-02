@@ -1,10 +1,6 @@
 package com.better.alarm.persistence
 
-import ch.qos.logback.core.OutputStreamAppender
 import com.better.alarm.logger.Logger
-import com.better.alarm.logger.addAppender
-import com.better.alarm.logger.logback
-import com.better.alarm.logger.patternLayoutEncoder
 import com.better.alarm.model.modify
 import com.better.alarm.persistance.DataStoreAlarmsRepository
 import kotlinx.coroutines.CoroutineScope
@@ -97,13 +93,7 @@ class DataStoreAlarmsRepositoryTest {
       }
 
   private fun logger(): Logger {
-    val logback = logback {
-      addAppender(OutputStreamAppender()) {
-        outputStream = System.out
-        encoder = patternLayoutEncoder("[%thread] %-5level %logger{36} - %msg%n")
-      }
-    }
-    return Logger(logback.getLogger("TEST"))
+    return Logger.create()
   }
 }
 
