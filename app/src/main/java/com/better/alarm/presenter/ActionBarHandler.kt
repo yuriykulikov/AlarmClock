@@ -2,6 +2,7 @@ package com.better.alarm.presenter
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -144,11 +145,14 @@ class ActionBarHandler(
     val dialogView =
         inflator.inflate(R.layout.dialog_say_thanks, null).apply {
           findViewById<Button>(R.id.dialog_say_thanks_button_review).setOnClickListener {
-            val intent =
-                Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("market://details?id=" + BuildConfig.APPLICATION_ID))
-            mContext.startActivity(intent)
+            val appId = BuildConfig.APPLICATION_ID
+            val uri = Uri.parse("market://details?id=$appId")
+            val fallback = Uri.parse("https://play.google.com/store/apps/details?id=$appId")
+            try {
+              mContext.startActivity(Intent(Intent.ACTION_VIEW, uri))
+            } catch (anfe: ActivityNotFoundException) {
+              mContext.startActivity(Intent(Intent.ACTION_VIEW, fallback))
+            }
           }
 
           findViewById<TextView>(R.id.dialog_say_thanks_text_as_button_donate_premium)
