@@ -228,7 +228,7 @@ class AlarmsListActivity : AppCompatActivity() {
   override fun onResume() {
     super.onResume()
     window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
-    NotificationSettings().checkSettings(this)
+    NotificationSettings.checkNotificationPermissionsAndSettings(this)
     store.uiVisible.onNext(true)
   }
 

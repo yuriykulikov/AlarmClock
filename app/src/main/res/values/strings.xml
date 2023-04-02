@@ -204,4 +204,6 @@
 
        \n\nIronically, you should set the sound to "none" in advanced settings.</string>
     <string name="date">Date</string>
+    <string name="alert_permission_post_notifications_title">Permission to show notifications</string>
+    <string name="alert_permission_post_notifications_text">To display a popup when the alarm rings, permission to show notifications is required.</string>
 </resources>

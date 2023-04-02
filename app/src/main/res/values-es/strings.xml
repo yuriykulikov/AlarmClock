@@ -144,4 +144,6 @@ Todas las notificaciones están desactivadas, ¡incluida la gran ventana emergen
        \n\nHaga clic en Aceptar para ir a la configuración y luego seleccione la segunda acción superior (Sonido).
        \n\nEsto puede parecer extraño, pero simplemente apague el sonido en la configuración avanzada.</string>
     <string name="date">Fecha</string>
+    <string name="alert_permission_post_notifications_title">Permiso para mostrar notificaciones</string>
+    <string name="alert_permission_post_notifications_text">Para mostrar un mensaje emergente cuando suene la alarma, se requiere permiso para mostrar notificaciones.</string>
 </resources>

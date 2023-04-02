@@ -117,4 +117,6 @@
 
        \n\nКумедно, але як раз звук треба вимкнути у додаткових налаштуваннях.</string>
     <string name="date">Дата</string>
+    <string name="alert_permission_post_notifications_title">Дозвіл на показ повідомлень</string>
+    <string name="alert_permission_post_notifications_text">Для відображення спливаючого вікна при дзвінку будильника потрібен дозвіл на показ повідомлень.</string>
 </resources>
