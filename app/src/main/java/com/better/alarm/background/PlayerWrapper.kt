@@ -2,10 +2,16 @@ package com.better.alarm.background
 
 import android.content.Context
 import android.content.res.Resources
+import android.media.AudioAttributes
+import android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION
+import android.media.AudioAttributes.USAGE_ALARM
+import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.net.Uri
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.better.alarm.logger.Logger
 import com.better.alarm.model.Alarmtone
 
@@ -36,11 +42,49 @@ class PlayerWrapper(val resources: Resources, val context: Context, val log: Log
 
   override fun startAlarm() {
     player?.runCatching {
-      setAudioStreamType(AudioManager.STREAM_ALARM)
+      when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> setAudioUsageL()
+        else -> setAudioUsageLegacy()
+      }
       isLooping = true
       prepare()
+      when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> requestAudioFocusO()
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> requestAudioFocusM()
+      }
       start()
     }
+  }
+
+  /** https://github.com/yuriykulikov/AlarmClock/issues/538 */
+  @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+  private fun MediaPlayer.setAudioUsageL() {
+    setAudioAttributes(
+        AudioAttributes.Builder()
+            .setUsage(USAGE_ALARM)
+            .setContentType(CONTENT_TYPE_SONIFICATION)
+            .build())
+  }
+  @SuppressWarnings("deprecation")
+  private fun MediaPlayer.setAudioUsageLegacy() {
+    setAudioStreamType(AudioManager.STREAM_ALARM)
+  }
+
+  @RequiresApi(Build.VERSION_CODES.M)
+  private fun requestAudioFocusM() {
+    context
+        .getSystemService(AudioManager::class.java)
+        .requestAudioFocus(null, AudioManager.STREAM_ALARM, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
+  }
+
+  @RequiresApi(Build.VERSION_CODES.O)
+  private fun requestAudioFocusO() {
+    context
+        .getSystemService(AudioManager::class.java)
+        .requestAudioFocus(
+            AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
+                .setAudioAttributes(AudioAttributes.Builder().setUsage(USAGE_ALARM).build())
+                .build())
   }
 
   override fun setDataSourceFromResource(res: Int) {
