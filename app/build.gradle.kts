@@ -62,6 +62,9 @@ tasks.withType(Test::class.java) {
     isIncludeNoLocationClasses = true
     excludes = listOf("jdk.internal.*")
   }
+
+  systemProperty("org.slf4j.simpleLogger.logFile", "System.out")
+  systemProperty("org.slf4j.simpleLogger.defaultLogLevel", "trace")
 }
 
 val acraEmail =
@@ -162,6 +165,7 @@ dependencies {
   testImplementation("junit:junit:4.13.2")
   testImplementation("io.mockk:mockk:1.13.4")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
+  testImplementation("org.slf4j:slf4j-simple:2.0.7")
 
   val androidxTest = "1.5.0"
   androidTestImplementation("com.squareup.assertj:assertj-android:1.2.0")
