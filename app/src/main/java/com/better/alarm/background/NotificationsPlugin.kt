@@ -83,6 +83,8 @@ class NotificationsPlugin(
               getString(R.string.alarm_alert_dismiss_text),
               pendingDismiss)
           setDefaults(Notification.DEFAULT_LIGHTS)
+          setSound(null)
+          setVibrate(longArrayOf(0))
         }
 
     if (startForeground && isOreo()) {
