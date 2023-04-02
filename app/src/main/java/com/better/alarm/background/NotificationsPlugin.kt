@@ -62,8 +62,11 @@ class NotificationsPlugin(
           setContentTitle(alarm.label)
           setContentText(getString(R.string.alarm_notify_text))
           setSmallIcon(R.drawable.stat_notify_alarm)
+          setWhen(0)
           priority = NotificationCompat.PRIORITY_HIGH
           setCategory(NotificationCompat.CATEGORY_ALARM)
+          setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+          setLocalOnly(true)
           // setFullScreenIntent to show the user AlarmAlert dialog at the same time
           // when the Notification Bar was created.
           setFullScreenIntent(pendingNotify, true)
