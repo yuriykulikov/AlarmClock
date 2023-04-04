@@ -9,13 +9,13 @@ on:
     types: [opened, reopened, synchronize]
 
 jobs:
-  test:
+  ChatGPT:
     runs-on: ubuntu-latest
     steps:
       - uses: anc95/ChatGPT-CodeReview@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          MODEL: GPT-3.5
+          MODEL: gpt-3.5-turbo
           top_p: 1
           temperature: 1
