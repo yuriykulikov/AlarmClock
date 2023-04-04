@@ -151,7 +151,7 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
   implementation("com.google.android.material:material:1.8.0")
-  implementation("org.slf4j:slf4j-api:1.7.36")
+  implementation("org.slf4j:slf4j-api:2.0.7")
   implementation("com.github.tony19:logback-android:2.0.1")
   implementation("androidx.multidex:multidex:2.0.1")
   implementation("androidx.datastore:datastore:1.0.0")
