@@ -16,3 +16,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          MODEL: GPT-3.5
+          top_p: 1
+          temperature: 1
