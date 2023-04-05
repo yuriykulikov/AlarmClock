@@ -35,4 +35,4 @@ Apache 2.0
 [![Installs](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.better.alarm%26l%3DGoogle%2520Play%2520Installs%26m%3D%24totalinstalls)](https://play.google.com/store/apps/details?id=com.better.alarm)
 
 # Code coverage
-[![Codecov](https://codecov.io/gh/yuriykulikov/AlarmClock/branch/develop/graphs/tree.svg)](https://codecov.io/github/yuriykulikov/AlarmClock?branch=develop)
+[![Codecov](https://codecov.io/gh/yuriykulikov/AlarmClock/branch/develop/graphs/tree.svg)](https://codecov.io/github/yuriykulikov/AlarmClock)
