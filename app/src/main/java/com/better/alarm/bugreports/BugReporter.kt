@@ -7,6 +7,7 @@ import com.better.alarm.R
 import com.better.alarm.logger.Logger
 import org.acra.ACRA
 import org.acra.ReportField
+import org.acra.config.mailSender
 import org.acra.data.StringFormat
 import org.acra.file.Directory
 import org.acra.ktx.initAcra
@@ -45,12 +46,16 @@ class BugReporter(
               ReportField.SHARED_PREFERENCES,
           )
       applicationLogFileDir = Directory.ROOT
-      customSender(
-          mailTo = BuildConfig.ACRA_EMAIL,
-          subject =
-              "${context.getString(R.string.simple_alarm_clock)} ${BuildConfig.FLAVOR}${BuildConfig.VERSION_NAME} Bug Report",
-          body = context.getString(R.string.dialog_bugreport_hint),
-      )
+      // setApplicationLogFile(context.getFileStreamPath("app.log").absolutePath)
+      mailSender {
+        mailTo = BuildConfig.ACRA_EMAIL
+        reportAsFile = true
+        reportFileName = "application-logs.txt"
+        enabled = true
+        subject =
+            "${context.getString(R.string.simple_alarm_clock)} ${BuildConfig.FLAVOR} ${BuildConfig.VERSION_NAME} Bug Report"
+        body = context.getString(R.string.dialog_bugreport_hint)
+      }
     }
 
     val prev = Thread.currentThread().uncaughtExceptionHandler

@@ -3,7 +3,6 @@ plugins {
   kotlin("android")
   jacoco
   kotlin("plugin.serialization")
-  kotlin("kapt")
 }
 
 jacoco { toolVersion = "0.8.8" }
@@ -78,8 +77,8 @@ val acraEmail =
 android {
   compileSdk = 33
   defaultConfig {
-    versionCode = 31300
-    versionName = "3.13.00"
+    versionCode = 31200
+    versionName = "3.12.00"
     applicationId = "com.better.alarm"
     minSdk = 16
     targetSdk = 33
@@ -138,8 +137,6 @@ dependencies {
   val coroutinesVersion = "1.6.4"
   val serializationVersion = "1.5.0"
   implementation("ch.acra:acra-mail:5.9.7")
-  compileOnly("com.google.auto.service:auto-service-annotations:1.0.1")
-  kapt("com.google.auto.service:auto-service:1.0.1")
   implementation("com.melnykov:floatingactionbutton:1.3.0")
   implementation("io.reactivex.rxjava2:rxjava:2.2.21")
   implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
