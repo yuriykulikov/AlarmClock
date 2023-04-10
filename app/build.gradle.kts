@@ -77,8 +77,8 @@ val acraEmail =
 android {
   compileSdk = 33
   defaultConfig {
-    versionCode = 31200
-    versionName = "3.12.00"
+    versionCode = 31400
+    versionName = "3.14.00"
     applicationId = "com.better.alarm"
     minSdk = 16
     targetSdk = 33
@@ -136,7 +136,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 dependencies {
   val coroutinesVersion = "1.6.4"
   val serializationVersion = "1.5.0"
-  implementation("ch.acra:acra-mail:5.9.7")
+  implementation("ch.acra:acra-mail:5.9.8-beta01")
   implementation("com.melnykov:floatingactionbutton:1.3.0")
   implementation("io.reactivex.rxjava2:rxjava:2.2.21")
   implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
