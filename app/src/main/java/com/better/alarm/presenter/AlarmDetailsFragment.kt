@@ -192,20 +192,29 @@ class AlarmDetailsFragment : Fragment() {
     }
 
     observeEditor { alarmValue ->
-      if (alarmValue.date != null) {
+      val valid = alarmValue.isValid()
+      fragmentView.findViewById<View>(R.id.details_activity_button_save).isEnabled = valid
+      rowHolder.rowView.isEnabled = valid
+      rowHolder.detailsCheckImageView.alpha = if (valid) 1f else .2f
+
+      repeatSummary.setTextColor(
+          requireActivity()
+              .theme
+              .resolveColor(if (valid) android.R.attr.colorForeground else R.attr.colorError))
+    }
+  }
+
+  private fun AlarmValue.isValid(): Boolean {
+    return when (date) {
+      null -> true
+      else -> {
         val nextTime =
             Calendar.getInstance().apply {
-              timeInMillis = alarmValue.date.timeInMillis
-              set(Calendar.HOUR_OF_DAY, alarmValue.hour)
-              set(Calendar.MINUTE, alarmValue.minutes)
+              timeInMillis = date.timeInMillis
+              set(Calendar.HOUR_OF_DAY, hour)
+              set(Calendar.MINUTE, minutes)
             }
-        val invalid = nextTime.before(Calendar.getInstance())
-        fragmentView.findViewById<View>(R.id.details_activity_button_save).isEnabled = !invalid
-
-        repeatSummary.setTextColor(
-            requireActivity()
-                .theme
-                .resolveColor(if (invalid) R.attr.colorError else android.R.attr.colorForeground))
+        nextTime.after(Calendar.getInstance())
       }
     }
   }
@@ -389,7 +398,14 @@ class AlarmDetailsFragment : Fragment() {
 
   override fun onResume() {
     super.onResume()
-    backButtonSub = store.onBackPressed().subscribe { saveAlarm() }
+    backButtonSub =
+        store.onBackPressed().subscribe {
+          editor.takeFirst {
+            if (it.isValid()) {
+              saveAlarm()
+            }
+          }
+        }
   }
 
   override fun onPause() {

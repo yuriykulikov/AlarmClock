@@ -1,5 +1,6 @@
 package com.better.alarm.model
 
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -12,6 +13,8 @@ import kotlinx.serialization.encoding.Encoder
 data class AlarmValues(
     val alarms: Map<Int, AlarmValue> = emptyMap(),
 )
+
+val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
 
 @Serializable
 data class AlarmValue(
@@ -37,7 +40,9 @@ data class AlarmValue(
 
   override fun toString(): String {
     val box = if (isEnabled) "[x]" else "[ ]"
-    return "$id $box $hour:$minutes $daysOfWeek $label"
+    val dateOrRepeat =
+        if (date != null) dateFormat.format(date.timeInMillis) else daysOfWeek.toString()
+    return "$id $box $hour:$minutes $dateOrRepeat $label"
   }
 
   fun withState(name: String): AlarmValue = copy(state = name)
