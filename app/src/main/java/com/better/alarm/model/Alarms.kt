@@ -103,6 +103,7 @@ class Alarms(
   }
 
   override fun insertDefaultAlarms() {
+    logger.debug { "insertDefaultAlarms() adding default alarms ..." }
     createNewAlarm().edit {
       copy(
           daysOfWeek = DaysOfWeek(31),

@@ -92,6 +92,7 @@ android {
     getByName("debug") {
       enableUnitTestCoverage = true
       enableAndroidTestCoverage = true
+      applicationIdSuffix = ".debug"
       buildConfigField("String", "ACRA_EMAIL", "\"$acraEmail\"")
     }
     getByName("release") {
