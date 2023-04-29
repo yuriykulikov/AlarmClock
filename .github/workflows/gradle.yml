@@ -66,30 +66,26 @@ jobs:
           distribution: 'adopt'
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      - name: Assemble
-        run: ./gradlew assembleDevelopRelease
-      - name: Sign develop APK
-        uses: r0adkll/sign-android-release@v1
-        # ID used to access action output
-        id: sign_develop_app
-        with:
-          releaseDirectory: app/build/outputs/apk/develop/release
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          alias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
-      #- name: Upload signed app
-      #  uses: actions/upload-artifact@v2
-      #  with:
-      #    name: Signed develop release apk
-      #    path: ${{steps.sign_develop_app.outputs.signedReleaseFile}}
-      - name: Publish to google play
+      - name: Extract upload store
+        run: 'echo "$UPLOAD_STORE_BASE64" | base64 --decode > app/upload-keystore.jks'
+        shell: bash
+        env:
+          UPLOAD_STORE_BASE64: ${{secrets.UPLOAD_STORE_BASE64}}
+      - name: Bundle develop
+        if: github.ref == 'refs/heads/develop'
+        run: ./gradlew :app:bundleDevelopRelease
+        env:
+          UPLOAD_KEYSTORE_PASSWORD: ${{secrets.UPLOAD_KEYSTORE_PASSWORD}}
+          UPLOAD_KEY_ALIAS: ${{secrets.UPLOAD_KEY_ALIAS}}
+          UPLOAD_KEY_PASSWORD: ${{secrets.UPLOAD_KEY_PASSWORD}}
+      - name: Publish develop to google play
+        if: github.ref == 'refs/heads/develop'
         uses: r0adkll/upload-google-play@v1.1.1
         continue-on-error: true
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON_PLAIN_TEXT }}
           packageName: com.better.alarm
-          releaseFiles: ${{steps.sign_develop_app.outputs.signedReleaseFile}}
+          releaseFiles: app/build/outputs/bundle/developRelease/app-develop-release.aab
           track: internal
           inAppUpdatePriority: 2
           # whatsNewDirectory: distribution/whatsnew
@@ -112,24 +108,27 @@ jobs:
           distribution: 'adopt'
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      - name: Assemble
-        run: ./gradlew assemblePremiumRelease
-      - name: Sign premium APK
-        uses: r0adkll/sign-android-release@v1
-        # ID used to access action output
-        id: sign_premium_app
-        with:
-          releaseDirectory: app/build/outputs/apk/premium/release
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          alias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
-      - name: Publish to google play
+      - name: Extract upload store
+        run: 'echo "$UPLOAD_STORE_BASE64" | base64 --decode > app/upload-keystore.jks'
+        shell: bash
+        env:
+          UPLOAD_STORE_BASE64: ${{secrets.UPLOAD_STORE_BASE64}}
+      - name: Bundle premium
+        if: github.ref == 'refs/heads/develop'
+        run: ./gradlew :app:bundlePremiumRelease
+        env:
+          UPLOAD_KEYSTORE_PASSWORD: ${{secrets.UPLOAD_KEYSTORE_PASSWORD}}
+          UPLOAD_KEY_ALIAS: ${{secrets.UPLOAD_KEY_ALIAS}}
+          UPLOAD_KEY_PASSWORD: ${{secrets.UPLOAD_KEY_PASSWORD}}
+      - name: Publish premium to google play
+        if: github.ref == 'refs/heads/develop'
         uses: r0adkll/upload-google-play@v1.1.1
         continue-on-error: true
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON_PLAIN_TEXT }}
           packageName: com.premium.alarm
-          releaseFiles: ${{steps.sign_premium_app.outputs.signedReleaseFile}}
+          releaseFiles: app/build/outputs/bundle/premiumRelease/app-premium-release.aab
           track: internal
           inAppUpdatePriority: 2
+          # whatsNewDirectory: distribution/whatsnew
+          # mappingFile: app/build/outputs/mapping/release/mapping.txt

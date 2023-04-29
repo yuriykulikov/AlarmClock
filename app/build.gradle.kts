@@ -74,11 +74,12 @@ val acraEmail =
         ?.substringAfter("=")
         ?: System.getenv()["ACRA_EMAIL"] ?: ""
 
+@Suppress("UnstableApiUsage")
 android {
   compileSdk = 33
   defaultConfig {
-    versionCode = 31402
-    versionName = "3.14.02"
+    versionCode = 31403
+    versionName = "3.14.03"
     applicationId = "com.better.alarm"
     minSdk = 16
     targetSdk = 33
@@ -88,6 +89,14 @@ android {
   }
   namespace = "com.better.alarm"
   testNamespace = "com.better.alarm.debug"
+  signingConfigs {
+    create("release") {
+      storeFile = file("upload-keystore.jks")
+      storePassword = System.getenv("UPLOAD_KEYSTORE_PASSWORD")
+      keyAlias = System.getenv("UPLOAD_KEY_ALIAS")
+      keyPassword = System.getenv("UPLOAD_KEY_PASSWORD")
+    }
+  }
   buildTypes {
     getByName("debug") {
       enableUnitTestCoverage = true
@@ -99,6 +108,7 @@ android {
       isMinifyEnabled = false
       proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.txt")
       buildConfigField("String", "ACRA_EMAIL", "\"$acraEmail\"")
+      getByName("release") { signingConfig = signingConfigs.getByName("release") }
     }
   }
 
