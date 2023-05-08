@@ -145,7 +145,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 }
 
 dependencies {
-  val coroutinesVersion = "1.6.4"
+  val coroutinesVersion = "1.7.0"
   val serializationVersion = "1.5.0"
   implementation("ch.acra:acra-mail:5.10.0-beta03")
   implementation("com.melnykov:floatingactionbutton:1.3.0")
