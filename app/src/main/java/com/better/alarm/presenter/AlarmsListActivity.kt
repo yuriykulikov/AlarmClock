@@ -54,7 +54,6 @@ import com.better.alarm.model.AlarmsRepository
 import com.better.alarm.util.Optional
 import com.better.alarm.util.formatToast
 import com.google.android.material.snackbar.Snackbar
-import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposables
 import io.reactivex.functions.Consumer
 import io.reactivex.subjects.BehaviorSubject
@@ -62,6 +61,7 @@ import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import java.util.*
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.protobuf.ProtoBuf
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -278,7 +278,7 @@ class AlarmsListActivity : AppCompatActivity() {
                 })
   }
 
-  private fun showList(@NonNull edited: EditedAlarm) {
+  private fun showList(edited: EditedAlarm) {
     replace(
         fragment =
             AlarmsListFragment().apply {
@@ -293,7 +293,7 @@ class AlarmsListActivity : AppCompatActivity() {
     )
   }
 
-  private fun showDetails(@NonNull edited: EditedAlarm) {
+  private fun showDetails(edited: EditedAlarm) {
     replace(
         fragment =
             AlarmDetailsFragment().apply {
@@ -345,6 +345,7 @@ class AlarmsListActivity : AppCompatActivity() {
   }
 
   /** restores an [EditedAlarm] from SavedInstanceState. Counterpart of [EditedAlarm.writeInto]. */
+  @OptIn(ExperimentalSerializationApi::class)
   private fun editedAlarmFromSavedInstanceState(savedInstanceState: Bundle): EditedAlarm {
     return EditedAlarm(
         isNew = savedInstanceState.getBoolean("isNew"),
@@ -364,6 +365,7 @@ class AlarmsListActivity : AppCompatActivity() {
   /**
    * Saves EditedAlarm into SavedInstanceState. Counterpart of [editedAlarmFromSavedInstanceState]
    */
+  @OptIn(ExperimentalSerializationApi::class)
   private fun EditedAlarm.writeInto(outState: Bundle?) {
     val toWrite: EditedAlarm = this
     outState?.run {
