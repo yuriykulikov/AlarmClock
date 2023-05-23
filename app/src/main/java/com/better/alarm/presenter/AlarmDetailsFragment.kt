@@ -136,7 +136,7 @@ class AlarmDetailsFragment : Fragment() {
   }
 
   private fun onCreateLabelView() {
-    val label: EditText = fragmentView.findViewById<EditText>(R.id.details_label)
+    val label: EditText = fragmentView.findViewById(R.id.details_label)
 
     observeEditor { value ->
       if (value.label != label.text.toString()) {
@@ -418,7 +418,7 @@ class AlarmDetailsFragment : Fragment() {
     editor.takeFirst { value ->
       alarms.getAlarm(alarmId)?.run { edit { withChangeData(value) } }
       store.hideDetails(rowHolder)
-      rowHolder.animateCheck(check = false)
+      animateCheck(check = false)
     }
   }
 
@@ -430,7 +430,7 @@ class AlarmDetailsFragment : Fragment() {
       }
       // else do not save changes
       store.hideDetails(rowHolder)
-      rowHolder.animateCheck(check = false)
+      animateCheck(check = false)
     }
   }
 
@@ -456,7 +456,7 @@ class AlarmDetailsFragment : Fragment() {
     disposables.add(this)
   }
 
-  private fun RowHolder.animateCheck(check: Boolean) {
+  private fun animateCheck(check: Boolean) {
     rowHolder.detailsCheckImageView.animate().alpha(if (check) 1f else 0f).setDuration(500).start()
     rowHolder.detailsImageView.animate().alpha(if (check) 0f else 1f).setDuration(500).start()
   }

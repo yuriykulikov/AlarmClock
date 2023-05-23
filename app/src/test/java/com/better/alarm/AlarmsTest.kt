@@ -12,7 +12,6 @@ import com.better.alarm.model.AlarmCore.IStateNotifier
 import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.Alarms
 import com.better.alarm.model.AlarmsScheduler
-import com.better.alarm.model.CalendarType
 import com.better.alarm.model.Calendars
 import com.better.alarm.model.DaysOfWeek
 import com.better.alarm.model.modify
@@ -26,7 +25,6 @@ import io.reactivex.Single
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import java.util.*
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -174,7 +172,7 @@ class AlarmsTest {
     val instance = createAlarms()
     val newAlarm = instance.createNewAlarm()
     newAlarm.enable(true)
-    instance.onAlarmFired((newAlarm as AlarmCore), CalendarType.NORMAL)
+    instance.onAlarmFired((newAlarm as AlarmCore))
     verify { stateNotifierMock.broadcastAlarmState(newAlarm.id, Intents.ALARM_ALERT_ACTION) }
 
     newAlarm.dismiss()
@@ -192,7 +190,7 @@ class AlarmsTest {
     val instance = createAlarms()
     val newAlarm = instance.createNewAlarm()
     newAlarm.edit { withIsEnabled(true).withDaysOfWeek(DaysOfWeek(1)) }
-    instance.onAlarmFired((newAlarm as AlarmCore), CalendarType.NORMAL)
+    instance.onAlarmFired((newAlarm as AlarmCore))
     verify { stateNotifierMock.broadcastAlarmState(newAlarm.id, Intents.ALARM_ALERT_ACTION) }
     newAlarm.dismiss()
     verify { stateNotifierMock.broadcastAlarmState(newAlarm.id, Intents.ALARM_DISMISS_ACTION) }
@@ -209,8 +207,8 @@ class AlarmsTest {
     val instance = createAlarms()
     val newAlarm = instance.createNewAlarm()
     newAlarm.enable(true)
-    Assertions.assertThat(alarmSetterMock.typeName).isEqualTo("NORMAL")
-    instance.onAlarmFired((newAlarm as AlarmCore), CalendarType.NORMAL)
+    assertThat(alarmSetterMock.typeName).isEqualTo("NORMAL")
+    instance.onAlarmFired((newAlarm as AlarmCore))
     verify { stateNotifierMock.broadcastAlarmState(newAlarm.id, Intents.ALARM_ALERT_ACTION) }
     newAlarm.edit { withDaysOfWeek(DaysOfWeek(1)).withIsPrealarm(true) }
     verify { stateNotifierMock.broadcastAlarmState(newAlarm.id, Intents.ALARM_DISMISS_ACTION) }
@@ -219,7 +217,7 @@ class AlarmsTest {
     store.alarms().test().assertValue { alarmValues ->
       alarmValues.size == 1 && alarmValues[0].isEnabled
     }
-    Assertions.assertThat(alarmSetterMock.id).isEqualTo(newAlarm.id)
+    assertThat(alarmSetterMock.id).isEqualTo(newAlarm.id)
   }
 
   @Test
@@ -234,7 +232,7 @@ class AlarmsTest {
     // TODO verify
 
     // when pre-alarm fired
-    instance.onAlarmFired((newAlarm as AlarmCore), CalendarType.PREALARM)
+    instance.onAlarmFired((newAlarm as AlarmCore))
     verify { stateNotifierMock.broadcastAlarmState(newAlarm.id, Intents.ALARM_PREALARM_ACTION) }
 
     // when pre-alarm-snoozed
@@ -244,7 +242,7 @@ class AlarmsTest {
     }
 
     // when alarm fired
-    instance.onAlarmFired(newAlarm, CalendarType.NORMAL)
+    instance.onAlarmFired(newAlarm)
     verify { stateNotifierMock.broadcastAlarmState(newAlarm.id, Intents.ACTION_CANCEL_SNOOZE) }
     verify { stateNotifierMock.broadcastAlarmState(newAlarm.id, Intents.ALARM_ALERT_ACTION) }
 
@@ -269,7 +267,7 @@ class AlarmsTest {
     // TODO verify
 
     // when alarm fired
-    instance.onAlarmFired((newAlarm as AlarmCore), CalendarType.NORMAL)
+    instance.onAlarmFired((newAlarm as AlarmCore))
     verify { stateNotifierMock.broadcastAlarmState(newAlarm.id, Intents.ALARM_ALERT_ACTION) }
 
     // when pre-alarm-snoozed
@@ -291,7 +289,7 @@ class AlarmsTest {
     // TODO verify
 
     // when alarm fired
-    instance.onAlarmFired((newAlarm as AlarmCore), CalendarType.PREALARM)
+    instance.onAlarmFired((newAlarm as AlarmCore))
     verify { stateNotifierMock.broadcastAlarmState(newAlarm.id, Intents.ALARM_PREALARM_ACTION) }
 
     // when pre-alarm-snoozed
@@ -299,7 +297,7 @@ class AlarmsTest {
     verify {
       stateNotifierMock.broadcastAlarmState(newAlarm.id, Intents.ALARM_SNOOZE_ACTION, any())
     }
-    instance.onAlarmFired(newAlarm, CalendarType.SNOOZE)
+    instance.onAlarmFired(newAlarm)
     verify { stateNotifierMock.broadcastAlarmState(newAlarm.id, Intents.ALARM_ALERT_ACTION) }
   }
 
@@ -315,9 +313,9 @@ class AlarmsTest {
     // TODO verify
 
     // when alarm fired
-    instance.onAlarmFired((newAlarm as AlarmCore), CalendarType.PREALARM)
+    instance.onAlarmFired((newAlarm as AlarmCore))
     verify { stateNotifierMock.broadcastAlarmState(newAlarm.id, Intents.ALARM_PREALARM_ACTION) }
-    instance.onAlarmFired(newAlarm, CalendarType.NORMAL)
+    instance.onAlarmFired(newAlarm)
     verify { stateNotifierMock.broadcastAlarmState(newAlarm.id, Intents.ALARM_ALERT_ACTION) }
 
     // when pre-alarm-snoozed
@@ -337,7 +335,7 @@ class AlarmsTest {
     }
 
     // when alarm fired
-    instance.onAlarmFired((newAlarm as AlarmCore), CalendarType.NORMAL)
+    instance.onAlarmFired((newAlarm as AlarmCore))
     verify { stateNotifierMock.broadcastAlarmState(newAlarm.id, Intents.ALARM_ALERT_ACTION) }
     newAlarm.snooze()
     val record = alarmsRepository.createdRecords[0]
@@ -346,7 +344,7 @@ class AlarmsTest {
     alarmSetterMock.removeRTCAlarm()
     val newAlarms = createAlarms()
     newAlarms.start()
-    Assertions.assertThat(alarmSetterMock.id).isEqualTo(record.value.id)
+    assertThat(alarmSetterMock.id).isEqualTo(record.value.id)
   }
 
   @Test
@@ -360,13 +358,13 @@ class AlarmsTest {
 
     // when alarm fired
     currentHour = 7
-    instance.onAlarmFired((newAlarm as AlarmCore), CalendarType.NORMAL)
+    instance.onAlarmFired((newAlarm as AlarmCore))
     verify { stateNotifierMock.broadcastAlarmState(newAlarm.id, Intents.ALARM_ALERT_ACTION) }
     newAlarm.snooze()
     println("----- now snooze -------")
     newAlarm.snooze(7, 42)
-    Assertions.assertThat(alarmSetterMock.id).isEqualTo(newAlarm.id)
-    Assertions.assertThat(alarmSetterMock.calendar!![Calendar.MINUTE]).isEqualTo(42)
+    assertThat(alarmSetterMock.id).isEqualTo(newAlarm.id)
+    assertThat(alarmSetterMock.calendar!![Calendar.MINUTE]).isEqualTo(42)
   }
 
   @Test
@@ -378,7 +376,7 @@ class AlarmsTest {
     alarmSetterMock.removeRTCAlarm()
     val newAlarms = createAlarms()
     newAlarms.start()
-    Assertions.assertThat(alarmSetterMock.id).isEqualTo(record.value.id)
+    assertThat(alarmSetterMock.id).isEqualTo(record.value.id)
     // TODO
     //  assertThat(alarmSetterMock.getCalendar().get(Calendar.MINUTE)).isEqualTo(42);
   }
@@ -393,9 +391,9 @@ class AlarmsTest {
     }
 
     // when alarm fired
-    instance.onAlarmFired((newAlarm as AlarmCore), CalendarType.PREALARM)
+    instance.onAlarmFired((newAlarm as AlarmCore))
     verify { stateNotifierMock.broadcastAlarmState(newAlarm.id, Intents.ALARM_PREALARM_ACTION) }
-    instance.onAlarmFired(newAlarm, CalendarType.NORMAL)
+    instance.onAlarmFired(newAlarm)
     verify { stateNotifierMock.broadcastAlarmState(newAlarm.id, Intents.ALARM_ALERT_ACTION) }
     verify(inverse = true) {
       stateNotifierMock.broadcastAlarmState(newAlarm.id, Intents.ALARM_DISMISS_ACTION)

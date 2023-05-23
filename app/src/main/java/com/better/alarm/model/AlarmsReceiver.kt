@@ -36,7 +36,7 @@ class AlarmsReceiver : BroadcastReceiver() {
         val calendarType =
             intent.extras?.getString(AlarmsScheduler.EXTRA_TYPE)?.let { CalendarType.valueOf(it) }
         log.debug { "Fired $id $calendarType" }
-        alarms.getAlarm(id)?.let { alarms.onAlarmFired(it, calendarType) }
+        alarms.getAlarm(id)?.let { alarms.onAlarmFired(it) }
       }
       AlarmsScheduler.ACTION_INEXACT_FIRED -> {
         val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)

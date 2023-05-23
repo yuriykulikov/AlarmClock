@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -24,7 +25,6 @@ import io.reactivex.disposables.CompositeDisposable
 class AppearanceFragment : Fragment() {
   private val dynamicThemeHandler: DynamicThemeHandler by globalInject()
   private val prefs: Prefs by globalInject()
-  private val store: UiStore by globalInject()
   private val disposable: CompositeDisposable = CompositeDisposable()
 
   @TargetApi(21)
@@ -121,7 +121,7 @@ class AppearanceFragment : Fragment() {
   }
 
   private fun applySelectedTheme() {
-    Handler().post {
+    Handler(Looper.getMainLooper()).post {
       val intent =
           requireActivity()
               .packageManager

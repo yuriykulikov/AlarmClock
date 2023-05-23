@@ -5,7 +5,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 
 fun <T, O> Observable<T>.mapNotNull(func: (T) -> O?): Observable<O> {
-  return map { Optional.fromNullable<O>(func(it)) }.filter { it.isPresent() }.map { it.get() }
+  return map { Optional.fromNullable(func(it)) }.filter { it.isPresent() }.map { it.get() }
 }
 
 fun <T : Any> BehaviorSubject<T>.modify(func: (T).(T) -> T) {

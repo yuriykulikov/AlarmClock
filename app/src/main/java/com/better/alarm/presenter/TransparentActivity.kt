@@ -1,9 +1,11 @@
 package com.better.alarm.presenter
 
+
 import com.better.alarm.configuration.globalInject
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
 import io.reactivex.disposables.Disposables
+
 
 class TransparentActivity : androidx.fragment.app.FragmentActivity() {
   private var dialog = Disposables.disposed()
@@ -23,9 +25,10 @@ class TransparentActivity : androidx.fragment.app.FragmentActivity() {
             finish()
           }
     }
+
   }
 
-  override fun onPause() {
+    override fun onPause() {
     super.onPause()
     dialog.dispose()
   }
@@ -36,7 +39,7 @@ class TransparentActivity : androidx.fragment.app.FragmentActivity() {
   }
 
   override fun onBackPressed() {
-    super.onBackPressed()
+      super.onBackPressed()
     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
   }
 }
