@@ -192,7 +192,7 @@ class AlertServiceWrapper : Service() {
   override fun onDestroy() {
     alertService.onDestroy()
 
-    oreo { stopForeground(true) }
+    oreo { stopForeground(STOP_FOREGROUND_DETACH) }
   }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

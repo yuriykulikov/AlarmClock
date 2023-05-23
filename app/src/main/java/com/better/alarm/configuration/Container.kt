@@ -116,7 +116,7 @@ fun startKoin(context: Context): Koin {
     single { BackgroundNotifications(get(), get(), get(), get(), get()) }
     factory<Wakelocks> { get<WakeLockManager>() }
     factory<Scheduler> { AndroidSchedulers.mainThread() }
-    single<WakeLockManager> { WakeLockManager(logger("WakeLockManager"), get()) }
+    single { WakeLockManager(logger("WakeLockManager"), get()) }
     factory { get<Context>().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator }
     factory { get<Context>().getSystemService(Context.POWER_SERVICE) as PowerManager }
     factory { get<Context>().getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager }
