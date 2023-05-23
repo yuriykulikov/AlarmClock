@@ -14,7 +14,6 @@ import com.better.alarm.wakelock.Wakelocks
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.functions.BiFunction
 import io.reactivex.subjects.BehaviorSubject
 import java.util.Calendar
 
@@ -193,7 +192,7 @@ class AlertService(
     // cancel what we don't need anymore
     nowShowing.drop(toShow.size).forEach { notifications.cancel(it) }
 
-    nowShowing = toShow.mapIndexed { index, _ -> index }
+    nowShowing = List(toShow.size) { index -> index }
   }
 
   private fun playSound(active: Map<Int, Type>) {
@@ -209,18 +208,18 @@ class AlertService(
     wantedVolume.onNext(TargetVolume.FADED_IN)
 
     val targetVolumeAccountingForInCallState: Observable<TargetVolume> =
-        Observable.combineLatest<TargetVolume, CallState, TargetVolume>(
+        Observable.combineLatest(
             wantedVolume,
-            inCall.zipWithIndex { callActive, index -> CallState(index == 0, callActive) },
-            BiFunction { volume, callState ->
-              when {
+            inCall.zipWithIndex { callActive, index -> CallState(index == 0, callActive) }
+        ) { volume, callState ->
+            when {
                 !callState.initial && callState.inCall -> TargetVolume.MUTED
                 !callState.initial && !callState.inCall -> TargetVolume.FADED_IN_FAST
                 else -> volume
-              }
-            })
+            }
+        }
 
-    val alarm = alarms.getAlarm(id)
+      val alarm = alarms.getAlarm(id)
     val alarmtone = alarm?.alarmtone ?: Alarmtone.Default
     val label = alarm?.labelOrDefault ?: ""
     val pluginDisposables =

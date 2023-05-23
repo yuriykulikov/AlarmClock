@@ -74,7 +74,7 @@ class Alarms(
     return alarm
   }
 
-  fun onAlarmFired(alarm: AlarmCore, calendarType: CalendarType?) {
+  fun onAlarmFired(alarm: AlarmCore) {
     // TODO this should not be needed
     alarmsScheduler.removeAlarm(alarm.id)
     alarm.onAlarmFired()
