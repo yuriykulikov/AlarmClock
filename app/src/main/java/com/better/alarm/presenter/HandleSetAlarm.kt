@@ -97,7 +97,15 @@ class HandleSetAlarm : Activity() {
   private fun createNewAlarm(hours: Int, minutes: Int, label: String): Alarm {
     logger.debug { "No alarm found, creating a new one" }
     return alarmsManager.createNewAlarm().apply {
-      edit { copy(hour = hours, minutes = minutes, isEnabled = true, label = label) }
+      edit {
+        copy(
+            hour = hours,
+            minutes = minutes,
+            isEnabled = true,
+            label = label,
+            isDeleteAfterDismiss = true,
+        )
+      }
     }
   }
 }
