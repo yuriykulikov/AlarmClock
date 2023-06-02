@@ -39,6 +39,7 @@ data class Store(
   data class AlarmSet(
       val alarm: AlarmValue,
       val millis: Long,
+      val fromUserInteraction: Boolean,
   ) {
     fun alarm(): AlarmValue = alarm
 

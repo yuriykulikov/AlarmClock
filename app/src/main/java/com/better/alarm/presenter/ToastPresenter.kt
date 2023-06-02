@@ -21,6 +21,7 @@ import android.content.Context
 import android.widget.Toast
 import com.better.alarm.configuration.Store
 import com.better.alarm.util.formatToast
+import com.better.alarm.util.subscribeForever
 
 class ToastPresenter(private val store: Store, private val context: Context) {
   private var sToast: Toast? = null
@@ -29,8 +30,8 @@ class ToastPresenter(private val store: Store, private val context: Context) {
     store
         .sets()
         .withLatestFrom(store.uiVisible, { set, uiVisible -> set to uiVisible })
-        .subscribe { (set: Store.AlarmSet, uiVisible: Boolean) ->
-          if (!uiVisible && set.alarm.isEnabled) {
+        .subscribeForever { (set: Store.AlarmSet, uiVisible: Boolean) ->
+          if (!uiVisible && set.alarm.isEnabled && set.fromUserInteraction) {
             popAlarmSetToast(context, set.millis)
           }
         }

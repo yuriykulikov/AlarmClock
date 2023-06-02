@@ -345,7 +345,8 @@ class AlarmCore(
 
       inner class NormalSetState : AlarmState() {
         override fun onEnter(reason: Event) {
-          broadcastAlarmSetWithNormalTime(calculateNextTime().timeInMillis)
+          broadcastAlarmSetWithNormalTime(
+              calculateNextTime().timeInMillis, reason.isUserInteraction())
         }
 
         override fun onResume() {
@@ -365,7 +366,8 @@ class AlarmCore(
 
       inner class PreAlarmSetState : AlarmState() {
         override fun onEnter(reason: Event) {
-          broadcastAlarmSetWithNormalTime(calculateNextPrealarmTime().timeInMillis)
+          broadcastAlarmSetWithNormalTime(
+              calculateNextPrealarmTime().timeInMillis, reason.isUserInteraction())
         }
 
         override fun onResume() {
@@ -636,8 +638,8 @@ class AlarmCore(
     updateListInStore()
   }
 
-  private fun broadcastAlarmSetWithNormalTime(millis: Long) {
-    store.sets().onNext(Store.AlarmSet(container, millis))
+  private fun broadcastAlarmSetWithNormalTime(millis: Long, fromUserInteraction: Boolean) {
+    store.sets().onNext(Store.AlarmSet(container, millis, fromUserInteraction))
     updateListInStore()
   }
 
@@ -847,4 +849,22 @@ class AlarmCore(
 
   override val data: AlarmValue
     get() = container
+}
+
+private fun Event.isUserInteraction(): Boolean {
+  return when (this) {
+    is Enable -> true
+    is Change -> true
+    Create -> true
+    Delete -> true
+    Disable -> true
+    Dismiss -> true
+    RequestSkip -> true
+    is Snooze -> true
+    Fired -> false
+    InexactFired -> false
+    PrealarmDurationChanged -> false
+    Refresh -> false
+    TimeSet -> false
+  }
 }
