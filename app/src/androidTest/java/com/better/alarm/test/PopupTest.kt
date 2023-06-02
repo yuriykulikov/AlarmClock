@@ -91,7 +91,8 @@ class PopupTest {
     onView().with(text = "Dismiss").perform(ViewActions.longClick())
 
     launchActivity(AlarmsListActivity::class.java, id)
-    assertThat(alarmsList()).hasSize(3)
+    // delete after dismiss
+    assertThat(alarmsList()).hasSize(2)
     // all disabled
     assertThat(alarmsList().filter { it.isEnabled }).hasSize(0)
   }
@@ -161,7 +162,8 @@ class PopupTest {
         })
 
     launchActivity(AlarmsListActivity::class.java, id)
-    assertThat(alarmsList()).hasSize(3)
+    // delete after dismiss
+    assertThat(alarmsList()).hasSize(2)
     assertThat(alarmsList().filter { it.isEnabled }).hasSize(0)
   }
 }
