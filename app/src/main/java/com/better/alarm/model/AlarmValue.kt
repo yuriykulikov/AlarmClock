@@ -62,6 +62,7 @@ data class AlarmValue(
           daysOfWeek = data.daysOfWeek,
           isDeleteAfterDismiss = data.isDeleteAfterDismiss,
           date = data.date,
+          questionType = data.questionType
       )
 
   fun withHour(hour: Int) = copy(hour = hour)
