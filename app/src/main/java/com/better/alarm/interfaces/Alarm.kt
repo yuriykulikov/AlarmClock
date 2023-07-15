@@ -25,7 +25,6 @@ interface Alarm {
     val labelOrDefault: String
     val alarmtone: Alarmtone
     val data: AlarmValue
-    val question: Question
 }
 
 //val id: Int,

@@ -64,12 +64,12 @@ class AlarmAlertFullScreen : FragmentActivity() {
     private var mAlarm: Alarm? = null
     private var disposableDialog = Disposables.empty()
     private var subscription: Disposable? = null
-    private var currQuestion: Question? = null
+    private var question: Question? = null
 
     override fun onCreate(icicle: Bundle?) {
         AlarmApplication.startOnce(application)
         setTheme(dynamicThemeHandler.alertTheme())
-        currQuestion = QuestionList().getRandomQuestion()
+        question = QuestionList().getRandomQuestion()
 
         super.onCreate(icicle)
         requestedOrientation =
@@ -131,10 +131,9 @@ class AlarmAlertFullScreen : FragmentActivity() {
         )
     }
 
-    private fun setTitle() {
-        val titleText = mAlarm?.labelOrDefault ?: ""
-        title = titleText
-        findViewById<TextView>(R.id.alarm_alert_label).text = titleText
+    private fun setQuestion() {
+        val questionText = question?.description
+        findViewById<TextView>(R.id.alarm_question).text = questionText
     }
 
 
@@ -169,7 +168,7 @@ class AlarmAlertFullScreen : FragmentActivity() {
             }
         }
 
-        setTitle()
+        setQuestion()
     }
 
     /**
@@ -212,7 +211,7 @@ class AlarmAlertFullScreen : FragmentActivity() {
         logger.debug { "AlarmAlert.OnNewIntent()" }
         val id = intent.getIntExtra(Intents.EXTRA_ID, -1)
         mAlarm = alarmsManager.getAlarm(id)
-        setTitle()
+        setQuestion()
     }
 
     override fun onResume() {
