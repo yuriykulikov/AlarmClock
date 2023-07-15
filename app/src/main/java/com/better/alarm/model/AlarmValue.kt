@@ -31,6 +31,7 @@ data class AlarmValue(
     val label: String = "",
     val daysOfWeek: DaysOfWeek = DaysOfWeek(0),
     val isDeleteAfterDismiss: Boolean = false,
+    val questionType: QuestionType = QuestionType.ALL,
     @Serializable(with = CalendarSerializer::class) val date: Calendar? = null,
 ) {
   val skipping
