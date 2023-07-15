@@ -64,7 +64,7 @@ class AlarmAlertFullScreen : FragmentActivity() {
     private var mAlarm: Alarm? = null
     private var disposableDialog = Disposables.empty()
     private var subscription: Disposable? = null
-    private var currQuestion: Question = null
+    private var currQuestion: Question? = null
 
     override fun onCreate(icicle: Bundle?) {
         AlarmApplication.startOnce(application)
