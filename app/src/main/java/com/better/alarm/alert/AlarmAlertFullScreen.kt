@@ -134,41 +134,46 @@ class AlarmAlertFullScreen : FragmentActivity() {
     private fun setQuestion() {
         val questionText = question?.description
         findViewById<TextView>(R.id.alarm_question).text = questionText
+        val choices = question?.choices;
+        findViewById<TextView>(R.id.alert_button_one).text = choices?.get(0) ?: "1";
+        findViewById<TextView>(R.id.alert_button_two).text = choices?.get(1) ?: "2";
+        findViewById<TextView>(R.id.alert_button_three).text = choices?.get(2) ?: "3";
+        findViewById<TextView>(R.id.alert_button_four).text = choices?.get(3) ?: "4";
     }
 
 
     private fun updateLayout() {
         setContentView(R.layout.alert_fullscreen)
-
-        findViewById<Button>(R.id.alert_button_snooze).run {
-            requestFocus()
-            setOnClickListener {
-                if (isSnoozeEnabled) {
-                    mAlarm?.snooze()
-                }
-            }
-            setOnLongClickListener {
-                if (isSnoozeEnabled) {
-                    showSnoozePicker()
-                }
-                true
-            }
-        }
-        findViewById<Button>(R.id.alert_button_dismiss).run {
-            setOnClickListener {
-                if (sp.longClickDismiss.value) {
-                    text = getString(R.string.alarm_alert_hold_the_button_text)
-                } else {
-                    dismiss()
-                }
-            }
-            setOnLongClickListener {
-                dismiss()
-                true
-            }
-        }
-
         setQuestion()
+
+
+//        findViewById<Button>(R.id.alert_button_snooze).run {
+//            requestFocus()
+//            setOnClickListener {
+//                if (isSnoozeEnabled) {
+//                    mAlarm?.snooze()
+//                }
+//            }
+//            setOnLongClickListener {
+//                if (isSnoozeEnabled) {
+//                    showSnoozePicker()
+//                }
+//                true
+//            }
+//        }
+//        findViewById<Button>(R.id.alert_button_dismiss).run {
+//            setOnClickListener {
+//                if (sp.longClickDismiss.value) {
+//                    text = getString(R.string.alarm_alert_hold_the_button_text)
+//                } else {
+//                    dismiss()
+//                }
+//            }
+//            setOnLongClickListener {
+//                dismiss()
+//                true
+//            }
+//        }
     }
 
     /**
@@ -216,8 +221,8 @@ class AlarmAlertFullScreen : FragmentActivity() {
 
     override fun onResume() {
         super.onResume()
-        findViewById<Button>(R.id.alert_button_snooze)?.isEnabled = isSnoozeEnabled
-        findViewById<View>(R.id.alert_text_snooze)?.isEnabled = isSnoozeEnabled
+//        findViewById<Button>(R.id.alert_button_snooze)?.isEnabled = isSnoozeEnabled
+//        findViewById<View>(R.id.alert_text_snooze)?.isEnabled = isSnoozeEnabled
     }
 
     override fun onPause() {
