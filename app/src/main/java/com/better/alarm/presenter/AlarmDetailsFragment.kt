@@ -109,7 +109,6 @@ class AlarmDetailsFragment : Fragment() {
     disposables = CompositeDisposable()
 
     onCreateTopRowView()
-    onCreateLabelView()
     onCreateRepeatView()
     onCreateRingtoneView()
     onCreateDeleteOnDismissView()
@@ -135,30 +134,30 @@ class AlarmDetailsFragment : Fragment() {
     }
   }
 
-  private fun onCreateLabelView() {
-    val label: EditText = fragmentView.findViewById(R.id.details_label)
-
-    observeEditor { value ->
-      if (value.label != label.text.toString()) {
-        label.setText(value.label)
-      }
-    }
-
-    label.addTextChangedListener(
-        object : TextWatcher {
-          override fun afterTextChanged(s: Editable?) {}
-
-          override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-          override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            editor.takeFirst {
-              if (it.label != s.toString()) {
-                modify("Label") { prev -> prev.copy(label = s.toString(), isEnabled = true) }
-              }
-            }
-          }
-        })
-  }
+//  private fun onCreateLabelView() {
+//    val label: EditText = fragmentView.findViewById(R.id.details_label)
+//
+//    observeEditor { value ->
+//      if (value.label != label.text.toString()) {
+//        label.setText(value.label)
+//      }
+//    }
+//
+//    label.addTextChangedListener(
+//        object : TextWatcher {
+//          override fun afterTextChanged(s: Editable?) {}
+//
+//          override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+//
+//          override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+//            editor.takeFirst {
+//              if (it.label != s.toString()) {
+//                modify("Label") { prev -> prev.copy(label = s.toString(), isEnabled = true) }
+//              }
+//            }
+//          }
+//        })
+//  }
 
   private fun onCreateRepeatView() {
     fragmentView.findViewById<LinearLayout>(R.id.details_repeat_row).setOnClickListener {

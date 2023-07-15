@@ -17,6 +17,8 @@
     <!-- Here come strings which are not contained in the AOSP -->
     <string name="alarm_delete_on_dismiss">Удалить после срабатывания</string>
     <string name="alarm_prealarm">Предварительный сигнал</string>
+    <!-- Setting labels on Set alarm screen: Prealarm -->
+    <string name="alarm_question_type">Alarm Question Type</string>
     <string name="prealarm_duration_title">Длительность предварительного сигнала</string>
     <string-array name="prealarm_duration_entries">
         <item>Выкл.</item>
