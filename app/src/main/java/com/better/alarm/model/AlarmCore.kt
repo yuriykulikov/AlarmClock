@@ -114,12 +114,15 @@ object Create : Event()
  * ```
  */
 class AlarmCore(
-    private val alarmStore: AlarmStore,
+//    무슨 문제 풀건지
+//    몇 문제 풀건지
+//    난이도는 어떻게 할지
+    private val alarmStore: AlarmStore, // ?
     private val log: Logger,
-    private val mAlarmsScheduler: IAlarmsScheduler,
-    private val broadcaster: IStateNotifier,
-    private val prefs: Prefs,
-    private val store: Store,
+    private val mAlarmsScheduler: IAlarmsScheduler, // ?
+    private val broadcaster: IStateNotifier, // ?
+    private val prefs: Prefs, // ?
+    private val store: Store, // ?
     private val calendars: Calendars,
     private val onDelete: (Int) -> Unit,
 ) : Alarm {

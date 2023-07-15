@@ -37,6 +37,8 @@ interface IAlarmsManager {
   /**
    * Create new AlarmCore with default settings
    *
+   * 알람 코어는 한 알람에 대한 많은 정보를 갖고있음
+   *
    * @return Alarm
    */
   fun createNewAlarm(): Alarm
