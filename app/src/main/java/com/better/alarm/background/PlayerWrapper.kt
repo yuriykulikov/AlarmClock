@@ -8,25 +8,18 @@ import android.media.AudioAttributes.USAGE_ALARM
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.MediaPlayer
-import android.media.RingtoneManager
-import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.core.net.toUri
 import com.better.alarm.logger.Logger
-import com.better.alarm.model.Alarmtone
 
-class PlayerWrapper(val resources: Resources, val context: Context, val log: Logger) : Player {
-  override fun setDataSource(alarmtone: Alarmtone) {
-    // Fall back on the default alarm if the database does not have an
-    // alarm stored.
-    val uri =
-        when (alarmtone) {
-          is Alarmtone.Silent -> throw RuntimeException("alarm is silent")
-          is Alarmtone.Default -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-          is Alarmtone.Sound -> Uri.parse(alarmtone.uriString)
-        }
-
-    player?.setDataSource(context, uri)
+class PlayerWrapper(
+    val resources: Resources,
+    val context: Context,
+    val log: Logger,
+) : Player {
+  override fun setDataSource(uri: String) {
+    player?.setDataSource(context, uri.toUri())
   }
 
   private var player: MediaPlayer? =

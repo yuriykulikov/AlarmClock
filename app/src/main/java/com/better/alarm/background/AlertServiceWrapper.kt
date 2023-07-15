@@ -64,7 +64,8 @@ class AlertServiceWrapper : Service() {
             prealarmVolume = get<Prefs>().preAlarmVolume.observe(),
             fadeInTimeInMillis = get<Prefs>().fadeInTimeInSeconds.observe().map { it * 1000 },
             inCall = get(named("inCall")),
-            scheduler = get())
+            scheduler = get(),
+        )
       }
 
       factory<AlertPlugin>(named("VibrationPlugin")) {
@@ -89,7 +90,9 @@ class AlertServiceWrapper : Service() {
             inCall = get(named("inCall")),
             plugins = getAll(),
             notifications = get(),
-            enclosing = get())
+            enclosing = get(),
+            prefs = get(),
+        )
       }
     }
 

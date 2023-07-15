@@ -131,7 +131,8 @@ fun startKoin(context: Context): Koin {
           prealarmVolume = get<Prefs>().preAlarmVolume.observe(),
           fadeInTimeInMillis = Observable.just(100),
           inCall = Observable.just(false),
-          scheduler = get())
+          scheduler = get(),
+      )
     }
   }
 

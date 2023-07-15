@@ -37,7 +37,7 @@ class KlaxonPluginTest {
         PluginAlarmData(1, Alarmtone.Default, ""), false, Observable.just(TargetVolume.FADED_IN))
 
     verify { playerMock.setPerceivedVolume(0f) }
-    verify { playerMock.setDataSource(Alarmtone.Default) }
+    verify { playerMock.setDataSource(Alarmtone.defaultAlarmAlertUri) }
     verify { playerMock.startAlarm() }
   }
 
@@ -89,20 +89,10 @@ class KlaxonPluginTest {
   @Test
   fun `fallback should be used if failed to play default`() {
 
-    every { playerMock.setDataSource(Alarmtone.Default) } throws NullPointerException("Test IOE")
+    every { playerMock.setDataSource(any()) } throws NullPointerException("Test IOE")
 
     klaxonPlugin.go(
         PluginAlarmData(1, Alarmtone.Default, ""), true, Observable.just(TargetVolume.FADED_IN))
-
-    verify { playerMock.setDataSourceFromResource(R.raw.fallbackring) }
-  }
-
-  @Test
-  fun `fallback should be used if failed to play`() {
-    every { playerMock.setDataSource(Alarmtone.Sound("")) } throws NullPointerException("Test IOE")
-
-    klaxonPlugin.go(
-        PluginAlarmData(1, Alarmtone.Sound(""), ""), true, Observable.just(TargetVolume.FADED_IN))
 
     verify { playerMock.setDataSourceFromResource(R.raw.fallbackring) }
   }

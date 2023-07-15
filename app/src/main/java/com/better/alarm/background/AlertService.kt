@@ -2,6 +2,7 @@ package com.better.alarm.background
 
 import android.app.Notification
 import com.better.alarm.BuildConfig
+import com.better.alarm.configuration.Prefs
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.isOreo
@@ -69,7 +70,8 @@ class AlertService(
     private val inCall: Observable<Boolean>,
     private val plugins: List<AlertPlugin>,
     private val notifications: NotificationsPlugin,
-    private val enclosing: EnclosingService
+    private val enclosing: EnclosingService,
+    private val prefs: Prefs,
 ) {
   private val wantedVolume: BehaviorSubject<TargetVolume> =
       BehaviorSubject.createDefault(TargetVolume.MUTED)
@@ -220,7 +222,9 @@ class AlertService(
               }
             }
     val alarm = alarms.getAlarm(id)
-    val alarmtone = alarm?.alarmtone ?: Alarmtone.Default
+    val alarmtone =
+        if (alarm?.alarmtone is Alarmtone.Default) prefs.defaultRingtone()
+        else alarm?.alarmtone ?: Alarmtone.Default
     val label = alarm?.labelOrDefault ?: ""
     val pluginDisposables =
         plugins.map {

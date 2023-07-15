@@ -1,6 +1,7 @@
 package com.better.alarm.configuration
 
 import com.better.alarm.lollipop
+import com.better.alarm.model.Alarmtone
 import com.better.alarm.stores.PrimitiveDataStoreFactory
 import com.better.alarm.stores.RxDataStore
 import com.better.alarm.stores.intStringDataStore
@@ -26,6 +27,7 @@ private constructor(
     val skipDuration: RxDataStore<Int>,
     val longClickDismiss: RxDataStore<Boolean>,
     val theme: RxDataStore<String>,
+    val defaultRingtone: RxDataStore<String>,
 ) {
   fun layout(): Layout {
     return listRowLayout
@@ -41,7 +43,9 @@ private constructor(
         }
         .blockingFirst()
   }
-
+  fun defaultRingtone(): Alarmtone {
+    return Alarmtone.fromString(defaultRingtone.value)
+  }
   companion object {
 
     @JvmStatic
@@ -58,6 +62,8 @@ private constructor(
           skipDuration = factory.intStringDataStore(KEY_SKIP_DURATION, 30),
           longClickDismiss = factory.booleanDataStore(KEY_LONGCLICK_DISMISS, true),
           theme = factory.stringDataStore(KEY_THEME, "deusex"),
+          defaultRingtone =
+              factory.stringDataStore(KEY_DEFAULT_RINGTONE, Alarmtone.SystemDefault.asString()),
       )
     }
 
@@ -73,6 +79,7 @@ private constructor(
     const val MAX_PREALARM_VOLUME = 10
     const val KEY_PREALARM_VOLUME = "key_prealarm_volume"
     const val KEY_VOLUME_PREFERENCE = "volume_preference"
+    const val KEY_DEFAULT_RINGTONE = "default_ringtone"
     const val LIST_ROW_LAYOUT = "ui_list_row_layout"
     const val LIST_ROW_LAYOUT_COMPACT = "compact"
     const val LIST_ROW_LAYOUT_CLASSIC = "classic"

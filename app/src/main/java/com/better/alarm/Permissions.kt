@@ -4,13 +4,13 @@ import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.pm.PackageManager
-import android.media.RingtoneManager
 import android.os.Build
 import com.better.alarm.background.PlayerWrapper
 import com.better.alarm.configuration.globalLogger
 import com.better.alarm.logger.Logger
 import com.better.alarm.model.Alarmtone
-import com.better.alarm.model.ringtoneManagerString
+import com.better.alarm.model.ringtoneManagerUri
+import com.better.alarm.presenter.userFriendlyTitle
 
 /** Checks if all ringtones can be played, and requests permissions if it is not the case */
 fun checkPermissions(activity: Activity, tones: List<Alarmtone>) {
@@ -22,18 +22,19 @@ fun checkPermissions(activity: Activity, tones: List<Alarmtone>) {
     val unplayable =
         tones
             .filter { alarmtone ->
-              runCatching {
-                    PlayerWrapper(context = activity, resources = activity.resources, log = logger)
-                        .setDataSource(alarmtone)
-                  }
-                  .isFailure
+              val uri = alarmtone.ringtoneManagerUri()
+              uri != null &&
+                  runCatching {
+                        PlayerWrapper(
+                                context = activity,
+                                resources = activity.resources,
+                                log = logger,
+                            )
+                            .setDataSource(uri)
+                      }
+                      .isFailure
             }
-            .mapNotNull { tone ->
-              RingtoneManager.getRingtone(activity, tone.ringtoneManagerString())
-            }
-            .map { ringtone ->
-              runCatching { ringtone.getTitle(activity) ?: "null" }.getOrDefault("null")
-            }
+            .map { ringtone -> ringtone.userFriendlyTitle(activity) }
 
     if (unplayable.isNotEmpty()) {
       try {

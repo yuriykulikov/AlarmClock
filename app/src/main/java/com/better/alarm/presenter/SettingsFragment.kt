@@ -18,6 +18,8 @@ import com.better.alarm.R
 import com.better.alarm.checkPermissions
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.globalInject
+import com.better.alarm.configuration.globalLogger
+import com.better.alarm.logger.Logger
 import com.better.alarm.lollipop
 import com.better.alarm.model.Alarmtone
 import com.better.alarm.stores.RxDataStore
@@ -30,6 +32,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
   private val vibrator: Vibrator by globalInject()
   private val prefs: Prefs by globalInject()
   private val disposables = CompositeDisposable()
+  private val logger: Logger by globalLogger("SettingsFragment")
 
   private val contentResolver: ContentResolver
     get() = requireActivity().contentResolver
@@ -83,6 +86,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
   }
 
+  @Deprecated("Deprecated in Java")
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    if (data == null) return
+    val alarmtone = data.getPickedRingtone()
+    check(alarmtone !is Alarmtone.Default) { "Default alarmtone is not allowed here" }
+    logger.debug { "Picked default alarm tone: $alarmtone" }
+    prefs.defaultRingtone.value = alarmtone.asString()
+    checkPermissions(
+        requireActivity(),
+        listOf(alarmtone),
+    )
+  }
+
   override fun onPreferenceTreeClick(preference: Preference): Boolean {
     when (preference.key) {
       Prefs.KEY_ALARM_IN_SILENT_MODE -> {
@@ -112,9 +128,21 @@ class SettingsFragment : PreferenceFragmentCompat() {
           (systemModeRingerStreamsAffected() and alarmStreamTypeBit) == 0
     }
 
-    findPreference<VolumePreference>(Prefs.KEY_VOLUME_PREFERENCE)?.onResume()
-
-    checkPermissions(requireActivity(), listOf(Alarmtone.Default))
+    findPreference<VolumePreference>(Prefs.KEY_VOLUME_PREFERENCE)?.run {
+      showPicker = {
+        val current = Alarmtone.fromString(prefs.defaultRingtone.value)
+        showRingtonePicker(current, 43)
+      }
+      prefs.defaultRingtone
+          .observe()
+          .map { Alarmtone.fromString(it) }
+          .subscribe { alarmtone ->
+            val summary = alarmtone.userFriendlyTitle(requireContext())
+            logger.debug { "Setting summary to $summary" }
+            ringtoneTitle = summary
+          }
+          .also { disposables.add(it) }
+    }
 
     bindListPreference(Prefs.KEY_ALARM_SNOOZE, prefs.snoozeDuration) { duration ->
       val idx = findIndexOfValue(duration.toString())

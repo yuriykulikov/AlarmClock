@@ -18,9 +18,6 @@
 package com.better.alarm.presenter
 
 import android.content.Intent
-import android.media.Ringtone
-import android.media.RingtoneManager
-import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -31,7 +28,6 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.better.alarm.R
 import com.better.alarm.checkPermissions
@@ -44,7 +40,6 @@ import com.better.alarm.logger.Logger
 import com.better.alarm.lollipop
 import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.Alarmtone
-import com.better.alarm.model.ringtoneManagerString
 import com.better.alarm.util.Optional
 import com.better.alarm.util.modify
 import com.better.alarm.view.showRepeatAndDateDialog
@@ -268,47 +263,34 @@ class AlarmDetailsFragment : Fragment() {
   private fun onCreateRingtoneView() {
     fragmentView.findViewById<LinearLayout>(R.id.details_ringtone_row).setOnClickListener {
       editor.takeFirst { value ->
-        try {
-          val pickerIntent =
-              Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
-                putExtra(
-                    RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,
-                    value.alarmtone.ringtoneManagerString())
-
-                putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
-                putExtra(
-                    RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI,
-                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
-
-                putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true)
-                putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
-              }
-          startActivityForResult(pickerIntent, ringtonePickerRequestCode)
-        } catch (e: Exception) {
-          Toast.makeText(
-                  context,
-                  requireContext().getString(R.string.details_no_ringtone_picker),
-                  Toast.LENGTH_LONG)
-              .show()
-        }
+        showRingtonePicker(value.alarmtone, ringtonePickerRequestCode, prefs.defaultRingtone())
       }
     }
 
     val ringtoneSummary by lazy {
       fragmentView.findViewById<TextView>(R.id.details_ringtone_summary)
     }
-    editor
-        .distinctUntilChanged()
+
+    Observable.combineLatest(
+            editor.distinctUntilChanged().map { it.alarmtone },
+            prefs.defaultRingtone.observe().map { Alarmtone.fromString(it) }) {
+                value,
+                defaultRingtone ->
+              value to defaultRingtone
+            }
         .observeOn(Schedulers.computation())
-        .map { value ->
-          when (value.alarmtone) {
-            is Alarmtone.Silent -> requireContext().getText(R.string.silent_alarm_summary)
-            is Alarmtone.Default ->
-                RingtoneManager.getRingtone(
-                        context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
-                    .title()
-            is Alarmtone.Sound ->
-                RingtoneManager.getRingtone(context, Uri.parse(value.alarmtone.uriString)).title()
+        .map { (alarmtone, default) ->
+          when {
+            // Default (title)
+            // We need this case otherwise we will have "App default (Default (title))"
+            alarmtone is Alarmtone.Default && default is Alarmtone.SystemDefault ->
+                default.userFriendlyTitle(requireActivity())
+            // App default (title)
+            alarmtone is Alarmtone.Default ->
+                getString(
+                    R.string.app_default_ringtone, default.userFriendlyTitle(requireActivity()))
+            // title
+            else -> alarmtone.userFriendlyTitle(requireActivity())
           }
         }
         .observeOn(AndroidSchedulers.mainThread())
@@ -360,40 +342,14 @@ class AlarmDetailsFragment : Fragment() {
     disposables.dispose()
   }
 
+  @Deprecated("Deprecated in Java")
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
     if (data != null && requestCode == ringtonePickerRequestCode) {
-      handlerRingtonePickerResult(data)
+      val alarmtone = data.getPickedRingtone()
+      checkPermissions(requireActivity(), listOf(alarmtone))
+      logger.debug { "Picked alarm tone: $alarmtone" }
+      modify("Ringtone picker") { prev -> prev.copy(alarmtone = alarmtone, isEnabled = true) }
     }
-  }
-
-  private fun handlerRingtonePickerResult(data: Intent) {
-    val alert: String? =
-        data.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)?.toString()
-
-    logger.debug { "Got ringtone: $alert" }
-
-    val alarmtone =
-        when (alert) {
-          null -> Alarmtone.Silent
-          RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString() -> Alarmtone.Default
-          else -> Alarmtone.Sound(alert)
-        }
-
-    logger.debug { "onActivityResult $alert -> $alarmtone" }
-
-    checkPermissions(requireActivity(), listOf(alarmtone))
-
-    modify("Ringtone picker") { prev -> prev.copy(alarmtone = alarmtone, isEnabled = true) }
-  }
-
-  fun Ringtone?.title(): CharSequence {
-    return try {
-      context?.let { this?.getTitle(it) } ?: context?.getText(R.string.silent_alarm_summary)
-    } catch (e: Exception) {
-      context?.getText(R.string.silent_alarm_summary)
-    } catch (e: NullPointerException) {
-      null
-    } ?: ""
   }
 
   override fun onResume() {
