@@ -37,16 +37,16 @@
                     android:layout_gravity="center|left"
                     android:layout_weight="1"
                     android:text="@string/alarm_repeat"
-                    android:textColor="?attr/colorAccent"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="?attr/colorAccent" />
 
                 <TextView
                     android:id="@+id/details_repeat_summary"
-                    android:textColor="?android:attr/textColorPrimary"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:text="Weekdays" />
+                    android:text="Weekdays"
+                    android:textColor="?android:attr/textColorPrimary" />
 
             </LinearLayout>
 
@@ -103,16 +103,16 @@
                     android:layout_gravity="center|left"
                     android:layout_weight="1"
                     android:text="@string/alert"
-                    android:textColor="?attr/colorAccent"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="?attr/colorAccent" />
 
                 <TextView
                     android:id="@+id/details_ringtone_summary"
-                    android:textColor="?android:attr/textColorPrimary"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:text="Super Mario" />
+                    android:text="Super Mario"
+                    android:textColor="?android:attr/textColorPrimary" />
             </LinearLayout>
 
             <View
@@ -132,8 +132,8 @@
                     android:layout_weight="1"
                     android:gravity="center|left"
                     android:text="@string/alarm_prealarm"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="?android:attr/textColorPrimary" />
 
                 <LinearLayout
                     android:layout_width="68dip"
@@ -165,8 +165,8 @@
                 android:inputType="textCapSentences"
                 android:minHeight="68dip"
                 android:singleLine="true"
-                android:textColor="?attr/colorAccent"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="?attr/colorAccent" />
         </LinearLayout>
     </ScrollView>
 
