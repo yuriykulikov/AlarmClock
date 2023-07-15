@@ -43,7 +43,7 @@
                 android:gravity="center|center_horizontal"
                 android:paddingTop="8dip"
                 android:paddingBottom="8dip"
-                android:text="Label"
+                android:text="question"
                 android:textSize="18sp" />
 
             <com.better.alarm.view.DigitalClock
@@ -69,26 +69,13 @@
                     android:textStyle="bold" />
             </com.better.alarm.view.DigitalClock>
 
-            <TextView
-                android:id="@+id/alarm_alert_label"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="match_parent"
-                android:layout_height="0px"
-                android:layout_weight="1"
-                android:clickable="false"
-                android:gravity="center|center_horizontal"
-                android:paddingTop="8dip"
-                android:paddingBottom="8dip"
-                android:text="Label"
-                android:textSize="18sp" />
-
 
         </LinearLayout>
 
     </RelativeLayout>
 
     <Button
-        android:id="@+id/alert_button_snooze"
+        android:id="@+id/alert_button_one"
         style="?android:attr/buttonBarButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -99,7 +86,7 @@
         android:background="@color/mat_purple" />
 
     <Button
-        android:id="@+id/alert_button_dismiss"
+        android:id="@+id/alert_button_two"
         style="?android:attr/buttonBarButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -130,12 +117,6 @@
         android:layout_marginRight="40dp"
         android:layout_marginBottom="10dp"
         android:background="@color/mat_purple" />
-
-    <TextView
-        android:id="@+id/alert_text_snooze"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
 
     <View
         android:layout_width="match_parent"
