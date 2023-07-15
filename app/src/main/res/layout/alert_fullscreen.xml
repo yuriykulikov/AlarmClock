@@ -83,7 +83,10 @@
         android:layout_marginTop="10dp"
         android:layout_marginRight="40dp"
         android:layout_marginBottom="10dp"
-        android:background="@color/mat_purple" />
+        android:textColor="@color/dark_on_background"
+        android:background="@color/blackish"
+        android:text="one"
+        />
 
     <Button
         android:id="@+id/alert_button_two"
@@ -94,7 +97,10 @@
         android:layout_marginTop="10dp"
         android:layout_marginRight="40dp"
         android:layout_marginBottom="10dp"
-        android:background="@color/mat_purple" />
+        android:textColor="@color/dark_on_background"
+        android:background="@color/blackish"
+        android:text="two"
+        />
 
     <Button
         android:id="@+id/alert_button_three"
@@ -105,7 +111,10 @@
         android:layout_marginTop="10dp"
         android:layout_marginRight="40dp"
         android:layout_marginBottom="10dp"
-        android:background="@color/mat_purple" />
+        android:textColor="@color/dark_on_background"
+        android:background="@color/blackish"
+        android:text="three"
+        />
 
     <Button
         android:id="@+id/alert_button_four"
@@ -116,7 +125,10 @@
         android:layout_marginTop="10dp"
         android:layout_marginRight="40dp"
         android:layout_marginBottom="10dp"
-        android:background="@color/mat_purple" />
+        android:textColor="@color/dark_on_background"
+        android:background="@color/blackish"
+        android:text="four"
+        />
 
     <View
         android:layout_width="match_parent"
