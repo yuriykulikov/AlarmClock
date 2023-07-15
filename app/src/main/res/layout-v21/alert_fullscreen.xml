@@ -83,10 +83,17 @@
         android:layout_marginTop="10dp"
         android:layout_marginRight="40dp"
         android:layout_marginBottom="10dp"
+<<<<<<< HEAD
+        android:background="@color/blackish"
+        android:text="one"
+        android:textAllCaps="false"
+        android:textColor="@color/dark_on_background" />
+=======
         android:text="One"
         android:textColor="@color/dark_on_background"
         android:background="@color/blackish"
         android:textAllCaps="false" />
+>>>>>>> dab5527eb7c812f7763c67090f3b2c86660cb7d7
 
     <Button
         android:id="@+id/alert_button_two"
