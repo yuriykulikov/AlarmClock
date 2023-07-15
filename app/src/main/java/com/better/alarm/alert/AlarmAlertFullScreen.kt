@@ -146,21 +146,53 @@ class AlarmAlertFullScreen : FragmentActivity() {
         setContentView(R.layout.alert_fullscreen)
         setQuestion()
 
+        findViewById<Button>(R.id.alert_button_one).run {
+            requestFocus()
+            setOnClickListener {
+                if (question?.correctAnswer == 0) {
+                    mAlarm?.dismiss()
+                } else {
+                    question = QuestionList().getRandomQuestion()
+                    setQuestion()
+                }
+            }
+        }
 
-//        findViewById<Button>(R.id.alert_button_snooze).run {
-//            requestFocus()
-//            setOnClickListener {
-//                if (isSnoozeEnabled) {
-//                    mAlarm?.snooze()
-//                }
-//            }
-//            setOnLongClickListener {
-//                if (isSnoozeEnabled) {
-//                    showSnoozePicker()
-//                }
-//                true
-//            }
-//        }
+        findViewById<Button>(R.id.alert_button_two).run {
+            requestFocus()
+            setOnClickListener {
+                if (question?.correctAnswer == 1) {
+                    mAlarm?.dismiss()
+                } else {
+                    question = QuestionList().getRandomQuestion()
+                    setQuestion()
+                }
+            }
+        }
+
+        findViewById<Button>(R.id.alert_button_three).run {
+            requestFocus()
+            setOnClickListener {
+                if (question?.correctAnswer == 2) {
+                    mAlarm?.dismiss()
+                } else {
+                    question = QuestionList().getRandomQuestion()
+                    setQuestion()
+                }
+            }
+        }
+
+        findViewById<Button>(R.id.alert_button_four).run {
+            requestFocus()
+            setOnClickListener {
+                if (question?.correctAnswer == 3) {
+                    mAlarm?.dismiss()
+                } else {
+                    question = QuestionList().getRandomQuestion()
+                    setQuestion()
+                }
+            }
+        }
 //        findViewById<Button>(R.id.alert_button_dismiss).run {
 //            setOnClickListener {
 //                if (sp.longClickDismiss.value) {
