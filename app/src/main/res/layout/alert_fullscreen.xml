@@ -76,17 +76,17 @@
 
     <Button
         android:id="@+id/alert_button_one"
-        style="?android:attr/buttonBarButtonStyle"
+        style="@android:style/Widget.Material.Light.Button.Inset"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="40dp"
         android:layout_marginTop="10dp"
         android:layout_marginRight="40dp"
         android:layout_marginBottom="10dp"
-        android:textColor="@color/dark_on_background"
         android:background="@color/blackish"
         android:text="one"
-        />
+        android:textAllCaps="false"
+        android:textColor="@color/dark_on_background" />
 
     <Button
         android:id="@+id/alert_button_two"

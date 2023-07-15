@@ -114,9 +114,6 @@ object Create : Event()
  * ```
  */
 class AlarmCore(
-//    무슨 문제 풀건지
-//    몇 문제 풀건지
-//    난이도는 어떻게 할지
     private val alarmStore: AlarmStore, // ?
     private val log: Logger,
     private val mAlarmsScheduler: IAlarmsScheduler, // ?
