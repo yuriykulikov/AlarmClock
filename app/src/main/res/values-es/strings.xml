@@ -72,7 +72,7 @@
         <item>Normal</item>
         <item>Clásico</item>
     </string-array>
-    <string name="simple_alarm_clock">Despertador simple</string>
+    <string name="simple_alarm_clock">Dev Alarm</string>
     <string-array name="snooze_duration_with_off_entries">
         <item>"está apagada"</item>
         <item>"5 minutos"</item>
@@ -91,7 +91,7 @@
     <string name="preference_category_ui">Interfaz</string>
     <string name="preference_list_row_layout_title">Tamaño</string>
     <string name="menu_about_title">Sobre el programa</string>
-    <string name="dialog_about_content">Simple alarm clock es un programa de código abierto que combina una interfaz simple y las características necesarias
+    <string name="dialog_about_content">Dev Alarm es un programa de código abierto que combina una interfaz simple y las características necesarias
 
        \n\nConsejo:
        \n· Puede cambiar el cambio de tamaño de la alarma en la configuración.

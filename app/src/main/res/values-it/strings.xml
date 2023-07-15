@@ -64,7 +64,7 @@
         <item><xliff:g example="2 days" id="DAYS">%1$s</xliff:g>, <xliff:g example="2 ore" id="HOURS">%2$s</xliff:g>, e <xliff:g example="2 minuti" id="MINUTES">%3$s</xliff:g></item>
     </string-array>
     <string name="theme_title">Tema dell\'interfaccia</string>
-    <string name="simple_alarm_clock">Sveglia Semplice</string>
+    <string name="simple_alarm_clock">Dev Alarm</string>
     <string-array name="snooze_duration_with_off_entries">
         <item>Disattivo</item>
         <item>"5 minuti"</item>
@@ -83,7 +83,7 @@
     <string name="preference_category_ui">Interfaccia</string>
     <string name="preference_list_row_layout_title">Dimensione</string>
     <string name="menu_about_title">A proposito dell’applicazione</string>
-    <string name="dialog_about_content">Simple Alarm Clock è un programma open source che combina un’interfaccia semplice e le funzionalità necessarie ad una sveglia comoda.
+    <string name="dialog_about_content">Dev Alarm è un programma open source che combina un’interfaccia semplice e le funzionalità necessarie ad una sveglia comoda.
 
        \n\nSuggerimenti:
        \n· Scegli la dimensione del layout nelle impostazioni
