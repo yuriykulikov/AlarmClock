@@ -66,14 +66,11 @@ class AlarmAlertFullScreen : FragmentActivity() {
     private var disposableDialog = Disposables.empty()
     private var subscription: Disposable? = null
     private var question: Question? = null
-    
-    // temp
-    private var questionType: QuestionType = QuestionType.JAVA
 
     override fun onCreate(icicle: Bundle?) {
         AlarmApplication.startOnce(application)
         setTheme(dynamicThemeHandler.alertTheme())
-        question = QuestionList().getRandomQuestion(questionType)
+        question = QuestionList().getRandomQuestion(mAlarm?.data!!.questionType)
 
         super.onCreate(icicle)
         requestedOrientation =
@@ -156,7 +153,7 @@ class AlarmAlertFullScreen : FragmentActivity() {
                 if (question?.correctAnswer == 0) {
                     mAlarm?.dismiss()
                 } else {
-                    question = QuestionList().getRandomQuestion(questionType)
+                    question = QuestionList().getRandomQuestion(mAlarm?.data!!.questionType)
                     setQuestion()
                 }
             }
@@ -168,7 +165,7 @@ class AlarmAlertFullScreen : FragmentActivity() {
                 if (question?.correctAnswer == 1) {
                     mAlarm?.dismiss()
                 } else {
-                    question = QuestionList().getRandomQuestion(questionType)
+                    question = QuestionList().getRandomQuestion(mAlarm?.data!!.questionType)
                     setQuestion()
                 }
             }
@@ -180,7 +177,7 @@ class AlarmAlertFullScreen : FragmentActivity() {
                 if (question?.correctAnswer == 2) {
                     mAlarm?.dismiss()
                 } else {
-                    question = QuestionList().getRandomQuestion(questionType)
+                    question = QuestionList().getRandomQuestion(mAlarm?.data!!.questionType)
                     setQuestion()
                 }
             }
@@ -192,7 +189,7 @@ class AlarmAlertFullScreen : FragmentActivity() {
                 if (question?.correctAnswer == 3) {
                     mAlarm?.dismiss()
                 } else {
-                    question = QuestionList().getRandomQuestion(questionType)
+                    question = QuestionList().getRandomQuestion(mAlarm?.data!!.questionType)
                     setQuestion()
                 }
             }
