@@ -1,9 +1,15 @@
 package com.better.alarm.model
 
+import kotlin.random.Random
+
 class QuestionList {
 
     fun getQuestions(): List<Question> {
         return questions
+    }
+
+    fun getRandomQuestion(): Question {
+        return questions[Random.nextInt(questions.size)]
     }
 
     private val questions = listOf(
