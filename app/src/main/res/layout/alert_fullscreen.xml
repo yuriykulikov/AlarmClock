@@ -33,19 +33,6 @@
             android:gravity="center|center_horizontal"
             android:orientation="vertical">
 
-<!--            <TextView-->
-<!--                android:id="@+id/alarm_alert_label"-->
-<!--                style="?android:attr/buttonBarButtonStyle"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="0px"-->
-<!--                android:layout_weight="1"-->
-<!--                android:clickable="false"-->
-<!--                android:gravity="center|center_horizontal"-->
-<!--                android:paddingTop="8dip"-->
-<!--                android:paddingBottom="8dip"-->
-<!--                android:text="Label"-->
-<!--                android:textSize="18sp" />-->
-
             <TextView
                 android:id="@+id/alarm_question"
                 style="?android:attr/buttonBarButtonStyle"
@@ -83,26 +70,72 @@
             </com.better.alarm.view.DigitalClock>
 
             <TextView
-                android:id="@+id/alert_text_snooze"
+                android:id="@+id/alarm_alert_label"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="0px"
                 android:layout_weight="1"
                 android:clickable="false"
-                android:text="@string/alarm_alert_snooze_text"
-                android:textSize="24sp" />
+                android:gravity="center|center_horizontal"
+                android:paddingTop="8dip"
+                android:paddingBottom="8dip"
+                android:text="Label"
+                android:textSize="18sp" />
+
+
         </LinearLayout>
 
-        <Button
-            android:id="@+id/alert_button_snooze"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="40dp"
-            android:layout_marginBottom="10dp" />
     </RelativeLayout>
+
+    <Button
+        android:id="@+id/alert_button_snooze"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/mat_purple" />
+
+    <Button
+        android:id="@+id/alert_button_dismiss"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/mat_purple" />
+
+    <Button
+        android:id="@+id/alert_button_three"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/mat_purple" />
+
+    <Button
+        android:id="@+id/alert_button_four"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/mat_purple" />
+
+    <TextView
+        android:id="@+id/alert_text_snooze"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
 
     <View
         android:layout_width="match_parent"
@@ -111,16 +144,6 @@
         android:layout_marginRight="16dip"
         android:background="?android:attr/dividerHorizontal" />
 
-    <Button
-        android:id="@+id/alert_button_dismiss"
-        style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:layout_marginLeft="40dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="40dp"
-        android:layout_marginBottom="10dp"
-        android:layout_weight="1"
-        android:text="@string/alarm_alert_dismiss_text"
-        android:textSize="24sp" />
+
+
 </LinearLayout>
