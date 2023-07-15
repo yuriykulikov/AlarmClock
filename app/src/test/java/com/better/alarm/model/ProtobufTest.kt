@@ -57,6 +57,7 @@ message Alarmtone {
   //   message Default, serial name 'Default'
   //   message Silent, serial name 'Silent'
   //   message Sound, serial name 'Sound'
+  //   message SystemDefault, serial name 'SystemDefault'
   required bytes value = 2;
 }
 
@@ -73,6 +74,9 @@ message Silent {
 
 message Sound {
   required string uriString = 1;
+}
+
+message SystemDefault {
 }
 """)
   }

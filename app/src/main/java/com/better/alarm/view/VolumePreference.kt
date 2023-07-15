@@ -17,12 +17,9 @@
 package com.better.alarm.view
 
 import android.content.Context
-import android.content.Intent
 import android.media.AudioManager
-import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
-import android.provider.Settings
 import android.util.AttributeSet
 import android.view.View
 import android.widget.SeekBar
@@ -38,7 +35,6 @@ import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.Prefs.Companion.MAX_PREALARM_VOLUME
 import com.better.alarm.configuration.globalInject
 import com.better.alarm.configuration.globalLogger
-import com.better.alarm.model.Alarmtone
 import com.better.alarm.util.subscribeIn
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -54,30 +50,31 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
   private val am: AudioManager by globalInject()
   private val alarmTypeUri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
 
-  private var ringtone: Ringtone? = null
   private var ringtoneSummary: TextView? = null
   private var fragmentScope = CompositeDisposable()
   private var prealarmSampleDisposable = Disposables.empty()
+  private var sampleDisposable = Disposables.empty()
 
   private val klaxon: KlaxonPlugin by globalInject(named("volumePreferenceDemo"))
 
+  var showPicker: (() -> Unit)? = null
+  var ringtoneTitle: CharSequence? = null
+    set(value) {
+      field = value
+      ringtoneSummary?.text = value
+    }
+
   init {
     layoutResource = R.layout.seekbar_dialog
-    // this actually can return null
-    this.ringtone = RingtoneManager.getRingtone(context, alarmTypeUri)
-    ringtone?.streamType = AudioManager.STREAM_ALARM
   }
 
   override fun onBindViewHolder(holder: PreferenceViewHolder) {
     super.onBindViewHolder(holder)
     bindPrealarmSeekBar(holder.findById(R.id.seekbar_dialog_seekbar_prealarm_volume))
     bindAudioManagerVolume(holder.findById(R.id.seekbar_dialog_seekbar_master_volume))
-
-    holder.findById<View>(R.id.settings_ringtone).setOnClickListener {
-      context.startActivity(Intent(Settings.ACTION_SOUND_SETTINGS))
-    }
     ringtoneSummary = holder.findById(R.id.settings_ringtone_summary)
-    onResume()
+    ringtoneTitle?.let { ringtoneSummary?.text = it }
+    holder.findById<View>(R.id.settings_ringtone).setOnClickListener { showPicker?.invoke() }
   }
 
   /** Extension function to avoid crashes cause by an incorrect cast (see history) */
@@ -86,22 +83,6 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
   override fun onDetached() {
     super.onDetached()
     fragmentScope.dispose()
-  }
-
-  /** Called from [com.better.alarm.presenter.SettingsFragment.onResume] */
-  fun onResume() {
-    updateRingtoneSummary()
-  }
-
-  private fun updateRingtoneSummary() {
-    ringtoneSummary?.text =
-        runCatching {
-              RingtoneManager.getRingtone(context, alarmTypeUri) //
-                  // this can fail, see https://github.com/yuriykulikov/AlarmClock/issues/403
-                  ?.getTitle(context)
-                  ?: context.getText(R.string.silent_alarm_summary)
-            }
-            .getOrDefault("")
   }
 
   /** Called from [com.better.alarm.presenter.SettingsFragment.onPause] */
@@ -119,10 +100,17 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
 
     masterVolumeProgress.subscribeIn(fragmentScope) { progress ->
       stopPrealarmSample()
+      stopMasterSample()
       am.setStreamVolume(AudioManager.STREAM_ALARM, progress, 0)
-      if (ringtone?.isPlaying == false) {
-        ringtone?.play()
-      }
+      sampleDisposable =
+          klaxon.go(
+              PluginAlarmData(
+                  id = -1,
+                  label = "",
+                  alarmtone = rxPrefs.defaultRingtone(),
+              ),
+              prealarm = false,
+              targetVolume = Observable.just(TargetVolume.FADED_IN))
     }
 
     masterVolumeProgress
@@ -145,7 +133,11 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
       stopPrealarmSample()
       prealarmSampleDisposable =
           klaxon.go(
-              PluginAlarmData(id = -1, label = "", alarmtone = Alarmtone.Default),
+              PluginAlarmData(
+                  id = -1,
+                  label = "",
+                  alarmtone = rxPrefs.defaultRingtone(),
+              ),
               prealarm = true,
               targetVolume = Observable.just(TargetVolume.FADED_IN))
     }
@@ -161,7 +153,7 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
   }
 
   private fun stopMasterSample() {
-    ringtone?.stop()
+    sampleDisposable.dispose()
   }
 
   /** Turns a [SeekBar] into a volume control. */

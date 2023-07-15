@@ -78,8 +78,8 @@ val acraEmail =
 android {
   compileSdk = 33
   defaultConfig {
-    versionCode = 31404
-    versionName = "3.14.04"
+    versionCode = 31500
+    versionName = "3.15.00"
     applicationId = "com.better.alarm"
     minSdk = 16
     targetSdk = 33

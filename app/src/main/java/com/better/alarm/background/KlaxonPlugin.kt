@@ -3,6 +3,7 @@ package com.better.alarm.background
 import com.better.alarm.R
 import com.better.alarm.logger.Logger
 import com.better.alarm.model.Alarmtone
+import com.better.alarm.model.ringtoneManagerUri
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
@@ -20,7 +21,7 @@ interface Player {
   fun stop()
 
   fun reset()
-  fun setDataSource(alarmtone: Alarmtone)
+  fun setDataSource(uri: String)
 }
 
 /** Plays sound when told to. Performs a fade-in. */
@@ -72,7 +73,7 @@ class KlaxonPlugin(
           }
         }
 
-    log.debug { "[KlaxonPlugin] go (prealarm: $prealarm)" }
+    log.debug { "[KlaxonPlugin] go ${alarm.alarmtone} (prealarm: $prealarm)" }
     val volumeSub = volume.subscribe { currentVolume -> player?.setPerceivedVolume(currentVolume) }
 
     disposable =
@@ -85,10 +86,10 @@ class KlaxonPlugin(
       player?.run {
         try {
           setPerceivedVolume(0f)
-          setDataSource(alarm.alarmtone)
+          setDataSource(requireNotNull(alarm.alarmtone.ringtoneManagerUri()))
           startAlarm()
         } catch (ex: Exception) {
-          log.w("Using the fallback ringtone")
+          log.warning { "Using the fallback ringtone, because ringtoneManagerUri() failed: $ex" }
           // The alert may be on the sd card which could be busy right
           // now. Use the fallback ringtone.
           // Must reset the media player to clear the error state.

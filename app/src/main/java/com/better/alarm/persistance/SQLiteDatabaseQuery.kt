@@ -52,7 +52,7 @@ class SQLiteDatabaseQuery(
         isVibrate = c.getInt(Columns.ALARM_VIBRATE_INDEX) == 1,
         isPrealarm = c.getInt(Columns.ALARM_PREALARM_INDEX) == 1,
         label = c.getString(Columns.ALARM_MESSAGE_INDEX) ?: "",
-        alarmtone = Alarmtone.fromString(c.getString(Columns.ALARM_ALERT_INDEX)),
+        alarmtone = Alarmtone.migrateFromString(c.getString(Columns.ALARM_ALERT_INDEX)),
         state = c.getString(Columns.ALARM_STATE_INDEX)
                 ?: (if (enabled) "NormalSetState" else "DisabledState"),
         nextTime =

@@ -4,7 +4,9 @@ import com.better.alarm.background.AlertPlugin
 import com.better.alarm.background.AlertService
 import com.better.alarm.background.EnclosingService
 import com.better.alarm.background.Event
+import com.better.alarm.background.KlaxonPlugin
 import com.better.alarm.background.NotificationsPlugin
+import com.better.alarm.background.Player
 import com.better.alarm.background.PluginAlarmData
 import com.better.alarm.background.TargetVolume
 import com.better.alarm.interfaces.Alarm
@@ -21,6 +23,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.observers.TestObserver
 import io.reactivex.plugins.RxJavaPlugins
+import io.reactivex.schedulers.Schedulers
 import kotlin.properties.Delegates
 import org.assertj.core.api.KotlinAssertions.assertThat
 import org.junit.Test
@@ -46,7 +49,7 @@ class AlertServiceTest {
         mockk<Alarm> {
           every { id } returns 3
           every { labelOrDefault } returns "3"
-          every { alarmtone } returns Alarmtone.Default
+          every { alarmtone } returns Alarmtone.Sound("custom")
         }
     every { getAlarm(2) } returns alarm2
     every { getAlarm(3) } returns alarm3
@@ -78,7 +81,9 @@ class AlertServiceTest {
           alarms = alarmsManager,
           enclosing = enclosingService,
           notifications = notificationsPlugin,
-          plugins = listOf(plugin))
+          plugins = listOf(plugin),
+          prefs = mockk(relaxed = true),
+      )
 
   init {
     RxJavaPlugins.setErrorHandler { it.printStackTrace() }
@@ -209,5 +214,62 @@ class AlertServiceTest {
       // last dismissed
       notificationsPlugin.cancel(2)
     }
+  }
+
+  @Test
+  fun `default alarm is used when configured`() {
+    val logger = Logger.create()
+    val player = mockk<Player>(relaxed = true)
+    val service =
+        AlertService(
+            log = logger,
+            inCall = Observable.just(false),
+            wakelocks = wakelocks,
+            alarms = alarmsManager,
+            enclosing = enclosingService,
+            notifications = notificationsPlugin,
+            plugins =
+                listOf(
+                    KlaxonPlugin(
+                        logger,
+                        playerFactory = { player },
+                        Observable.just(0),
+                        Observable.just(0),
+                        Observable.just(false),
+                        Schedulers.computation(),
+                    )),
+            prefs = mockk(relaxed = true),
+        )
+    service.onStartCommand(Event.AlarmEvent(1))
+
+    verify { player.setDataSource("DEFAULT_ALARM_ALERT_URI_IN_TEST") }
+  }
+  @Test
+  fun `custom alarm is used when configured`() {
+    val logger = Logger.create()
+    val player = mockk<Player>(relaxed = true)
+    val service =
+        AlertService(
+            log = logger,
+            inCall = Observable.just(false),
+            wakelocks = wakelocks,
+            alarms = alarmsManager,
+            enclosing = enclosingService,
+            notifications = notificationsPlugin,
+            plugins =
+                listOf(
+                    KlaxonPlugin(
+                        logger,
+                        playerFactory = { player },
+                        Observable.just(0),
+                        Observable.just(0),
+                        Observable.just(false),
+                        Schedulers.computation(),
+                    )),
+            prefs = mockk(relaxed = true),
+        )
+    service.onStartCommand(Event.AlarmEvent(3))
+
+    verify { player.setDataSource("custom") }
   }
 }
