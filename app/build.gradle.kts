@@ -169,6 +169,8 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:$serializationVersion")
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
 
+  implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.1")
+
   testImplementation("net.wuerl.kotlin:assertj-core-kotlin:0.2.1")
   testImplementation("junit:junit:4.13.2")
   testImplementation("io.mockk:mockk:1.13.5")
