@@ -1,10 +1,3 @@
-[![Installs](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.better.alarm%26l%3DGoogle%2520Play%2520Installs%26m%3D%24totalinstalls)](https://play.google.com/store/apps/details?id=com.better.alarm)
-[![Rating](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.better.alarm%26l%3DGoogle%2520Play%2520Rating%26m%3D%24rating)](https://play.google.com/store/apps/details?id=com.better.alarm)
-[![Version](https://img.shields.io/endpoint?color=blue&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.better.alarm%26l%3DGoogle%2520Play%26m%3D%24version)](https://play.google.com/store/apps/details?id=com.better.alarm)
-
-[![Build Status](https://github.com/yuriykulikov/AlarmClock/actions/workflows/gradle.yml/badge.svg?branch=develop)](https://github.com/yuriykulikov/AlarmClock/actions)
-[![codecov](https://codecov.io/gh/yuriykulikov/AlarmClock/branch/develop/graph/badge.svg)](https://codecov.io/gh/yuriykulikov/AlarmClock)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f5af63df137746bcb45e43b4f2a78217)](https://app.codacy.com/gh/yuriykulikov/AlarmClock)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 # Developer Alarm Clock
@@ -26,20 +19,3 @@ The repository has been forked to create the Developer Alarm Clock, which focuse
 # License
 Apache 2.0
 
-[//]: # ([<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png")
-
-[//]: # (     alt="Get it on Google Play")
-
-[//]: # (     height="100">]&#40;https://play.google.com/store/apps/details?id=com.better.alarm&#41;)
-
-[//]: # ([<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png")
-
-[//]: # (     alt="Get it on F-Droid")
-
-[//]: # (     height="100">]&#40;https://f-droid.org/packages/com.better.alarm/&#41;)
-
-[//]: # ()
-[//]: # ([![Installs]&#40;https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.better.alarm%26l%3DGoogle%2520Play%2520Installs%26m%3D%24totalinstalls&#41;]&#40;https://play.google.com/store/apps/details?id=com.better.alarm&#41;)
-
-# Code coverage
-[![Codecov](https://codecov.io/gh/yuriykulikov/AlarmClock/branch/develop/graphs/tree.svg)](https://codecov.io/gh/yuriykulikov/AlarmClock)
