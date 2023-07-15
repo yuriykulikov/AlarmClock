@@ -33,6 +33,19 @@
             android:gravity="center|center_horizontal"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/alarm_question"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="0px"
+                android:layout_weight="1"
+                android:clickable="false"
+                android:gravity="center|center_horizontal"
+                android:paddingTop="8dip"
+                android:paddingBottom="8dip"
+                android:text="Label"
+                android:textSize="18sp" />
+
             <com.better.alarm.view.DigitalClock
                 android:layout_width="match_parent"
                 android:layout_height="0px"
