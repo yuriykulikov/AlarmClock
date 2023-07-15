@@ -42,6 +42,7 @@ import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.model.Question
 import com.better.alarm.model.QuestionList
+import com.better.alarm.model.QuestionType
 import com.better.alarm.presenter.DynamicThemeHandler
 import com.better.alarm.presenter.TimePickerDialogFragment
 import io.reactivex.Observable
@@ -65,11 +66,14 @@ class AlarmAlertFullScreen : FragmentActivity() {
     private var disposableDialog = Disposables.empty()
     private var subscription: Disposable? = null
     private var question: Question? = null
+    
+    // temp
+    private var questionType: QuestionType = QuestionType.JAVA
 
     override fun onCreate(icicle: Bundle?) {
         AlarmApplication.startOnce(application)
         setTheme(dynamicThemeHandler.alertTheme())
-        question = QuestionList().getRandomQuestion()
+        question = QuestionList().getRandomQuestion(questionType)
 
         super.onCreate(icicle)
         requestedOrientation =
@@ -152,7 +156,7 @@ class AlarmAlertFullScreen : FragmentActivity() {
                 if (question?.correctAnswer == 0) {
                     mAlarm?.dismiss()
                 } else {
-                    question = QuestionList().getRandomQuestion()
+                    question = QuestionList().getRandomQuestion(questionType)
                     setQuestion()
                 }
             }
@@ -164,7 +168,7 @@ class AlarmAlertFullScreen : FragmentActivity() {
                 if (question?.correctAnswer == 1) {
                     mAlarm?.dismiss()
                 } else {
-                    question = QuestionList().getRandomQuestion()
+                    question = QuestionList().getRandomQuestion(questionType)
                     setQuestion()
                 }
             }
@@ -176,7 +180,7 @@ class AlarmAlertFullScreen : FragmentActivity() {
                 if (question?.correctAnswer == 2) {
                     mAlarm?.dismiss()
                 } else {
-                    question = QuestionList().getRandomQuestion()
+                    question = QuestionList().getRandomQuestion(questionType)
                     setQuestion()
                 }
             }
@@ -188,7 +192,7 @@ class AlarmAlertFullScreen : FragmentActivity() {
                 if (question?.correctAnswer == 3) {
                     mAlarm?.dismiss()
                 } else {
-                    question = QuestionList().getRandomQuestion()
+                    question = QuestionList().getRandomQuestion(questionType)
                     setQuestion()
                 }
             }

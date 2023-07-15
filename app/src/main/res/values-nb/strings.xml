@@ -20,6 +20,8 @@
     <!-- Setting labels on Set alarm screen: Prealarm -->
     <string name="alarm_prealarm">Dempet forhåndsalarm</string>
     <!-- Pre-alarm duration title -->
+    <!-- Setting labels on Set alarm screen: Prealarm -->
+    <string name="alarm_question_type">Alarm Question Type</string>
     <string name="prealarm_duration_title">Forhåndsalarm-varighet</string>
     <!--
          Entries listed in the ListPreference when invoking the pre-alarm duration

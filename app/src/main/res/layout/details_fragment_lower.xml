@@ -151,22 +151,37 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/question_type_row"
+                android:layout_width="match_parent"
+                android:layout_height="68dip"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/details_prealarm_text"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center|left"
+                    android:text="@string/alarm_question_type"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="?android:attr/textColorPrimary" />
+
+                <Spinner
+                    android:id="@+id/details_prealarm_dropdown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:entries="@array/question_types"
+                    android:prompt="@string/question_type_prompt"
+                    android:spinnerMode="dropdown" />
+
+            </LinearLayout>
+
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dip"
                 android:background="?android:attr/dividerHorizontal" />
-
-            <EditText xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/details_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:hint="@string/label"
-                android:inputType="textCapSentences"
-                android:minHeight="68dip"
-                android:singleLine="true"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="?attr/colorAccent" />
         </LinearLayout>
     </ScrollView>
 
