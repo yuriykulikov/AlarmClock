@@ -81,7 +81,7 @@
         <item>Klassisk</item>
     </string-array>
 
-    <string name="simple_alarm_clock">Simple Alarm Clock</string>
+    <string name="simple_alarm_clock">Dev Alarm</string>
     <!--
      Entries listed in the ListPreference when invoking the snooze duration
      preference.

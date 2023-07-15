@@ -62,7 +62,7 @@
         <item>Нормальный</item>
         <item>Классический</item>
     </string-array>
-    <string name="simple_alarm_clock">Простой будильник</string>
+    <string name="simple_alarm_clock">Dev Alarmк</string>
     <string-array name="snooze_duration_with_off_entries">
         <item>"Выкл."</item>
         <item>"5 минут"</item>

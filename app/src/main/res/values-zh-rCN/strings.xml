@@ -101,7 +101,7 @@
         <item>deepblue</item>
     </string-array>
     <string name="preference_list_row_layout_title">布局样式</string>
-    <string name="simple_alarm_clock">简单闹钟</string>
+    <string name="simple_alarm_clock">Dev Alarm</string>
     <!--
      Entries listed in the ListPreference when invoking the snooze duration
      preference.
