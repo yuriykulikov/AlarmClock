@@ -21,7 +21,6 @@ import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
-import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.TextView
@@ -40,9 +39,8 @@ import com.better.alarm.configuration.globalLogger
 import com.better.alarm.interfaces.Alarm
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
-import com.better.alarm.model.Question
-import com.better.alarm.model.QuestionList
-import com.better.alarm.model.QuestionType
+import com.better.alarm.question.Question
+import com.better.alarm.question.QuestionList
 import com.better.alarm.presenter.DynamicThemeHandler
 import com.better.alarm.presenter.TimePickerDialogFragment
 import io.reactivex.Observable

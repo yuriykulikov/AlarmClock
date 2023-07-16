@@ -1,4 +1,4 @@
-package com.better.alarm.model
+package com.better.alarm.question
 
 data class Question(
     val id: Int,

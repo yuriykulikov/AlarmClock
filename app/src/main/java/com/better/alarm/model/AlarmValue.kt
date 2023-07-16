@@ -1,5 +1,6 @@
 package com.better.alarm.model
 
+import com.better.alarm.question.QuestionType
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlinx.serialization.KSerializer

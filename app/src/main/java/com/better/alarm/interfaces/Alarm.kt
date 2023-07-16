@@ -2,7 +2,6 @@ package com.better.alarm.interfaces
 
 import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.Alarmtone
-import com.better.alarm.model.Question
 
 /**
  * Alarm 인터스페이스가 어떻게 구성되어있는지
