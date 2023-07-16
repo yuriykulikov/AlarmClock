@@ -258,7 +258,8 @@ class AlarmDetailsFragment : Fragment() {
                 val selectedQuestionType = when (position) {
                     0 -> QuestionType.ALL
                     1 -> QuestionType.JAVA
-                    2 -> QuestionType.SQL
+                    2 -> QuestionType.PYTHON
+                    3 -> QuestionType.SQL
                     else -> QuestionType.ALL // 기본값 설정
                 }
                 modify(
