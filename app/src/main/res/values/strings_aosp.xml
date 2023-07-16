@@ -30,7 +30,7 @@
     <!-- Menu item on Alarm Clock screen: Edit alarm -->
 
     <!-- Context Menu Item on Alarm Settings screen: Delete alarm -->
-    <string name="alarm_list_title">Alarms</string>
+    <string name="alarm_list_title">Dev Alarm</string>
 
     <!-- Context Menu Item on Alarm Settings screen: Enable alarm -->
     <string name="add_alarm">Add alarm</string>

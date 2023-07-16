@@ -14,7 +14,7 @@
  -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="alarm_list_title" msgid="7589940465292950600">"Alarmas"</string>
+    <string name="alarm_list_title" msgid="7589940465292950600">"Dev Alarm"</string>
     <string name="add_alarm" msgid="5976616107390962899">"Agregar alarma"</string>
     <string name="delete_alarm" msgid="3457780990646206817">"Eliminar alarma"</string>
     <string name="enable_alarm" msgid="1834599140632142536">"Activar alarma"</string>
