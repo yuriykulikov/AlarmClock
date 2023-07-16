@@ -31,12 +31,6 @@
     <!-- Setting labels on Set alarm screen: Prealarm -->
     <string name="alarm_question_type">알람 문제 타입</string>
 
-    <string-array name="question_types">
-        <item>모두</item>
-        <item>자바</item>
-        <item>SQL</item>
-    </string-array>
-
     <string name="question_type_prompt">문제 종류 선택</string>
 
     <!-- Pre-alarm duration title -->
