@@ -22,13 +22,10 @@ import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -58,7 +55,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.widget.AdapterView
 import android.widget.Spinner
-import com.better.alarm.model.QuestionType
+import com.better.alarm.question.QuestionType
 
 /** Details activity allowing for fine-grained alarm modification */
 class AlarmDetailsFragment : Fragment() {
