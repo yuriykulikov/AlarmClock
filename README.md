@@ -1,5 +1,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
+![](media/dev_alarm_screen.png)
+
 # Developer Alarm Clock
 Developer Alarm Clock is an alarm clock application for Android smartphones and tablets that has evolved from the Simple Alarm Clock repository. It is designed to cater to developers by offering a wide range of coding-related questions from Java, SQL, and other domains. To turn off the alarm, users must solve the presented coding problems. With Developer Alarm Clock, waking up becomes an opportunity to exercise coding skills and start the day with a mental challenge.
 
