@@ -252,27 +252,25 @@ class AlarmDetailsFragment : Fragment() {
         val mQuestionTypeSpinner by lazy {
             fragmentView.findViewById(R.id.details_prealarm_dropdown) as Spinner
         }
-        println("mQuestionTypeSpinner = ${mQuestionTypeSpinner.selectedItem.toString()}")
-//        mQuestionTypeSpinner.setOnClickListener {
-//            modify("Question Type") { value -> value.copy(questionType = value.questionType)}
-//        }
 
+        mQuestionTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedQuestionType = when (position) {
+                    0 -> QuestionType.ALL
+                    1 -> QuestionType.JAVA
+                    2 -> QuestionType.SQL
+                    else -> QuestionType.ALL // 기본값 설정
+                }
+                modify(
+                    "Question Type"
+                ) {value -> value.copy(questionType = selectedQuestionType)}
+            }
 
-//        mQuestionTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-//            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-//                val selectedQuestionType = when (position) {
-//                    0 -> QuestionType.ALL
-//                    1 -> QuestionType.JAVA
-//                    2 -> QuestionType.SQL
-//                    else -> QuestionType.ALL // 기본값 설정
-//                }
-//            }
-//
-//            override fun onNothingSelected(parent: AdapterView<*>?) {
-//                //
-//            }
-//
-//        }
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                //
+            }
+
+        }
     }
 
     private fun onCreatePrealarmView() {

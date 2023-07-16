@@ -7,8 +7,7 @@ class QuestionList {
     fun getRandomQuestion(questionType: QuestionType): Question {
         return when (questionType) {
             QuestionType.ALL -> {
-                val probabilityOfJava = javaQuestions.size / (sqlQuestions.size + javaQuestions.size)
-                if (Math.random() < probabilityOfJava) javaQuestions.random() else sqlQuestions.random()
+                (javaQuestions + sqlQuestions).random()
             }
             QuestionType.JAVA -> {
                 javaQuestions.random()
