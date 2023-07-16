@@ -36,6 +36,7 @@
         <item>Java</item>
         <item>Python</item>
         <item>SQL</item>
+        <item>CODING_INTERVIEW</item>
     </string-array>
 
     <string name="question_type_prompt">Select Question Type</string>

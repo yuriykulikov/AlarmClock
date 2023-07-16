@@ -4,5 +4,6 @@ enum class QuestionType {
     ALL,
     JAVA,
     SQL,
-    PYTHON
+    PYTHON,
+    CODING_INTERVIEW
 }

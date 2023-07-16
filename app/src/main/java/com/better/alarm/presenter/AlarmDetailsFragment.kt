@@ -227,12 +227,13 @@ class AlarmDetailsFragment : Fragment() {
 
         mQuestionTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val selectedQuestionType = when (position) {
-                    0 -> QuestionType.ALL
-                    1 -> QuestionType.JAVA
-                    2 -> QuestionType.PYTHON
-                    3 -> QuestionType.SQL
-                    else -> QuestionType.ALL // 기본값 설정
+                val selectedQuestionType = when (parent?.getItemAtPosition(position).toString()) {
+                    "ALL" -> QuestionType.ALL
+                    "Java" -> QuestionType.JAVA
+                    "Python" -> QuestionType.PYTHON
+                    "SQL" -> QuestionType.SQL
+                    "CODING_INTERVIEW" -> QuestionType.CODING_INTERVIEW
+                    else -> QuestionType.ALL // default
                 }
                 modify(
                     "Question Type"
@@ -240,7 +241,11 @@ class AlarmDetailsFragment : Fragment() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                //
+                val selectedQuestionType = QuestionType.ALL
+
+                modify(
+                    "Question Type"
+                ) {value -> value.copy(questionType = selectedQuestionType)}
             }
 
         }
