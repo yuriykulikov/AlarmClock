@@ -26,7 +26,7 @@
         <item>120</item>
     </string-array>
     <!-- Setting labels on Set alarm screen: Prealarm -->
-    <string name="alarm_prealarm">Gentle pre-alarm</string>
+    <string name="alarm_prealarm">젠틀모드</string>
 
     <!-- Setting labels on Set alarm screen: Prealarm -->
     <string name="alarm_question_type">알람 문제 타입</string>
