@@ -1,0 +1,5 @@
+version: 1.0
+failThreshold: 0
+linter: jetbrains/qodana-jvm-android:2023.2-eap
+profile:
+  name: qodana.recommended

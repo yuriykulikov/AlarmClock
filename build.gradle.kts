@@ -9,6 +9,7 @@ plugins {
   val kotlin = "1.9.0"
   kotlin("plugin.serialization") version kotlin apply false
   kotlin("android") version kotlin apply false
+  id("org.jetbrains.qodana") version "0.1.12"
 }
 
 allprojects {
