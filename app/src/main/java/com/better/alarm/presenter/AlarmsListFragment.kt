@@ -1,7 +1,6 @@
 package com.better.alarm.presenter
 
 import android.animation.ArgbEvaluator
-import android.annotation.TargetApi
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
@@ -27,7 +26,6 @@ import com.better.alarm.configuration.globalInject
 import com.better.alarm.configuration.globalLogger
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.logger.Logger
-import com.better.alarm.lollipop
 import com.better.alarm.model.AlarmValue
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
@@ -75,7 +73,7 @@ class AlarmsListFragment : Fragment() {
   }
   inner class AlarmListAdapter(alarmTime: Int, label: Int, private val values: List<AlarmValue>) :
       ArrayAdapter<AlarmValue>(requireContext(), alarmTime, label, values) {
-    private val highlighter: ListRowHighlighter? by lazy {
+    private val highlighter: ListRowHighlighter by lazy {
       ListRowHighlighter.createFor(requireActivity().theme)
     }
 
@@ -100,11 +98,9 @@ class AlarmsListFragment : Fragment() {
 
       row.onOff.isChecked = alarm.isEnabled
 
-      lollipop {
-        row.digitalClock.transitionName = "clock" + alarm.id
-        row.container.transitionName = "onOff" + alarm.id
-        row.detailsButton.transitionName = "detailsButton" + alarm.id
-      }
+      row.digitalClock.transitionName = "clock" + alarm.id
+      row.container.transitionName = "onOff" + alarm.id
+      row.detailsButton.transitionName = "detailsButton" + alarm.id
 
       // Delete add, skip animation
       if (row.idHasChanged) {
@@ -165,7 +161,7 @@ class AlarmsListFragment : Fragment() {
             else -> View.INVISIBLE
           }
 
-      highlighter?.applyTo(row, alarm.isEnabled)
+      highlighter.applyTo(row, alarm.isEnabled)
 
       return row.rowView
     }
@@ -243,7 +239,7 @@ class AlarmsListFragment : Fragment() {
       fabSync?.trySend(Unit)?.getOrThrow()
     }
 
-    lollipop { (fab as FloatingActionButton).attachToListView(listView) }
+    (fab as FloatingActionButton).attachToListView(listView)
 
     alarmsSub =
         prefs.listRowLayout
@@ -269,7 +265,7 @@ class AlarmsListFragment : Fragment() {
               mAdapter.addAll(sorted)
             }
 
-    lollipop { configureBottomDrawer(view) }
+    configureBottomDrawer(view)
 
     logger.trace { "onCreateView() { postponeEnterTransition() }" }
     postponeEnterTransition()
@@ -281,7 +277,6 @@ class AlarmsListFragment : Fragment() {
     return view
   }
 
-  @TargetApi(21)
   private fun configureBottomDrawer(view: View) {
     val drawerContainer: View = view.findViewById<View>(R.id.bottom_drawer_container)
     val bottomDrawerToolbar = view.findViewById<View>(R.id.bottom_drawer_toolbar)

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+    <!-- List, details and settings -->
+    <style name="DefaultSynthwaveTheme" parent="Theme.AppCompat">
+        <!-- accent - buttons, accented text -->
+        <item name="colorAccent">@color/synthwave_secondary</item>
+        <!-- FAB color-->
+        <item name="listFabColor">@color/synthwave_fab</item>
+        <!-- lists background -->
+        <item name="android:windowBackground">@color/synthwave_background</item>
+        <!-- context menu background -->
+        <item name="android:colorBackground">@color/synthwave_surface</item>
+        <!-- ripple color -->
+        <item name="colorControlHighlight">@color/synthwave_ripple</item>
+
+        <!-- lighting, affects dialogs, popups and elevated elements -->
+        <item name="android:ambientShadowAlpha">0.2</item>
+        <item name="android:spotShadowAlpha">0.2</item>
+        <item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/synthwave_glow
+        </item>
+        <item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/synthwave_glow</item>
+
+        <!-- clock colors in the list -->
+        <item name="android:colorForeground">@color/synthwave_on_background</item>
+        <item name="listRowDisabledColor">@color/grey</item>
+
+        <!-- drawer -->
+        <item name="drawerBackgroundColor">@color/mat_purple_dark</item>
+        <item name="drawerClosedBackgroundColor">@color/synthwave_background</item>
+
+        <!-- notification bar color -->
+        <item name="android:colorPrimaryDark">@color/synthwave_surface</item>
+        <!-- action bar -->
+        <item name="titleTextColor">@color/deusex_on_surface</item>
+        <item name="colorPrimary">@color/synthwave_surface</item>
+        <item name="android:colorPrimary">@color/synthwave_surface</item>
+        <!-- navigation bar color -->
+        <item name="android:navigationBarColor">@color/synthwave_background</item>
+
+        <!-- other styles -->
+        <item name="android:alertDialogTheme">@style/DialogThemeSynthwave</item>
+        <item name="android:dialogTheme">@style/DialogThemeSynthwave</item>
+        <item name="alertDialogTheme">@style/DialogThemeSynthwave</item>
+        <item name="dialogTheme">@style/DialogThemeSynthwave</item>
+        <item name="snackbarStyle">@style/Widget.App.SnackbarDefaultSynthWaveTheme</item>
+    </style>
+
+    <style name="Widget.App.SnackbarDefaultSynthWaveTheme" parent="">
+        <item name="android:background">@color/synthwave_secondary</item>
+    </style>
+
+    <style name="AlarmAlertFullScreenSynthwaveTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="colorAccent">@color/synthwave_secondary</item>
+        <item name="android:colorForeground">@color/synthwave_on_background</item>
+    </style>
+
+    <style name="DialogThemeSynthwave" parent="Theme.AppCompat.Dialog">
+        <item name="colorAccent">@color/synthwave_secondary</item>
+        <item name="android:colorBackground">@color/synthwave_background</item>
+        <item name="backgroundTint">@color/synthwave_surface</item>
+        <item name="android:windowBackground">@color/synthwave_background</item>
+        <item name="android:colorForeground">@color/synthwave_on_background</item>
+    </style>
+
+    <style name="TimePickerDialogFragmentSynthwave" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="colorAccent">@color/synthwave_secondary</item>
+        <item name="timePickerDeleteButtonStyle">@style/TimePickerDeleteButtonStyle</item>
+        <item name="android:backgroundTint">@color/synthwave_surface</item>
+        <item name="elevation">20dp</item>
+        <item name="android:ambientShadowAlpha">0.5</item>
+        <item name="android:spotShadowAlpha">0.2</item>
+        <item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/synthwave_glow
+        </item>
+        <item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/synthwave_glow</item>
+        <item name="colorControlHighlight">@color/synthwave_ripple</item>
+        <item name="android:colorForeground">@color/synthwave_on_background</item>
+    </style>
+
+    <color name="synthwave_on_background">@color/whitish</color>
+    <color name="synthwave_on_surface">@color/whitish</color>
+    <color name="synthwave_surface">@color/mat_purple_dark</color>
+    <color name="synthwave_background">@color/mat_almost_black</color>
+    <color name="synthwave_secondary">@color/mat_purple</color>
+    <color name="synthwave_ripple">@color/mat_purple_lighter</color>
+    <color name="synthwave_glow">@color/mat_purple</color>
+    <color name="synthwave_primary">@color/mat_blue_primary_variant</color>
+    <color name="synthwave_fab">@color/mat_purple</color>
+</resources>

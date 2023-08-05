@@ -81,7 +81,7 @@ android {
     versionCode = 31502
     versionName = "3.15.02"
     applicationId = "com.better.alarm"
-    minSdk = 16
+    minSdk = 21
     targetSdk = 33
     testApplicationId = "com.better.alarm.test"
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
