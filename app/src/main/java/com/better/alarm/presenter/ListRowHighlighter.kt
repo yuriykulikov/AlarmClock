@@ -3,7 +3,6 @@ package com.better.alarm.presenter
 import android.content.res.Resources
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
-import com.better.alarm.lollipop
 
 /**
  * Applies colors from themes to certain views of a [RowHolder]. If an alarm is disabled, colors
@@ -35,10 +34,7 @@ class ListRowHighlighter(
   }
 
   companion object {
-    /** Creates a [ListRowHighlighter] if [lollipop] and above, returns null otherwise */
-    fun createFor(theme: Resources.Theme): ListRowHighlighter? {
-      if (!lollipop()) return null
-
+    fun createFor(theme: Resources.Theme): ListRowHighlighter {
       return ListRowHighlighter(
           accentColor = theme.resolveColor(android.R.attr.colorAccent),
           primaryTextColor = theme.resolveColor(android.R.attr.colorForeground),

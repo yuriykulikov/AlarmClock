@@ -37,7 +37,6 @@ import com.better.alarm.configuration.globalInject
 import com.better.alarm.configuration.globalLogger
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.logger.Logger
-import com.better.alarm.lollipop
 import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.Alarmtone
 import com.better.alarm.util.Optional
@@ -303,11 +302,9 @@ class AlarmDetailsFragment : Fragment() {
         daysOfWeek.visibility = View.INVISIBLE
         label.visibility = View.INVISIBLE
 
-        lollipop {
-          digitalClock.transitionName = "clock$alarmId"
-          container.transitionName = "onOff$alarmId"
-          detailsButton.transitionName = "detailsButton$alarmId"
-        }
+        digitalClock.transitionName = "clock$alarmId"
+        container.transitionName = "onOff$alarmId"
+        detailsButton.transitionName = "detailsButton$alarmId"
 
         digitalClock.setLive(false)
 

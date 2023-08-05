@@ -68,16 +68,6 @@ fun preOreo(action: () -> Unit) {
   }
 }
 
-fun lollipop(action: () -> Unit) {
-  if (lollipop()) {
-    action()
-  }
-}
-
-fun lollipop(): Boolean {
-  return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-}
-
 fun pendingIntentUpdateCurrentFlag(): Int {
   return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE

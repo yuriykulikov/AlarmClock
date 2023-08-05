@@ -14,15 +14,12 @@
  */
 package com.better.alarm.presenter;
 
-import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.AlarmManager.AlarmClockInfo;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.provider.Settings;
-import android.text.format.DateFormat;
 import com.better.alarm.OreoKt;
 import com.better.alarm.configuration.Prefs;
 import com.better.alarm.configuration.Store;
@@ -30,7 +27,6 @@ import com.better.alarm.interfaces.Intents;
 import com.better.alarm.util.Optional;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
-import java.util.Calendar;
 
 /**
  * @author Yuriy
@@ -61,45 +57,13 @@ public class ScheduledReceiver {
               public void accept(@NonNull Optional<Store.Next> nextOptional) throws Exception {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                   // we use setAlarmClock for these anyway, so nothing to do here.
-                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                  doForLollipop(context, nextOptional);
                 } else {
-                  doForPreLollipop(context, nextOptional);
+                  doForLollipop(context, nextOptional);
                 }
               }
             });
   }
 
-  private void doForPreLollipop(Context context, Optional<Store.Next> nextOptional) {
-    if (nextOptional.isPresent()) {
-      // Broadcast intent for the notification bar
-      Intent alarmChanged = new Intent("android.intent.action.ALARM_CHANGED");
-      alarmChanged.putExtra("alarmSet", true);
-      context.sendBroadcast(alarmChanged);
-
-      // Update systems settings, so that interested Apps (like
-      // KeyGuard)
-      // will react accordingly
-      String format = prefs.is24HourFormat().blockingGet() ? DM24 : DM12;
-      Calendar calendar = Calendar.getInstance();
-      long milliseconds = nextOptional.get().nextNonPrealarmTime();
-      calendar.setTimeInMillis(milliseconds);
-      String timeString = (String) DateFormat.format(format, calendar);
-      Settings.System.putString(
-          context.getContentResolver(), Settings.System.NEXT_ALARM_FORMATTED, timeString);
-    } else {
-      // Broadcast intent for the notification bar
-      Intent alarmChanged = new Intent("android.intent.action.ALARM_CHANGED");
-      alarmChanged.putExtra("alarmSet", false);
-      context.sendBroadcast(alarmChanged);
-      // Update systems settings, so that interested Apps (like KeyGuard)
-      // will react accordingly
-      Settings.System.putString(
-          context.getContentResolver(), Settings.System.NEXT_ALARM_FORMATTED, "");
-    }
-  }
-
-  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   private void doForLollipop(Context context, Optional<Store.Next> nextOptional) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !am.canScheduleExactAlarms()) {
       return;
