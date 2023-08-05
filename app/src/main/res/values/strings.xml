@@ -207,4 +207,6 @@
     <string name="alert_permission_post_notifications_title">Permission to show notifications</string>
     <string name="alert_permission_post_notifications_text">To display a popup when the alarm rings, permission to show notifications is required.</string>
     <string name="app_default_ringtone">App default (%s)</string>
+    <string name="set_exact_alarm_permission_title">Permission to set exact alarm time</string>
+    <string name="set_exact_alarm_permission_text">To set an alarm at the exact time, permission to set exact alarm time is required.</string>
 </resources>

@@ -148,6 +148,10 @@ interface AlarmSetter {
     @TargetApi(Build.VERSION_CODES.O)
     private inner class OreoSetter : ISetAlarmStrategy {
       override fun setRTCAlarm(calendar: Calendar, pendingIntent: PendingIntent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !am.canScheduleExactAlarms()) {
+          log.warning { "Permission denied!" }
+          return
+        }
         val pendingShowList =
             PendingIntent.getActivity(
                 mContext,
@@ -159,6 +163,8 @@ interface AlarmSetter {
       }
 
       override fun setInexactAlarm(calendar: Calendar, pendingIntent: PendingIntent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !am.canScheduleExactAlarms())
+            return
         am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
       }
     }

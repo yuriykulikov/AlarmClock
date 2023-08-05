@@ -139,4 +139,6 @@
     <string name="alert_permission_post_notifications_title">Permesso di visualizzare le notifiche</string>
     <string name="alert_permission_post_notifications_text">Per visualizzare un popup quando suona la sveglia, è necessario il permesso di visualizzare le notifiche.</string>
     <string name="app_default_ringtone">Predefinito dell\'app (%s)</string>
+    <string name="set_exact_alarm_permission_title">Permesso per impostare l\'ora esatta della sveglia</string>
+    <string name="set_exact_alarm_permission_text">Per impostare una sveglia all\'ora esatta\, è necessario il permesso per impostare l\'ora esatta della sveglia.</string>
 </resources>
