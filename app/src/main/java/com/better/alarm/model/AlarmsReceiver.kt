@@ -15,6 +15,7 @@
  */
 package com.better.alarm.model
 
+import android.app.AlarmManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -44,6 +45,7 @@ class AlarmsReceiver : BroadcastReceiver() {
         alarms.getAlarm(id)?.onInexactAlarmFired()
       }
       Intent.ACTION_BOOT_COMPLETED,
+      AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED,
       Intent.ACTION_TIMEZONE_CHANGED,
       Intent.ACTION_LOCALE_CHANGED,
       Intent.ACTION_MY_PACKAGE_REPLACED -> {

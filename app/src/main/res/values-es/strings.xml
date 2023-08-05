@@ -147,4 +147,6 @@ Todas las notificaciones están desactivadas, ¡incluida la gran ventana emergen
     <string name="alert_permission_post_notifications_title">Permiso para mostrar notificaciones</string>
     <string name="alert_permission_post_notifications_text">Para mostrar un mensaje emergente cuando suene la alarma, se requiere permiso para mostrar notificaciones.</string>
     <string name="app_default_ringtone">Predeterminado de la app (%s)</string>
+    <string name="set_exact_alarm_permission_title">Permiso para establecer una hora de alarma exacta</string>
+    <string name="set_exact_alarm_permission_text">Para configurar una alarma en el momento exacto, se requiere permiso para establecer la hora de alarma exacta.</string>
 </resources>

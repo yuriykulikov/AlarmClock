@@ -109,4 +109,7 @@
     <string name="date">Dato</string>
     <string name="alert_permission_post_notifications_title">Tillatelse til å vise varsler</string>
     <string name="alert_permission_post_notifications_text">For å vise et popup-vindu når alarmen ringer, er det nødvendig med tillatelse til å vise varsler.</string>
+    <string name="app_default_ringtone">App standard(%s)</string>
+    <string name="set_exact_alarm_permission_title">Tillatelse til å sette nøyaktig alarmtid</string>
+    <string name="set_exact_alarm_permission_text">For å stille inn en alarm til nøyaktig tid, kreves tillatelse til å sette nøyaktig alarmtid.</string>
 </resources>

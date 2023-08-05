@@ -101,6 +101,10 @@ public class ScheduledReceiver {
 
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   private void doForLollipop(Context context, Optional<Store.Next> nextOptional) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !am.canScheduleExactAlarms()) {
+      return;
+    }
+
     if (nextOptional.isPresent()) {
       int id = nextOptional.get().alarm().getId();
 
@@ -110,6 +114,7 @@ public class ScheduledReceiver {
           PendingIntent.getActivity(context, id, showList, OreoKt.pendingIntentUpdateCurrentFlag());
 
       long milliseconds = nextOptional.get().nextNonPrealarmTime();
+
       am.setAlarmClock(
           new AlarmClockInfo(milliseconds, showIntent),
           PendingIntent.getBroadcast(
