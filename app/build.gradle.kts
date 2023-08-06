@@ -161,6 +161,7 @@ dependencies {
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$coroutinesVersion")
   implementation("com.google.android.material:material:1.8.0")
   implementation("org.slf4j:slf4j-api:1.7.36")
   implementation("com.github.tony19:logback-android:2.0.1")
