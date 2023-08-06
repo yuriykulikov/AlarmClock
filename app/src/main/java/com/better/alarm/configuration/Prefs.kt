@@ -4,6 +4,7 @@ import com.better.alarm.model.Alarmtone
 import com.better.alarm.stores.PrimitiveDataStoreFactory
 import com.better.alarm.stores.RxDataStore
 import com.better.alarm.stores.intStringDataStore
+import io.reactivex.Observable
 import io.reactivex.Single
 
 /** Created by Yuriy on 10.06.2017. */
@@ -29,17 +30,17 @@ private constructor(
     val defaultRingtone: RxDataStore<String>,
 ) {
   fun layout(): Layout {
-    return listRowLayout
-        .observe()
-        .take(1)
-        .map {
-          when (it) {
-            LIST_ROW_LAYOUT_CLASSIC -> Layout.CLASSIC
-            LIST_ROW_LAYOUT_COMPACT -> Layout.COMPACT
-            else -> Layout.BOLD
-          }
-        }
-        .blockingFirst()
+    return listRowLayout().take(1).blockingFirst()
+  }
+
+  fun listRowLayout(): Observable<Layout> {
+    return listRowLayout.observe().map {
+      when (it) {
+        LIST_ROW_LAYOUT_CLASSIC -> Layout.CLASSIC
+        LIST_ROW_LAYOUT_COMPACT -> Layout.COMPACT
+        else -> Layout.BOLD
+      }
+    }
   }
 
   fun defaultRingtone(): Alarmtone {
