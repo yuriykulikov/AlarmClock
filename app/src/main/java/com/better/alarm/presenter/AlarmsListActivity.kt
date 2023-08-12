@@ -52,17 +52,13 @@ import com.better.alarm.model.AlarmsRepository
 import com.better.alarm.util.formatToast
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.disposables.Disposables
-import io.reactivex.subjects.PublishSubject
 import java.util.*
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.protobuf.ProtoBuf
-import org.koin.core.module.Module
-import org.koin.dsl.module
 
 /** This activity displays a list of alarms and optionally a details fragment. */
 class AlarmsListActivity : AppCompatActivity() {
@@ -75,44 +71,8 @@ class AlarmsListActivity : AppCompatActivity() {
 
   private var snackbarDisposable = Disposables.disposed()
 
-  val uiStore: UiStore by globalInject()
+  private val uiStore: UiStore by globalInject()
   private val dynamicThemeHandler: DynamicThemeHandler by globalInject()
-
-  companion object {
-    val uiStoreModule: Module = module { single<UiStore> { createStore(null, get()) } }
-    private fun createStore(edited: EditedAlarm?, alarms: IAlarmsManager): UiStore {
-      class UiStoreIR : UiStore {
-        var onBackPressed = PublishSubject.create<String>()
-        val editing: MutableStateFlow<EditedAlarm?> = MutableStateFlow(edited)
-
-        override fun editing(): MutableStateFlow<EditedAlarm?> {
-          return editing
-        }
-
-        override fun onBackPressed(): PublishSubject<String> {
-          return onBackPressed
-        }
-
-        override fun createNewAlarm() {
-          editing.value = EditedAlarm(isNew = true, value = AlarmValue(isDeleteAfterDismiss = true))
-        }
-
-        override fun edit(id: Int) {
-          alarms.getAlarm(id)?.let { alarm ->
-            editing.value = EditedAlarm(isNew = false, value = alarm.data)
-          }
-        }
-
-        override fun hideDetails() {
-          editing.value = null
-        }
-
-        override var openDrawerOnCreate: Boolean = false
-      }
-
-      return UiStoreIR()
-    }
-  }
 
   override fun onNewIntent(intent: Intent?) {
     super.onNewIntent(intent)
