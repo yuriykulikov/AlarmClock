@@ -1,21 +1,37 @@
 package com.better.alarm.presenter
 
 import com.better.alarm.configuration.EditedAlarm
+import com.better.alarm.model.AlarmValue
+import com.better.alarm.model.Alarms
 import io.reactivex.subjects.PublishSubject
 import kotlinx.coroutines.flow.MutableStateFlow
 
-/** Created by Yuriy on 11.08.2017. */
-interface UiStore {
-  fun editing(): MutableStateFlow<EditedAlarm?>
+class UiStore(private val alarms: Alarms) {
 
-  fun onBackPressed(): PublishSubject<String>
+  private var onBackPressed = PublishSubject.create<String>()
+  private val editing: MutableStateFlow<EditedAlarm?> = MutableStateFlow(null)
 
-  fun createNewAlarm()
+  fun editing(): MutableStateFlow<EditedAlarm?> {
+    return editing
+  }
 
-  fun edit(id: Int)
+  fun onBackPressed(): PublishSubject<String> {
+    return onBackPressed
+  }
 
-  fun hideDetails()
+  fun createNewAlarm() {
+    editing.value = EditedAlarm(isNew = true, value = AlarmValue(isDeleteAfterDismiss = true))
+  }
 
-  /** Open the drawer when the activity is created. True after theme changes. */
-  var openDrawerOnCreate: Boolean
+  fun edit(id: Int) {
+    alarms.getAlarm(id)?.let { alarm ->
+      editing.value = EditedAlarm(isNew = false, value = alarm.data)
+    }
+  }
+
+  fun hideDetails() {
+    editing.value = null
+  }
+
+  var openDrawerOnCreate: Boolean = false
 }
