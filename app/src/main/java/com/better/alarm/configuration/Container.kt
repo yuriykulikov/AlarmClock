@@ -29,10 +29,10 @@ import com.better.alarm.persistance.DataStoreAlarmsRepository
 import com.better.alarm.persistance.DatabaseQuery
 import com.better.alarm.persistance.DatastoreMigration
 import com.better.alarm.persistance.SQLiteDatabaseQuery
-import com.better.alarm.presenter.AlarmsListActivity
 import com.better.alarm.presenter.DynamicThemeHandler
 import com.better.alarm.presenter.ScheduledReceiver
 import com.better.alarm.presenter.ToastPresenter
+import com.better.alarm.presenter.UiStore
 import com.better.alarm.stores.SharedRxDataStoreFactory
 import com.better.alarm.util.Optional
 import com.better.alarm.wakelock.WakeLockManager
@@ -91,6 +91,8 @@ fun startKoin(context: Context): Koin {
           events = PublishSubject.create())
     }
 
+    single { UiStore(get()) }
+
     factory { get<Context>().getSystemService(Context.ALARM_SERVICE) as AlarmManager }
     single<AlarmSetter> { AlarmSetter.AlarmSetterImpl(logger("AlarmSetter"), get(), get()) }
     factory { Calendars { Calendar.getInstance() } }
@@ -139,7 +141,6 @@ fun startKoin(context: Context): Koin {
 
   return startKoin {
         modules(module)
-        modules(AlarmsListActivity.uiStoreModule)
         modules(loggerModule())
       }
       .koin
