@@ -29,6 +29,8 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModel
 import com.better.alarm.R
 import com.better.alarm.checkPermissions
 import com.better.alarm.configuration.Layout
@@ -53,6 +55,9 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.rx2.asObservable
 
+class AlarmDetailsViewModel : ViewModel() {
+  var newAlarmPopupSeen: Boolean = false
+}
 /** Details activity allowing for fine-grained alarm modification */
 class AlarmDetailsFragment : Fragment() {
   private val alarms: IAlarmsManager by globalInject()
@@ -65,6 +70,7 @@ class AlarmDetailsFragment : Fragment() {
 
   private val alarmsListActivity by lazy { activity as AlarmsListActivity }
   private val store: UiStore by globalInject()
+  private val viewModel: AlarmDetailsViewModel by viewModels()
 
   val rowHolder: RowHolder by lazy {
     RowHolder(fragmentView.findViewById(R.id.details_list_row_container), -1, prefs.layout())
@@ -117,8 +123,9 @@ class AlarmDetailsFragment : Fragment() {
     onCreatePrealarmView()
     onCreateBottomView()
 
-    if (editedAlarm?.isNew == true) {
+    if (editedAlarm?.isNew == true && !viewModel.newAlarmPopupSeen) {
       showTimePicker()
+      viewModel.newAlarmPopupSeen = true
     }
 
     editedAlarmId = editedAlarm?.value?.id.takeIf { it != -1 }
