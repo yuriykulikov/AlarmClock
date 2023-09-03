@@ -115,6 +115,7 @@ class AlarmDetailsFragment : Fragment() {
     onCreateRingtoneView()
     onCreateDeleteOnDismissView()
     onCreatePrealarmView()
+    onCreateVibrateView()
     onCreateBottomView()
 
     if (editedAlarm?.isNew == true) {
@@ -264,6 +265,23 @@ class AlarmDetailsFragment : Fragment() {
         }
         .addTo(disposables)
   }
+
+    private fun onCreateVibrateView() {
+        val mVibrateRow by lazy {
+            fragmentView.findViewById(R.id.details_vibrate_row) as LinearLayout
+        }
+
+        val mVibrateCheckBox by lazy {
+            fragmentView.findViewById(R.id.details_vibration_checkbox) as CheckBox
+        }
+
+        // pre-alarm
+        mVibrateRow.setOnClickListener {
+            modify("Vibrate") { value -> value.copy(isVibrate = !value.isVibrate, isEnabled = true) }
+        }
+
+        observeEditor { value -> mVibrateCheckBox.isChecked = value.isVibrate }
+    }
 
   private fun onCreateRingtoneView() {
     fragmentView.findViewById<LinearLayout>(R.id.details_ringtone_row).setOnClickListener {
