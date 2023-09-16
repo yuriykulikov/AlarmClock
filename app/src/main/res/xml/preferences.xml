@@ -34,12 +34,6 @@
             android:summary="@string/alarm_in_silent_mode_summary"
             android:title="@string/alarm_in_silent_mode_title"
             app:iconSpaceReserved="false" />
-
-        <androidx.preference.CheckBoxPreference
-            android:defaultValue="true"
-            android:key="vibrate"
-            android:title="@string/alarm_vibrate"
-            app:iconSpaceReserved="false" />
     </androidx.preference.PreferenceCategory>
     <androidx.preference.PreferenceCategory
         android:key="preference_category_ui"
