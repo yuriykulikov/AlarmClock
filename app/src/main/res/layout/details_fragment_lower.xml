@@ -167,7 +167,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center|left"
-                    android:text="@string/vibrate"
+                    android:text="@string/alarm_vibrate"
                     android:textColor="?android:attr/textColorPrimary"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
