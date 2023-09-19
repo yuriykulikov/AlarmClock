@@ -155,6 +155,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
           }
     }
 
+    bindListPreference(Prefs.KEY_VIBRATE, prefs.vibrate) { summary = entry }
+
     bindListPreference(Prefs.KEY_THEME, prefs.theme) { summary = entry }
 
     bindListPreference(Prefs.LIST_ROW_LAYOUT, prefs.listRowLayout) { summary = entry }

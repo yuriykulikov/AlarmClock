@@ -86,6 +86,18 @@
         <item><xliff:g example="2 days" id="DAYS">%1$s</xliff:g>, <xliff:g example="2 hours" id="HOURS">%2$s</xliff:g>, and <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
     </string-array>
 
+    <string name="vibration_title">Vibration</string>
+    <string-array name="vibration_entries">
+        <item>Always Off</item>
+        <item>On (by default)</item>
+        <item>Off (by default)</item>
+    </string-array>
+    <string-array name="vibration_values">
+        <item>alwaysoff</item>
+        <item>on</item>
+        <item>off</item>
+    </string-array>
+
     <string name="theme_title">Interface theme</string>
     <string-array name="themes_entries">
         <item>Neon</item>

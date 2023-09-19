@@ -20,7 +20,7 @@ class VibrationPlugin(
     private val vibrator: Vibrator,
     private val fadeInTimeInMillis: Observable<Int>,
     private val scheduler: Scheduler,
-    private val vibratePreference: Observable<Boolean>
+    private val vibratePreference: Observable<String>
 ) : AlertPlugin {
   private val vibratePattern: LongArray = longArrayOf(500, 500)
   private var disposable = Disposables.empty()
@@ -35,8 +35,11 @@ class VibrationPlugin(
         Observable.combineLatest(
                 vibratePreference,
                 targetVolume,
-                BiFunction<Boolean, TargetVolume, TargetVolume> { isEnabled, volume ->
-                  if (isEnabled) volume else TargetVolume.MUTED
+                BiFunction<String, TargetVolume, TargetVolume> { vibrate, volume ->
+                  when (vibrate) {
+                    "on" -> volume
+                    else -> TargetVolume.MUTED
+                  }
                 })
             .distinctUntilChanged()
             .switchMap { volume ->

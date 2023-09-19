@@ -41,6 +41,7 @@ import com.better.alarm.R
 import com.better.alarm.checkPermissions
 import com.better.alarm.configuration.AlarmApplication
 import com.better.alarm.configuration.EditedAlarm
+import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.Store
 import com.better.alarm.configuration.globalGet
 import com.better.alarm.configuration.globalInject
@@ -84,6 +85,7 @@ class AlarmsListActivity : AppCompatActivity() {
       class UiStoreIR : UiStore {
         var onBackPressed = PublishSubject.create<String>()
         val editing: MutableStateFlow<EditedAlarm?> = MutableStateFlow(edited)
+        private val prefs: Prefs by globalInject()
 
         override fun editing(): MutableStateFlow<EditedAlarm?> {
           return editing
@@ -94,7 +96,17 @@ class AlarmsListActivity : AppCompatActivity() {
         }
 
         override fun createNewAlarm() {
-          editing.value = EditedAlarm(isNew = true, value = AlarmValue(isDeleteAfterDismiss = true))
+          editing.value = EditedAlarm(
+            isNew = true,
+            value = AlarmValue(
+              isDeleteAfterDismiss = true,
+              isVibrate =
+                when(prefs.vibrate.value) {
+                  "on" -> true
+                  else -> false
+                }
+            )
+          )
         }
 
         override fun edit(id: Int) {
