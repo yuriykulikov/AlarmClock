@@ -63,6 +63,12 @@
         <item><xliff:g example="2 ore" id="HOURS">%2$s</xliff:g> e <xliff:g example="2 minuti" id="MINUTES">%3$s</xliff:g></item>
         <item><xliff:g example="2 days" id="DAYS">%1$s</xliff:g>, <xliff:g example="2 ore" id="HOURS">%2$s</xliff:g>, e <xliff:g example="2 minuti" id="MINUTES">%3$s</xliff:g></item>
     </string-array>
+    <string name="vibration_title">Vibrazione</string>
+    <string-array name="vibration_entries">
+        <item>Attivata per impostazione predefinita</item>
+        <item>Disattivata per impostazione predefinita</item>
+        <item>Disabilitata</item>
+    </string-array>
     <string name="theme_title">Tema dell\'interfaccia</string>
     <string name="simple_alarm_clock">Sveglia Semplice</string>
     <string-array name="snooze_duration_with_off_entries">

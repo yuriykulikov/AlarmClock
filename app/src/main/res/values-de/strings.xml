@@ -56,6 +56,12 @@
         <item msgid="9115697840826129603">"<xliff:g id="HOURS">%2$s</xliff:g> und <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
         <item msgid="2332583385137381060">"<xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> und <xliff:g id="MINUTES">%3$s</xliff:g>."</item>
     </string-array>
+    <string name="vibration_title">Vibration</string>
+    <string-array name="vibration_entries">
+        <item>Standardmäßig eingeschaltet</item>
+        <item>Standardmäßig ausgeschaltet</item>
+        <item>Deaktiviert</item>
+    </string-array>
     <string name="theme_title">Oberfläche</string>
     <string name="preference_list_row_layout_title">Zeilengröße</string>
     <string-array name="preference_list_row_layout_entries">
