@@ -298,9 +298,8 @@ class AlarmDetailsFragment : Fragment() {
           }
         }
 
-        val mVibrateCheckBox by lazy {
-            fragmentView.findViewById<CheckBox>(R.id.details_vibration_checkbox)
-        }
+        val mVibrateCheckBox =
+          fragmentView.findViewById<CheckBox>(R.id.details_vibration_checkbox)
 
         // pre-alarm
         mVibrateRow.setOnClickListener {

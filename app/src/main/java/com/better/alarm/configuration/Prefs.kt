@@ -67,7 +67,7 @@ private constructor(
     }
 
     const val KEY_THEME = "ui_theme"
-    const val KEY_VIBRATE = "ui_vibrate"
+    const val KEY_VIBRATE = "vibrate"
     const val KEY_SKIP_DURATION = "skip_notification_time"
     const val KEY_ALARM_IN_SILENT_MODE = "alarm_in_silent_mode"
     const val KEY_ALARM_SNOOZE = "snooze_duration"

@@ -100,11 +100,7 @@ class AlarmsListActivity : AppCompatActivity() {
             isNew = true,
             value = AlarmValue(
               isDeleteAfterDismiss = true,
-              isVibrate =
-                when(prefs.vibrate.value) {
-                  "on" -> true
-                  else -> false
-                }
+              isVibrate = prefs.vibrate.value == "on"
             )
           )
         }
