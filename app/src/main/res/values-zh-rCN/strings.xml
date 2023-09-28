@@ -84,7 +84,12 @@
         <item><xliff:g example="2 hours" id="HOURS">%2$s</xliff:g> <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
         <item><xliff:g example="2 days" id="DAYS">%1$s</xliff:g> <xliff:g example="2 hours" id="HOURS">%2$s</xliff:g> <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
     </string-array>
-
+    <string name="vibration_title">振动</string>
+    <string-array name="vibration_entries">
+        <item>默认开启</item>
+        <item>默认关闭</item>
+        <item>禁用</item>
+    </string-array>
     <string name="theme_title">界面主题</string>
     <string-array name="themes_entries">
         <item>Neon</item>

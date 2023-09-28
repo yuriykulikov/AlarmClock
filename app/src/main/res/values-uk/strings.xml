@@ -41,6 +41,12 @@
         <item>"<xliff:g id="HOURS">%2$s</xliff:g> и <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
         <item>"<xliff:g id="DAYS">%1$s</xliff:g>, <xliff:g id="HOURS">%2$s</xliff:g> и <xliff:g id="MINUTES">%3$s</xliff:g>"</item>
     </string-array>
+    <string name="vibration_title">Вібрація</string>
+    <string-array name="vibration_entries">
+        <item>Увімкнено за замовчуванням</item>
+        <item>Вимкнено за замовчуванням</item>
+        <item>Вимкнено</item>
+    </string-array>
     <string name="theme_title">Кольорова гамма</string>
     <string-array name="preference_list_row_layout_entries">
         <item>Компактний</item>

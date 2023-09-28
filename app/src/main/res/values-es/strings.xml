@@ -65,7 +65,12 @@
         <item><xliff:g id="HOURS" example="2 hours">%2$s</xliff:g> and <xliff:g id="MINUTES" example="2 minutes">%3$s</xliff:g></item>
         <item><xliff:g id="DAYS" example="2 days">%1$s</xliff:g>, <xliff:g id="HOURS" example="2 hours">%2$s</xliff:g>, and <xliff:g id="MINUTES" example="2 minutes">%3$s</xliff:g></item>
     </string-array>
-
+    <string name="vibration_title">Vibración</string>
+    <string-array name="vibration_entries">
+        <item>Activada por defecto</item>
+        <item>Desactivada por defecto</item>
+        <item>Desactivada</item>
+    </string-array>
     <string name="theme_title">Gama de colores</string>
     <string-array name="preference_list_row_layout_entries">
         <item>Compacto</item>

@@ -28,6 +28,7 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.better.alarm.R
 import com.better.alarm.checkPermissions
@@ -115,6 +116,7 @@ class AlarmDetailsFragment : Fragment() {
     onCreateRingtoneView()
     onCreateDeleteOnDismissView()
     onCreatePrealarmView()
+    onCreateVibrateView()
     onCreateBottomView()
 
     if (editedAlarm?.isNew == true) {
@@ -264,6 +266,48 @@ class AlarmDetailsFragment : Fragment() {
         }
         .addTo(disposables)
   }
+
+    private fun onCreateVibrateView() {
+        val mVibrateRow =
+            fragmentView.findViewById<LinearLayout>(R.id.details_vibrate_row)
+
+        when(prefs.vibrate.value) {
+          "alwaysoff" -> {
+            mVibrateRow.isVisible = false
+            modify("Vibrate") {
+                value -> value.copy(isVibrate = false, isEnabled = true)
+            }
+          }
+          "on" -> {
+            editedAlarmId?.let {
+              if(alarms.getAlarm(it)?.data?.isEnabled == false) {
+                modify("Vibrate") {
+                    value -> value.copy(isVibrate = true, isEnabled = true)
+                }
+              }
+            }
+          }
+          "off" -> {
+            editedAlarmId?.let {
+              if(alarms.getAlarm(it)?.data?.isEnabled == false) {
+                modify("Vibrate") {
+                    value -> value.copy(isVibrate = false, isEnabled = true)
+                }
+              }
+            }
+          }
+        }
+
+        val mVibrateCheckBox =
+          fragmentView.findViewById<CheckBox>(R.id.details_vibration_checkbox)
+
+        // pre-alarm
+        mVibrateRow.setOnClickListener {
+            modify("Vibrate") { value -> value.copy(isVibrate = !value.isVibrate, isEnabled = true) }
+        }
+
+        observeEditor { value -> mVibrateCheckBox.isChecked = value.isVibrate }
+    }
 
   private fun onCreateRingtoneView() {
     fragmentView.findViewById<LinearLayout>(R.id.details_ringtone_row).setOnClickListener {

@@ -16,18 +16,18 @@ enum class Layout {
 
 class Prefs
 private constructor(
-    val is24HourFormat: Single<Boolean>,
-    val preAlarmDuration: RxDataStore<Int>,
-    val preAlarmVolume: RxDataStore<Int>,
-    val snoozeDuration: RxDataStore<Int>,
-    val listRowLayout: RxDataStore<String>,
-    val autoSilence: RxDataStore<Int>,
-    val fadeInTimeInSeconds: RxDataStore<Int>,
-    val vibrate: RxDataStore<Boolean>,
-    val skipDuration: RxDataStore<Int>,
-    val longClickDismiss: RxDataStore<Boolean>,
-    val theme: RxDataStore<String>,
-    val defaultRingtone: RxDataStore<String>,
+  val is24HourFormat: Single<Boolean>,
+  val preAlarmDuration: RxDataStore<Int>,
+  val preAlarmVolume: RxDataStore<Int>,
+  val snoozeDuration: RxDataStore<Int>,
+  val listRowLayout: RxDataStore<String>,
+  val autoSilence: RxDataStore<Int>,
+  val fadeInTimeInSeconds: RxDataStore<Int>,
+  val vibrate: RxDataStore<String>,
+  val skipDuration: RxDataStore<Int>,
+  val longClickDismiss: RxDataStore<Boolean>,
+  val theme: RxDataStore<String>,
+  val defaultRingtone: RxDataStore<String>,
 ) {
   fun layout(): Layout {
     return listRowLayout().take(1).blockingFirst()
@@ -57,7 +57,7 @@ private constructor(
           listRowLayout = factory.stringDataStore(LIST_ROW_LAYOUT, LIST_ROW_LAYOUT_BOLD),
           autoSilence = factory.intStringDataStore(KEY_AUTO_SILENCE, 10),
           fadeInTimeInSeconds = factory.intStringDataStore(KEY_FADE_IN_TIME_SEC, 30),
-          vibrate = factory.booleanDataStore(KEY_VIBRATE, true),
+          vibrate = factory.stringDataStore(KEY_VIBRATE, "on"),
           skipDuration = factory.intStringDataStore(KEY_SKIP_DURATION, 30),
           longClickDismiss = factory.booleanDataStore(KEY_LONGCLICK_DISMISS, true),
           theme = factory.stringDataStore(KEY_THEME, "deusex"),
