@@ -1,7 +1,9 @@
 package com.better.alarm.view
 
+import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
+import java.sql.Timestamp
 
 /** Created by Yuriy on 17.08.2017. */
 open class TimePickerPresenter(private val is24HoursMode: Boolean) {
@@ -19,7 +21,8 @@ open class TimePickerPresenter(private val is24HoursMode: Boolean) {
     OK,
     LEFT,
     RIGHT,
-    DELETE
+    DELETE,
+      THIRTYMIN
   }
 
   enum class AmPm {
@@ -38,6 +41,7 @@ open class TimePickerPresenter(private val is24HoursMode: Boolean) {
   private var leftRightEntered: Boolean = false
 
   fun onClick(key: Key) {
+
     when (key) {
       Key.ONE -> input = input.plus(1)
       Key.TWO -> input = input.plus(2)
@@ -51,6 +55,21 @@ open class TimePickerPresenter(private val is24HoursMode: Boolean) {
       Key.ZERO -> input = input.plus(0)
       Key.LEFT,
       Key.RIGHT -> leftRightEntered = true
+        Key.THIRTYMIN -> {
+            val currentTimeMillis = System.currentTimeMillis()
+            val newTime = Timestamp(currentTimeMillis + (30 * 60 * 1000))
+            var hours = newTime.hours
+            if (is24HoursMode && hours > 12) {
+                hours -= 12
+                amPm = AmPm.PM
+            }
+            val minutes = newTime.minutes
+            val inputs = hours.toString() + minutes.toString()
+            for (str in inputs) {
+                input = input.plus(Integer.parseInt(str.toString()))
+            }
+            leftRightEntered = true
+        }
       else -> {}
     }
 
