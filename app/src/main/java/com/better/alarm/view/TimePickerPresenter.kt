@@ -1,6 +1,5 @@
 package com.better.alarm.view
 
-import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import java.sql.Timestamp
@@ -56,10 +55,11 @@ open class TimePickerPresenter(private val is24HoursMode: Boolean) {
       Key.LEFT,
       Key.RIGHT -> leftRightEntered = true
         Key.THIRTYMIN -> {
+            this.reset()
             val currentTimeMillis = System.currentTimeMillis()
             val newTime = Timestamp(currentTimeMillis + (30 * 60 * 1000))
             var hours = newTime.hours
-            if (is24HoursMode && hours > 12) {
+            if (!is24HoursMode && hours > 12) {
                 hours -= 12
                 amPm = AmPm.PM
             }
