@@ -2,6 +2,7 @@ package com.better.alarm.presenter
 
 import android.animation.ArgbEvaluator
 import android.app.AlertDialog
+import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.ContextMenu
@@ -13,21 +14,27 @@ import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.AdapterView
 import android.widget.AdapterView.AdapterContextMenuInfo
+import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import com.better.alarm.R
+import com.better.alarm.configuration.Layout
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.Store
 import com.better.alarm.configuration.globalInject
 import com.better.alarm.configuration.globalLogger
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.logger.Logger
+import com.better.alarm.model.AlarmValue
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.melnykov.fab.FloatingActionButton
+import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlinx.coroutines.channels.Channel
 
 /**
@@ -42,29 +49,12 @@ class AlarmsListFragment : Fragment() {
   private val uiStore: UiStore by globalInject()
   private val prefs: Prefs by globalInject()
   private val logger: Logger by globalLogger("AlarmsListFragment")
-  var transitionRowHolder: RowHolder? = null
-    private set
+
   private val mAdapter: AlarmListAdapter by lazy {
-    AlarmListAdapter(
-        requireContext(),
-        highlighter = ListRowHighlighter.createFor(requireContext().theme),
-        logger = logger,
-        changeAlarm = { id, enable ->
-          alarms.getAlarm(alarmId = id)?.edit { copy(isEnabled = enable) }
-        },
-        showPicker = { alarm ->
-          timePickerDialogDisposable =
-              TimePickerDialogFragment.showTimePicker(parentFragmentManager).subscribe { picked ->
-                if (picked.isPresent()) {
-                  alarms.getAlarm(alarm.id)?.also { alarm ->
-                    alarm.edit {
-                      copy(
-                          isEnabled = true, hour = picked.get().hour, minutes = picked.get().minute)
-                    }
-                  }
-                }
-              }
-        })
+    AlarmListAdapter(R.layout.list_row_classic, R.string.alarm_list_title, ArrayList())
+  }
+  private val inflater: LayoutInflater by lazy {
+    requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
   }
 
   private var alarmsSub: Disposable = Disposables.disposed()
@@ -72,8 +62,118 @@ class AlarmsListFragment : Fragment() {
   private var backSub: Disposable = Disposables.disposed()
   private var timePickerDialogDisposable = Disposables.disposed()
 
+  /** changed by [Prefs.listRowLayout] in [onResume] */
+  private var listRowLayoutId = R.layout.list_row_classic
+
+  /** changed by [Prefs.listRowLayout] in [onResume] */
+  private var listRowLayout = prefs.layout()
+
   companion object {
     var fabSync: Channel<Unit>? = null
+  }
+  inner class AlarmListAdapter(alarmTime: Int, label: Int, private val values: List<AlarmValue>) :
+      ArrayAdapter<AlarmValue>(requireContext(), alarmTime, label, values) {
+    private val highlighter: ListRowHighlighter by lazy {
+      ListRowHighlighter.createFor(requireActivity().theme)
+    }
+
+    private fun recycleView(convertView: View?, parent: ViewGroup, id: Int): RowHolder {
+      val tag = convertView?.tag
+      return when {
+        tag is RowHolder && tag.layout == listRowLayout -> RowHolder(convertView, id, listRowLayout)
+        else -> {
+          val rowView = inflater.inflate(listRowLayoutId, parent, false)
+          RowHolder(rowView, id, listRowLayout).apply { digitalClock.setLive(false) }
+        }
+      }
+    }
+
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+      // get the alarm which we have to display
+      val alarm = values[position]
+
+      logger.trace { "getView($position) $alarm" }
+
+      val row = recycleView(convertView, parent, alarm.id)
+
+      row.onOff.isChecked = alarm.isEnabled
+
+      row.digitalClock.transitionName = "clock" + alarm.id
+      row.container.transitionName = "onOff" + alarm.id
+      row.detailsButton.transitionName = "detailsButton" + alarm.id
+
+      // Delete add, skip animation
+      if (row.idHasChanged) {
+        row.onOff.jumpDrawablesToCurrentState()
+      }
+
+      row.container
+          // onOff
+          .setOnClickListener {
+            val enable = !alarm.isEnabled
+            logger.debug { "onClick: ${if (enable) "enable" else "disable"}" }
+            alarms.getAlarm(alarm.id)?.enable(enable)
+          }
+
+      val pickerClickTarget =
+          with(row) { if (layout == Layout.CLASSIC) digitalClockContainer else digitalClock }
+      pickerClickTarget.setOnClickListener {
+        timePickerDialogDisposable =
+            TimePickerDialogFragment.showTimePicker(parentFragmentManager).subscribe { picked ->
+              if (picked.isPresent()) {
+                alarms.getAlarm(alarm.id)?.also { alarm ->
+                  alarm.edit {
+                    copy(isEnabled = true, hour = picked.get().hour, minutes = picked.get().minute)
+                  }
+                }
+              }
+            }
+      }
+
+      pickerClickTarget.setOnLongClickListener { false }
+
+      // set the alarm text
+      val c = Calendar.getInstance()
+      c.set(Calendar.HOUR_OF_DAY, alarm.hour)
+      c.set(Calendar.MINUTE, alarm.minutes)
+      row.digitalClock.updateTime(c)
+
+      val removeEmptyView = listRowLayout == Layout.CLASSIC || listRowLayout == Layout.COMPACT
+      // Set the repeat text or leave it blank if it does not repeat.
+
+      row.daysOfWeek.run {
+        text = daysOfWeekStringWithSkip(alarm)
+        visibility =
+            when {
+              text.isNotEmpty() -> View.VISIBLE
+              removeEmptyView -> View.GONE
+              else -> View.INVISIBLE
+            }
+      }
+
+      // Set the repeat text or leave it blank if it does not repeat.
+      row.label.text = alarm.label
+
+      row.label.visibility =
+          when {
+            alarm.label.isNotBlank() -> View.VISIBLE
+            removeEmptyView -> View.GONE
+            else -> View.INVISIBLE
+          }
+
+      highlighter.applyTo(row, alarm.isEnabled)
+
+      return row.rowView
+    }
+
+    private fun daysOfWeekStringWithSkip(alarm: AlarmValue): String {
+      val daysOfWeekStr = alarm.daysOfWeek.toString(context, false)
+      return when {
+        alarm.date != null -> SimpleDateFormat.getDateInstance().format(alarm.date.time)
+        alarm.skipping -> "$daysOfWeekStr (skipping)"
+        else -> daysOfWeekStr
+      }
+    }
   }
 
   override fun onContextItemSelected(item: MenuItem): Boolean {
@@ -126,8 +226,7 @@ class AlarmsListFragment : Fragment() {
 
     listView.onItemClickListener =
         AdapterView.OnItemClickListener { _, listRow, position, _ ->
-          transitionRowHolder = listRow.tag as RowHolder
-          mAdapter.getItem(position)?.id?.let { uiStore.edit(it) }
+          mAdapter.getItem(position)?.id?.let { uiStore.edit(it, listRow.tag as RowHolder) }
         }
 
     registerForContextMenu(listView)
@@ -143,21 +242,28 @@ class AlarmsListFragment : Fragment() {
     (fab as FloatingActionButton).attachToListView(listView)
 
     alarmsSub =
-        store.alarms().subscribe { alarms ->
-          val sorted =
-              alarms //
-                  .sortedBy { it.minutes }
-                  .sortedBy { it.hour }
-                  .sortedBy {
-                    when (it.daysOfWeek.coded) {
-                      0x7F -> 1
-                      0x1F -> 2
-                      0x60 -> 3
-                      else -> 0
-                    }
-                  }
-          mAdapter.dataset = sorted
-        }
+        prefs.listRowLayout
+            .observe()
+            .switchMap { uiStore.transitioningToNewAlarmDetails() }
+            .switchMap { transitioning ->
+              if (transitioning) Observable.never() else store.alarms()
+            }
+            .subscribe { alarms ->
+              val sorted =
+                  alarms //
+                      .sortedBy { it.minutes }
+                      .sortedBy { it.hour }
+                      .sortedBy {
+                        when (it.daysOfWeek.coded) {
+                          0x7F -> 1
+                          0x1F -> 2
+                          0x60 -> 3
+                          else -> 0
+                        }
+                      }
+              mAdapter.clear()
+              mAdapter.addAll(sorted)
+            }
 
     configureBottomDrawer(view)
 
@@ -255,7 +361,16 @@ class AlarmsListFragment : Fragment() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    layoutSub = prefs.listRowLayout().subscribe { mAdapter.listRowLayout = it }
+    layoutSub =
+        prefs.listRowLayout.observe().subscribe {
+          listRowLayout = prefs.layout()
+          listRowLayoutId =
+              when (listRowLayout) {
+                Layout.COMPACT -> R.layout.list_row_compact
+                Layout.CLASSIC -> R.layout.list_row_classic
+                else -> R.layout.list_row_bold
+              }
+        }
   }
 
   override fun onPause() {
@@ -278,7 +393,12 @@ class AlarmsListFragment : Fragment() {
 
     // Use the current item to create a custom view for the header.
     val info = menuInfo as AdapterContextMenuInfo
-    val alarm = mAdapter.getItem(info.position) ?: return
+    val alarm = mAdapter.getItem(info.position)
+
+    // Construct the Calendar to compute the time.
+    val cal = Calendar.getInstance()
+    cal.set(Calendar.HOUR_OF_DAY, alarm!!.hour)
+    cal.set(Calendar.MINUTE, alarm.minutes)
 
     val visible =
         when {

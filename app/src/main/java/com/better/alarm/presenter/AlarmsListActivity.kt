@@ -20,6 +20,7 @@ package com.better.alarm.presenter
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.os.Build
 import android.os.Bundle
 import android.transition.ChangeBounds
 import android.transition.ChangeTransform
@@ -33,8 +34,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.commit
-import androidx.lifecycle.lifecycleScope
+import androidx.fragment.app.Fragment
 import com.better.alarm.BuildConfig
 import com.better.alarm.NotificationSettings
 import com.better.alarm.R
@@ -49,15 +49,15 @@ import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.logger.Logger
 import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.AlarmsRepository
+import com.better.alarm.util.Optional
 import com.better.alarm.util.formatToast
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.disposables.Disposables
+import io.reactivex.functions.Consumer
+import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.Subject
 import java.util.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.protobuf.ProtoBuf
@@ -73,19 +73,22 @@ class AlarmsListActivity : AppCompatActivity() {
   private val store: Store by globalInject()
   private val repository: AlarmsRepository by globalInject()
 
+  private var sub = Disposables.disposed()
   private var snackbarDisposable = Disposables.disposed()
 
   val uiStore: UiStore by globalInject()
   private val dynamicThemeHandler: DynamicThemeHandler by globalInject()
 
   companion object {
-    val uiStoreModule: Module = module { single<UiStore> { createStore(null, get()) } }
-    private fun createStore(edited: EditedAlarm?, alarms: IAlarmsManager): UiStore {
+    val uiStoreModule: Module = module { single<UiStore> { createStore(EditedAlarm(), get()) } }
+
+    private fun createStore(edited: EditedAlarm, alarms: IAlarmsManager): UiStore {
       class UiStoreIR : UiStore {
         var onBackPressed = PublishSubject.create<String>()
-        val editing: MutableStateFlow<EditedAlarm?> = MutableStateFlow(edited)
+        var editing: BehaviorSubject<EditedAlarm> = BehaviorSubject.createDefault(edited)
+        var transitioningToNewAlarmDetails: Subject<Boolean> = BehaviorSubject.createDefault(false)
 
-        override fun editing(): MutableStateFlow<EditedAlarm?> {
+        override fun editing(): BehaviorSubject<EditedAlarm> {
           return editing
         }
 
@@ -94,17 +97,38 @@ class AlarmsListActivity : AppCompatActivity() {
         }
 
         override fun createNewAlarm() {
-          editing.value = EditedAlarm(isNew = true, value = AlarmValue(isDeleteAfterDismiss = true))
+          transitioningToNewAlarmDetails.onNext(true)
+          val newAlarm = alarms.createNewAlarm()
+          editing.onNext(
+              EditedAlarm(
+                  isNew = true,
+                  value = Optional.of(newAlarm.data.copy(isDeleteAfterDismiss = true)),
+                  id = newAlarm.id,
+                  holder = Optional.absent()))
         }
 
-        override fun edit(id: Int) {
+        override fun transitioningToNewAlarmDetails(): Subject<Boolean> {
+          return transitioningToNewAlarmDetails
+        }
+
+        override fun edit(id: Int, holder: RowHolder?) {
           alarms.getAlarm(id)?.let { alarm ->
-            editing.value = EditedAlarm(isNew = false, value = alarm.data)
+            editing.onNext(
+                EditedAlarm(
+                    isNew = false,
+                    value = Optional.of(alarm.data),
+                    id = id,
+                    holder = Optional.fromNullable(holder)))
           }
         }
 
-        override fun hideDetails() {
-          editing.value = null
+        override fun hideDetails(holder: RowHolder?) {
+          editing.onNext(
+              EditedAlarm(
+                  isNew = false,
+                  value = Optional.absent(),
+                  id = holder?.alarmId ?: -1,
+                  holder = Optional.fromNullable(holder)))
         }
 
         override var openDrawerOnCreate: Boolean = false
@@ -142,10 +166,11 @@ class AlarmsListActivity : AppCompatActivity() {
     if (prevVersion == BuildConfig.VERSION_CODE) {
       val restored = editedAlarmFromSavedInstanceState(savedInstanceState)
       logger.trace { "Restored $this with $restored" }
-      uiStore.editing().value = restored
+      uiStore.editing().onNext(restored)
     } else {
       // need this because store is not scoped
-      uiStore.editing().value = null
+      uiStore.editing().onNext(EditedAlarm())
+      uiStore.transitioningToNewAlarmDetails().onNext(false)
     }
 
     this.mActionBarHandler = ActionBarHandler(this, uiStore, alarms, globalGet())
@@ -173,7 +198,7 @@ class AlarmsListActivity : AppCompatActivity() {
     snackbarDisposable =
         store
             .sets()
-            .withLatestFrom(store.uiVisible) { set, uiVisible -> set to uiVisible }
+            .withLatestFrom(store.uiVisible, { set, uiVisible -> set to uiVisible })
             .subscribe { (set: Store.AlarmSet, uiVisible: Boolean) ->
               if (uiVisible) {
                 showSnackbar(set)
@@ -191,7 +216,9 @@ class AlarmsListActivity : AppCompatActivity() {
         .apply {
           val text = view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
           text.gravity = Gravity.CENTER_HORIZONTAL
-          text.textAlignment = View.TEXT_ALIGNMENT_CENTER
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            text.textAlignment = View.TEXT_ALIGNMENT_CENTER
+          }
         }
         .show()
   }
@@ -211,6 +238,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
   override fun onStop() {
     super.onStop()
+    this.sub.dispose()
     snackbarDisposable.dispose()
   }
 
@@ -234,70 +262,66 @@ class AlarmsListActivity : AppCompatActivity() {
   }
 
   private fun configureTransactions() {
-    uiStore
-        .editing()
-        .distinctUntilChangedBy { it }
-        .onEach { edited ->
-          when {
-            isDestroyed -> return@onEach
-            edited != null -> showDetails(edited)
-            else -> showList()
-          }
-        }
-        .launchIn(lifecycleScope)
+    sub =
+        uiStore
+            .editing()
+            .distinctUntilChanged { edited -> edited.isEdited }
+            .subscribe(
+                Consumer { edited ->
+                  when {
+                    isDestroyed -> return@Consumer
+                    edited.isEdited -> showDetails(edited)
+                    else -> showList(edited)
+                  }
+                })
   }
 
-  private fun showList() {
-    val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
-    if (currentFragment is AlarmsListFragment) {
-      logger.trace { "skipping fragment transition, because already showing $currentFragment" }
-      return
-    } else {
-      val details: AlarmDetailsFragment? = currentFragment as? AlarmDetailsFragment
-      logger.trace { "transition from: $details to AlarmsListFragment" }
-      supportFragmentManager.commit(allowStateLoss = true) {
-        replace(
-            R.id.main_fragment_container,
+  private fun showList(edited: EditedAlarm) {
+    replace(
+        fragment =
             AlarmsListFragment().apply {
               arguments = Bundle()
               enterTransition = TransitionSet().addTransition(Fade())
               sharedElementEnterTransition = moveTransition()
               allowEnterTransitionOverlap = true
-            })
-        details?.exitTransition = Fade()
-        details?.rowHolder?.run {
-          addSharedElement(digitalClock, "clock${details.editedAlarmId}")
-          addSharedElement(container, "onOff${details.editedAlarmId}")
-          addSharedElement(detailsButton, "detailsButton${details.editedAlarmId}")
-        }
-      }
-    }
+            },
+        edited = edited,
+    )
   }
 
   private fun showDetails(edited: EditedAlarm) {
-    val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
-    if (currentFragment is AlarmDetailsFragment) {
-      logger.trace { "skipping fragment transition, because already showing $currentFragment" }
-    } else {
-      val listFragment = currentFragment as? AlarmsListFragment
-      logger.trace { "transition from: $currentFragment to AlarmDetailsFragment" }
-
-      supportFragmentManager.commit(allowStateLoss = true) {
-        replace(
-            R.id.main_fragment_container,
+    replace(
+        fragment =
             AlarmDetailsFragment().apply {
               arguments = Bundle()
               enterTransition = TransitionSet().addTransition(Slide()).addTransition(Fade())
               sharedElementEnterTransition = moveTransition()
               allowEnterTransitionOverlap = true
-            })
-        listFragment?.exitTransition = Fade()
-        listFragment?.transitionRowHolder?.run {
-          addSharedElement(digitalClock, "clock")
-          addSharedElement(container, "onOff")
-          addSharedElement(detailsButton, "detailsButton")
-        }
-      }
+            },
+        edited = edited,
+    )
+  }
+
+  fun replace(fragment: Fragment, edited: EditedAlarm) {
+    val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
+
+    if (currentFragment?.javaClass == fragment.javaClass) {
+      logger.trace { "skipping fragment transition, because already showing $currentFragment" }
+    } else {
+      logger.trace { "transition from: $currentFragment to $fragment" }
+      currentFragment?.apply { exitTransition = Fade() }
+
+      supportFragmentManager
+          .beginTransaction()
+          .replace(R.id.main_fragment_container, fragment)
+          .apply {
+            edited.holder.getOrNull()?.run {
+              addSharedElement(digitalClock, "clock${alarmId}")
+              addSharedElement(container, "onOff${alarmId}")
+              addSharedElement(detailsButton, "detailsButton${alarmId}")
+            }
+          }
+          .commitAllowingStateLoss()
     }
   }
 
@@ -311,15 +335,20 @@ class AlarmsListActivity : AppCompatActivity() {
 
   /** restores an [EditedAlarm] from SavedInstanceState. Counterpart of [EditedAlarm.writeInto]. */
   @OptIn(ExperimentalSerializationApi::class)
-  private fun editedAlarmFromSavedInstanceState(savedInstanceState: Bundle): EditedAlarm? {
-    return if (savedInstanceState.getBoolean("isEdited")) {
-      val restored =
-          ProtoBuf.decodeFromByteArray(
-              AlarmValue.serializer(), savedInstanceState.getByteArray("edited") ?: ByteArray(0))
-      EditedAlarm(savedInstanceState.getBoolean("isNew"), restored)
-    } else {
-      null
-    }
+  private fun editedAlarmFromSavedInstanceState(savedInstanceState: Bundle): EditedAlarm {
+    return EditedAlarm(
+        isNew = savedInstanceState.getBoolean("isNew"),
+        id = savedInstanceState.getInt("id"),
+        value =
+            if (savedInstanceState.getBoolean("isEdited")) {
+              val restored =
+                  savedInstanceState.getByteArray("edited")?.let {
+                    ProtoBuf.decodeFromByteArray(AlarmValue.serializer(), it)
+                  }
+              Optional.fromNullable(restored)
+            } else {
+              Optional.absent()
+            })
   }
 
   /**
@@ -330,8 +359,13 @@ class AlarmsListActivity : AppCompatActivity() {
     val toWrite: EditedAlarm = this
     outState?.run {
       putBoolean("isNew", isNew)
-      putBoolean("isEdited", true)
-      putByteArray("edited", ProtoBuf.encodeToByteArray(AlarmValue.serializer(), value))
+      putInt("id", id)
+      putBoolean("isEdited", isEdited)
+
+      value.getOrNull()?.let { edited ->
+        putByteArray("edited", ProtoBuf.encodeToByteArray(AlarmValue.serializer(), edited))
+      }
+
       logger.trace { "Saved state $toWrite" }
     }
   }

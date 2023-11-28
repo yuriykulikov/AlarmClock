@@ -6,8 +6,6 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
-import android.os.Looper
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.Menu
@@ -23,12 +21,7 @@ import com.better.alarm.BuildConfig
 import com.better.alarm.R
 import com.better.alarm.bugreports.BugReporter
 import com.better.alarm.interfaces.IAlarmsManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import io.reactivex.disposables.Disposables
 
 /**
  * This class handles options menu and action bar
@@ -41,7 +34,7 @@ class ActionBarHandler(
     private val alarms: IAlarmsManager,
     private val reporter: BugReporter
 ) {
-  private var scope = CoroutineScope(Dispatchers.Unconfined)
+  private var sub = Disposables.disposed()
 
   /**
    * Delegate [Activity.onCreateOptionsMenu]
@@ -75,26 +68,20 @@ class ActionBarHandler(
         MenuItemCompat.getActionProvider(menuItem) as androidx.appcompat.widget.ShareActionProvider
     sp.setShareIntent(intent)
 
-    store
-        .editing()
-        .distinctUntilChangedBy { it }
-        .onEach { edited ->
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            check(Looper.getMainLooper().isCurrentThread)
-          }
-          val showDelete = edited != null && !edited.isNew
+    sub =
+        store.editing().subscribe { edited ->
+          val showDelete = edited.isEdited && !edited.isNew
 
           menu.findItem(R.id.set_alarm_menu_delete_alarm).isVisible = showDelete
 
-          actionBar.setDisplayHomeAsUpEnabled(edited != null)
+          actionBar.setDisplayHomeAsUpEnabled(edited.isEdited)
         }
-        .launchIn(scope)
 
     return true
   }
 
   fun onDestroy() {
-    scope.cancel()
+    sub.dispose()
   }
 
   /**
@@ -139,7 +126,7 @@ class ActionBarHandler(
           setTitle(mContext.getString(R.string.delete_alarm))
           setMessage(mContext.getString(R.string.delete_alarm_confirm))
           setPositiveButton(android.R.string.ok) { _, _ ->
-            store.editing().value?.value?.id?.let { alarms.getAlarm(it)?.delete() }
+            alarms.getAlarm(store.editing().blockingFirst().id())?.delete()
             store.hideDetails()
           }
           setNegativeButton(android.R.string.cancel, null)

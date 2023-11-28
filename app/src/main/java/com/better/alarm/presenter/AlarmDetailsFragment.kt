@@ -40,6 +40,7 @@ import com.better.alarm.logger.Logger
 import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.Alarmtone
 import com.better.alarm.util.Optional
+import com.better.alarm.util.modify
 import com.better.alarm.view.showRepeatAndDateDialog
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -49,9 +50,6 @@ import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.rx2.asObservable
 
 /** Details activity allowing for fine-grained alarm modification */
 class AlarmDetailsFragment : Fragment() {
@@ -66,19 +64,15 @@ class AlarmDetailsFragment : Fragment() {
   private val alarmsListActivity by lazy { activity as AlarmsListActivity }
   private val store: UiStore by globalInject()
 
-  val rowHolder: RowHolder by lazy {
-    RowHolder(fragmentView.findViewById(R.id.details_list_row_container), -1, prefs.layout())
+  private val rowHolder: RowHolder by lazy {
+    RowHolder(fragmentView.findViewById(R.id.details_list_row_container), alarmId, prefs.layout())
   }
-  /** Id of the alarm being edited. `null` if new alarm should be created but was not created yet */
-  var editedAlarmId: Int? = null
-    private set(value) {
-      check(value != -1)
-      field = value
-    }
 
   private val editor: Observable<AlarmValue> by lazy {
-    store.editing().mapNotNull { it?.value }.asObservable()
+    store.editing().filter { it.value.isPresent() }.map { it.value.get() }
   }
+
+  private val alarmId: Int by lazy { store.editing().value!!.id }
 
   private val highlighter: ListRowHighlighter? by lazy {
     ListRowHighlighter.createFor(requireActivity().theme)
@@ -93,8 +87,7 @@ class AlarmDetailsFragment : Fragment() {
       container: ViewGroup?,
       savedInstanceState: Bundle?
   ): View {
-    val editedAlarm = store.editing().value
-    logger.trace { "Showing details of $editedAlarm" }
+    logger.trace { "Showing details of ${store.editing().value}" }
 
     val view =
         inflater.inflate(
@@ -117,11 +110,12 @@ class AlarmDetailsFragment : Fragment() {
     onCreatePrealarmView()
     onCreateBottomView()
 
-    if (editedAlarm?.isNew == true) {
-      showTimePicker()
+    store.transitioningToNewAlarmDetails().takeFirst { isNewAlarm ->
+      if (isNewAlarm) {
+        showTimePicker()
+      }
+      store.transitioningToNewAlarmDetails().onNext(false)
     }
-
-    editedAlarmId = editedAlarm?.value?.id.takeIf { it != -1 }
 
     return view
   }
@@ -308,6 +302,10 @@ class AlarmDetailsFragment : Fragment() {
         daysOfWeek.visibility = View.INVISIBLE
         label.visibility = View.INVISIBLE
 
+        digitalClock.transitionName = "clock$alarmId"
+        container.transitionName = "onOff$alarmId"
+        detailsButton.transitionName = "detailsButton$alarmId"
+
         digitalClock.setLive(false)
 
         val pickerClickTarget =
@@ -334,11 +332,6 @@ class AlarmDetailsFragment : Fragment() {
         }
 
         animateCheck(check = true)
-
-        // for transitions
-        digitalClock.transitionName = "clock"
-        container.transitionName = "onOff"
-        detailsButton.transitionName = "detailsButton"
       }
 
   override fun onDestroyView() {
@@ -375,25 +368,23 @@ class AlarmDetailsFragment : Fragment() {
   }
 
   private fun saveAlarm() {
-    val edited = store.editing().value ?: return
-    val alarm =
-        if (edited.isNew) {
-          alarms.createNewAlarm()
-        } else {
-          alarms.getAlarm(edited.value.id)
-        }
-
-    editedAlarmId = alarm?.id
-
-    alarm?.edit { withChangeData(edited.value.copy(id = id)) }
-
-    store.hideDetails()
-    animateCheck(check = false)
+    editor.takeFirst { value ->
+      alarms.getAlarm(alarmId)?.run { edit { withChangeData(value) } }
+      store.hideDetails(rowHolder)
+      animateCheck(check = false)
+    }
   }
 
   private fun revert() {
-    store.hideDetails()
-    animateCheck(check = false)
+    store.editing().value?.let { edited ->
+      // "Revert" on a newly created alarm should delete it.
+      if (edited.isNew) {
+        alarms.getAlarm(edited.id)?.delete()
+      }
+      // else do not save changes
+      store.hideDetails(rowHolder)
+      animateCheck(check = false)
+    }
   }
 
   private fun showTimePicker() {
@@ -411,7 +402,7 @@ class AlarmDetailsFragment : Fragment() {
 
   private fun modify(reason: String, function: (AlarmValue) -> AlarmValue) {
     logger.debug { "Performing modification because of $reason" }
-    store.editing().update { edited -> edited?.copy(value = function(edited.value)) }
+    store.editing().modify { copy(value = value.map { function(it) }) }
   }
 
   private fun Disposable.addTo(disposables: CompositeDisposable) {
