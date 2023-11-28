@@ -1,5 +1,6 @@
 package com.better.alarm.persistance
 
+import android.os.Looper
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.Serializer
@@ -9,164 +10,166 @@ import com.better.alarm.model.AlarmStore
 import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.AlarmValues
 import com.better.alarm.model.AlarmsRepository
-import com.better.alarm.model.modify
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicReference
-import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.takeWhile
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
-
-/** Stores [AlarmValue]s in [DataStore]s. */
-class DataStoreAlarmsRepository(
-    private val datastoreDir: File,
-    private val logger: Logger,
-    ioDispatcher: CoroutineContext,
-) : AlarmsRepository {
-  val ioScope: CoroutineScope = CoroutineScope(ioDispatcher)
-  private val dataStore: DataStore<AlarmValues> =
-      DataStoreFactory.create(
-          serializer = ProtobufSerializer,
-          produceFile = { datastoreDir.resolve("alarms") },
-          scope = ioScope,
-          corruptionHandler = ReplaceFileCorruptionHandler { AlarmValues() },
-      )
-
-  private val stores = ConcurrentHashMap<Int, AlarmStore>()
-  private val initJob: Job =
-      ioScope.launch {
-        val restoredValues = dataStore.data.first()
-        val newStores =
-            restoredValues.alarms
-                .filter { it.value.state != "DeletedState" } //
-                .mapValues { (id, value) -> createProtobufStore(id, value) }
-        stores.putAll(newStores)
-      }
-
-  override fun create(): AlarmStore {
-    val id = (0..Int.MAX_VALUE).first { it !in stores.keys }
-    val store = createProtobufStore(id, AlarmValue())
-    stores[store.id] = store
-    store.modify { AlarmValue(id = id) }
-    return store
-  }
-
-  override fun query(): List<AlarmStore> = runBlocking {
-    initJob.join()
-    stores.values.toList()
-  }
-
-  override val initialized: Boolean
-    get() = datastoreDir.resolve("alarms").exists()
-
-  override suspend fun awaitStored() {
-    stores.forEach { (_, store) -> store.awaitStored() }
-  }
-  private fun createProtobufStore(id: Int, value: AlarmValue) =
-      ProtobufAlarmStore(
-          datastore = dataStore,
-          logger = logger,
-          id = id,
-          initialValue = value,
-          scope = ioScope,
-          onDelete = { deletedId, awaitDeleted ->
-            ioScope.launch {
-              awaitDeleted()
-              logger.debug { "Removed $deletedId from stores map" }
-              stores.remove(id)
-            }
-          },
-      )
-}
+import org.koin.core.time.measureDuration
+import org.koin.core.time.measureTimedValue
 
 /**
- * # ProtobufAlarmStore: AlarmStore
+ * [AlarmsRepository] which stores [AlarmValue]s in a [DataStore].
  *
- * Persistent [AlarmStore] for [AlarmValue]. Stores [AlarmValue] associated by [AlarmValue.id] (
- * [AlarmValues.alarms]) using a [DataStore].
+ * [AlarmsRepository] uses active records ([AlarmStore]s) to read and write values.
  *
- * ## Threading
+ * ## Extra care required
+ * Both reading and writing are asynchronous which requires extra care in certain situations.
  *
- * Changing the [value] is instant, [value] is available synchronously. Access to the [value] is
- * thread-safe.
+ * ### Reading
+ * When reading values to dispatch an event to an alarm from a broadcast receiver, a blocking read
+ * is required because the application can destroyed before the asynchronous read can complete.
+ *
+ * ### Writing
+ * Writing is done in the background and we can assume then the last value will eventually be
+ * written. However, we must ensure that the application is not destroyed before the write
+ * completes. This is done by calling [awaitStored] before the application can be destroyed. Since
+ * there are no callbacks for application destruction, we must call [awaitStored] and blocking await
+ * in certain key places. These places are:
+ * - [android.app.Activity.onPause] before returning from the method
+ * - [android.content.BroadcastReceiver.onReceive] before returning from the method
  */
-private class ProtobufAlarmStore(
-    private val datastore: DataStore<AlarmValues>,
+class DataStoreAlarmsRepository(
     private val logger: Logger,
-    override val id: Int,
-    initialValue: AlarmValue,
-    scope: CoroutineScope,
-    private val onDelete: (Int, awaitDelete: suspend () -> Unit) -> Unit,
-) : AlarmStore {
-  private var cached: AtomicReference<AlarmValue> = AtomicReference(initialValue)
-  override var value: AlarmValue
-    get() {
-      return requireNotNull(cached.get()) { "Alarm was deleted!" }
-    }
-    set(value) {
-      requireNotNull(cached.get()) { "Alarm was deleted!" }
-      cached.set(value)
-      require(writes.tryEmit(value))
-    }
+    private val ioScope: CoroutineScope,
+    initial: AlarmValues,
+    private val dataStore: DataStore<AlarmValues>,
+    override val initialized: Boolean
+) : AlarmsRepository {
+  companion object {
+    fun createBlocking(
+        datastoreDir: File,
+        logger: Logger,
+        ioScope: CoroutineScope
+    ): AlarmsRepository {
+      val initialized = datastoreDir.resolve("alarms").exists()
+      val dataStore: DataStore<AlarmValues> =
+          DataStoreFactory.create(
+              serializer = ProtobufSerializer,
+              produceFile = { datastoreDir.resolve("alarms") },
+              scope = ioScope,
+              corruptionHandler = ReplaceFileCorruptionHandler { AlarmValues() },
+          )
 
-  override fun delete() {
-    if (cached.get() != null) {
-      cached.set(null)
-      require(writes.tryEmit(null))
-      onDelete(id) { awaitStored() }
-    }
-  }
-
-  override suspend fun awaitStored() {
-    writtenState.first { it == cached.get() }
-  }
-
-  /** Updated when data is stored to disc. Use in tests and perhaps when not foreground. */
-  private val writtenState: MutableStateFlow<AlarmValue?> = MutableStateFlow(initialValue)
-
-  private val writes =
-      MutableSharedFlow<AlarmValue?>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
-
-  init {
-    writes
-        .distinctUntilChanged()
-        .conflate()
-        .map { next ->
-          val updated =
-              datastore.updateData { alarms ->
-                val modified =
-                    when {
-                      next != null -> alarms.alarms.plus(id to next)
-                      else -> alarms.alarms.minus(id)
-                    }
-                alarms.copy(alarms = modified)
-              }
-          if (id in updated.alarms) {
-            logger.debug { "Stored $next on disc" }
-          } else {
-            logger.debug { "Deleted $id on disc" }
+      val (restoredValues, duration) =
+          measureTimedValue {
+            runBlocking { withTimeout(5000) { ioScope.async { dataStore.data.first() }.await() } }
           }
-          writtenState.value = next
-          updated
+
+      logger.debug { "create() took ${duration.toInt()}ms" }
+
+      return DataStoreAlarmsRepository(
+              logger = logger,
+              ioScope = ioScope,
+              initial = restoredValues,
+              dataStore = dataStore,
+              initialized = initialized,
+          )
+          .also { it.launch() }
+    }
+  }
+
+  private val alarmsByIdState: MutableStateFlow<Map<Int, AlarmValue>> =
+      MutableStateFlow(initial.alarms)
+
+  override fun create(): AlarmStore {
+    val usedIds = alarmsByIdState.value.keys
+    val id = (0..Int.MAX_VALUE).first { it !in usedIds }
+    alarmsByIdState.update { alarmsById ->
+      val created = id to AlarmValue(id = id)
+      alarmsById.plus(created)
+    }
+    return createStoreView(id)
+  }
+
+  override fun query(): List<AlarmStore> {
+    return alarmsByIdState.value.map { (id, _) -> createStoreView(id) }
+  }
+
+  private fun launch() {
+    alarmsByIdState
+        .onEach { newData ->
+          val storeDuration = measureDuration {
+            dataStore.updateData { prev ->
+              val duration = measureDuration {
+                // changed
+                prev.alarms
+                    .filter { (id, value) -> id in newData && value != newData[id] }
+                    .forEach { (id, prevValue) ->
+                      logger.debug { "changed $prevValue => ${newData[id]}" }
+                    }
+                // added
+                newData
+                    .filter { (id, value) -> id !in prev.alarms }
+                    .forEach { logger.debug { "added ${it.value}" } }
+                // removed
+                prev.alarms
+                    .filter { (id, value) -> id !in newData }
+                    .forEach { logger.debug { "removed ${it.value}" } }
+              }
+              logger.debug { "Logging took ${duration.toInt()}ms" }
+              AlarmValues(alarms = newData)
+            }
+          }
+          logger.debug { "Store took ${storeDuration.toInt()}ms" }
         }
-        .takeWhile { id in it.alarms }
-        .launchIn(scope)
+        .launchIn(ioScope)
+  }
+
+  override fun awaitStored() {
+    val duration = measureDuration {
+      runBlocking {
+        withTimeout(5000) {
+          dataStore.data.first { stored -> stored.alarms == alarmsByIdState.value }
+        }
+      }
+    }
+    logger.debug { "awaitStored() took ${duration.toInt()}ms" }
+  }
+
+  /**
+   * Creates a view of the [alarmsByIdState] for the given id. [AlarmStore] is backed by the
+   * [alarmsByIdState] value associated with this id, therefore changes to [AlarmStore] are
+   * reflected in the state and are stored.
+   */
+  private fun createStoreView(id: Int): AlarmStore {
+    return object : AlarmStore {
+      override val id: Int = id
+      override var value: AlarmValue
+        get() {
+          check(Looper.getMainLooper() == Looper.myLooper()) { "Must be called on main thread" }
+          return requireNotNull(alarmsByIdState.value).getValue(id)
+        }
+        set(value) {
+          check(Looper.getMainLooper() == Looper.myLooper()) { "Must be called on main thread" }
+          alarmsByIdState.update { it.plus(id to value) }
+        }
+
+      override fun delete() {
+        check(Looper.getMainLooper() == Looper.myLooper()) { "Must be called on main thread" }
+        alarmsByIdState.update { it.minus(id) }
+      }
+    }
   }
 }
 
@@ -183,6 +186,7 @@ object ProtobufSerializer : Serializer<AlarmValues> {
       error("Failed to read from ${bytes.decodeToString()}")
     }
   }
+
   @Suppress("BlockingMethodInNonBlockingContext")
   override suspend fun writeTo(t: AlarmValues, output: OutputStream) {
     output.write(ProtoBuf.encodeToByteArray(AlarmValues.serializer(), t))

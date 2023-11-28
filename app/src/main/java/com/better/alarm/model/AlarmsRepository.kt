@@ -2,20 +2,28 @@ package com.better.alarm.model
 
 import com.better.alarm.stores.RxDataStore
 
-/** Created by Yuriy on 24.06.2017. */
+/** Repository for [AlarmValue] with an active record interface. */
 interface AlarmsRepository {
+  /** Creates a new [AlarmStore] with initial [AlarmValue]. All changes will be stored. */
   fun create(): AlarmStore
+  /** Query stored [AlarmValue]s as active records ([AlarmStore]s). */
   fun query(): List<AlarmStore>
+  /** Check if the repository is initialized. */
   val initialized: Boolean
-  suspend fun awaitStored()
+
+  /**
+   * Awaits until all pending changes are durably stored. This call is required before the system
+   * goes to sleep or the application can be destroyed.
+   */
+  fun awaitStored()
 }
 
+/** Active record for a single [AlarmValue]. */
 interface AlarmStore {
   val id: Int
   var value: AlarmValue
-  fun delete()
 
-  suspend fun awaitStored()
+  fun delete()
 }
 
 /** Change the contents of the [RxDataStore] given the previous value. */

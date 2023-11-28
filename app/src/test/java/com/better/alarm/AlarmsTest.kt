@@ -62,6 +62,7 @@ class AlarmsTest {
 
   @Before
   fun setUp() {
+    // Dispatchers.setMain(Dispatchers.Default.limitedParallelism(1))
     setMainUnconfined()
     prefs = create(Single.just(true), InMemoryRxDataStoreFactory.create())
     store =
@@ -85,6 +86,7 @@ class AlarmsTest {
             alarmsRepository,
             logger,
             databaseQuery)
+    alarms.start()
     alarmsScheduler.start()
     return alarms
   }
@@ -143,10 +145,7 @@ class AlarmsTest {
   fun alarmsFromMemoryMustBePresentInTheList() {
     // given
     alarmsRepository.create().modify { copy(isEnabled = true, label = "hello") }
-    val instance = createAlarms()
-    // when
-    instance.start()
-
+    createAlarms()
     // verify
     store.alarms().test().assertValue { alarmValues ->
       println(alarmValues)
@@ -342,8 +341,7 @@ class AlarmsTest {
     println("------------")
     // now we simulate it started all over again
     alarmSetterMock.removeRTCAlarm()
-    val newAlarms = createAlarms()
-    newAlarms.start()
+    createAlarms()
     assertThat(alarmSetterMock.id).isEqualTo(record.value.id)
   }
 
@@ -374,8 +372,7 @@ class AlarmsTest {
     println("------------")
     // now we simulate it started all over again
     alarmSetterMock.removeRTCAlarm()
-    val newAlarms = createAlarms()
-    newAlarms.start()
+    createAlarms()
     assertThat(alarmSetterMock.id).isEqualTo(record.value.id)
     // TODO
     //  assertThat(alarmSetterMock.getCalendar().get(Calendar.MINUTE)).isEqualTo(42);
@@ -410,7 +407,7 @@ class AlarmsTest {
     alarmsRepository.initialized = false
 
     // when
-    createAlarms().start()
+    createAlarms()
 
     // verify
     assertThat(store.alarms().test().values().first())
@@ -433,7 +430,7 @@ class AlarmsTest {
     every { databaseQuery.query() } returns alarmsInDatabase
 
     // when
-    createAlarms().start()
+    createAlarms()
 
     // verify
     assertThat(store.alarms().test().values().first()).containsAll(alarmsInDatabase)

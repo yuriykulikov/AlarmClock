@@ -58,7 +58,6 @@ import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import java.util.*
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.protobuf.ProtoBuf
 import org.koin.core.module.Module
@@ -233,7 +232,7 @@ class AlarmsListActivity : AppCompatActivity() {
   override fun onPause() {
     super.onPause()
     store.uiVisible.onNext(false)
-    runBlocking { repository.awaitStored() }
+    repository.awaitStored()
   }
 
   override fun onStop() {
