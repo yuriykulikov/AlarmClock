@@ -1,8 +1,10 @@
 package com.better.alarm.persistence
 
 import com.better.alarm.logger.Logger
+import com.better.alarm.model.AlarmsRepository
 import com.better.alarm.model.modify
 import com.better.alarm.persistance.DataStoreAlarmsRepository
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,9 +20,8 @@ class DataStoreAlarmsRepositoryTest {
 
   @Test
   fun `changes are cached`() {
-    val repository =
-        DataStoreAlarmsRepository(
-            datastoreDir = datastoreDir, logger = logger(), ioDispatcher = Dispatchers.IO)
+    val repository = createBlocking()
+
     repository.create().run {
       modify { copy(hour = 20) }
       modify { copy(minutes = 30) }
@@ -30,22 +31,20 @@ class DataStoreAlarmsRepositoryTest {
     }
   }
 
-  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
   fun `changes are written to file`() =
       runBlocking<Unit> {
-        val scheduler = Dispatchers.IO
-        val firstRepository = DataStoreAlarmsRepository(datastoreDir, logger(), scheduler)
+        val scope = CoroutineScope(Dispatchers.IO)
+        val firstRepository = createBlocking(scope)
         val alarmStore = firstRepository.create()
         // when
         alarmStore.modify { copy(hour = 20) }
         alarmStore.modify { copy(minutes = 30) }
         firstRepository.awaitStored()
-        firstRepository.ioScope.cancel()
-        firstRepository.ioScope.coroutineContext.job.join()
+        cancelAndJoin(scope)
 
         // then
-        DataStoreAlarmsRepository(datastoreDir, logger(), scheduler).query().run {
+        createBlocking().query().run {
           assertThat(first().value.hour).isEqualTo(20)
           assertThat(first().value.minutes).isEqualTo(30)
         }
@@ -55,8 +54,9 @@ class DataStoreAlarmsRepositoryTest {
   @Test
   fun `new alarms are deleted from the file when delete is called`() =
       runBlocking<Unit> {
-        val scheduler = Dispatchers.IO
-        with(DataStoreAlarmsRepository(datastoreDir, logger(), scheduler)) {
+        val ioScope = CoroutineScope(Dispatchers.IO)
+        val firstRepository = createBlocking(ioScope)
+        with(firstRepository) {
           create()
           val store = create()
           awaitStored()
@@ -66,7 +66,7 @@ class DataStoreAlarmsRepositoryTest {
         }
 
         // then
-        DataStoreAlarmsRepository(datastoreDir, logger(), scheduler).query().run {
+        createBlocking(CoroutineScope(Dispatchers.IO)).query().run {
           assertThat(this).hasSize(1)
           assertThat(first().value.hour).isEqualTo(0)
           assertThat(first().value.minutes).isEqualTo(0)
@@ -78,7 +78,8 @@ class DataStoreAlarmsRepositoryTest {
   fun `alarms are written to file when create is called`() =
       runBlocking<Unit> {
         val scheduler = Dispatchers.IO
-        with(DataStoreAlarmsRepository(datastoreDir, logger(), scheduler)) {
+        val ioScope = CoroutineScope(scheduler)
+        createBlocking(ioScope).run {
           create()
           // when
           awaitStored()
@@ -86,7 +87,7 @@ class DataStoreAlarmsRepositoryTest {
         }
 
         // then
-        DataStoreAlarmsRepository(datastoreDir, logger(), scheduler).query().run {
+        createBlocking().query().run {
           assertThat(first().value.hour).isEqualTo(0)
           assertThat(first().value.minutes).isEqualTo(0)
         }
@@ -95,6 +96,15 @@ class DataStoreAlarmsRepositoryTest {
   private fun logger(): Logger {
     return Logger.create()
   }
+
+  private fun createBlocking(
+      scope: CoroutineScope = CoroutineScope(Dispatchers.IO + CoroutineName("io"))
+  ): AlarmsRepository =
+      DataStoreAlarmsRepository.createBlocking(
+          datastoreDir = datastoreDir,
+          logger = logger(),
+          ioScope = scope,
+      )
 }
 
 private suspend fun cancelAndJoin(scope: CoroutineScope) {

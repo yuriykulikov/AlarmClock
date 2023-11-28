@@ -29,11 +29,13 @@ import com.better.alarm.interfaces.Alarm
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
+import com.better.alarm.model.AlarmsRepository
 
 class HandleSetAlarm : Activity() {
   private val store: Store by globalInject()
   private val alarmsManager: IAlarmsManager by globalInject()
   private val logger: Logger by globalLogger("HandleSetAlarm")
+  private val repository: AlarmsRepository by globalInject()
 
   override fun onCreate(icicle: Bundle?) {
     super.onCreate(icicle)
@@ -50,6 +52,7 @@ class HandleSetAlarm : Activity() {
       }
       intent.getBooleanExtra(AlarmClock.EXTRA_SKIP_UI, false) -> {
         createNewAlarmFromIntent(intent)
+        repository.awaitStored()
         finish()
       }
       else -> {

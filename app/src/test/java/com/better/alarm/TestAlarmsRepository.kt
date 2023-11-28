@@ -5,7 +5,6 @@ import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.AlarmsRepository
 import com.better.alarm.stores.InMemoryRxDataStoreFactory.Companion.inMemoryRxDataStore
 
-/** Created by Yuriy on 25.06.2017. */
 class TestAlarmsRepository : AlarmsRepository {
   private var idCounter: Int = 0
   val createdRecords = mutableListOf<AlarmStore>()
@@ -20,8 +19,6 @@ class TestAlarmsRepository : AlarmsRepository {
           override fun delete() {
             createdRecords.removeIf { it.value.id == value.id }
           }
-
-          override suspend fun awaitStored() {}
         }
         .also { createdRecords.add(it) }
   }
@@ -31,5 +28,6 @@ class TestAlarmsRepository : AlarmsRepository {
   }
 
   override var initialized: Boolean = true
-  override suspend fun awaitStored() {}
+
+  override fun awaitStored() {}
 }

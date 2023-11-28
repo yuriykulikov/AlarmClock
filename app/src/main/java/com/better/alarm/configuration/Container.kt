@@ -45,6 +45,7 @@ import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import java.io.File
 import java.util.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.Koin
 import org.koin.core.context.loadKoinModules
@@ -99,10 +100,10 @@ fun startKoin(context: Context): Koin {
     factory<IAlarmsScheduler> { get<AlarmsScheduler>() }
     single<AlarmCore.IStateNotifier> { AlarmStateNotifier(get()) }
     single<AlarmsRepository> {
-      DataStoreAlarmsRepository(
+      DataStoreAlarmsRepository.createBlocking(
           datastoreDir = get(named("datastore")),
           logger = logger("DataStoreAlarmsRepository"),
-          ioDispatcher = Dispatchers.IO,
+          ioScope = CoroutineScope(Dispatchers.IO),
       )
     }
     single(named("datastore")) { File(get<Context>().applicationContext.filesDir, "datastore") }
