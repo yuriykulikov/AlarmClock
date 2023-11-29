@@ -31,7 +31,7 @@ import com.better.alarm.configuration.InjectKt;
 /** Settings for the Alarm Clock. */
 public class SettingsActivity extends AppCompatActivity {
   private final DynamicThemeHandler dynamicThemeHandler =
-      InjectKt.globalInject(DynamicThemeHandler.class).getValue();
+      InjectKt.javaInject(DynamicThemeHandler.class);
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {

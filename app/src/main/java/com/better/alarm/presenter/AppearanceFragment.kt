@@ -18,13 +18,13 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.better.alarm.R
 import com.better.alarm.configuration.Prefs
-import com.better.alarm.configuration.globalInject
 import io.reactivex.disposables.CompositeDisposable
+import org.koin.android.ext.android.inject
 
 /** Dialog to set alarm time. */
 class AppearanceFragment : Fragment() {
-  private val dynamicThemeHandler: DynamicThemeHandler by globalInject()
-  private val prefs: Prefs by globalInject()
+  private val dynamicThemeHandler: DynamicThemeHandler by inject()
+  private val prefs: Prefs by inject()
   private val disposable: CompositeDisposable = CompositeDisposable()
 
   @TargetApi(21)

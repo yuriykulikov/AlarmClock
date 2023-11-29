@@ -17,7 +17,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.ActionBar
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuItemCompat
 import com.better.alarm.BuildConfig
 import com.better.alarm.R
@@ -36,11 +35,20 @@ import kotlinx.coroutines.flow.onEach
  * @author Kate
  */
 class ActionBarHandler(
-    private val mContext: AppCompatActivity,
+    private val activity: Context,
     private val store: UiStore,
     private val alarms: IAlarmsManager,
     private val reporter: BugReporter
 ) {
+  class Factory(
+      private val alarms: IAlarmsManager,
+      private val store: UiStore,
+      private val reporter: BugReporter
+  ) {
+    fun create(activity: Activity): ActionBarHandler =
+        ActionBarHandler(activity, store, alarms, reporter)
+  }
+
   private var scope = CoroutineScope(Dispatchers.Unconfined)
 
   /**
@@ -106,7 +114,7 @@ class ActionBarHandler(
   fun onOptionsItemSelected(item: MenuItem): Boolean {
     when (item.itemId) {
       R.id.menu_item_settings ->
-          mContext.startActivity(Intent(mContext, SettingsActivity::class.java))
+          activity.startActivity(Intent(activity, SettingsActivity::class.java))
       R.id.menu_review -> showSayThanks()
       R.id.menu_bugreport -> showBugreport()
       R.id.set_alarm_menu_delete_alarm -> deleteAlarm()
@@ -117,11 +125,11 @@ class ActionBarHandler(
   }
 
   private fun showAbout() {
-    AlertDialog.Builder(mContext)
+    AlertDialog.Builder(activity)
         .apply {
-          setTitle(mContext.getString(R.string.menu_about_title))
+          setTitle(activity.getString(R.string.menu_about_title))
           setView(
-              View.inflate(mContext, R.layout.dialog_about, null).apply {
+              View.inflate(activity, R.layout.dialog_about, null).apply {
                 findViewById<TextView>(R.id.dialog_about_text).run {
                   setText(R.string.dialog_about_content)
                   movementMethod = LinkMovementMethod.getInstance()
@@ -134,10 +142,10 @@ class ActionBarHandler(
   }
 
   private fun deleteAlarm() {
-    AlertDialog.Builder(mContext)
+    AlertDialog.Builder(activity)
         .apply {
-          setTitle(mContext.getString(R.string.delete_alarm))
-          setMessage(mContext.getString(R.string.delete_alarm_confirm))
+          setTitle(activity.getString(R.string.delete_alarm))
+          setMessage(activity.getString(R.string.delete_alarm_confirm))
           setPositiveButton(android.R.string.ok) { _, _ ->
             store.editing().value?.value?.id?.let { alarms.getAlarm(it)?.delete() }
             store.hideDetails()
@@ -148,7 +156,7 @@ class ActionBarHandler(
   }
 
   private fun showSayThanks() {
-    val inflator = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    val inflator = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
     val dialogView =
         inflator.inflate(R.layout.dialog_say_thanks, null).apply {
@@ -157,9 +165,9 @@ class ActionBarHandler(
             val uri = Uri.parse("market://details?id=$appId")
             val fallback = Uri.parse("https://play.google.com/store/apps/details?id=$appId")
             try {
-              mContext.startActivity(Intent(Intent.ACTION_VIEW, uri))
+              activity.startActivity(Intent(Intent.ACTION_VIEW, uri))
             } catch (anfe: ActivityNotFoundException) {
-              mContext.startActivity(Intent(Intent.ACTION_VIEW, fallback))
+              activity.startActivity(Intent(Intent.ACTION_VIEW, fallback))
             }
           }
 
@@ -167,7 +175,7 @@ class ActionBarHandler(
               .movementMethod = LinkMovementMethod.getInstance()
         }
 
-    AlertDialog.Builder(mContext)
+    AlertDialog.Builder(activity)
         .apply {
           setPositiveButton(android.R.string.ok) { _, _ -> }
           setTitle(R.string.dialog_say_thanks_title)
@@ -179,14 +187,14 @@ class ActionBarHandler(
   }
 
   private fun showBugreport() {
-    val inflator = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    val inflator = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
     val dialogView = inflator.inflate(R.layout.dialog_bugreport, null)
 
     dialogView.findViewById<TextView>(R.id.dialog_bugreport_textview).movementMethod =
         LinkMovementMethod.getInstance()
 
-    AlertDialog.Builder(mContext)
+    AlertDialog.Builder(activity)
         .apply {
           setPositiveButton(android.R.string.ok) { _, _ -> reporter.sendUserReport() }
           setTitle(R.string.menu_bugreport)

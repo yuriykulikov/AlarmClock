@@ -19,7 +19,6 @@ import androidx.fragment.app.Fragment
 import com.better.alarm.R
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.Store
-import com.better.alarm.configuration.globalInject
 import com.better.alarm.configuration.globalLogger
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.logger.Logger
@@ -29,6 +28,7 @@ import com.melnykov.fab.FloatingActionButton
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import kotlinx.coroutines.channels.Channel
+import org.koin.android.ext.android.inject
 
 /**
  * Shows a list of alarms. To react on user interaction, requires a strategy. An activity hosting
@@ -37,10 +37,10 @@ import kotlinx.coroutines.channels.Channel
  * @author Yuriy
  */
 class AlarmsListFragment : Fragment() {
-  private val alarms: IAlarmsManager by globalInject()
-  private val store: Store by globalInject()
-  private val uiStore: UiStore by globalInject()
-  private val prefs: Prefs by globalInject()
+  private val alarms: IAlarmsManager by inject()
+  private val store: Store by inject()
+  private val uiStore: UiStore by inject()
+  private val prefs: Prefs by inject()
   private val logger: Logger by globalLogger("AlarmsListFragment")
   var transitionRowHolder: RowHolder? = null
     private set

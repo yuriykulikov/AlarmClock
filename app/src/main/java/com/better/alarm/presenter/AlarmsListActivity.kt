@@ -42,8 +42,6 @@ import com.better.alarm.checkPermissions
 import com.better.alarm.configuration.AlarmApplication
 import com.better.alarm.configuration.EditedAlarm
 import com.better.alarm.configuration.Store
-import com.better.alarm.configuration.globalGet
-import com.better.alarm.configuration.globalInject
 import com.better.alarm.configuration.globalLogger
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.logger.Logger
@@ -57,20 +55,23 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.protobuf.ProtoBuf
+import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 
 /** This activity displays a list of alarms and optionally a details fragment. */
 class AlarmsListActivity : AppCompatActivity() {
-  private lateinit var mActionBarHandler: ActionBarHandler
-
+  private val mActionBarHandler: ActionBarHandler by lazy {
+    get<ActionBarHandler.Factory>().create(this)
+  }
   private val logger: Logger by globalLogger("AlarmsListActivity")
-  private val alarms: IAlarmsManager by globalInject()
-  private val store: Store by globalInject()
-  private val repository: AlarmsRepository by globalInject()
+  private val alarms: IAlarmsManager by inject()
+  private val store: Store by inject()
+  private val repository: AlarmsRepository by inject()
 
   private var snackbarDisposable = Disposables.disposed()
 
-  private val uiStore: UiStore by globalInject()
-  private val dynamicThemeHandler: DynamicThemeHandler by globalInject()
+  private val uiStore: UiStore by inject()
+  private val dynamicThemeHandler: DynamicThemeHandler by inject()
 
   override fun onNewIntent(intent: Intent?) {
     super.onNewIntent(intent)
@@ -105,8 +106,6 @@ class AlarmsListActivity : AppCompatActivity() {
       // need this because store is not scoped
       uiStore.editing().value = null
     }
-
-    this.mActionBarHandler = ActionBarHandler(this, uiStore, alarms, globalGet())
 
     if (!resources.getBoolean(R.bool.isTablet)) {
       requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
