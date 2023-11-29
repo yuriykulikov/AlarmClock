@@ -17,16 +17,16 @@ import androidx.fragment.app.Fragment
 import com.better.alarm.R
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.Store
-import com.better.alarm.configuration.globalInject
 import com.better.alarm.util.Optional
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.BiFunction
+import org.koin.android.ext.android.inject
 
 /** @author Yuriy */
 class InfoFragment : Fragment() {
-  private val prefs: Prefs by globalInject()
-  private val store: Store by globalInject()
+  private val prefs: Prefs by inject()
+  private val store: Store by inject()
   private var disposable: Disposable? = null
 
   override fun onCreateView(

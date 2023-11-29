@@ -15,8 +15,6 @@ import com.better.alarm.CHANNEL_ID
 import com.better.alarm.R
 import com.better.alarm.configuration.AlarmApplication
 import com.better.alarm.configuration.Prefs
-import com.better.alarm.configuration.globalGet
-import com.better.alarm.configuration.globalInject
 import com.better.alarm.configuration.logger
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
@@ -29,6 +27,8 @@ import com.better.alarm.wakelock.Wakelocks
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import java.util.concurrent.Executor
+import org.koin.android.ext.android.inject
+import org.koin.core.context.GlobalContext
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.koinApplication
@@ -133,7 +133,7 @@ class AlertServiceWrapper : Service() {
     }
   }
 
-  private val wakelocks: WakeLockManager by globalInject()
+  private val wakelocks: WakeLockManager by inject()
   private lateinit var alertService: AlertService
 
   override fun onCreate() {
@@ -143,16 +143,16 @@ class AlertServiceWrapper : Service() {
               modules(module())
               modules(
                   module {
-                    factory { globalGet<LoggerFactory>() }
-                    factory { globalGet<Wakelocks>() }
-                    factory { globalGet<IAlarmsManager>() }
-                    factory { globalGet<TelephonyManager>() }
+                    factory { GlobalContext.get().get<LoggerFactory>() }
+                    factory { GlobalContext.get().get<Wakelocks>() }
+                    factory { GlobalContext.get().get<IAlarmsManager>() }
+                    factory { GlobalContext.get().get<TelephonyManager>() }
                     factory<Context> { this@AlertServiceWrapper }
-                    factory { globalGet<NotificationManager>() }
-                    factory { globalGet<Prefs>() }
-                    factory { globalGet<Scheduler>() }
-                    factory { globalGet<Vibrator>() }
-                    factory { globalGet<Resources>() }
+                    factory { GlobalContext.get().get<NotificationManager>() }
+                    factory { GlobalContext.get().get<Prefs>() }
+                    factory { GlobalContext.get().get<Scheduler>() }
+                    factory { GlobalContext.get().get<Vibrator>() }
+                    factory { GlobalContext.get().get<Resources>() }
                   })
               modules(
                   module {

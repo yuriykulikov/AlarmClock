@@ -35,7 +35,6 @@ import com.better.alarm.R
 import com.better.alarm.checkPermissions
 import com.better.alarm.configuration.Layout
 import com.better.alarm.configuration.Prefs
-import com.better.alarm.configuration.globalInject
 import com.better.alarm.configuration.globalLogger
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.logger.Logger
@@ -50,26 +49,27 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.rx2.asObservable
+import org.koin.android.ext.android.inject
 
 class AlarmDetailsViewModel : ViewModel() {
   var newAlarmPopupSeen: Boolean = false
 }
 /** Details activity allowing for fine-grained alarm modification */
 class AlarmDetailsFragment : Fragment() {
-  private val alarms: IAlarmsManager by globalInject()
+  private val alarms: IAlarmsManager by inject()
   private val logger: Logger by globalLogger("AlarmDetailsFragment")
-  private val prefs: Prefs by globalInject()
+  private val prefs: Prefs by inject()
   private var disposables = CompositeDisposable()
 
   private var backButtonSub: Disposable = Disposables.disposed()
   private var disposableDialog = Disposables.disposed()
 
   private val alarmsListActivity by lazy { activity as AlarmsListActivity }
-  private val store: UiStore by globalInject()
+  private val store: UiStore by inject()
   private val viewModel: AlarmDetailsViewModel by viewModels()
 
   val rowHolder: RowHolder by lazy {

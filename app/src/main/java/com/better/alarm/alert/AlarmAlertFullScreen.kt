@@ -35,7 +35,6 @@ import com.better.alarm.background.Event.SnoozedEvent
 import com.better.alarm.configuration.AlarmApplication
 import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.Store
-import com.better.alarm.configuration.globalInject
 import com.better.alarm.configuration.globalLogger
 import com.better.alarm.interfaces.Alarm
 import com.better.alarm.interfaces.IAlarmsManager
@@ -48,17 +47,18 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import java.util.concurrent.TimeUnit
+import org.koin.android.ext.android.inject
 
 /**
  * Alarm Clock alarm alert: pops visible indicator and plays alarm tone. This activity is the full
  * screen version which shows over the lock screen with the wallpaper as the background.
  */
 class AlarmAlertFullScreen : FragmentActivity() {
-  private val store: Store by globalInject()
-  private val alarmsManager: IAlarmsManager by globalInject()
-  private val sp: Prefs by globalInject()
+  private val store: Store by inject()
+  private val alarmsManager: IAlarmsManager by inject()
+  private val sp: Prefs by inject()
   private val logger by globalLogger("AlarmAlertFullScreen")
-  private val dynamicThemeHandler: DynamicThemeHandler by globalInject()
+  private val dynamicThemeHandler: DynamicThemeHandler by inject()
   private var mAlarm: Alarm? = null
   private var disposableDialog = Disposables.empty()
   private var subscription: Disposable? = null

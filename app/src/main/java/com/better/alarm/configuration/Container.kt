@@ -29,6 +29,7 @@ import com.better.alarm.persistance.DataStoreAlarmsRepository
 import com.better.alarm.persistance.DatabaseQuery
 import com.better.alarm.persistance.DatastoreMigration
 import com.better.alarm.persistance.SQLiteDatabaseQuery
+import com.better.alarm.presenter.ActionBarHandler
 import com.better.alarm.presenter.DynamicThemeHandler
 import com.better.alarm.presenter.ScheduledReceiver
 import com.better.alarm.presenter.ToastPresenter
@@ -44,7 +45,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import java.io.File
-import java.util.*
+import java.util.Calendar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.Koin
@@ -91,6 +92,7 @@ fun startKoin(context: Context): Koin {
           events = PublishSubject.create())
     }
 
+    factory { ActionBarHandler.Factory(get(), get(), get()) }
     single { UiStore(get()) }
 
     factory { get<Context>().getSystemService(Context.ALARM_SERVICE) as AlarmManager }
@@ -140,6 +142,7 @@ fun startKoin(context: Context): Koin {
   }
 
   return startKoin {
+        allowOverride(true)
         modules(module)
         modules(loggerModule())
       }
@@ -147,7 +150,5 @@ fun startKoin(context: Context): Koin {
 }
 
 fun overrideIs24hoursFormatOverride(is24hours: Boolean) {
-  loadKoinModules(
-      module =
-          module(override = true) { factory(named("dateFormatOverride")) { is24hours.toString() } })
+  loadKoinModules(module { factory(named("dateFormatOverride")) { is24hours.toString() } })
 }

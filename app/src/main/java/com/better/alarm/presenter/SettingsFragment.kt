@@ -16,19 +16,19 @@ import androidx.preference.PreferenceFragmentCompat
 import com.better.alarm.R
 import com.better.alarm.checkPermissions
 import com.better.alarm.configuration.Prefs
-import com.better.alarm.configuration.globalInject
 import com.better.alarm.configuration.globalLogger
 import com.better.alarm.logger.Logger
 import com.better.alarm.model.Alarmtone
 import com.better.alarm.stores.RxDataStore
 import com.better.alarm.view.VolumePreference
 import io.reactivex.disposables.CompositeDisposable
+import org.koin.android.ext.android.inject
 
 /** Created by Yuriy on 24.07.2017. */
 class SettingsFragment : PreferenceFragmentCompat() {
   private val alarmStreamTypeBit = 1 shl AudioManager.STREAM_ALARM
-  private val vibrator: Vibrator by globalInject()
-  private val prefs: Prefs by globalInject()
+  private val vibrator: Vibrator by inject()
+  private val prefs: Prefs by inject()
   private val disposables = CompositeDisposable()
   private val logger: Logger by globalLogger("SettingsFragment")
 

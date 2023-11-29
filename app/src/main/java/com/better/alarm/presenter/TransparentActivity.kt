@@ -1,13 +1,13 @@
 package com.better.alarm.presenter
 
-import com.better.alarm.configuration.globalInject
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
 import io.reactivex.disposables.Disposables
+import org.koin.android.ext.android.inject
 
 class TransparentActivity : androidx.fragment.app.FragmentActivity() {
   private var dialog = Disposables.disposed()
-  private val alarms: IAlarmsManager by globalInject()
+  private val alarms: IAlarmsManager by inject()
 
   override fun onResume() {
     super.onResume()

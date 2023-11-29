@@ -26,10 +26,4 @@ inline fun <reified T : Any> globalGet(
 
 fun globalLogger(tag: String) = lazy { GlobalContext.get().get<LoggerFactory>().createLogger(tag) }
 
-/**
- * globalInject lazily given dependency
- *
- * @param clazz
- */
-fun <T : Any> globalInject(clazz: Class<T>) =
-    lazy<T> { GlobalContext.get().get(clazz = clazz.kotlin) }
+fun <T : Any> javaInject(clazz: Class<T>): T = GlobalContext.get().get<T>(clazz = clazz.kotlin)

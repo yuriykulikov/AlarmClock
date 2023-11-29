@@ -23,19 +23,19 @@ import android.os.Bundle
 import android.provider.AlarmClock
 import com.better.alarm.configuration.AlarmApplication
 import com.better.alarm.configuration.Store
-import com.better.alarm.configuration.globalInject
 import com.better.alarm.configuration.globalLogger
 import com.better.alarm.interfaces.Alarm
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.logger.Logger
 import com.better.alarm.model.AlarmsRepository
+import org.koin.android.ext.android.inject
 
 class HandleSetAlarm : Activity() {
-  private val store: Store by globalInject()
-  private val alarmsManager: IAlarmsManager by globalInject()
+  private val store: Store by inject()
+  private val alarmsManager: IAlarmsManager by inject()
   private val logger: Logger by globalLogger("HandleSetAlarm")
-  private val repository: AlarmsRepository by globalInject()
+  private val repository: AlarmsRepository by inject()
 
   override fun onCreate(icicle: Bundle?) {
     super.onCreate(icicle)

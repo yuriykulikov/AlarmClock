@@ -14,7 +14,6 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.better.alarm.R
 import com.better.alarm.alert.AlarmAlertFullScreen
 import com.better.alarm.configuration.Store
-import com.better.alarm.configuration.globalInject
 import com.better.alarm.configuration.overrideIs24hoursFormatOverride
 import com.better.alarm.interfaces.Intents
 import com.better.alarm.model.AlarmSetter
@@ -35,6 +34,7 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
+import org.koin.core.context.GlobalContext
 
 /** Created by Yuriy on 12.07.2017. */
 @RunWith(AndroidJUnit4::class)
@@ -115,7 +115,7 @@ class PopupTest {
     Espresso.onView(ViewMatchers.withText("9")).perform(ViewActions.click())
     assertTimerView("23:59")
     Espresso.onView(ViewMatchers.withText("OK")).perform(ViewActions.click())
-    val next = globalInject(Store::class.java).value.next().blockingFirst()
+    val next = GlobalContext.get().get<Store>().next().blockingFirst()
     assertThat(next.isPresent()).isTrue
     val nextTime = Calendar.getInstance()
     nextTime.timeInMillis = next.get().nextNonPrealarmTime()
