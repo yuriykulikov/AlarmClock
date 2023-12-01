@@ -122,15 +122,14 @@ class AppearanceFragment : Fragment() {
 
   private fun applySelectedTheme() {
     Handler(Looper.getMainLooper()).post {
-      val intent =
-          requireActivity()
-              .packageManager
-              .getLaunchIntentForPackage(requireActivity().packageName)
-              ?.apply {
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                putExtra("reason", SettingsFragment.themeChangeReason)
-              }
-      startActivity(intent)
+      requireActivity()
+          .packageManager
+          .getLaunchIntentForPackage(requireActivity().packageName)
+          ?.apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            putExtra("reason", SettingsFragment.themeChangeReason)
+          }
+          ?.let { startActivity(it) }
     }
   }
 
