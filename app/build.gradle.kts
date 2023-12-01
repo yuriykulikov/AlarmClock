@@ -152,7 +152,7 @@ dependencies {
   implementation("io.reactivex.rxjava2:rxjava:2.2.21")
   implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
   implementation("io.insert-koin:koin-core:3.4.1")
-  implementation("androidx.fragment:fragment:1.5.6")
+  implementation("androidx.fragment:fragment:1.6.2")
   // TODO remove this when we don't use it anymore
   implementation("androidx.preference:preference:1.2.1")
   // resolves duplicate class caused by androidx.preference:preference:1.2.0

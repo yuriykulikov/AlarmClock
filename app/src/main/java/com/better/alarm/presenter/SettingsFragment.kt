@@ -55,15 +55,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
     findPreference<Preference>(Prefs.KEY_THEME)?.onPreferenceChangeListener =
         Preference.OnPreferenceChangeListener { _, _ ->
           Handler(Looper.getMainLooper()).post {
-            val intent =
-                requireActivity()
-                    .packageManager
-                    .getLaunchIntentForPackage(requireActivity().packageName)
-                    ?.apply {
-                      addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                      putExtra("reason", themeChangeReason)
-                    }
-            startActivity(intent)
+            requireActivity()
+                .packageManager
+                .getLaunchIntentForPackage(requireActivity().packageName)
+                ?.apply {
+                  addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                  putExtra("reason", themeChangeReason)
+                }
+                ?.let { startActivity(it) }
           }
           true
         }
