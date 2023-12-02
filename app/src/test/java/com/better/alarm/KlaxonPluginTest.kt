@@ -1,11 +1,11 @@
 package com.better.alarm
 
-import com.better.alarm.background.KlaxonPlugin
-import com.better.alarm.background.Player
-import com.better.alarm.background.PluginAlarmData
-import com.better.alarm.background.TargetVolume
+import com.better.alarm.data.Alarmtone
 import com.better.alarm.logger.Logger
-import com.better.alarm.model.Alarmtone
+import com.better.alarm.services.KlaxonPlugin
+import com.better.alarm.services.Player
+import com.better.alarm.services.PluginAlarmData
+import com.better.alarm.services.TargetVolume
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

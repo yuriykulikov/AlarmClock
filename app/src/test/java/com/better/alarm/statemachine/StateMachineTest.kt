@@ -1,5 +1,7 @@
 package com.better.alarm.statemachine
 
+import com.better.alarm.domain.statemachine.State
+import com.better.alarm.domain.statemachine.StateMachine
 import com.better.alarm.logger.Logger
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

@@ -1,14 +1,14 @@
 package com.better.alarm
 
-import com.better.alarm.configuration.Prefs
-import com.better.alarm.configuration.Store
+import com.better.alarm.data.AlarmsRepository
+import com.better.alarm.data.DataStoreAlarmsRepository
+import com.better.alarm.data.Prefs
+import com.better.alarm.data.stores.InMemoryRxDataStoreFactory
+import com.better.alarm.domain.AlarmCore
+import com.better.alarm.domain.AlarmsScheduler
+import com.better.alarm.domain.Calendars
+import com.better.alarm.domain.Store
 import com.better.alarm.logger.Logger
-import com.better.alarm.model.AlarmCore
-import com.better.alarm.model.AlarmsRepository
-import com.better.alarm.model.AlarmsScheduler
-import com.better.alarm.model.Calendars
-import com.better.alarm.persistance.DataStoreAlarmsRepository
-import com.better.alarm.stores.InMemoryRxDataStoreFactory
 import com.better.alarm.util.Optional
 import io.mockk.mockk
 import io.reactivex.Single

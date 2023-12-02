@@ -21,7 +21,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
-        android:name=".configuration.AlarmApplication"
+        android:name=".bootstrap.AlarmApplication"
         android:allowBackup="true"
         android:fullBackupOnly="true"
         android:icon="@mipmap/ic_launcher"
@@ -30,7 +30,7 @@
 
         <!-- Activity to set a new or modify existing alarm -->
         <activity
-            android:name=".presenter.AlarmsListActivity"
+            android:name=".ui.main.AlarmsListActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
             android:exported="true"
             android:label="@string/alarm_list_title"
@@ -44,14 +44,14 @@
 
         <!-- Application Settings -->
         <activity
-            android:name=".presenter.SettingsActivity"
+            android:name=".ui.settings.SettingsActivity"
             android:excludeFromRecents="true"
             android:exported="false"
             android:label="@string/settings"
             android:theme="@style/DefaultDarkTheme" />
 
         <activity
-            android:name=".presenter.HandleSetAlarm"
+            android:name=".ui.exported.HandleSetAlarm"
             android:excludeFromRecents="true"
             android:exported="true"
             android:permission="com.android.alarm.permission.SET_ALARM"
@@ -64,7 +64,7 @@
         <!-- This activity is basically the same as AlarmAlert
              but full-screen so that it can turn the display on. -->
         <activity
-            android:name=".alert.AlarmAlertFullScreen"
+            android:name=".ui.alert.AlarmAlertFullScreen"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
@@ -73,7 +73,7 @@
 
         <!-- Transparent activity with TimPickerFragment -->
         <activity
-            android:name=".presenter.TransparentActivity"
+            android:name=".ui.alert.TransparentActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
@@ -82,13 +82,13 @@
 
         <!-- KlaxonPresenter plays sound -->
         <service
-            android:name=".background.AlertServiceWrapper"
+            android:name=".services.AlertServiceWrapper"
             android:description="@string/alarm_klaxon_service_desc"
             android:exported="false" />
 
         <!-- Model -->
         <receiver
-            android:name=".model.AlarmsReceiver"
+            android:name=".receivers.AlarmsReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="${applicationId}.ACTION_FIRED" />
@@ -104,11 +104,11 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".model.TestReceiver"
+            android:name=".receivers.TestReceiver"
             android:exported="false" />
         <!-- Persistence -->
         <provider
-            android:name=".persistance.AlarmProvider"
+            android:name=".data.contentprovider.AlarmProvider"
             android:authorities="${applicationId}.model"
             android:exported="false" />
     </application>

@@ -5,8 +5,8 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.better.alarm.presenter.AlarmsListActivity
 import com.better.alarm.test.TestSync.Companion.openActionBarOverflowOrOptionsMenu
+import com.better.alarm.ui.main.AlarmsListActivity
 import java.util.*
 import org.junit.Rule
 import org.junit.Test

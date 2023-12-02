@@ -2,12 +2,12 @@ package com.better.alarm.test
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.better.alarm.configuration.Store
-import com.better.alarm.configuration.overrideIs24hoursFormatOverride
-import com.better.alarm.model.AlarmValue
-import com.better.alarm.model.Alarmtone
-import com.better.alarm.model.DaysOfWeek
-import com.better.alarm.presenter.computeTexts
+import com.better.alarm.bootstrap.overrideIs24hoursFormatOverride
+import com.better.alarm.data.AlarmValue
+import com.better.alarm.data.Alarmtone
+import com.better.alarm.data.DaysOfWeek
+import com.better.alarm.domain.Store
+import com.better.alarm.ui.list.computeTexts
 import java.util.Calendar
 import java.util.Locale
 import org.assertj.core.api.Assertions.assertThat

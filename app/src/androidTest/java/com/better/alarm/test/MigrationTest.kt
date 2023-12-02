@@ -3,11 +3,11 @@ package com.better.alarm.test
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.better.alarm.model.DaysOfWeek
-import com.better.alarm.model.TestReceiver
-import com.better.alarm.persistance.AlarmDatabaseHelper
-import com.better.alarm.persistance.SQLiteDatabaseQuery
-import com.better.alarm.presenter.AlarmsListActivity
+import com.better.alarm.data.DaysOfWeek
+import com.better.alarm.data.contentprovider.AlarmDatabaseHelper
+import com.better.alarm.data.contentprovider.SQLiteDatabaseQuery
+import com.better.alarm.receivers.TestReceiver
+import com.better.alarm.ui.main.AlarmsListActivity
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.AfterClass

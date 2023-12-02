@@ -84,7 +84,7 @@
 
                         <fragment
                             android:id="@+id/list_activity_info_fragment"
-                            android:name="com.better.alarm.presenter.InfoFragment"
+                            android:name="com.better.alarm.ui.list.InfoFragment"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             tools:layout="@layout/info_fragment" />
@@ -93,7 +93,7 @@
             </androidx.appcompat.widget.Toolbar>
 
             <fragment
-                android:name="com.better.alarm.presenter.AppearanceFragment"
+                android:name="com.better.alarm.ui.themes.AppearanceFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:layout="@layout/appearance_fragment" />
