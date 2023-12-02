@@ -74,7 +74,7 @@
                         android:layout_gravity="center_horizontal"
                         android:alpha="0.8"
                         android:src="@drawable/ic_baseline_horizontal_rule_24"
-                        android:tint="?android:attr/textColorPrimary" />
+                        app:tint="?android:attr/textColorPrimary" />
 
                     <FrameLayout
                         android:layout_width="match_parent"
