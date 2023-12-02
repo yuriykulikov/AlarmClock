@@ -36,29 +36,41 @@ enum class TargetVolume {
 
 sealed class Event {
   data class NullEvent(val actions: String = "null") : Event()
+
   data class AlarmEvent(val id: Int, val actions: String = Intents.ALARM_ALERT_ACTION) : Event()
+
   data class PrealarmEvent(val id: Int, val actions: String = Intents.ALARM_PREALARM_ACTION) :
       Event()
+
   data class DismissEvent(val id: Int, val actions: String = Intents.ALARM_DISMISS_ACTION) :
       Event()
+
   data class SnoozedEvent(
       val id: Int,
       val calendar: Calendar,
       val actions: String = Intents.ALARM_SNOOZE_ACTION
   ) : Event()
+
   data class ShowSkip(val id: Int, val actions: String = Intents.ALARM_SHOW_SKIP) : Event()
+
   data class HideSkip(val id: Int, val actions: String = Intents.ALARM_REMOVE_SKIP) : Event()
+
   data class CancelSnoozedEvent(val id: Int, val actions: String = Intents.ACTION_CANCEL_SNOOZE) :
       Event()
+
   data class Autosilenced(val id: Int, val actions: String = Intents.ACTION_SOUND_EXPIRED) :
       Event()
+
   data class MuteEvent(val actions: String = Intents.ACTION_MUTE) : Event()
+
   data class DemuteEvent(val actions: String = Intents.ACTION_DEMUTE) : Event()
 }
 
 interface EnclosingService {
   fun handleUnwantedEvent()
+
   fun stopSelf()
+
   fun startForeground(id: Int, notification: Notification)
 }
 
@@ -80,6 +92,7 @@ class AlertService(
     NORMAL,
     PREALARM
   }
+
   private data class CallState(val initial: Boolean, val inCall: Boolean)
 
   private val disposable: CompositeDisposable = CompositeDisposable()

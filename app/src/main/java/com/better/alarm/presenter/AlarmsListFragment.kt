@@ -71,6 +71,7 @@ class AlarmsListFragment : Fragment() {
   companion object {
     var fabSync: Channel<Unit>? = null
   }
+
   inner class AlarmListAdapter(alarmTime: Int, label: Int, private val values: List<AlarmValue>) :
       ArrayAdapter<AlarmValue>(requireContext(), alarmTime, label, values) {
     private val highlighter: ListRowHighlighter by lazy {

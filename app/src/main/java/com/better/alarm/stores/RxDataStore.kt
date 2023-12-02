@@ -28,6 +28,7 @@ import io.reactivex.Observable
 /** Represents a single store. This an observable and persistent container for a single value. */
 interface RxDataStore<T> {
   var value: T
+
   fun observe(): Observable<T>
 }
 

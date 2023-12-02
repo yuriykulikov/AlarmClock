@@ -59,6 +59,7 @@ class AlertServiceTest {
       object : AlertPlugin {
         var targetVolumeTest: TestObserver<TargetVolume> by Delegates.notNull()
         val disposables: MutableMap<Int, Disposable> = mutableMapOf()
+
         override fun go(
             alarm: PluginAlarmData,
             prealarm: Boolean,
@@ -244,6 +245,7 @@ class AlertServiceTest {
 
     verify { player.setDataSource("DEFAULT_ALARM_ALERT_URI_IN_TEST") }
   }
+
   @Test
   fun `custom alarm is used when configured`() {
     val logger = Logger.create()

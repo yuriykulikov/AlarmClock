@@ -114,6 +114,7 @@ class BackgroundNotifications(
   }
 
   private fun getString(id: Int, vararg args: String) = mContext.getString(id, *args)
+
   private fun getString(id: Int) = mContext.getString(id)
 
   private fun Calendar.formatTimeString(): String {

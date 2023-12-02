@@ -14,13 +14,16 @@ import java.util.concurrent.TimeUnit
 
 interface Player {
   fun startAlarm()
+
   fun setDataSourceFromResource(res: Int)
+
   fun setPerceivedVolume(perceived: Float)
 
   /** Stops alarm audio */
   fun stop()
 
   fun reset()
+
   fun setDataSource(uri: String)
 }
 

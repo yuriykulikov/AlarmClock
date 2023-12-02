@@ -10,6 +10,7 @@ import java.util.*
 
 interface DatabaseQuery {
   fun query(): List<AlarmValue>
+
   fun delete(id: Int)
 }
 

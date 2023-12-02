@@ -29,6 +29,7 @@ class KlaxonPluginTest {
           scheduler = scheduler)
 
   private fun Float.squared() = this * this
+
   private val closeEnough = Percentage.withPercentage(10f.toDouble())
 
   @Test

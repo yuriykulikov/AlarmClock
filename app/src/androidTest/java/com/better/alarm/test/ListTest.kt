@@ -61,6 +61,7 @@ class ListTest {
 
     assertThat(alarmsList().filter { it.isEnabled }).isEmpty()
   }
+
   @Test
   fun alarmsCanBeDeletedWithLongClick() {
     clickFab()
