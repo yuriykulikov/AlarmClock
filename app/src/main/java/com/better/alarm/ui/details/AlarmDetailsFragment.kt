@@ -29,8 +29,7 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.lifecycleScope
 import com.better.alarm.R
 import com.better.alarm.bootstrap.globalLogger
 import com.better.alarm.data.AlarmValue
@@ -46,39 +45,40 @@ import com.better.alarm.ui.ringtonepicker.showRingtonePicker
 import com.better.alarm.ui.ringtonepicker.userFriendlyTitle
 import com.better.alarm.ui.row.ListRowHighlighter
 import com.better.alarm.ui.row.RowHolder
+import com.better.alarm.ui.state.BackPresses
+import com.better.alarm.ui.state.EditedAlarm
 import com.better.alarm.ui.themes.resolveColor
 import com.better.alarm.ui.timepicker.PickedTime
 import com.better.alarm.ui.timepicker.TimePickerDialogFragment
 import com.better.alarm.util.Optional
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
-import io.reactivex.schedulers.Schedulers
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.rx2.asObservable
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class AlarmDetailsViewModel : ViewModel() {
-  var newAlarmPopupSeen: Boolean = false
-}
 /** Details activity allowing for fine-grained alarm modification */
 class AlarmDetailsFragment : Fragment() {
-  private val alarms: IAlarmsManager by inject()
+  @Deprecated("Use viewModel instead") private val alarms: IAlarmsManager by inject()
   private val logger: Logger by globalLogger("AlarmDetailsFragment")
-  private val prefs: Prefs by inject()
+  @Deprecated("Use viewModel instead") private val prefs: Prefs by inject()
   private var disposables = CompositeDisposable()
 
-  private var backButtonSub: Disposable = Disposables.disposed()
+  private val backPresses: BackPresses by inject()
   private var disposableDialog = Disposables.disposed()
 
   private val alarmsListActivity by lazy { activity as AlarmsListActivity }
-  private val store: UiStore by inject()
-  private val viewModel: AlarmDetailsViewModel by viewModels()
+  private val detailsViewModel: AlarmDetailsViewModel by viewModel()
 
   val rowHolder: RowHolder by lazy {
     RowHolder(fragmentView.findViewById(R.id.details_list_row_container), -1, prefs.layout())
@@ -90,9 +90,7 @@ class AlarmDetailsFragment : Fragment() {
       field = value
     }
 
-  private val editor: Observable<AlarmValue> by lazy {
-    store.editing().mapNotNull { it?.value }.asObservable()
-  }
+  private val editor: StateFlow<EditedAlarm?> by lazy { detailsViewModel.editor() }
 
   private val highlighter: ListRowHighlighter? by lazy {
     ListRowHighlighter.createFor(requireActivity().theme)
@@ -107,7 +105,7 @@ class AlarmDetailsFragment : Fragment() {
       container: ViewGroup?,
       savedInstanceState: Bundle?
   ): View {
-    val editedAlarm = store.editing().value
+    val editedAlarm = editor.value
     logger.trace { "Showing details of $editedAlarm" }
 
     val view =
@@ -131,12 +129,20 @@ class AlarmDetailsFragment : Fragment() {
     onCreatePrealarmView()
     onCreateBottomView()
 
-    if (editedAlarm?.isNew == true && !viewModel.newAlarmPopupSeen) {
+    if (editedAlarm?.isNew == true && !detailsViewModel.newAlarmPopupSeen) {
       showTimePicker()
-      viewModel.newAlarmPopupSeen = true
+      detailsViewModel.newAlarmPopupSeen = true
     }
 
     editedAlarmId = editedAlarm?.value?.id.takeIf { it != -1 }
+
+    backPresses.onBackPressed(lifecycle) {
+      withEdited {
+        if (it.isValid()) {
+          saveAlarm()
+        }
+      }
+    }
 
     return view
   }
@@ -166,7 +172,7 @@ class AlarmDetailsFragment : Fragment() {
           override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
           override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            editor.takeFirst {
+            withEdited {
               if (it.label != s.toString()) {
                 modify("Label") { prev -> prev.copy(label = s.toString(), isEnabled = true) }
               }
@@ -177,16 +183,17 @@ class AlarmDetailsFragment : Fragment() {
 
   private fun onCreateRepeatView() {
     fragmentView.findViewById<LinearLayout>(R.id.details_repeat_row).setOnClickListener {
-      editor
-          .firstOrError()
-          .flatMap { value -> requireContext().showRepeatAndDateDialog(value) }
-          .subscribe { fromDialog ->
-            modify("Repeat dialog") { prev ->
-              prev.copy(
-                  isEnabled = true, daysOfWeek = fromDialog.daysOfWeek, date = fromDialog.date)
+      withEdited { value ->
+        requireContext()
+            .showRepeatAndDateDialog(value)
+            .subscribe { fromDialog ->
+              modify("Repeat dialog") { prev ->
+                prev.copy(
+                    isEnabled = true, daysOfWeek = fromDialog.daysOfWeek, date = fromDialog.date)
+              }
             }
-          }
-          .addTo(disposables)
+            .addTo(disposables)
+      }
     }
 
     val repeatTitle = fragmentView.findViewById<TextView>(R.id.details_repeat_title)
@@ -282,7 +289,7 @@ class AlarmDetailsFragment : Fragment() {
 
   private fun onCreateRingtoneView() {
     fragmentView.findViewById<LinearLayout>(R.id.details_ringtone_row).setOnClickListener {
-      editor.takeFirst { value ->
+      withEdited { value ->
         showRingtonePicker(value.alarmtone, ringtonePickerRequestCode, prefs.defaultRingtone())
       }
     }
@@ -291,31 +298,30 @@ class AlarmDetailsFragment : Fragment() {
       fragmentView.findViewById<TextView>(R.id.details_ringtone_summary)
     }
 
-    Observable.combineLatest(
-            editor.distinctUntilChanged().map { it.alarmtone },
-            prefs.defaultRingtone.observe().map { Alarmtone.fromString(it) }) {
-                value,
-                defaultRingtone ->
+    combine(
+            editor.mapNotNull { it?.value?.alarmtone },
+            prefs.defaultRingtone.flow().map { Alarmtone.fromString(it) }) { value, defaultRingtone
+              ->
               value to defaultRingtone
             }
-        .observeOn(Schedulers.computation())
         .map { (alarmtone, default) ->
-          when {
-            // Default (title)
-            // We need this case otherwise we will have "App default (Default (title))"
-            alarmtone is Alarmtone.Default && default is Alarmtone.SystemDefault ->
-                default.userFriendlyTitle(requireActivity())
-            // App default (title)
-            alarmtone is Alarmtone.Default ->
-                getString(
-                    R.string.app_default_ringtone, default.userFriendlyTitle(requireActivity()))
-            // title
-            else -> alarmtone.userFriendlyTitle(requireActivity())
+          withContext(Dispatchers.IO) {
+            when {
+              // Default (title)
+              // We need this case otherwise we will have "App default (Default (title))"
+              alarmtone is Alarmtone.Default && default is Alarmtone.SystemDefault ->
+                  default.userFriendlyTitle(requireActivity())
+              // App default (title)
+              alarmtone is Alarmtone.Default ->
+                  getString(
+                      R.string.app_default_ringtone, default.userFriendlyTitle(requireActivity()))
+              // title
+              else -> alarmtone.userFriendlyTitle(requireActivity())
+            }
           }
         }
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { ringtoneSummary.text = it }
-        .addTo(disposables)
+        .onEach { ringtoneSummary.text = it }
+        .launchIn(lifecycleScope)
   }
 
   private fun onCreateTopRowView() =
@@ -371,26 +377,13 @@ class AlarmDetailsFragment : Fragment() {
     }
   }
 
-  override fun onResume() {
-    super.onResume()
-    backButtonSub =
-        store.onBackPressed().subscribe {
-          editor.takeFirst {
-            if (it.isValid()) {
-              saveAlarm()
-            }
-          }
-        }
-  }
-
   override fun onPause() {
     super.onPause()
     disposableDialog.dispose()
-    backButtonSub.dispose()
   }
 
   private fun saveAlarm() {
-    val edited = store.editing().value ?: return
+    val edited = detailsViewModel.editor().value ?: return
     val alarm =
         if (edited.isNew) {
           alarms.createNewAlarm()
@@ -402,12 +395,12 @@ class AlarmDetailsFragment : Fragment() {
 
     alarm?.edit { withChangeData(edited.value.copy(id = id)) }
 
-    store.hideDetails()
+    detailsViewModel.hideDetails()
     animateCheck(check = false)
   }
 
   private fun revert() {
-    store.hideDetails()
+    detailsViewModel.hideDetails()
     animateCheck(check = false)
   }
 
@@ -426,7 +419,7 @@ class AlarmDetailsFragment : Fragment() {
 
   private fun modify(reason: String, function: (AlarmValue) -> AlarmValue) {
     logger.debug { "Performing modification because of $reason" }
-    store.editing().update { edited -> edited?.copy(value = function(edited.value)) }
+    detailsViewModel.modify(reason) { edited -> function(edited) }
   }
 
   private fun Disposable.addTo(disposables: CompositeDisposable) {
@@ -439,10 +432,10 @@ class AlarmDetailsFragment : Fragment() {
   }
 
   private fun observeEditor(block: (value: AlarmValue) -> Unit) {
-    editor.distinctUntilChanged().subscribe { block(it) }.addTo(disposables)
+    editor.mapNotNull { it?.value }.onEach { block(it) }.launchIn(lifecycleScope)
   }
 
-  private fun <T : Any> Observable<T>.takeFirst(block: (value: T) -> Unit) {
-    take(1).subscribe { block(it) }.addTo(disposables)
+  private fun withEdited(block: (value: AlarmValue) -> Unit) {
+    editor.value?.value?.let { block(it) }
   }
 }

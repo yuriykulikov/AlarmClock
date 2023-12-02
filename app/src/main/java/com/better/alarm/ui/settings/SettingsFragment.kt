@@ -167,7 +167,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     super.onPause()
   }
 
-  private fun <S> bindListPreference(
+  private fun <S : Any> bindListPreference(
       key: String,
       store: RxDataStore<S>,
       func: (ListPreference).(S) -> Unit

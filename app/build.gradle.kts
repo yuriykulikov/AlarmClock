@@ -151,6 +151,7 @@ dependencies {
   implementation("com.melnykov:floatingactionbutton:1.3.0")
   implementation("io.reactivex.rxjava2:rxjava:2.2.21")
   implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-rx2:1.7.3")
   implementation("io.insert-koin:koin-android:3.5.0")
   implementation("androidx.fragment:fragment:1.6.2")
   // TODO remove this when we don't use it anymore
