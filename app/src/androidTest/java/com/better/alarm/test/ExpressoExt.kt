@@ -9,8 +9,8 @@ import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.better.alarm.R
-import com.better.alarm.model.AlarmValue
-import com.better.alarm.presenter.AlarmsListFragment
+import com.better.alarm.data.AlarmValue
+import com.better.alarm.ui.list.AlarmsListFragment
 import java.util.function.Predicate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel

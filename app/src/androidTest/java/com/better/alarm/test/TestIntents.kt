@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.test.platform.app.InstrumentationRegistry
-import com.better.alarm.model.TestReceiver
+import com.better.alarm.receivers.TestReceiver
 import java.util.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.runBlocking

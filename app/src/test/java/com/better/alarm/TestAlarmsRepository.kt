@@ -1,9 +1,9 @@
 package com.better.alarm
 
-import com.better.alarm.model.AlarmStore
-import com.better.alarm.model.AlarmValue
-import com.better.alarm.model.AlarmsRepository
-import com.better.alarm.stores.InMemoryRxDataStoreFactory.Companion.inMemoryRxDataStore
+import com.better.alarm.data.AlarmStore
+import com.better.alarm.data.AlarmValue
+import com.better.alarm.data.AlarmsRepository
+import com.better.alarm.data.stores.InMemoryRxDataStoreFactory.Companion.inMemoryRxDataStore
 
 class TestAlarmsRepository : AlarmsRepository {
   private var idCounter: Int = 0

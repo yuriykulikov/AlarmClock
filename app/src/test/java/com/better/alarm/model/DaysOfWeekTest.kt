@@ -2,6 +2,7 @@ package com.better.alarm.model
 
 import android.content.Context
 import com.better.alarm.R
+import com.better.alarm.data.DaysOfWeek
 import io.mockk.every
 import io.mockk.mockk
 import java.util.Locale

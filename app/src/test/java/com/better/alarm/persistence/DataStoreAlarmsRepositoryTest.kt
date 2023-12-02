@@ -1,9 +1,9 @@
 package com.better.alarm.persistence
 
+import com.better.alarm.data.AlarmsRepository
+import com.better.alarm.data.DataStoreAlarmsRepository
+import com.better.alarm.data.modify
 import com.better.alarm.logger.Logger
-import com.better.alarm.model.AlarmsRepository
-import com.better.alarm.model.modify
-import com.better.alarm.persistance.DataStoreAlarmsRepository
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

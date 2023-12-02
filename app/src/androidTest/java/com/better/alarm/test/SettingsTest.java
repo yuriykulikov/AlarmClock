@@ -13,7 +13,7 @@ import androidx.test.espresso.action.Tap;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.better.alarm.R;
-import com.better.alarm.presenter.SettingsActivity;
+import com.better.alarm.ui.settings.SettingsActivity;
 import java.util.Locale;
 import org.junit.Rule;
 import org.junit.Test;

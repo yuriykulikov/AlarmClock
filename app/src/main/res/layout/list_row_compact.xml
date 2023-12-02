@@ -30,7 +30,7 @@
         android:longClickable="false"
         android:orientation="vertical">
 
-        <com.better.alarm.view.DigitalClock
+        <com.better.alarm.ui.view.DigitalClock
             android:id="@+id/list_row_digital_clock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
                 android:textAllCaps="true"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="20dp" />
-        </com.better.alarm.view.DigitalClock>
+        </com.better.alarm.ui.view.DigitalClock>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -89,7 +89,7 @@
         android:layout_weight="2"
         android:orientation="vertical">
 
-        <com.better.alarm.view.DontPressWithParentLayout
+        <com.better.alarm.ui.view.DontPressWithParentLayout
             android:id="@+id/list_row_on_off_checkbox_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -112,7 +112,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1" />
-        </com.better.alarm.view.DontPressWithParentLayout>
+        </com.better.alarm.ui.view.DontPressWithParentLayout>
 
         <LinearLayout
             android:id="@+id/details_button_container"

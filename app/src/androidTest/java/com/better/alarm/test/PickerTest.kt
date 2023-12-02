@@ -4,9 +4,9 @@ import androidx.test.espresso.ViewInteraction
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.better.alarm.R
-import com.better.alarm.configuration.overrideIs24hoursFormatOverride
-import com.better.alarm.presenter.AlarmsListActivity
+import com.better.alarm.bootstrap.overrideIs24hoursFormatOverride
 import com.better.alarm.test.TestSync.Companion.clickFab
+import com.better.alarm.ui.main.AlarmsListActivity
 import java.util.*
 import org.junit.After
 import org.junit.Before

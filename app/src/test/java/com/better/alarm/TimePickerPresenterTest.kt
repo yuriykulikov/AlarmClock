@@ -1,7 +1,7 @@
 package com.better.alarm
 
-import com.better.alarm.view.TimePickerPresenter
-import com.better.alarm.view.TimePickerPresenter.Key
+import com.better.alarm.ui.timepicker.TimePickerPresenter
+import com.better.alarm.ui.timepicker.TimePickerPresenter.Key
 import org.assertj.core.api.KotlinAssertions.assertThat
 import org.junit.Rule
 import org.junit.Test

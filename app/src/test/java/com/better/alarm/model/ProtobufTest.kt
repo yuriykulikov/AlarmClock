@@ -1,5 +1,6 @@
 package com.better.alarm.model
 
+import com.better.alarm.data.AlarmValues
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.protobuf.schema.ProtoBufSchemaGenerator
 import org.assertj.core.api.KotlinAssertions.assertThat
@@ -14,13 +15,13 @@ class ProtobufTest {
             """syntax = "proto2";
 
 
-// serial name 'com.better.alarm.model.AlarmValues'
+// serial name 'com.better.alarm.data.AlarmValues'
 message AlarmValues {
   // WARNING: a default value decoded when value is missing
   map<int32, AlarmValue> alarms = 1;
 }
 
-// serial name 'com.better.alarm.model.AlarmValue'
+// serial name 'com.better.alarm.data.AlarmValue'
 message AlarmValue {
   // WARNING: a default value decoded when value is missing
   optional int64 nextTime = 1;
@@ -50,7 +51,7 @@ message AlarmValue {
   optional int64 date = 13;
 }
 
-// serial name 'com.better.alarm.model.Alarmtone'
+// serial name 'com.better.alarm.data.Alarmtone'
 message Alarmtone {
   required string type = 1;
   // decoded as message with one of these types:
@@ -61,7 +62,7 @@ message Alarmtone {
   required bytes value = 2;
 }
 
-// serial name 'com.better.alarm.model.DaysOfWeek'
+// serial name 'com.better.alarm.data.DaysOfWeek'
 message DaysOfWeek {
   required int32 coded = 1;
 }
