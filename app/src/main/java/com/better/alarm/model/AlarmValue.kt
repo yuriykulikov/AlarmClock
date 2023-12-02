@@ -35,6 +35,7 @@ data class AlarmValue(
 ) {
   val skipping
     get() = state.contentEquals("SkippingSetState")
+
   val isRepeatSet
     get() = date == null && daysOfWeek.coded != 0
 
@@ -46,8 +47,11 @@ data class AlarmValue(
   }
 
   fun withState(name: String): AlarmValue = copy(state = name)
+
   fun withIsEnabled(enabled: Boolean): AlarmValue = copy(isEnabled = enabled)
+
   fun withNextTime(calendar: Calendar): AlarmValue = copy(nextTime = calendar)
+
   fun withChangeData(data: AlarmValue) =
       copy(
           id = data.id,
@@ -64,7 +68,9 @@ data class AlarmValue(
       )
 
   fun withHour(hour: Int) = copy(hour = hour)
+
   fun withDaysOfWeek(daysOfWeek: DaysOfWeek) = copy(daysOfWeek = daysOfWeek)
+
   fun withIsPrealarm(isPrealarm: Boolean) = copy(isPrealarm = isPrealarm)
 }
 

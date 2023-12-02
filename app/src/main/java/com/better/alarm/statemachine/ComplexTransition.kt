@@ -2,6 +2,7 @@ package com.better.alarm.statemachine
 
 abstract class ComplexTransition<T> : State<T>() {
   abstract fun performComplexTransition()
+
   override fun enter(reason: T?) {
     performComplexTransition()
   }

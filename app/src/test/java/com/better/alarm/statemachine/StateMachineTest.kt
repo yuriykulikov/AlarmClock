@@ -11,6 +11,7 @@ class StateMachineTest {
   private val captured: MutableList<CapturedEvent> = mutableListOf()
   private val capturedEvents: List<OnEvent>
     get() = captured.filterIsInstance<OnEvent>()
+
   private val capturedTransitions: List<CapturedEvent>
     get() = captured.filterNot { it is OnEvent }
 

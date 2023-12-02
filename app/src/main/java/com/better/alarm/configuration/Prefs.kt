@@ -41,9 +41,11 @@ private constructor(
         }
         .blockingFirst()
   }
+
   fun defaultRingtone(): Alarmtone {
     return Alarmtone.fromString(defaultRingtone.value)
   }
+
   companion object {
 
     @JvmStatic

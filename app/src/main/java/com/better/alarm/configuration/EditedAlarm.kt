@@ -12,5 +12,6 @@ data class EditedAlarm(
     val holder: Optional<RowHolder> = Optional.absent()
 ) {
   fun id() = id
+
   val isEdited: Boolean = value.isPresent()
 }

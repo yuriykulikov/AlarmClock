@@ -165,7 +165,9 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
             if (!fromTouch) return
             progressChanged.onNext(progress)
           }
+
           override fun onStartTrackingTouch(seekBar: SeekBar) = Unit
+
           override fun onStopTrackingTouch(seekBar: SeekBar) = Unit
         })
     return progressChanged

@@ -36,9 +36,11 @@ sealed class Alarmtone {
       is Sound -> uriString
     }
   }
+
   companion object {
     val defaultAlarmAlertUri =
         Settings.System.DEFAULT_ALARM_ALERT_URI?.toString() ?: "DEFAULT_ALARM_ALERT_URI_IN_TEST"
+
     fun fromString(string: String): Alarmtone {
       return when (string) {
         "Silent" -> Silent

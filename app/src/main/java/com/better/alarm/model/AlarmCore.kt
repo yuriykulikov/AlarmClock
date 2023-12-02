@@ -152,6 +152,7 @@ class AlarmCore(
   /** Strategy used to notify other components about alarm state. */
   interface IStateNotifier {
     fun broadcastAlarmState(id: Int, action: String, calendar: Calendar? = null)
+
     fun broadcastAlarmState(id: Int, action: String)
   }
 
@@ -721,7 +722,9 @@ class AlarmCore(
     }
 
     open fun onEnter(reason: Event) {}
+
     open fun onResume() {}
+
     override fun exit(reason: Event?) {}
 
     override fun onEvent(event: Event): Boolean {
@@ -752,16 +755,27 @@ class AlarmCore(
     }
 
     protected open fun onEnable() = markNotHandled()
+
     protected open fun onDisable() = markNotHandled()
+
     protected open fun onSnooze(snooze: Snooze) = markNotHandled()
+
     protected open fun onDismiss() = markNotHandled()
+
     protected open fun onChange(alarmValue: AlarmValue) = markNotHandled()
+
     protected open fun onFired() = markNotHandled()
+
     protected open fun onInexactFired() = markNotHandled()
+
     protected open fun onRequestSkip() = markNotHandled()
+
     protected open fun onPreAlarmDurationChanged() = markNotHandled()
+
     protected open fun onRefresh() = markNotHandled()
+
     protected open fun onTimeSet() = markNotHandled()
+
     protected open fun onDelete() = markNotHandled()
   }
 
@@ -828,8 +842,10 @@ class AlarmCore(
 
   override val id: Int
     get() = container.id
+
   override val labelOrDefault: String
     get() = container.label
+
   override val alarmtone: Alarmtone
     get() = container.alarmtone
 

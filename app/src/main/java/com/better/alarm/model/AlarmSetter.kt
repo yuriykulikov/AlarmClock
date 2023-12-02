@@ -171,6 +171,7 @@ interface AlarmSetter {
 
     private interface ISetAlarmStrategy {
       fun setRTCAlarm(calendar: Calendar, pendingIntent: PendingIntent)
+
       fun setInexactAlarm(calendar: Calendar, pendingIntent: PendingIntent) {
         setRTCAlarm(calendar, pendingIntent)
       }

@@ -153,16 +153,28 @@ class PickerAmTest {
   }
 
   private fun one(): ViewInteraction = onView().with(id = R.id.key_left, text = "1")
+
   private fun two(): ViewInteraction = onView().with(id = R.id.key_middle, text = "2")
+
   private fun three(): ViewInteraction = onView().with(id = R.id.key_right, text = "3")
+
   private fun four(): ViewInteraction = onView().with(id = R.id.key_left, text = "4")
+
   private fun five(): ViewInteraction = onView().with(id = R.id.key_middle, text = "5")
+
   private fun six(): ViewInteraction = onView().with(id = R.id.key_right, text = "6")
+
   private fun seven(): ViewInteraction = onView().with(id = R.id.key_left, text = "7")
+
   private fun eight(): ViewInteraction = onView().with(id = R.id.key_middle, text = "8")
+
   private fun nine(): ViewInteraction = onView().with(id = R.id.key_right, text = "9")
+
   private fun zero(): ViewInteraction = onView().with(id = R.id.key_middle, text = "0")
+
   private fun ok(): ViewInteraction = onView().with(text = "OK")
+
   private fun am(): ViewInteraction = onView().with(id = R.id.key_left, text = "AM")
+
   private fun pm(): ViewInteraction = onView().with(id = R.id.key_right, text = "PM")
 }

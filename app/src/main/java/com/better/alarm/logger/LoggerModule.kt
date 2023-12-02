@@ -21,6 +21,7 @@ fun loggerModule() = module {
   single<LoggerFactory> {
     object : LoggerFactory {
       val logback: ILoggerFactory = configureLogback(get())
+
       override fun createLogger(tag: String): Logger {
         return Logger(logback.getLogger(tag))
       }
