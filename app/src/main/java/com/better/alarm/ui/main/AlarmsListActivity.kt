@@ -40,8 +40,6 @@ import com.better.alarm.R
 import com.better.alarm.bootstrap.AlarmApplication
 import com.better.alarm.bootstrap.globalLogger
 import com.better.alarm.data.AlarmValue
-import com.better.alarm.data.AlarmsRepository
-import com.better.alarm.domain.IAlarmsManager
 import com.better.alarm.domain.Store
 import com.better.alarm.logger.Logger
 import com.better.alarm.notifications.NotificationSettings
@@ -49,32 +47,31 @@ import com.better.alarm.platform.checkPermissions
 import com.better.alarm.ui.details.AlarmDetailsFragment
 import com.better.alarm.ui.list.AlarmsListFragment
 import com.better.alarm.ui.settings.SettingsFragment
+import com.better.alarm.ui.state.BackPresses
 import com.better.alarm.ui.state.EditedAlarm
 import com.better.alarm.ui.themes.DynamicThemeHandler
 import com.better.alarm.ui.toast.formatToast
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.disposables.Disposables
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.protobuf.ProtoBuf
-import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /** This activity displays a list of alarms and optionally a details fragment. */
-class AlarmsListActivity : AppCompatActivity() {
+class AlarmsListActivity() : AppCompatActivity() {
   private val mActionBarHandler: ActionBarHandler by lazy {
-    get<ActionBarHandler.Factory>().create(this)
+    ActionBarHandler(this, viewModel, backPresses)
   }
   private val logger: Logger by globalLogger("AlarmsListActivity")
-  private val alarms: IAlarmsManager by inject()
   private val store: Store by inject()
-  private val repository: AlarmsRepository by inject()
 
   private var snackbarDisposable = Disposables.disposed()
 
-  private val uiStore: UiStore by inject()
+  private val viewModel: MainViewModel by viewModel()
+  private val backPresses: BackPresses by inject()
   private val dynamicThemeHandler: DynamicThemeHandler by inject()
 
   override fun onNewIntent(intent: Intent?) {
@@ -92,7 +89,7 @@ class AlarmsListActivity : AppCompatActivity() {
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
     outState.putInt("version", BuildConfig.VERSION_CODE)
-    uiStore.editing().value?.writeInto(outState)
+    viewModel.editing().value?.writeInto(outState)
   }
 
   @SuppressLint("SourceLockedOrientationActivity")
@@ -100,15 +97,14 @@ class AlarmsListActivity : AppCompatActivity() {
     AlarmApplication.startOnce(application)
     setTheme(dynamicThemeHandler.defaultTheme())
     super.onCreate(savedInstanceState)
-    uiStore.openDrawerOnCreate = intent?.getBooleanExtra("openDrawerOnCreate", false) ?: false
+    viewModel.openDrawerOnCreate = intent?.getBooleanExtra("openDrawerOnCreate", false) ?: false
     val prevVersion = savedInstanceState?.getInt("version", BuildConfig.VERSION_CODE)
     if (prevVersion == BuildConfig.VERSION_CODE) {
       val restored = editedAlarmFromSavedInstanceState(savedInstanceState)
       logger.trace { "Restored $this with $restored" }
-      uiStore.editing().value = restored
+      restored?.let { viewModel.edit(it) }
     } else {
-      // need this because store is not scoped
-      uiStore.editing().value = null
+      viewModel.hideDetails()
     }
 
     if (!resources.getBoolean(R.bool.isTablet)) {
@@ -122,6 +118,8 @@ class AlarmsListActivity : AppCompatActivity() {
         .take(1)
         .subscribe { alarms -> checkPermissions(this, alarms.map { it.alarmtone }) }
         .apply {}
+
+    backPresses.onBackPressed(lifecycle) { finish() }
   }
 
   override fun onStart() {
@@ -167,7 +165,7 @@ class AlarmsListActivity : AppCompatActivity() {
   override fun onPause() {
     super.onPause()
     store.uiVisible.onNext(false)
-    repository.awaitStored()
+    viewModel.awaitStored()
   }
 
   override fun onStop() {
@@ -191,13 +189,12 @@ class AlarmsListActivity : AppCompatActivity() {
   }
 
   override fun onBackPressed() {
-    uiStore.onBackPressed().onNext(AlarmsListActivity::class.java.simpleName)
+    backPresses.backPressed("AlarmsListActivity.onBackPressed")
   }
 
   private fun configureTransactions() {
-    uiStore
+    viewModel
         .editing()
-        .distinctUntilChangedBy { it }
         .onEach { edited ->
           when {
             isDestroyed -> return@onEach

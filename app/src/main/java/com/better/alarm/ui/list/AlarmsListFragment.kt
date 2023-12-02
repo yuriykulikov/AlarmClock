@@ -33,6 +33,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import kotlinx.coroutines.channels.Channel
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * Shows a list of alarms. To react on user interaction, requires a strategy. An activity hosting
@@ -41,10 +42,10 @@ import org.koin.android.ext.android.inject
  * @author Yuriy
  */
 class AlarmsListFragment : Fragment() {
-  private val alarms: IAlarmsManager by inject()
-  private val store: Store by inject()
-  private val uiStore: UiStore by inject()
-  private val prefs: Prefs by inject()
+  @Deprecated("Use viewModel instead") private val alarms: IAlarmsManager by inject()
+  @Deprecated("Use viewModel instead") private val store: Store by inject()
+  private val listViewModel: ListViewModel by viewModel()
+  @Deprecated("Use viewModel instead") private val prefs: Prefs by inject()
   private val logger: Logger by globalLogger("AlarmsListFragment")
   var transitionRowHolder: RowHolder? = null
     private set
@@ -74,7 +75,6 @@ class AlarmsListFragment : Fragment() {
 
   private var alarmsSub: Disposable = Disposables.disposed()
   private var layoutSub: Disposable = Disposables.disposed()
-  private var backSub: Disposable = Disposables.disposed()
   private var timePickerDialogDisposable = Disposables.disposed()
 
   companion object {
@@ -132,7 +132,7 @@ class AlarmsListFragment : Fragment() {
     listView.onItemClickListener =
         AdapterView.OnItemClickListener { _, listRow, position, _ ->
           transitionRowHolder = listRow.tag as RowHolder
-          mAdapter.getItem(position)?.id?.let { uiStore.edit(it) }
+          mAdapter.getItem(position)?.let { listViewModel.edit(it) }
         }
 
     registerForContextMenu(listView)
@@ -141,7 +141,7 @@ class AlarmsListFragment : Fragment() {
 
     val fab: View = view.findViewById(R.id.fab)
     fab.setOnClickListener {
-      uiStore.createNewAlarm()
+      listViewModel.createNewAlarm()
       fabSync?.trySend(Unit)?.getOrThrow()
     }
 
@@ -202,10 +202,10 @@ class AlarmsListFragment : Fragment() {
       val fabK = -((initialFabElevation - fabAtOverlap) / overlap)
 
       peekHeight = bottomDrawerToolbar.minimumHeight
-      if (uiStore.openDrawerOnCreate) {
+      if (listViewModel.openDrawerOnCreate) {
         state = BottomSheetBehavior.STATE_EXPANDED
         // reset the flag after opening the drawer
-        uiStore.openDrawerOnCreate = false
+        listViewModel.openDrawerOnCreate = false
         setDrawerBackgrounds(openColor)
       } else {
         setDrawerBackgrounds(closedColor)
@@ -253,11 +253,6 @@ class AlarmsListFragment : Fragment() {
     }
   }
 
-  override fun onResume() {
-    super.onResume()
-    backSub = uiStore.onBackPressed().subscribe { requireActivity().finish() }
-  }
-
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     layoutSub = prefs.listRowLayout().subscribe { mAdapter.listRowLayout = it }
@@ -265,7 +260,6 @@ class AlarmsListFragment : Fragment() {
 
   override fun onPause() {
     super.onPause()
-    backSub.dispose()
     // dismiss the time picker if it was showing. Otherwise we will have to uiStore the state and it
     // is not nice for the user
     timePickerDialogDisposable.dispose()

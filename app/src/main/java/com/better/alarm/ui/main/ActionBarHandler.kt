@@ -20,14 +20,11 @@ import androidx.appcompat.app.ActionBar
 import androidx.core.view.MenuItemCompat
 import com.better.alarm.BuildConfig
 import com.better.alarm.R
-import com.better.alarm.domain.IAlarmsManager
-import com.better.alarm.logger.BugReporter
 import com.better.alarm.ui.settings.SettingsActivity
-import com.better.alarm.ui.state.UiStore
+import com.better.alarm.ui.state.BackPresses
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -38,19 +35,9 @@ import kotlinx.coroutines.flow.onEach
  */
 class ActionBarHandler(
     private val activity: Context,
-    private val store: UiStore,
-    private val alarms: IAlarmsManager,
-    private val reporter: BugReporter
+    private val mainViewModel: MainViewModel,
+    private val backPresses: BackPresses,
 ) {
-  class Factory(
-      private val alarms: IAlarmsManager,
-      private val store: UiStore,
-      private val reporter: BugReporter
-  ) {
-    fun create(activity: Activity): ActionBarHandler =
-        ActionBarHandler(activity, store, alarms, reporter)
-  }
-
   private var scope = CoroutineScope(Dispatchers.Unconfined)
 
   /**
@@ -85,9 +72,8 @@ class ActionBarHandler(
         MenuItemCompat.getActionProvider(menuItem) as androidx.appcompat.widget.ShareActionProvider
     sp.setShareIntent(intent)
 
-    store
+    mainViewModel
         .editing()
-        .distinctUntilChangedBy { it }
         .onEach { edited ->
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             check(Looper.getMainLooper().isCurrentThread)
@@ -121,7 +107,7 @@ class ActionBarHandler(
       R.id.menu_bugreport -> showBugreport()
       R.id.set_alarm_menu_delete_alarm -> deleteAlarm()
       R.id.menu_about -> showAbout()
-      android.R.id.home -> store.onBackPressed().onNext("ActionBar")
+      android.R.id.home -> backPresses.backPressed("ActionBar")
     }
     return true
   }
@@ -148,10 +134,7 @@ class ActionBarHandler(
         .apply {
           setTitle(activity.getString(R.string.delete_alarm))
           setMessage(activity.getString(R.string.delete_alarm_confirm))
-          setPositiveButton(android.R.string.ok) { _, _ ->
-            store.editing().value?.value?.id?.let { alarms.getAlarm(it)?.delete() }
-            store.hideDetails()
-          }
+          setPositiveButton(android.R.string.ok) { _, _ -> mainViewModel.deleteEdited() }
           setNegativeButton(android.R.string.cancel, null)
         }
         .show()
@@ -198,7 +181,7 @@ class ActionBarHandler(
 
     AlertDialog.Builder(activity)
         .apply {
-          setPositiveButton(android.R.string.ok) { _, _ -> reporter.sendUserReport() }
+          setPositiveButton(android.R.string.ok) { _, _ -> mainViewModel.sendUserReport() }
           setTitle(R.string.menu_bugreport)
           setCancelable(true)
           setNegativeButton(android.R.string.cancel) { _, _ -> }

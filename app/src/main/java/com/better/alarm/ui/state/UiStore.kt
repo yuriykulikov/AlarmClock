@@ -1,31 +1,23 @@
 package com.better.alarm.ui.state
 
 import com.better.alarm.data.AlarmValue
-import com.better.alarm.domain.Alarms
-import io.reactivex.subjects.PublishSubject
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
-class UiStore(private val alarms: Alarms) {
+class UiStore {
 
-  private var onBackPressed = PublishSubject.create<String>()
   private val editing: MutableStateFlow<EditedAlarm?> = MutableStateFlow(null)
 
-  fun editing(): MutableStateFlow<EditedAlarm?> {
+  fun editing(): StateFlow<EditedAlarm?> {
     return editing
-  }
-
-  fun onBackPressed(): PublishSubject<String> {
-    return onBackPressed
   }
 
   fun createNewAlarm() {
     editing.value = EditedAlarm(isNew = true, value = AlarmValue(isDeleteAfterDismiss = true))
   }
 
-  fun edit(id: Int) {
-    alarms.getAlarm(id)?.let { alarm ->
-      editing.value = EditedAlarm(isNew = false, value = alarm.data)
-    }
+  fun edit(alarmValue: AlarmValue, isNew: Boolean = false) {
+    editing.value = EditedAlarm(isNew = isNew, value = alarmValue)
   }
 
   fun hideDetails() {

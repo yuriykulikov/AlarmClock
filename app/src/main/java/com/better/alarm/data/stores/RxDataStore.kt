@@ -24,16 +24,22 @@
 package com.better.alarm.data.stores
 
 import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.rx2.asFlow
 
 /** Represents a single store. This an observable and persistent container for a single value. */
-interface RxDataStore<T> {
+interface RxDataStore<T : Any> {
   var value: T
 
   fun observe(): Observable<T>
+
+  fun flow(): Flow<T> {
+    return observe().asFlow()
+  }
 }
 
 /** Change the contents of the [RxDataStore] given the previous value. */
-fun <T> RxDataStore<T>.modify(func: T.(prev: T) -> T) {
+fun <T : Any> RxDataStore<T>.modify(func: T.(prev: T) -> T) {
   value = func(value, value)
 }
 

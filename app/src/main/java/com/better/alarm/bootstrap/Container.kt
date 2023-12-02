@@ -35,7 +35,10 @@ import com.better.alarm.receivers.ScheduledReceiver
 import com.better.alarm.services.AlertServicePusher
 import com.better.alarm.services.KlaxonPlugin
 import com.better.alarm.services.PlayerWrapper
-import com.better.alarm.ui.main.ActionBarHandler
+import com.better.alarm.ui.details.AlarmDetailsViewModel
+import com.better.alarm.ui.list.ListViewModel
+import com.better.alarm.ui.main.MainViewModel
+import com.better.alarm.ui.state.BackPresses
 import com.better.alarm.ui.state.UiStore
 import com.better.alarm.ui.themes.DynamicThemeHandler
 import com.better.alarm.ui.toast.ToastPresenter
@@ -50,6 +53,7 @@ import java.io.File
 import java.util.Calendar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.Koin
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
@@ -94,8 +98,11 @@ fun startKoin(context: Context): Koin {
           events = PublishSubject.create())
     }
 
-    factory { ActionBarHandler.Factory(get(), get(), get()) }
-    single { UiStore(get()) }
+    viewModelOf(::MainViewModel)
+    viewModelOf(::AlarmDetailsViewModel)
+    viewModelOf(::ListViewModel)
+    single { UiStore() }
+    single { BackPresses() }
 
     factory { get<Context>().getSystemService(Context.ALARM_SERVICE) as AlarmManager }
     single<AlarmSetter> { AlarmSetter.AlarmSetterImpl(logger("AlarmSetter"), get(), get()) }
