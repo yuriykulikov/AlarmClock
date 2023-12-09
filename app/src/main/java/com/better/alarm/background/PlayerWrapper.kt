@@ -35,10 +35,7 @@ class PlayerWrapper(
 
   override fun startAlarm() {
     player?.runCatching {
-      when {
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> setAudioUsageL()
-        else -> setAudioUsageLegacy()
-      }
+      setAudioUsageL()
       isLooping = true
       prepare()
       when {
@@ -50,18 +47,12 @@ class PlayerWrapper(
   }
 
   /** https://github.com/yuriykulikov/AlarmClock/issues/538 */
-  @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
   private fun MediaPlayer.setAudioUsageL() {
     setAudioAttributes(
         AudioAttributes.Builder()
             .setUsage(USAGE_ALARM)
             .setContentType(CONTENT_TYPE_SONIFICATION)
             .build())
-  }
-
-  @SuppressWarnings("deprecation")
-  private fun MediaPlayer.setAudioUsageLegacy() {
-    setAudioStreamType(AudioManager.STREAM_ALARM)
   }
 
   @RequiresApi(Build.VERSION_CODES.M)
