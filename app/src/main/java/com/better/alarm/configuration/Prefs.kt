@@ -1,6 +1,5 @@
 package com.better.alarm.configuration
 
-import com.better.alarm.lollipop
 import com.better.alarm.model.Alarmtone
 import com.better.alarm.stores.PrimitiveDataStoreFactory
 import com.better.alarm.stores.RxDataStore
@@ -34,10 +33,9 @@ private constructor(
         .observe()
         .take(1)
         .map {
-          when {
-            !lollipop() -> Layout.CLASSIC
-            it == LIST_ROW_LAYOUT_CLASSIC -> Layout.CLASSIC
-            it == LIST_ROW_LAYOUT_COMPACT -> Layout.COMPACT
+          when (it) {
+            LIST_ROW_LAYOUT_CLASSIC -> Layout.CLASSIC
+            LIST_ROW_LAYOUT_COMPACT -> Layout.COMPACT
             else -> Layout.BOLD
           }
         }
