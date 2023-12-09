@@ -58,6 +58,7 @@ class PlayerWrapper(
             .setContentType(CONTENT_TYPE_SONIFICATION)
             .build())
   }
+
   @SuppressWarnings("deprecation")
   private fun MediaPlayer.setAudioUsageLegacy() {
     setAudioStreamType(AudioManager.STREAM_ALARM)
