@@ -21,6 +21,7 @@ import com.better.alarm.BuildConfig
 import com.better.alarm.R
 import com.better.alarm.bugreports.BugReporter
 import com.better.alarm.interfaces.IAlarmsManager
+import com.better.alarm.lollipop
 import io.reactivex.disposables.Disposables
 
 /**
@@ -51,7 +52,11 @@ class ActionBarHandler(
         Intent(Intent.ACTION_SEND).apply {
           type = "text/plain"
 
-          addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
+          addFlags(
+              when {
+                lollipop() -> Intent.FLAG_ACTIVITY_NEW_DOCUMENT
+                else -> @Suppress("DEPRECATION") Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET
+              })
 
           // Add data to the intent, the receiving app will decide what to do with
           // it.

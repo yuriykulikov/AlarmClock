@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+    <!-- List, details and settings -->
+    <style name="DefaultDarkTheme" parent="Theme.AppCompat">
+        <!-- accent - buttons, accented text -->
+        <item name="colorAccent">@color/dark_secondary</item>
+        <!-- FAB color-->
+        <item name="listFabColor">@color/dark_fab_color</item>
+        <!-- lists background -->
+        <item name="android:windowBackground">@color/dark_background</item>
+        <!-- context menu background -->
+        <item name="android:colorBackground">@color/dark_background</item>
+        <!-- ripple color -->
+        <item name="colorControlHighlight">@color/dark_ripple</item>
+
+        <!-- lighting, affects dialogs, popups and elevated elements -->
+        <item name="android:ambientShadowAlpha">0.2</item>
+        <item name="android:spotShadowAlpha">0.2</item>
+        <item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/dark_glow</item>
+        <item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/dark_glow</item>
+
+        <!-- clock colors in the list -->
+        <item name="android:colorForeground">@color/dark_on_background</item>
+        <item name="listRowDisabledColor">@color/grey</item>
+
+        <!-- drawer -->
+        <item name="drawerBackgroundColor">@color/dark_surface</item>
+        <item name="drawerClosedBackgroundColor">@color/dark_background</item>
+
+        <!-- notification bar color -->
+        <item name="android:colorPrimaryDark">@color/dark_surface</item>
+        <!-- action bar -->
+        <item name="titleTextColor">@color/dark_on_surface</item>
+        <item name="colorPrimary">@color/dark_surface</item>
+        <item name="android:colorPrimary">@color/dark_surface</item>
+        <!-- navigation bar color -->
+        <item name="android:navigationBarColor">@color/dark_background</item>
+
+        <!-- other styles -->
+        <item name="android:alertDialogTheme">@style/DialogThemeDark</item>
+        <item name="android:dialogTheme">@style/DialogThemeDark</item>
+        <item name="alertDialogTheme">@style/DialogThemeDark</item>
+        <item name="dialogTheme">@style/DialogThemeDark</item>
+        <item name="snackbarStyle">@style/Widget.App.SnackbarDefaultDarkTheme</item>
+    </style>
+
+    <style name="Widget.App.SnackbarDefaultDarkTheme" parent="">
+        <item name="android:background">@color/dark_secondary</item>
+
+    </style>
+
+    <style name="AlarmAlertFullScreenDarkTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="colorAccent">@color/dark_secondary</item>
+        <item name="colorControlHighlight">@color/dark_ripple</item>
+        <item name="android:colorBackground">@color/dark_background</item>
+        <item name="android:colorForeground">@color/dark_on_background</item>
+    </style>
+
+    <style name="DialogThemeDark" parent="Theme.AppCompat.Dialog">
+        <item name="colorAccent">@color/dark_secondary</item>
+        <item name="android:colorBackground">@color/dark_background</item>
+        <item name="backgroundTint">@color/dark_background</item>
+        <item name="android:windowBackground">@color/dark_background</item>
+        <item name="android:colorForeground">@color/dark_on_background</item>
+    </style>
+
+    <style name="TimePickerDialogFragmentDark" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="colorAccent">@color/dark_secondary</item>
+        <item name="timePickerDeleteButtonStyle">@style/TimePickerDeleteButtonStyle</item>
+        <item name="android:backgroundTint">@color/dark_background</item>
+        <item name="elevation">20dp</item>
+        <item name="android:ambientShadowAlpha">0.5</item>
+        <item name="android:spotShadowAlpha">0.2</item>
+        <item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/dark_glow</item>
+        <item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/dark_glow</item>
+        <item name="colorControlHighlight">@color/dark_ripple</item>
+        <item name="android:colorForeground">@color/dark_on_background</item>
+    </style>
+
+    <color name="dark_on_background">@color/whitish</color>
+    <color name="dark_on_surface">@color/whitish</color>
+    <color name="dark_surface">@color/mat_grey_ws</color>
+    <color name="dark_background">@color/mat_almost_black_ws</color>
+    <color name="dark_secondary">@color/mat_teal_ws</color>
+    <color name="dark_ripple">@color/mat_grey_ws</color>
+    <color name="dark_glow">@color/mat_teal_secondary_variant</color>
+    <color name="dark_primary">@color/mat_teal_ws</color>
+    <color name="dark_fab_color">@color/mat_teal_ws</color>
+</resources>

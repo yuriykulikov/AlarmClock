@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Light Themes -->
+    <style name="DefaultLightThemeBase" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- accent - buttons, accented text -->
+        <item name="colorAccent">@color/light_secondary</item>
+        <!-- FAB color-->
+        <item name="listFabColor">@color/light_primary</item>
+
+        <!-- clock colors in the list -->
+        <item name="android:colorForeground">@color/light_on_background</item>
+        <item name="listRowDisabledColor">@color/grey</item>
+
+        <!-- action bar -->
+        <item name="titleTextColor">@color/whitish</item>
+        <item name="android:colorPrimary">@color/dark_grey</item>
+        <item name="colorPrimary">@color/dark_grey</item>
+
+        <!-- drawer -->
+        <item name="drawerBackgroundColor">@color/whitish</item>
+        <item name="drawerClosedBackgroundColor">?android:attr/colorBackground</item>
+
+        <!-- other styles -->
+        <item name="snackbarStyle">@style/Widget.App.SnackbarDefaultLightTheme</item>
+    </style>
+
+    <style name="DefaultLightTheme" parent="DefaultLightThemeBase" />
+
+    <style name="Widget.App.SnackbarDefaultLightTheme" parent="">
+        <item name="android:background">@color/light_primary</item>
+    </style>
+
+    <style name="AlarmAlertFullScreenLightTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="TimePickerDialogFragmentLight" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="timePickerDeleteButtonStyle">@style/TimePickerDeleteButtonStyle</item>
+        <item name="android:colorForeground">@color/light_on_background</item>
+    </style>
+
+    <color name="light_on_background">@color/mat_almost_black</color>
+    <color name="light_surface">@color/blackish</color>
+    <color name="light_background">@color/grey</color>
+    <color name="light_secondary">@color/mat_teal_secondary_variant</color>
+    <color name="light_ripple">@color/mat_teal_secondary</color>
+    <color name="light_glow">@color/dark_grey</color>
+    <color name="light_primary">@color/mat_blue_purple_primary</color>
+</resources>

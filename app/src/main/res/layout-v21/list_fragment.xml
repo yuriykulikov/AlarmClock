@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ListView
+        android:id="@+id/list_fragment_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="72dp"
+        android:layout_weight="1"
+        tools:layout="@layout/list_fragment"
+        tools:listitem="@layout/list_row_bold" />
+
+    <com.melnykov.fab.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom|right"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="100dp"
+        android:backgroundTint="?attr/listFabColor"
+        android:backgroundTintMode="src_atop"
+        android:elevation="6dp"
+        android:src="@drawable/ic_baseline_add_24"
+        app:fab_colorNormal="?attr/listFabColor"
+        app:fab_colorPressed="?attr/listFabColor" />
+
+    <!-- Container for the expanded drawer, must be elevated above the FAB -->
+    <LinearLayout
+        android:id="@+id/bottom_drawer_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="16dp"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical"
+        app:behavior_hideable="false"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <!-- This has to be elevated to have background -->
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/bottom_drawer_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/mat_blue_primary_variant"
+            app:elevation="0dp">
+
+            <!-- Toolbar visible when drawer collapsed -->
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/bottom_drawer_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/mat_purple"
+                android:minHeight="72dp"
+                app:contentInsetEnd="0dp"
+                app:contentInsetStart="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:alpha="0.8"
+                        android:src="@drawable/ic_baseline_horizontal_rule_24"
+                        android:tint="?android:attr/textColorPrimary" />
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:background="@color/transparent">
+
+                        <fragment
+                            android:id="@+id/list_activity_info_fragment"
+                            android:name="com.better.alarm.presenter.InfoFragment"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            tools:layout="@layout/info_fragment" />
+                    </FrameLayout>
+                </LinearLayout>
+            </androidx.appcompat.widget.Toolbar>
+
+            <fragment
+                android:name="com.better.alarm.presenter.AppearanceFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:layout="@layout/appearance_fragment" />
+        </com.google.android.material.appbar.AppBarLayout>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

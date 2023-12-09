@@ -3,6 +3,7 @@ package com.better.alarm.presenter
 import android.content.ContentResolver
 import android.content.Intent
 import android.media.AudioManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -19,6 +20,7 @@ import com.better.alarm.configuration.Prefs
 import com.better.alarm.configuration.globalInject
 import com.better.alarm.configuration.globalLogger
 import com.better.alarm.logger.Logger
+import com.better.alarm.lollipop
 import com.better.alarm.model.Alarmtone
 import com.better.alarm.stores.RxDataStore
 import com.better.alarm.view.VolumePreference
@@ -48,8 +50,23 @@ class SettingsFragment : PreferenceFragmentCompat() {
       findPreference<Preference>(Prefs.KEY_VIBRATE)?.let { category.removePreference(it) }
     }
 
-    findPreference<Preference>(Prefs.KEY_ALARM_IN_SILENT_MODE)?.let {
-      category.removePreference(it)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      findPreference<Preference>(Prefs.KEY_ALARM_IN_SILENT_MODE)?.let {
+        category.removePreference(it)
+      }
+    }
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+      findPreference<PreferenceCategory>("preference_category_ui")?.run {
+        findPreference<Preference>(Prefs.LIST_ROW_LAYOUT)?.let { rowLayout ->
+          removePreference(rowLayout)
+        }
+      }
+
+      findPreference<ListPreference>(Prefs.KEY_THEME)?.apply {
+        entries = entries.take(2).toTypedArray()
+        entryValues = entryValues.take(2).toTypedArray()
+      }
     }
 
     findPreference<Preference>(Prefs.KEY_THEME)?.onPreferenceChangeListener =
@@ -103,6 +120,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
   override fun onResume() {
     super.onResume()
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+      val alarmInSilentModePref =
+          findPreference<CheckBoxPreference>(Prefs.KEY_ALARM_IN_SILENT_MODE)!!
+      alarmInSilentModePref.isChecked =
+          (systemModeRingerStreamsAffected() and alarmStreamTypeBit) == 0
+    }
 
     findPreference<VolumePreference>(Prefs.KEY_VOLUME_PREFERENCE)?.run {
       showPicker = {
@@ -156,7 +179,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     bindListPreference(Prefs.KEY_THEME, prefs.theme) { summary = entry }
 
-    bindListPreference(Prefs.LIST_ROW_LAYOUT, prefs.listRowLayout) { summary = entry }
+    lollipop { bindListPreference(Prefs.LIST_ROW_LAYOUT, prefs.listRowLayout) { summary = entry } }
   }
 
   override fun onPause() {

@@ -18,6 +18,7 @@
 package com.better.alarm.presenter
 
 import android.annotation.SuppressLint
+import android.annotation.TargetApi
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
@@ -47,6 +48,7 @@ import com.better.alarm.configuration.globalInject
 import com.better.alarm.configuration.globalLogger
 import com.better.alarm.interfaces.IAlarmsManager
 import com.better.alarm.logger.Logger
+import com.better.alarm.lollipop
 import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.AlarmsRepository
 import com.better.alarm.util.Optional
@@ -268,7 +270,7 @@ class AlarmsListActivity : AppCompatActivity() {
             .subscribe(
                 Consumer { edited ->
                   when {
-                    isDestroyed -> return@Consumer
+                    lollipop() && isDestroyed -> return@Consumer
                     edited.isEdited -> showDetails(edited)
                     else -> showList(edited)
                   }
@@ -280,9 +282,11 @@ class AlarmsListActivity : AppCompatActivity() {
         fragment =
             AlarmsListFragment().apply {
               arguments = Bundle()
-              enterTransition = TransitionSet().addTransition(Fade())
-              sharedElementEnterTransition = moveTransition()
-              allowEnterTransitionOverlap = true
+              lollipop {
+                enterTransition = TransitionSet().addTransition(Fade())
+                sharedElementEnterTransition = moveTransition()
+                allowEnterTransitionOverlap = true
+              }
             },
         edited = edited,
     )
@@ -293,9 +297,11 @@ class AlarmsListActivity : AppCompatActivity() {
         fragment =
             AlarmDetailsFragment().apply {
               arguments = Bundle()
-              enterTransition = TransitionSet().addTransition(Slide()).addTransition(Fade())
-              sharedElementEnterTransition = moveTransition()
-              allowEnterTransitionOverlap = true
+              lollipop {
+                enterTransition = TransitionSet().addTransition(Slide()).addTransition(Fade())
+                sharedElementEnterTransition = moveTransition()
+                allowEnterTransitionOverlap = true
+              }
             },
         edited = edited,
     )
@@ -308,22 +314,27 @@ class AlarmsListActivity : AppCompatActivity() {
       logger.trace { "skipping fragment transition, because already showing $currentFragment" }
     } else {
       logger.trace { "transition from: $currentFragment to $fragment" }
-      currentFragment?.apply { exitTransition = Fade() }
+      currentFragment?.apply { lollipop { exitTransition = Fade() } }
 
       supportFragmentManager
           .beginTransaction()
           .replace(R.id.main_fragment_container, fragment)
           .apply {
-            edited.holder.getOrNull()?.run {
-              addSharedElement(digitalClock, "clock${alarmId}")
-              addSharedElement(container, "onOff${alarmId}")
-              addSharedElement(detailsButton, "detailsButton${alarmId}")
+            if (lollipop()) {
+              edited.holder.getOrNull()?.run {
+                addSharedElement(digitalClock, "clock${alarmId}")
+                addSharedElement(container, "onOff${alarmId}")
+                addSharedElement(detailsButton, "detailsButton${alarmId}")
+              }
+            } else {
+              this.setCustomAnimations(R.anim.push_down_in, android.R.anim.fade_out)
             }
           }
           .commitAllowingStateLoss()
     }
   }
 
+  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   private fun moveTransition(): TransitionSet {
     return TransitionSet().apply {
       ordering = TransitionSet.ORDERING_TOGETHER

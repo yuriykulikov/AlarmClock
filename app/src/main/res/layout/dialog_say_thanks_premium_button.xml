@@ -4,5 +4,4 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
-    android:text="@string/dialog_say_thanks_premium_text_as_button"
-    android:textColor="?android:attr/colorAccent" />
+    android:text="@string/dialog_say_thanks_premium_text_as_button" />
