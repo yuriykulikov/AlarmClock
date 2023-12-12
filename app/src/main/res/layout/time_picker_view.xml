@@ -67,6 +67,12 @@
             style="?attr/timePickerDeleteButtonStyle"
             android:contentDescription="@string/delete"
             android:layout_height="match_parent" />
+        <Button
+            android:id="@+id/thirty_min_from_now"
+            android:layout_weight="1"
+            android:layout_width="0dip"
+            android:text="30 min from now"
+            android:layout_height="match_parent" />
     </LinearLayout>
 
     <include
@@ -84,4 +90,5 @@
     <include
         layout="@layout/three_keys_view_ampm"
         android:id="@+id/fourth" />
+
 </LinearLayout>

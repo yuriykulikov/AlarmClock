@@ -45,6 +45,8 @@ public class TimePicker extends LinearLayout implements Button.OnClickListener {
   protected final Button mNumbers[] = new Button[10];
   protected Button mLeft, mRight;
   protected ImageButton mDelete;
+
+  protected Button fixedTimeBtn;
   protected TextView timePickerTime;
   private final TimePickerPresenter presenter;
   private int hours;
@@ -107,6 +109,8 @@ public class TimePicker extends LinearLayout implements Button.OnClickListener {
     mNumbers[0] = (Button) v4.findViewById(R.id.key_middle);
     mRight = (Button) v4.findViewById(R.id.key_right);
 
+    fixedTimeBtn = (Button) findViewById(R.id.thirty_min_from_now);
+
     for (int i = 0; i < 10; i++) {
       mNumbers[i].setOnClickListener(this);
       mNumbers[i].setText(String.format("%d", i));
@@ -125,9 +129,11 @@ public class TimePicker extends LinearLayout implements Button.OnClickListener {
     mLeft.setTag(TimePickerPresenter.Key.LEFT);
     mRight.setTag(TimePickerPresenter.Key.RIGHT);
     mDelete.setTag(TimePickerPresenter.Key.DELETE);
+    fixedTimeBtn.setTag(TimePickerPresenter.Key.THIRTYMIN);
 
     mLeft.setOnClickListener(this);
     mRight.setOnClickListener(this);
+    fixedTimeBtn.setOnClickListener(this);
 
     Resources res = mContext.getResources();
     mAmPmLabel = (TextView) findViewById(R.id.time_picker_ampm_label);
