@@ -41,7 +41,7 @@ jobs:
       with:
         files: ./app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
     - name: Upload Reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: Unit Test Reports
