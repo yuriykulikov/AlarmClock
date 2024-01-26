@@ -140,7 +140,7 @@
                     android:src="@drawable/ic_baseline_check_24"
                     android:textSize="40dp"
                     android:textStyle="normal"
-                    android:tint="?android:attr/textColorPrimary" />
+                    app:tint="?android:attr/textColorPrimary" />
             </RelativeLayout>
 
             <View
