@@ -1,7 +1,7 @@
 package com.better.alarm.test
 
 import android.view.View
-import android.widget.ListView
+import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions
@@ -10,6 +10,7 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.better.alarm.R
 import com.better.alarm.data.AlarmValue
+import com.better.alarm.ui.list.AlarmListAdapter
 import com.better.alarm.ui.list.AlarmsListFragment
 import java.util.function.Predicate
 import kotlinx.coroutines.Dispatchers
@@ -47,17 +48,12 @@ fun ViewInteraction.assertEnabled() {
 
 /** Returns [AlarmValue] currently in the alarms list. */
 fun alarmsList(): List<AlarmValue> {
-  return mutableListOf<AlarmValue>().apply {
+  return buildList {
     Espresso.onView(ViewMatchers.withId(R.id.list_fragment_list)).check { view, noViewFoundException
       ->
-      if (noViewFoundException != null) {
-        throw RuntimeException(noViewFoundException)
-      } else {
-        val adapter = (view as ListView).adapter
-        for (i in 0 until adapter.count) {
-          add(adapter.getItem(i) as AlarmValue)
-        }
-      }
+      noViewFoundException?.let { throw RuntimeException(noViewFoundException) }
+      val adapter = (view as RecyclerView).adapter as AlarmListAdapter
+      addAll(adapter.dataset)
     }
   }
 }
