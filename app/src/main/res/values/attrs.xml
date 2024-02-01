@@ -5,10 +5,7 @@
         <attr name="maxValue" format="integer" />
         <attr name="cancelButton" format="boolean" />
     </declare-styleable>
-    <attr name="alertFullScreenBackground" format="reference" />
-    <attr name="alarmDetailsButtonStyle" format="reference" />
     <attr name="timePickerDeleteButtonStyle" format="reference" />
-    <attr name="infoBarColor" format="color" />
     <attr name="listFabColor" format="color" />
     <attr name="listRowDisabledColor" format="color" />
     <attr name="drawerClosedBackgroundColor" format="color" />

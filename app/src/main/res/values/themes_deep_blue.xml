@@ -84,7 +84,7 @@
     <color name="deepblue_on_surface">@color/whitish</color>
     <color name="deepblue_background">#1d2733</color>
     <color name="deepblue_secondary">#5fa3de</color>
-    <color name="deepblue_ripple">@color/dark_grey</color>
+    <color name="deepblue_ripple">@color/dark_ripple</color>
     <color name="deepblue_glow">@color/blackish</color>
     <color name="deepblue_primary">#5fa3de</color>
     <color name="deepblue_fab_color">#5fa3de</color>
