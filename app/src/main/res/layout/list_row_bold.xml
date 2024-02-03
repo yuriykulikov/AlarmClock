@@ -18,6 +18,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/ripple_rounded"
     android:baselineAligned="true"
     android:gravity="center_vertical"
     android:minHeight="120dp"
@@ -51,7 +52,7 @@
                 android:id="@+id/digital_clock_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:background="@drawable/ripple_rounded"
                 android:fontFamily="sans-serif-light"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="50dp"
@@ -144,7 +145,7 @@
                     android:src="@drawable/ic_baseline_check_24"
                     android:textSize="40sp"
                     android:textStyle="normal"
-                    android:tint="?android:attr/textColorPrimary" />
+                    app:tint="?android:attr/textColorPrimary" />
             </RelativeLayout>
 
             <View

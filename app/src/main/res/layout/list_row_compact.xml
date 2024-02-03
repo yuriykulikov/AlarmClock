@@ -18,6 +18,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="80dp"
+    android:background="@drawable/ripple_rounded"
     android:baselineAligned="true"
     android:orientation="horizontal">
 
@@ -35,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-
+            android:background="@drawable/ripple_rounded"
             android:focusable="false"
             android:orientation="horizontal">
 
@@ -151,7 +152,7 @@
                     android:src="@drawable/ic_baseline_check_24"
                     android:textSize="40dp"
                     android:textStyle="normal"
-                    android:tint="?android:attr/textColorPrimary" />
+                    app:tint="?android:attr/textColorPrimary" />
             </RelativeLayout>
 
             <View

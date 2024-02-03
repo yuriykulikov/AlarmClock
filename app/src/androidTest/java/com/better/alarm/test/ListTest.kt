@@ -1,14 +1,16 @@
 package com.better.alarm.test
 
 import android.content.Intent
-import androidx.test.espresso.Espresso.onData
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withTagValue
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -23,8 +25,8 @@ import com.better.alarm.ui.main.AlarmsListActivity
 import java.util.*
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.anything
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -70,10 +72,8 @@ class ListTest {
 
     assertThat(alarmsList()).hasSize(3)
 
-    onData(anything())
-        .onChildView(withId(R.id.details_button_container))
-        .atPosition(0)
-        .perform(longClick())
+    onView(withId(R.id.list_fragment_list))
+        .perform(RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(0, longClick()))
     onView(withText("Delete alarm")).click()
     onView(withText("OK")).click()
 
@@ -120,13 +120,10 @@ class ListTest {
     onView(withText("OK")).perform(click())
 
     assertThat(alarmsList()).hasSize(3)
+    onView(withId(R.id.list_fragment_list))
+        .perform(RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(0, longClick()))
 
-    onData(anything())
-        .atPosition(0)
-        .onChildView(withId(R.id.details_button_container))
-        .perform(click())
-
-    onView(withId(R.id.set_alarm_menu_delete_alarm)).perform(click())
+    onView(withText("Delete alarm")).perform(click())
 
     onView(withText("OK")).perform(click())
 
@@ -217,7 +214,7 @@ class ListTest {
 
   @Test
   fun changeTimeInList() {
-    onData(anything()).atPosition(0).onChildView(withId(R.id.digital_clock_time)).perform(click())
+    onView(withText("08:30")).perform(click())
 
     onView(withText("1")).perform(click())
     onView(withText("2")).perform(click())
@@ -234,10 +231,9 @@ class ListTest {
 
     assertThat(alarmsList().filter { it.isEnabled }).hasSize(1)
 
-    onData(anything())
-        .atPosition(0)
-        .onChildView(withId(R.id.list_row_on_off_checkbox_container))
-        .perform(click())
+    val id = alarmsList().first().id
+    onView(withTagValue(Matchers.`is`("onOff$id"))).perform(click())
+
     assertThat(alarmsList().filter { it.isEnabled }).isEmpty()
   }
 

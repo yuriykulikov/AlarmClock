@@ -2,9 +2,11 @@ package com.better.alarm.ui.list
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import com.better.alarm.R
 import com.better.alarm.data.AlarmValue
 import com.better.alarm.data.Layout
@@ -12,28 +14,34 @@ import com.better.alarm.logger.Logger
 import com.better.alarm.ui.row.ListRowHighlighter
 import com.better.alarm.ui.row.RowHolder
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
 
 class AlarmListAdapter(
-    context: Context,
+    private val context: Context,
     private val highlighter: ListRowHighlighter,
     private val logger: Logger,
+    private val listRowLayout: Layout,
+    private val showDetails: (alarm: AlarmValue, holder: RowHolder) -> Unit,
     private val changeAlarm: (id: Int, enable: Boolean) -> Unit,
     private val showPicker: (alarm: AlarmValue) -> Unit,
-) : ArrayAdapter<AlarmValue>(context, android.R.layout.simple_list_item_1) {
+) :
+    ListAdapter<AlarmValue, RowHolder>(
+        object : DiffUtil.ItemCallback<AlarmValue>() {
+          override fun areItemsTheSame(oldItem: AlarmValue, newItem: AlarmValue): Boolean {
+            return oldItem.id == newItem.id
+          }
+
+          override fun areContentsTheSame(oldItem: AlarmValue, newItem: AlarmValue): Boolean {
+            return oldItem == newItem
+          }
+        }) {
+  private val holders = mutableMapOf<Int, RowHolder>()
   private val inflater: LayoutInflater = LayoutInflater.from(context)
-  var listRowLayout: Layout = Layout.CLASSIC
-    set(value) {
-      field = value
-      notifyDataSetChanged()
-    }
 
   var dataset: List<AlarmValue> = emptyList()
     set(value) {
       field = value
-      clear()
-      addAll(value)
-      notifyDataSetChanged()
+      submitList(value)
     }
 
   private val listRowLayoutId: Int
@@ -44,35 +52,31 @@ class AlarmListAdapter(
           Layout.BOLD -> R.layout.list_row_bold
         }
 
-  private fun recycleView(convertView: View?, parent: ViewGroup, id: Int): RowHolder {
-    val tag = convertView?.tag
-    return when {
-      tag is RowHolder && tag.layout == listRowLayout -> RowHolder(convertView, id, listRowLayout)
-      else -> {
-        val rowView = inflater.inflate(listRowLayoutId, parent, false)
-        RowHolder(rowView, id, listRowLayout).apply { digitalClock.setLive(false) }
-      }
-    }
+  var contextMenuAlarm: AlarmValue? = null
+    private set
+
+  override fun getItemCount(): Int {
+    return dataset.size
   }
 
-  override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+  override fun onCreateViewHolder(p0: ViewGroup, p1: Int): RowHolder {
+    return RowHolder(inflater.inflate(listRowLayoutId, p0, false), p1, listRowLayout)
+  }
+
+  override fun onBindViewHolder(row: RowHolder, position: Int) {
     // get the alarm which we have to display
     val alarm = dataset[position]
 
     logger.trace { "getView($position) $alarm" }
 
-    val row = recycleView(convertView, parent, alarm.id)
-
     row.onOff.isChecked = alarm.isEnabled
 
     row.digitalClock.transitionName = "clock" + alarm.id
     row.container.transitionName = "onOff" + alarm.id
+    row.container.tag = "onOff" + alarm.id
     row.detailsButton.transitionName = "detailsButton" + alarm.id
-
-    // Delete add, skip animation
-    if (row.idHasChanged) {
-      row.onOff.jumpDrawablesToCurrentState()
-    }
+    row.daysOfWeek.transitionName = "daysOfWeek" + alarm.id
+    row.label.transitionName = "label" + alarm.id
 
     row.container
         // onOff
@@ -92,34 +96,47 @@ class AlarmListAdapter(
     val c = Calendar.getInstance()
     c.set(Calendar.HOUR_OF_DAY, alarm.hour)
     c.set(Calendar.MINUTE, alarm.minutes)
+    row.digitalClock.setLive(false)
     row.digitalClock.updateTime(c)
 
-    val removeEmptyView = listRowLayout == Layout.CLASSIC || listRowLayout == Layout.COMPACT
     // Set the repeat text or leave it blank if it does not repeat.
 
     row.daysOfWeek.run {
       text = daysOfWeekStringWithSkip(alarm)
-      visibility =
-          when {
-            text.isNotEmpty() -> View.VISIBLE
-            removeEmptyView -> View.GONE
-            else -> View.INVISIBLE
-          }
+      visibility = if (text.isNotEmpty()) View.VISIBLE else View.INVISIBLE
     }
 
     // Set the repeat text or leave it blank if it does not repeat.
     row.label.text = alarm.label
 
-    row.label.visibility =
-        when {
-          alarm.label.isNotBlank() -> View.VISIBLE
-          removeEmptyView -> View.GONE
-          else -> View.INVISIBLE
-        }
+    row.label.visibility = if (alarm.label.isNotBlank()) View.VISIBLE else View.INVISIBLE
 
     highlighter.applyTo(row, alarm.isEnabled)
+    row.rowView.setOnCreateContextMenuListener { menu, _, _ ->
+      contextMenuAlarm = alarm
 
-    return row.rowView
+      // Inflate the menu from xml.
+      MenuInflater(context).inflate(R.menu.list_context_menu, menu)
+
+      val visible =
+          when {
+            alarm.isEnabled ->
+                when {
+                  alarm.skipping -> listOf(R.id.list_context_enable)
+                  alarm.isRepeatSet -> listOf(R.id.skip_alarm)
+                  else -> listOf(R.id.list_context_menu_disable)
+                }
+            // disabled
+            else -> listOf(R.id.list_context_enable)
+          }
+      listOf(R.id.list_context_enable, R.id.list_context_menu_disable, R.id.skip_alarm)
+          .minus(visible)
+          .forEach { menu.removeItem(it) }
+    }
+
+    row.rowView.setOnClickListener { showDetails(alarm, row) }
+
+    holders[alarm.id] = row
   }
 
   private fun daysOfWeekStringWithSkip(alarm: AlarmValue): String {

@@ -83,7 +83,7 @@
     <color name="synthwave_surface">@color/mat_purple_dark</color>
     <color name="synthwave_background">@color/mat_almost_black</color>
     <color name="synthwave_secondary">@color/mat_purple</color>
-    <color name="synthwave_ripple">@color/mat_purple_lighter</color>
+    <color name="synthwave_ripple">@color/mat_purple_dark</color>
     <color name="synthwave_glow">@color/mat_purple</color>
     <color name="synthwave_primary">@color/mat_blue_primary_variant</color>
     <color name="synthwave_fab">@color/mat_purple</color>

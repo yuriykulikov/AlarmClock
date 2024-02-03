@@ -305,18 +305,19 @@ class AlarmDetailsFragment : Fragment() {
               value to defaultRingtone
             }
         .map { (alarmtone, default) ->
+          // apparently not safe to use from IO thread
+          val hostActivity = requireActivity()
           withContext(Dispatchers.IO) {
             when {
               // Default (title)
               // We need this case otherwise we will have "App default (Default (title))"
               alarmtone is Alarmtone.Default && default is Alarmtone.SystemDefault ->
-                  default.userFriendlyTitle(requireActivity())
+                  default.userFriendlyTitle(hostActivity)
               // App default (title)
               alarmtone is Alarmtone.Default ->
-                  getString(
-                      R.string.app_default_ringtone, default.userFriendlyTitle(requireActivity()))
+                  getString(R.string.app_default_ringtone, default.userFriendlyTitle(hostActivity))
               // title
-              else -> alarmtone.userFriendlyTitle(requireActivity())
+              else -> alarmtone.userFriendlyTitle(hostActivity)
             }
           }
         }

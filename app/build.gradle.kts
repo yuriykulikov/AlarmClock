@@ -183,4 +183,5 @@ dependencies {
   androidTestImplementation("androidx.test:runner:$androidxTest")
   androidTestImplementation("androidx.test:rules:$androidxTest")
   androidTestImplementation("androidx.test.ext:junit:1.1.5")
+  androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
 }

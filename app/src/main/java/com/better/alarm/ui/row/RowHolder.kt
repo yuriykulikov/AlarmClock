@@ -4,12 +4,13 @@ import android.view.View
 import android.widget.CompoundButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.better.alarm.R
 import com.better.alarm.data.Layout
 import com.better.alarm.ui.view.DigitalClock
 
 /** Created by Yuriy on 05.08.2017. */
-class RowHolder(view: View, id: Int, val layout: Layout) {
+class RowHolder(view: View, id: Int, val layout: Layout) : RecyclerView.ViewHolder(view) {
   val digitalClock: DigitalClock
   val digitalClockContainer: View
   val rowView: View = view

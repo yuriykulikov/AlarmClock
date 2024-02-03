@@ -30,6 +30,7 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.View.GONE
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -46,6 +47,7 @@ import com.better.alarm.notifications.NotificationSettings
 import com.better.alarm.platform.checkPermissions
 import com.better.alarm.ui.details.AlarmDetailsFragment
 import com.better.alarm.ui.list.AlarmsListFragment
+import com.better.alarm.ui.list.configureBottomDrawer
 import com.better.alarm.ui.settings.SettingsFragment
 import com.better.alarm.ui.state.BackPresses
 import com.better.alarm.ui.state.EditedAlarm
@@ -53,6 +55,8 @@ import com.better.alarm.ui.themes.DynamicThemeHandler
 import com.better.alarm.ui.toast.formatToast
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.disposables.Disposables
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -97,7 +101,7 @@ class AlarmsListActivity() : AppCompatActivity() {
     AlarmApplication.startOnce(application)
     setTheme(dynamicThemeHandler.defaultTheme())
     super.onCreate(savedInstanceState)
-    viewModel.openDrawerOnCreate = intent?.getBooleanExtra("openDrawerOnCreate", false) ?: false
+    viewModel.drawerExpanded.value = intent?.getBooleanExtra("openDrawerOnCreate", false) ?: false
     val prevVersion = savedInstanceState?.getInt("version", BuildConfig.VERSION_CODE)
     if (prevVersion == BuildConfig.VERSION_CODE) {
       val restored = editedAlarmFromSavedInstanceState(savedInstanceState)
@@ -112,7 +116,8 @@ class AlarmsListActivity() : AppCompatActivity() {
     }
 
     setContentView(R.layout.list_activity)
-
+    configureBottomDrawer(
+        this, findViewById(R.id.bottom_drawer_container), logger, viewModel, lifecycleScope)
     store
         .alarms()
         .take(1)
@@ -193,9 +198,9 @@ class AlarmsListActivity() : AppCompatActivity() {
   }
 
   private fun configureTransactions() {
-    viewModel
-        .editing()
-        .onEach { edited ->
+    combine(viewModel.editing(), viewModel.layout()) { l, r -> l to r }
+        .distinctUntilChanged()
+        .onEach { (edited, _) ->
           when {
             isDestroyed -> return@onEach
             edited != null -> showDetails(edited)
@@ -207,29 +212,30 @@ class AlarmsListActivity() : AppCompatActivity() {
 
   private fun showList() {
     val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
-    if (currentFragment is AlarmsListFragment) {
-      logger.trace { "skipping fragment transition, because already showing $currentFragment" }
-      return
-    } else {
-      val details: AlarmDetailsFragment? = currentFragment as? AlarmDetailsFragment
-      logger.trace { "transition from: $details to AlarmsListFragment" }
-      supportFragmentManager.commit(allowStateLoss = true) {
-        replace(
-            R.id.main_fragment_container,
-            AlarmsListFragment().apply {
-              arguments = Bundle()
-              enterTransition = TransitionSet().addTransition(Fade())
-              sharedElementEnterTransition = moveTransition()
-              allowEnterTransitionOverlap = true
-            })
-        details?.exitTransition = Fade()
-        details?.rowHolder?.run {
-          addSharedElement(digitalClock, "clock${details.editedAlarmId}")
-          addSharedElement(container, "onOff${details.editedAlarmId}")
-          addSharedElement(detailsButton, "detailsButton${details.editedAlarmId}")
-        }
+    val details: AlarmDetailsFragment? = currentFragment as? AlarmDetailsFragment
+    logger.trace { "transition from: $details to AlarmsListFragment" }
+    supportFragmentManager.commit(allowStateLoss = true) {
+      replace(
+          R.id.main_fragment_container,
+          AlarmsListFragment().apply {
+            arguments = Bundle()
+            enterTransition = TransitionSet().addTransition(Fade())
+            sharedElementEnterTransition = moveTransition()
+            allowEnterTransitionOverlap = true
+          })
+      details?.exitTransition = Fade()
+      details?.rowHolder?.run {
+        addSharedElement(digitalClock, "clock${details.editedAlarmId}")
+        addSharedElement(container, "onOff${details.editedAlarmId}")
+        addSharedElement(detailsButton, "detailsButton${details.editedAlarmId}")
       }
     }
+    // fade out the bottom drawer using animation
+    findViewById<View>(R.id.bottom_drawer_container)
+        .apply { visibility = View.VISIBLE }
+        .animate()
+        .alpha(1f)
+        .setDuration(1000)
   }
 
   private fun showDetails(edited: EditedAlarm) {
@@ -254,6 +260,13 @@ class AlarmsListActivity() : AppCompatActivity() {
           addSharedElement(digitalClock, "clock")
           addSharedElement(container, "onOff")
           addSharedElement(detailsButton, "detailsButton")
+        }
+      }
+      // fade out the bottom drawer using animation
+      findViewById<View>(R.id.bottom_drawer_container).run {
+        animate().alpha(0f).setDuration(200).withEndAction {
+          visibility = GONE
+          viewModel.drawerExpanded.value = false
         }
       }
     }
