@@ -146,6 +146,8 @@
     <string name="preference_category_sound">Volumes and sound</string>
     <string name="preference_category_ui">User interface</string>
     <string name="preference_category_durations">Durations</string>
+    <string name="preference_category_background">Background</string>
+    <string name="change_background_title">Change Background</string>
     <string name="details_no_ringtone_picker">No Ringtone provider found…</string>
     <string name="permissions_external_storage_text">It seems that we cannot play %s, probably because a permission is required. If you want, you can grant the permission. Alternatively, select a different sound. This decision can be changed in System Settings.</string>
     <string name="menu_about_title">About</string>

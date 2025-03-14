@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <Button
+        android:id="@+id/alert_vision_dismiss"
+        android:layout_width="156dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="216dp"
+        android:layout_marginTop="596dp"
+        android:text="@string/alarm_alert_dismiss_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/alert_vision_snooze"
+        android:layout_width="156dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="596dp"
+        android:text="@string/alarm_alert_snooze_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.camera.view.PreviewView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/alert_vision_preview"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

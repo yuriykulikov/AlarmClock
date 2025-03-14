@@ -292,4 +292,12 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+    <string-array name="background_entries">
+        <item>Default</item>
+        <item>Upload</item>
+    </string-array>
+    <string-array name="background_values">
+        <item>Default</item>
+        <item>Upload</item>
+    </string-array>
 </resources>
