@@ -270,6 +270,7 @@ class AlarmCore(
   private inner class RescheduleTransition : ComplexTransition<Event>() {
     override fun performComplexTransition() {
       if (container.isRepeatSet) {
+        alarmStore.modify { withNextIsSnooze(false) }
         if (container.isPrealarm && preAlarmDuration.blockingFirst() != -1) {
           stateMachine.transitionTo(preAlarmSet)
         } else {
@@ -577,7 +578,10 @@ class AlarmCore(
               else -> nextRegualarSnoozeCalendar()
             }
         // change the next time to show notification properly
-        alarmStore.modify { withNextTime(nextTime) }
+        alarmStore.modify {
+          withNextTime(nextTime)
+          withNextIsSnooze(true)
+        }
         // updateListInStore()
         broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION, nextTime) // Yar. 18.08
       }

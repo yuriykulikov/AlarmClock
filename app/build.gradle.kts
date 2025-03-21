@@ -76,7 +76,7 @@ val acraEmail =
 
 @Suppress("UnstableApiUsage")
 android {
-  compileSdk = 34
+  compileSdk = 33
   defaultConfig {
     versionCode = 31601
     versionName = "3.16.01"
@@ -171,10 +171,10 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:$serializationVersion")
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
 
-  implementation("androidx.camera:camera-camera2:1.3.0") // Or the latest version
-  implementation("androidx.camera:camera-core:1.3.0")
-  implementation("androidx.camera:camera-lifecycle:1.3.0")
-  implementation("androidx.camera:camera-view:1.3.0")
+  implementation("androidx.camera:camera-camera2:1.2.3") // Or the latest version
+  implementation("androidx.camera:camera-core:1.2.3")
+  implementation("androidx.camera:camera-lifecycle:1.2.3")
+  implementation("androidx.camera:camera-view:1.2.3")
   implementation("com.google.guava:guava:31.0.1-android")
 
 

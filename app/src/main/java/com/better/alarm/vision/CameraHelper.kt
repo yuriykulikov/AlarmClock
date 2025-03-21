@@ -123,7 +123,8 @@ class CameraXHelper(
     //Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
   }
 
-  fun shutdown() {
+  fun destroy() {
     cameraExecutor.shutdown()
+    cameraProvider?.unbindAll()
   }
 }

@@ -78,15 +78,17 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
         .take(1)
         .subscribe { finish() }
 
-    cameraXHelper = CameraXHelper(this, this, findViewById(R.id.alert_vision_preview))
     Handler(Looper.getMainLooper()).postDelayed({
-      cameraXHelper?.takePhoto()
+      cameraXHelper = CameraXHelper(this, this, findViewById(R.id.alert_vision_preview))
     }, 1000)
 
-    cameraXHelper = CameraXHelper(this, this, findViewById(R.id.alert_vision_preview))
     Handler(Looper.getMainLooper()).postDelayed({
       cameraXHelper?.takePhoto(flashed = true)
-    }, 2000)
+    }, 5000)
+
+    Handler(Looper.getMainLooper()).postDelayed({
+      dismiss()
+    }, 10000)
 
   }
 
@@ -214,10 +216,12 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
   }
 
   public override fun onDestroy() {
-    super.onDestroy()
     // No longer care about the alarm being killed.
     subscription?.dispose()
     disposableDialog.dispose()
+    cameraXHelper?.destroy()
+
+    super.onDestroy()
   }
 
   override fun onBackPressed() {

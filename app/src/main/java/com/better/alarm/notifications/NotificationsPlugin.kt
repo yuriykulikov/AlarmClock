@@ -32,6 +32,7 @@ import com.better.alarm.receivers.PresentationToModelIntents
 import com.better.alarm.services.EnclosingService
 import com.better.alarm.services.PluginAlarmData
 import com.better.alarm.ui.alert.AlarmAlertFullScreen
+import com.better.alarm.ui.alert.AlarmAlertVisionFullScreen
 
 /**
  * Glue class: connects AlarmAlert IntentReceiver to AlarmAlert activity. Passes through Alarm ID.
