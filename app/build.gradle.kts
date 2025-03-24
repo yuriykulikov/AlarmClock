@@ -177,7 +177,7 @@ dependencies {
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
   testImplementation("org.slf4j:slf4j-simple:2.0.11")
 
-  val androidxTest = "1.5.0"
+  val androidxTest = "1.6.1"
   androidTestImplementation("com.squareup.assertj:assertj-android:1.2.0")
   androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
   androidTestImplementation("androidx.test:runner:$androidxTest")
