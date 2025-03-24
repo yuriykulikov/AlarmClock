@@ -179,7 +179,7 @@ dependencies {
 
   val androidxTest = "1.5.0"
   androidTestImplementation("com.squareup.assertj:assertj-android:1.2.0")
-  androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+  androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
   androidTestImplementation("androidx.test:runner:$androidxTest")
   androidTestImplementation("androidx.test:rules:$androidxTest")
   androidTestImplementation("androidx.test.ext:junit:1.1.5")
