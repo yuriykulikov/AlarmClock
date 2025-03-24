@@ -5,7 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
+import android.util.Size
 import android.widget.Toast
 import androidx.camera.core.*
 import androidx.camera.core.ImageCapture.FLASH_MODE_ON
@@ -13,6 +13,7 @@ import androidx.camera.core.ImageCapture.FlashMode
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import com.better.alarm.bootstrap.globalLogger
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -23,13 +24,21 @@ import kotlin.text.format
 class CameraXHelper(
   private val context: Context,
   private val lifecycleOwner: LifecycleOwner,
-  private val previewView: androidx.camera.view.PreviewView
+  private val previewView: androidx.camera.view.PreviewView,
+  private val cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor(),
+  private val imageAnalyzer: ImageAnalysis.Analyzer? = null,
 ) {
+  private val logger by globalLogger("CameraXHelper")
   private var cameraProvider: ProcessCameraProvider? = null
   private var imageCapture: ImageCapture? = null
+  private var imageAnalysis: ImageAnalysis? = null
   private var camera: Camera? = null
-  private val cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
   private var lensFacing = CameraSelector.LENS_FACING_BACK
+  private var isTorchOn = false
+  private var cameraResolution: Size = Size(640, 480)
+  private var _cameraIsOpened: Boolean = false
+  val cameraIsOpened: Boolean
+    get() = _cameraIsOpened
 
   init {
     startCamera()
@@ -39,21 +48,50 @@ class CameraXHelper(
     val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
 
     cameraProviderFuture.addListener({
-      cameraProvider = cameraProviderFuture.get()
+      try {
+        cameraProvider = cameraProviderFuture.get()
 
-      val preview = Preview.Builder().build().also {
-        it.setSurfaceProvider(previewView.surfaceProvider)
+        val preview = Preview.Builder()
+          .setTargetResolution(cameraResolution)
+          .build().also {
+            it.setSurfaceProvider(previewView.surfaceProvider)
+          }
+
+        imageCapture = ImageCapture.Builder()
+          .setTargetResolution(cameraResolution)
+          .build()
+
+        val cameraSelector = CameraSelector.Builder()
+          .requireLensFacing(lensFacing)
+          .build()
+
+        if (imageAnalyzer != null)
+          imageAnalysis = ImageAnalysis.Builder()
+            .setTargetResolution(cameraResolution)
+            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
+            .build().also{
+              it.setAnalyzer(cameraExecutor, imageAnalyzer)
+            }
+        cameraProvider?.unbindAll()
+        camera = cameraProvider?.bindToLifecycle(lifecycleOwner, cameraSelector, preview, imageCapture, imageAnalysis)
+        if (camera == null) {
+          logger.error { "Use case binding failed: (camera == null)" }
+          _cameraIsOpened = false
+        } else {
+          _cameraIsOpened = true
+        }
+      } catch (e: Exception) {
+        logger.error { "Use case binding failed: $e" }
+        _cameraIsOpened = false
       }
 
-      imageCapture = ImageCapture.Builder().build()
-
-      val cameraSelector = CameraSelector.Builder()
-        .requireLensFacing(lensFacing)
-        .build()
-
-      cameraProvider?.unbindAll()
-      camera = cameraProvider?.bindToLifecycle(lifecycleOwner, cameraSelector, preview, imageCapture)
-
+      camera?.cameraInfo?.torchState?.observe(lifecycleOwner) {
+        state -> isTorchOn = state == TorchState.ON
+      }
+      if (camera!=null) {
+        _cameraIsOpened = true
+      }
     }, ContextCompat.getMainExecutor(context))
   }
 
@@ -90,15 +128,18 @@ class CameraXHelper(
         }
 
         override fun onError(exception: ImageCaptureException) {
-          Log.e("CameraXHelper", "拍照失敗: ${exception.message}", exception)
+          logger.error {  "拍照失敗: ${exception.message}" }
         }
       })
   }
 
-  fun toggleFlash() {
-    imageCapture?.flashMode = if (imageCapture?.flashMode == ImageCapture.FLASH_MODE_ON)
-      ImageCapture.FLASH_MODE_OFF else ImageCapture.FLASH_MODE_ON
-    showToast("閃光燈: ${if (imageCapture?.flashMode == ImageCapture.FLASH_MODE_ON) "開啟" else "關閉"}")
+  fun setOrToggleFlash(targetState: Boolean? = null) {
+    if (targetState != null && targetState != isTorchOn) {
+      camera?.cameraControl?.enableTorch(targetState)
+    }
+    else {
+      camera?.cameraControl?.enableTorch(!isTorchOn)
+    }
   }
 
   fun switchCamera() {

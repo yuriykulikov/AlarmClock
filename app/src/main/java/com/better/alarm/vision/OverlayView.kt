@@ -24,6 +24,7 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
+import com.better.alarm.R
 
 class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 

@@ -43,13 +43,13 @@ data class Snooze(val hour: Int?, val minute: Int?) : Event()
 
 data class Change(val value: AlarmValue) : Event()
 
+data class Fired(val type: CalendarType) : Event()
+
 object PrealarmDurationChanged : Event()
 
 object Dismiss : Event()
 
 object RequestSkip : Event()
-
-object Fired : Event()
 
 object Enable : Event()
 
@@ -270,7 +270,6 @@ class AlarmCore(
   private inner class RescheduleTransition : ComplexTransition<Event>() {
     override fun performComplexTransition() {
       if (container.isRepeatSet) {
-        alarmStore.modify { withNextIsSnooze(false) }
         if (container.isPrealarm && preAlarmDuration.blockingFirst() != -1) {
           stateMachine.transitionTo(preAlarmSet)
         } else {
@@ -360,7 +359,7 @@ class AlarmCore(
           showSkipNotification(nextTime)
         }
 
-        override fun onFired() {
+        override fun onFired(type: CalendarType) {
           stateMachine.transitionTo(fired)
         }
 
@@ -396,7 +395,7 @@ class AlarmCore(
           }
         }
 
-        override fun onFired() {
+        override fun onFired(type: CalendarType) {
           stateMachine.transitionTo(preAlarmFired)
         }
 
@@ -474,7 +473,7 @@ class AlarmCore(
         }
       }
 
-      override fun onFired() {
+      override fun onFired(type: CalendarType) {
         // yeah should never happen
         stateMachine.transitionTo(fired)
       }
@@ -495,7 +494,13 @@ class AlarmCore(
     /** handles both snoozed and main for now */
     inner class FiredState : AlarmState() {
       override fun onEnter(reason: Event) {
-        broadcastAlarmState(Intents.ALARM_ALERT_ACTION)
+        if (reason is Fired && reason.type == CalendarType.SNOOZE) {
+          broadcastAlarmState(Intents.SNOOZE_ALARM_ALERT_ACTION)
+          log.debug { "broadcast Snooze alarm"}
+        } else {
+          broadcastAlarmState(Intents.ALARM_ALERT_ACTION)
+          log.debug {"broadcast Normal alarm"}
+        }
         val autoSilenceMinutes = autoSilence.blockingFirst()
         if (autoSilenceMinutes > 0) {
           // -1 means OFF
@@ -505,7 +510,7 @@ class AlarmCore(
         }
       }
 
-      override fun onFired() {
+      override fun onFired(type: CalendarType) {
         broadcastAlarmState(Intents.ACTION_SOUND_EXPIRED)
         // this is like a dismiss but we show an additional notification
         stateMachine.transitionTo(rescheduleTransition)
@@ -527,7 +532,7 @@ class AlarmCore(
         setAlarm(calculateNextTime(), CalendarType.NORMAL)
       }
 
-      override fun onFired() {
+      override fun onFired(type: CalendarType) {
         stateMachine.transitionTo(fired)
       }
 
@@ -578,10 +583,7 @@ class AlarmCore(
               else -> nextRegualarSnoozeCalendar()
             }
         // change the next time to show notification properly
-        alarmStore.modify {
-          withNextTime(nextTime)
-          withNextIsSnooze(true)
-        }
+        alarmStore.modify { withNextTime(nextTime) }
         // updateListInStore()
         broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION, nextTime) // Yar. 18.08
       }
@@ -592,10 +594,10 @@ class AlarmCore(
           nextTime = nextRegualarSnoozeCalendar()
         }
 
-        setAlarm(nextTime!!, CalendarType.NORMAL)
+        setAlarm(nextTime!!, CalendarType.SNOOZE)
       }
 
-      override fun onFired() {
+      override fun onFired(type: CalendarType) {
         stateMachine.transitionTo(fired)
       }
 
@@ -617,7 +619,7 @@ class AlarmCore(
         broadcastAlarmState(Intents.ALARM_SNOOZE_ACTION, calculateNextTime())
       }
 
-      override fun onFired() {
+      override fun onFired(type: CalendarType) {
         stateMachine.transitionTo(fired)
       }
 
@@ -632,7 +634,7 @@ class AlarmCore(
       }
 
       override fun onResume() {
-        setAlarm(calculateNextTime(), CalendarType.NORMAL)
+        setAlarm(calculateNextTime(), CalendarType.SNOOZE)
       }
     }
   }
@@ -743,7 +745,7 @@ class AlarmCore(
         is Snooze -> onSnooze(event)
         is Dismiss -> onDismiss()
         is Change -> onChange(event.value)
-        is Fired -> onFired()
+        is Fired -> onFired(event.type)
         is PrealarmDurationChanged -> onPreAlarmDurationChanged()
         is Refresh -> onRefresh()
         is TimeSet -> onTimeSet()
@@ -771,7 +773,7 @@ class AlarmCore(
 
     protected open fun onChange(alarmValue: AlarmValue) = markNotHandled()
 
-    protected open fun onFired() = markNotHandled()
+    protected open fun onFired(type: CalendarType) = markNotHandled()
 
     protected open fun onInexactFired() = markNotHandled()
 
@@ -797,8 +799,8 @@ class AlarmCore(
         .let { disposable.add(it) }
   }
 
-  fun onAlarmFired() {
-    stateMachine.sendEvent(Fired)
+  fun onAlarmFired(type: CalendarType = CalendarType.NORMAL) {
+    stateMachine.sendEvent(Fired(type))
   }
 
   fun onInexactAlarmFired() {
@@ -884,7 +886,7 @@ private fun Event.isUserInteraction(): Boolean {
     Dismiss -> true
     RequestSkip -> true
     is Snooze -> true
-    Fired -> false
+    is Fired -> false
     InexactFired -> false
     PrealarmDurationChanged -> false
     Refresh -> false

@@ -27,7 +27,7 @@ interface AlertPlugin {
   ): Disposable
 }
 
-data class PluginAlarmData(val id: Int, val alarmtone: Alarmtone, val label: String)
+data class PluginAlarmData(val id: Int, val alarmtone: Alarmtone, val label: String, val type: String = "")
 
 enum class TargetVolume {
   MUTED,
@@ -39,6 +39,8 @@ sealed class Event {
   data class NullEvent(val actions: String = "null") : Event()
 
   data class AlarmEvent(val id: Int, val actions: String = Intents.ALARM_ALERT_ACTION) : Event()
+
+  data class SnoozeAlarmEvent(val id: Int, val actions: String = Intents.SNOOZE_ALARM_ALERT_ACTION) : Event()
 
   data class PrealarmEvent(val id: Int, val actions: String = Intents.ALARM_PREALARM_ACTION) :
       Event()
@@ -91,7 +93,8 @@ class AlertService(
 
   private enum class Type {
     NORMAL,
-    PREALARM
+    SNOOZE,
+    PREALARM,
   }
 
   private data class CallState(val initial: Boolean, val inCall: Boolean)
@@ -136,6 +139,7 @@ class AlertService(
     return if (stateValid(event)) {
       when (event) {
         is Event.AlarmEvent -> soundAlarm(event.id, Type.NORMAL)
+        is Event.SnoozeAlarmEvent-> soundAlarm(event.id, Type.SNOOZE)
         is Event.PrealarmEvent -> soundAlarm(event.id, Type.PREALARM)
         is Event.MuteEvent -> wantedVolume.onNext(TargetVolume.MUTED)
         is Event.DemuteEvent -> wantedVolume.onNext(TargetVolume.FADED_IN_FAST)
@@ -159,6 +163,7 @@ class AlertService(
       activeAlarms.requireValue().isEmpty() -> {
         when (event) {
           is Event.AlarmEvent -> true
+          is Event.SnoozeAlarmEvent -> true
           is Event.PrealarmEvent -> true
           else -> {
             check(!BuildConfig.DEBUG) {
@@ -188,11 +193,13 @@ class AlertService(
     require(active.isNotEmpty())
     val toShow =
         active
-            .mapNotNull { (id, _) -> alarms.getAlarm(id) }
-            .map { alarm ->
+            .map { (id, type) ->
+              val alarm = alarms.getAlarm(id)!!
               val alarmtone = alarm.alarmtone
               val label = alarm.labelOrDefault
-              PluginAlarmData(alarm.id, alarmtone, label)
+              log.debug { type.name }
+              val typeString = if (type == Type.NORMAL) Intents.TYPE_NORMAL_ALARM else Intents.TYPE_SNOOZE_ALARM
+              PluginAlarmData(alarm.id, alarmtone, label, typeString)
             }
 
     log.debug { "Show notifications: $toShow" }

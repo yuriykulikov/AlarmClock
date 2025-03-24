@@ -18,6 +18,8 @@ class AlertServicePusher(store: Store, context: Context, wm: WakeLockManager, lo
           when (it) {
             is Event.AlarmEvent ->
                 Intent(Intents.ALARM_ALERT_ACTION).apply { putExtra(Intents.EXTRA_ID, it.id) }
+            is Event.SnoozeAlarmEvent ->
+                Intent(Intents.SNOOZE_ALARM_ALERT_ACTION).apply { putExtra(Intents.EXTRA_ID, it.id) }
             is Event.PrealarmEvent ->
                 Intent(Intents.ALARM_PREALARM_ACTION).apply { putExtra(Intents.EXTRA_ID, it.id) }
             is Event.DismissEvent ->

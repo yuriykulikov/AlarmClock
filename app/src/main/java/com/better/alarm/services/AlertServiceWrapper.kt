@@ -207,6 +207,7 @@ class AlertServiceWrapper : Service() {
       alertService.onStartCommand(
           when (intent.action) {
             Intents.ALARM_ALERT_ACTION -> Event.AlarmEvent(intent.getIntExtra(Intents.EXTRA_ID, -1))
+            Intents.SNOOZE_ALARM_ALERT_ACTION-> Event.SnoozeAlarmEvent(intent.getIntExtra(Intents.EXTRA_ID, -1))
             Intents.ALARM_PREALARM_ACTION ->
                 Event.PrealarmEvent(intent.getIntExtra(Intents.EXTRA_ID, -1))
             Intents.ACTION_MUTE -> Event.MuteEvent()
@@ -221,6 +222,7 @@ class AlertServiceWrapper : Service() {
             Intents.ALARM_ALERT_ACTION,
             Intents.ALARM_PREALARM_ACTION,
             Intents.ACTION_MUTE,
+            Intents.SNOOZE_ALARM_ALERT_ACTION,
             Intents.ACTION_DEMUTE -> START_STICKY
             Intents.ALARM_SNOOZE_ACTION,
             Intents.ALARM_DISMISS_ACTION,

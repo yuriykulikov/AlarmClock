@@ -3,6 +3,7 @@ package com.better.alarm.data
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerialInfo
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -20,7 +21,6 @@ val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
 data class AlarmValue(
     @Serializable(with = CalendarSerializer::class)
     val nextTime: Calendar = Calendar.getInstance().apply { timeInMillis = 0 },
-    val nextIsSnooze : Boolean = false,
     val state: String = "DisabledState",
     val id: Int = -1,
     val isEnabled: Boolean = false,
@@ -50,8 +50,6 @@ data class AlarmValue(
   fun withState(name: String): AlarmValue = copy(state = name)
 
   fun withIsEnabled(enabled: Boolean): AlarmValue = copy(isEnabled = enabled)
-
-  fun withNextIsSnooze(nextIsSnooze: Boolean): AlarmValue = copy(nextIsSnooze = nextIsSnooze)
 
   fun withNextTime(calendar: Calendar): AlarmValue = copy(nextTime = calendar)
 

@@ -2,15 +2,21 @@ package com.better.alarm.ui.alert
 
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.TextView
+import androidx.camera.core.ImageAnalysis
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.better.alarm.R
 import com.better.alarm.bootstrap.AlarmApplication
@@ -28,12 +34,16 @@ import com.better.alarm.services.Event.SnoozedEvent
 import com.better.alarm.ui.themes.DynamicThemeHandler
 import com.better.alarm.ui.timepicker.TimePickerDialogFragment
 import com.better.alarm.vision.CameraXHelper
+import com.better.alarm.vision.Detector
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import org.koin.android.ext.android.inject
+import java.util.Calendar
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class AlarmAlertVisionFullScreen : FragmentActivity() {
@@ -46,6 +56,9 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
   private var disposableDialog = Disposables.empty()
   private var subscription: Disposable? = null
   private var cameraXHelper: CameraXHelper? = null
+  private var cameraExecutor: ExecutorService? = null
+  private var detector: Detector? = null
+  private var isFirstAlarm = false
 
   override fun onCreate(icicle: Bundle?) {
     AlarmApplication.startOnce(application)
@@ -61,6 +74,9 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
         else -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
       }
     val id = intent.getIntExtra(Intents.EXTRA_ID, -1)
+    isFirstAlarm = intent.getStringExtra(Intents.EXTRA_TYPE) == Intents.TYPE_NORMAL_ALARM
+    logger.debug { "isFirstAlarm: $isFirstAlarm" }
+    logger.debug { "type: ${intent.getStringExtra(Intents.EXTRA_TYPE)}" }
 
     mAlarm = alarmsManager.getAlarm(id)
 
@@ -78,18 +94,18 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
         .take(1)
         .subscribe { finish() }
 
-    Handler(Looper.getMainLooper()).postDelayed({
-      cameraXHelper = CameraXHelper(this, this, findViewById(R.id.alert_vision_preview))
-    }, 1000)
-
-    Handler(Looper.getMainLooper()).postDelayed({
-      cameraXHelper?.takePhoto(flashed = true)
-    }, 5000)
-
-    Handler(Looper.getMainLooper()).postDelayed({
-      dismiss()
-    }, 10000)
-
+    if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+      switchToNormalActivity()
+    } else {
+      cameraExecutor = Executors.newSingleThreadExecutor()
+      Handler(Looper.getMainLooper()).postDelayed({
+        cameraXHelper = CameraXHelper(this, this, findViewById(R.id.alert_vision_preview), cameraExecutor!!, cameraAnalyzer)
+        if (!cameraXHelper?.cameraIsOpened!!) {
+          switchToNormalActivity()
+        }
+        cameraXHelper?.setOrToggleFlash(true)
+      }, 5000)
+    }
   }
 
   /**
@@ -213,6 +229,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
   override fun onPause() {
     super.onPause()
     disposableDialog.dispose()
+    cameraXHelper?.destroy()
   }
 
   public override fun onDestroy() {
@@ -226,5 +243,33 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
 
   override fun onBackPressed() {
     // Don't allow back to dismiss
+  }
+
+  private val cameraAnalyzer = ImageAnalysis.Analyzer { imageProxy ->
+    val bitmapBuffer =
+      Bitmap.createBitmap(
+        imageProxy.width,
+        imageProxy.height,
+        Bitmap.Config.ARGB_8888
+      )
+    imageProxy.use { bitmapBuffer.copyPixelsFromBuffer(imageProxy.planes[0].buffer) }
+    imageProxy.close()
+    detector?.detect(bitmapBuffer)
+  }
+
+  /**
+   * Starts the normal alarm alert activity and finishes this one.
+   *
+   * This is used when the camera is not available or the detector do not detect a person.
+   */
+  private fun switchToNormalActivity() {
+    val id = intent.getIntExtra(Intents.EXTRA_ID, -1)
+    val alarmType = intent.getStringExtra(Intents.EXTRA_TYPE)
+    logger.debug { "switchToNormalActivity: $id $alarmType" }
+
+    val normalActivityIntent = Intent(this, AlarmAlertFullScreen::class.java)
+    normalActivityIntent.putExtra(Intents.EXTRA_ID, id)
+    normalActivityIntent.putExtra(Intents.EXTRA_TYPE, alarmType)
+    startActivity(normalActivityIntent)
   }
 }

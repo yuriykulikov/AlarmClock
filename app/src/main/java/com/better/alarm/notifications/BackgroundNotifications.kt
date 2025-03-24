@@ -50,6 +50,7 @@ class BackgroundNotifications(
     store.events.subscribeForever { event ->
       when (event) {
         is Event.AlarmEvent -> nm.cancel(event.id + SNOOZE_NOTIFICATION)
+        is Event.SnoozeAlarmEvent-> nm.cancel(event.id + SNOOZE_NOTIFICATION)
         is Event.PrealarmEvent -> nm.cancel(event.id + SNOOZE_NOTIFICATION)
         is Event.DismissEvent -> nm.cancel(event.id + SNOOZE_NOTIFICATION)
         is Event.CancelSnoozedEvent -> nm.cancel(event.id + SNOOZE_NOTIFICATION)

@@ -19,6 +19,7 @@ class AlarmStateNotifier(private val store: Store) : IStateNotifier {
     val event =
         when (action) {
           Intents.ALARM_ALERT_ACTION -> Event.AlarmEvent(id)
+          Intents.SNOOZE_ALARM_ALERT_ACTION -> Event.SnoozeAlarmEvent(id)
           Intents.ALARM_PREALARM_ACTION -> Event.PrealarmEvent(id)
           Intents.ACTION_MUTE -> Event.MuteEvent()
           Intents.ACTION_DEMUTE -> Event.DemuteEvent()
