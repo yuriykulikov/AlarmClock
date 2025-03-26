@@ -165,7 +165,8 @@ class CameraXHelper(
   }
 
   fun destroy() {
-    cameraExecutor.shutdown()
+    if (!cameraExecutor.isShutdown)
+      cameraExecutor.shutdown()
     cameraProvider?.unbindAll()
   }
 }

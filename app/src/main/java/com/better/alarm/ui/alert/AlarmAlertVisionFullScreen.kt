@@ -16,6 +16,7 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.TextView
 import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageProxy
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.better.alarm.R
@@ -33,8 +34,13 @@ import com.better.alarm.services.Event.MuteEvent
 import com.better.alarm.services.Event.SnoozedEvent
 import com.better.alarm.ui.themes.DynamicThemeHandler
 import com.better.alarm.ui.timepicker.TimePickerDialogFragment
+import com.better.alarm.vision.BoundingBox
 import com.better.alarm.vision.CameraXHelper
+import com.better.alarm.vision.Constants
+import com.better.alarm.vision.Constants.LABELS_PATH
+import com.better.alarm.vision.Constants.MODEL_PATH
 import com.better.alarm.vision.Detector
+import com.better.alarm.vision.OverlayView
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -59,10 +65,14 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
   private var cameraExecutor: ExecutorService? = null
   private var detector: Detector? = null
   private var isFirstAlarm = false
+  private lateinit var overlayView: OverlayView
 
   override fun onCreate(icicle: Bundle?) {
     AlarmApplication.startOnce(application)
     setTheme(dynamicThemeHandler.alertTheme())
+
+    overlayView = findViewById(R.id.alert_vision_overlay)
+
     super.onCreate(icicle)
     requestedOrientation =
       when {
@@ -75,8 +85,6 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
       }
     val id = intent.getIntExtra(Intents.EXTRA_ID, -1)
     isFirstAlarm = intent.getStringExtra(Intents.EXTRA_TYPE) == Intents.TYPE_NORMAL_ALARM
-    logger.debug { "isFirstAlarm: $isFirstAlarm" }
-    logger.debug { "type: ${intent.getStringExtra(Intents.EXTRA_TYPE)}" }
 
     mAlarm = alarmsManager.getAlarm(id)
 
@@ -98,6 +106,10 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
       switchToNormalActivity()
     } else {
       cameraExecutor = Executors.newSingleThreadExecutor()
+      cameraExecutor?.execute( {
+        detector = Detector(this, MODEL_PATH, Constants.LabelList, DetectionHandler()) { logger.debug { it } }
+      })
+
       Handler(Looper.getMainLooper()).postDelayed({
         cameraXHelper = CameraXHelper(this, this, findViewById(R.id.alert_vision_preview), cameraExecutor!!, cameraAnalyzer)
         if (!cameraXHelper?.cameraIsOpened!!) {
@@ -237,7 +249,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     subscription?.dispose()
     disposableDialog.dispose()
     cameraXHelper?.destroy()
-
+    detector?.close()
     super.onDestroy()
   }
 
@@ -257,6 +269,86 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     detector?.detect(bitmapBuffer)
   }
 
+  enum class DetectionState {
+    PEEKING, WAKING
+  }
+  private abstract class DetectionAction (val triggerGesture: String) {
+    private val ACTION_CONFIRMING_TIME = 2000
+    private var firstSignalTime: Long = 0
+    fun checkDetectionState(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
+      if (boundingBoxes.any { it.clsName == triggerGesture }) {
+        if (firstSignalTime == 0L) {
+          firstSignalTime = System.currentTimeMillis()
+        } else if (System.currentTimeMillis() - firstSignalTime > ACTION_CONFIRMING_TIME) {
+          startAction()
+        }
+      } else {
+        firstSignalTime = 0L
+      }
+    }
+    abstract fun startAction()
+  }
+  private inner class SnoozeAction : DetectionAction(Constants.LabelList[Constants.GESTURE_MID]) {
+    override fun startAction() {
+      mAlarm?.snooze()
+    }
+  }
+  private inner class ReportTimeAction : DetectionAction(Constants.LabelList[Constants.GESTURE_2]) {
+    override fun startAction() {
+      // TODO implement
+    }
+  }
+
+  private inner class DetectionHandler : Detector.DetectorListener {
+    private val MAX_NOPERSON_TIME = 5000
+    private var state = DetectionState.PEEKING
+    private var initialCountDown = 30
+    private var lastPersonDetectionTime = 0L
+    private val actions = mutableListOf<DetectionAction>(
+      SnoozeAction(),
+      ReportTimeAction()
+    )
+
+    private fun peekStateOnDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
+      if (boundingBoxes.any { it.clsName == Constants.LabelList[Constants.HEAD] }) {
+        state = DetectionState.WAKING
+        lastPersonDetectionTime = System.currentTimeMillis()
+      } else {
+        initialCountDown--
+        if (initialCountDown == 0) {
+          if (isFirstAlarm) {
+            switchToNormalActivity()
+            logger.debug { "nothing detected after initial detection, switch to normal activity" }
+          } else {
+            logger.debug { "nothing detected after initial detection, dismiss the alarm" }
+            dismiss()
+          }
+        }
+      }
+    }
+
+    private fun wakeStateOnDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
+      if (boundingBoxes.any { it.clsName == Constants.LabelList[Constants.HEAD] }) {
+        lastPersonDetectionTime = System.currentTimeMillis()
+      }
+      if (System.currentTimeMillis() - lastPersonDetectionTime > MAX_NOPERSON_TIME) {
+        mAlarm?.snooze()
+      }
+      actions.forEach { it.checkDetectionState(boundingBoxes, inferenceTime) }
+    }
+
+    override fun onDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
+      when (state) {
+        DetectionState.PEEKING -> peekStateOnDetect(boundingBoxes, inferenceTime)
+        DetectionState.WAKING -> wakeStateOnDetect(boundingBoxes, inferenceTime)
+      }
+      runOnUiThread {
+        overlayView.setResults(boundingBoxes)
+        overlayView.invalidate()
+      }
+    }
+  }
+
   /**
    * Starts the normal alarm alert activity and finishes this one.
    *
@@ -271,5 +363,6 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     normalActivityIntent.putExtra(Intents.EXTRA_ID, id)
     normalActivityIntent.putExtra(Intents.EXTRA_TYPE, alarmType)
     startActivity(normalActivityIntent)
+    finish()
   }
 }

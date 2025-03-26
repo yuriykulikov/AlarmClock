@@ -19,8 +19,6 @@ package com.better.alarm.vision
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.SystemClock
-import com.better.alarm.vision.MetaData.extractNamesFromLabelFile
-import com.better.alarm.vision.MetaData.extractNamesFromMetadata
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.gpu.CompatibilityList
@@ -39,13 +37,12 @@ import java.io.InputStreamReader
 class Detector(
     private val context: Context,
     private val modelPath: String,
-    private val labelPath: String?,
+    private val labels: List<String>,
     private val detectorListener: DetectorListener,
     private val message: (String) -> Unit
 ) {
 
     private var interpreter: Interpreter
-    private var labels = mutableListOf<String>()
 
     private var tensorWidth = 0
     private var tensorHeight = 0
@@ -71,16 +68,6 @@ class Detector(
 
         val model = FileUtil.loadMappedFile(context, modelPath)
         interpreter = Interpreter(model, options)
-
-        labels.addAll(extractNamesFromMetadata(model))
-        if (labels.isEmpty()) {
-            if (labelPath == null) {
-                message("Model not contains metadata, provide LABELS_PATH in Constants.kt")
-                labels.addAll(MetaData.TEMP_CLASSES)
-            } else {
-                labels.addAll(extractNamesFromLabelFile(context, labelPath))
-            }
-        }
 
         val inputShape = interpreter.getInputTensor(0)?.shape()
         val outputShape = interpreter.getOutputTensor(0)?.shape()
@@ -151,7 +138,7 @@ class Detector(
         inferenceTime = SystemClock.uptimeMillis() - inferenceTime
 
         if (bestBoxes == null) {
-            detectorListener.onEmptyDetect()
+            detectorListener.onDetect(emptyList(), inferenceTime)
             return
         }
 
@@ -240,7 +227,6 @@ class Detector(
     }
 
     interface DetectorListener {
-        fun onEmptyDetect()
         fun onDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long)
     }
 

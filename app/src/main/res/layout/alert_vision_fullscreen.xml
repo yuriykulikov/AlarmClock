@@ -8,17 +8,17 @@
 
     <Button
         android:id="@+id/alert_vision_dismiss"
-        android:layout_width="156dp"
+        android:layout_width="160dp"
         android:layout_height="100dp"
-        android:layout_marginStart="216dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginTop="596dp"
         android:text="@string/alarm_alert_dismiss_text"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/alert_vision_snooze"
-        android:layout_width="156dp"
+        android:layout_width="160dp"
         android:layout_height="100dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="596dp"
@@ -26,8 +26,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.camera.view.PreviewView
+    <com.better.alarm.vision.OverlayView
+        android:id="@+id/alert_vision_overlay"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/alert_vision_preview"/>
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="70dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintWidth_percent="0.8"
+        app:layout_constraintDimensionRatio="3:4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/alert_vision_preview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="70dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintWidth_percent="0.8"
+        app:layout_constraintDimensionRatio="3:4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
