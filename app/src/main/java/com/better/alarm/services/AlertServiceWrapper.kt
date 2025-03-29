@@ -79,7 +79,7 @@ class AlertServiceWrapper : Service() {
 
       single<NotificationsPlugin> {
         NotificationsPlugin(
-            logger = logger("AlertService"), mContext = get(), nm = get(), enclosingService = get())
+            logger = logger("AlertService"), mContext = get(), nm = get(), enclosingService = get(), prefs = get())
       }
 
       single {

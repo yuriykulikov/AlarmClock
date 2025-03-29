@@ -1,22 +1,18 @@
 package com.better.alarm.ui.alert
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.graphics.Bitmap
-import android.graphics.Matrix
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.TextView
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageProxy
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.better.alarm.R
@@ -37,9 +33,9 @@ import com.better.alarm.ui.timepicker.TimePickerDialogFragment
 import com.better.alarm.vision.BoundingBox
 import com.better.alarm.vision.CameraXHelper
 import com.better.alarm.vision.Constants
-import com.better.alarm.vision.Constants.LABELS_PATH
-import com.better.alarm.vision.Constants.MODEL_PATH
-import com.better.alarm.vision.Detector
+import com.better.alarm.vision.DetectedAction
+import com.better.alarm.vision.DetectionHandler
+import com.better.alarm.vision.DualModelDetectionHandler
 import com.better.alarm.vision.OverlayView
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -47,7 +43,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import org.koin.android.ext.android.inject
-import java.util.Calendar
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -63,7 +58,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
   private var subscription: Disposable? = null
   private var cameraXHelper: CameraXHelper? = null
   private var cameraExecutor: ExecutorService? = null
-  private var detector: Detector? = null
+  private var detectionHandler: DetectionHandler? = null
   private var isFirstAlarm = false
   private lateinit var overlayView: OverlayView
 
@@ -71,7 +66,6 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     AlarmApplication.startOnce(application)
     setTheme(dynamicThemeHandler.alertTheme())
 
-    overlayView = findViewById(R.id.alert_vision_overlay)
 
     super.onCreate(icicle)
     requestedOrientation =
@@ -91,6 +85,8 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     turnScreenOn()
     updateLayout()
 
+    overlayView = findViewById(R.id.alert_vision_overlay)
+
     // Register to get the alarm killed/snooze/dismiss intent.
     subscription =
       store.events
@@ -106,17 +102,23 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
       switchToNormalActivity()
     } else {
       cameraExecutor = Executors.newSingleThreadExecutor()
+
       cameraExecutor?.execute( {
-        detector = Detector(this, MODEL_PATH, Constants.LabelList, DetectionHandler()) { logger.debug { it } }
+        detectionHandler = IDetectionHandler(this)
+        Handler(Looper.getMainLooper()).postDelayed({
+          cameraXHelper = CameraXHelper(this, this, findViewById(R.id.alert_vision_preview), cameraExecutor!!, detectionHandler!!.analyzer) {
+              succeeded ->
+            if (succeeded) {
+              //cameraXHelper?.setOrToggleFlash(true)
+            }
+            else {
+              switchToNormalActivity()
+              logger.debug {"camera is not opened after 5 seconds, switch to normal activity"}
+            }
+          }
+        }, 3000)
       })
 
-      Handler(Looper.getMainLooper()).postDelayed({
-        cameraXHelper = CameraXHelper(this, this, findViewById(R.id.alert_vision_preview), cameraExecutor!!, cameraAnalyzer)
-        if (!cameraXHelper?.cameraIsOpened!!) {
-          switchToNormalActivity()
-        }
-        cameraXHelper?.setOrToggleFlash(true)
-      }, 5000)
     }
   }
 
@@ -242,6 +244,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     super.onPause()
     disposableDialog.dispose()
     cameraXHelper?.destroy()
+    detectionHandler?.destroy()
   }
 
   public override fun onDestroy() {
@@ -249,7 +252,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     subscription?.dispose()
     disposableDialog.dispose()
     cameraXHelper?.destroy()
-    detector?.close()
+    detectionHandler?.destroy()
     super.onDestroy()
   }
 
@@ -257,91 +260,41 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     // Don't allow back to dismiss
   }
 
-  private val cameraAnalyzer = ImageAnalysis.Analyzer { imageProxy ->
-    val bitmapBuffer =
-      Bitmap.createBitmap(
-        imageProxy.width,
-        imageProxy.height,
-        Bitmap.Config.ARGB_8888
-      )
-    imageProxy.use { bitmapBuffer.copyPixelsFromBuffer(imageProxy.planes[0].buffer) }
-    imageProxy.close()
-    detector?.detect(bitmapBuffer)
-  }
 
-  enum class DetectionState {
-    PEEKING, WAKING
-  }
-  private abstract class DetectionAction (val triggerGesture: String) {
-    private val ACTION_CONFIRMING_TIME = 2000
-    private var firstSignalTime: Long = 0
-    fun checkDetectionState(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
-      if (boundingBoxes.any { it.clsName == triggerGesture }) {
-        if (firstSignalTime == 0L) {
-          firstSignalTime = System.currentTimeMillis()
-        } else if (System.currentTimeMillis() - firstSignalTime > ACTION_CONFIRMING_TIME) {
-          startAction()
-        }
-      } else {
-        firstSignalTime = 0L
-      }
-    }
-    abstract fun startAction()
-  }
-  private inner class SnoozeAction : DetectionAction(Constants.LabelList[Constants.GESTURE_MID]) {
+  private inner class SnoozeAction : DetectedAction(Constants.LabelList[Constants.GESTURE_MID]) {
     override fun startAction() {
       mAlarm?.snooze()
     }
   }
-  private inner class ReportTimeAction : DetectionAction(Constants.LabelList[Constants.GESTURE_2]) {
+  private inner class ReportTimeAction : DetectedAction(Constants.LabelList[Constants.GESTURE_2]) {
     override fun startAction() {
       // TODO implement
     }
   }
 
-  private inner class DetectionHandler : Detector.DetectorListener {
-    private val MAX_NOPERSON_TIME = 5000
-    private var state = DetectionState.PEEKING
-    private var initialCountDown = 30
-    private var lastPersonDetectionTime = 0L
-    private val actions = mutableListOf<DetectionAction>(
-      SnoozeAction(),
-      ReportTimeAction()
-    )
-
-    private fun peekStateOnDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
-      if (boundingBoxes.any { it.clsName == Constants.LabelList[Constants.HEAD] }) {
-        state = DetectionState.WAKING
-        lastPersonDetectionTime = System.currentTimeMillis()
-      } else {
-        initialCountDown--
-        if (initialCountDown == 0) {
-          if (isFirstAlarm) {
-            switchToNormalActivity()
-            logger.debug { "nothing detected after initial detection, switch to normal activity" }
-          } else {
-            logger.debug { "nothing detected after initial detection, dismiss the alarm" }
-            dismiss()
-          }
-        }
+  private inner class IDetectionHandler(context: Context) :
+    DualModelDetectionHandler(
+      mutableListOf(
+        SnoozeAction(),
+        ReportTimeAction()
+      ), context) {
+    override fun onPeekNoPerson() {
+      if (isFirstAlarm) {
+        switchToNormalActivity()
+      }
+      else {
+        dismiss()
+        logger.debug { "nothing detected after initial detection, dismiss" }
       }
     }
 
-    private fun wakeStateOnDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
-      if (boundingBoxes.any { it.clsName == Constants.LabelList[Constants.HEAD] }) {
-        lastPersonDetectionTime = System.currentTimeMillis()
-      }
-      if (System.currentTimeMillis() - lastPersonDetectionTime > MAX_NOPERSON_TIME) {
+    override fun onPersonLeave() {
+      runOnUiThread{
         mAlarm?.snooze()
       }
-      actions.forEach { it.checkDetectionState(boundingBoxes, inferenceTime) }
     }
 
-    override fun onDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
-      when (state) {
-        DetectionState.PEEKING -> peekStateOnDetect(boundingBoxes, inferenceTime)
-        DetectionState.WAKING -> wakeStateOnDetect(boundingBoxes, inferenceTime)
-      }
+    override fun onDetectUiUpdate(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
       runOnUiThread {
         overlayView.setResults(boundingBoxes)
         overlayView.invalidate()

@@ -17,7 +17,7 @@ Full License Text: https://creativecommons.org/licenses/by/4.0/
 package com.better.alarm.vision
 
 object Constants {
-  const val MODEL_PATH = "head_float16.tflite"
+  const val MODEL_PATH = "v9.tflite"
   val LABELS_PATH: String? = null // provide your labels.txt file if the metadata not present in the model
 
   val LabelList = listOf(
@@ -39,7 +39,3 @@ object Constants {
   val GESTURE_5 = 6
   val GESTURE_MID = 7
 }
-
-
-
-

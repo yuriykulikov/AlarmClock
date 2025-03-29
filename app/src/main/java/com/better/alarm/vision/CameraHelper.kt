@@ -27,6 +27,7 @@ class CameraXHelper(
   private val previewView: androidx.camera.view.PreviewView,
   private val cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor(),
   private val imageAnalyzer: ImageAnalysis.Analyzer? = null,
+  private val cameraOpenedCB: (Boolean) -> Unit
 ) {
   private val logger by globalLogger("CameraXHelper")
   private var cameraProvider: ProcessCameraProvider? = null
@@ -51,30 +52,26 @@ class CameraXHelper(
       try {
         cameraProvider = cameraProviderFuture.get()
 
-        val preview = Preview.Builder()
-          .setTargetResolution(cameraResolution)
-          .build().also {
-            it.setSurfaceProvider(previewView.surfaceProvider)
-          }
-
-        imageCapture = ImageCapture.Builder()
-          .setTargetResolution(cameraResolution)
-          .build()
-
         val cameraSelector = CameraSelector.Builder()
           .requireLensFacing(lensFacing)
           .build()
 
+        val preview = Preview.Builder()
+          .setTargetResolution(Size(640, 640))
+          .build().also {
+            it.setSurfaceProvider(previewView.surfaceProvider)
+          }
+
         if (imageAnalyzer != null)
           imageAnalysis = ImageAnalysis.Builder()
-            .setTargetResolution(cameraResolution)
+            .setTargetResolution(Size(640, 640))
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
             .build().also{
               it.setAnalyzer(cameraExecutor, imageAnalyzer)
             }
         cameraProvider?.unbindAll()
-        camera = cameraProvider?.bindToLifecycle(lifecycleOwner, cameraSelector, preview, imageCapture, imageAnalysis)
+        camera = cameraProvider?.bindToLifecycle(lifecycleOwner, cameraSelector, preview, imageAnalysis)
         if (camera == null) {
           logger.error { "Use case binding failed: (camera == null)" }
           _cameraIsOpened = false
@@ -92,6 +89,7 @@ class CameraXHelper(
       if (camera!=null) {
         _cameraIsOpened = true
       }
+      cameraOpenedCB(_cameraIsOpened)
     }, ContextCompat.getMainExecutor(context))
   }
 
