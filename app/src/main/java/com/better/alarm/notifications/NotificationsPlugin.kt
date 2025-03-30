@@ -49,7 +49,7 @@ class NotificationsPlugin(
     // Trigger a notification that, when clicked, will show the alarm
     // alert dialog. No need to check for fullscreen since this will always
     // be launched from a user action.
-    val notify = if (true) {
+    val notify = if (prefs.enableVisionWaking.value) {
         Intent(mContext, AlarmAlertVisionFullScreen::class.java)
     } else {
         Intent(mContext, AlarmAlertFullScreen::class.java)

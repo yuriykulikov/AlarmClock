@@ -38,7 +38,7 @@ class DetectorV9(
     private val message: (String) -> Unit
 ) {
 
-    private var interpreter: Interpreter
+    private var interpreter: Interpreter? = null
     private var labels = mutableListOf<String>()
     private var isOpened = false
 
@@ -72,8 +72,8 @@ class DetectorV9(
             labels.addAll(MetaData.TEMP_CLASSES)
         }
 
-        val inputShape = interpreter.getInputTensor(0)?.shape()
-        val outputShape = interpreter.getOutputTensor(0)?.shape()
+        val inputShape = interpreter?.getInputTensor(0)?.shape()
+        val outputShape = interpreter?.getOutputTensor(0)?.shape()
 
         if (inputShape != null) {
             tensorWidth = inputShape[1]
@@ -94,7 +94,7 @@ class DetectorV9(
     }
 
     fun restart(isGpu: Boolean) {
-        interpreter.close()
+        interpreter?.close()
         isOpened = false
 
         val options = if (isGpu) {
@@ -119,7 +119,8 @@ class DetectorV9(
     }
 
     fun close() {
-        interpreter.close()
+        interpreter?.close()
+        interpreter = null
         isOpened = false
     }
 
@@ -141,7 +142,7 @@ class DetectorV9(
         val imageBuffer = processedImage.buffer
 
         val output = TensorBuffer.createFixedSize(intArrayOf(1, numChannel, numElements), OUTPUT_IMAGE_TYPE)
-        interpreter.run(imageBuffer, output.buffer)
+        interpreter?.run(imageBuffer, output.buffer)
 
         val bestBoxes = bestBox(output.floatArray)
         inferenceTime = SystemClock.uptimeMillis() - inferenceTime

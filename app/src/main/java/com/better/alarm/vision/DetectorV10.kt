@@ -38,13 +38,16 @@ class DetectorV10(
     private val detectorListener: DetectorListener,
     private val message: (String) -> Unit
 ) {
-    private var interpreter: Interpreter
+    private var interpreter: Interpreter? = null
+    private var interpreterIsValid = false
     private var labels = mutableListOf<String>()
 
     private var tensorWidth = 0
     private var tensorHeight = 0
     private var numChannel = 0
     private var numElements = 0
+    private var gpuDelegate: GpuDelegate? = null
+    private var operatingLock: Any = Any()
 
     private val imageProcessor = ImageProcessor.Builder()
         .add(NormalizeOp(INPUT_MEAN, INPUT_STANDARD_DEVIATION))
@@ -52,8 +55,16 @@ class DetectorV10(
         .build()
 
     init {
+
+        val compatList = CompatibilityList()
         val options = Interpreter.Options().apply{
+          if(compatList.isDelegateSupportedOnThisDevice){
+            val delegateOptions = compatList.bestOptionsForThisDevice
+            gpuDelegate = GpuDelegate(delegateOptions)
+            this.addDelegate(gpuDelegate)
+          } else {
             this.setNumThreads(4)
+          }
         }
 
         val model = FileUtil.loadMappedFile(context, modelPath)
@@ -66,8 +77,8 @@ class DetectorV10(
 
         labels.forEach(::println)
 
-        val inputShape = interpreter.getInputTensor(0)?.shape()
-        val outputShape = interpreter.getOutputTensor(0)?.shape()
+        val inputShape = interpreter?.getInputTensor(0)?.shape()
+        val outputShape = interpreter?.getOutputTensor(0)?.shape()
 
         if (inputShape != null) {
             tensorWidth = inputShape[1]
@@ -84,17 +95,20 @@ class DetectorV10(
             numElements = outputShape[1]
             numChannel = outputShape[2]
         }
+
+        interpreterIsValid = true
     }
 
     fun restart(isGpu: Boolean) {
-        interpreter.close()
+        interpreter?.close()
 
         val options = if (isGpu) {
             val compatList = CompatibilityList()
             Interpreter.Options().apply{
                 if(compatList.isDelegateSupportedOnThisDevice){
                     val delegateOptions = compatList.bestOptionsForThisDevice
-                    this.addDelegate(GpuDelegate(delegateOptions))
+                    gpuDelegate = GpuDelegate(delegateOptions)
+                    this.addDelegate(gpuDelegate)
                 } else {
                     this.setNumThreads(4)
                 }
@@ -110,31 +124,43 @@ class DetectorV10(
     }
 
     fun close() {
-        interpreter.close()
+        synchronized(operatingLock) {
+          interpreter?.close()
+          interpreter = null
+          interpreterIsValid = false
+          gpuDelegate?.close()
+        }
     }
 
     fun detect(frame: Bitmap) {
-        if (tensorWidth == 0
+        if (!interpreterIsValid) {
+          message("Interpreter is not valid")
+          return
+        }
+        val bestBoxes: List<BoundingBox>
+        var inferenceTime: Long
+        synchronized( operatingLock ) {
+          if (tensorWidth == 0
             || tensorHeight == 0
             || numChannel == 0
             || numElements == 0) return
 
-        var inferenceTime = SystemClock.uptimeMillis()
+          inferenceTime = SystemClock.uptimeMillis()
 
-        val resizedBitmap = Bitmap.createScaledBitmap(frame, tensorWidth, tensorHeight, false)
+          val resizedBitmap = Bitmap.createScaledBitmap(frame, tensorWidth, tensorHeight, false)
 
-        val tensorImage = TensorImage(INPUT_IMAGE_TYPE)
-        tensorImage.load(resizedBitmap)
-        val processedImage = imageProcessor.process(tensorImage)
-        val imageBuffer = processedImage.buffer
+          val tensorImage = TensorImage(INPUT_IMAGE_TYPE)
+          tensorImage.load(resizedBitmap)
+          val processedImage = imageProcessor.process(tensorImage)
+          val imageBuffer = processedImage.buffer
 
-        val output = TensorBuffer.createFixedSize(intArrayOf(1, numChannel, numElements), OUTPUT_IMAGE_TYPE)
-        interpreter.run(imageBuffer, output.buffer)
+          val output = TensorBuffer.createFixedSize(intArrayOf(1, numChannel, numElements), OUTPUT_IMAGE_TYPE)
+          interpreter?.run(imageBuffer, output.buffer)
 
-        val bestBoxes = bestBox(output.floatArray)
-        inferenceTime = SystemClock.uptimeMillis() - inferenceTime
-
-        detectorListener.onDetect(bestBoxes, inferenceTime)
+          bestBoxes = bestBox(output.floatArray)
+          inferenceTime = SystemClock.uptimeMillis() - inferenceTime
+        }
+      detectorListener.onDetect(bestBoxes, inferenceTime)
     }
 
     private fun bestBox(array: FloatArray) : List<BoundingBox> {

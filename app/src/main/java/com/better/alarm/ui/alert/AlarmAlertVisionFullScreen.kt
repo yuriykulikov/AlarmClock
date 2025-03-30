@@ -23,6 +23,7 @@ import com.better.alarm.domain.Alarm
 import com.better.alarm.domain.IAlarmsManager
 import com.better.alarm.domain.Store
 import com.better.alarm.receivers.Intents
+import com.better.alarm.services.Event
 import com.better.alarm.services.Event.Autosilenced
 import com.better.alarm.services.Event.DemuteEvent
 import com.better.alarm.services.Event.DismissEvent
@@ -32,8 +33,6 @@ import com.better.alarm.ui.themes.DynamicThemeHandler
 import com.better.alarm.ui.timepicker.TimePickerDialogFragment
 import com.better.alarm.vision.BoundingBox
 import com.better.alarm.vision.CameraXHelper
-import com.better.alarm.vision.Constants
-import com.better.alarm.vision.DetectedAction
 import com.better.alarm.vision.DetectionHandler
 import com.better.alarm.vision.DualModelDetectionHandler
 import com.better.alarm.vision.OverlayView
@@ -66,8 +65,8 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     AlarmApplication.startOnce(application)
     setTheme(dynamicThemeHandler.alertTheme())
 
-
     super.onCreate(icicle)
+
     requestedOrientation =
       when {
         // portrait on smartphone
@@ -253,6 +252,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     disposableDialog.dispose()
     cameraXHelper?.destroy()
     detectionHandler?.destroy()
+    cameraExecutor?.shutdown()
     super.onDestroy()
   }
 
@@ -260,38 +260,39 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     // Don't allow back to dismiss
   }
 
-
-  private inner class SnoozeAction : DetectedAction(Constants.LabelList[Constants.GESTURE_MID]) {
-    override fun startAction() {
-      mAlarm?.snooze()
-    }
-  }
-  private inner class ReportTimeAction : DetectedAction(Constants.LabelList[Constants.GESTURE_2]) {
-    override fun startAction() {
-      // TODO implement
-    }
-  }
-
   private inner class IDetectionHandler(context: Context) :
-    DualModelDetectionHandler(
-      mutableListOf(
-        SnoozeAction(),
-        ReportTimeAction()
-      ), context) {
-    override fun onPeekNoPerson() {
-      if (isFirstAlarm) {
-        switchToNormalActivity()
-      }
+    DualModelDetectionHandler(context) {
+    override fun onPeekFinish(isPersonDetected: Boolean) {
+      logger.debug { "onPeekFinish: $isPersonDetected" }
+      if (isPersonDetected)
+        store.events.onNext(Event.StartWakingEvent())
       else {
-        dismiss()
-        logger.debug { "nothing detected after initial detection, dismiss" }
+        if (isFirstAlarm)
+          switchToNormalActivity()
+        else {
+          dismiss()
+          logger.debug { "nothing detected after initial detection, dismiss" }
+        }
       }
     }
 
     override fun onPersonLeave() {
+      logger.debug { "onPersonLeave" }
       runOnUiThread{
         mAlarm?.snooze()
       }
+    }
+
+    override fun onGestureDetected(gesture: String) {
+      when (gesture) {
+        sp.visionSnoozeGesture.value -> {
+          mAlarm?.snooze()
+        }
+        sp.visionReportTimeGesture.value -> {
+          // TODO implement
+        }
+      }
+      logger.debug { "gesture detected: $gesture" }
     }
 
     override fun onDetectUiUpdate(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
@@ -312,10 +313,11 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     val alarmType = intent.getStringExtra(Intents.EXTRA_TYPE)
     logger.debug { "switchToNormalActivity: $id $alarmType" }
 
+    finish()
     val normalActivityIntent = Intent(this, AlarmAlertFullScreen::class.java)
     normalActivityIntent.putExtra(Intents.EXTRA_ID, id)
     normalActivityIntent.putExtra(Intents.EXTRA_TYPE, alarmType)
     startActivity(normalActivityIntent)
-    finish()
+    store.events.onNext(Event.StartWakingEvent())
   }
 }

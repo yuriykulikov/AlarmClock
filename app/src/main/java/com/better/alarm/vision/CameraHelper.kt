@@ -25,7 +25,7 @@ class CameraXHelper(
   private val context: Context,
   private val lifecycleOwner: LifecycleOwner,
   private val previewView: androidx.camera.view.PreviewView,
-  private val cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor(),
+  private val cameraExecutor: ExecutorService,
   private val imageAnalyzer: ImageAnalysis.Analyzer? = null,
   private val cameraOpenedCB: (Boolean) -> Unit
 ) {
@@ -163,8 +163,6 @@ class CameraXHelper(
   }
 
   fun destroy() {
-    if (!cameraExecutor.isShutdown)
-      cameraExecutor.shutdown()
     cameraProvider?.unbindAll()
   }
 }

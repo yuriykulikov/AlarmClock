@@ -11,26 +11,28 @@ enum class DetectionState {
 }
 
 interface DetectionHandler{
-  fun onPeekNoPerson()
+  fun onPeekFinish(isPersonDetected: Boolean)
   fun onPersonLeave()
   fun onDetectUiUpdate(boundingBoxes: List<BoundingBox>, inferenceTime: Long)
+  fun onGestureDetected(gesture: String)
   fun destroy()
 
   val analyzer: ImageAnalysis.Analyzer
 }
 
 abstract class DualModelDetectionHandler (
-  private val actions: MutableList<DetectionAction>,
   private val context: Context
 ) : DetectionHandler {
-  private val HEAD_MODEL_PATH = "head_26_float16.tflite"
+  private val HEAD_MODEL_PATH = "head_n_float16.tflite"
   private val GESTURE_MODEL_PATH = "YOLOv10n_gestures_float16.tflite"
   private val MAX_NOPERSON_TIME = 5000
+  private val GESTURE_CONFRIM_TIME = 1000
+  private val INITIAL_MAX_TIME = 6000
   private var state = DetectionState.PEEKING
-  private var initialCountDown = 30000
+  private var peekStartTime = 0L
   private var lastPersonDetectionTime = 0L
   private val logger by globalLogger("DetectionHandler")
-  private var headDetectorV9: DetectorV9? = null
+  private var headDetectorV10: DetectorV10? = null
   private var gestureDetector: DetectorV10? = null
   private val boundingBoxesThisFrame = mutableListOf<BoundingBox>()
 
@@ -53,16 +55,15 @@ abstract class DualModelDetectionHandler (
       bitmapBuffer, 0, 0, bitmapBuffer.width, bitmapBuffer.height,
       matrix, true
     )
-    logger.debug { "analyze ${rotatedBitmap.width}x${rotatedBitmap.height}" }
     boundingBoxesThisFrame.clear()
     if (state == DetectionState.WAKING) {
       gestureDetector?.detect(rotatedBitmap)
     }
-    headDetectorV9?.detect(rotatedBitmap)
+    headDetectorV10?.detect(rotatedBitmap)
   }
 
   init {
-    headDetectorV9 = DetectorV9(context, HEAD_MODEL_PATH, HeadDetectorListener(), {
+    headDetectorV10 = DetectorV10(context, HEAD_MODEL_PATH, HeadDetectorListener(), {
       logger.debug { it }
     })
     gestureDetector = DetectorV10(context, GESTURE_MODEL_PATH, GestureDetectorListener(), {
@@ -70,20 +71,24 @@ abstract class DualModelDetectionHandler (
     })
   }
 
-  inner class HeadDetectorListener : DetectorV9.DetectorListener {
+  inner class HeadDetectorListener : DetectorV10.DetectorListener {
     private fun peekStateOnDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
-      if (boundingBoxes.any { it.clsName == "person" }) {
+      if (peekStartTime == 0L) {
+        peekStartTime = System.currentTimeMillis()
+      }
+      if (boundingBoxes.any { it.clsName == Labels.HEAD }) {
         state = DetectionState.WAKING
         lastPersonDetectionTime = System.currentTimeMillis()
+        onPeekFinish(true)
       } else {
-        if (--initialCountDown== 0) {
-          onPeekNoPerson()
+        if (System.currentTimeMillis() - peekStartTime > INITIAL_MAX_TIME) {
+          onPeekFinish(false)
         }
       }
     }
 
     private fun wakeStateOnDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
-      if (boundingBoxes.any { it.clsName == "person" }) {
+      if (boundingBoxes.any { it.clsName == Labels.HEAD }) {
         lastPersonDetectionTime = System.currentTimeMillis()
       }
       if (System.currentTimeMillis() - lastPersonDetectionTime > MAX_NOPERSON_TIME) {
@@ -101,27 +106,42 @@ abstract class DualModelDetectionHandler (
   }
 
   inner class GestureDetectorListener : DetectorV10.DetectorListener {
+    private val firstGestureTime = buildMap<String, Long> {
+      for (gesture in Labels.GestureLabelList)
+        put(gesture, 0)
+    }.toMutableMap()
+
     override fun onDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
-      actions.forEach { it.checkDetectionState(boundingBoxes, inferenceTime) }
+      for (gesture in Labels.GestureLabelList) {
+        if (!boundingBoxes.any { it.clsName == gesture }) {
+          firstGestureTime[gesture] = 0
+        } else if (firstGestureTime[gesture] == 0L) {
+          firstGestureTime[gesture] = System.currentTimeMillis()
+        } else if (System.currentTimeMillis() - firstGestureTime[gesture]!! > GESTURE_CONFRIM_TIME) {
+          onGestureDetected(gesture)
+        }
+      }
       boundingBoxesThisFrame.addAll(boundingBoxes)
     }
   }
 
   override fun destroy() {
-    headDetectorV9?.close()
+    headDetectorV10?.close()
     gestureDetector?.close()
+    headDetectorV10 = null
+    gestureDetector = null
   }
 }
 
 abstract class SingleModelDetectionHandler (
   private val context: Context,
-  private val actions: MutableList<DetectionAction>,
 ) : DetectorV9.DetectorListener, DetectionHandler {
   private val MODEL_PATH = "alarm_v1.16.tflite"
   private val MAX_NOPERSON_TIME = 5000
-  private var state = DetectionState.PEEKING
+  private val GESTURE_CONFRIM_TIME = 1000
   private var initialCountDown = 30000
   private var lastPersonDetectionTime = 0L
+  private var state = DetectionState.PEEKING
   private val logger by globalLogger("DetectionHandler")
   private var detectorV9: DetectorV9? = null
   override val analyzer: ImageAnalysis.Analyzer = ImageAnalysis.Analyzer {
@@ -147,6 +167,11 @@ abstract class SingleModelDetectionHandler (
     detectorV9?.detect(rotatedBitmap)
   }
 
+  private val firstGestureTime = buildMap<String, Long> {
+    for (gesture in Labels.GestureLabelList)
+      put(gesture, 0)
+  }.toMutableMap()
+
   init {
     detectorV9 = DetectorV9(context, MODEL_PATH, this) {
       logger.debug { it }
@@ -154,25 +179,34 @@ abstract class SingleModelDetectionHandler (
   }
 
   private fun peekStateOnDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
-    if (boundingBoxes.any { it.clsName == Constants.LabelList[Constants.HEAD] }) {
+    if (boundingBoxes.any { it.clsName == Labels.HEAD }) {
       state = DetectionState.WAKING
       lastPersonDetectionTime = System.currentTimeMillis()
+      onPeekFinish(true)
     } else {
       initialCountDown--
       if (initialCountDown == 0) {
-        onPeekNoPerson()
+        onPeekFinish(false)
       }
     }
   }
 
   private fun wakeStateOnDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
-    if (boundingBoxes.any { it.clsName == Constants.LabelList[Constants.HEAD] }) {
+    if (boundingBoxes.any { it.clsName == Labels.HEAD }) {
       lastPersonDetectionTime = System.currentTimeMillis()
     }
     if (System.currentTimeMillis() - lastPersonDetectionTime > MAX_NOPERSON_TIME) {
       onPersonLeave()
     }
-    actions.forEach { it.checkDetectionState(boundingBoxes, inferenceTime) }
+    for (gesture in Labels.GestureLabelList) {
+      if (!boundingBoxes.any { it.clsName == gesture }) {
+        firstGestureTime[gesture] = 0
+      } else if (firstGestureTime[gesture] == 0L) {
+        firstGestureTime[gesture] = System.currentTimeMillis()
+      } else if (System.currentTimeMillis() - firstGestureTime[gesture]!! > GESTURE_CONFRIM_TIME) {
+        onGestureDetected(gesture)
+      }
+    }
   }
 
   override fun onDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
@@ -189,28 +223,3 @@ abstract class SingleModelDetectionHandler (
     detectorV9?.close()
   }
 }
-
-
-interface DetectionAction {
-  fun checkDetectionState(boundingBoxes: List<BoundingBox>, inferenceTime: Long)
-
-  fun startAction()
-}
-
-abstract class DetectedAction(val triggerGesture: String) : DetectionAction {
-  private val ACTION_CONFIRMING_TIME = 2000
-  private var firstSignalTime: Long = 0
-  override fun checkDetectionState(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
-    if (boundingBoxes.any { it.clsName == triggerGesture }) {
-      if (firstSignalTime == 0L) {
-        firstSignalTime = System.currentTimeMillis()
-      } else if (System.currentTimeMillis() - firstSignalTime > ACTION_CONFIRMING_TIME) {
-        startAction()
-      }
-    } else {
-      firstSignalTime = 0L
-    }
-  }
-  abstract override fun startAction()
-}
-

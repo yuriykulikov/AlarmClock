@@ -169,6 +169,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
     bindListPreference(Prefs.KEY_THEME, prefs.theme) { summary = entry }
 
     bindListPreference(Prefs.LIST_ROW_LAYOUT, prefs.listRowLayout) { summary = entry }
+
+    bindListPreference(Prefs.KEY_VISION_GESTURE_SNOOZE, prefs.visionSnoozeGesture) { summary = entry }
+
+    bindListPreference(Prefs.KEY_VISION_GESTURE_REPORT_TIME, prefs.visionReportTimeGesture) { summary = entry }
   }
 
   override fun onPause() {

@@ -25,6 +25,15 @@ object Intents {
   const val ALARM_ALERT_ACTION = BuildConfig.APPLICATION_ID + ".ALARM_ALERT"
 
   /** Alarm fires */
+  const val ALARM_ALERT_PAUSE_ACTION = BuildConfig.APPLICATION_ID + ".ALARM_ALERT_PAUSE"
+
+  /** Alarm fires */
+  const val ALARM_ALERT_RESUME_ACTION = BuildConfig.APPLICATION_ID + ".ALARM_ALERT_RESUME"
+
+  /** Alarm fires */
+  const val ALARM_ALERT_START_WAKING_ACTION = BuildConfig.APPLICATION_ID + ".ALARM_ALERT_START_WAKING"
+
+  /** Alarm fires */
   const val ALARM_PREALARM_ACTION = BuildConfig.APPLICATION_ID + ".ALARM_PREALARM_ACTION"
 
   /** Alarm is snoozed */

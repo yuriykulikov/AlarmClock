@@ -3,6 +3,7 @@ package com.better.alarm.data
 import com.better.alarm.data.stores.PrimitiveDataStoreFactory
 import com.better.alarm.data.stores.RxDataStore
 import com.better.alarm.data.stores.intStringDataStore
+import com.better.alarm.vision.Labels
 import io.reactivex.Observable
 import io.reactivex.Single
 
@@ -68,8 +69,8 @@ private constructor(
           defaultRingtone =
               factory.stringDataStore(KEY_DEFAULT_RINGTONE, Alarmtone.SystemDefault.asString()),
           enableVisionWaking = factory.booleanDataStore(KEY_ENABLE_VISION_WAKING, false),
-          visionSnoozeGesture = factory.stringDataStore(KEY_VISION_SNOOZE_GESTURE, "None"),
-          visionReportTimeGesture = factory.stringDataStore(KEY_VISION_REPORT_TIME_GESTURE, "None")
+          visionSnoozeGesture = factory.stringDataStore(KEY_VISION_GESTURE_SNOOZE, Labels.CALL),
+          visionReportTimeGesture = factory.stringDataStore(KEY_VISION_GESTURE_REPORT_TIME, Labels.THUMB_INDEX)
       )
     }
 
@@ -87,8 +88,8 @@ private constructor(
     const val KEY_VOLUME_PREFERENCE = "volume_preference"
     const val KEY_DEFAULT_RINGTONE = "default_ringtone"
     const val KEY_ENABLE_VISION_WAKING = "enable_vision_waking"
-    const val KEY_VISION_SNOOZE_GESTURE = "vision_snooze_gesture"
-    const val KEY_VISION_REPORT_TIME_GESTURE = "vision_report_time_gesture"
+    const val KEY_VISION_GESTURE_SNOOZE = "vision_gesture_snooze"
+    const val KEY_VISION_GESTURE_REPORT_TIME = "vision_gesture_report_time"
     const val LIST_ROW_LAYOUT = "ui_list_row_layout"
     const val LIST_ROW_LAYOUT_COMPACT = "compact"
     const val LIST_ROW_LAYOUT_CLASSIC = "classic"
