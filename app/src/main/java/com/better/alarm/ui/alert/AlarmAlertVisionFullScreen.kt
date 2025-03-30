@@ -36,6 +36,7 @@ import com.better.alarm.vision.CameraXHelper
 import com.better.alarm.vision.DetectionHandler
 import com.better.alarm.vision.DualModelDetectionHandler
 import com.better.alarm.vision.OverlayView
+import com.better.alarm.vision.TTSHelper
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -58,6 +59,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
   private var cameraXHelper: CameraXHelper? = null
   private var cameraExecutor: ExecutorService? = null
   private var detectionHandler: DetectionHandler? = null
+  private var ttsHelper: TTSHelper? = null
   private var isFirstAlarm = false
   private lateinit var overlayView: OverlayView
 
@@ -116,6 +118,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
             }
           }
         }, 3000)
+
       })
 
     }
@@ -246,16 +249,6 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     detectionHandler?.destroy()
   }
 
-  public override fun onDestroy() {
-    // No longer care about the alarm being killed.
-    subscription?.dispose()
-    disposableDialog.dispose()
-    cameraXHelper?.destroy()
-    detectionHandler?.destroy()
-    cameraExecutor?.shutdown()
-    super.onDestroy()
-  }
-
   override fun onBackPressed() {
     // Don't allow back to dismiss
   }
@@ -278,15 +271,20 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
 
     override fun onPersonLeave() {
       logger.debug { "onPersonLeave" }
-      runOnUiThread{
-        mAlarm?.snooze()
+      ttsHelper?.say("person left") {
+        runOnUiThread{
+          mAlarm?.snooze()
+        }
       }
     }
 
     override fun onGestureDetected(gesture: String) {
+      ttsHelper?.say("$gesture detected")
       when (gesture) {
         sp.visionSnoozeGesture.value -> {
-          mAlarm?.snooze()
+          ttsHelper?.say("snooze") {
+            runOnUiThread { mAlarm?.snooze() }
+          }
         }
         sp.visionReportTimeGesture.value -> {
           // TODO implement
@@ -319,5 +317,16 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     normalActivityIntent.putExtra(Intents.EXTRA_TYPE, alarmType)
     startActivity(normalActivityIntent)
     store.events.onNext(Event.StartWakingEvent())
+  }
+
+  public override fun onDestroy() {
+    // No longer care about the alarm being killed.
+    subscription?.dispose()
+    disposableDialog.dispose()
+    cameraXHelper?.destroy()
+    detectionHandler?.destroy()
+    cameraExecutor?.shutdown()
+    ttsHelper?.destroy()
+    super.onDestroy()
   }
 }
