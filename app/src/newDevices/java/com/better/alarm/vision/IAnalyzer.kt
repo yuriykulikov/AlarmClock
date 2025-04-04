@@ -5,13 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.Matrix
 import androidx.camera.core.ImageAnalysis
 import com.better.alarm.bootstrap.globalLogger
-import com.better.alarm.vision.BoundingBox
-import com.better.alarm.vision.DetectionAnalyzer
-import com.better.alarm.vision.DetectionHandler
-import com.better.alarm.vision.DetectionState
-import com.better.alarm.vision.DetectorV10
-import com.better.alarm.vision.Gesture
-import com.better.alarm.vision.Labels
 import com.google.mediapipe.framework.image.BitmapImageBuilder
 import com.google.mediapipe.framework.image.MPImage
 import com.google.mediapipe.tasks.components.containers.Landmark
@@ -52,12 +45,12 @@ class IAnalyzer (
   private val context: Context,
   private val handler: DetectionHandler
 ): DetectionAnalyzer {
-  private val MAX_NOPERSON_TIME = 10000
+  private val MAX_NOPERSON_TIME = 20000
   private val INITIAL_MAX_TIME = 6000
   private var peekStartTime = 0L
   private var lastPersonDetectionTime = 0L
   private val logger by globalLogger("DetectionHandler")
-  private val HEAD_MODEL_PATH = "head_n_float16.tflite"
+  private val HEAD_MODEL_PATH = "head_n_float32.tflite"
   private val GESTURE_MODEL_PATH = "gesture_recognizer.task"
   private var headDetectorV10: DetectorV10? = null
   private var gestureRecognizer: GestureRecognizer? = null
@@ -105,6 +98,7 @@ class IAnalyzer (
       gestureRecognizer?.recognizeAsync(mpImage, System.currentTimeMillis())
     }
     headDetectorV10?.detect(rotatedBitmap)
+    bitmapBuffer.recycle()
   }
 
   init {
