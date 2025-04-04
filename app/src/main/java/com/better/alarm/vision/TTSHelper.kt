@@ -9,10 +9,21 @@ import android.speech.tts.UtteranceProgressListener
 import com.better.alarm.bootstrap.globalLogger
 import java.util.UUID
 
+interface TTSHelper {
+  fun speak(word: String, queue: Int = TextToSpeech.QUEUE_ADD, callback: (() -> Unit)? = null)
+  fun destroy()
+}
 
-class TTSHelper(
+class EmptyTTSHelper: TTSHelper {
+  override fun speak(word: String, queue: Int, callback: (() -> Unit)?) {
+    callback?.invoke()
+  }
+  override fun destroy() {}
+}
+
+class ITTSHelper(
   private val context: Context,
-) {
+): TTSHelper{
   private var tts: TextToSpeech? = null
   private val logger by globalLogger("TTSHelper")
   private var speakingParams = Bundle().apply{ putInt(TextToSpeech.Engine.KEY_PARAM_STREAM, STREAM_ALARM) }
@@ -39,22 +50,27 @@ class TTSHelper(
       }
     }
     tts?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
-      override fun onStart(utteranceId: String?) { }
+      override fun onStart(utteranceId: String?) {
+        logger.debug { "onStart: $utteranceId" }
+      }
 
       override fun onDone(utteranceId: String?) {
         if (utteranceId == null) return
         if (!callbackMap.containsKey(utteranceId)) return
         callbackMap[utteranceId]?.invoke()
         callbackMap.remove(utteranceId)
+        logger.debug { "onDone: $utteranceId" }
       }
 
-      override fun onError(utteranceId: String?) { }
+      override fun onError(utteranceId: String?) {
+        logger.error { "onError: $utteranceId" }
+      }
     })
 
 
   }
 
-  fun say(word: String, queue: Int = TextToSpeech.QUEUE_ADD, callback: (() -> Unit)? = null) {
+  override fun speak(word: String, queue: Int, callback: (() -> Unit)?) {
     val uuid: String = UUID.randomUUID().toString()
     tts?.speak(word, queue, speakingParams, uuid)
     if (callback != null) {
@@ -62,7 +78,7 @@ class TTSHelper(
     }
   }
 
-  fun destroy() {
+  override fun destroy() {
     tts?.shutdown()
     tts = null
   }

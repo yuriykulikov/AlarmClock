@@ -188,6 +188,13 @@
     <!-- Report time action preference title -->
     <string name="vision_report_time_action_title">Gesture to report time</string>
 
+    <string name="enable_vision_waking_title">enable AI vision waking</string>
+
+    <string name="vision_waking_flashlight_title">turn on flashlight</string>
+    <string name="vision_waking_flashlight_summary">necessary if the environment is dark</string>
+
+    <string name="vision_tts_title">enable Text to Speech</string>
+
     <!--
          Entries listed in the ListPreference when invoking the auto silence
          preference.
@@ -306,78 +313,37 @@
         <item>Default</item>
         <item>Upload</item>
     </string-array>
+
     <string-array name="vision_gesture_entries">
-        <item>grabbing</item>
-        <item>grip</item>
-        <item>holy</item>
-        <item>point</item>
-        <item>call</item>
-        <item>three3</item>
-        <item>timeout</item>
-        <item>xsign</item>
-        <item>hand_heart</item>
-        <item>hand_heart2</item>
-        <item>little_finger</item>
-        <item>middle_finger</item>
-        <item>take_picture</item>
-        <item>dislike</item>
-        <item>fist</item>
-        <item>four</item>
-        <item>like</item>
-        <item>mute</item>
-        <item>ok</item>
+        <item>none</item>
+        <item>zero</item>
         <item>one</item>
-        <item>palm</item>
-        <item>peace</item>
-        <item>peace_inverted</item>
-        <item>rock</item>
-        <item>stop</item>
-        <item>stop_inverted</item>
+        <item>two</item>
         <item>three</item>
-        <item>three2</item>
-        <item>two_up</item>
-        <item>two_up_inverted</item>
-        <item>three_gun</item>
-        <item>thumb_index</item>
-        <item>thumb_index2</item>
-        <item>no_gesture</item>
+        <item>four</item>
+        <item>five</item>
+        <item>middle finger</item>
+        <item>little finger</item>
+        <item>call</item>
+        <item>rock</item>
+        <item>thumbs up</item>
+        <item>gun</item>
     </string-array>
 
     <string-array name="vision_gesture_values">
-        <item>grabbing</item>
-        <item>grip</item>
-        <item>holy</item>
-        <item>point</item>
-        <item>call</item>
-        <item>three3</item>
-        <item>timeout</item>
-        <item>xsign</item>
-        <item>hand_heart</item>
-        <item>hand_heart2</item>
-        <item>little_finger</item>
-        <item>middle_finger</item>
-        <item>take_picture</item>
-        <item>dislike</item>
-        <item>fist</item>
-        <item>four</item>
-        <item>like</item>
-        <item>mute</item>
-        <item>ok</item>
+        <item>none</item>
+        <item>zero</item>
         <item>one</item>
-        <item>palm</item>
-        <item>peace</item>
-        <item>peace_inverted</item>
-        <item>rock</item>
-        <item>stop</item>
-        <item>stop_inverted</item>
+        <item>two</item>
         <item>three</item>
-        <item>three2</item>
-        <item>two_up</item>
-        <item>two_up_inverted</item>
-        <item>three_gun</item>
-        <item>thumb_index</item>
-        <item>thumb_index2</item>
-        <item>no_gesture</item>
+        <item>four</item>
+        <item>five</item>
+        <item>middle finger</item>
+        <item>little finger</item>
+        <item>call</item>
+        <item>rock</item>
+        <item>thumbs up</item>
+        <item>gun</item>
     </string-array>
 
 </resources>

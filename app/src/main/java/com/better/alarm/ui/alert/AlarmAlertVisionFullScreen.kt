@@ -1,6 +1,5 @@
 package com.better.alarm.ui.alert
 
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
@@ -9,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.speech.tts.TextToSpeech
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
@@ -20,6 +20,7 @@ import com.better.alarm.bootstrap.AlarmApplication
 import com.better.alarm.bootstrap.globalLogger
 import com.better.alarm.data.Prefs
 import com.better.alarm.domain.Alarm
+import com.better.alarm.domain.Calendars
 import com.better.alarm.domain.IAlarmsManager
 import com.better.alarm.domain.Store
 import com.better.alarm.receivers.Intents
@@ -33,16 +34,20 @@ import com.better.alarm.ui.themes.DynamicThemeHandler
 import com.better.alarm.ui.timepicker.TimePickerDialogFragment
 import com.better.alarm.vision.BoundingBox
 import com.better.alarm.vision.CameraXHelper
+import com.better.alarm.vision.DetectionAnalyzer
 import com.better.alarm.vision.DetectionHandler
-import com.better.alarm.vision.DualModelDetectionHandler
+import com.better.alarm.vision.EmptyTTSHelper
+import com.better.alarm.vision.ITTSHelper
 import com.better.alarm.vision.OverlayView
 import com.better.alarm.vision.TTSHelper
+import com.better.alarm.vision.IAnalyzer
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import org.koin.android.ext.android.inject
+import java.util.Calendar
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -53,12 +58,13 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
   private val sp: Prefs by inject()
   private val logger by globalLogger("AlarmAlertVisionFullScreen")
   private val dynamicThemeHandler: DynamicThemeHandler by inject()
+  private val calendars: Calendars by inject()
   private var mAlarm: Alarm? = null
   private var disposableDialog = Disposables.empty()
   private var subscription: Disposable? = null
   private var cameraXHelper: CameraXHelper? = null
-  private var cameraExecutor: ExecutorService? = null
-  private var detectionHandler: DetectionHandler? = null
+  private lateinit var cameraExecutor: ExecutorService
+  private lateinit var analyzer: DetectionAnalyzer
   private var ttsHelper: TTSHelper? = null
   private var isFirstAlarm = false
   private lateinit var overlayView: OverlayView
@@ -98,29 +104,37 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
         }
         .take(1)
         .subscribe { finish() }
+    ttsHelper = if (sp.visionTTS.value) ITTSHelper(this) else EmptyTTSHelper()
 
     if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+      logger.debug { "camera permission is not granted, switch to normal activity" }
       switchToNormalActivity()
     } else {
       cameraExecutor = Executors.newSingleThreadExecutor()
 
-      cameraExecutor?.execute( {
-        detectionHandler = IDetectionHandler(this)
+      cameraExecutor.execute {
+        analyzer = IAnalyzer(this, detectionHandler)
         Handler(Looper.getMainLooper()).postDelayed({
-          cameraXHelper = CameraXHelper(this, this, findViewById(R.id.alert_vision_preview), cameraExecutor!!, detectionHandler!!.analyzer) {
-              succeeded ->
+          cameraXHelper = CameraXHelper(this, this,findViewById(R.id.alert_vision_preview) , cameraExecutor, analyzer.analyzer) { succeeded ->
             if (succeeded) {
-              //cameraXHelper?.setOrToggleFlash(true)
-            }
-            else {
+              if (sp.visionFlashlight.value) {
+                cameraXHelper?.setOrToggleFlash(true)
+              }
+            } else {
+              logger.debug { "camera is not opened after 5 seconds, switch to normal activity" }
               switchToNormalActivity()
-              logger.debug {"camera is not opened after 5 seconds, switch to normal activity"}
             }
           }
-        }, 3000)
+        }, 5000)
+      }
 
-      })
-
+      // avoid auto silence in vision mode
+      if (sp.autoSilence.value > 0) {
+        val autoSilenceTimeMillis:Long = sp.autoSilence.value * 60 * 1000L
+        Handler(Looper.getMainLooper()).postDelayed({
+          mAlarm?.snooze()
+        }, autoSilenceTimeMillis - 30000)
+      }
     }
   }
 
@@ -244,17 +258,13 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
 
   override fun onPause() {
     super.onPause()
-    disposableDialog.dispose()
-    cameraXHelper?.destroy()
-    detectionHandler?.destroy()
   }
 
   override fun onBackPressed() {
     // Don't allow back to dismiss
   }
 
-  private inner class IDetectionHandler(context: Context) :
-    DualModelDetectionHandler(context) {
+  private val detectionHandler: DetectionHandler = object: DetectionHandler {
     override fun onPeekFinish(isPersonDetected: Boolean) {
       logger.debug { "onPeekFinish: $isPersonDetected" }
       if (isPersonDetected)
@@ -263,7 +273,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
         if (isFirstAlarm)
           switchToNormalActivity()
         else {
-          dismiss()
+          runOnUiThread { dismiss() }
           logger.debug { "nothing detected after initial detection, dismiss" }
         }
       }
@@ -271,19 +281,26 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
 
     override fun onPersonLeave() {
       logger.debug { "onPersonLeave" }
-      ttsHelper?.say("person left") {
+      ttsHelper?.speak("person left") {
         runOnUiThread{
-          mAlarm?.snooze()
+          val t = calendars.now()
+          t.add(Calendar.MINUTE, 1)
+          mAlarm?.snooze(t.get(Calendar.HOUR_OF_DAY), t.get(Calendar.MINUTE))
         }
       }
     }
 
     override fun onGestureDetected(gesture: String) {
-      ttsHelper?.say("$gesture detected")
+      ttsHelper?.speak("$gesture detected", TextToSpeech.QUEUE_FLUSH)
       when (gesture) {
         sp.visionSnoozeGesture.value -> {
-          ttsHelper?.say("snooze") {
-            runOnUiThread { mAlarm?.snooze() }
+          logger.debug { "snooze gesture detected, snooze!!!" }
+          ttsHelper?.speak("snooze") {
+            runOnUiThread{
+              val t = calendars.now()
+              t.add(Calendar.MINUTE, 1)
+              mAlarm?.snooze(t.get(Calendar.HOUR_OF_DAY), t.get(Calendar.MINUTE))
+            }
           }
         }
         sp.visionReportTimeGesture.value -> {
@@ -324,9 +341,11 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     subscription?.dispose()
     disposableDialog.dispose()
     cameraXHelper?.destroy()
-    detectionHandler?.destroy()
-    cameraExecutor?.shutdown()
+    analyzer.destroy()
+    cameraExecutor.shutdown()
     ttsHelper?.destroy()
+    cameraXHelper = null
+    ttsHelper = null
     super.onDestroy()
   }
 }

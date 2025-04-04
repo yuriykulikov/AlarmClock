@@ -29,6 +29,8 @@ private constructor(
     val theme: RxDataStore<String>,
     val defaultRingtone: RxDataStore<String>,
     val enableVisionWaking: RxDataStore<Boolean>,
+    val visionFlashlight: RxDataStore<Boolean>,
+    val visionTTS: RxDataStore<Boolean>,
     val visionSnoozeGesture: RxDataStore<String>,
     val visionReportTimeGesture: RxDataStore<String>
 ) {
@@ -69,8 +71,10 @@ private constructor(
           defaultRingtone =
               factory.stringDataStore(KEY_DEFAULT_RINGTONE, Alarmtone.SystemDefault.asString()),
           enableVisionWaking = factory.booleanDataStore(KEY_ENABLE_VISION_WAKING, false),
+          visionFlashlight = factory.booleanDataStore(KEY_VISION_FLASHLIGHT, false),
           visionSnoozeGesture = factory.stringDataStore(KEY_VISION_GESTURE_SNOOZE, Labels.CALL),
-          visionReportTimeGesture = factory.stringDataStore(KEY_VISION_GESTURE_REPORT_TIME, Labels.THUMB_INDEX)
+          visionReportTimeGesture = factory.stringDataStore(KEY_VISION_GESTURE_REPORT_TIME, Labels.THUMB_INDEX),
+          visionTTS = factory.booleanDataStore(KEY_VISION_TTS, true)
       )
     }
 
@@ -88,6 +92,8 @@ private constructor(
     const val KEY_VOLUME_PREFERENCE = "volume_preference"
     const val KEY_DEFAULT_RINGTONE = "default_ringtone"
     const val KEY_ENABLE_VISION_WAKING = "enable_vision_waking"
+    const val KEY_VISION_FLASHLIGHT = "vision_flashlight"
+    const val KEY_VISION_TTS = "vision_tts"
     const val KEY_VISION_GESTURE_SNOOZE = "vision_gesture_snooze"
     const val KEY_VISION_GESTURE_REPORT_TIME = "vision_gesture_report_time"
     const val LIST_ROW_LAYOUT = "ui_list_row_layout"

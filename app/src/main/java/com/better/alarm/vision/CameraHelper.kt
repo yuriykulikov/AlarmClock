@@ -71,7 +71,9 @@ class CameraXHelper(
               it.setAnalyzer(cameraExecutor, imageAnalyzer)
             }
         cameraProvider?.unbindAll()
-        camera = cameraProvider?.bindToLifecycle(lifecycleOwner, cameraSelector, preview, imageAnalysis)
+        camera =
+          if (imageAnalysis != null) cameraProvider?.bindToLifecycle(lifecycleOwner, cameraSelector, preview, imageAnalysis)
+          else cameraProvider?.bindToLifecycle(lifecycleOwner, cameraSelector, preview)
         if (camera == null) {
           logger.error { "Use case binding failed: (camera == null)" }
           _cameraIsOpened = false

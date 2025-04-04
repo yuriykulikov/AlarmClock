@@ -81,7 +81,7 @@ android {
     versionCode = 31601
     versionName = "3.16.01"
     applicationId = "com.better.alarm"
-    minSdk = 21
+    minSdk = 24
     targetSdk = 33
     testApplicationId = "com.better.alarm.test"
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -132,7 +132,13 @@ android {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
   }
+
+  packagingOptions {
+    resources.pickFirsts.add("META-INF/gradle/incremental.annotation.processors")
+  }
+
   testOptions { unitTests.isReturnDefaultValues = true }
+
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
@@ -200,4 +206,7 @@ dependencies {
   implementation("org.tensorflow:tensorflow-lite-api:2.16.1")
   implementation("org.tensorflow:tensorflow-lite-gpu:2.16.1")
   implementation("org.tensorflow:tensorflow-lite-select-tf-ops:2.16.1")
+
+
+  implementation("com.google.mediapipe:tasks-vision:latest.release")
 }
