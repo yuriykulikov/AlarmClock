@@ -81,7 +81,6 @@ android {
     versionCode = 31601
     versionName = "3.16.01"
     applicationId = "com.better.alarm"
-    minSdk = 24
     targetSdk = 33
     testApplicationId = "com.better.alarm.test"
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -113,10 +112,25 @@ android {
   }
 
   flavorDimensions.add("default")
+  flavorDimensions.add("version")
 
   productFlavors {
-    create("develop") { applicationId = "com.better.alarm" }
-    create("premium") { applicationId = "com.premium.alarm" }
+    create("develop") {
+      dimension = "default"
+      applicationId = "com.better.alarm"
+    }
+    create("premium") {
+      dimension = "default"
+      applicationId = "com.premium.alarm"
+    }
+    create("newDevices") {
+      dimension = "version"
+      minSdk = 24
+    }
+    create("oldDevices") {
+      dimension = "version"
+      minSdk = 21
+    }
   }
 
   installation {
@@ -208,5 +222,5 @@ dependencies {
   implementation("org.tensorflow:tensorflow-lite-select-tf-ops:2.16.1")
 
 
-  implementation("com.google.mediapipe:tasks-vision:latest.release")
+  "newDevicesImplementation"("com.google.mediapipe:tasks-vision:latest.release")
 }

@@ -5,6 +5,13 @@ import android.graphics.Bitmap
 import android.graphics.Matrix
 import androidx.camera.core.ImageAnalysis
 import com.better.alarm.bootstrap.globalLogger
+import com.better.alarm.vision.BoundingBox
+import com.better.alarm.vision.DetectionAnalyzer
+import com.better.alarm.vision.DetectionHandler
+import com.better.alarm.vision.DetectionState
+import com.better.alarm.vision.DetectorV10
+import com.better.alarm.vision.Gesture
+import com.better.alarm.vision.Labels
 import com.google.mediapipe.framework.image.BitmapImageBuilder
 import com.google.mediapipe.framework.image.MPImage
 import com.google.mediapipe.tasks.components.containers.Landmark
@@ -23,7 +30,7 @@ data class YMGesture (
   data class FingersState (val thumb: Int, val index: Int, val middle: Int, val ring: Int, val little: Int)
 }
 
-fun List<Int>.toFingersState(): YMGesture.FingersState{
+fun List<Int>.toFingersState(): YMGesture.FingersState {
   return YMGesture.FingersState(this[0], this[1], this[2], this[3], this[4])
 }
 
