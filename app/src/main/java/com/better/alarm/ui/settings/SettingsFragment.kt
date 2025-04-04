@@ -1,13 +1,18 @@
 package com.better.alarm.ui.settings
 
+import android.Manifest
 import android.content.ContentResolver
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.media.AudioManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Vibrator
 import android.provider.Settings
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.CheckBoxPreference
 import androidx.preference.ListPreference
@@ -132,6 +137,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
           .launchIn(lifecycleScope)
     }
 
+    findPreference<CheckBoxPreference>(Prefs.KEY_ENABLE_VISION_WAKING)?.run{
+      setOnPreferenceChangeListener(Preference.OnPreferenceChangeListener { _, newValue ->
+        if (newValue as Boolean) {
+          // ask for permission if not granted
+          if(ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.CAMERA), 1000)
+            return@OnPreferenceChangeListener false
+          }
+        }
+        true
+      })
+    }
+
     bindListPreference(Prefs.KEY_ALARM_SNOOZE, prefs.snoozeDuration) { duration ->
       val idx = findIndexOfValue(duration.toString())
       summary = entries[idx]
@@ -173,6 +191,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
     bindListPreference(Prefs.KEY_VISION_GESTURE_SNOOZE, prefs.visionSnoozeGesture) { summary = entry }
 
     bindListPreference(Prefs.KEY_VISION_GESTURE_REPORT_TIME, prefs.visionReportTimeGesture) { summary = entry }
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+      listOf(
+        Prefs.KEY_VISION_TTS,
+        Prefs.KEY_VISION_FLASHLIGHT,
+        Prefs.KEY_VISION_GESTURE_SNOOZE,
+        Prefs.KEY_VISION_GESTURE_REPORT_TIME,
+        Prefs.KEY_ENABLE_VISION_WAKING,
+      ).forEach { key->
+        findPreference<Preference>(key)?.isVisible = false
+      }
+    }
   }
 
   override fun onPause() {
