@@ -845,6 +845,10 @@ class AlarmCore(
     stateMachine.sendEvent(Delete)
   }
 
+  override fun deleteAutoSilence() {
+    removeAlarm()
+  }
+
   // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // ++++++ getters for GUI +++++++++++++++++++++++++++++++
   // ++++++++++++++++++++++++++++++++++++++++++++++++++++++

@@ -16,6 +16,8 @@ interface Alarm {
 
   fun isSkipping(): Boolean
 
+  fun deleteAutoSilence()
+
   fun delete()
 
   /** Change something and commit */

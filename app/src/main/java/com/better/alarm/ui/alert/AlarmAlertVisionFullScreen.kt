@@ -129,12 +129,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
       }
 
       // avoid auto silence in vision mode
-      if (sp.autoSilence.value > 0) {
-        val autoSilenceTimeMillis:Long = sp.autoSilence.value * 60 * 1000L
-        Handler(Looper.getMainLooper()).postDelayed({
-          mAlarm?.snooze()
-        }, autoSilenceTimeMillis - 30000)
-      }
+      mAlarm?.deleteAutoSilence()
     }
   }
 
