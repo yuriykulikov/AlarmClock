@@ -26,6 +26,7 @@ class CameraXHelper(
   private val lifecycleOwner: LifecycleOwner,
   private val previewView: androidx.camera.view.PreviewView,
   private val cameraExecutor: ExecutorService,
+  private var lensFacing: Int = CameraSelector.LENS_FACING_BACK,
   private val imageAnalyzer: ImageAnalysis.Analyzer? = null,
   private val cameraOpenedCB: (Boolean) -> Unit
 ) {
@@ -34,7 +35,6 @@ class CameraXHelper(
   private var imageCapture: ImageCapture? = null
   private var imageAnalysis: ImageAnalysis? = null
   private var camera: Camera? = null
-  private var lensFacing = CameraSelector.LENS_FACING_BACK
   private var isTorchOn = false
   private var cameraResolution: Size = Size(640, 480)
   private var _cameraIsOpened: Boolean = false

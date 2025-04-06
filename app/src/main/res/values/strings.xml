@@ -211,4 +211,5 @@
     <string name="app_default_ringtone">App default (%s)</string>
     <string name="set_exact_alarm_permission_title">Permission to set exact alarm time</string>
     <string name="set_exact_alarm_permission_text">To set an alarm at the exact time, permission to set exact alarm time is required.</string>
+    <string name="behavior_setting_instruction">You can add multiple actions corresponding to AI-detected gestures using the \"+\" button. \nEach gesture is defined by five buttons, representing the thumb, index finger, middle finger, ring finger, and pinky from left to right. If a button is in the \"On\" state, it means the corresponding finger is extended; if it\'s \"Off,\" it means the finger is folded. \nFor example: On, Off, Off, Off, Off => Thumbs-up gesture.</string>
 </resources>

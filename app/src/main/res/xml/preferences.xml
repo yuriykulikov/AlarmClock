@@ -137,21 +137,11 @@
             android:key="vision_tts"
             android:title="@string/vision_tts_title"
             app:iconSpaceReserved="false" />
-        <androidx.preference.ListPreference
-            android:defaultValue="None"
-            android:dialogTitle="@string/vision_snooze_action_title"
-            android:entries="@array/vision_gesture_entries"
-            android:entryValues="@array/vision_gesture_values"
-            android:key="vision_gesture_snooze"
-            android:title="@string/vision_snooze_action_title"
-            app:iconSpaceReserved="false" />
-        <androidx.preference.ListPreference
-            android:defaultValue="None"
-            android:dialogTitle="@string/vision_report_time_action_title"
-            android:entries="@array/vision_gesture_entries"
-            android:entryValues="@array/vision_gesture_values"
-            android:key="vision_gesture_report_time"
-            android:title="@string/vision_report_time_action_title"
+
+        <com.better.alarm.ui.settings.VisionBehaviorPreference
+            android:defaultValue=""
+            android:key="vision_behavior"
+            android:title="Set Behavior"
             app:iconSpaceReserved="false" />
 
 

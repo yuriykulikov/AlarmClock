@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -19,14 +20,26 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-feature android:name="android.hardware.camera"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature android:name="android.hardware.camera" />
 
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
-    <!-- For Android 13 and above -->
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+        android:maxSdkVersion="28" /> <!-- For Android 13 and above -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" /> <!-- https://github.com/ACRA/acra/issues/787 -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+
+            <data android:mimeType="message/rfc822" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SEND_MULTIPLE" />
+
+            <data android:mimeType="message/rfc822" />
+        </intent>
+    </queries>
 
     <application
         android:name=".bootstrap.AlarmApplication"
@@ -35,7 +48,9 @@
         android:icon="@mipmap/ic_launcher"
         android:installLocation="internalOnly"
         android:label="@string/simple_alarm_clock">
-
+        <activity
+            android:name=".ui.settings.CameraTestActivity"
+            android:exported="false" />
         <!-- Activity to set a new or modify existing alarm -->
         <activity
             android:name=".ui.main.AlarmsListActivity"
@@ -46,18 +61,16 @@
             android:theme="@style/DefaultDarkTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- Application Settings -->
+        </activity> <!-- Application Settings -->
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:excludeFromRecents="true"
             android:exported="false"
             android:label="@string/settings"
             android:theme="@style/DefaultDarkTheme" />
-
         <activity
             android:name=".ui.exported.HandleSetAlarm"
             android:excludeFromRecents="true"
@@ -66,11 +79,14 @@
             android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
                 <action android:name="android.intent.action.SET_ALARM" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <!-- This activity is basically the same as AlarmAlert
-             but full-screen so that it can turn the display on. -->
+        <!--
+ This activity is basically the same as AlarmAlert
+             but full-screen so that it can turn the display on.
+        -->
         <activity
             android:name=".ui.alert.AlarmAlertFullScreen"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
@@ -78,31 +94,24 @@
             android:launchMode="singleInstance"
             android:taskAffinity=""
             android:theme="@style/DefaultDarkTheme" />
-
         <activity
             android:name=".ui.alert.AlarmAlertVisionFullScreen"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
             android:taskAffinity=""
-            android:theme="@style/DefaultDarkTheme" />
-
-        <!-- Transparent activity with TimPickerFragment -->
+            android:theme="@style/DefaultDarkTheme" /> <!-- Transparent activity with TimPickerFragment -->
         <activity
             android:name=".ui.alert.TransparentActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
             android:taskAffinity=""
-            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar" />
-
-        <!-- KlaxonPresenter plays sound -->
+            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar" /> <!-- KlaxonPresenter plays sound -->
         <service
             android:name=".services.AlertServiceWrapper"
             android:description="@string/alarm_klaxon_service_desc"
-            android:exported="false" />
-
-        <!-- Model -->
+            android:exported="false" /> <!-- Model -->
         <receiver
             android:name=".receivers.AlarmsReceiver"
             android:exported="false">
@@ -121,22 +130,11 @@
         </receiver>
         <receiver
             android:name=".receivers.TestReceiver"
-            android:exported="false" />
-        <!-- Persistence -->
+            android:exported="false" /> <!-- Persistence -->
         <provider
             android:name=".data.contentprovider.AlarmProvider"
             android:authorities="${applicationId}.model"
             android:exported="false" />
     </application>
-    <!-- https://github.com/ACRA/acra/issues/787 -->
-    <queries>
-        <intent>
-            <action android:name="android.intent.action.SEND" />
-            <data android:mimeType="message/rfc822" />
-        </intent>
-        <intent>
-            <action android:name="android.intent.action.SEND_MULTIPLE" />
-            <data android:mimeType="message/rfc822" />
-        </intent>
-    </queries>
+
 </manifest>

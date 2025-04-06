@@ -12,7 +12,6 @@ import android.speech.tts.TextToSpeech
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.better.alarm.R
@@ -30,6 +29,7 @@ import com.better.alarm.services.Event.DemuteEvent
 import com.better.alarm.services.Event.DismissEvent
 import com.better.alarm.services.Event.MuteEvent
 import com.better.alarm.services.Event.SnoozedEvent
+import com.better.alarm.ui.settings.VisionBehaviorItemView
 import com.better.alarm.ui.themes.DynamicThemeHandler
 import com.better.alarm.ui.timepicker.TimePickerDialogFragment
 import com.better.alarm.vision.BoundingBox
@@ -37,6 +37,7 @@ import com.better.alarm.vision.CameraXHelper
 import com.better.alarm.vision.DetectionAnalyzer
 import com.better.alarm.vision.DetectionHandler
 import com.better.alarm.vision.EmptyTTSHelper
+import com.better.alarm.vision.Gesture
 import com.better.alarm.vision.ITTSHelper
 import com.better.alarm.vision.OverlayView
 import com.better.alarm.vision.TTSHelper
@@ -46,6 +47,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
+import kotlinx.serialization.json.Json
 import org.koin.android.ext.android.inject
 import java.util.Calendar
 import java.util.concurrent.ExecutorService
@@ -68,6 +70,19 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
   private var ttsHelper: TTSHelper? = null
   private var isFirstAlarm = false
   private lateinit var overlayView: OverlayView
+
+  companion object {
+    val behaviorList = listOf(
+      "Snooze for 5 minutes",
+      "Snooze for 10 minutes",
+      "Snooze for 15 minutes",
+      "Snooze for 20 minutes",
+      "Snooze for 30 minutes",
+      "Snooze for 45 minutes",
+      "Snooze for 1 hour",
+      "Report time"
+    )
+  }
 
   override fun onCreate(icicle: Bundle?) {
     AlarmApplication.startOnce(application)
@@ -113,9 +128,9 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
       cameraExecutor = Executors.newSingleThreadExecutor()
 
       cameraExecutor.execute {
-        analyzer = IAnalyzer(this, detectionHandler)
+        analyzer = IAnalyzer(this, detectionHandler, Json.decodeFromString(sp.visionBehavior.value))
         Handler(Looper.getMainLooper()).postDelayed({
-          cameraXHelper = CameraXHelper(this, this,findViewById(R.id.alert_vision_preview) , cameraExecutor, analyzer.analyzer) { succeeded ->
+          cameraXHelper = CameraXHelper(this, this,findViewById(R.id.alert_vision_preview) , cameraExecutor, imageAnalyzer = analyzer.analyzer) { succeeded ->
             if (succeeded) {
               if (sp.visionFlashlight.value) {
                 cameraXHelper?.setOrToggleFlash(true)
@@ -162,11 +177,6 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
         WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
   }
 
-  private fun setTitle() {
-    val titleText = mAlarm?.labelOrDefault ?: ""
-    title = titleText
-    findViewById<TextView>(R.id.alarm_alert_label).text = titleText
-  }
 
   private fun updateLayout() {
     setContentView(R.layout.alert_vision_fullscreen)
@@ -198,8 +208,6 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
         true
       }
     }
-
-    //setTitle()
   }
 
   /**
@@ -242,7 +250,6 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     logger.debug { "AlarmAlert.OnNewIntent()" }
     val id = intent.getIntExtra(Intents.EXTRA_ID, -1)
     mAlarm = alarmsManager.getAlarm(id)
-    setTitle()
   }
 
   override fun onResume() {
@@ -285,24 +292,31 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
       }
     }
 
-    override fun onGestureDetected(gesture: String) {
-      ttsHelper?.speak("$gesture detected", TextToSpeech.QUEUE_FLUSH)
-      when (gesture) {
-        sp.visionSnoozeGesture.value -> {
-          logger.debug { "snooze gesture detected, snooze!!!" }
-          ttsHelper?.speak("snooze") {
-            runOnUiThread{
-              val t = calendars.now()
-              t.add(Calendar.MINUTE, 1)
-              mAlarm?.snooze(t.get(Calendar.HOUR_OF_DAY), t.get(Calendar.MINUTE))
-            }
-          }
-        }
-        sp.visionReportTimeGesture.value -> {
-          // TODO implement
+
+    override fun onBehaviorAction(operation: String) {
+      when (operation) {
+        "Snooze for 5 minutes" -> snoozeAction(5)
+        "Snooze for 10 minutes" -> snoozeAction(10)
+        "Snooze for 15 minutes" -> snoozeAction(15)
+        "Snooze for 20 minutes" -> snoozeAction(20)
+        "Snooze for 30 minutes" -> snoozeAction(30)
+        "Snooze for 45 minutes" -> snoozeAction(45)
+        "Snooze for 1 hour" -> snoozeAction(60)
+        "Report time" -> {
+
         }
       }
-      logger.debug { "gesture detected: $gesture" }
+    }
+
+    fun snoozeAction(minutes: Int) {
+      logger.debug { "snooze gesture detected, snooze!!!" }
+      ttsHelper?.speak("snooze") {
+        runOnUiThread{
+          val t = calendars.now()
+          t.add(Calendar.MINUTE, minutes)
+          mAlarm?.snooze(t.get(Calendar.HOUR_OF_DAY), t.get(Calendar.MINUTE))
+        }
+      }
     }
 
     override fun onDetectUiUpdate(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
