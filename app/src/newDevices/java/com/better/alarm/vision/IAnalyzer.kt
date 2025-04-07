@@ -53,6 +53,7 @@ class IAnalyzer (
   private val headBoundingBox: Subject<List<BoundingBox>> = BehaviorSubject.create()
   private val compositeDisposable = CompositeDisposable()
   private var state = DetectionState.PEEKING
+  private var stopped = false
 
   override val analyzer: ImageAnalysis.Analyzer = ImageAnalysis.Analyzer {
       imageProxy ->
@@ -95,9 +96,14 @@ class IAnalyzer (
 
     val boundingBoxesObservable = Observable.zip(headBoundingBox, gestureBoundingBox) { head, gesture -> head + gesture }
     val disposable = boundingBoxesObservable.subscribe {
-      handler.onDetectUiUpdate(it, 0)
+      if (!stopped)
+        handler.onDetectUiUpdate(it, 0)
     }
     compositeDisposable.add(disposable)
+  }
+
+  override fun stop() {
+    stopped = true
   }
 
   override fun skipPeek() {
@@ -113,11 +119,13 @@ class IAnalyzer (
       if (boundingBoxes.any { it.clsName == Labels.HEAD }) {
         state = DetectionState.WAKING
         lastPersonDetectionTime = System.currentTimeMillis()
-        handler.onPeekFinish(true)
+        if (!stopped)
+          handler.onPeekFinish(true)
       } else {
         if (System.currentTimeMillis() - peekStartTime > INITIAL_MAX_TIME) {
           state = DetectionState.FINISHED
-          handler.onPeekFinish(false)
+          if (!stopped)
+            handler.onPeekFinish(false)
         }
       }
     }
@@ -129,7 +137,8 @@ class IAnalyzer (
       }
       if (System.currentTimeMillis() - lastPersonDetectionTime > MAX_NOPERSON_TIME) {
         hasPersonLeft = true
-        handler.onPersonLeave()
+        if (!stopped)
+          handler.onPersonLeave()
       }
     }
     override fun onDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
@@ -158,7 +167,8 @@ class IAnalyzer (
           behaviorConfidenceMap[behavior] = confidence - 1
         if (behaviorConfidenceMap[behavior]!! > ACCEPT_CONFIDENCE){
           behaviorConfidenceMap[behavior] = 0
-          handler.onBehaviorAction(behavior.operation)
+          if (!stopped)
+            handler.onBehaviorAction(behavior.operation)
         }
       }
     }

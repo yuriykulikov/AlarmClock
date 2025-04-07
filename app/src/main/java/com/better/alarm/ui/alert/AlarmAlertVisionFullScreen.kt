@@ -191,6 +191,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
       requestFocus()
       setOnClickListener {
         if (isSnoozeEnabled) {
+          analyzer?.stop()
           mAlarm?.snooze()
         }
       }
@@ -232,6 +233,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
       TimePickerDialogFragment.showTimePicker(supportFragmentManager).subscribe { picked ->
         timer.dispose()
         if (picked.isPresent()) {
+          analyzer?.stop()
           mAlarm?.snooze(picked.get().hour, picked.get().minute)
         } else {
           store.events.onNext(DemuteEvent())
@@ -242,6 +244,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
   }
 
   private fun dismiss() {
+    analyzer?.stop()
     mAlarm?.dismiss()
   }
 
@@ -293,6 +296,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
         runOnUiThread{
           val t = calendars.now()
           t.add(Calendar.MINUTE, 1)
+          analyzer?.stop()
           mAlarm?.snooze(t.get(Calendar.HOUR_OF_DAY), t.get(Calendar.MINUTE))
         }
       }
@@ -320,6 +324,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
         runOnUiThread{
           val t = calendars.now()
           t.add(Calendar.MINUTE, minutes)
+          analyzer?.stop()
           mAlarm?.snooze(t.get(Calendar.HOUR_OF_DAY), t.get(Calendar.MINUTE))
         }
       }

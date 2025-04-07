@@ -34,6 +34,7 @@ fun Gesture.FingersState.toFingersList(): List<Int> {
 
 interface DetectionAnalyzer {
   val analyzer: ImageAnalysis.Analyzer
+  fun stop()
   fun skipPeek()
   fun destroy()
 }
