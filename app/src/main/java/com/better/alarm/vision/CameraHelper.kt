@@ -2,8 +2,12 @@ package com.better.alarm.vision
 
 import android.content.ContentValues
 import android.content.Context
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraManager
 import android.os.Build
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import android.util.Size
 import android.widget.Toast
@@ -38,10 +42,12 @@ class CameraXHelper(
   private var isTorchOn = false
   private var cameraResolution: Size = Size(640, 480)
   private var _cameraIsOpened: Boolean = false
+  private var cameraOpenedCBCalled = false
   val cameraIsOpened: Boolean
     get() = _cameraIsOpened
 
   init {
+
     startCamera()
   }
 
@@ -83,6 +89,24 @@ class CameraXHelper(
       } catch (e: Exception) {
         logger.error { "Use case binding failed: $e" }
         _cameraIsOpened = false
+        val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as? CameraManager
+        val mainCameraId = cameraManager?.cameraIdList?.maxByOrNull { cameraId ->
+          val characteristics = cameraManager.getCameraCharacteristics(cameraId)
+          val sensorSize = characteristics.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE)!!
+          (sensorSize.width * sensorSize.height).toFloat()
+        }?.takeIf { characteristics ->
+          cameraManager.getCameraCharacteristics(characteristics).get(CameraCharacteristics.LENS_FACING) == lensFacing
+        }?: cameraManager?.cameraIdList?.firstOrNull()
+        cameraManager?.registerAvailabilityCallback(
+          object : CameraManager.AvailabilityCallback() {
+            override fun onCameraAvailable(cameraId: String) {
+              super.onCameraAvailable(cameraId)
+              logger.debug{"onCameraAvailable: $cameraId"}
+              if (cameraId == mainCameraId)
+                startCamera()
+            }
+          }, Handler(Looper.getMainLooper())
+        )
       }
 
       camera?.cameraInfo?.torchState?.observe(lifecycleOwner) {
@@ -90,8 +114,16 @@ class CameraXHelper(
       }
       if (camera!=null) {
         _cameraIsOpened = true
+        cameraOpenedCB(_cameraIsOpened)
+        cameraOpenedCBCalled = true
+      } else {
+        Handler(Looper.getMainLooper()).postDelayed({
+          if (!cameraOpenedCBCalled) {
+            cameraOpenedCB(_cameraIsOpened)
+            cameraOpenedCBCalled = true
+          }
+        },5000)
       }
-      cameraOpenedCB(_cameraIsOpened)
     }, ContextCompat.getMainExecutor(context))
   }
 

@@ -65,8 +65,8 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
   private var disposableDialog = Disposables.empty()
   private var subscription: Disposable? = null
   private var cameraXHelper: CameraXHelper? = null
-  private lateinit var cameraExecutor: ExecutorService
-  private lateinit var analyzer: DetectionAnalyzer
+  private var cameraExecutor: ExecutorService? = null
+  private var analyzer: DetectionAnalyzer? = null
   private var ttsHelper: TTSHelper? = null
   private var isFirstAlarm = false
   private lateinit var overlayView: OverlayView
@@ -127,10 +127,16 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     } else {
       cameraExecutor = Executors.newSingleThreadExecutor()
 
-      cameraExecutor.execute {
+      cameraExecutor?.execute {
         analyzer = IAnalyzer(this, detectionHandler, Json.decodeFromString(sp.visionBehavior.value))
-        Handler(Looper.getMainLooper()).postDelayed({
-          cameraXHelper = CameraXHelper(this, this,findViewById(R.id.alert_vision_preview) , cameraExecutor, imageAnalyzer = analyzer.analyzer) { succeeded ->
+        Handler(Looper.getMainLooper()).post {
+          cameraXHelper = CameraXHelper(
+            this,
+            this,
+            findViewById(R.id.alert_vision_preview),
+            cameraExecutor!!,
+            imageAnalyzer = analyzer!!.analyzer
+          ) { succeeded ->
             if (succeeded) {
               if (sp.visionFlashlight.value) {
                 cameraXHelper?.setOrToggleFlash(true)
@@ -140,7 +146,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
               switchToNormalActivity()
             }
           }
-        }, 5000)
+        }
       }
 
       // avoid auto silence in vision mode
@@ -350,8 +356,8 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     subscription?.dispose()
     disposableDialog.dispose()
     cameraXHelper?.destroy()
-    analyzer.destroy()
-    cameraExecutor.shutdown()
+    analyzer?.destroy()
+    cameraExecutor?.shutdown()
     ttsHelper?.destroy()
     cameraXHelper = null
     ttsHelper = null
