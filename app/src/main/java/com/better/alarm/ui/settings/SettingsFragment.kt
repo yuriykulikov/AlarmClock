@@ -11,6 +11,8 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Vibrator
 import android.provider.Settings
+import android.view.WindowManager
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
@@ -138,16 +140,33 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     findPreference<CheckBoxPreference>(Prefs.KEY_ENABLE_VISION_WAKING)?.run{
-      setOnPreferenceChangeListener(Preference.OnPreferenceChangeListener { _, newValue ->
-        if (newValue as Boolean) {
-          // ask for permission if not granted
-          if(ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.CAMERA), 1000)
-            return@OnPreferenceChangeListener false
+      onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
+          if (newValue as Boolean) {
+            // ask for permission if not granted
+            if(ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+              ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.CAMERA), 1000)
+              return@OnPreferenceChangeListener false
+            }
           }
-        }
+          true
+      }
+    }
+
+    findPreference<Preference>("vision_help")?.run {
+      setOnPreferenceClickListener {
+        AlertDialog.Builder(requireContext())
+          .setView(R.layout.vision_help_dialog)
+          .setPositiveButton(android.R.string.ok) { _, _ -> }
+          .create().run {
+            window?.setLayout(
+              WindowManager.LayoutParams.MATCH_PARENT,
+              WindowManager.LayoutParams.MATCH_PARENT
+            )
+            show()
+          }
+
         true
-      })
+      }
     }
 
     bindListPreference(Prefs.KEY_ALARM_SNOOZE, prefs.snoozeDuration) { duration ->

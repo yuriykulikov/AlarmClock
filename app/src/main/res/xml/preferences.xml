@@ -121,6 +121,10 @@
     <androidx.preference.PreferenceCategory
         android:title="Ai vision waking"
         app:iconSpaceReserved="false">
+        <Preference
+            android:key="vision_help"
+            android:title="@string/vision_help_title"
+            android:summary="@string/vision_help_summary" />
         <androidx.preference.CheckBoxPreference
             android:defaultValue="false"
             android:key="enable_vision_waking"

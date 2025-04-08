@@ -46,10 +46,13 @@ class VisionBehaviorPreference(context: Context, attrs: AttributeSet) : Preferen
     }
 
     if (initialValueString.isNotEmpty()) {
-      val storedValue: VisionBehaviorItemView.Companion.BehaviorsStoreValue = Json.decodeFromString(initialValueString)
-
-      storedValue.items.forEach {
-        addItem(it)
+      try {
+        val storedValue: VisionBehaviorItemView.Companion.BehaviorsStoreValue = Json.decodeFromString(initialValueString)
+        storedValue.items.forEach {
+          addItem(it)
+        }
+      } catch (e: Exception) {
+        logger.error { e.stackTraceToString() }
       }
     }
 
