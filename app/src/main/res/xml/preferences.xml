@@ -141,7 +141,12 @@
             android:key="vision_tts"
             android:title="@string/vision_tts_title"
             app:iconSpaceReserved="false" />
-
+        <androidx.preference.CheckBoxPreference
+            android:defaultValue="true"
+            android:key="vision_check_after_dismiss"
+            android:title="@string/vision_check_after_dismiss_title"
+            android:summary="@string/vision_check_after_dismiss_summary"
+            app:iconSpaceReserved="false" />
         <com.better.alarm.ui.settings.VisionBehaviorPreference
             android:defaultValue=""
             android:key="vision_behavior"

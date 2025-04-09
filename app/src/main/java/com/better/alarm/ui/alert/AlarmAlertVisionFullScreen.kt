@@ -8,7 +8,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.speech.tts.TextToSpeech
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
@@ -29,7 +28,6 @@ import com.better.alarm.services.Event.DemuteEvent
 import com.better.alarm.services.Event.DismissEvent
 import com.better.alarm.services.Event.MuteEvent
 import com.better.alarm.services.Event.SnoozedEvent
-import com.better.alarm.ui.settings.VisionBehaviorItemView
 import com.better.alarm.ui.themes.DynamicThemeHandler
 import com.better.alarm.ui.timepicker.TimePickerDialogFragment
 import com.better.alarm.vision.BoundingBox
@@ -37,7 +35,6 @@ import com.better.alarm.vision.CameraXHelper
 import com.better.alarm.vision.DetectionAnalyzer
 import com.better.alarm.vision.DetectionHandler
 import com.better.alarm.vision.EmptyTTSHelper
-import com.better.alarm.vision.Gesture
 import com.better.alarm.vision.ITTSHelper
 import com.better.alarm.vision.OverlayView
 import com.better.alarm.vision.TTSHelper
@@ -204,11 +201,11 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
         if (sp.longClickDismiss.value) {
           text = getString(R.string.alarm_alert_hold_the_button_text)
         } else {
-          dismissWithCheck()
+          dismiss()
         }
       }
       setOnLongClickListener {
-        dismissWithCheck()
+        dismiss()
         true
       }
     }
@@ -239,14 +236,17 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     disposableDialog = CompositeDisposable(dialog, timer)
   }
 
-  private fun dismiss() {
+  private fun dismissDirectly() {
     analyzer?.stop()
     mAlarm?.dismiss()
   }
 
-  private fun dismissWithCheck() {
+  private fun dismiss() {
     analyzer?.stop()
-    mAlarm?.dismissWithCheck()
+    if (sp.visionCheckAfterDismiss.value)
+      mAlarm?.dismissWithCheck()
+    else
+      mAlarm?.dismiss()
   }
 
   private fun snooze(hour: Int, minute: Int) {
@@ -287,7 +287,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     override fun onPeekFinish(isPersonDetected: Boolean) {
       logger.debug { "onPeekFinish: $isPersonDetected" }
       if (!isPersonDetected && alarmType == Intents.TYPE_CHECK_ALARM) {
-        runOnUiThread { dismiss() }
+        runOnUiThread { dismissDirectly() }
         logger.debug { "nothing detected after initial detection, dismiss" }
         return
       }
@@ -300,7 +300,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
       logger.debug { "onPersonLeave" }
       ttsHelper?.speak("person left") {
         runOnUiThread{
-          dismissWithCheck()
+          dismiss()
         }
       }
     }
@@ -337,7 +337,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
       logger.debug { "dismiss gesture detected, dismiss!!!" }
       ttsHelper?.speak("dismiss") {
         runOnUiThread{
-          dismissWithCheck()
+          dismiss()
         }
       }
     }

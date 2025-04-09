@@ -216,4 +216,6 @@
     <string name="vision_help_summary">Click to learn more.</string>
     <string name="vision_help_text1">When the alarm starts, the phone\'s rear camera will be activated and analyzed by a locally running AI model. This allows for smarter control of the alarm. Once this feature is enabled, you won’t need to get out of bed in the cold winter just to turn off the alarm—only to fall back asleep and end up missing your first class...  This program operates based on the following logic:</string>
     <string name="alarm_notify_check_label">check whether you have gotten up</string>
+    <string name="vision_check_after_dismiss_title">Check after dismiss</string>
+    <string name="vision_check_after_dismiss_summary">set a check alarm after the alarm is dismissed. If the check alarm doesn\'t detect people it will dismiss itself or you can also dismiss it manually.</string>
 </resources>
