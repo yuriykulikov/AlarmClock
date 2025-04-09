@@ -145,13 +145,13 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 }
 
 dependencies {
-  val coroutinesVersion = "1.7.3"
+  val coroutinesVersion = "1.10.2"
   val serializationVersion = "1.6.2"
   implementation("ch.acra:acra-mail:5.12.0")
   implementation("com.melnykov:floatingactionbutton:1.3.0")
   implementation("io.reactivex.rxjava2:rxjava:2.2.21")
   implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-rx2:1.7.3")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-rx2:1.10.2")
   implementation("io.insert-koin:koin-android:3.5.3")
   implementation("androidx.fragment:fragment:1.6.2")
   // TODO remove this when we don't use it anymore
