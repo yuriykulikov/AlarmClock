@@ -51,10 +51,13 @@ class BackgroundNotifications(
       when (event) {
         is Event.AlarmEvent -> nm.cancel(event.id + SNOOZE_NOTIFICATION)
         is Event.SnoozeAlarmEvent-> nm.cancel(event.id + SNOOZE_NOTIFICATION)
+        is Event.CheckAlarmEvent -> nm.cancel(event.id + SNOOZE_NOTIFICATION)
         is Event.PrealarmEvent -> nm.cancel(event.id + SNOOZE_NOTIFICATION)
         is Event.DismissEvent -> nm.cancel(event.id + SNOOZE_NOTIFICATION)
         is Event.CancelSnoozedEvent -> nm.cancel(event.id + SNOOZE_NOTIFICATION)
+        is Event.CancelCheckEvent -> nm.cancel(event.id + SNOOZE_NOTIFICATION)
         is Event.SnoozedEvent -> onSnoozed(event.id, event.calendar)
+        is Event.CheckEvent -> onCheck(event.id, event.calendar)
         is Event.Autosilenced -> onSoundExpired(event.id)
         is Event.ShowSkip -> onShowSkip(event.id)
         is Event.HideSkip -> nm.cancel(SKIP_NOTIFICATION + event.id)
@@ -109,6 +112,33 @@ class BackgroundNotifications(
               pendingDismiss)
           setDefaults(Notification.DEFAULT_LIGHTS)
         }
+
+    // Send the notification using the alarm id to easily identify the
+    // correct notification.
+    nm.notify(id + SNOOZE_NOTIFICATION, status)
+  }
+
+  private fun onCheck(id: Int, calendar: Calendar) {
+
+    val pendingDismiss =
+      PresentationToModelIntents.createPendingIntent(
+        mContext, PresentationToModelIntents.ACTION_REQUEST_DISMISS, id)
+
+    val label = alarmsManager.getAlarm(id)?.labelOrDefault ?: ""
+
+    val status =
+      mContext.notificationBuilder(CHANNEL_ID) {
+        // Get the display time for the snooze and update the notification.
+        setContentTitle(getString(R.string.alarm_notify_check_label, label))
+        setSmallIcon(R.drawable.stat_notify_alarm)
+        setContentIntent(pendingDismiss)
+        setOngoing(true)
+        addAction(
+          R.drawable.ic_action_dismiss,
+          getString(R.string.alarm_alert_dismiss_text),
+          pendingDismiss)
+        setDefaults(Notification.DEFAULT_LIGHTS)
+      }
 
     // Send the notification using the alarm id to easily identify the
     // correct notification.

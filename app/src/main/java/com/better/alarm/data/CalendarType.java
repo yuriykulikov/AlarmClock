@@ -4,5 +4,6 @@ public enum CalendarType {
   NORMAL,
   SNOOZE,
   PREALARM,
-  AUTOSILENCE
+  AUTOSILENCE,
+  CHECK
 }

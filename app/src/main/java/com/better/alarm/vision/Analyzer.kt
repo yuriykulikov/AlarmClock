@@ -4,7 +4,7 @@ import androidx.camera.core.ImageAnalysis
 import kotlinx.serialization.Serializable
 
 enum class DetectionState {
-  PEEKING, WAKING, FINISHED
+  PEEKING, WAKING
 }
 
 interface DetectionHandler{

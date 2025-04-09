@@ -68,7 +68,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
   private var cameraExecutor: ExecutorService? = null
   private var analyzer: DetectionAnalyzer? = null
   private var ttsHelper: TTSHelper? = null
-  private var isFirstAlarm = false
+  private var alarmType: String? = null
   private lateinit var overlayView: OverlayView
 
   companion object {
@@ -80,6 +80,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
       "Snooze for 30 minutes",
       "Snooze for 45 minutes",
       "Snooze for 1 hour",
+      "Dismiss",
       "Report time"
     )
   }
@@ -100,7 +101,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
         else -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
       }
     val id = intent.getIntExtra(Intents.EXTRA_ID, -1)
-    isFirstAlarm = intent.getStringExtra(Intents.EXTRA_TYPE) == Intents.TYPE_NORMAL_ALARM
+    alarmType = intent.getStringExtra(Intents.EXTRA_TYPE)
 
     mAlarm = alarmsManager.getAlarm(id)
 
@@ -148,9 +149,6 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
           }
         }
       }
-
-      // avoid auto silence in vision mode
-      mAlarm?.deleteAutoSilence()
     }
   }
 
@@ -191,8 +189,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
       requestFocus()
       setOnClickListener {
         if (isSnoozeEnabled) {
-          analyzer?.stop()
-          mAlarm?.snooze()
+          snooze()
         }
       }
       setOnLongClickListener {
@@ -207,11 +204,11 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
         if (sp.longClickDismiss.value) {
           text = getString(R.string.alarm_alert_hold_the_button_text)
         } else {
-          dismiss()
+          dismissWithCheck()
         }
       }
       setOnLongClickListener {
-        dismiss()
+        dismissWithCheck()
         true
       }
     }
@@ -233,8 +230,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
       TimePickerDialogFragment.showTimePicker(supportFragmentManager).subscribe { picked ->
         timer.dispose()
         if (picked.isPresent()) {
-          analyzer?.stop()
-          mAlarm?.snooze(picked.get().hour, picked.get().minute)
+          snooze(picked.get().hour, picked.get().minute)
         } else {
           store.events.onNext(DemuteEvent())
         }
@@ -246,6 +242,21 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
   private fun dismiss() {
     analyzer?.stop()
     mAlarm?.dismiss()
+  }
+
+  private fun dismissWithCheck() {
+    analyzer?.stop()
+    mAlarm?.dismissWithCheck()
+  }
+
+  private fun snooze(hour: Int, minute: Int) {
+    analyzer?.stop()
+    mAlarm?.snooze(hour, minute)
+  }
+
+  private fun snooze() {
+    analyzer?.stop()
+    mAlarm?.snooze()
   }
 
   private val isSnoozeEnabled: Boolean
@@ -267,37 +278,29 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     findViewById<View>(R.id.alert_text_snooze)?.isEnabled = isSnoozeEnabled
   }
 
-  override fun onPause() {
-    super.onPause()
-  }
-
   override fun onBackPressed() {
     // Don't allow back to dismiss
   }
 
   private val detectionHandler: DetectionHandler = object: DetectionHandler {
+    var enablePersonLeaveDismiss = false
     override fun onPeekFinish(isPersonDetected: Boolean) {
       logger.debug { "onPeekFinish: $isPersonDetected" }
-      if (isPersonDetected)
-        store.events.onNext(Event.StartWakingEvent())
-      else {
-        if (isFirstAlarm)
-          switchToNormalActivity()
-        else {
-          runOnUiThread { dismiss() }
-          logger.debug { "nothing detected after initial detection, dismiss" }
-        }
+      if (!isPersonDetected && alarmType == Intents.TYPE_CHECK_ALARM) {
+        runOnUiThread { dismiss() }
+        logger.debug { "nothing detected after initial detection, dismiss" }
+        return
       }
+      enablePersonLeaveDismiss = isPersonDetected
+      store.events.onNext(Event.StartWakingEvent())
     }
 
     override fun onPersonLeave() {
+      if (!enablePersonLeaveDismiss) return
       logger.debug { "onPersonLeave" }
       ttsHelper?.speak("person left") {
         runOnUiThread{
-          val t = calendars.now()
-          t.add(Calendar.MINUTE, 1)
-          analyzer?.stop()
-          mAlarm?.snooze(t.get(Calendar.HOUR_OF_DAY), t.get(Calendar.MINUTE))
+          dismissWithCheck()
         }
       }
     }
@@ -312,6 +315,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
         "Snooze for 30 minutes" -> snoozeAction(30)
         "Snooze for 45 minutes" -> snoozeAction(45)
         "Snooze for 1 hour" -> snoozeAction(60)
+        "Dismiss" -> dismissAction()
         "Report time" -> {
 
         }
@@ -324,8 +328,16 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
         runOnUiThread{
           val t = calendars.now()
           t.add(Calendar.MINUTE, minutes)
-          analyzer?.stop()
-          mAlarm?.snooze(t.get(Calendar.HOUR_OF_DAY), t.get(Calendar.MINUTE))
+          snooze(t.get(Calendar.HOUR_OF_DAY), t.get(Calendar.MINUTE))
+        }
+      }
+    }
+
+    fun dismissAction() {
+      logger.debug { "dismiss gesture detected, dismiss!!!" }
+      ttsHelper?.speak("dismiss") {
+        runOnUiThread{
+          dismissWithCheck()
         }
       }
     }

@@ -46,6 +46,8 @@ sealed class Event {
 
   data class SnoozeAlarmEvent(val id: Int, val actions: String = Intents.SNOOZE_ALARM_ALERT_ACTION) : Event()
 
+  data class CheckAlarmEvent(val id: Int, val actions: String = Intents.CHECK_ALARM_ALERT_ACTION) : Event()
+
   data class PrealarmEvent(val id: Int, val actions: String = Intents.ALARM_PREALARM_ACTION) :
       Event()
 
@@ -58,12 +60,20 @@ sealed class Event {
       val actions: String = Intents.ALARM_SNOOZE_ACTION
   ) : Event()
 
+  data class CheckEvent(
+      val id: Int,
+      val calendar: Calendar,
+      val actions: String = Intents.CHECK_ALARM_ALERT_ACTION
+  ) : Event()
+
   data class ShowSkip(val id: Int, val actions: String = Intents.ALARM_SHOW_SKIP) : Event()
 
   data class HideSkip(val id: Int, val actions: String = Intents.ALARM_REMOVE_SKIP) : Event()
 
   data class CancelSnoozedEvent(val id: Int, val actions: String = Intents.ACTION_CANCEL_SNOOZE) :
       Event()
+
+  data class CancelCheckEvent(val id:Int, val actions: String = Intents.ACTION_CANCEL_CHECK) : Event()
 
   data class Autosilenced(val id: Int, val actions: String = Intents.ACTION_SOUND_EXPIRED) :
       Event()
@@ -105,6 +115,7 @@ class AlertService(
     NORMAL,
     SNOOZE,
     PREALARM,
+    CHECK
   }
 
   private data class CallState(val initial: Boolean, val inCall: Boolean)
@@ -151,6 +162,7 @@ class AlertService(
       when (event) {
         is Event.AlarmEvent -> soundAlarm(event.id, Type.NORMAL)
         is Event.SnoozeAlarmEvent-> soundAlarm(event.id, Type.SNOOZE)
+        is Event.CheckAlarmEvent -> soundAlarm(event.id, Type.CHECK)
         is Event.PrealarmEvent -> soundAlarm(event.id, Type.PREALARM)
         is Event.MuteEvent -> wantedVolume.onNext(TargetVolume.MUTED)
         is Event.DemuteEvent -> wantedVolume.onNext(TargetVolume.FADED_IN_FAST)
@@ -178,6 +190,7 @@ class AlertService(
         when (event) {
           is Event.AlarmEvent -> true
           is Event.SnoozeAlarmEvent -> true
+          is Event.CheckAlarmEvent -> true
           is Event.PrealarmEvent -> true
           else -> {
             check(!BuildConfig.DEBUG) {
@@ -224,7 +237,12 @@ class AlertService(
               val alarmtone = alarm.alarmtone
               val label = alarm.labelOrDefault
               log.debug { type.name }
-              val typeString = if (type == Type.NORMAL) Intents.TYPE_NORMAL_ALARM else Intents.TYPE_SNOOZE_ALARM
+              val typeString = when(type) {
+                Type.NORMAL -> Intents.TYPE_NORMAL_ALARM
+                Type.SNOOZE -> Intents.TYPE_SNOOZE_ALARM
+                Type.CHECK -> Intents.TYPE_CHECK_ALARM
+                else -> ""
+              }
               PluginAlarmData(alarm.id, alarmtone, label, typeString)
             }
 

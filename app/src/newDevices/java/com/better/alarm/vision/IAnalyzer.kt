@@ -22,7 +22,8 @@ import io.reactivex.subjects.Subject
 import kotlin.math.sqrt
 
 fun getCos(v1: FloatArray, v2: FloatArray): Float {
-  return (v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2]) / sqrt(v1[0]*v1[0] + v1[1]*v1[1] + v1[2]*v1[2]) / sqrt(v2[0]*v2[0] + v2[1]*v2[1] + v2[2]*v2[2])
+  return (v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2]) /
+    (sqrt(v1[0]*v1[0] + v1[1]*v1[1] + v1[2]*v1[2]) * sqrt(v2[0]*v2[0] + v2[1]*v2[1] + v2[2]*v2[2]))
 }
 
 fun List<NormalizedLandmark>.toBoundingBox(name: String, w: Int, h: Int): BoundingBox {
@@ -45,7 +46,7 @@ class IAnalyzer (
   private var peekStartTime = 0L
   private var lastPersonDetectionTime = 0L
   private val logger by globalLogger("DetectionHandler")
-  private val HEAD_MODEL_PATH = "head_n_float32.tflite"
+  private val HEAD_MODEL_PATH = "head_2_float32.tflite"
   private val GESTURE_MODEL_PATH = "gesture_recognizer.task"
   private var headDetectorV10: DetectorV10? = null
   private var gestureRecognizer: GestureRecognizer? = null
@@ -111,7 +112,6 @@ class IAnalyzer (
   }
 
   inner class HeadDetectorListener : DetectorV10.DetectorListener {
-    private var hasPersonLeft = false
     private fun peekStateOnDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
       if (peekStartTime == 0L) {
         peekStartTime = System.currentTimeMillis()
@@ -123,7 +123,7 @@ class IAnalyzer (
           handler.onPeekFinish(true)
       } else {
         if (System.currentTimeMillis() - peekStartTime > INITIAL_MAX_TIME) {
-          state = DetectionState.FINISHED
+          state = DetectionState.WAKING
           if (!stopped)
             handler.onPeekFinish(false)
         }
@@ -131,28 +131,26 @@ class IAnalyzer (
     }
 
     private fun wakeStateOnDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
-      if (hasPersonLeft) return
       if (boundingBoxes.any { it.clsName == Labels.HEAD }) {
         lastPersonDetectionTime = System.currentTimeMillis()
       }
-      if (System.currentTimeMillis() - lastPersonDetectionTime > MAX_NOPERSON_TIME) {
-        hasPersonLeft = true
+      if (System.currentTimeMillis() - lastPersonDetectionTime > MAX_NOPERSON_TIME && lastPersonDetectionTime != -1L) {
         if (!stopped)
           handler.onPersonLeave()
+        lastPersonDetectionTime = -1L
       }
     }
     override fun onDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
       when (state) {
         DetectionState.PEEKING -> peekStateOnDetect(boundingBoxes, inferenceTime)
         DetectionState.WAKING -> wakeStateOnDetect(boundingBoxes, inferenceTime)
-        DetectionState.FINISHED -> return
       }
       headBoundingBox.onNext(boundingBoxes)
     }
   }
 
   inner class GestureDetectorListener : ResultListener<GestureRecognizerResult, MPImage>{
-    private val ACCEPT_CONFIDENCE = 5
+    private val ACCEPT_CONFIDENCE = 3
     private val behaviorConfidenceMap = buildMap {
       behaviors.items.forEach {
         put(it, 0)
@@ -186,12 +184,11 @@ class IAnalyzer (
           v1 = floatArrayOf(worldLandmarks[0].x() - worldLandmarks[i+1].x(), worldLandmarks[0].y() - worldLandmarks[i+1].y(), worldLandmarks[0].z() - worldLandmarks[i+1].z())
           v2 = floatArrayOf(worldLandmarks[i+1].x() - worldLandmarks[i+3].x(), worldLandmarks[i+1].y() - worldLandmarks[i+3].y(), worldLandmarks[i+1].z() - worldLandmarks[i+3].z())
           cosValue = getCos(v1, v2)
-          if (cosValue > 0.2) add(1)
-          else if (cosValue < -0.2) add(-1)
+          if (cosValue > 0.1) add(1)
+          else if (cosValue < -0.1) add(-1)
           else add(0)
         }
       }.toFingersState()
-      logger.debug { fingersState.toString() }
       return Gesture(fingersState)
     }
 
@@ -209,7 +206,6 @@ class IAnalyzer (
       }
       onDetect(gestures)
       gestureBoundingBox.onNext(boundingBoxes)
-      logger.debug { "gestures boundingBox: ${boundingBoxes.toString()}" }
     }
   }
 

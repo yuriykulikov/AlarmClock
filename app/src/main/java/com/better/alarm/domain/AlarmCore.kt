@@ -45,6 +45,8 @@ data class Change(val value: AlarmValue) : Event()
 
 data class Fired(val type: CalendarType) : Event()
 
+object Check : Event()
+
 object PrealarmDurationChanged : Event()
 
 object Dismiss : Event()
@@ -168,6 +170,7 @@ class AlarmCore(
   private val preAlarmSet = set.PreAlarmSetState()
   private val skipping = enabledState.SkippingSetState()
   private val snoozed = enabledState.SnoozedState()
+  private val check = enabledState.CheckState()
   private val preAlarmFired = enabledState.PreAlarmFiredState()
   private val preAlarmSnoozed = enabledState.PreAlarmSnoozedState()
   private val fired = enabledState.FiredState()
@@ -187,6 +190,7 @@ class AlarmCore(
       addState(preAlarmSet, set)
       addState(normalSet, set)
       addState(snoozed, enabledState)
+      addState(check, enabledState)
       addState(skipping, enabledState)
       addState(preAlarmFired, enabledState)
       addState(fired, enabledState)
@@ -497,9 +501,11 @@ class AlarmCore(
         if (reason is Fired && reason.type == CalendarType.SNOOZE) {
           broadcastAlarmState(Intents.SNOOZE_ALARM_ALERT_ACTION)
           log.debug { "broadcast Snooze alarm"}
-        } else {
+        } else if (reason is Fired && reason.type == CalendarType.NORMAL){
           broadcastAlarmState(Intents.ALARM_ALERT_ACTION)
           log.debug {"broadcast Normal alarm"}
+        } else {
+          broadcastAlarmState(Intents.CHECK_ALARM_ALERT_ACTION)
         }
         val autoSilenceMinutes = autoSilence.blockingFirst()
         if (autoSilenceMinutes > 0) {
@@ -518,6 +524,10 @@ class AlarmCore(
 
       override fun onSnooze(snooze: Snooze) {
         stateMachine.transitionTo(snoozed)
+      }
+
+      override fun onCheck() {
+        stateMachine.transitionTo(check)
       }
 
       override fun exit(reason: Event?) {
@@ -612,6 +622,31 @@ class AlarmCore(
         broadcastAlarmState(Intents.ACTION_CANCEL_SNOOZE)
       }
     }
+     inner class CheckState : AlarmState() {
+       internal var nextTime: Calendar? = null
+       val checkTime = 5
+       override fun onEnter(reason: Event) {
+         nextTime = calendars.now().apply { add(Calendar.MINUTE, checkTime) }
+         alarmStore.modify { withNextTime(nextTime) }
+         broadcastAlarmState(Intents.ALARM_CHECK_ACTION, nextTime)
+       }
+
+       override fun onResume() {
+         if (nextTime == null) {
+           nextTime = calendars.now().apply { add(Calendar.MINUTE, checkTime) }
+         }
+         setAlarm(nextTime!!, CalendarType.CHECK)
+       }
+
+       override fun onFired(type: CalendarType) {
+         stateMachine.transitionTo(fired)
+       }
+
+       override fun exit(reason: Event?) {
+         removeAlarm()
+         broadcastAlarmState(Intents.ACTION_CANCEL_CHECK)
+       }
+     }
 
     inner class PreAlarmSnoozedState : AlarmState() {
       override fun onEnter(reason: Event) {
@@ -743,6 +778,7 @@ class AlarmCore(
         is Enable -> onEnable()
         is Disable -> onDisable()
         is Snooze -> onSnooze(event)
+        is Check -> onCheck()
         is Dismiss -> onDismiss()
         is Change -> onChange(event.value)
         is Fired -> onFired(event.type)
@@ -768,6 +804,8 @@ class AlarmCore(
     protected open fun onDisable() = markNotHandled()
 
     protected open fun onSnooze(snooze: Snooze) = markNotHandled()
+
+    protected open fun onCheck() = markNotHandled()
 
     protected open fun onDismiss() = markNotHandled()
 
@@ -837,6 +875,10 @@ class AlarmCore(
     stateMachine.sendEvent(Snooze(hourOfDay, minute))
   }
 
+  override fun dismissWithCheck() {
+    stateMachine.sendEvent(Check)
+  }
+
   override fun dismiss() {
     stateMachine.sendEvent(Dismiss)
   }
@@ -890,6 +932,7 @@ private fun Event.isUserInteraction(): Boolean {
     Dismiss -> true
     RequestSkip -> true
     is Snooze -> true
+    Check -> true
     is Fired -> false
     InexactFired -> false
     PrealarmDurationChanged -> false

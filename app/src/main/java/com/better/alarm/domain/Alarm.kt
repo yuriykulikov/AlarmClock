@@ -10,6 +10,8 @@ interface Alarm {
 
   fun snooze(hourOfDay: Int, minute: Int)
 
+  fun dismissWithCheck()
+
   fun dismiss()
 
   fun requestSkip()
