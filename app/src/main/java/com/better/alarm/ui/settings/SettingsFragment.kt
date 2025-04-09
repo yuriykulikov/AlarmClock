@@ -154,17 +154,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     findPreference<Preference>("vision_help")?.run {
       setOnPreferenceClickListener {
-        AlertDialog.Builder(requireContext())
-          .setView(R.layout.vision_help_dialog)
-          .setPositiveButton(android.R.string.ok) { _, _ -> }
-          .create().run {
-            window?.setLayout(
-              WindowManager.LayoutParams.MATCH_PARENT,
-              WindowManager.LayoutParams.MATCH_PARENT
-            )
-            show()
-          }
-
+        val intent = Intent(requireContext(), VisionWakingHelpActivity::class.java)
+        startActivity(intent)
         true
       }
     }

@@ -49,9 +49,11 @@
         android:installLocation="internalOnly"
         android:label="@string/simple_alarm_clock">
         <activity
-            android:name=".ui.settings.CameraTestActivity"
+            android:name=".ui.settings.VisionWakingHelpActivity"
             android:exported="false" />
-        <!-- Activity to set a new or modify existing alarm -->
+        <activity
+            android:name=".ui.settings.CameraTestActivity"
+            android:exported="false" /> <!-- Activity to set a new or modify existing alarm -->
         <activity
             android:name=".ui.main.AlarmsListActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
