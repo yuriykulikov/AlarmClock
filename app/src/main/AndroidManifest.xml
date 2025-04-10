@@ -50,9 +50,11 @@
         android:label="@string/simple_alarm_clock">
         <activity
             android:name=".ui.settings.VisionWakingHelpActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".ui.settings.CameraTestActivity"
+            android:screenOrientation="portrait"
             android:exported="false" /> <!-- Activity to set a new or modify existing alarm -->
         <activity
             android:name=".ui.main.AlarmsListActivity"
