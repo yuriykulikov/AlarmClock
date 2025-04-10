@@ -74,7 +74,7 @@ private constructor(
           visionFlashlight = factory.booleanDataStore(KEY_VISION_FLASHLIGHT, false),
           visionTTS = factory.booleanDataStore(KEY_VISION_TTS, true),
           visionCheckAfterDismiss = factory.booleanDataStore(KEY_VISION_CHECK_AFTER_DISMISS, true),
-          visionBehavior = factory.stringDataStore(KEY_VISION_BEHAVIOR, "")
+          visionBehavior = factory.stringDataStore(KEY_VISION_BEHAVIOR, "{\"items\":[]}")
       )
     }
 

@@ -148,7 +148,7 @@
             android:summary="@string/vision_check_after_dismiss_summary"
             app:iconSpaceReserved="false" />
         <com.better.alarm.ui.settings.VisionBehaviorPreference
-            android:defaultValue=""
+            android:defaultValue="{&quot;items&quot;:[]}"
             android:key="vision_behavior"
             android:title="Set Behavior"
             app:iconSpaceReserved="false" />
