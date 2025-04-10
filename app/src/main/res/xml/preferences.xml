@@ -120,6 +120,7 @@
     </androidx.preference.PreferenceCategory>
     <androidx.preference.PreferenceCategory
         android:title="Ai vision waking"
+        android:key="category_vision_waking"
         app:iconSpaceReserved="false">
         <Preference
             android:key="vision_help"

@@ -208,14 +208,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     bindListPreference(Prefs.LIST_ROW_LAYOUT, prefs.listRowLayout) { summary = entry }
 
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-      listOf(
-        Prefs.KEY_VISION_TTS,
-        Prefs.KEY_VISION_FLASHLIGHT,
-        Prefs.KEY_ENABLE_VISION_WAKING,
-        Prefs.KEY_VISION_BEHAVIOR,
-      ).forEach { key->
-        findPreference<Preference>(key)?.isVisible = false
-      }
+      findPreference<PreferenceCategory>("category_vision_waking")?.isVisible = false
     }
   }
 
