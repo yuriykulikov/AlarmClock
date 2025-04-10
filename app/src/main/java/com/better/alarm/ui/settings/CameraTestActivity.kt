@@ -44,9 +44,9 @@ class CameraTestActivity : AppCompatActivity() {
   private val logger by globalLogger("CameraTestActivity")
   private val dynamicThemeHandler: DynamicThemeHandler by inject()
   private var cameraXHelper: CameraXHelper? = null
-  private lateinit var cameraExecutor: ExecutorService
-  private lateinit var analyzer: DetectionAnalyzer
-  private lateinit var overlayView: OverlayView
+  private var cameraExecutor: ExecutorService? = null
+  private var analyzer: DetectionAnalyzer? = null
+  private var overlayView: OverlayView? = null
   override fun onCreate(savedInstanceState: Bundle?) {
     AlarmApplication.startOnce(application)
     setTheme(dynamicThemeHandler.alertTheme())
@@ -70,16 +70,14 @@ class CameraTestActivity : AppCompatActivity() {
     }
     cameraExecutor = Executors.newSingleThreadExecutor()
 
-    cameraExecutor.execute {
+    cameraExecutor!!.execute {
       analyzer = IAnalyzer(this, detectionHandler, Json.decodeFromString(sp.visionBehavior.value))
-      analyzer.skipPeek()
-      Handler(Looper.getMainLooper()).postDelayed({
-        cameraXHelper = CameraXHelper(this, this,findViewById(R.id.alert_vision_preview) , cameraExecutor, lensFacing = CameraSelector.LENS_FACING_BACK, imageAnalyzer =  analyzer.analyzer) { succeeded ->
-          if (!succeeded) {
-            logger.error {"CameraXHelper failed to start"}
-          }
+      analyzer!!.skipPeek()
+      cameraXHelper = CameraXHelper(this, this,findViewById(R.id.alert_vision_preview) , cameraExecutor!!, lensFacing = CameraSelector.LENS_FACING_BACK, imageAnalyzer =  analyzer!!.analyzer) { succeeded ->
+        if (!succeeded) {
+          logger.error {"CameraXHelper failed to start"}
         }
-      }, 3000)
+      }
     }
 
     findViewById<Button>(R.id.alert_vision_dismiss).run {
@@ -110,8 +108,8 @@ class CameraTestActivity : AppCompatActivity() {
 
     override fun onDetectUiUpdate(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
       runOnUiThread {
-        overlayView.setResults(boundingBoxes)
-        overlayView.invalidate()
+        overlayView?.setResults(boundingBoxes)
+        overlayView?.invalidate()
       }
     }
 
@@ -121,8 +119,8 @@ class CameraTestActivity : AppCompatActivity() {
   }
   override fun onDestroy() {
     cameraXHelper?.destroy()
-    analyzer.destroy()
-    cameraExecutor.shutdown()
+    analyzer?.destroy()
+    cameraExecutor?.shutdown()
     super.onDestroy()
   }
 }
