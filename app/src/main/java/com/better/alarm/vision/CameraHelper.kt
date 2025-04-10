@@ -51,7 +51,7 @@ class CameraXHelper(
     startCamera()
   }
 
-  private fun startCamera() {
+  private fun startCamera(isFirstTime: Boolean =true) {
     val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
 
     cameraProviderFuture.addListener({
@@ -89,24 +89,26 @@ class CameraXHelper(
       } catch (e: Exception) {
         logger.error { "Use case binding failed: $e" }
         _cameraIsOpened = false
-        val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as? CameraManager
-        val mainCameraId = cameraManager?.cameraIdList?.maxByOrNull { cameraId ->
-          val characteristics = cameraManager.getCameraCharacteristics(cameraId)
-          val sensorSize = characteristics.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE)!!
-          (sensorSize.width * sensorSize.height).toFloat()
-        }?.takeIf { characteristics ->
-          cameraManager.getCameraCharacteristics(characteristics).get(CameraCharacteristics.LENS_FACING) == lensFacing
-        }?: cameraManager?.cameraIdList?.firstOrNull()
-        cameraManager?.registerAvailabilityCallback(
-          object : CameraManager.AvailabilityCallback() {
-            override fun onCameraAvailable(cameraId: String) {
-              super.onCameraAvailable(cameraId)
-              logger.debug{"onCameraAvailable: $cameraId"}
-              if (cameraId == mainCameraId)
-                startCamera()
-            }
-          }, Handler(Looper.getMainLooper())
-        )
+        if (isFirstTime) {
+          val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as? CameraManager
+          val mainCameraId = cameraManager?.cameraIdList?.maxByOrNull { cameraId ->
+            val characteristics = cameraManager.getCameraCharacteristics(cameraId)
+            val sensorSize = characteristics.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE)!!
+            (sensorSize.width * sensorSize.height).toFloat()
+          }?.takeIf { characteristics ->
+            cameraManager.getCameraCharacteristics(characteristics).get(CameraCharacteristics.LENS_FACING) == lensFacing
+          }?: cameraManager?.cameraIdList?.firstOrNull()
+          cameraManager?.registerAvailabilityCallback(
+            object : CameraManager.AvailabilityCallback() {
+              override fun onCameraAvailable(cameraId: String) {
+                super.onCameraAvailable(cameraId)
+                logger.debug{"onCameraAvailable: $cameraId"}
+                if (cameraId == mainCameraId)
+                  startCamera(isFirstTime = false)
+              }
+            }, Handler(Looper.getMainLooper())
+          )
+        }
       }
 
       camera?.cameraInfo?.torchState?.observe(lifecycleOwner) {
