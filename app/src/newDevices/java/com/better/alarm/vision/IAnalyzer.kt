@@ -6,7 +6,6 @@ import android.graphics.Matrix
 import androidx.camera.core.ImageAnalysis
 import com.better.alarm.bootstrap.globalLogger
 import com.better.alarm.ui.settings.VisionBehaviorItemView
-import com.better.alarm.vision.IAnalyzer.Companion.GESTURE_MODEL_PATH
 import com.google.mediapipe.framework.image.BitmapImageBuilder
 import com.google.mediapipe.framework.image.MPImage
 import com.google.mediapipe.tasks.components.containers.Landmark
@@ -27,7 +26,7 @@ fun getCos(v1: FloatArray, v2: FloatArray): Float {
     (sqrt(v1[0]*v1[0] + v1[1]*v1[1] + v1[2]*v1[2]) * sqrt(v2[0]*v2[0] + v2[1]*v2[1] + v2[2]*v2[2]))
 }
 
-fun List<NormalizedLandmark>.toBoundingBox(name: String, w: Int, h: Int): BoundingBox {
+fun List<NormalizedLandmark>.toBoundingBox(name: String): BoundingBox {
   val minX = minOf { it.x() }
   val maxX = maxOf{ it.x() }
   val minY = minOf { it.y() }
@@ -219,7 +218,7 @@ class IAnalyzer (
         val name = behaviors.items.find {
           it.gesture == resultGesture
         }?.operation?: resultGesture.fingers?.toFingersList().toString()
-        boundingBoxes.add(result.landmarks()[i].toBoundingBox(name, input.width, input.height))
+        boundingBoxes.add(result.landmarks()[i].toBoundingBox(name))
         gestures.add(resultGesture)
       }
       onDetect(gestures)

@@ -5,25 +5,19 @@ import android.content.Context
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.os.Build
-import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
 import android.util.Size
-import android.widget.Toast
 import androidx.camera.core.*
 import androidx.camera.core.ImageCapture.FLASH_MODE_ON
-import androidx.camera.core.ImageCapture.FlashMode
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.better.alarm.bootstrap.globalLogger
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import kotlin.text.format
 
 class CameraXHelper(
   private val context: Context,
@@ -40,11 +34,8 @@ class CameraXHelper(
   private var imageAnalysis: ImageAnalysis? = null
   private var camera: Camera? = null
   private var isTorchOn = false
-  private var cameraResolution: Size = Size(640, 480)
   private var _cameraIsOpened: Boolean = false
   private var cameraOpenedCBCalled = false
-  val cameraIsOpened: Boolean
-    get() = _cameraIsOpened
 
   init {
 
@@ -97,7 +88,7 @@ class CameraXHelper(
             (sensorSize.width * sensorSize.height).toFloat()
           }?.takeIf { characteristics ->
             cameraManager.getCameraCharacteristics(characteristics).get(CameraCharacteristics.LENS_FACING) == lensFacing
-          }?: cameraManager?.cameraIdList?.firstOrNull()
+          } ?: cameraManager?.cameraIdList?.firstOrNull()
           cameraManager?.registerAvailabilityCallback(
             object : CameraManager.AvailabilityCallback() {
               override fun onCameraAvailable(cameraId: String) {
@@ -129,7 +120,7 @@ class CameraXHelper(
     }, ContextCompat.getMainExecutor(context))
   }
 
-  fun takePhoto(flashed: Boolean=false, saveToGallery: Boolean=false) {
+  fun takePhoto(flashed: Boolean=false) {
 
     val name = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
       .format(System.currentTimeMillis()) + ".jpg"
@@ -190,13 +181,10 @@ class CameraXHelper(
 
     camera?.cameraControl?.setExposureCompensationIndex(newEV)
       ?.addListener({
-        showToast("曝光值設定: $newEV")
+        logger.debug { "Exposure compensation set to $newEV" }
       }, ContextCompat.getMainExecutor(context))
   }
 
-  private fun showToast(message: String) {
-    //Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-  }
 
   fun destroy() {
     cameraProvider?.unbindAll()

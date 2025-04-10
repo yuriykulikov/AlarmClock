@@ -5,24 +5,15 @@ import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageAnalysis
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.better.alarm.R
 import com.better.alarm.bootstrap.AlarmApplication
 import com.better.alarm.bootstrap.globalLogger
 import com.better.alarm.data.Prefs
-import com.better.alarm.domain.Alarm
-import com.better.alarm.domain.Calendars
-import com.better.alarm.domain.IAlarmsManager
-import com.better.alarm.domain.Store
 import com.better.alarm.ui.themes.DynamicThemeHandler
 import com.better.alarm.vision.BoundingBox
 import com.better.alarm.vision.CameraXHelper
@@ -30,16 +21,12 @@ import com.better.alarm.vision.DetectionAnalyzer
 import com.better.alarm.vision.DetectionHandler
 import com.better.alarm.vision.IAnalyzer
 import com.better.alarm.vision.OverlayView
-import com.better.alarm.vision.TTSHelper
-import io.reactivex.disposables.Disposable
-import io.reactivex.disposables.Disposables
 import kotlinx.serialization.json.Json
 import org.koin.android.ext.android.inject
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class CameraTestActivity : AppCompatActivity() {
-  private val store: Store by inject()
   private val sp: Prefs by inject()
   private val logger by globalLogger("CameraTestActivity")
   private val dynamicThemeHandler: DynamicThemeHandler by inject()
