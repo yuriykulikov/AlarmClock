@@ -127,22 +127,20 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
 
       cameraExecutor?.execute {
         analyzer = IAnalyzer(this, detectionHandler, Json.decodeFromString(sp.visionBehavior.value))
-        Handler(Looper.getMainLooper()).post {
-          cameraXHelper = CameraXHelper(
-            this,
-            this,
-            findViewById(R.id.alert_vision_preview),
-            cameraExecutor!!,
-            imageAnalyzer = analyzer!!.analyzer
-          ) { succeeded ->
-            if (succeeded) {
-              if (sp.visionFlashlight.value) {
-                cameraXHelper?.setOrToggleFlash(true)
-              }
-            } else {
-              logger.debug { "camera is not opened after 5 seconds, switch to normal activity" }
-              switchToNormalActivity()
+        cameraXHelper = CameraXHelper(
+          this,
+          this,
+          findViewById(R.id.alert_vision_preview),
+          cameraExecutor!!,
+          imageAnalyzer = analyzer!!.analyzer
+        ) { succeeded ->
+          if (succeeded) {
+            if (sp.visionFlashlight.value) {
+              cameraXHelper?.setOrToggleFlash(true)
             }
+          } else {
+            logger.debug { "camera is not opened after 5 seconds, switch to normal activity" }
+            switchToNormalActivity()
           }
         }
       }

@@ -63,14 +63,14 @@ class CameraXHelper(
           .build()
 
         val preview = Preview.Builder()
-          .setTargetResolution(Size(640, 640))
+          .setTargetResolution(Size(800, 800))
           .build().also {
             it.setSurfaceProvider(previewView.surfaceProvider)
           }
 
         if (imageAnalyzer != null)
           imageAnalysis = ImageAnalysis.Builder()
-            .setTargetResolution(Size(640, 640))
+            .setTargetResolution(Size(800, 800))
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
             .build().also{
