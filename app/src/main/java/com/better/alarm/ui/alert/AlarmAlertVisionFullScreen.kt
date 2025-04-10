@@ -294,7 +294,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     override fun onPersonLeave() {
       if (!enablePersonLeaveDismiss) return
       logger.debug { "onPersonLeave" }
-      ttsHelper?.speak("person left") {
+      ttsHelper?.speak(getString(R.string.vision_tts_person_leave)) {
         runOnUiThread{
           dismiss()
         }
@@ -320,7 +320,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
 
     fun snoozeAction(minutes: Int) {
       logger.debug { "snooze gesture detected, snooze!!!" }
-      ttsHelper?.speak("snooze") {
+      ttsHelper?.speak(getString(R.string.vision_tts_snooze)) {
         runOnUiThread{
           val t = calendars.now()
           t.add(Calendar.MINUTE, minutes)
@@ -331,7 +331,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
 
     fun dismissAction() {
       logger.debug { "dismiss gesture detected, dismiss!!!" }
-      ttsHelper?.speak("dismiss") {
+      ttsHelper?.speak(getString(R.string.vision_tts_dismiss)) {
         runOnUiThread{
           dismiss()
         }
