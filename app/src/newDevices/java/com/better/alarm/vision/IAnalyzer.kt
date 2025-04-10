@@ -6,6 +6,7 @@ import android.graphics.Matrix
 import androidx.camera.core.ImageAnalysis
 import com.better.alarm.bootstrap.globalLogger
 import com.better.alarm.ui.settings.VisionBehaviorItemView
+import com.better.alarm.vision.IAnalyzer.Companion.GESTURE_MODEL_PATH
 import com.google.mediapipe.framework.image.BitmapImageBuilder
 import com.google.mediapipe.framework.image.MPImage
 import com.google.mediapipe.tasks.components.containers.Landmark
@@ -41,13 +42,7 @@ class IAnalyzer (
   private val handler: DetectionHandler,
   private val behaviors: VisionBehaviorItemView.Companion.BehaviorsStoreValue
 ): DetectionAnalyzer {
-  private val MAX_NOPERSON_TIME = 20000
-  private val INITIAL_MAX_TIME = 6000
-  private var peekStartTime = 0L
-  private var lastPersonDetectionTime = 0L
   private val logger by globalLogger("DetectionHandler")
-  private val HEAD_MODEL_PATH = "head_2_float32.tflite"
-  private val GESTURE_MODEL_PATH = "gesture_recognizer.task"
   private var headDetectorV10: DetectorV10? = null
   private var gestureRecognizer: GestureRecognizer? = null
   private val gestureBoundingBox: Subject<List<BoundingBox>> = BehaviorSubject.create()
@@ -55,6 +50,29 @@ class IAnalyzer (
   private val compositeDisposable = CompositeDisposable()
   private var state = DetectionState.PEEKING
   private var stopped = false
+  private var peekStartTime = 0L
+  private var lastPersonDetectionTime = 0L
+
+  companion object {
+    const val MAX_NOPERSON_TIME = 20000
+    const val INITIAL_MAX_TIME = 6000
+    const val HEAD_MODEL_PATH = "head_2_float32.tflite"
+    const val GESTURE_MODEL_PATH = "gesture_recognizer.task"
+    fun checkAvailability(context: Context): Boolean {
+      try {
+        val gestureRecognizerOption = GestureRecognizer.GestureRecognizerOptions.builder().apply {
+          setBaseOptions(BaseOptions.builder().setModelAssetPath(GESTURE_MODEL_PATH).build())
+          setResultListener { _, _ -> }
+          setRunningMode(RunningMode.LIVE_STREAM)
+        }.build()
+        val recognizer = GestureRecognizer.createFromOptions(context, gestureRecognizerOption)
+        recognizer.close()
+        return true
+      } catch (e: Exception) {
+        return false
+      }
+    }
+  }
 
   override val analyzer: ImageAnalysis.Analyzer = ImageAnalysis.Analyzer {
       imageProxy ->
@@ -217,3 +235,5 @@ class IAnalyzer (
     compositeDisposable.dispose()
   }
 }
+
+

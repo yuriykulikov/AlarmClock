@@ -218,4 +218,6 @@
     <string name="alarm_notify_check_label">check whether you have gotten up</string>
     <string name="vision_check_after_dismiss_title">Check after dismiss</string>
     <string name="vision_check_after_dismiss_summary">set a check alarm after the alarm is dismissed. If the check alarm doesn\'t detect people it will dismiss itself or you can also dismiss it manually.</string>
+    <string name="vision_waking_unavailable_title">Vision Waking Unavailable!!!</string>
+    <string name="vision_waking_unavailable_message">Unfortunately, this method is unavailable on your device. This might occurs on some x86_64 devices due to unsupported library.</string>
 </resources>

@@ -31,6 +31,7 @@ import com.better.alarm.platform.checkPermissions
 import com.better.alarm.ui.ringtonepicker.getPickedRingtone
 import com.better.alarm.ui.ringtonepicker.showRingtonePicker
 import com.better.alarm.ui.ringtonepicker.userFriendlyTitle
+import com.better.alarm.vision.IAnalyzer
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -145,6 +146,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
             // ask for permission if not granted
             if(ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
               ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.CAMERA), 1000)
+              return@OnPreferenceChangeListener false
+            }
+            if(!IAnalyzer.checkAvailability(requireContext())) {
+              AlertDialog.Builder(requireContext())
+                  .setTitle(R.string.vision_waking_unavailable_title)
+                  .setMessage(R.string.vision_waking_unavailable_message)
+                  .setPositiveButton(android.R.string.ok, null)
+                  .show()
               return@OnPreferenceChangeListener false
             }
           }
