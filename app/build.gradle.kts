@@ -152,7 +152,6 @@ android {
   }
 
   testOptions { unitTests.isReturnDefaultValues = true }
-
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
@@ -167,7 +166,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 dependencies {
   val coroutinesVersion = "1.7.3"
   val serializationVersion = "1.6.2"
-  implementation("ch.acra:acra-mail:5.11.3")
+  implementation("ch.acra:acra-mail:5.12.0")
   implementation("com.melnykov:floatingactionbutton:1.3.0")
   implementation("io.reactivex.rxjava2:rxjava:2.2.21")
   implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
@@ -200,15 +199,16 @@ dependencies {
 
   testImplementation("net.wuerl.kotlin:assertj-core-kotlin:0.2.1")
   testImplementation("junit:junit:4.13.2")
-  testImplementation("io.mockk:mockk:1.13.9")
+  testImplementation("io.mockk:mockk:1.13.17")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
-  testImplementation("org.slf4j:slf4j-simple:2.0.11")
+  testImplementation("org.slf4j:slf4j-simple:2.0.17")
 
-  val androidxTest = "1.5.0"
+  val androidxTest = "1.6.1"
   androidTestImplementation("com.squareup.assertj:assertj-android:1.2.0")
-  androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+  androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
   androidTestImplementation("androidx.test:runner:$androidxTest")
   androidTestImplementation("androidx.test:rules:$androidxTest")
+  androidTestImplementation("androidx.test.ext:junit:1.2.1")
   androidTestImplementation("androidx.test.ext:junit:1.1.5")
 
   implementation("org.tensorflow:tensorflow-lite:2.16.1")
