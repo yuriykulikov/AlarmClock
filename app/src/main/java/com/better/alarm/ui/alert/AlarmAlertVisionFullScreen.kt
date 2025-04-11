@@ -288,6 +288,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
         return
       }
       enablePersonLeaveDismiss = isPersonDetected
+      ttsHelper?.speak(getString(if (isPersonDetected) R.string.vision_tts_peek_person else R.string.vision_tts_peek_no_person))
       store.events.onNext(Event.StartWakingEvent())
     }
 

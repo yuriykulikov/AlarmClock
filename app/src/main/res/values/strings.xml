@@ -224,4 +224,6 @@
     <string name="vision_tts_snooze">snooze for a while</string>
     <string name="vision_tts_dismiss">alarm dismissed</string>
     <string name="vision_help_text2">Tip: \n1. make sure that the camera can capture your head in every circumstances. You can ues the \"test\" button to test camera\n2. Since it might take some time to recognize hand gesture, hold the gesture for a while to trigger the defined action.</string>
+    <string name="vision_tts_peek_person">I see you</string>
+    <string name="vision_tts_peek_no_person">Person not detected</string>
 </resources>
