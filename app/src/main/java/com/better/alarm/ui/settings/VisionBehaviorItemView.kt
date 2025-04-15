@@ -9,24 +9,18 @@ import android.widget.ToggleButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.better.alarm.R
 import com.better.alarm.ui.alert.AlarmAlertVisionFullScreen
+import com.better.alarm.vision.Behavior
 import com.better.alarm.vision.Gesture
 import com.better.alarm.vision.toFingersList
 import com.better.alarm.vision.toFingersState
-import kotlinx.serialization.Serializable
 
 class VisionBehaviorItemView @JvmOverloads constructor(
   context: android.content.Context,
   attrs: android.util.AttributeSet? = null,
   defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
-  companion object {
-    @Serializable
-    data class BehaviorStoreItem(val gesture: Gesture, val operation: String)
-    @Serializable
-    data class BehaviorsStoreValue(val items: List<BehaviorStoreItem>)
-  }
 
-  var onRemove: (() -> Unit)? = null
+    var onRemove: (() -> Unit)? = null
   var onUpdate: (() -> Unit)? = null
   private lateinit var fingerButtons: List<ToggleButton>
   private lateinit var behaviorSpinner: Spinner
@@ -61,16 +55,22 @@ class VisionBehaviorItemView @JvmOverloads constructor(
   }
 
   private fun updateCurrentData() {
-    currentData = BehaviorStoreItem(Gesture(
-      buildList {
-        fingerButtons.forEachIndexed { index, button ->
-          if (button.isChecked) add(1) else add(-1)
-        }
-      }.toFingersState())
-      , behaviorSpinner.selectedItem.toString())
+    currentData = Behavior.BehaviorStoreItem(
+      Gesture(
+        buildList {
+          fingerButtons.forEachIndexed { index, button ->
+            if (button.isChecked) add(1) else add(-1)
+          }
+        }.toFingersState()
+      ), behaviorSpinner.selectedItem.toString()
+    )
   }
 
-  var currentData: BehaviorStoreItem = BehaviorStoreItem(Gesture(Gesture.FingersState(0,0,0,0,0)), AlarmAlertVisionFullScreen.behaviorList[0])
+  var currentData: Behavior.BehaviorStoreItem =
+    Behavior.BehaviorStoreItem(
+      Gesture(Gesture.FingersState(0, 0, 0, 0, 0)),
+      AlarmAlertVisionFullScreen.behaviorList[0]
+    )
     set(value) {
       val itemFingerStateList = value.gesture.fingers?.toFingersList()
       fingerButtons.forEachIndexed { index, button ->
@@ -79,4 +79,5 @@ class VisionBehaviorItemView @JvmOverloads constructor(
       behaviorSpinner.setSelection(AlarmAlertVisionFullScreen.behaviorList.indexOf(value.operation))
       field = value
     }
+
 }

@@ -14,6 +14,7 @@ import androidx.preference.PreferenceViewHolder
 import com.better.alarm.R
 import com.better.alarm.bootstrap.globalLogger
 import com.better.alarm.logger.Logger
+import com.better.alarm.vision.Behavior
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -47,7 +48,7 @@ class VisionBehaviorPreference(context: Context, attrs: AttributeSet) : Preferen
 
     if (initialValueString.isNotEmpty()) {
       try {
-        val storedValue: VisionBehaviorItemView.Companion.BehaviorsStoreValue = Json.decodeFromString(initialValueString)
+        val storedValue: Behavior.BehaviorsStoreValue = Json.decodeFromString(initialValueString)
         storedValue.items.forEach {
           addItem(it)
         }
@@ -80,7 +81,7 @@ class VisionBehaviorPreference(context: Context, attrs: AttributeSet) : Preferen
 
   }
 
-  private fun addItem(item: VisionBehaviorItemView.Companion.BehaviorStoreItem? = null) {
+  private fun addItem(item: Behavior.BehaviorStoreItem? = null) {
 
     val view = LayoutInflater.from(context).inflate(R.layout.vision_behavior_item, behaviorListLayout, false) as VisionBehaviorItemView
     view.onRemove = {
@@ -96,12 +97,12 @@ class VisionBehaviorPreference(context: Context, attrs: AttributeSet) : Preferen
         override fun onAnimationStart(animation: android.view.animation.Animation?) {}
       })
       view.startAnimation(animation)
-      val newValue = VisionBehaviorItemView.Companion.BehaviorsStoreValue(items.map { it.currentData })
+      val newValue = Behavior.BehaviorsStoreValue(items.map { it.currentData })
       val valueString = Json.encodeToString(newValue)
       persistString(valueString)
     }
     view.onUpdate = {
-      val newValue = VisionBehaviorItemView.Companion.BehaviorsStoreValue(items.map { it.currentData })
+      val newValue = Behavior.BehaviorsStoreValue(items.map { it.currentData })
       val valueString = Json.encodeToString(newValue)
       persistString(valueString)
     }

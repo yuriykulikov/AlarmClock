@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.Matrix
 import androidx.camera.core.ImageAnalysis
 import com.better.alarm.bootstrap.globalLogger
-import com.better.alarm.ui.settings.VisionBehaviorItemView
 import com.google.mediapipe.framework.image.BitmapImageBuilder
 import com.google.mediapipe.framework.image.MPImage
 import com.google.mediapipe.tasks.components.containers.Landmark
@@ -39,7 +38,7 @@ fun List<NormalizedLandmark>.toBoundingBox(name: String): BoundingBox {
 class IAnalyzer (
   private val context: Context,
   private val handler: DetectionHandler,
-  private val behaviors: VisionBehaviorItemView.Companion.BehaviorsStoreValue
+  private val behaviors: Behavior.BehaviorsStoreValue
 ): DetectionAnalyzer {
   private val logger by globalLogger("DetectionHandler")
   private var headDetectorV10: DetectorV10? = null
