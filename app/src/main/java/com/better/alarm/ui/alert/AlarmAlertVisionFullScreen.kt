@@ -233,12 +233,10 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
   }
 
   private fun dismissDirectly() {
-    analyzer?.stop()
     mAlarm?.dismiss()
   }
 
   private fun dismiss() {
-    analyzer?.stop()
     if (sp.visionCheckAfterDismiss.value)
       mAlarm?.dismissWithCheck()
     else
@@ -246,12 +244,10 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
   }
 
   private fun snooze(hour: Int, minute: Int) {
-    analyzer?.stop()
     mAlarm?.snooze(hour, minute)
   }
 
   private fun snooze() {
-    analyzer?.stop()
     mAlarm?.snooze()
   }
 
@@ -279,10 +275,13 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
   }
 
   private val detectionHandler: DetectionHandler = object: DetectionHandler {
-    var enablePersonLeaveDismiss = false
+    private var enablePersonLeaveDismiss = false
+    private var allowAction = true
     override fun onPeekFinish(isPersonDetected: Boolean) {
+      if (!allowAction) return
       logger.debug { "onPeekFinish: $isPersonDetected" }
       if (!isPersonDetected && alarmType == Intents.TYPE_CHECK_ALARM) {
+        allowAction = false
         runOnUiThread { dismissDirectly() }
         logger.debug { "nothing detected after initial detection, dismiss" }
         return
@@ -293,7 +292,8 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     }
 
     override fun onPersonLeave() {
-      if (!enablePersonLeaveDismiss) return
+      if (!enablePersonLeaveDismiss || !allowAction) return
+      allowAction = false
       logger.debug { "onPersonLeave" }
       ttsHelper?.speak(getString(R.string.vision_tts_person_leave)) {
         runOnUiThread{
@@ -302,8 +302,8 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
       }
     }
 
-
     override fun onBehaviorAction(operation: String) {
+      if (!allowAction) return
       when (operation) {
         "Snooze for 5 minutes" -> snoozeAction(5)
         "Snooze for 10 minutes" -> snoozeAction(10)
@@ -320,6 +320,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     }
 
     fun snoozeAction(minutes: Int) {
+      allowAction = false
       logger.debug { "snooze gesture detected, snooze!!!" }
       ttsHelper?.speak(getString(R.string.vision_tts_snooze)) {
         runOnUiThread{
@@ -331,6 +332,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
     }
 
     fun dismissAction() {
+      allowAction = false
       logger.debug { "dismiss gesture detected, dismiss!!!" }
       ttsHelper?.speak(getString(R.string.vision_tts_dismiss)) {
         runOnUiThread{

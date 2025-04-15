@@ -9,7 +9,7 @@ import com.better.alarm.ui.settings.VisionBehaviorItemView
 class IAnalyzer(
   val context: Context,
   private val handler: DetectionHandler,
-  private val behaviorList: VisionBehaviorItemView.Companion.BehaviorsStoreValue
+  private val behaviorList: Behavior.BehaviorsStoreValue
 ) : DetectionAnalyzer {
 
   companion object {
@@ -20,8 +20,6 @@ class IAnalyzer(
 
   override val analyzer: ImageAnalysis.Analyzer
     get() = ImageAnalysis.Analyzer { }
-
-  override fun stop() {}
 
   override fun skipPeek() {}
 }

@@ -18,6 +18,11 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.Subject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.sqrt
 
 fun getCos(v1: FloatArray, v2: FloatArray): Float {
@@ -47,12 +52,12 @@ class IAnalyzer (
   private val headBoundingBox: Subject<List<BoundingBox>> = BehaviorSubject.create()
   private val compositeDisposable = CompositeDisposable()
   private var state = DetectionState.PEEKING
-  private var stopped = false
-  private var peekStartTime = 0L
-  private var lastPersonDetectionTime = 0L
+  private var handlerOperationLock = Any()
+  private val personWatcher = PersonWatcher()
+
 
   companion object {
-    const val MAX_NOPERSON_TIME = 20000
+    const val MAX_NOPERSON_TIME = 10000L
     const val INITIAL_MAX_TIME = 6000
     const val HEAD_MODEL_PATH = "head_2_float32.tflite"
     const val GESTURE_MODEL_PATH = "gesture_recognizer.task"
@@ -72,33 +77,6 @@ class IAnalyzer (
     }
   }
 
-  override val analyzer: ImageAnalysis.Analyzer = ImageAnalysis.Analyzer {
-      imageProxy ->
-    val bitmapBuffer =
-        Bitmap.createBitmap(
-            imageProxy.width,
-            imageProxy.height,
-            Bitmap.Config.ARGB_8888
-        )
-    imageProxy.use { bitmapBuffer.copyPixelsFromBuffer(imageProxy.planes[0].buffer) }
-    imageProxy.close()
-
-    val matrix = Matrix().apply {
-      postRotate(imageProxy.imageInfo.rotationDegrees.toFloat())
-    }
-
-    val rotatedBitmap = Bitmap.createBitmap(
-        bitmapBuffer, 0, 0, bitmapBuffer.width, bitmapBuffer.height,
-        matrix, true
-    )
-    if (state == DetectionState.WAKING) {
-      val mpImage = BitmapImageBuilder(rotatedBitmap).build()
-      gestureRecognizer?.recognizeAsync(mpImage, System.currentTimeMillis())
-    }
-    headDetectorV10?.detect(rotatedBitmap)
-    bitmapBuffer.recycle()
-  }
-
   init {
     headDetectorV10 = DetectorV10(context, HEAD_MODEL_PATH, HeadDetectorListener(), {
         logger.debug { it }
@@ -113,79 +91,105 @@ class IAnalyzer (
 
     val boundingBoxesObservable = Observable.zip(headBoundingBox, gestureBoundingBox) { head, gesture -> head + gesture }
     val disposable = boundingBoxesObservable.subscribe {
-      if (!stopped)
-        handler.onDetectUiUpdate(it, 0)
+      sendAction { handler.onDetectUiUpdate(it, 0) }
     }
     compositeDisposable.add(disposable)
-  }
-
-  override fun stop() {
-    stopped = true
   }
 
   override fun skipPeek() {
     state = DetectionState.WAKING
   }
 
-  inner class HeadDetectorListener : DetectorV10.DetectorListener {
-    private fun peekStateOnDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
-      if (peekStartTime == 0L) {
-        peekStartTime = System.currentTimeMillis()
-      }
-      if (boundingBoxes.any { it.clsName == Labels.HEAD }) {
-        state = DetectionState.WAKING
-        lastPersonDetectionTime = System.currentTimeMillis()
-        if (!stopped)
-          handler.onPeekFinish(true)
-      } else {
-        if (System.currentTimeMillis() - peekStartTime > INITIAL_MAX_TIME) {
-          state = DetectionState.WAKING
-          if (!stopped)
-            handler.onPeekFinish(false)
+  override val analyzer: ImageAnalysis.Analyzer = ImageAnalysis.Analyzer {
+      imageProxy ->
+    val bitmapBuffer =
+      Bitmap.createBitmap(
+        imageProxy.width,
+        imageProxy.height,
+        Bitmap.Config.ARGB_8888
+      )
+    imageProxy.use { bitmapBuffer.copyPixelsFromBuffer(imageProxy.planes[0].buffer) }
+    imageProxy.close()
+
+    val matrix = Matrix().apply {
+      postRotate(imageProxy.imageInfo.rotationDegrees.toFloat())
+    }
+
+    val rotatedBitmap = Bitmap.createBitmap(
+      bitmapBuffer, 0, 0, bitmapBuffer.width, bitmapBuffer.height,
+      matrix, true
+    )
+    val mpImage = BitmapImageBuilder(rotatedBitmap).build()
+    gestureRecognizer?.recognizeAsync(mpImage, System.currentTimeMillis())
+    headDetectorV10?.detect(rotatedBitmap)
+    bitmapBuffer.recycle()
+
+    personWatcher.startOnce()
+  }
+
+  private inner class PersonWatcher {
+    private var job: Job? = null
+    private var isStarted = false
+
+    fun startOnce() {
+      if (!isStarted) {
+        isStarted = true
+        job = CoroutineScope(Dispatchers.Main).launch {
+          delay(MAX_NOPERSON_TIME)
+          onTimeoutAction()
         }
       }
     }
 
-    private fun wakeStateOnDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
-      if (boundingBoxes.any { it.clsName == Labels.HEAD }) {
-        lastPersonDetectionTime = System.currentTimeMillis()
-      }
-      if (System.currentTimeMillis() - lastPersonDetectionTime > MAX_NOPERSON_TIME && lastPersonDetectionTime != -1L) {
-        if (!stopped)
-          handler.onPersonLeave()
-        lastPersonDetectionTime = -1L
+    fun onPersonDetect() {
+      onDetectAction()
+      job?.cancel()
+      job = CoroutineScope(Dispatchers.Main).launch {
+        delay(MAX_NOPERSON_TIME)
+        onTimeoutAction()
       }
     }
+
+    private fun onDetectAction() {
+      if (state == DetectionState.PEEKING) {
+        state = DetectionState.WAKING
+        sendAction { handler.onPeekFinish(true) }
+      }
+    }
+
+    private fun onTimeoutAction() {
+      when(state) {
+        DetectionState.PEEKING -> {
+          state = DetectionState.WAKING
+          sendAction { handler.onPeekFinish(false) }
+        }
+        DetectionState.WAKING -> {
+          sendAction { handler.onPersonLeave() }
+        }
+      }
+    }
+
+    fun stop() {
+      job?.cancel()
+    }
+  }
+
+  private inner class HeadDetectorListener : DetectorV10.DetectorListener {
     override fun onDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
-      when (state) {
-        DetectionState.PEEKING -> peekStateOnDetect(boundingBoxes, inferenceTime)
-        DetectionState.WAKING -> wakeStateOnDetect(boundingBoxes, inferenceTime)
+      if (boundingBoxes.any { it.clsName == Labels.HEAD }) {
+        personWatcher.onPersonDetect()
       }
       headBoundingBox.onNext(boundingBoxes)
     }
   }
 
-  inner class GestureDetectorListener : ResultListener<GestureRecognizerResult, MPImage>{
-    private val ACCEPT_CONFIDENCE = 3
+  private inner class GestureDetectorListener : ResultListener<GestureRecognizerResult, MPImage>{
+    private val ACCEPT_CONFIDENCE = 2
     private val behaviorConfidenceMap = buildMap {
       behaviors.items.forEach {
         put(it, 0)
       }
     }.toMutableMap()
-
-    private fun onDetect(gestures: List<Gesture>) {
-      behaviorConfidenceMap.forEach { (behavior, confidence) ->
-        if (gestures.any { it == behavior.gesture})
-          behaviorConfidenceMap[behavior] = confidence + 1
-        else if (confidence > 0)
-          behaviorConfidenceMap[behavior] = confidence - 1
-        if (behaviorConfidenceMap[behavior]!! > ACCEPT_CONFIDENCE){
-          behaviorConfidenceMap[behavior] = 0
-          if (!stopped)
-            handler.onBehaviorAction(behavior.operation)
-        }
-      }
-    }
 
     private fun transform2YMGesture(worldLandmarks: List<Landmark>): Gesture {
       val fingersState = buildList {
@@ -220,12 +224,36 @@ class IAnalyzer (
         boundingBoxes.add(result.landmarks()[i].toBoundingBox(name))
         gestures.add(resultGesture)
       }
-      onDetect(gestures)
+      if (gestures.isNotEmpty()) {
+        if (state == DetectionState.WAKING)
+          onGestureDetect(gestures)
+        personWatcher.onPersonDetect()
+      }
       gestureBoundingBox.onNext(boundingBoxes)
+    }
+
+    private fun onGestureDetect(gestures: List<Gesture>) {
+      behaviorConfidenceMap.forEach { (behavior, confidence) ->
+        if (gestures.any { it == behavior.gesture})
+          behaviorConfidenceMap[behavior] = confidence + 1
+        else if (confidence > 0)
+          behaviorConfidenceMap[behavior] = confidence - 1
+        if (behaviorConfidenceMap[behavior]!! > ACCEPT_CONFIDENCE){
+          behaviorConfidenceMap[behavior] = 0
+          sendAction { handler.onBehaviorAction(behavior.operation) }
+        }
+      }
+    }
+  }
+
+  private fun sendAction(action: () -> Unit) {
+    synchronized(handlerOperationLock) {
+      action()
     }
   }
 
   override fun destroy() {
+    personWatcher.stop()
     headDetectorV10?.close()
     headDetectorV10 = null
     gestureRecognizer?.close()
@@ -233,5 +261,3 @@ class IAnalyzer (
     compositeDisposable.dispose()
   }
 }
-
-
