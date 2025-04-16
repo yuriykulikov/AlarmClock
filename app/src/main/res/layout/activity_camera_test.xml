@@ -53,5 +53,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="0dp"
+        android:text="@string/vision_test_help_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/alert_vision_overlay"
+        app:layout_constraintTop_toBottomOf="@+id/alert_vision_preview" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

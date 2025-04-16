@@ -188,12 +188,12 @@
     <!-- Report time action preference title -->
     <string name="vision_report_time_action_title">Gesture to report time</string>
 
-    <string name="enable_vision_waking_title">enable AI vision waking</string>
+    <string name="enable_vision_waking_title">Enable AI vision waking</string>
 
-    <string name="vision_waking_flashlight_title">turn on flashlight</string>
-    <string name="vision_waking_flashlight_summary">necessary if the environment is dark</string>
+    <string name="vision_waking_flashlight_title">Turn on flashlight</string>
+    <string name="vision_waking_flashlight_summary">Necessary if the environment is dark</string>
 
-    <string name="vision_tts_title">enable Text to Speech</string>
+    <string name="vision_tts_title">Enable Text to Speech</string>
 
     <!--
          Entries listed in the ListPreference when invoking the auto silence

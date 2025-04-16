@@ -58,7 +58,6 @@ class IAnalyzer (
 
   companion object {
     const val MAX_NOPERSON_TIME = 10000L
-    const val INITIAL_MAX_TIME = 6000
     const val HEAD_MODEL_PATH = "head_2_float32.tflite"
     const val GESTURE_MODEL_PATH = "gesture_recognizer.task"
     fun checkAvailability(context: Context): Boolean {

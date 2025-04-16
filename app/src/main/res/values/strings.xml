@@ -215,15 +215,16 @@
     <string name="vision_help_title">What is AI vision waking?</string>
     <string name="vision_help_summary">Click to learn more.</string>
     <string name="vision_help_text1">When the alarm starts, the phone\'s rear camera will be activated and analyzed by a locally running AI model. This allows for smarter control of the alarm. Once this feature is enabled, you won’t need to get out of bed in the cold winter just to turn off the alarm—only to fall back asleep and end up missing your first class...  This program operates based on the following logic:</string>
-    <string name="alarm_notify_check_label">check whether you have gotten up. Click to cancel</string>
+    <string name="alarm_notify_check_label">Check whether you are awake. Click to cancel</string>
     <string name="vision_check_after_dismiss_title">Check after dismiss</string>
-    <string name="vision_check_after_dismiss_summary">set a check alarm after the alarm is dismissed. If the check alarm doesn\'t detect people it will dismiss itself or you can also dismiss it manually.</string>
+    <string name="vision_check_after_dismiss_summary">Set a check alarm after the alarm is dismissed. If the check alarm doesn\'t detect people it will dismiss itself or you can also dismiss it manually.</string>
     <string name="vision_waking_unavailable_title">Vision Waking Unavailable!!!</string>
     <string name="vision_waking_unavailable_message">Unfortunately, this method is unavailable on your device. This might occurs on some x86_64 devices due to unsupported library.</string>
     <string name="vision_tts_person_leave">person might have left</string>
     <string name="vision_tts_snooze">snooze for a while</string>
     <string name="vision_tts_dismiss">alarm dismissed</string>
-    <string name="vision_help_text2">Tip: \n1. make sure that the camera can capture your head in every circumstances. You can ues the \"test\" button to test camera\n2. Since it might take some time to recognize hand gesture, hold the gesture for a while to trigger the defined action.</string>
+    <string name="vision_help_text2">Tip: \n1. make sure that the camera can capture your head in every circumstances. You can ues the \"test\" button to test camera\n2. Since it might take some time to recognize hand gesture, hold the gesture for a while to trigger the defined action. \n3. head detection might not work well if you are too close to the camera</string>
     <string name="vision_tts_peek_person">I see you</string>
     <string name="vision_tts_peek_no_person">Person not detected</string>
+    <string name="vision_test_help_text">For each detected hand, five numbers are displayed from left to right, corresponding to the thumb, index finger, middle finger, ring finger, and pinky. A value of -1 indicates the finger is bent, 1 means it is fully extended, and 0 represents a state in between.</string>
 </resources>
