@@ -18,11 +18,10 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.Subject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.TimeUnit
 import kotlin.math.sqrt
 
 fun getCos(v1: FloatArray, v2: FloatArray): Float {
@@ -58,7 +57,7 @@ class IAnalyzer (
 
   companion object {
     const val MAX_NOPERSON_TIME = 10000L
-    const val HEAD_MODEL_PATH = "head_2_float32.tflite"
+    const val HEAD_MODEL_PATH = "head_s_float16.tflite"
     const val GESTURE_MODEL_PATH = "gesture_recognizer.task"
     fun checkAvailability(context: Context): Boolean {
       try {
@@ -127,26 +126,27 @@ class IAnalyzer (
   }
 
   private inner class PersonWatcher {
-    private var job: Job? = null
+    private var scheduler: ScheduledExecutorService? = Executors.newSingleThreadScheduledExecutor()
     private var isStarted = false
+    @Volatile
+    private var future: ScheduledFuture<*>? = null
 
     fun startOnce() {
       if (!isStarted) {
         isStarted = true
-        job = CoroutineScope(Dispatchers.Main).launch {
-          delay(MAX_NOPERSON_TIME)
+        future = scheduler?.schedule({
           onTimeoutAction()
-        }
+        }, MAX_NOPERSON_TIME, TimeUnit.MILLISECONDS)
       }
     }
 
     fun onPersonDetect() {
       onDetectAction()
-      job?.cancel()
-      job = CoroutineScope(Dispatchers.Main).launch {
-        delay(MAX_NOPERSON_TIME)
+      logger.debug { "onPersonDetect" }
+      future?.cancel(false)
+      future = scheduler?.schedule({
         onTimeoutAction()
-      }
+      }, MAX_NOPERSON_TIME, TimeUnit.MILLISECONDS)
     }
 
     private fun onDetectAction() {
@@ -169,7 +169,9 @@ class IAnalyzer (
     }
 
     fun stop() {
-      job?.cancel()
+      future?.cancel(false)
+      scheduler?.shutdown()
+      scheduler = null
     }
   }
 
