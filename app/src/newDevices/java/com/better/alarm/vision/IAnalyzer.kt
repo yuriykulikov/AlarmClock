@@ -10,18 +10,19 @@ import com.google.mediapipe.framework.image.MPImage
 import com.google.mediapipe.tasks.components.containers.Landmark
 import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
 import com.google.mediapipe.tasks.core.BaseOptions
+import com.google.mediapipe.tasks.core.Delegate
 import com.google.mediapipe.tasks.core.OutputHandler.ResultListener
 import com.google.mediapipe.tasks.vision.core.RunningMode
-import com.google.mediapipe.tasks.vision.gesturerecognizer.GestureRecognizer
-import com.google.mediapipe.tasks.vision.gesturerecognizer.GestureRecognizerResult
+import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarker
+import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarker.HandLandmarkerOptions
+import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarkerResult
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.ScheduledFuture
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.sqrt
 
 fun getCos(v1: FloatArray, v2: FloatArray): Float {
@@ -46,27 +47,31 @@ class IAnalyzer (
 ): DetectionAnalyzer {
   private val logger by globalLogger("DetectionHandler")
   private var headDetectorV10: DetectorV10? = null
-  private var gestureRecognizer: GestureRecognizer? = null
-  private val gestureBoundingBox: Subject<List<BoundingBox>> = BehaviorSubject.create()
-  private val headBoundingBox: Subject<List<BoundingBox>> = BehaviorSubject.create()
+  private var gestureRecognizer: HandLandmarker? = null
+  private val gestureRecognizerOperatingLock = Any()
+  private val gestureBoundingBox: Subject<List<BoundingBox>> = BehaviorSubject.createDefault(listOf())
+  private val headBoundingBox: Subject<List<BoundingBox>> = BehaviorSubject.createDefault(listOf())
   private val compositeDisposable = CompositeDisposable()
   private var state = DetectionState.PEEKING
   private var handlerOperationLock = Any()
   private val personWatcher = PersonWatcher()
+  private val headDetectorExecutor = Executors.newSingleThreadExecutor()
+  private val headDetectorExecutorIsBusy = AtomicBoolean(false)
 
 
   companion object {
-    const val MAX_NOPERSON_TIME = 10000L
-    const val HEAD_MODEL_PATH = "head_n_float32.tflite"
-    const val GESTURE_MODEL_PATH = "gesture_recognizer.task"
+    const val HEAD_MODEL_PATH = "head_s_float32.tflite"
+    const val GESTURE_MODEL_PATH = "hand_landmarker.task"
+    const val MAX_NO_HEAD_TIME = 5000L
+    const val MAX_NO_HAND_Time = 10000L
     fun checkAvailability(context: Context): Boolean {
       try {
-        val gestureRecognizerOption = GestureRecognizer.GestureRecognizerOptions.builder().apply {
+        val gestureRecognizerOption = HandLandmarkerOptions.builder().apply {
           setBaseOptions(BaseOptions.builder().setModelAssetPath(GESTURE_MODEL_PATH).build())
           setResultListener { _, _ -> }
           setRunningMode(RunningMode.LIVE_STREAM)
         }.build()
-        val recognizer = GestureRecognizer.createFromOptions(context, gestureRecognizerOption)
+        val recognizer = HandLandmarker.createFromOptions(context, gestureRecognizerOption)
         recognizer.close()
         return true
       } catch (e: Exception) {
@@ -79,15 +84,18 @@ class IAnalyzer (
     headDetectorV10 = DetectorV10(context, HEAD_MODEL_PATH, HeadDetectorListener(), {
         logger.debug { it }
     })
-    val gestureRecognizerOption = GestureRecognizer.GestureRecognizerOptions.builder().apply {
-      setBaseOptions(BaseOptions.builder().setModelAssetPath(GESTURE_MODEL_PATH).build())
+    val gestureRecognizerOption = HandLandmarkerOptions.builder().apply {
+      setBaseOptions(BaseOptions.builder().apply {
+        setModelAssetPath(GESTURE_MODEL_PATH)
+        setDelegate(Delegate.GPU)
+      }.build())
       setRunningMode(RunningMode.LIVE_STREAM)
       setResultListener(GestureDetectorListener())
     }.build()
-    gestureRecognizer = GestureRecognizer.createFromOptions(context, gestureRecognizerOption)
+    gestureRecognizer = HandLandmarker.createFromOptions(context, gestureRecognizerOption)
     logger.debug { "init YOLOMediaPipeDetectionHandler" }
 
-    val boundingBoxesObservable = Observable.zip(headBoundingBox, gestureBoundingBox) { head, gesture -> head + gesture }
+    val boundingBoxesObservable = Observable.combineLatest(headBoundingBox, gestureBoundingBox) { head, gesture -> head + gesture }
     val disposable = boundingBoxesObservable.subscribe {
       sendAction { handler.onDetectUiUpdate(it, 0) }
     }
@@ -118,35 +126,71 @@ class IAnalyzer (
       matrix, true
     )
     val mpImage = BitmapImageBuilder(rotatedBitmap).build()
-    gestureRecognizer?.recognizeAsync(mpImage, System.currentTimeMillis())
-    headDetectorV10?.detect(rotatedBitmap)
-    bitmapBuffer.recycle()
+    synchronized(gestureRecognizerOperatingLock) {
+      gestureRecognizer?.detectAsync(mpImage, System.currentTimeMillis())
+    }
 
-    personWatcher.startOnce()
+    if (headDetectorExecutorIsBusy.compareAndSet(false, true)) {
+      val inputBitmap = Bitmap.createBitmap(rotatedBitmap)
+      headDetectorExecutor.execute {
+        headDetectorV10?.detect(inputBitmap)
+        inputBitmap.recycle()
+        headDetectorExecutorIsBusy.set(false)
+      }
+    }
+    bitmapBuffer.recycle()
+    rotatedBitmap.recycle()
   }
 
   private inner class PersonWatcher {
-    private var scheduler: ScheduledExecutorService? = Executors.newSingleThreadScheduledExecutor()
-    private var isStarted = false
-    @Volatile
-    private var future: ScheduledFuture<*>? = null
+    private val compositeDisposable = CompositeDisposable()
+    private val headResultSubject = BehaviorSubject.createDefault(false)
+    private val handResultSubject = BehaviorSubject.createDefault(false)
+    private var lastNoHeadTime = 0L
+    private var lastNoHandTime = 0L
 
-    fun startOnce() {
-      if (!isStarted) {
-        isStarted = true
-        future = scheduler?.schedule({
+    init {
+      val disposable = Observable.combineLatest(headResultSubject, handResultSubject) { head, hand -> head || hand }
+        .skip(1)
+        .distinctUntilChanged()
+        .subscribe {
+        if (it) {
+          logger.debug { "onDetectAction" }
+          onDetectAction()
+        } else {
+          logger.debug { "onTimeoutAction" }
           onTimeoutAction()
-        }, MAX_NOPERSON_TIME, TimeUnit.MILLISECONDS)
+        }
+      }
+      compositeDisposable.add(disposable)
+    }
+
+    fun updateHeadDetectionResult(result: Boolean, inferenceTime: Long) {
+      if (result) {
+        lastNoHeadTime = 0L
+        handResultSubject.onNext(true)
+      } else {
+        if (lastNoHeadTime == 0L) {
+          lastNoHeadTime = System.currentTimeMillis()
+        }
+        if (System.currentTimeMillis() - inferenceTime - lastNoHeadTime > MAX_NO_HEAD_TIME) {
+          handResultSubject.onNext(false)
+        }
       }
     }
 
-    fun onPersonDetect() {
-      onDetectAction()
-      logger.debug { "onPersonDetect" }
-      future?.cancel(false)
-      future = scheduler?.schedule({
-        onTimeoutAction()
-      }, MAX_NOPERSON_TIME, TimeUnit.MILLISECONDS)
+    fun updateGestureDetectionResult(result: Boolean, inferenceTime: Long) {
+      if (result) {
+        lastNoHandTime = 0L
+        headResultSubject.onNext(true)
+      } else {
+        if (lastNoHandTime == 0L) {
+          lastNoHandTime = System.currentTimeMillis()
+        }
+        if (System.currentTimeMillis() - inferenceTime - lastNoHandTime > MAX_NO_HAND_Time) {
+          headResultSubject.onNext(false)
+        }
+      }
     }
 
     private fun onDetectAction() {
@@ -169,22 +213,18 @@ class IAnalyzer (
     }
 
     fun stop() {
-      future?.cancel(false)
-      scheduler?.shutdown()
-      scheduler = null
+      compositeDisposable.dispose()
     }
   }
 
   private inner class HeadDetectorListener : DetectorV10.DetectorListener {
     override fun onDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
-      if (boundingBoxes.any { it.clsName == Labels.HEAD }) {
-        personWatcher.onPersonDetect()
-      }
+      personWatcher.updateHeadDetectionResult(boundingBoxes.any { it.clsName == Labels.HEAD }, inferenceTime)
       headBoundingBox.onNext(boundingBoxes)
     }
   }
 
-  private inner class GestureDetectorListener : ResultListener<GestureRecognizerResult, MPImage>{
+  private inner class GestureDetectorListener : ResultListener<HandLandmarkerResult, MPImage>{
     private val ACCEPT_CONFIDENCE = 2
     private val behaviorConfidenceMap = buildMap {
       behaviors.items.forEach {
@@ -213,7 +253,7 @@ class IAnalyzer (
       return Gesture(fingersState)
     }
 
-    override fun run(result: GestureRecognizerResult?, input: MPImage?) {
+    override fun run(result: HandLandmarkerResult?, input: MPImage?) {
       if (result == null || input == null) return
       val boundingBoxes = mutableListOf<BoundingBox>()
       val gestures = mutableListOf<Gesture>()
@@ -225,12 +265,13 @@ class IAnalyzer (
         boundingBoxes.add(result.landmarks()[i].toBoundingBox(name))
         gestures.add(resultGesture)
       }
+      personWatcher.updateGestureDetectionResult(gestures.isNotEmpty(), System.currentTimeMillis() - result.timestampMs())
       if (gestures.isNotEmpty()) {
         if (state == DetectionState.WAKING)
           onGestureDetect(gestures)
-        personWatcher.onPersonDetect()
       }
       gestureBoundingBox.onNext(boundingBoxes)
+      input.close()
     }
 
     private fun onGestureDetect(gestures: List<Gesture>) {
@@ -255,10 +296,13 @@ class IAnalyzer (
 
   override fun destroy() {
     personWatcher.stop()
+    synchronized(gestureRecognizerOperatingLock) {
+      gestureRecognizer?.close()
+      gestureRecognizer = null
+    }
     headDetectorV10?.close()
     headDetectorV10 = null
-    gestureRecognizer?.close()
-    gestureRecognizer = null
+    headDetectorExecutor.shutdown()
     compositeDisposable.dispose()
   }
 }
