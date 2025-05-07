@@ -1,6 +1,6 @@
 buildscript {
   repositories { google() }
-  dependencies { dependencies { classpath("com.android.tools.build:gradle:7.3.1") } }
+  dependencies { dependencies { classpath("com.android.tools.build:gradle:8.10.0") } }
 }
 
 plugins {
