@@ -157,7 +157,7 @@ dependencies {
   // TODO remove this when we don't use it anymore
   implementation("androidx.preference:preference:1.2.1")
   // resolves duplicate class caused by androidx.preference:preference:1.2.0
-  implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+  implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.0")
   // implementation("androidx.lifecycle:lifecycle-viewmodel:2.5.1")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
