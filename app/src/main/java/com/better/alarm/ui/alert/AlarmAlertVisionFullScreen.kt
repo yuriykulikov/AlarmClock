@@ -275,7 +275,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
   }
 
   private val detectionHandler: DetectionHandler = object: DetectionHandler {
-    private var enablePersonLeaveDismiss = false
+    private var doPeekPerson = false
     private var allowAction = true
     override fun onPeekFinish(isPersonDetected: Boolean) {
       if (!allowAction) return
@@ -286,13 +286,13 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
         logger.debug { "nothing detected after initial detection, dismiss" }
         return
       }
-      enablePersonLeaveDismiss = isPersonDetected
+      doPeekPerson = isPersonDetected
       ttsHelper?.speak(getString(if (isPersonDetected) R.string.vision_tts_peek_person else R.string.vision_tts_peek_no_person))
       store.events.onNext(Event.StartWakingEvent())
     }
 
     override fun onPersonLeave() {
-      if (!enablePersonLeaveDismiss || !allowAction) return
+      if (!doPeekPerson || !allowAction || !sp.visionEnablePersonLeaveDismiss.value) return
       allowAction = false
       logger.debug { "onPersonLeave" }
       ttsHelper?.speak(getString(R.string.vision_tts_person_leave)) {

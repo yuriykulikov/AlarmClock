@@ -32,7 +32,8 @@ private constructor(
     val visionFlashlight: RxDataStore<Boolean>,
     val visionTTS: RxDataStore<Boolean>,
     val visionCheckAfterDismiss: RxDataStore<Boolean>,
-    val visionBehavior: RxDataStore<String>
+    val visionBehavior: RxDataStore<String>,
+    val visionEnablePersonLeaveDismiss: RxDataStore<Boolean>
 ) {
   fun layout(): Layout {
     return listRowLayout().take(1).blockingFirst()
@@ -74,7 +75,9 @@ private constructor(
           visionFlashlight = factory.booleanDataStore(KEY_VISION_FLASHLIGHT, false),
           visionTTS = factory.booleanDataStore(KEY_VISION_TTS, true),
           visionCheckAfterDismiss = factory.booleanDataStore(KEY_VISION_CHECK_AFTER_DISMISS, true),
-          visionBehavior = factory.stringDataStore(KEY_VISION_BEHAVIOR, "{\"items\":[]}")
+          visionBehavior = factory.stringDataStore(KEY_VISION_BEHAVIOR, "{\"items\":[]}"),
+          visionEnablePersonLeaveDismiss =
+              factory.booleanDataStore(KEY_VISION_ENABLE_PERSON_LEAVE_DISMISS, false)
       )
     }
 
@@ -96,6 +99,7 @@ private constructor(
     const val KEY_VISION_TTS = "vision_tts"
     const val KEY_VISION_CHECK_AFTER_DISMISS = "vision_check_after_dismiss"
     const val KEY_VISION_BEHAVIOR = "vision_behavior"
+    const val KEY_VISION_ENABLE_PERSON_LEAVE_DISMISS = "vision_enable_person_leave_dismiss"
     const val LIST_ROW_LAYOUT = "ui_list_row_layout"
     const val LIST_ROW_LAYOUT_COMPACT = "compact"
     const val LIST_ROW_LAYOUT_CLASSIC = "classic"

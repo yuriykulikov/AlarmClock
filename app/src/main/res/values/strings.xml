@@ -227,4 +227,6 @@
     <string name="vision_tts_peek_person">I see you</string>
     <string name="vision_tts_peek_no_person">Person not detected</string>
     <string name="vision_test_help_text">For each detected hand, five numbers are displayed from left to right, corresponding to the thumb, index finger, middle finger, ring finger, and pinky. A value of -1 indicates the finger is bent, 1 means it is fully extended, and 0 represents a state in between.</string>
+    <string name="vision_enable_person_leave_dismiss_title">Enable \"Person leave dismiss\" feature</string>
+    <string name="vision_enable_person_leave_dismiss_summary">If a person is detected at the start, you can simply walk away and the alarm will automatically dismiss after 10 seconds.\nHowever, if person detection is intermittent, the alarm might be dismissed unexpectedly.</string>
 </resources>
