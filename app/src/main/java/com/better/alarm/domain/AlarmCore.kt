@@ -496,7 +496,14 @@ class AlarmCore(
       override fun onEnter(reason: Event) {
         broadcastAlarmState(Intents.ALARM_ALERT_ACTION)
         val autoSilenceMinutes = autoSilence.blockingFirst()
-        if (autoSilenceMinutes > 0) {
+        if (prefs.mustWake.value > 0) {
+          // -1 means OFF
+          val nextTime = calendars.now()
+          nextTime.add(Calendar.MINUTE, prefs.mustWake.value)
+          setAlarm(nextTime, CalendarType.MUST_WAKE)
+          log.debug { "Set must wake alarm for ${df.format(nextTime.time)}" }
+        }
+        else if (autoSilenceMinutes > 0) {
           // -1 means OFF
           val nextTime = calendars.now()
           nextTime.add(Calendar.MINUTE, autoSilenceMinutes)
@@ -505,9 +512,14 @@ class AlarmCore(
       }
 
       override fun onFired() {
-        broadcastAlarmState(Intents.ACTION_SOUND_EXPIRED)
-        // this is like a dismiss but we show an additional notification
-        stateMachine.transitionTo(rescheduleTransition)
+        if (prefs.mustWake.value > 0) { // must wake action
+          log.debug { "Must wake alarm fired" }
+          broadcastAlarmState(Intents.ACTION_MUST_WAKE)
+        } else { // auto silence action
+          broadcastAlarmState(Intents.ACTION_SOUND_EXPIRED)
+          // this is like a dismiss but we show an additional notification
+          stateMachine.transitionTo(rescheduleTransition)
+        }
       }
 
       override fun onSnooze(snooze: Snooze) {

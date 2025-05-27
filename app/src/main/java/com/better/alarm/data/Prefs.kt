@@ -21,6 +21,7 @@ private constructor(
     val snoozeDuration: RxDataStore<Int>,
     val listRowLayout: RxDataStore<String>,
     val autoSilence: RxDataStore<Int>,
+    val mustWake: RxDataStore<Int>,
     val fadeInTimeInSeconds: RxDataStore<Int>,
     val vibrate: RxDataStore<Boolean>,
     val skipDuration: RxDataStore<Int>,
@@ -57,6 +58,7 @@ private constructor(
           snoozeDuration = factory.intStringDataStore(KEY_ALARM_SNOOZE, 10),
           listRowLayout = factory.stringDataStore(LIST_ROW_LAYOUT, LIST_ROW_LAYOUT_BOLD),
           autoSilence = factory.intStringDataStore(KEY_AUTO_SILENCE, 10),
+          mustWake = factory.intStringDataStore(KEY_MUST_WAKE, -1),
           fadeInTimeInSeconds = factory.intStringDataStore(KEY_FADE_IN_TIME_SEC, 30),
           vibrate = factory.booleanDataStore(KEY_VIBRATE, true),
           skipDuration = factory.intStringDataStore(KEY_SKIP_DURATION, 30),
@@ -73,6 +75,7 @@ private constructor(
     const val KEY_ALARM_IN_SILENT_MODE = "alarm_in_silent_mode"
     const val KEY_ALARM_SNOOZE = "snooze_duration"
     const val KEY_AUTO_SILENCE = "auto_silence"
+    const val KEY_MUST_WAKE = "must_wake"
     const val KEY_PREALARM_DURATION = "prealarm_duration"
     const val KEY_FADE_IN_TIME_SEC = "fade_in_time_sec"
     const val KEY_LONGCLICK_DISMISS = "longclick_dismiss_key"

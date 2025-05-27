@@ -57,6 +57,7 @@ class BackgroundNotifications(
         is Event.Autosilenced -> onSoundExpired(event.id)
         is Event.ShowSkip -> onShowSkip(event.id)
         is Event.HideSkip -> nm.cancel(SKIP_NOTIFICATION + event.id)
+        is Event.MustWakeEvent,
         is Event.DemuteEvent,
         is Event.MuteEvent,
         is Event.NullEvent -> Unit

@@ -32,7 +32,8 @@ data class PluginAlarmData(val id: Int, val alarmtone: Alarmtone, val label: Str
 enum class TargetVolume {
   MUTED,
   FADED_IN,
-  FADED_IN_FAST
+  FADED_IN_FAST,
+  MUST_WAKE
 }
 
 sealed class Event {
@@ -61,6 +62,8 @@ sealed class Event {
 
   data class Autosilenced(val id: Int, val actions: String = Intents.ACTION_SOUND_EXPIRED) :
       Event()
+
+  data class MustWakeEvent(val id: Int, val actions: String = Intents.ACTION_MUST_WAKE) : Event()
 
   data class MuteEvent(val actions: String = Intents.ACTION_MUTE) : Event()
 
@@ -142,6 +145,7 @@ class AlertService(
         is Event.DismissEvent -> remove(event.id)
         is Event.SnoozedEvent -> remove(event.id)
         is Event.Autosilenced -> remove(event.id)
+        is Event.MustWakeEvent -> wantedVolume.onNext(TargetVolume.MUST_WAKE)
         else -> {
           check(!BuildConfig.DEBUG) { "Unexpected event: $event" }
         }

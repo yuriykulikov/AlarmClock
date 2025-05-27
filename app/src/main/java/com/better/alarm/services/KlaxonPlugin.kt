@@ -1,5 +1,8 @@
 package com.better.alarm.services
 
+import android.media.AudioManager
+import android.media.AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE
+import android.media.AudioManager.STREAM_ALARM
 import com.better.alarm.R
 import com.better.alarm.data.Alarmtone
 import com.better.alarm.data.ringtoneManagerUri
@@ -34,6 +37,7 @@ class KlaxonPlugin(
     private val prealarmVolume: Observable<Int>,
     private val fadeInTimeInMillis: Observable<Int>,
     private val inCall: Observable<Boolean>,
+    private val am: AudioManager,
     private val scheduler: Scheduler
 ) : AlertPlugin {
   companion object {
@@ -41,10 +45,12 @@ class KlaxonPlugin(
     private const val FADE_IN_STEPS = 100
     private const val IN_CALL_VOLUME = 0.125f
     private const val SILENT = 0f
+    private const val MAX = 1f
   }
 
   private var player: Player? = null
   private var disposable = Disposables.empty()
+  private var originalStreamVolume = -1
 
   private fun fadeInSlow(prealarm: Boolean) =
       fadeInTimeInMillis.firstOrError().flatMapObservable { fadeIn(it, prealarm) }
@@ -73,14 +79,22 @@ class KlaxonPlugin(
             TargetVolume.MUTED -> Observable.just(SILENT)
             TargetVolume.FADED_IN -> fadeInSlow(prealarm)
             TargetVolume.FADED_IN_FAST -> fadeIn(FAST_FADE_IN_TIME, prealarm)
+            TargetVolume.MUST_WAKE -> {
+              setSystemVolumeToMax()
+              Observable.just(MAX)
+            }
           }
         }
 
     log.debug { "[KlaxonPlugin] go ${alarm.alarmtone} (prealarm: $prealarm)" }
     val volumeSub = volume.subscribe { currentVolume -> player?.setPerceivedVolume(currentVolume) }
 
+
     disposable =
-        CompositeDisposable(callSub, volumeSub, Disposables.fromAction { player?.stopAndCleanup() })
+        CompositeDisposable(callSub, volumeSub, Disposables.fromAction {
+          am.setStreamVolume(STREAM_ALARM, originalStreamVolume, FLAG_REMOVE_SOUND_AND_VIBRATE)
+          player?.stopAndCleanup()
+        })
     return disposable
   }
 
@@ -147,6 +161,11 @@ class KlaxonPlugin(
         BiFunction<Float, Float, Float> { targetVolume, fadePercentage ->
           fadePercentage * targetVolume
         })
+  }
+
+  private fun setSystemVolumeToMax() {
+    originalStreamVolume = am.getStreamVolume(STREAM_ALARM)
+    am.setStreamVolume(STREAM_ALARM, am.getStreamMaxVolume(STREAM_ALARM), FLAG_REMOVE_SOUND_AND_VIBRATE)
   }
 
   /** Stops alarm audio */
