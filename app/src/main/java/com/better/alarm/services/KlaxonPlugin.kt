@@ -92,7 +92,10 @@ class KlaxonPlugin(
 
     disposable =
         CompositeDisposable(callSub, volumeSub, Disposables.fromAction {
-          am.setStreamVolume(STREAM_ALARM, originalStreamVolume, FLAG_REMOVE_SOUND_AND_VIBRATE)
+          if (originalStreamVolume != -1) {
+            am.setStreamVolume(STREAM_ALARM, originalStreamVolume, FLAG_REMOVE_SOUND_AND_VIBRATE)
+            originalStreamVolume = -1
+          }
           player?.stopAndCleanup()
         })
     return disposable
