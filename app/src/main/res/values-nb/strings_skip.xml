@@ -4,6 +4,7 @@
     <string name="notification_alarm_is_about_to_go_off">Alarmen er i ferd med å gå</string>
     <string name="skip_duration_title">Hopp over alarmvarsel</string>
     <string-array name="skip_duration_entries">
+        <item>For Alltid</item>
         <item>Av</item>
         <item>15 minutter</item>
         <item>30 minutter</item>

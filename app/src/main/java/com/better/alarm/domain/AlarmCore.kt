@@ -411,6 +411,9 @@ class AlarmCore(
           skipTime == -1 -> {
             // switched off
           }
+          skipTime == -2 -> {
+            broadcastAlarmState(Intents.ALARM_SHOW_SKIP)
+          }
           toShowSkip.after(calendars.now()) -> {
             mAlarmsScheduler.setInexactAlarm(id, toShowSkip)
           }
