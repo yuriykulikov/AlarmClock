@@ -4,6 +4,7 @@
     <string name="notification_alarm_is_about_to_go_off">Alarm is about to go off on</string>
     <string name="skip_duration_title">Skip alarm notification</string>
     <string-array name="skip_duration_entries">
+        <item>Forever</item>
         <item>Off</item>
         <item>15 minutes</item>
         <item>30 minutes</item>
@@ -12,6 +13,7 @@
         <item>3 hours</item>
     </string-array>
     <string-array name="skip_duration_values">
+        <item>-2</item>
         <item>-1</item>
         <item>15</item>
         <item>30</item>

@@ -4,6 +4,7 @@
     <string name="notification_alarm_is_about_to_go_off">La alarma está a punto de sonar.</string>
     <string name="skip_duration_title">Notificación "Saltar alarma"</string>
     <string-array name="skip_duration_entries">
+        <item>Para Siempre</item>
         <item>Apagado</item>
         <item>15 minutos</item>
         <item>30 minutos</item>
