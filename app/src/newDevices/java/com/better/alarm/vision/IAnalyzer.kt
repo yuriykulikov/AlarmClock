@@ -19,7 +19,6 @@ import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarkerResult
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
-import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
@@ -41,7 +40,7 @@ fun List<NormalizedLandmark>.toBoundingBox(name: String): BoundingBox {
 }
 
 class IAnalyzer (
-  private val context: Context,
+  context: Context,
   private val handler: DetectionHandler,
   private val behaviors: Behavior.BehaviorsStoreValue
 ): DetectionAnalyzer {
@@ -156,9 +155,13 @@ class IAnalyzer (
 
     init {
       val disposable = Observable.combineLatest(headResultSubject, handResultSubject) { head, hand ->
-        if (head == STATUS_UNKNOWN || hand == STATUS_UNKNOWN) return@combineLatest STATUS_UNKNOWN
-        if ((head == STATUS_DETECTED) || (hand == STATUS_DETECTED)) STATUS_DETECTED
-        else STATUS_NOT_DETECTED
+        if (head == STATUS_DETECTED || hand == STATUS_DETECTED) {
+          STATUS_DETECTED
+        } else if (head == STATUS_NOT_DETECTED && hand == STATUS_NOT_DETECTED) {
+          STATUS_NOT_DETECTED
+        } else {
+          STATUS_UNKNOWN
+        }
       }
       .skip(1)
       .distinctUntilChanged()
