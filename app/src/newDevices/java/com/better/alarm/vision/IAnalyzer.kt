@@ -40,7 +40,7 @@ fun List<NormalizedLandmark>.toBoundingBox(name: String): BoundingBox {
 }
 
 class IAnalyzer (
-  context: Context,
+  private val context: Context,
   private val handler: DetectionHandler,
   private val behaviors: Behavior.BehaviorsStoreValue
 ): DetectionAnalyzer {
