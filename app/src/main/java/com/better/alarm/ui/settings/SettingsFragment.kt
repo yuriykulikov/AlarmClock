@@ -184,6 +184,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     bindListPreference(Prefs.KEY_SKIP_DURATION, prefs.skipDuration) { skipDuration ->
       val indexOfValue = findIndexOfValue(skipDuration.toString())
+      if (indexOfValue == -1) return@bindListPreference
       summary = entries[indexOfValue]
     }
 

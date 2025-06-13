@@ -64,6 +64,11 @@ class IAnalyzer (
     const val GESTURE_MODEL_PATH = "hand_landmarker.task"
     const val MAX_NO_HEAD_TIME = 5000L
     const val MAX_NO_HAND_Time = 10000L
+
+    const val STATUS_DETECTED = 1
+    const val STATUS_NOT_DETECTED = 0
+    const val STATUS_UNKNOWN = -1
+
     fun checkAvailability(context: Context): Boolean {
       try {
         val gestureRecognizerOption = HandLandmarkerOptions.builder().apply {
@@ -144,17 +149,22 @@ class IAnalyzer (
 
   private inner class PersonWatcher {
     private val compositeDisposable = CompositeDisposable()
-    private val headResultSubject = BehaviorSubject.createDefault(false)
-    private val handResultSubject = BehaviorSubject.createDefault(false)
+    private val headResultSubject = BehaviorSubject.createDefault(STATUS_UNKNOWN) // because rxjava 2 cannot use boolean? so I have to use int
+    private val handResultSubject = BehaviorSubject.createDefault(STATUS_UNKNOWN)
     private var lastNoHeadTime = 0L
     private var lastNoHandTime = 0L
 
     init {
-      val disposable = Observable.combineLatest(headResultSubject, handResultSubject) { head, hand -> head || hand }
-        .skip(1)
-        .distinctUntilChanged()
-        .subscribe {
-        if (it) {
+      val disposable = Observable.combineLatest(headResultSubject, handResultSubject) { head, hand ->
+        if (head == STATUS_UNKNOWN || hand == STATUS_UNKNOWN) return@combineLatest STATUS_UNKNOWN
+        if ((head == STATUS_DETECTED) || (hand == STATUS_DETECTED)) STATUS_DETECTED
+        else STATUS_NOT_DETECTED
+      }
+      .skip(1)
+      .distinctUntilChanged()
+      .subscribe {
+        if (it == STATUS_UNKNOWN) return@subscribe
+        if (it == STATUS_DETECTED) {
           logger.debug { "onDetectAction" }
           onDetectAction()
         } else {
@@ -168,13 +178,15 @@ class IAnalyzer (
     fun updateHeadDetectionResult(result: Boolean, inferenceTime: Long) {
       if (result) {
         lastNoHeadTime = 0L
-        handResultSubject.onNext(true)
+        headResultSubject.onNext(STATUS_DETECTED)
+        logger.debug { "head detected" }
       } else {
         if (lastNoHeadTime == 0L) {
           lastNoHeadTime = System.currentTimeMillis()
         }
         if (System.currentTimeMillis() - inferenceTime - lastNoHeadTime > MAX_NO_HEAD_TIME) {
-          handResultSubject.onNext(false)
+          headResultSubject.onNext(STATUS_NOT_DETECTED)
+          logger.debug { "no head detected" }
         }
       }
     }
@@ -182,13 +194,14 @@ class IAnalyzer (
     fun updateGestureDetectionResult(result: Boolean, inferenceTime: Long) {
       if (result) {
         lastNoHandTime = 0L
-        headResultSubject.onNext(true)
+        handResultSubject.onNext(STATUS_DETECTED)
+        logger.debug { "hand detected" }
       } else {
         if (lastNoHandTime == 0L) {
           lastNoHandTime = System.currentTimeMillis()
         }
         if (System.currentTimeMillis() - inferenceTime - lastNoHandTime > MAX_NO_HAND_Time) {
-          headResultSubject.onNext(false)
+          handResultSubject.onNext(STATUS_NOT_DETECTED)
         }
       }
     }
