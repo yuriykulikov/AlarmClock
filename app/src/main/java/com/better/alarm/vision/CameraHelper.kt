@@ -185,7 +185,6 @@ class CameraXHelper(
       }, ContextCompat.getMainExecutor(context))
   }
 
-
   fun destroy() {
     cameraProvider?.unbindAll()
   }

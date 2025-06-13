@@ -179,14 +179,12 @@ class IAnalyzer (
       if (result) {
         lastNoHeadTime = 0L
         headResultSubject.onNext(STATUS_DETECTED)
-        logger.debug { "head detected" }
       } else {
         if (lastNoHeadTime == 0L) {
           lastNoHeadTime = System.currentTimeMillis()
         }
         if (System.currentTimeMillis() - inferenceTime - lastNoHeadTime > MAX_NO_HEAD_TIME) {
           headResultSubject.onNext(STATUS_NOT_DETECTED)
-          logger.debug { "no head detected" }
         }
       }
     }
@@ -195,7 +193,6 @@ class IAnalyzer (
       if (result) {
         lastNoHandTime = 0L
         handResultSubject.onNext(STATUS_DETECTED)
-        logger.debug { "hand detected" }
       } else {
         if (lastNoHandTime == 0L) {
           lastNoHandTime = System.currentTimeMillis()
