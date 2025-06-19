@@ -143,9 +143,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             -1 -> getString(R.string.auto_silence_never)
             else -> getString(R.string.auto_silence_summary, newValue)
           }
-      if (prefs.mustWake.value != -1) {
-        summary = getString(R.string.auto_silence_disabled_by_must_wake_mode_summary)
-      }
     }
 
     bindListPreference(Prefs.KEY_SKIP_DURATION, prefs.skipDuration) { skipDuration ->
@@ -176,9 +173,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             -1 -> getString(R.string.must_wake_off_summary)
             else -> getString(R.string.must_wake_summary, it)
           }
-      findPreference<ListPreference>(Prefs.KEY_AUTO_SILENCE)?.run {
-          summary = getString(R.string.auto_silence_disabled_by_must_wake_mode_summary)
-      }
     }
 
     bindListPreference(Prefs.KEY_THEME, prefs.theme) { summary = entry }
