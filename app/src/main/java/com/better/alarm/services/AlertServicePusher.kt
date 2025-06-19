@@ -24,6 +24,7 @@ class AlertServicePusher(store: Store, context: Context, wm: WakeLockManager, lo
                 Intent(Intents.ALARM_DISMISS_ACTION).apply { putExtra(Intents.EXTRA_ID, it.id) }
             is Event.MuteEvent -> Intent(Intents.ACTION_MUTE)
             is Event.DemuteEvent -> Intent(Intents.ACTION_DEMUTE)
+            is Event.MustWakeEvent -> Intent(Intents.ACTION_MUST_WAKE)
             is Event.SnoozedEvent -> null
             is Event.Autosilenced -> null
             is Event.CancelSnoozedEvent -> null

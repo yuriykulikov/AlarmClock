@@ -43,6 +43,7 @@ class VibrationPlugin(
               when (volume) {
                 TargetVolume.MUTED -> Observable.just(0)
                 TargetVolume.FADED_IN -> fadeInSlow(prealarm)
+                TargetVolume.MUST_WAKE,
                 TargetVolume.FADED_IN_FAST -> Observable.just(255)
               }
             }

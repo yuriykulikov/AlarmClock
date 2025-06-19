@@ -147,6 +147,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     bindListPreference(Prefs.KEY_SKIP_DURATION, prefs.skipDuration) { skipDuration ->
       val indexOfValue = findIndexOfValue(skipDuration.toString())
+      if (indexOfValue == -1) return@bindListPreference
       summary = entries[indexOfValue]
     }
 
@@ -163,6 +164,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
           when (newValue) {
             1 -> getString(R.string.fade_in_off_summary)
             else -> getString(R.string.fade_in_summary, newValue)
+          }
+    }
+
+    bindListPreference(Prefs.KEY_MUST_WAKE, prefs.mustWake) {
+      summary =
+          when (it) {
+            -1 -> getString(R.string.must_wake_off_summary)
+            else -> getString(R.string.must_wake_summary, it)
           }
     }
 

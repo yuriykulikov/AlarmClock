@@ -53,6 +53,7 @@ import java.io.File
 import java.util.Calendar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.Koin
 import org.koin.core.context.loadKoinModules
@@ -146,6 +147,7 @@ fun startKoin(context: Context): Koin {
           fadeInTimeInMillis = Observable.just(100),
           inCall = Observable.just(false),
           scheduler = get(),
+          am = androidContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager,
       )
     }
   }

@@ -74,7 +74,9 @@
         <item>120 seconds</item>
     </string-array>
     <string name="fade_in_summary">Fade-in duration is <xliff:g id="seconds">%d</xliff:g> seconds</string>
+    <string name="must_wake_summary">Must-wake deadline is set to <xliff:g id="minute">%d</xliff:g> minutes. After that the alarm volume will be set to max.</string>
     <string name="fade_in_off_summary">Fade-in is switched off</string>
+    <string name="must_wake_off_summary">Must-wake feature is disabled. </string>
     <string-array name="alarm_set_short">
         <item>Less than a minute from now</item>
         <item><xliff:g example="2 days" id="DAYS">%1$s</xliff:g></item>
@@ -114,6 +116,32 @@
     </string-array>
 
     <string name="simple_alarm_clock">Simple Alarm Clock</string>
+    <!--
+     Entries listed in the ListPreference when invoking the snooze duration
+     preference.
+ -->
+    <string-array name="must_wake_entries">
+        <item>Off</item>
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>15 minutes</item>
+        <item>20 minutes</item>
+        <item>25 minutes</item>
+        <item>30 minutes</item>
+    </string-array>
+    <!--
+         Values that are retrieved from the ListPreference. These must match
+         the snooze_duration_entries above.
+    -->
+    <string-array name="must_wake_values">
+        <item>-1</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>25</item>
+        <item>30</item>
+    </string-array>
     <!--
      Entries listed in the ListPreference when invoking the snooze duration
      preference.
@@ -209,4 +237,6 @@
     <string name="app_default_ringtone">App default (%s)</string>
     <string name="set_exact_alarm_permission_title">Permission to set exact alarm time</string>
     <string name="set_exact_alarm_permission_text">To set an alarm at the exact time, permission to set exact alarm time is required.</string>
+    <string name="must_wake_title">Must wake deadline</string>
+    <string name="auto_silence_disabled_by_must_wake_mode_summary">This feature is disabled by the \"must wake deadline\" feature.\nTurn off \"must wake deadline\" to enable this feature.</string>
 </resources>

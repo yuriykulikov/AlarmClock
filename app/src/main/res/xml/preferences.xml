@@ -117,5 +117,16 @@
             android:key="auto_silence"
             android:title="@string/auto_silence_title"
             app:iconSpaceReserved="false" />
+
+
+        <androidx.preference.ListPreference
+            android:defaultValue="10"
+            android:dialogTitle="@string/must_wake_title"
+            android:entries="@array/must_wake_entries"
+            android:entryValues="@array/must_wake_values"
+            android:key="must_wake"
+            android:title="@string/must_wake_title"
+            app:iconSpaceReserved="false" />
+
     </androidx.preference.PreferenceCategory>
 </androidx.preference.PreferenceScreen>
