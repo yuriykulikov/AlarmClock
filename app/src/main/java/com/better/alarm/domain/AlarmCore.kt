@@ -512,7 +512,8 @@ class AlarmCore(
       }
 
       override fun onFired() {
-        if (prefs.mustWake.value > 0) { // must wake action
+
+        if (prefs.mustWake.value > 0 && calendars.now().get(Calendar.MINUTE) == container.minutes+prefs.mustWake.value) { // must wake action
           log.debug { "Must wake alarm fired" }
           broadcastAlarmState(Intents.ACTION_MUST_WAKE)
           if (prefs.autoSilence.value > 0 && prefs.autoSilence.value > prefs.mustWake.value) {
