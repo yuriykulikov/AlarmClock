@@ -65,6 +65,7 @@ class CameraTestActivity : AppCompatActivity() {
           logger.error {"CameraXHelper failed to start"}
         }
       }
+      analyzer!!.lensFacingObservable = cameraXHelper!!.lensFacingObservable
     }
 
     findViewById<Button>(R.id.alert_vision_dismiss).run {
@@ -78,6 +79,11 @@ class CameraTestActivity : AppCompatActivity() {
       setOnLongClickListener {
         dismiss()
         true
+      }
+    }
+    findViewById<Button>(R.id.switch_camera).run {
+      setOnClickListener {
+        cameraXHelper?.switchCamera()
       }
     }
   }

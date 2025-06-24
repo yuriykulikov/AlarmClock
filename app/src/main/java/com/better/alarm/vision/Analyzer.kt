@@ -1,6 +1,7 @@
 package com.better.alarm.vision
 
 import androidx.camera.core.ImageAnalysis
+import io.reactivex.Observable
 import kotlinx.serialization.Serializable
 
 enum class DetectionState {
@@ -34,6 +35,7 @@ fun Gesture.FingersState.toFingersList(): List<Int> {
 
 interface DetectionAnalyzer {
   val analyzer: ImageAnalysis.Analyzer
+  var lensFacingObservable: Observable<Int>?
   fun skipPeek()
   fun destroy()
 }

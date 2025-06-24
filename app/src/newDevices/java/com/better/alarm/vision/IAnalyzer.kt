@@ -3,6 +3,7 @@ package com.better.alarm.vision
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
+import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import com.better.alarm.bootstrap.globalLogger
 import com.google.mediapipe.framework.image.BitmapImageBuilder
@@ -56,7 +57,14 @@ class IAnalyzer (
   private val personWatcher = PersonWatcher()
   private val headDetectorExecutor = Executors.newSingleThreadExecutor()
   private val headDetectorExecutorIsBusy = AtomicBoolean(false)
-
+  private var lensFacing = CameraSelector.LENS_FACING_BACK
+  override var lensFacingObservable: Observable<Int>? = null
+    set(value) {
+      field = value
+      compositeDisposable.add(value!!.subscribe {
+        lensFacing = it
+      })
+    }
 
   companion object {
     const val HEAD_MODEL_PATH = "head_s_float32.tflite"
@@ -123,6 +131,9 @@ class IAnalyzer (
 
     val matrix = Matrix().apply {
       postRotate(imageProxy.imageInfo.rotationDegrees.toFloat())
+      if (lensFacing == CameraSelector.LENS_FACING_FRONT) {
+        postScale(-1F, 1F)
+      }
     }
 
     val rotatedBitmap = Bitmap.createBitmap(

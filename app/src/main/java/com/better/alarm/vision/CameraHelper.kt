@@ -15,6 +15,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.better.alarm.bootstrap.globalLogger
+import io.reactivex.subjects.BehaviorSubject
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.ExecutorService
@@ -24,7 +25,7 @@ class CameraXHelper(
   private val lifecycleOwner: LifecycleOwner,
   private val previewView: androidx.camera.view.PreviewView,
   private val cameraExecutor: ExecutorService,
-  private var lensFacing: Int = CameraSelector.LENS_FACING_BACK,
+  lensFacing: Int = CameraSelector.LENS_FACING_BACK,
   private val imageAnalyzer: ImageAnalysis.Analyzer? = null,
   private val cameraOpenedCB: (Boolean) -> Unit
 ) {
@@ -36,9 +37,9 @@ class CameraXHelper(
   private var isTorchOn = false
   private var _cameraIsOpened: Boolean = false
   private var cameraOpenedCBCalled = false
+  val lensFacingObservable = BehaviorSubject.createDefault(lensFacing)
 
   init {
-
     startCamera()
   }
 
@@ -50,7 +51,7 @@ class CameraXHelper(
         cameraProvider = cameraProviderFuture.get()
 
         val cameraSelector = CameraSelector.Builder()
-          .requireLensFacing(lensFacing)
+          .requireLensFacing(lensFacingObservable.value!!)
           .build()
 
         val preview = Preview.Builder()
@@ -87,7 +88,7 @@ class CameraXHelper(
             val sensorSize = characteristics.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE)!!
             (sensorSize.width * sensorSize.height).toFloat()
           }?.takeIf { characteristics ->
-            cameraManager.getCameraCharacteristics(characteristics).get(CameraCharacteristics.LENS_FACING) == lensFacing
+            cameraManager.getCameraCharacteristics(characteristics).get(CameraCharacteristics.LENS_FACING) == lensFacingObservable.value
           } ?: cameraManager?.cameraIdList?.firstOrNull()
           cameraManager?.registerAvailabilityCallback(
             object : CameraManager.AvailabilityCallback() {
@@ -153,7 +154,7 @@ class CameraXHelper(
         }
 
         override fun onError(exception: ImageCaptureException) {
-          logger.error {  "拍照失敗: ${exception.message}" }
+          logger.error {  "capture failed: ${exception.message}" }
         }
       })
   }
@@ -168,10 +169,11 @@ class CameraXHelper(
   }
 
   fun switchCamera() {
-    lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK)
+    val lensFacing = if (lensFacingObservable.value == CameraSelector.LENS_FACING_BACK)
       CameraSelector.LENS_FACING_FRONT else CameraSelector.LENS_FACING_BACK
 
-    startCamera() // 重新啟動相機
+    lensFacingObservable.onNext(lensFacing)
+    startCamera()
   }
 
   fun adjustExposure(evValue: Int) {

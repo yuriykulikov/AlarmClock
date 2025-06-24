@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import com.better.alarm.ui.settings.VisionBehaviorItemView
+import io.reactivex.Observable
 
 
 class IAnalyzer(
@@ -20,6 +21,7 @@ class IAnalyzer(
 
   override val analyzer: ImageAnalysis.Analyzer
     get() = ImageAnalysis.Analyzer { }
+  override var lensFacingObservable: Observable<Int>? = null
 
   override fun skipPeek() {}
 }
