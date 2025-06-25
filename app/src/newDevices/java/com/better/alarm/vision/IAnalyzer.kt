@@ -67,7 +67,7 @@ class IAnalyzer (
     }
 
   companion object {
-    const val HEAD_MODEL_PATH = "head_s_float32.tflite"
+    const val HEAD_MODEL_PATH = "M100_float32.tflite"
     const val GESTURE_MODEL_PATH = "hand_landmarker.task"
     const val MAX_NO_HEAD_TIME = 5000L
     const val MAX_NO_HAND_Time = 10000L
@@ -243,7 +243,8 @@ class IAnalyzer (
 
   private inner class HeadDetectorListener : DetectorV10.DetectorListener {
     override fun onDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
-      personWatcher.updateHeadDetectionResult(boundingBoxes.any { it.clsName == Labels.HEAD }, inferenceTime)
+      personWatcher.updateHeadDetectionResult(boundingBoxes.any { it.cls == 0 || it.cls == 1 }, inferenceTime)
+      logger.debug { "person detection get ${boundingBoxes.size} boxes in $inferenceTime ms" }
       headBoundingBox.onNext(boundingBoxes)
     }
   }

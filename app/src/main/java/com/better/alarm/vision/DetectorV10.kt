@@ -140,25 +140,25 @@ class DetectorV10(
         val bestBoxes: List<BoundingBox>
         var inferenceTime: Long
         synchronized( operatingLock ) {
-          if (tensorWidth == 0
-            || tensorHeight == 0
-            || numChannel == 0
-            || numElements == 0) return
+            if (tensorWidth == 0
+              || tensorHeight == 0
+              || numChannel == 0
+              || numElements == 0) return
 
-          inferenceTime = SystemClock.uptimeMillis()
+            inferenceTime = SystemClock.uptimeMillis()
 
-          val resizedBitmap = Bitmap.createScaledBitmap(frame, tensorWidth, tensorHeight, false)
+            val resizedBitmap = Bitmap.createScaledBitmap(frame, tensorWidth, tensorHeight, false)
 
-          val tensorImage = TensorImage(INPUT_IMAGE_TYPE)
-          tensorImage.load(resizedBitmap)
-          val processedImage = imageProcessor.process(tensorImage)
-          val imageBuffer = processedImage.buffer
+            val tensorImage = TensorImage(INPUT_IMAGE_TYPE)
+            tensorImage.load(resizedBitmap)
+            val processedImage = imageProcessor.process(tensorImage)
+            val imageBuffer = processedImage.buffer
 
-          val output = TensorBuffer.createFixedSize(intArrayOf(1, numChannel, numElements), OUTPUT_IMAGE_TYPE)
-          interpreter?.run(imageBuffer, output.buffer)
+            val output = TensorBuffer.createFixedSize(intArrayOf(1, numChannel, numElements), OUTPUT_IMAGE_TYPE)
+            interpreter?.run(imageBuffer, output.buffer)
 
-          bestBoxes = bestBox(output.floatArray)
-          inferenceTime = SystemClock.uptimeMillis() - inferenceTime
+            bestBoxes = bestBox(output.floatArray)
+            inferenceTime = SystemClock.uptimeMillis() - inferenceTime
         }
       detectorListener.onDetect(bestBoxes, inferenceTime)
     }
@@ -198,6 +198,6 @@ class DetectorV10(
         private const val INPUT_STANDARD_DEVIATION = 255f
         private val INPUT_IMAGE_TYPE = DataType.FLOAT32
         private val OUTPUT_IMAGE_TYPE = DataType.FLOAT32
-        private const val CONFIDENCE_THRESHOLD = 0.3F
+        private const val CONFIDENCE_THRESHOLD = 0.15F
     }
 }
