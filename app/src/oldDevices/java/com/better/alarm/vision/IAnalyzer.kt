@@ -10,7 +10,8 @@ import io.reactivex.Observable
 class IAnalyzer(
   val context: Context,
   private val handler: DetectionHandler,
-  private val behaviorList: Behavior.BehaviorsStoreValue
+  private val behaviorList: Behavior.BehaviorsStoreValue,
+  private val modelPath: String
 ) : DetectionAnalyzer {
 
   companion object {

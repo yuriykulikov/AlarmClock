@@ -3,7 +3,6 @@ package com.better.alarm.data
 import com.better.alarm.data.stores.PrimitiveDataStoreFactory
 import com.better.alarm.data.stores.RxDataStore
 import com.better.alarm.data.stores.intStringDataStore
-import com.better.alarm.vision.Labels
 import io.reactivex.Observable
 import io.reactivex.Single
 
@@ -33,7 +32,8 @@ private constructor(
     val visionTTS: RxDataStore<Boolean>,
     val visionCheckAfterDismiss: RxDataStore<Boolean>,
     val visionBehavior: RxDataStore<String>,
-    val visionEnablePersonLeaveDismiss: RxDataStore<Boolean>
+    val visionEnablePersonLeaveDismiss: RxDataStore<Boolean>,
+    val visionModelSelect: RxDataStore<String>
 ) {
   fun layout(): Layout {
     return listRowLayout().take(1).blockingFirst()
@@ -77,7 +77,8 @@ private constructor(
           visionCheckAfterDismiss = factory.booleanDataStore(KEY_VISION_CHECK_AFTER_DISMISS, true),
           visionBehavior = factory.stringDataStore(KEY_VISION_BEHAVIOR, "{\"items\":[]}"),
           visionEnablePersonLeaveDismiss =
-              factory.booleanDataStore(KEY_VISION_ENABLE_PERSON_LEAVE_DISMISS, false)
+              factory.booleanDataStore(KEY_VISION_ENABLE_PERSON_LEAVE_DISMISS, false),
+          visionModelSelect = factory.stringDataStore(KEY_VISION_MODEL_SELECT, "m.tflite")
       )
     }
 
@@ -100,6 +101,7 @@ private constructor(
     const val KEY_VISION_CHECK_AFTER_DISMISS = "vision_check_after_dismiss"
     const val KEY_VISION_BEHAVIOR = "vision_behavior"
     const val KEY_VISION_ENABLE_PERSON_LEAVE_DISMISS = "vision_enable_person_leave_dismiss"
+    const val KEY_VISION_MODEL_SELECT = "vision_model_select"
     const val LIST_ROW_LAYOUT = "ui_list_row_layout"
     const val LIST_ROW_LAYOUT_COMPACT = "compact"
     const val LIST_ROW_LAYOUT_CLASSIC = "classic"

@@ -124,7 +124,7 @@ class AlarmAlertVisionFullScreen : FragmentActivity() {
       cameraExecutor = Executors.newSingleThreadExecutor()
 
       cameraExecutor?.execute {
-        analyzer = IAnalyzer(this, detectionHandler, Json.decodeFromString(sp.visionBehavior.value))
+        analyzer = IAnalyzer(this, detectionHandler, Json.decodeFromString(sp.visionBehavior.value), sp.visionModelSelect.value)
         cameraXHelper = CameraXHelper(
           this,
           this,

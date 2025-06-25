@@ -346,4 +346,18 @@
         <item>gun</item>
     </string-array>
 
+    <string-array name="model_select_entries">
+        <item>nano</item>
+        <item>small</item>
+        <item>medium</item>
+    </string-array>
+    <!-- Textual content of the button to discard the current dialog values and close the dialog -->
+    <!-- Textual content of the button to update an alarm with the current dialog values -->
+    <!-- place holder for am/pm label when it is not set -->
+    <string-array name="model_select_values" translatable="false">
+        <item>n.tflite</item>
+        <item>s.tflite</item>
+        <item>m.tflite</item>
+    </string-array>
+
 </resources>

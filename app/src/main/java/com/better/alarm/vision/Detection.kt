@@ -2,10 +2,6 @@ package com.better.alarm.vision
 
 import kotlinx.serialization.Serializable
 
-object Labels {
-  const val HEAD = "head"
-}
-
 object Behavior {
   @Serializable
   data class BehaviorStoreItem(val gesture: Gesture, val operation: String)
