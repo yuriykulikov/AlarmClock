@@ -157,10 +157,10 @@
         <androidx.preference.ListPreference
             android:defaultValue="m"
             android:dialogTitle="@string/vision_model_select_title"
-            android:entries="@array/auto_silence_entries"
-            android:entryValues="@array/auto_silence_values"
-            android:key="auto_silence"
-            android:title="@string/auto_silence_title"
+            android:entries="@array/vision_gesture_entries"
+            android:entryValues="@array/vision_gesture_values"
+            android:key="vision_model_select"
+            android:title="@string/vision_model_select_title"
             app:iconSpaceReserved="false" />
         <com.better.alarm.ui.settings.VisionBehaviorPreference
             android:defaultValue="{&quot;items&quot;:[]}"
