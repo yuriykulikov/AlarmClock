@@ -58,7 +58,7 @@ class CameraTestActivity : AppCompatActivity() {
     cameraExecutor = Executors.newSingleThreadExecutor()
 
     cameraExecutor!!.execute {
-      analyzer = IAnalyzer(this, detectionHandler, Json.decodeFromString(sp.visionBehavior.value))
+      analyzer = IAnalyzer(this, detectionHandler, Json.decodeFromString(sp.visionBehavior.value), sp.visionModelSelect.value)
       analyzer!!.skipPeek()
       cameraXHelper = CameraXHelper(this, this,findViewById(R.id.alert_vision_preview) , cameraExecutor!!, lensFacing = CameraSelector.LENS_FACING_BACK, imageAnalyzer =  analyzer!!.analyzer) { succeeded ->
         if (!succeeded) {
