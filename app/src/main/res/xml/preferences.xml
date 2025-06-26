@@ -157,8 +157,8 @@
         <androidx.preference.ListPreference
             android:defaultValue="m"
             android:dialogTitle="@string/vision_model_select_title"
-            android:entries="@array/vision_gesture_entries"
-            android:entryValues="@array/vision_gesture_values"
+            android:entries="@array/model_select_entries"
+            android:entryValues="@array/model_select_values"
             android:key="vision_model_select"
             android:title="@string/vision_model_select_title"
             app:iconSpaceReserved="false" />

@@ -208,6 +208,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     bindListPreference(Prefs.LIST_ROW_LAYOUT, prefs.listRowLayout) { summary = entry }
 
+    bindListPreference(Prefs.KEY_VISION_MODEL_SELECT, prefs.visionModelSelect) { summary = entry }
+
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
       findPreference<PreferenceCategory>("category_vision_waking")?.isVisible = false
     }
