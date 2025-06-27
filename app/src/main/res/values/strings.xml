@@ -232,4 +232,5 @@
     <string name="switch_camera_text">Switch Camera</string>
     <string name="vision_model_select_title">Select model for head detection</string>
     <string name="camera_test_wait_instruct">AI model loading might take some time</string>
+    <string name="vision_tts_summary">Report status vocally in the waking process.</string>
 </resources>

@@ -141,6 +141,7 @@
             android:defaultValue="true"
             android:key="vision_tts"
             android:title="@string/vision_tts_title"
+            android:summary="@string/vision_tts_summary"
             app:iconSpaceReserved="false" />
         <androidx.preference.CheckBoxPreference
             android:defaultValue="true"
