@@ -231,4 +231,5 @@
     <string name="vision_enable_person_leave_dismiss_summary">If a person is detected at the start, you can simply walk away and the alarm will automatically dismiss after 10 seconds.\nHowever, if person detection is intermittent, the alarm might be dismissed unexpectedly.</string>
     <string name="switch_camera_text">Switch Camera</string>
     <string name="vision_model_select_title">Select model for head detection</string>
+    <string name="camera_test_wait_instruct">AI model loading might take some time</string>
 </resources>
