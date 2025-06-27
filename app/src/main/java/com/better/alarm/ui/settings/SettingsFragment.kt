@@ -11,9 +11,9 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Vibrator
 import android.provider.Settings
-import android.view.WindowManager
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.CheckBoxPreference
@@ -47,6 +47,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
   private val prefs: Prefs by inject()
   private val disposables = CompositeDisposable()
   private val logger: Logger by globalLogger("SettingsFragment")
+  private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
 
   private val contentResolver: ContentResolver
     get() = requireActivity().contentResolver
@@ -82,6 +83,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
           }
           true
         }
+
+    requestPermissionLauncher = registerForActivityResult(
+      ActivityResultContracts.RequestPermission()
+    ) { granted ->
+      if (granted) {
+        findPreference<CheckBoxPreference>(Prefs.KEY_ENABLE_VISION_WAKING)?.isChecked = true
+      }
+    }
   }
 
   @Deprecated("Deprecated in Java")
@@ -121,6 +130,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
   override fun onResume() {
     super.onResume()
+    
+    if(ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+      findPreference<CheckBoxPreference>(Prefs.KEY_ENABLE_VISION_WAKING)?.isChecked = false
+    }
 
     findPreference<VolumePreference>(Prefs.KEY_VOLUME_PREFERENCE)?.run {
       showPicker = {
@@ -145,7 +158,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
           if (newValue as Boolean) {
             // ask for permission if not granted
             if(ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-              ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.CAMERA), 1000)
+              requestPermissionLauncher.launch(Manifest.permission.CAMERA)
               return@OnPreferenceChangeListener false
             }
             if(!IAnalyzer.checkAvailability(requireContext())) {

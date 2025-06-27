@@ -155,7 +155,7 @@
             android:summary="@string/vision_enable_person_leave_dismiss_summary"
             app:iconSpaceReserved="false" />
         <androidx.preference.ListPreference
-            android:defaultValue="m"
+            android:defaultValue="m.tflite"
             android:dialogTitle="@string/vision_model_select_title"
             android:entries="@array/model_select_entries"
             android:entryValues="@array/model_select_values"

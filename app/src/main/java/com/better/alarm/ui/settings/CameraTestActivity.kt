@@ -6,10 +6,12 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.Button
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.preference.CheckBoxPreference
 import com.better.alarm.R
 import com.better.alarm.bootstrap.AlarmApplication
 import com.better.alarm.bootstrap.globalLogger
@@ -53,7 +55,14 @@ class CameraTestActivity : AppCompatActivity() {
     overlayView = findViewById(R.id.alert_vision_overlay)
 
     if(ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-      ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), 1000)
+      val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+      ) { granted ->
+        if (!granted) {
+          finish()
+        }
+      }
+      requestPermissionLauncher.launch(Manifest.permission.CAMERA)
     }
     cameraExecutor = Executors.newSingleThreadExecutor()
 
