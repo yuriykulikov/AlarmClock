@@ -30,7 +30,6 @@ class VisionBehaviorPreference(context: Context, attrs: AttributeSet) : Preferen
   private lateinit var behaviorListLayout: LinearLayout
   private val items = mutableListOf<VisionBehaviorItemView>()
   private var addButton: ImageButton? = null
-  private var initialValueString = ""
   init {
     layoutResource = R.layout.preference_vision_behavior
   }
@@ -46,6 +45,7 @@ class VisionBehaviorPreference(context: Context, attrs: AttributeSet) : Preferen
       addItem()
     }
 
+    val initialValueString = getPersistedString("")
     if (initialValueString.isNotEmpty()) {
       try {
         val storedValue: Behavior.BehaviorsStoreValue = Json.decodeFromString(initialValueString)
@@ -77,8 +77,8 @@ class VisionBehaviorPreference(context: Context, attrs: AttributeSet) : Preferen
   }
 
   override fun onSetInitialValue(defaultValue: Any?) {
-    initialValueString = getPersistedString(defaultValue as? String)
-
+    val initialValueString = getPersistedString(defaultValue as? String)
+    persistString(initialValueString)
   }
 
   private fun addItem(item: Behavior.BehaviorStoreItem? = null) {
@@ -86,20 +86,13 @@ class VisionBehaviorPreference(context: Context, attrs: AttributeSet) : Preferen
     val view = LayoutInflater.from(context).inflate(R.layout.vision_behavior_item, behaviorListLayout, false) as VisionBehaviorItemView
     view.onRemove = {
       items.remove(view)
-      val animation = AnimationUtils.loadAnimation(context, android.R.anim.slide_out_right)
-      animation.setAnimationListener(object : android.view.animation.Animation.AnimationListener {
-        override fun onAnimationRepeat(animation: android.view.animation.Animation?) {}
-
-        override fun onAnimationEnd(animation: android.view.animation.Animation?) {
-          behaviorListLayout.removeView(view)
-        }
-
-        override fun onAnimationStart(animation: android.view.animation.Animation?) {}
-      })
-      view.startAnimation(animation)
       val newValue = Behavior.BehaviorsStoreValue(items.map { it.currentData })
       val valueString = Json.encodeToString(newValue)
       persistString(valueString)
+      view.animate()
+        .translationX(-view.width.toFloat()).alpha(0f).setDuration(200)
+        .withEndAction { behaviorListLayout.removeView(view)}
+        .start()
     }
     view.onUpdate = {
       val newValue = Behavior.BehaviorsStoreValue(items.map { it.currentData })
