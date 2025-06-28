@@ -130,7 +130,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
   override fun onResume() {
     super.onResume()
-    
+
     if(ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
       findPreference<CheckBoxPreference>(Prefs.KEY_ENABLE_VISION_WAKING)?.isChecked = false
     }
@@ -161,13 +161,24 @@ class SettingsFragment : PreferenceFragmentCompat() {
               requestPermissionLauncher.launch(Manifest.permission.CAMERA)
               return@OnPreferenceChangeListener false
             }
-            if(!IAnalyzer.checkAvailability(requireContext())) {
-              AlertDialog.Builder(requireContext())
+            when (IAnalyzer.checkAvailability(requireContext())) {
+              IAnalyzer.LIBRARY_NOT_AVAILABLE -> {
+                AlertDialog.Builder(requireContext())
                   .setTitle(R.string.vision_waking_unavailable_title)
                   .setMessage(R.string.vision_waking_unavailable_message)
                   .setPositiveButton(android.R.string.ok, null)
                   .show()
-              return@OnPreferenceChangeListener false
+                return@OnPreferenceChangeListener false
+              }
+              IAnalyzer.HAND_LANDMARK_TEST_FAIL -> {
+                AlertDialog.Builder(requireContext())
+                  .setTitle(R.string.vision_waking_unavailable_title)
+                  .setMessage(R.string.vision_waking_hand_landmark_test_fail_message)
+                  .setPositiveButton(android.R.string.ok, null)
+                  .show()
+                return@OnPreferenceChangeListener false
+              }
+              IAnalyzer.AVAILABLE -> {}
             }
           }
           true

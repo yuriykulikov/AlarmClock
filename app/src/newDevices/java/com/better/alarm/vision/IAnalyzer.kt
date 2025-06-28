@@ -76,18 +76,22 @@ class IAnalyzer (
     const val STATUS_NOT_DETECTED = 0
     const val STATUS_UNKNOWN = -1
 
-    fun checkAvailability(context: Context): Boolean {
+    const val AVAILABLE = 0
+    const val LIBRARY_NOT_AVAILABLE = 1
+    const val HAND_LANDMARK_TEST_FAIL = 2
+
+    fun checkAvailability(context: Context): Int {
       try {
         val gestureRecognizerOption = HandLandmarkerOptions.builder().apply {
           setBaseOptions(BaseOptions.builder().setModelAssetPath(GESTURE_MODEL_PATH).build())
-          setResultListener { _, _ -> }
-          setRunningMode(RunningMode.LIVE_STREAM)
+          setRunningMode(RunningMode.IMAGE)
         }.build()
         val recognizer = HandLandmarker.createFromOptions(context, gestureRecognizerOption)
         recognizer.close()
-        return true
+        return AVAILABLE
       } catch (e: Exception) {
-        return false
+        e.printStackTrace()
+        return LIBRARY_NOT_AVAILABLE
       }
     }
   }
@@ -120,14 +124,17 @@ class IAnalyzer (
 
   override val analyzer: ImageAnalysis.Analyzer = ImageAnalysis.Analyzer {
       imageProxy ->
+    val rowStride = imageProxy.planes[0].rowStride
+    val pixelStride = imageProxy.planes[0].pixelStride
+    val rowPadding = rowStride - pixelStride * imageProxy.width
     val bitmapBuffer =
       Bitmap.createBitmap(
-        imageProxy.width,
+        imageProxy.width + rowPadding / pixelStride,
         imageProxy.height,
         Bitmap.Config.ARGB_8888
       )
+
     imageProxy.use { bitmapBuffer.copyPixelsFromBuffer(imageProxy.planes[0].buffer) }
-    imageProxy.close()
 
     val matrix = Matrix().apply {
       postRotate(imageProxy.imageInfo.rotationDegrees.toFloat())
@@ -149,12 +156,9 @@ class IAnalyzer (
       val inputBitmap = Bitmap.createBitmap(rotatedBitmap)
       headDetectorExecutor.execute {
         headDetectorV10?.detect(inputBitmap)
-        inputBitmap.recycle()
         headDetectorExecutorIsBusy.set(false)
       }
     }
-    bitmapBuffer.recycle()
-    rotatedBitmap.recycle()
   }
 
   private inner class PersonWatcher {

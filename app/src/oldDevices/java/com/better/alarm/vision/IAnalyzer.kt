@@ -15,7 +15,7 @@ class IAnalyzer(
 ) : DetectionAnalyzer {
 
   companion object {
-    fun checkAvailability(context: Context): Boolean { return false }
+    fun checkAvailability(context: Context): Int { return 1 }
   }
 
   override fun destroy() {}
