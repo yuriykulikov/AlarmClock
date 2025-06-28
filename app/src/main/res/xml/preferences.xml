@@ -150,7 +150,7 @@
             android:summary="@string/vision_check_after_dismiss_summary"
             app:iconSpaceReserved="false" />
         <androidx.preference.CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="vision_enable_person_leave_dismiss"
             android:title="@string/vision_enable_person_leave_dismiss_title"
             android:summary="@string/vision_enable_person_leave_dismiss_summary"
