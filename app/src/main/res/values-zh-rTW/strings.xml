@@ -3,4 +3,5 @@
     <string name="vision_tts_person_leave">人沒拉</string>
     <string name="vision_tts_snooze">又睡 沒救了</string>
     <string name="vision_tts_dismiss">關啦</string>
+    <string name="finger_state">手勢</string>
 </resources>

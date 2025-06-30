@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:gravity="center_vertical"
-        android:text="Set Behavior"
+        android:text="@string/vision_behavior_title"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="?android:attr/textColorPrimary"
         app:layout_constraintBottom_toTopOf="@+id/addButton"

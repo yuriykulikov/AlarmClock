@@ -166,7 +166,7 @@
         <com.better.alarm.ui.settings.VisionBehaviorPreference
             android:defaultValue="{&quot;items&quot;:[]}"
             android:key="vision_behavior"
-            android:title="Set Behavior"
+            android:title="@string/vision_behavior_title"
             app:iconSpaceReserved="false" />
 
 

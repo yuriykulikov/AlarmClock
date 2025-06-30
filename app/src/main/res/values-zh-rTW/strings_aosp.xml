@@ -84,4 +84,25 @@
     </string-array>
     <string name="default_ringtone_setting_title" msgid="4549726190682964245">"設定預設鈴聲"</string>
     <string name="alarm_klaxon_service_desc" msgid="2147506334302260256">"在「時鐘」設定的鬧鐘鈴聲播放服務。"</string>
+    <string name="vision_help_title">AI vision waking是什麼</string>
+    <string name="vision_help_summary">點擊查看詳細介紹</string>
+    <string name="vision_help_text1">AI vision waking 在鬧鐘開始時開啟手機後鏡頭，並透過本地運行的AI模型分析畫面，更聰明的控制鬧鐘，開啟這項功能後，你不需要從舒服的被窩裡爬起就能關閉鬧鐘，如果你不小心又趴回去睡死，這個鬧鐘還可以反覆地叫你起床。
+        \n\n使用技巧: \n1. 請確保後鏡頭可以在你睡覺的時候拍到你的頭\n2. 你可以使用[TEST CAMERA]按鈕來測試頭部偵測、手勢偵測、指令偵測的效果
+\n\n運作邏輯：</string>
+    <string name="enable_vision_waking_title">啟用這項功能</string>
+    <string name="vision_waking_flashlight_title">開啟手電筒</string>
+    <string name="vision_waking_flashlight_summary">會在啟用相機時開啟手電筒，建議打開</string>
+    <string name="vision_tts_title">語音提示</string>
+    <string name="vision_check_after_dismiss_title">結束後檢查你是否確實起床</string>
+    <string name="vision_check_after_dismiss_summary">關閉鬧鐘後設定一個5分鐘用於檢查的鬧鐘，若當時偵測到你還在床上就會響鈴。若你已經確實起床，也可以透過彈出的訊息通知提前關閉此次的檢查鬧鐘</string>
+    <string name="vision_enable_person_leave_dismiss_title">啟用[離開自動關閉]功能</string>
+    <string name="vision_enable_person_leave_dismiss_summary">當鬧鐘在響的時候，若你走出鏡頭外鬧鐘會自動關閉。但由於人體偵測不一定每次都準確，此功能請謹慎使用。另外，若鬧鐘的一開始就沒有偵測到人，該次鬧鐘會自動取消此功能。</string>
+    <string name="vision_model_select_title">選擇人體(頭部)偵測模型</string>
+    <string name="vision_behavior_title">自訂手勢操作</string>
+    <string name="behavior_setting_instruction">你可以透過"+"按鈕新增多項AI偵測到手勢後對應的行為。
+\n每個手勢由5個按鈕定義，從左到右分別代表大拇指、食指、中指、無名指、小拇指，若按鈕處與"開啟"狀態代表該手指伸值、"關閉"則代表該手指收起。
+\n例如： 開、關、關、關、關 => 比讚👍的手勢</string>
+    <string name="vision_behavior_summary">設定當AI偵測到手勢時對應的行為</string>
+    <string name="behavior_item_behavior">指令</string>
 </resources>
+
