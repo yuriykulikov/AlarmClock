@@ -78,7 +78,7 @@ private constructor(
           visionBehavior = factory.stringDataStore(KEY_VISION_BEHAVIOR, "{\"items\":[]}"),
           visionEnablePersonLeaveDismiss =
               factory.booleanDataStore(KEY_VISION_ENABLE_PERSON_LEAVE_DISMISS, false),
-          visionModelSelect = factory.stringDataStore(KEY_VISION_MODEL_SELECT, "m.tflite")
+          visionModelSelect = factory.stringDataStore(KEY_VISION_MODEL_SELECT, "s.tflite")
       )
     }
 
