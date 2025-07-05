@@ -3,6 +3,7 @@ package com.better.alarm.data
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerialInfo
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.SerialDescriptor

@@ -25,6 +25,10 @@ interface Player {
   fun reset()
 
   fun setDataSource(uri: String)
+
+  fun pause()
+
+  fun resume()
 }
 
 /** Plays sound when told to. Performs a fade-in. */
@@ -160,4 +164,12 @@ class KlaxonPlugin(
   }
 
   private fun Float.squared() = this * this
+
+  override fun pause() {
+    player?.pause()
+  }
+
+  override fun resume() {
+    player?.resume()
+  }
 }

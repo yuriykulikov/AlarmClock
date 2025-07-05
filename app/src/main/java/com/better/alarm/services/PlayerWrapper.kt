@@ -101,4 +101,13 @@ class PlayerWrapper(
   }
 
   private fun Float.squared() = this * this
+
+  override fun pause() {
+    if (player?.isPlaying!!)
+      player?.pause()
+  }
+
+  override fun resume() {
+    player?.start()
+  }
 }

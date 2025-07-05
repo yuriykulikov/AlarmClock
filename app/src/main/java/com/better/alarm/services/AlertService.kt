@@ -25,9 +25,13 @@ interface AlertPlugin {
       prealarm: Boolean,
       targetVolume: Observable<TargetVolume>
   ): Disposable
+
+  fun pause() {}
+
+  fun resume() {}
 }
 
-data class PluginAlarmData(val id: Int, val alarmtone: Alarmtone, val label: String)
+data class PluginAlarmData(val id: Int, val alarmtone: Alarmtone, val label: String, val type: String = "")
 
 enum class TargetVolume {
   MUTED,
@@ -39,6 +43,10 @@ sealed class Event {
   data class NullEvent(val actions: String = "null") : Event()
 
   data class AlarmEvent(val id: Int, val actions: String = Intents.ALARM_ALERT_ACTION) : Event()
+
+  data class SnoozeAlarmEvent(val id: Int, val actions: String = Intents.SNOOZE_ALARM_ALERT_ACTION) : Event()
+
+  data class CheckAlarmEvent(val id: Int, val actions: String = Intents.CHECK_ALARM_ALERT_ACTION) : Event()
 
   data class PrealarmEvent(val id: Int, val actions: String = Intents.ALARM_PREALARM_ACTION) :
       Event()
@@ -52,6 +60,12 @@ sealed class Event {
       val actions: String = Intents.ALARM_SNOOZE_ACTION
   ) : Event()
 
+  data class CheckEvent(
+      val id: Int,
+      val calendar: Calendar,
+      val actions: String = Intents.CHECK_ALARM_ALERT_ACTION
+  ) : Event()
+
   data class ShowSkip(val id: Int, val actions: String = Intents.ALARM_SHOW_SKIP) : Event()
 
   data class HideSkip(val id: Int, val actions: String = Intents.ALARM_REMOVE_SKIP) : Event()
@@ -59,12 +73,20 @@ sealed class Event {
   data class CancelSnoozedEvent(val id: Int, val actions: String = Intents.ACTION_CANCEL_SNOOZE) :
       Event()
 
+  data class CancelCheckEvent(val id:Int, val actions: String = Intents.ACTION_CANCEL_CHECK) : Event()
+
   data class Autosilenced(val id: Int, val actions: String = Intents.ACTION_SOUND_EXPIRED) :
       Event()
 
   data class MuteEvent(val actions: String = Intents.ACTION_MUTE) : Event()
 
   data class DemuteEvent(val actions: String = Intents.ACTION_DEMUTE) : Event()
+
+  data class PauseEvent(val actions: String = Intents.ALARM_ALERT_PAUSE_ACTION) : Event()
+
+  data class ResumeEvent(val actions: String = Intents.ALARM_ALERT_RESUME_ACTION) : Event()
+
+  data class StartWakingEvent(val actions: String = Intents.ALARM_ALERT_START_WAKING_ACTION) : Event()
 }
 
 interface EnclosingService {
@@ -91,7 +113,9 @@ class AlertService(
 
   private enum class Type {
     NORMAL,
-    PREALARM
+    SNOOZE,
+    PREALARM,
+    CHECK
   }
 
   private data class CallState(val initial: Boolean, val inCall: Boolean)
@@ -110,7 +134,8 @@ class AlertService(
         .subscribeIn(disposable) { active ->
           if (active.isNotEmpty()) {
             log.debug { "activeAlarms: $active" }
-            playSound(active)
+            if (!prefs.enableVisionWaking.value)
+              playSound(active)
             showNotifications(active)
           } else {
             log.debug { "no alarms anymore, stopSelf()" }
@@ -136,12 +161,17 @@ class AlertService(
     return if (stateValid(event)) {
       when (event) {
         is Event.AlarmEvent -> soundAlarm(event.id, Type.NORMAL)
+        is Event.SnoozeAlarmEvent-> soundAlarm(event.id, Type.SNOOZE)
+        is Event.CheckAlarmEvent -> soundAlarm(event.id, Type.CHECK)
         is Event.PrealarmEvent -> soundAlarm(event.id, Type.PREALARM)
         is Event.MuteEvent -> wantedVolume.onNext(TargetVolume.MUTED)
         is Event.DemuteEvent -> wantedVolume.onNext(TargetVolume.FADED_IN_FAST)
         is Event.DismissEvent -> remove(event.id)
         is Event.SnoozedEvent -> remove(event.id)
         is Event.Autosilenced -> remove(event.id)
+        is Event.PauseEvent -> pausePlugins()
+        is Event.ResumeEvent -> resumePlugins()
+        is Event.StartWakingEvent -> startWaking()
         else -> {
           check(!BuildConfig.DEBUG) { "Unexpected event: $event" }
         }
@@ -159,6 +189,8 @@ class AlertService(
       activeAlarms.requireValue().isEmpty() -> {
         when (event) {
           is Event.AlarmEvent -> true
+          is Event.SnoozeAlarmEvent -> true
+          is Event.CheckAlarmEvent -> true
           is Event.PrealarmEvent -> true
           else -> {
             check(!BuildConfig.DEBUG) {
@@ -184,15 +216,34 @@ class AlertService(
     activeAlarms.modify { plus(id to type) }
   }
 
+  private fun pausePlugins() {
+    plugins.forEach { it.pause() }
+  }
+
+  private fun resumePlugins() {
+    plugins.forEach { it.resume() }
+  }
+
+  private fun startWaking() {
+    playSound(activeAlarms.requireValue())
+  }
+
   private fun showNotifications(active: Map<Int, Type>) {
     require(active.isNotEmpty())
     val toShow =
         active
-            .mapNotNull { (id, _) -> alarms.getAlarm(id) }
-            .map { alarm ->
+            .map { (id, type) ->
+              val alarm = alarms.getAlarm(id)!!
               val alarmtone = alarm.alarmtone
               val label = alarm.labelOrDefault
-              PluginAlarmData(alarm.id, alarmtone, label)
+              log.debug { type.name }
+              val typeString = when(type) {
+                Type.NORMAL -> Intents.TYPE_NORMAL_ALARM
+                Type.SNOOZE -> Intents.TYPE_SNOOZE_ALARM
+                Type.CHECK -> Intents.TYPE_CHECK_ALARM
+                else -> ""
+              }
+              PluginAlarmData(alarm.id, alarmtone, label, typeString)
             }
 
     log.debug { "Show notifications: $toShow" }

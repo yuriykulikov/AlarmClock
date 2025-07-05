@@ -52,11 +52,8 @@ private constructor(private val preferences: SharedPreferences, private val logg
             // we need to hold a strong reference to this listener
             val listener =
                 object : SharedPreferences.OnSharedPreferenceChangeListener {
-                  override fun onSharedPreferenceChanged(
-                      preferences: SharedPreferences,
-                      key: String
-                  ) {
-                    emitter.onNext(key)
+                  override fun onSharedPreferenceChanged(preferences: SharedPreferences?, p1: String?) {
+                    p1?.let { emitter.onNext(it) }
                   }
 
                   protected fun finalize() {

@@ -81,7 +81,6 @@ android {
     versionCode = 31601
     versionName = "3.16.01"
     applicationId = "com.better.alarm"
-    minSdk = 21
     targetSdk = 33
     testApplicationId = "com.better.alarm.test"
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -113,10 +112,25 @@ android {
   }
 
   flavorDimensions.add("default")
+  flavorDimensions.add("version")
 
   productFlavors {
-    create("develop") { applicationId = "com.better.alarm" }
-    create("premium") { applicationId = "com.premium.alarm" }
+    create("develop") {
+      dimension = "default"
+      applicationId = "com.better.alarm"
+    }
+    create("premium") {
+      dimension = "default"
+      applicationId = "com.premium.alarm"
+    }
+    create("newDevices") {
+      dimension = "version"
+      minSdk = 24
+    }
+    create("oldDevices") {
+      dimension = "version"
+      minSdk = 21
+    }
   }
 
   installation {
@@ -132,6 +146,11 @@ android {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
   }
+
+  packagingOptions {
+    resources.pickFirsts.add("META-INF/gradle/incremental.annotation.processors")
+  }
+
   testOptions { unitTests.isReturnDefaultValues = true }
 }
 
@@ -171,6 +190,13 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:$serializationVersion")
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
 
+  implementation("androidx.camera:camera-camera2:1.2.3") // Or the latest version
+  implementation("androidx.camera:camera-core:1.2.3")
+  implementation("androidx.camera:camera-lifecycle:1.2.3")
+  implementation("androidx.camera:camera-view:1.2.3")
+  implementation("com.google.guava:guava:31.0.1-android")
+
+
   testImplementation("net.wuerl.kotlin:assertj-core-kotlin:0.2.1")
   testImplementation("junit:junit:4.13.2")
   testImplementation("io.mockk:mockk:1.13.17")
@@ -183,4 +209,18 @@ dependencies {
   androidTestImplementation("androidx.test:runner:$androidxTest")
   androidTestImplementation("androidx.test:rules:$androidxTest")
   androidTestImplementation("androidx.test.ext:junit:1.2.1")
+  androidTestImplementation("androidx.test.ext:junit:1.1.5")
+
+  implementation("org.tensorflow:tensorflow-lite:2.16.1")
+  implementation("org.tensorflow:tensorflow-lite-support:0.4.4")
+  implementation("org.tensorflow:tensorflow-lite-metadata:0.4.4")
+
+  implementation("org.tensorflow:tensorflow-lite-gpu-delegate-plugin:0.4.4")
+  implementation("org.tensorflow:tensorflow-lite-gpu-api:2.16.1")
+  implementation("org.tensorflow:tensorflow-lite-api:2.16.1")
+  implementation("org.tensorflow:tensorflow-lite-gpu:2.16.1")
+  implementation("org.tensorflow:tensorflow-lite-select-tf-ops:2.16.1")
+
+
+  "newDevicesImplementation"("com.google.mediapipe:tasks-vision:latest.release")
 }

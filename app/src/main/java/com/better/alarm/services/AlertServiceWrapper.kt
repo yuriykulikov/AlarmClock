@@ -79,7 +79,7 @@ class AlertServiceWrapper : Service() {
 
       single<NotificationsPlugin> {
         NotificationsPlugin(
-            logger = logger("AlertService"), mContext = get(), nm = get(), enclosingService = get())
+            logger = logger("AlertService"), mContext = get(), nm = get(), enclosingService = get(), prefs = get())
       }
 
       single {
@@ -207,12 +207,17 @@ class AlertServiceWrapper : Service() {
       alertService.onStartCommand(
           when (intent.action) {
             Intents.ALARM_ALERT_ACTION -> Event.AlarmEvent(intent.getIntExtra(Intents.EXTRA_ID, -1))
+            Intents.SNOOZE_ALARM_ALERT_ACTION-> Event.SnoozeAlarmEvent(intent.getIntExtra(Intents.EXTRA_ID, -1))
+            Intents.CHECK_ALARM_ALERT_ACTION -> Event.CheckAlarmEvent(intent.getIntExtra(Intents.EXTRA_ID, -1))
             Intents.ALARM_PREALARM_ACTION ->
                 Event.PrealarmEvent(intent.getIntExtra(Intents.EXTRA_ID, -1))
             Intents.ACTION_MUTE -> Event.MuteEvent()
             Intents.ACTION_DEMUTE -> Event.DemuteEvent()
             Intents.ALARM_DISMISS_ACTION ->
                 Event.DismissEvent(intent.getIntExtra(Intents.EXTRA_ID, -1))
+            Intents.ALARM_ALERT_START_WAKING_ACTION -> Event.StartWakingEvent()
+            Intents.ALARM_ALERT_PAUSE_ACTION -> Event.PauseEvent()
+            Intents.ALARM_ALERT_RESUME_ACTION -> Event.ResumeEvent()
             else -> throw RuntimeException("Unknown action ${intent.action}")
           })
 
@@ -221,6 +226,11 @@ class AlertServiceWrapper : Service() {
             Intents.ALARM_ALERT_ACTION,
             Intents.ALARM_PREALARM_ACTION,
             Intents.ACTION_MUTE,
+            Intents.SNOOZE_ALARM_ALERT_ACTION,
+            Intents.CHECK_ALARM_ALERT_ACTION,
+            Intents.ALARM_ALERT_START_WAKING_ACTION,
+            Intents.ALARM_ALERT_PAUSE_ACTION,
+            Intents.ALARM_ALERT_RESUME_ACTION,
             Intents.ACTION_DEMUTE -> START_STICKY
             Intents.ALARM_SNOOZE_ACTION,
             Intents.ALARM_DISMISS_ACTION,

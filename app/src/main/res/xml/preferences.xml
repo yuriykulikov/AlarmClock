@@ -118,4 +118,58 @@
             android:title="@string/auto_silence_title"
             app:iconSpaceReserved="false" />
     </androidx.preference.PreferenceCategory>
+    <androidx.preference.PreferenceCategory
+        android:title="Ai vision waking"
+        android:key="category_vision_waking"
+        app:iconSpaceReserved="false">
+        <Preference
+            android:key="vision_help"
+            android:title="@string/vision_help_title"
+            android:summary="@string/vision_help_summary" />
+        <androidx.preference.CheckBoxPreference
+            android:defaultValue="false"
+            android:key="enable_vision_waking"
+            android:title="@string/enable_vision_waking_title"
+            app:iconSpaceReserved="false" />
+        <androidx.preference.CheckBoxPreference
+            android:defaultValue="false"
+            android:key="vision_flashlight"
+            android:title="@string/vision_waking_flashlight_title"
+            android:summary="@string/vision_waking_flashlight_summary"
+            app:iconSpaceReserved="false" />
+        <androidx.preference.CheckBoxPreference
+            android:defaultValue="true"
+            android:key="vision_tts"
+            android:title="@string/vision_tts_title"
+            android:summary="@string/vision_tts_summary"
+            app:iconSpaceReserved="false" />
+        <androidx.preference.CheckBoxPreference
+            android:defaultValue="true"
+            android:key="vision_check_after_dismiss"
+            android:title="@string/vision_check_after_dismiss_title"
+            android:summary="@string/vision_check_after_dismiss_summary"
+            app:iconSpaceReserved="false" />
+        <androidx.preference.CheckBoxPreference
+            android:defaultValue="false"
+            android:key="vision_enable_person_leave_dismiss"
+            android:title="@string/vision_enable_person_leave_dismiss_title"
+            android:summary="@string/vision_enable_person_leave_dismiss_summary"
+            app:iconSpaceReserved="false" />
+        <androidx.preference.ListPreference
+            android:defaultValue="s.tflite"
+            android:dialogTitle="@string/vision_model_select_title"
+            android:entries="@array/model_select_entries"
+            android:entryValues="@array/model_select_values"
+            android:key="vision_model_select"
+            android:title="@string/vision_model_select_title"
+            app:iconSpaceReserved="false" />
+        <com.better.alarm.ui.settings.VisionBehaviorPreference
+            android:defaultValue="{&quot;items&quot;:[]}"
+            android:key="vision_behavior"
+            android:title="@string/vision_behavior_title"
+            app:iconSpaceReserved="false" />
+
+
+    </androidx.preference.PreferenceCategory>
+
 </androidx.preference.PreferenceScreen>

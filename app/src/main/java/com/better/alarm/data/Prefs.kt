@@ -27,6 +27,13 @@ private constructor(
     val longClickDismiss: RxDataStore<Boolean>,
     val theme: RxDataStore<String>,
     val defaultRingtone: RxDataStore<String>,
+    val enableVisionWaking: RxDataStore<Boolean>,
+    val visionFlashlight: RxDataStore<Boolean>,
+    val visionTTS: RxDataStore<Boolean>,
+    val visionCheckAfterDismiss: RxDataStore<Boolean>,
+    val visionBehavior: RxDataStore<String>,
+    val visionEnablePersonLeaveDismiss: RxDataStore<Boolean>,
+    val visionModelSelect: RxDataStore<String>
 ) {
   fun layout(): Layout {
     return listRowLayout().take(1).blockingFirst()
@@ -64,6 +71,14 @@ private constructor(
           theme = factory.stringDataStore(KEY_THEME, "deusex"),
           defaultRingtone =
               factory.stringDataStore(KEY_DEFAULT_RINGTONE, Alarmtone.SystemDefault.asString()),
+          enableVisionWaking = factory.booleanDataStore(KEY_ENABLE_VISION_WAKING, false),
+          visionFlashlight = factory.booleanDataStore(KEY_VISION_FLASHLIGHT, false),
+          visionTTS = factory.booleanDataStore(KEY_VISION_TTS, true),
+          visionCheckAfterDismiss = factory.booleanDataStore(KEY_VISION_CHECK_AFTER_DISMISS, true),
+          visionBehavior = factory.stringDataStore(KEY_VISION_BEHAVIOR, "{\"items\":[]}"),
+          visionEnablePersonLeaveDismiss =
+              factory.booleanDataStore(KEY_VISION_ENABLE_PERSON_LEAVE_DISMISS, false),
+          visionModelSelect = factory.stringDataStore(KEY_VISION_MODEL_SELECT, "s.tflite")
       )
     }
 
@@ -80,6 +95,13 @@ private constructor(
     const val KEY_PREALARM_VOLUME = "key_prealarm_volume"
     const val KEY_VOLUME_PREFERENCE = "volume_preference"
     const val KEY_DEFAULT_RINGTONE = "default_ringtone"
+    const val KEY_ENABLE_VISION_WAKING = "enable_vision_waking"
+    const val KEY_VISION_FLASHLIGHT = "vision_flashlight"
+    const val KEY_VISION_TTS = "vision_tts"
+    const val KEY_VISION_CHECK_AFTER_DISMISS = "vision_check_after_dismiss"
+    const val KEY_VISION_BEHAVIOR = "vision_behavior"
+    const val KEY_VISION_ENABLE_PERSON_LEAVE_DISMISS = "vision_enable_person_leave_dismiss"
+    const val KEY_VISION_MODEL_SELECT = "vision_model_select"
     const val LIST_ROW_LAYOUT = "ui_list_row_layout"
     const val LIST_ROW_LAYOUT_COMPACT = "compact"
     const val LIST_ROW_LAYOUT_CLASSIC = "classic"

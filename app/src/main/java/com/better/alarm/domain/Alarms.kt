@@ -19,6 +19,7 @@ import android.annotation.SuppressLint
 import com.better.alarm.data.AlarmStore
 import com.better.alarm.data.AlarmValue
 import com.better.alarm.data.AlarmsRepository
+import com.better.alarm.data.CalendarType
 import com.better.alarm.data.DatastoreMigration
 import com.better.alarm.data.DaysOfWeek
 import com.better.alarm.data.Prefs
@@ -76,10 +77,10 @@ class Alarms(
     return alarm
   }
 
-  fun onAlarmFired(alarm: AlarmCore) {
+  fun onAlarmFired(alarm: AlarmCore, type: CalendarType = CalendarType.NORMAL) {
     // TODO this should not be needed
     alarmsScheduler.removeAlarm(alarm.id)
-    alarm.onAlarmFired()
+    alarm.onAlarmFired(type)
   }
 
   override fun enable(alarm: AlarmValue, enable: Boolean) {

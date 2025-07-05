@@ -1,13 +1,20 @@
 package com.better.alarm.ui.settings
 
+import android.Manifest
 import android.content.ContentResolver
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.media.AudioManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Vibrator
 import android.provider.Settings
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.CheckBoxPreference
 import androidx.preference.ListPreference
@@ -24,6 +31,7 @@ import com.better.alarm.platform.checkPermissions
 import com.better.alarm.ui.ringtonepicker.getPickedRingtone
 import com.better.alarm.ui.ringtonepicker.showRingtonePicker
 import com.better.alarm.ui.ringtonepicker.userFriendlyTitle
+import com.better.alarm.vision.IAnalyzer
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -39,6 +47,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
   private val prefs: Prefs by inject()
   private val disposables = CompositeDisposable()
   private val logger: Logger by globalLogger("SettingsFragment")
+  private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
 
   private val contentResolver: ContentResolver
     get() = requireActivity().contentResolver
@@ -74,6 +83,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
           }
           true
         }
+
+    requestPermissionLauncher = registerForActivityResult(
+      ActivityResultContracts.RequestPermission()
+    ) { granted ->
+      if (granted) {
+        findPreference<CheckBoxPreference>(Prefs.KEY_ENABLE_VISION_WAKING)?.isChecked = true
+      }
+    }
   }
 
   @Deprecated("Deprecated in Java")
@@ -114,6 +131,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
   override fun onResume() {
     super.onResume()
 
+    if(ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+      findPreference<CheckBoxPreference>(Prefs.KEY_ENABLE_VISION_WAKING)?.isChecked = false
+    }
+
     findPreference<VolumePreference>(Prefs.KEY_VOLUME_PREFERENCE)?.run {
       showPicker = {
         val current = Alarmtone.fromString(prefs.defaultRingtone.value)
@@ -132,6 +153,46 @@ class SettingsFragment : PreferenceFragmentCompat() {
           .launchIn(lifecycleScope)
     }
 
+    findPreference<CheckBoxPreference>(Prefs.KEY_ENABLE_VISION_WAKING)?.run{
+      onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
+          if (newValue as Boolean) {
+            // ask for permission if not granted
+            if(ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+              requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+              return@OnPreferenceChangeListener false
+            }
+            when (IAnalyzer.checkAvailability(requireContext())) {
+              IAnalyzer.LIBRARY_NOT_AVAILABLE -> {
+                AlertDialog.Builder(requireContext())
+                  .setTitle(R.string.vision_waking_unavailable_title)
+                  .setMessage(R.string.vision_waking_unavailable_message)
+                  .setPositiveButton(android.R.string.ok, null)
+                  .show()
+                return@OnPreferenceChangeListener false
+              }
+              IAnalyzer.HAND_LANDMARK_TEST_FAIL -> {
+                AlertDialog.Builder(requireContext())
+                  .setTitle(R.string.vision_waking_unavailable_title)
+                  .setMessage(R.string.vision_waking_hand_landmark_test_fail_message)
+                  .setPositiveButton(android.R.string.ok, null)
+                  .show()
+                return@OnPreferenceChangeListener false
+              }
+              IAnalyzer.AVAILABLE -> {}
+            }
+          }
+          true
+      }
+    }
+
+    findPreference<Preference>("vision_help")?.run {
+      setOnPreferenceClickListener {
+        val intent = Intent(requireContext(), VisionWakingHelpActivity::class.java)
+        startActivity(intent)
+        true
+      }
+    }
+
     bindListPreference(Prefs.KEY_ALARM_SNOOZE, prefs.snoozeDuration) { duration ->
       val idx = findIndexOfValue(duration.toString())
       summary = entries[idx]
@@ -147,6 +208,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     bindListPreference(Prefs.KEY_SKIP_DURATION, prefs.skipDuration) { skipDuration ->
       val indexOfValue = findIndexOfValue(skipDuration.toString())
+      if (indexOfValue == -1) return@bindListPreference
       summary = entries[indexOfValue]
     }
 
@@ -169,6 +231,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
     bindListPreference(Prefs.KEY_THEME, prefs.theme) { summary = entry }
 
     bindListPreference(Prefs.LIST_ROW_LAYOUT, prefs.listRowLayout) { summary = entry }
+
+    bindListPreference(Prefs.KEY_VISION_MODEL_SELECT, prefs.visionModelSelect) { summary = entry }
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+      findPreference<PreferenceCategory>("category_vision_waking")?.isVisible = false
+    }
   }
 
   override fun onPause() {

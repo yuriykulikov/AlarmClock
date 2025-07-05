@@ -182,6 +182,19 @@
     <!-- Auto silence summary when turned off -->
     <string name="auto_silence_never">Off</string>
 
+    <!-- snooze action preference title -->
+    <string name="vision_snooze_action_title">Gesture to snooze</string>
+
+    <!-- Report time action preference title -->
+    <string name="vision_report_time_action_title">Gesture to report time</string>
+
+    <string name="enable_vision_waking_title">Enable AI vision waking</string>
+
+    <string name="vision_waking_flashlight_title">Turn on flashlight</string>
+    <string name="vision_waking_flashlight_summary">Necessary if the environment is dark</string>
+
+    <string name="vision_tts_title">Enable Text to Speech</string>
+
     <!--
          Entries listed in the ListPreference when invoking the auto silence
          preference.
@@ -292,4 +305,59 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+    <string-array name="background_entries">
+        <item>Default</item>
+        <item>Upload</item>
+    </string-array>
+    <string-array name="background_values">
+        <item>Default</item>
+        <item>Upload</item>
+    </string-array>
+
+    <string-array name="vision_gesture_entries">
+        <item>none</item>
+        <item>zero</item>
+        <item>one</item>
+        <item>two</item>
+        <item>three</item>
+        <item>four</item>
+        <item>five</item>
+        <item>middle finger</item>
+        <item>little finger</item>
+        <item>call</item>
+        <item>rock</item>
+        <item>thumbs up</item>
+        <item>gun</item>
+    </string-array>
+
+    <string-array name="vision_gesture_values">
+        <item>none</item>
+        <item>zero</item>
+        <item>one</item>
+        <item>two</item>
+        <item>three</item>
+        <item>four</item>
+        <item>five</item>
+        <item>middle finger</item>
+        <item>little finger</item>
+        <item>call</item>
+        <item>rock</item>
+        <item>thumbs up</item>
+        <item>gun</item>
+    </string-array>
+
+    <string-array name="model_select_entries">
+        <item>nano</item>
+        <item>small</item>
+        <item>medium</item>
+    </string-array>
+    <!-- Textual content of the button to discard the current dialog values and close the dialog -->
+    <!-- Textual content of the button to update an alarm with the current dialog values -->
+    <!-- place holder for am/pm label when it is not set -->
+    <string-array name="model_select_values" translatable="false">
+        <item>n.tflite</item>
+        <item>s.tflite</item>
+        <item>m.tflite</item>
+    </string-array>
+
 </resources>
